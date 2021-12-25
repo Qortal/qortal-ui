@@ -47,8 +47,6 @@ dmg:
 win:
   legalTrademarks: "QORTAL.ORG"
   icon: "./img/icons/ico/256x256.ico"
-  installerSidebar: "./img/win-installer-sidebar.bmp"
-  uninstallerSidebar: "./img/win-uninstaller-sidebar.bmp"
   target:
     - "nsis"
 
@@ -56,6 +54,8 @@ win:
 nsis:
   oneClick: false
   perMachine: false
+  installerSidebar: "./img/win-installer-sidebar.bmp"
+  uninstallerSidebar: "./img/win-uninstaller-sidebar.bmp"
   runAfterFinish: true
   deleteAppDataOnUninstall: true
   createDesktopShortcut: true
