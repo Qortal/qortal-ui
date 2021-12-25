@@ -119,11 +119,9 @@ if (!isLock) {
 		}
 	})
 	ipcMain.on('app_version', (event) => {
-		log.info(app.getVersion());
-		myWindow.webContents.send("app_version", {
-			version: app.getVersion();
-		});
-	})
+        log.info(app.getVersion());
+		mainWindow.webContents.send('app_version', { version: app.getVersion() });
+	});
 	autoUpdater.on('update-available', () => {
 		const n = new Notification({
 			title: 'Update Available!',
