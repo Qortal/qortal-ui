@@ -10,7 +10,7 @@
   "main": "default-plugins.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Qortal/qortal-ui.git",
+    "url": "https://github.com/Qortal/qortal-ui.git",
     "directory": "qortal-ui-plugins"
   },
   "author": "QORTAL <admin@qortal.org>",
