@@ -1,6 +1,7 @@
 # Qortal UI
 
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](https://opensource.org/licenses/GPL-3.0)
+<a href="https://discord.com/invite/54UyhB7"><img src="https://badgen.net/badge/Discord/join-us/7289DA" alt="Discord"></a>
 
 Decentralizing The World
 
