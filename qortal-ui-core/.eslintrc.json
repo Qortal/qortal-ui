@@ -1,0 +1,22 @@
+{
+    "extends" : "standard",
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ]
+    },
+    "env": {
+        "es6": true,
+        "browser": true,
+        "worker": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "sourceType": "module",
+        "allowImportExportEverywhere": true
+    }
+}

@@ -1,0 +1,18 @@
+# Yarn
+yarn.lock
+
+# Derived js files
+qortal-ui-plugins/plugins/core/**/*.js
+!*.src.js
+
+# Node modules
+node_modules/
+
+# Mac .DS_Store files
+.DS_Store
+
+# Build script related
+watch.pid
+
+# Built WWW
+qortal-ui/builtWWW

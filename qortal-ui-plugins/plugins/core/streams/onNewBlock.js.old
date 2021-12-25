@@ -1,0 +1,63 @@
+import { parentEpml } from '../connect.js'
+import { EpmlStream } from 'epml'
+
+const BLOCK_CHECK_INTERVAL = 3000 // You should be runn off config.user.nodeSettings.pingInterval...
+const BLOCK_CHECK_TIMEOUT = 3000
+
+export const BLOCK_STREAM_NAME = 'new_block'
+
+const onNewBlockFunctions = []
+
+let mostRecentBlock = {
+    height: -1
+}
+
+export const onNewBlock = newBlockFn => onNewBlockFunctions.push(newBlockFn)
+
+export const check = () => {
+    const c = doCheck()
+    c.then(() => {
+        setTimeout(() => check(), BLOCK_CHECK_INTERVAL)
+    })
+    c.catch(() => {
+        setTimeout(() => check(), BLOCK_CHECK_INTERVAL)
+    })
+}
+
+const doCheck = async () => {
+    let timeout = setTimeout(() => {
+        throw new Error('Block check timed out')
+    }, BLOCK_CHECK_TIMEOUT)
+
+    let _nodeStatus = {}
+
+    const block = await parentEpml.request('apiCall', {
+        url: '/blocks/last'
+    })
+
+    const _nodeInfo = await parentEpml.request('apiCall', {
+        url: '/admin/info'
+    })
+
+    let nodeConfig = await parentEpml.request('getNodeConfig')
+
+    if (nodeConfig.node === 0 || nodeConfig.node === 1) {
+        _nodeStatus = await parentEpml.request('apiCall', {
+            url: '/admin/status'
+        })
+    }
+
+    let appInfo = {
+        block: block,
+        nodeInfo: _nodeInfo,
+        nodeStatus: _nodeStatus
+    }
+    parentEpml.request('updateAppInfo', appInfo)
+
+    clearTimeout(timeout)
+
+    if (block.height > mostRecentBlock.height) {
+        mostRecentBlock = block
+        onNewBlockFunctions.forEach(fn => fn(mostRecentBlock))
+    }
+}

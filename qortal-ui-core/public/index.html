@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <meta charset="UTF-8">
+    <meta name="Description" content="Qortal Platform UI">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/img/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        html {
+            --scrollbarBG: #a1a1a1;
+            --thumbBG: #6a6c75;
+            overflow: hidden;
+        }
+
+        *::-webkit-scrollbar {
+            width: 11px;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--thumbBG);
+            border-radius: 6px;
+            border: 3px solid var(--scrollbarBG);
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: #eee;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="/build/styles.bundle.css">
+    <link rel="stylesheet" href="/font/material-icons.css">
+    <title>Qortal</title>
+
+
+    <script>
+
+        const memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
+        const heap = new Uint8Array(memory.buffer);
+
+        const sbrk = function (size, heap) {
+            let brk = 512 * 1024; // stack top
+            let old = brk;
+            brk += size;
+
+            if (brk > heap.length)
+                throw new Error("heap exhausted");
+
+            return old;
+        };
+
+        const importObject = {
+            env: {
+                memory: memory
+            },
+        };
+
+        function loadWebAssembly(filename, imports) {
+            // Fetch the file and compile it
+            return fetch(filename)
+                .then(response => response.arrayBuffer())
+                .then(buffer => WebAssembly.compile(buffer))
+                .then(module => {
+
+                    // Create the instance.
+                    return new WebAssembly.Instance(module, importObject);
+                });
+        }
+
+        const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm'
+
+        loadWebAssembly(path)
+            .then(wasmModule => {
+
+                window.sbrk = sbrk
+                window.memory = memory
+                window.heap = heap
+                window.powInstance = wasmModule.instance;
+                window.computePow = wasmModule.exports.compute2;
+            });
+
+    </script>
+</head>
+
+<body>
+    <app-styles></app-styles>
+    <main>
+
+        <noscript>
+            You need to enable JavaScript to run this app. 😞
+        </noscript>
+
+        <main-app id="main-app"></main-app>
+
+    </main>
+
+    <script type="module" src="/build/es6/main.js"></script>
+
+</body>
+
+</html>

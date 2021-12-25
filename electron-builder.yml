@@ -1,0 +1,93 @@
+appId: org.qortal.QortalUi
+productName: "Qortal UI"
+copyright: "Copyright © 2021"
+
+# forceCodeSigning: false
+
+# nodeGypRebuild: false
+
+compression: maximum
+
+asar: true
+
+files:
+  - from: "."
+    to: "."
+    filter:
+      - "electron.js"
+      - "img/"
+      - "node_modules/"
+      - "server.js"
+      - "package.json"
+      - "builtWWW/"
+      - "config/"
+      - "scripts/"
+
+afterPack: "./scripts/afterPack.js"
+
+# Mac OS configuration
+mac:
+  icon: "./img/icons/icns/256x256.icns"
+  target:
+    - { target: dmg }
+
+# Config for OSX dmg
+dmg:
+  icon: "./img/icons/icns/256x256.icns"
+  iconSize: 100
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: "link"
+      path: "/Applications"
+
+# Windows configuration
+win:
+  legalTrademarks: "QORTAL.ORG"
+  icon: "./img/icons/ico/256x256.ico"
+  installerSidebar: "./img/win-installer-sidebar.bmp"
+  uninstallerSidebar: "./img/win-uninstaller-sidebar.bmp"
+  target:
+    - "nsis"
+
+# Config for the windows installer
+nsis:
+  oneClick: false
+  perMachine: false
+  runAfterFinish: true
+  deleteAppDataOnUninstall: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# Linux configuration
+linux:
+  icon: "./img/icons/png/"
+  category: "Network"
+  packageCategory: "Network"
+  desktop:
+    StartupWMClass: qortal-ui
+  executableArgs:
+    - --no-sandbox
+    - '--js-flags="--max-old-space-size=6144"'
+  target:
+    - "deb"
+    - "AppImage"
+    - "snap"
+
+deb:
+  synopsis: "Qortal UI for Linux"
+  afterInstall: "./scripts/add-debian-apt-repo.sh"
+  afterRemove: "./scripts/uninstall-debian-conf.sh"
+
+snap:
+  synopsis: "Qortal UI for Linux"
+
+directories:
+  output: dist
+
+publish:
+  provider: github
+  owner: Qortal
+  repo: qortal-ui

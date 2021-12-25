@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/font/material-icons.css">
+    <style>
+        html {
+            --scrollbarBG: #a1a1a1;
+            --thumbBG: #6a6c75;
+        }
+
+        *::-webkit-scrollbar {
+            width: 11px;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--thumbBG);
+            border-radius: 6px;
+            border: 3px solid var(--scrollbarBG);
+        }
+
+        html,
+        body {
+            margin: 0;
+            font-family: "Roboto", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <send-coin-page></send-coin-page>
+    <script src="send-coin.js"></script>
+</body>
+
+</html>
