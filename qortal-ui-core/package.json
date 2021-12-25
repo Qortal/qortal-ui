@@ -11,7 +11,7 @@
   "main": "ui-core.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Qortal/qortal-ui.git",
+    "url": "git+https://github.com/Qortal/qortal-ui.git",
     "directory": "qortal-ui-core"
   },
   "author": "QORTAL <admin@qortal.org>",
