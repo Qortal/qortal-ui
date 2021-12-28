@@ -28,12 +28,17 @@ afterPack: "./scripts/afterPack.js"
 # Mac OS configuration
 mac:
   icon: "./img/icons/icns/256x256.icns"
+  hardenedRuntime: true,
+  gatekeeperAssess: false,
+  entitlements: "build/entitlements.mac.plist",
+  entitlementsInherit: "build/entitlements.mac.plist",
   target:
     - { target: dmg }
 
 # Config for OSX dmg
 dmg:
   icon: "./img/icons/icns/256x256.icns"
+  sign: false
   iconSize: 100
   contents:
     - x: 130
