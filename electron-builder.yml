@@ -25,6 +25,8 @@ files:
 
 afterPack: "./scripts/afterPack.js"
 
+afterSign: "./scripts/notarize.js"
+
 # Mac OS configuration
 mac:
   icon: "./img/icons/icns/256x256.icns"
