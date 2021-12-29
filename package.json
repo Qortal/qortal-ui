@@ -37,6 +37,8 @@
     "electron": "11.5.0",
     "electron-builder": "22.14.5",
 	"electron-notarize": "1.1.1",
+	"electron-osx-sign": "0.6.0",
+	"electron-packager": "15.4.0",
     "shelljs": "0.8.4"
   },
   "engines": {
