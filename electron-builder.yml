@@ -1,4 +1,4 @@
-aappId: "org.qortal.QortalUI"
+appId: "org.qortal.QortalUI"
 productName: "Qortal-UI"
 artifactName: "${productName}-Setup-${version}.${ext}"
 copyright: "Copyright © 2021 Qortal"
