@@ -280,7 +280,7 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="seed" id="seedPage">
                             <div>
                                 <div style="display:flex;">
-                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qortal address seed" id="v1SeedInput" type="password"></mwc-textfield>
+                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qora address seed" id="v1SeedInput" type="password"></mwc-textfield>
                                 </div>
                             </div>
                         </div>
