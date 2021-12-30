@@ -23,7 +23,7 @@ files:
       - "builtWWW/"
       - "config/"
       - "scripts/"
-	  - "build/"
+      - "build/"
 
 afterPack: "./scripts/afterPack.js"
 
