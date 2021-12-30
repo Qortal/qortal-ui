@@ -134,7 +134,7 @@ if (!isLock) {
 			title: 'Error while Updating...',
 			body: err
 		})
-		n.show();
+		// n.show();
 	})
 	autoUpdater.on('update-downloaded', () => {
 		const n = new Notification({
