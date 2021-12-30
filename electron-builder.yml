@@ -1,6 +1,7 @@
-appId: org.qortal.QortalUi
-productName: "Qortal UI"
-copyright: "Copyright © 2021"
+aappId: "org.qortal.QortalUI"
+productName: "Qortal-UI"
+artifactName: "${productName}-Setup-${version}.${ext}"
+copyright: "Copyright © 2021 Qortal"
 
 # forceCodeSigning: false
 
@@ -36,6 +37,7 @@ mac:
   entitlementsInherit: "./build/entitlements.mac.plist"
   target:
     - { target: dmg }
+    - { target: pkg }
 
 # Config for OSX dmg
 dmg:
@@ -49,6 +51,16 @@ dmg:
       y: 220
       type: "link"
       path: "/Applications"
+
+# Config for OSX pkg
+pkg:
+  installLocation: "/Applications"
+  allowAnywhere: true
+  allowCurrentUserHome: true
+  allowRootDirectory: true
+  isVersionChecked: true
+  isRelocatable: false
+  overwriteAction: "upgrade"
 
 # Windows configuration
 win:
