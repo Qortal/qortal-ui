@@ -7,7 +7,7 @@ copyright: "Copyright © 2021 Qortal"
 
 # nodeGypRebuild: false
 
-compression: maximum
+compression: normal
 
 asar: true
 
