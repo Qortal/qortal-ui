@@ -37,9 +37,11 @@ mac:
   entitlements: "./build/entitlements.mac.plist"
   entitlementsInherit: "./build/entitlements.mac.plist"
   category: "public.app-category.utilities"
+  asarUnpack: "**/*.node"
   target:
     - { target: dmg }
     - { target: pkg }
+	- { target: zip }
 
 # Config for OSX dmg
 dmg:
