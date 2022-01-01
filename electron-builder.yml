@@ -41,7 +41,6 @@ mac:
   target:
     - { target: dmg }
     - { target: pkg }
-	- { target: zip }
 
 # Config for OSX dmg
 dmg:
