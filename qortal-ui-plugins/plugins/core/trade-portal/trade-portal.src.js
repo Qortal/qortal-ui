@@ -610,7 +610,7 @@ class TradePortal extends LitElement {
 										id="sellAmountInput"
 										required label="Amount (QORT)"
 										placeholder="0.0000"
-										@input=${(e) => {this._checkSellAmount(e)}}
+										@input="${(e) => {this._checkSellAmount(e)}}"
 										type="number"
 										auto-validate="false"
 										outlined value="${this.initialAmount}"
@@ -623,7 +623,7 @@ class TradePortal extends LitElement {
 										id="sellPriceInput"
 										required label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
 										placeholder="0.0000"
-										@input=${(e) => {this._checkSellAmount(e)}}
+										@input="${(e) => {this._checkSellAmount(e)}}"
 										type="number"
 										auto-validate="false"
 										outlined value="${this.initialAmount}"
