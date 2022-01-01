@@ -36,6 +36,7 @@ mac:
   gatekeeperAssess: false
   entitlements: "./build/entitlements.mac.plist"
   entitlementsInherit: "./build/entitlements.mac.plist"
+  category: "public.app-category.utilities"
   target:
     - { target: dmg }
     - { target: pkg }
