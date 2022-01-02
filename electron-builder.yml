@@ -44,8 +44,8 @@ mac:
 
 # Config for OSX dmg
 dmg:
-  icon: "./img/icons/icns/256x256.icns"
   sign: false
+  icon: "./img/icons/icns/256x256.icns"
   iconSize: 100
   contents:
     - x: 130
@@ -113,6 +113,7 @@ snap:
 
 directories:
   output: dist
+  buildResources: "./build/"
 
 publish:
   provider: github
