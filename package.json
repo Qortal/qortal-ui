@@ -14,10 +14,7 @@
   },
   "homepage": "https://qortal.org",
   "author": "QORTAL <admin@qortal.org>",
-  "license": {
-    "type": "GPL-3.0",
-	"url" : "https://opensource.org/licenses/GPL-3.0"
-  },
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "node server.js",
     "build-dev": "node build.js",
