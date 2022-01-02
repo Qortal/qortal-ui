@@ -1,5 +1,5 @@
 name: qortal-ui
-version: 1.6.3
+version: 1.6.2
 summary: Qortal UI for Linux
 description: Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet.
 confinement: strict
