@@ -22,7 +22,7 @@
   "dependencies": {
     "@material/mwc-list": "^0.18.0",
     "@material/mwc-select": "^0.18.0",
-    "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js"
+    "emoji-picker-js": "https://github.com/lotw7277/emoji-picker-js"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
