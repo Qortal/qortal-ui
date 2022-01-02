@@ -1,6 +1,7 @@
 {
   "name": "qortal-ui-crypto",
   "version": "2.1.0",
+  "description": "QORTAL-UI Crypto",
   "keywords": [
     "QORT",
     "QORTAL",
@@ -14,7 +15,10 @@
     "directory": "qortal-ui-crypto"
   },
   "author": "QORTAL <admin@qortal.org>",
-  "license": "GPL-3.0",
+  "license": {
+    "type": "GPL-3.0",
+	"url" : "https://opensource.org/licenses/GPL-3.0"
+  },
   "dependencies": {
     "asmcrypto.js": "^2.3.2",
     "buffer": "^6.0.3",
