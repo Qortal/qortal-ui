@@ -153,7 +153,7 @@ class SendMoneyPage extends LitElement {
 						</div>
 					</paper-card>
 					<p>
-						<mwc-select id="coinType" label="Select Coin" index="0" @selected=${(e) => this.selectCoin(e)} style="min-width: 130px; max-width:100%; width:100%;">
+						<mwc-select id="coinType" label="Select Coin" index="0" @selected="${(e) => this.selectCoin(e)}" style="min-width: 130px; max-width:100%; width:100%;">
 							<mwc-list-item value="qort"></span> <span class="coinName qort">QORT</span></mwc-list-item>
 							<mwc-list-item value="btc"> <span class="coinName btc">BTC</span></mwc-list-item>
 							<mwc-list-item value="ltc"> <span class="coinName ltc">LTC</span></mwc-list-item>
@@ -166,9 +166,7 @@ class SendMoneyPage extends LitElement {
 							id="amountInput"
 							required
 							label="Amount (QORT)"
-							@input=${(e) => {
-								this._checkAmount(e)
-							}}
+							@input="${(e) => {this._checkAmount(e)}}"
 							type="number"
 							auto-validate="false"
 							value="${this.amount}"
@@ -176,7 +174,12 @@ class SendMoneyPage extends LitElement {
 						</mwc-textfield>
 					</p>
 					<p>
-						<mwc-textfield style="width:100%;" label="To (address or name)" id="recipient" type="text" value="${this.recipient}"></mwc-textfield>
+						<mwc-textfield
+						    style="width:100%;"
+							label="To (address or name)"
+							id="recipient" type="text" value="${this.recipient}"
+						>
+						</mwc-textfield>
 					</p>
 
 					<div style="${this.selectedCoin === 'invalid' || this.selectedCoin === 'qort' ? 'visibility: hidden; margin-bottom: -5em;' : 'visibility: visible; margin-bottom: 0;'}">
@@ -188,7 +191,7 @@ class SendMoneyPage extends LitElement {
 							step="1"
 							min="10"
 							max="100"
-							?disabled=${this.selectedCoin === 'invalid' || this.selectedCoin === 'qort' ? true : false}
+							?disabled="${this.selectedCoin === 'invalid' || this.selectedCoin === 'qort' ? true : false}"
 							value="${this.satFeePerByte}"
 						>
 						</mwc-slider>
@@ -201,7 +204,7 @@ class SendMoneyPage extends LitElement {
 
 					<div class="buttons">
 						<div>
-							<mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doSend(e)}>Send &nbsp;</mwc-button>
+							<mwc-button ?disabled="${this.btnDisable}" style="width:100%;" raised icon="send" @click="${(e) => this.doSend(e)}">Send &nbsp;</mwc-button>
 						</div>
 					</div>
 				</div>
