@@ -1,6 +1,7 @@
 {
   "name": "qortal-ui-plugins",
-  "version": "2.1.0",
+  "version": "2.1.1",
+  "description": "QORTAL-UI Plugins",
   "keywords": [
     "QORT",
     "QORTAL",
@@ -14,7 +15,10 @@
     "directory": "qortal-ui-plugins"
   },
   "author": "QORTAL <admin@qortal.org>",
-  "license": "GPL-3.0",
+  "license": {
+    "type": "GPL-3.0",
+	"url" : "https://opensource.org/licenses/GPL-3.0"
+  },
   "dependencies": {
     "@material/mwc-list": "^0.18.0",
     "@material/mwc-select": "^0.18.0",
