@@ -15,7 +15,10 @@
     "directory": "qortal-ui-core"
   },
   "author": "QORTAL <admin@qortal.org>",
-  "license": "GPL-3.0",
+  "license": {
+    "type": "GPL-3.0",
+	"url" : "https://opensource.org/licenses/GPL-3.0"
+  },
   "dependencies": {
     "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.4",
