@@ -137,6 +137,39 @@ export const routes = {
 		return response
 	},
 
+	standaloneTransaction: async (req) => {
+		const rebuildUint8Array = (obj) => {
+			let _array = new Uint8Array(Object.keys(obj).length)
+			for (let i = 0; i < _array.byteLength; ++i) {
+				_array.set([obj[i]], i)
+			}
+			return _array
+		}
+
+		let response
+		try {
+			// req.data.keyPair unfortunately "prepared" into horrible object so we need to convert back
+			let _keyPair = {};
+			for (let _keyName in req.data.keyPair) {
+				_keyPair[_keyName] = rebuildUint8Array(req.data.keyPair[_keyName])
+			}
+			const tx = createTransaction(req.data.type, _keyPair, req.data.params)
+			const res = await processTransaction(tx.signedBytes)
+			response = {
+				success: true,
+				data: res,
+			}
+		} catch (e) {
+			console.error(e)
+			console.error(e.message)
+			response = {
+				success: false,
+				message: e.message,
+			}
+		}
+		return response
+	},
+	
 	username: async (req) => {
 		const state = store.getState()
 		const username = state.user.storedWallets[state.app.wallet.addresses[0].address].name
