@@ -82,7 +82,16 @@ parentEpml.ready().then(() => {
             icon: 'group',
             menus: [],
             parent: false
-        }
+        },
+	    {
+            url: 'puzzles',
+            domain: 'core',
+            page: 'puzzles/index.html',
+            title: 'Puzzles',
+            icon: 'extension',
+            menus: [],
+            parent: false
+	    }
     ]
 
     const registerPlugins = (pluginInfo) => {
