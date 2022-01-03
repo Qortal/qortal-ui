@@ -631,9 +631,9 @@ class SendMoneyPage extends LitElement {
 		this.ltcSatMinFee = 10
 		this.ltcSatMaxFee = 100
 		this.ltcDefaultFee = 30 // 0.0000003 LTC per byte
-		this.dogeSatMinFee = 100000
-		this.dogeSatMaxFee = 1000000
-		this.dogeDefaultFee = 500000 // 0.005 DOGE per byte
+		this.dogeSatMinFee = 100
+		this.dogeSatMaxFee = 10000
+		this.dogeDefaultFee = 1000 // 0.00001 DOGE per byte
 		this.isValidAmount = false
 		this.qortBalance = 0
 		this.btcBalance = 0
