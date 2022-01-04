@@ -1,6 +1,6 @@
 appId: "org.qortal.QortalUI"
 productName: "Qortal UI"
-artifactName: "${productName}-Setup-${version}.${ext}"
+artifactName: "Qortal-Setup.${ext}"
 copyright: "Copyright © 2021 Qortal"
 
 # forceCodeSigning: false
