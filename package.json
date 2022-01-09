@@ -17,6 +17,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "dev": "node server.js",
+	"prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
     "build-dev": "node build.js",
     "build": "NODE_ENV=production node build.js",
     "server": "NODE_ENV=production node server.js",
