@@ -39,14 +39,10 @@ class SettingsPage extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <style>
-                
-            </style>
-
             <mwc-dialog id="settingsDialog" heading="Settings" opened=false>
                 <div style="min-height:450px; min-width: 300px; box-sizing: border-box; position: relative;">
 
-                    <mwc-select id="nodeSelect" label="Node url" index="0" @selected=${(e) => this.nodeSelected(e)} style="min-width: 130px; max-width:100%; width:100%;">
+                    <mwc-select id="nodeSelect" label="Node Url" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
                             <mwc-list-item value="${index}">${n.protocol + '://' + n.domain + ':' + n.port}</mwc-list-item>
                         `)}
@@ -54,17 +50,17 @@ class SettingsPage extends connect(store)(LitElement) {
 
                     <p style="margin-top: 45px;">Select a node from the default list of nodes above or add a custom node to the list above by clicking on the button below</p>
 
-                     <mwc-button style="display: block; bottom: 0; position: absolute; left: 30%;" @click=${() => this.shadowRoot.querySelector('#addNodeDialog').show()}><mwc-icon>add</mwc-icon>Add Custom Node</mwc-button>
+                    <mwc-button outlined style="display: block; position: absolute; left: 30%;" @click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"><mwc-icon>add</mwc-icon>Add Custom Node</mwc-button>
                 </div>
                 <mwc-button
                     slot="primaryAction"
                     dialogAction="close"
                     class="red"
-                    >
-                    Close
+                >
+                Close
                 </mwc-button>
             </mwc-dialog>
-            
+
             <mwc-dialog id="addNodeDialog" heading="Add Custom Node">
                 <mwc-select id="protocolList" label="Protocol" style="width:100%;">
                     <mwc-list-item value="http">http</mwc-list-item>
@@ -77,14 +73,14 @@ class SettingsPage extends connect(store)(LitElement) {
                     slot="secondaryAction"
                     dialogAction="close"
                     class="red"
-                    >
-                    Cancel
+                >
+                Close
                 </mwc-button>
                 <mwc-button
                     slot="primaryAction"
-                    @click=${this.addNode}
+                    @click="${this.addNode}"
                 >
-                    Add
+                Add And Save
                 </mwc-button>
             </mwc-dialog>
         `
@@ -110,7 +106,7 @@ class SettingsPage extends connect(store)(LitElement) {
         // Set selected node
         store.dispatch(doSetNode(selectedNodeIndex))
         snackbar.add({
-            labelText: `UI Set to Node : ${selectedNodeUrl}`,
+            labelText: `UI Set To Node : ${selectedNodeUrl}`,
             dismiss: true
         })
     }
@@ -129,16 +125,42 @@ class SettingsPage extends connect(store)(LitElement) {
 
             store.dispatch(doAddNode(nodeObject))
 
-            snackbar.add({
-                labelText: 'Successfully Added a Custom Node',
-                dismiss: true
-            })
+            const haveNodes = JSON.parse(localStorage.getItem('myQortalNodes'));
 
-            this.shadowRoot.getElementById('protocolList').value = ''
-            this.shadowRoot.getElementById('domainInput').value = ''
-            this.shadowRoot.getElementById('portInput').value = ''
+            if (haveNodes === null || haveNodes.length === 0) {
 
-            this.shadowRoot.querySelector('#addNodeDialog').close()
+                var savedNodes = [];
+                savedNodes.push(nodeObject);
+                localStorage.setItem('myQortalNodes', JSON.stringify(savedNodes));
+
+                snackbar.add({
+                    labelText: 'Successfully Added And Saved Custom Node',
+                    dismiss: true
+                })
+
+                this.shadowRoot.getElementById('protocolList').value = ''
+                this.shadowRoot.getElementById('domainInput').value = ''
+                this.shadowRoot.getElementById('portInput').value = ''
+
+                this.shadowRoot.querySelector('#addNodeDialog').close()
+
+            } else {
+
+                var stored = JSON.parse(localStorage.getItem('myQortalNodes'));
+                stored.push(nodeObject);
+                localStorage.setItem('myQortalNodes', JSON.stringify(stored));
+
+                snackbar.add({
+                    labelText: 'Successfully Added And Saved Custom Node',
+                    dismiss: true
+                })
+
+                this.shadowRoot.getElementById('protocolList').value = ''
+                this.shadowRoot.getElementById('domainInput').value = ''
+                this.shadowRoot.getElementById('portInput').value = ''
+
+                this.shadowRoot.querySelector('#addNodeDialog').close()
+            }
         }
     }
 }
