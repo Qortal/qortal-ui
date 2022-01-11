@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
+import { checkApiKey } from '../../apiKeyUtils.js'
 
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
@@ -45,7 +46,8 @@ class LoginSection extends connect(store)(LitElement) {
             hasStoredWallets: { type: Boolean },
             saveInBrowser: { type: Boolean },
             backedUpWalletJSON: { type: Object },
-            backedUpSeedLoading: { type: Boolean }
+            backedUpSeedLoading: { type: Boolean },
+            nodeConfig: { type: Object }
         }
     }
 
@@ -280,7 +282,7 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="seed" id="seedPage">
                             <div>
                                 <div style="display:flex;">
-                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qora address seed" id="v1SeedInput" type="password"></mwc-textfield>
+                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qortal address seed" id="v1SeedInput" type="password"></mwc-textfield>
                                 </div>
                             </div>
                         </div>
@@ -375,6 +377,7 @@ class LoginSection extends connect(store)(LitElement) {
         this.loggedIn = state.app.loggedIn
         this.wallets = state.user.storedWallets
         this.hasStoredWallets = this.wallets.length > 0
+        this.nodeConfig = state.app.nodeConfig
     }
 
     keyupEnter(e, action) {
@@ -535,6 +538,7 @@ class LoginSection extends connect(store)(LitElement) {
                                 })).catch(err => console.error(err))
                             }
                         }
+                        checkApiKey(this.nodeConfig)
                         this.cleanup()
                         return this.loadingRipple.fade()
                     })

@@ -97,7 +97,7 @@ class AppInfo extends connect(store)(LitElement) {
         return html`
             <div id="profileInMenu">
                 <span class="info">Block Height: ${this.blockInfo.height ? this.blockInfo.height : ''}  <span class=${this.cssStatus}>${this._renderStatus()}</span></span>
-                <span class="info">UI Version: v${this.nodeConfig.version ? this.nodeConfig.version : ''} </span>
+                <span class="info">UI Version: ${this.nodeConfig.version ? this.nodeConfig.version : ''} </span>
                 <span class="info">Core Version: ${this.nodeInfo.buildVersion ? this.nodeInfo.buildVersion : ''} </span>
                 <a id="pageLink"></a>
             </div>

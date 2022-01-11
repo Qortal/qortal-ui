@@ -11,6 +11,7 @@ import framePasteMenu from '../functional-components/frame-paste-menu.js'
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
 const signChatTransaction = api.signChatTransaction
+const signArbitraryTransaction = api.signArbitraryTransaction
 const tradeBotCreateRequest = api.tradeBotCreateRequest
 const tradeBotRespondRequest = api.tradeBotRespondRequest
 const signTradeBotTxn = api.signTradeBotTxn
@@ -169,7 +170,7 @@ export const routes = {
 		}
 		return response
 	},
-	
+
 	username: async (req) => {
 		const state = store.getState()
 		const username = state.user.storedWallets[state.app.wallet.addresses[0].address].name
@@ -197,6 +198,21 @@ export const routes = {
 			const signedChatBytes = await signChatTransaction(req.data.chatBytesArray, req.data.chatNonce, store.getState().app.wallet._addresses[req.data.nonce].keyPair)
 
 			const res = await processTransaction(signedChatBytes)
+			response = res
+		} catch (e) {
+			console.error(e)
+			console.error(e.message)
+			response = false
+		}
+		return response
+	},
+
+	sign_arbitrary: async (req) => {
+		let response
+		try {
+			const signedArbitraryBytes = await signArbitraryTransaction(req.data.arbitraryBytesBase58, req.data.arbitraryBytesForSigningBase58, req.data.arbitraryNonce, store.getState().app.wallet._addresses[req.data.nonce].keyPair)
+
+			const res = await processTransaction(signedArbitraryBytes)
 			response = res
 		} catch (e) {
 			console.error(e)

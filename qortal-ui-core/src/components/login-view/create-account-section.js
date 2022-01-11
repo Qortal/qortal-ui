@@ -10,6 +10,7 @@ import FileSaver from 'file-saver'
 
 import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet } from '../../redux/user/user-actions.js'
+import { checkApiKey } from '../../apiKeyUtils.js'
 
 import snackbar from '../../functional-components/snackbar.js'
 
@@ -48,7 +49,8 @@ class CreateAccountSection extends connect(store)(LitElement) {
             _wallet: { type: Object },
             _pass: { type: String },
             _name: { type: String },
-            isDownloadedBackup: { type: Boolean }
+            isDownloadedBackup: { type: Boolean },
+            nodeConfig: { type: Object }
         }
     }
 
@@ -181,6 +183,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                         .then(() => {
                                             store.dispatch(doLogin(this._wallet))
                                             store.dispatch(doSelectAddress(this._wallet.addresses[0]))
+                                            checkApiKey(this.nodeConfig);
                                             this.cleanup()
                                             return ripple.fade()
                                         })
@@ -191,6 +194,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                         } else {
                             store.dispatch(doLogin(this._wallet))
                             store.dispatch(doSelectAddress(this._wallet.addresses[0]))
+                            checkApiKey()
                             this.cleanup()
                         }
                     }
@@ -490,6 +494,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
     }
 
     stateChanged(state) {
+        this.nodeConfig = state.app.nodeConfig
         // this.loggedIn = state.app.loggedIn
     }
 
