@@ -12,8 +12,9 @@ import { request } from './fetch-request'
 // TradeBotCreateRequest
 export const tradeBotCreateRequest = (requestObject) => {
     const txn = new TradeBotCreateRequest().createTransaction(requestObject)
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/tradebot/create', {
+    return request(`/crosschain/tradebot/create?apiKey=${myNode.apiKey}`, {
         method: 'POST',
         headers: {
             'Accept': 'text/plain',
@@ -26,8 +27,9 @@ export const tradeBotCreateRequest = (requestObject) => {
 // TradeBotRespondRequest
 export const tradeBotRespondRequest = (requestObject) => {
     const txn = new TradeBotRespondRequest().createTransaction(requestObject)
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/tradebot/respond', {
+    return request(`/crosschain/tradebot/respond?apiKey=${myNode.apiKey}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -46,8 +48,9 @@ export const signTradeBotTxn = (unsignedTxn, keyPair) => {
 // Delete Trade Offer
 export const deleteTradeOffer = (requestObject) => {
     const txn = new DeleteTradeOffer().createTransaction(requestObject)
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/tradeoffer', {
+    return request(`/crosschain/tradeoffer?apiKey=${myNode.apiKey}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
@@ -59,8 +62,9 @@ export const deleteTradeOffer = (requestObject) => {
 
 // Send BTC 
 export const sendBtc = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/btc/send', {
+    return request(`/crosschain/btc/send?apiKey=${myNode.apiKey}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -72,8 +76,9 @@ export const sendBtc = (requestObject) => {
 
 // Send LTC 
 export const sendLtc = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/ltc/send', {
+    return request(`/crosschain/ltc/send?apiKey=${myNode.apiKey}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -85,8 +90,9 @@ export const sendLtc = (requestObject) => {
 
 // Send DOGE 
 export const sendDoge = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
 
-    return request('/crosschain/doge/send', {
+    return request(`/crosschain/doge/send?apiKey=${myNode.apiKey}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
