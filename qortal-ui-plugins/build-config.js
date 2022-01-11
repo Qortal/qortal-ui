@@ -91,9 +91,29 @@ const generateForPlugins = () => {
       in: "plugins/core/group-management/group-management.src.js",
       out: "plugins/core/group-management/group-management.js",
     },
+    // {
+    //     in: 'plugins/core/group-management/group-transaction/group-transaction.src.js',
+    //     out: 'plugins/core/group-management/group-transaction/group-transaction.js'
+    // },
     {
       in: "plugins/core/name-registration/name-registration.src.js",
       out: "plugins/core/name-registration/name-registration.js",
+    },
+    {
+      in: "plugins/core/qdn/websites.src.js",
+      out: "plugins/core/qdn/websites.js",
+    },
+    {
+      in: "plugins/core/qdn/publish/publish.src.js",
+      out: "plugins/core/qdn/publish/publish.js",
+    },
+    {
+      in: "plugins/core/qdn/browser/browser.src.js",
+      out: "plugins/core/qdn/browser/browser.js",
+    },
+    {
+      in: "plugins/core/qdn/data-management/data-management.src.js",
+      out: "plugins/core/qdn/data-management/data-management.js",
     },
     {
       in: "plugins/core/messaging/messaging.src.js",
@@ -114,7 +134,7 @@ const generateForPlugins = () => {
     {
       in: "plugins/core/puzzles/puzzles.src.js",
       out: "plugins/core/puzzles/puzzles.js",
-    }
+    },
   ].map((file) => {
     return generateRollupConfig(
       path.join(__dirname, file.in),

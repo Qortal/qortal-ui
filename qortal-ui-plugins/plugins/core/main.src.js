@@ -66,6 +66,24 @@ parentEpml.ready().then(() => {
             parent: false
         },
         {
+            url: 'websites',
+            domain: 'core',
+            page: 'qdn/index.html',
+            title: 'Websites',
+            icon: 'computer',
+            menus: [],
+            parent: false
+        },
+        {
+            url: 'data-management',
+            domain: 'core',
+            page: 'qdn/data-management/index.html',
+            title: 'Data Management',
+            icon: 'dns',
+            menus: [],
+            parent: false
+        },
+        {
             url: 'q-chat',
             domain: 'core',
             page: 'messaging/q-chat/index.html',
@@ -83,7 +101,7 @@ parentEpml.ready().then(() => {
             menus: [],
             parent: false
         },
-	    {
+	{
             url: 'puzzles',
             domain: 'core',
             page: 'puzzles/index.html',
@@ -91,7 +109,7 @@ parentEpml.ready().then(() => {
             icon: 'extension',
             menus: [],
             parent: false
-	    }
+	}
     ]
 
     const registerPlugins = (pluginInfo) => {

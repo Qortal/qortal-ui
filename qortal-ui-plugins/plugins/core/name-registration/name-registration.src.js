@@ -3,6 +3,7 @@
 // import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
 
 import { LitElement, html, css } from 'lit-element'
+import { render } from 'lit-html'
 import { Epml } from '../../../epml.js'
 
 import '@material/mwc-icon'
@@ -81,9 +82,15 @@ class NameRegistration extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Registered Names</h3>
-                    <vaadin-grid id="namesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Peers" .items="${this.names}" height-by-rows>
+                    <vaadin-grid id="namesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Names" .items="${this.names}" height-by-rows>
+                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>    
                         <vaadin-grid-column path="name"></vaadin-grid-column>
                         <vaadin-grid-column path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="12rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatarButton(data.item)}`, root)
+                        }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.names) ? html`
                         No names registered by this account!
@@ -129,6 +136,23 @@ class NameRegistration extends LitElement {
                 </mwc-dialog>
             </div>
         `
+    }
+
+    renderAvatar(nameObj) {
+        let name = nameObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
+        return html`<img src="${url}" style="width:100%;" onerror="this.onerror=null;this.style.display='none';">`
+    }
+
+    renderAvatarButton(nameObj) {
+        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;Set Avatar</mwc-button>`
+    }
+
+    async uploadAvatar(nameObj) {
+        let name = nameObj.name
+        window.location.href = `../qdn/publish/index.html?service=THUMBNAIL&identifier=qortal_avatar&name=${name}&uploadType=file&category=Avatar&showName=false&showService=false&showIdentifier=false`
     }
 
     // getNamesGrid() {
@@ -205,6 +229,12 @@ class NameRegistration extends LitElement {
 
 
         parentEpml.imReady()
+    }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
     }
 
     clearSelection() {

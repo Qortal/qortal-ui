@@ -123,6 +123,10 @@ class ChatScroller extends LitElement {
             text-align: right;
         }
 
+        .float-left {
+            float: left;
+        }
+
         .float-right {
             float: right;
         }
@@ -159,6 +163,13 @@ class ChatScroller extends LitElement {
     }
 
     chatMessageTemplate(messageObj) {
+        let avatarImg = '';
+        if (messageObj.senderName) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?apiKey=${myNode.apiKey}`;
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null;this.style.display='none';" />`;
+        }
 
         return `
             <li class="clearfix">
@@ -166,7 +177,8 @@ class ChatScroller extends LitElement {
                     <span class="message-data-name">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                 </div>
-                <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
+                <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
+                <div class="message-data-avatar" style="width:40px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
             </li>
         `
     }

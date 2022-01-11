@@ -174,12 +174,7 @@ class SendMoneyPage extends LitElement {
 						</mwc-textfield>
 					</p>
 					<p>
-						<mwc-textfield
-						    style="width:100%;"
-							label="To (address or name)"
-							id="recipient" type="text" value="${this.recipient}"
-						>
-						</mwc-textfield>
+						<mwc-textfield style="width:100%;" label="To (address or name)" id="recipient" type="text" value="${this.recipient}"></mwc-textfield>
 					</p>
 
 					<div style="${this.selectedCoin === 'invalid' || this.selectedCoin === 'qort' ? 'visibility: hidden; margin-bottom: -5em;' : 'visibility: visible; margin-bottom: 0;'}">
@@ -608,7 +603,7 @@ class SendMoneyPage extends LitElement {
 		clearTimeout(this.updateAccountBalanceTimeout)
 		parentEpml
 			.request('apiCall', {
-				url: `/addresses/balance/${this.selectedAddress.address}`,
+				url: `/addresses/balance/${this.selectedAddress.address}?apiKey=${this.getApiKey()}`,
 			})
 			.then((res) => {
 				this.qortBalance = res
@@ -807,7 +802,7 @@ class SendMoneyPage extends LitElement {
 	updateBTCAccountBalance() {
 		parentEpml
 			.request('apiCall', {
-				url: `/crosschain/btc/walletbalance`,
+				url: `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`,
 				method: 'POST',
 				body: window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey,
 			})
@@ -823,7 +818,7 @@ class SendMoneyPage extends LitElement {
 	updateLTCAccountBalance() {
 		parentEpml
 			.request('apiCall', {
-				url: `/crosschain/ltc/walletbalance`,
+				url: `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`,
 				method: 'POST',
 				body: window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey,
 			})
@@ -839,7 +834,7 @@ class SendMoneyPage extends LitElement {
 	updateDOGEAccountBalance() {
 		parentEpml
 			.request('apiCall', {
-				url: `/crosschain/doge/walletbalance`,
+				url: `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`,
 				method: 'POST',
 				body: window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey,
 			})
@@ -851,6 +846,12 @@ class SendMoneyPage extends LitElement {
 				}
 			})
 	}
+
+	getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
 
 	clearSelection() {
 		window.getSelection().removeAllRanges()

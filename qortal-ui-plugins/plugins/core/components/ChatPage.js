@@ -80,6 +80,9 @@ class ChatPage extends LitElement {
             cursor: pointer;
             max-height: 40px;
         }
+        .float-left {
+            float: left;
+        }
         `
     }
 
@@ -219,6 +222,13 @@ class ChatPage extends LitElement {
     * @property sender and other info..
     */
     chatMessageTemplate(messageObj) {
+        let avatarImg = '';
+        if (messageObj.senderName) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?apiKey=${myNode.apiKey}`;
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null;this.style.display='none';" />`;
+        }
 
         return `
             <li class="clearfix">
@@ -226,7 +236,8 @@ class ChatPage extends LitElement {
                     <span class="message-data-name">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                 </div>
-                <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
+                <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
+                <div class="message-data-avatar" style="width:40px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
             </li>
         `
     }

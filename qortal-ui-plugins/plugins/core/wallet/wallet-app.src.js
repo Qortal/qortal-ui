@@ -852,6 +852,12 @@ class MultiWallet extends LitElement {
 		checkSelectedTextAndShowMenu()
 	}
 
+	getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
+
 	clearSelection() {
 		window.getSelection().removeAllRanges()
 		window.parent.getSelection().removeAllRanges()
@@ -946,7 +952,7 @@ async showWallet(){
 					//fetching the qort balance
 						parentEpml
 							.request('apiCall', {
-								url: `/addresses/balance/${this.wallets.get('qort').wallet.address}`,
+								url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
 							})
 							.then((res) => {
 								if (isNaN(Number(res))) {
@@ -973,7 +979,7 @@ async showWallet(){
 					const walletName = `${coin}Wallet`
 					parentEpml
 						.request('apiCall', {
-							url: `/crosschain/${coin}/walletbalance`,
+							url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
 						})
@@ -989,7 +995,7 @@ async showWallet(){
 						})
 				//fetching transactions
 					const txs = await parentEpml.request('apiCall', {
-						url: `/crosschain/${coin}/wallettransactions`,
+						url: `/crosschain/${coin}/wallettransactions?apiKey=${this.getApiKey()}`,
 						method: 'POST',
 						body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
 					})

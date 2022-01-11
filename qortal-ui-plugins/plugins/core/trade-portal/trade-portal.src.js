@@ -532,14 +532,14 @@ class TradePortal extends LitElement {
 			<div class="open-market-container">
 				<div class="box">
 					<mwc-tab-bar id="tabs-1" activeIndex="0">
-						<mwc-tab id="tab-buy" label="Buy" @click=${(e) => this.displayTabContent('buy')}></mwc-tab>
-						<mwc-tab id="tab-sell" label="Sell" @click=${(e) => this.displayTabContent('sell')}></mwc-tab>
+						<mwc-tab id="tab-buy" label="Buy" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
+						<mwc-tab id="tab-sell" label="Sell" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
 					</mwc-tab-bar>
 					<z id="tabs-1-content">
 						<div id="tab-buy-content">
 							<div class="card">
 								<div style="margin-left: auto">
-									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click=${() => this.clearBuyForm()}></mwc-icon-button>
+									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 								</div>
 								<p>
 									<mwc-textfield
@@ -592,7 +592,7 @@ class TradePortal extends LitElement {
 								<span class="you-have">You have: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
 								<div class="buttons">
 									<div>
-										<mwc-button class="buy-button" ?disabled=${this.buyBtnDisable} style="width:100%;" raised @click=${(e) => this.buyAction(e)}>
+										<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
 											${this.isBuyLoading === false ? 'BUY' : html`<paper-spinner-lite active></paper-spinner-lite>`}
 										</mwc-button>
 									</div>
@@ -602,7 +602,7 @@ class TradePortal extends LitElement {
 						<div id="tab-sell-content">
 							<div class="card">
 								<div style="margin-left: auto">
-									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click=${() => this.clearSellForm()}></mwc-icon-button>
+									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
 								</div>										
 								<p>
 									<mwc-textfield
@@ -646,7 +646,7 @@ class TradePortal extends LitElement {
 								<span class="you-have">You have: ${this.listedCoins.get("QORTAL").balance} QORT</span>
 								<div class="buttons">
 									<div>
-										<mwc-button class="sell-button" ?disabled=${this.sellBtnDisable} style="width:100%;" raised @click=${(e) => this.sellAction()}>
+										<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
 											${this.isSellLoading === false ? 'SELL' : html`<paper-spinner-lite active></paper-spinner-lite>`}
 										</mwc-button>
 									</div>
@@ -1644,7 +1644,7 @@ class TradePortal extends LitElement {
 	updateAccountBalance() {
 		clearTimeout(this.updateAccountBalanceTimeout)
 		parentEpml.request('apiCall', {
-			url: `/addresses/balance/${this.selectedAddress.address}`,
+			url: `/addresses/balance/${this.selectedAddress.address}?apiKey=${this.getApiKey()}`,
 		})
 		.then((res) => {
 			this.listedCoins.get("QORTAL").balance = res
@@ -1658,11 +1658,11 @@ class TradePortal extends LitElement {
 
 		switch (this.selectedCoin) {
 			case 'LITECOIN':
-				_url = `/crosschain/ltc/walletbalance`
+				_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
 				_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
 				break
 			case 'DOGECOIN':
-				_url = `/crosschain/doge/walletbalance`
+				_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
 				_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
 				break
 			default:
@@ -1823,6 +1823,12 @@ class TradePortal extends LitElement {
 			}
 		}
 	}
+
+	getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
 
 	clearSelection() {
 		window.getSelection().removeAllRanges()

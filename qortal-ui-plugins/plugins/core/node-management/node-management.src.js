@@ -274,7 +274,7 @@ class NodeManagement extends LitElement {
   forceSyncPeer (peerAddress, rowIndex) {
     parentEpml
       .request("apiCall", {
-        url: `/admin/forcesync`,
+        url: `/admin/forcesync?apiKey=${this.getApiKey()}`,
         method: "POST",
         body: peerAddress,
       })
@@ -286,7 +286,7 @@ class NodeManagement extends LitElement {
   removePeer(peerAddress, rowIndex) {
     parentEpml
       .request("apiCall", {
-        url: `/peers`,
+        url: `/peers?apiKey=${this.getApiKey()}`,
         method: "DELETE",
         body: peerAddress,
       })
@@ -307,7 +307,7 @@ class NodeManagement extends LitElement {
 
     parentEpml
       .request("apiCall", {
-        url: `/peers`,
+        url: `/peers?apiKey=${this.getApiKey()}`,
         method: "POST",
         body: addPeerAddress,
       })
@@ -327,7 +327,7 @@ class NodeManagement extends LitElement {
 
     parentEpml
       .request("apiCall", {
-        url: `/admin/mintingaccounts`,
+        url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
         method: "POST",
         body: this.addMintingAccountKey,
       })
@@ -384,7 +384,7 @@ class NodeManagement extends LitElement {
         this.removeMintingAccountLoading = true;
 
         parentEpml.request("apiCall", {
-            url: `/admin/mintingaccounts`,
+            url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
             method: "DELETE",
             body: publicKey,
         }).then((res) => {
@@ -490,6 +490,12 @@ class NodeManagement extends LitElement {
       })
     });
     parentEpml.imReady();
+  }
+
+  getApiKey() {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+    let apiKey = myNode.apiKey;
+    return apiKey;
   }
 
   clearSelection() {

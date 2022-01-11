@@ -11,18 +11,15 @@
   "main": "default-plugins.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Qortal/qortal-ui.git",
+    "url": "https://github.com/Qortal/UI.git",
     "directory": "qortal-ui-plugins"
   },
   "author": "QORTAL <admin@qortal.org>",
-  "license": {
-    "type": "GPL-3.0",
-	"url" : "https://opensource.org/licenses/GPL-3.0"
-  },
+  "license": "GPL-3.0",
   "dependencies": {
     "@material/mwc-list": "^0.18.0",
     "@material/mwc-select": "^0.18.0",
-    "emoji-picker-js": "https://github.com/lotw7277/emoji-picker-js"
+    "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
