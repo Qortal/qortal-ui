@@ -1,6 +1,5 @@
 appId: "org.qortal.QortalUI"
 productName: "Qortal UI"
-artifactName: "Qortal-Setup.${ext}"
 copyright: "Copyright © 2021 Qortal"
 
 # forceCodeSigning: false
@@ -10,6 +9,10 @@ copyright: "Copyright © 2021 Qortal"
 compression: normal
 
 asar: true
+
+afterPack: "./scripts/afterPack.js"
+
+afterSign: "./scripts/notarize.js"
 
 files:
   - from: "."
@@ -24,10 +27,6 @@ files:
       - "config/"
       - "scripts/"
       - "build/"
-
-afterPack: "./scripts/afterPack.js"
-
-afterSign: "./scripts/notarize.js"
 
 # Mac OS configuration
 mac:
@@ -45,6 +44,7 @@ mac:
 # Config for OSX dmg
 dmg:
   sign: false
+  artifactName: "Qortal-Setup-macOS.${ext}"
   icon: "./img/icons/icns/256x256.icns"
   iconSize: 100
   contents:
@@ -57,6 +57,7 @@ dmg:
 
 # Config for OSX pkg
 pkg:
+  artifactName: "Qortal-Setup-macOS.${ext}"
   installLocation: "/Applications"
   background: {
     file: "./build/logo.png",
@@ -79,6 +80,7 @@ win:
 
 # Config for the windows installer
 nsis:
+  artifactName: "Qortal-Setup-win64.${ext}"
   oneClick: false
   perMachine: false
   installerSidebar: "./img/win-installer-sidebar.bmp"
@@ -102,14 +104,23 @@ linux:
     - "deb"
     - "AppImage"
     - "snap"
+    - "rpm"
 
 deb:
+  artifactName: "Qortal-Setup-amd64.${ext}"
   synopsis: "Qortal UI for Linux"
   afterInstall: "./scripts/add-debian-apt-repo.sh"
   afterRemove: "./scripts/uninstall-debian-conf.sh"
 
+appImage:
+  artifactName: "Qortal-Setup-amd64.${ext}"
+
 snap:
+  artifactName: "Qortal-Setup-amd64.${ext}"
   synopsis: "Qortal UI for Linux"
+
+rpm:
+  artifactName: "Qortal-Setup-amd64.${ext}"
 
 directories:
   output: dist
