@@ -238,9 +238,10 @@ class MintingInfo extends LitElement {
                     </div>
                     <div>
                         <h3>Introduction</h3><br />
-                            To activate your account you must have an transaction in your account.
-                            You can ask within Q-Chat or wherever else and someone will happily send you some small QORT.
-                            After somebody send you some QORT, logout and after login again. Your account is activated.
+							To "activate" your account, an OUTGOING transaction needs to take place.
+							Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account,
+							or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain.
+							Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.
                     </div>
                    <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">Close</mwc-button>
                 </mwc-dialog>
