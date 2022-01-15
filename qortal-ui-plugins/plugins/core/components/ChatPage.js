@@ -236,8 +236,8 @@ class ChatPage extends LitElement {
                     <span class="message-data-name">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                 </div>
-                <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
                 <div class="message-data-avatar" style="width:40px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
             </li>
         `
     }
