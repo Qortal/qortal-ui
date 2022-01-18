@@ -139,6 +139,10 @@ class ChatScroller extends LitElement {
             clear: both;
             height: 0;
         }
+
+        img {
+            border-radius: 25%;
+        }
         `
     }
 
@@ -177,7 +181,7 @@ class ChatScroller extends LitElement {
                     <span class="message-data-name">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                 </div>
-                <div class="message-data-avatar" style="width:40px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
             </li>
         `
