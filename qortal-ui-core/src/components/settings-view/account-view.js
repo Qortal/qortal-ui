@@ -97,7 +97,7 @@ class AccountView extends connect(store)(LitElement) {
             const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
             const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
             const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?apiKey=${this.getApiKey()}`
-            return html`<img src="${url}" style="width:150px; height:150px;" onerror="this.onerror=null;this.src="/img/noavatar.png";">`
+            return html`<img src="${url}" style="width:150px; height:150px;" onerror="this.onerror=null;this.src='/img/noavatar.png';">`
         }
     }
 
