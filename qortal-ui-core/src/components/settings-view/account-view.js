@@ -1,8 +1,13 @@
-import { LitElement, html, css } from 'lit-element'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
+import { LitElement, html, css } from 'lit-element';
+import { connect } from 'pwa-helpers';
+import { store } from '../../store.js';
 
 class AccountView extends connect(store)(LitElement) {
+    static get properties() {
+        return {
+            accountInfo: { type: Object }
+        }
+    }
 
     static get styles() {
         return css`
@@ -21,8 +26,8 @@ class AccountView extends connect(store)(LitElement) {
             }
 
             .img-icon {
-                font-size: 150px;
                 display: block;
+                margin-top: 10px;
             }
 
             .content-box {
@@ -30,7 +35,6 @@ class AccountView extends connect(store)(LitElement) {
                 padding: 10px 25px;
                 text-align: left;
                 display: inline-block;
-                /* min-width: 350px; */
             }
 
             .title {
@@ -46,49 +50,61 @@ class AccountView extends connect(store)(LitElement) {
                 display: inline-block;
             }
 
-            .start-chat {
-                display: inline-flex;
-                flex-direction: column;
-                justify-content: center;
-                align-content: center;
-                border: none;
-                border-radius: 20px;
-                padding-left: 25px;
-                padding-right: 25px;
-                color: white;
-                background: #6a6c75;
-                width: 50%;
-                font-size: 17px;
-                cursor: pointer;
-                height: 50px;
-                margin-top: 1rem;
-                text-transform: uppercase;
-                text-decoration: none;
-                transition: all .2s;
-                position: relative;
+            #accountName {
+                margin: 0;
+                font-size: 24px;
+                font-weight:500;
+                display: inline-block;
+                width:100%;
             }
         `
     }
 
+    constructor() {
+        super()
+        this.accountInfo = { names: [], addressInfo: {} };
+    }
+
     render() {
         return html`
-                <div class="sub-main">
-                    <div class="center-box">
-                        <mwc-icon class="img-icon">account_circle</mwc-icon>
-                        <div class="content-box">
-                            <span class="title">Address: </span>
-                            <span class="value">${store.getState().app.selectedAddress.address}</span>
-                            <br/>
-                            <span class="title">Public Key: </span>
-                            <span class="value">${store.getState().app.selectedAddress.base58PublicKey}</span>
-                        </div>
+            <div class="sub-main">
+                <div class="center-box">
+                    <div class="img-icon">${this.getAvatar()}</div>
+                    <span id="accountName">
+                        ${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : 'No Registered Name'}
+                    </span>
+                    <div class="content-box">
+                        <span class="title">Address: </span>
+                        <span class="value">${store.getState().app.selectedAddress.address}</span>
+                        <br/>
+                        <span class="title">Public Key: </span>
+                        <span class="value">${store.getState().app.selectedAddress.base58PublicKey}</span>
                     </div>
                 </div>
+            </div>
         `
     }
 
     stateChanged(state) {
-        // ...
+        this.accountInfo = state.app.accountInfo
+    }
+
+    getAvatar() {
+        let numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment);
+        if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
+            return html`<img src="/img/noavatar.png" style="width:150px; height:150px;">`
+        } else {
+            const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+            const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?apiKey=${this.getApiKey()}`
+            return html`<img src="${url}" style="width:150px; height:150px;" onerror="this.onerror=null;this.src="/img/noavatar.png";">`
+        }
+    }
+
+    getApiKey() {
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
+        let apiKey = apiNode.apiKey;
+        return apiKey;
     }
 }
 
