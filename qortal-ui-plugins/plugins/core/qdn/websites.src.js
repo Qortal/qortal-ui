@@ -141,6 +141,9 @@ class Websites extends LitElement {
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                             render(html`${this.renderStatus(data.item)}`, root)
                         }}></vaadin-grid-column>
+						<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSize(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                             render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
                         }}></vaadin-grid-column>
@@ -411,6 +414,14 @@ class Websites extends LitElement {
         return html`<span title="${websiteObj.status.description}">${websiteObj.status.title}</span>`
     }
 
+    renderSize(websiteObj) {
+        if (websiteObj.size === null) {
+            return html``
+        }
+        let sizeReadable = this.bytesToSize(websiteObj.size);
+        return html`<span>${sizeReadable}</span>`
+    }
+
     renderFollowUnfollowButton(websiteObj) {
         let name = websiteObj.name
 
@@ -446,6 +457,13 @@ class Websites extends LitElement {
             return html`<mwc-button @click=${() => this.unblockName(websiteObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
         }
     }
+
+    bytesToSize(bytes) {
+        var sizes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 bytes';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+     }
 
     _textMenu(event) {
 
