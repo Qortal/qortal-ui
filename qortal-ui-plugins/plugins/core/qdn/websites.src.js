@@ -1,10 +1,10 @@
-
 import { LitElement, html, css } from 'lit-element'
 import { render } from 'lit-html'
 import { Epml } from '../../../epml.js'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
+import '@material/mwc-textfield'
 
 import '@vaadin/vaadin-grid/vaadin-grid.js'
 import '@vaadin/vaadin-grid/theme/material/all-imports.js'
@@ -21,7 +21,11 @@ class Websites extends LitElement {
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
-            selectedAddress: { type: Object }
+            selectedAddress: { type: Object },
+	    searchName: { type: String },
+            searchResources: { type: Array },
+            searchFollowedNames: { type: Array },
+            searchBlockedNames: { type: Array }
         }
     }
 
@@ -37,10 +41,14 @@ class Websites extends LitElement {
                 padding: 12px 24px;
             }
 
+            #search {
+               display: flex;
+               align-items: center;
+            }
+
             .divCard {
                 border: 1px solid #eee;
                 padding: 1em;
-                /** box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20); **/
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 2em;
             }
@@ -118,7 +126,10 @@ class Websites extends LitElement {
         this.blockedNames = []
         this.relayMode = null
         this.isLoading = false
-        this.boundIndexRenderer = this.indexRenderer.bind(this);
+        this.searchName = ''
+        this.searchResources = []
+        this.searchFollowedNames = []
+        this.searchBlockedNames = []
     }
 
     render() {
@@ -129,9 +140,33 @@ class Websites extends LitElement {
                     ${this.renderPublishButton()}
                 </div>
                 <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
+                    <div id="search">
+                    <mwc-textfield style="width:20%;" outlined label="Name To Search ( must be valid name )" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
+                    <mwc-button style="width:10%;" raised icon="search" @click="${(e) => this.doSearch(e)}">Search &nbsp;</mwc-button>
+                    </div><br />
+                    <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" aria-label="Search" .items="${this.searchResources}" height-by-rows>
+                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                                render(html`${this.renderSearchAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSearchName(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSearchStatus(data.item)}`, root)
+                        }}></vaadin-grid-column>
+			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSearchSize(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSearchFollowUnfollowButton(data.item)}`, root);
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
+                        }}></vaadin-grid-column>
+                    </vaadin-grid><br />
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-                    <vaadin-grid id="grid" style="height:auto;" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" .items="${this.resources}" height-by-rows>
-                        <vaadin-grid-column width="3rem" flex-grow="0" header="Id" .renderer="${this.boundIndexRenderer}"></vaadin-grid-column>
+                    <vaadin-grid id="resourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" .items="${this.resources}" height-by-rows>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                                 render(html`${this.renderAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -141,10 +176,10 @@ class Websites extends LitElement {
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                             render(html`${this.renderStatus(data.item)}`, root)
                         }}></vaadin-grid-column>
-						<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSize(data.item)}`, root)
                         }}></vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
                             render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
                         }}></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
@@ -163,7 +198,7 @@ class Websites extends LitElement {
     firstUpdated() {
         const getArbitraryResources = async () => {
             let resources = await parentEpml.request('apiCall', {
-                url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=true&includestatus=true`
+                url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true`
             })
 
             this.resources = resources
@@ -186,6 +221,24 @@ class Websites extends LitElement {
 
             this.blockedNames = blockedNames
             setTimeout(getBlockedNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        const getSearchFollowedNames = async () => {
+            let searchFollowedNames = await parentEpml.request('apiCall', {
+                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.searchFollowedNames = searchFollowedNames
+            setTimeout(getSearchFollowedNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        const getSearchBlockedNames = async () => {
+            let searchBlockedNames = await parentEpml.request('apiCall', {
+                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.searchBlockedNames = searchBlockedNames
+            setTimeout(getSearchBlockedNames, this.config.user.nodeSettings.pingInterval)
         }
 
         const getRelayMode = async () => {
@@ -227,6 +280,8 @@ class Websites extends LitElement {
                     setTimeout(getArbitraryResources, 1)
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
+                    setTimeout(getSearchFollowedNames, 1)
+                    setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
                     configLoaded = true
                 }
@@ -241,13 +296,165 @@ class Websites extends LitElement {
         parentEpml.imReady()
     }
 
-    indexRenderer(root, column, rowData) {
-        render(
-            html`
-                <div>${rowData.index + 1}</div>
-            `,
-            root,
-        );
+    doSearch(e) {
+	this.searchResult()
+    }
+
+    async searchResult() {
+        let searchName = this.shadowRoot.getElementById('searchName').value
+        if (searchName.length === 0) {
+	    parentEpml.request('showSnackBar', 'Name cannot be empty!')
+        } else {
+            let searchResources = await parentEpml.request('apiCall', {
+                url: `/arbitrary/resources/search?service=${this.service}&query=${searchName}&default=true&limit=5&reverse=false&includestatus=true`
+            })
+            this.searchResources = searchResources
+        }
+    }
+
+    renderSearchAvatar(searchObj) {
+        let name = searchObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
+        return html`<img src="${url}" style="width:42px; height:42px;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+    }
+
+    renderSearchName(searchObj) {
+        let name = searchObj.name
+        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
+    }
+
+    renderSearchStatus(searchObj) {
+        return html`<span title="${searchObj.status.description}">${searchObj.status.title}</span>`
+    }
+
+    renderSearchSize(searchObj) {
+        if (searchObj.size === null) {
+            return html``
+        }
+        let sizeSearchReadable = this.bytesToSize(searchObj.size);
+        return html`<span>${sizeSearchReadable}</span>`
+    }
+
+    renderSearchFollowUnfollowButton(searchObj) {
+        let name = searchObj.name
+        if (this.searchFollowedNames == null || !Array.isArray(this.searchFollowedNames)) {
+            return html``
+        }
+        if (this.searchFollowedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.searchFollowName(searchObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.searchUnfollowName(searchObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+        }
+    }
+
+    async searchFollowName(searchObj) {
+        let name = searchObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({"items": items})
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name); 
+            this.searchFollowedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async searchUnfollowName(searchObj) {
+        let name = searchObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({"items": items})
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name); 
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    renderSearchBlockUnblockButton(searchObj) {
+        let name = searchObj.name
+        if (this.searchBlockedNames == null || !Array.isArray(this.searchBlockedNames)) {
+            return html``
+        }
+        if (this.searchBlockedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.searchBlockName(searchObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.searchUnblockName(searchObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+        }
+    }
+
+    async searchBlockName(searchObj) {
+        let name = searchObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({"items": items})
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name); 
+            this.searchBlockedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async searchUnblockName(searchObj) {
+        let name = searchObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({"items": items})
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name); 
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+        }
+        return ret
     }
 
     renderAvatar(websiteObj) {
@@ -495,7 +702,6 @@ class Websites extends LitElement {
     }
 
     clearSelection() {
-
         window.getSelection().removeAllRanges()
         window.parent.getSelection().removeAllRanges()
     }
