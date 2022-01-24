@@ -113,6 +113,8 @@ class Websites extends LitElement {
 
             img {
                 border-radius: 25%;
+				width: 42px;
+                height: 42px;
             }
         `
     }
@@ -322,7 +324,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" style="width:100%; height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderSearchName(searchObj) {
@@ -467,7 +469,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" style="width:100%; height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+        return html`<img src="${url}" nerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderRelayModeText() {
