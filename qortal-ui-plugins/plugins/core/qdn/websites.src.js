@@ -142,7 +142,7 @@ class Websites extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
                     <div id="search">
-                    <mwc-textfield style="width:20%;" outlined label="Name To Search ( must be valid name )" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
+                    <mwc-textfield style="width:20%;" outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
                     <mwc-button style="width:10%;" raised icon="search" @click="${(e) => this.doSearch(e)}">Search &nbsp;</mwc-button>
                     </div><br />
                     <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" aria-label="Search" .items="${this.searchResources}" height-by-rows>
