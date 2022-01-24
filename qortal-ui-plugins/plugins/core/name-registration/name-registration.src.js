@@ -60,6 +60,14 @@ class NameRegistration extends LitElement {
                 color:#333;
                 font-weight: 400;
             }
+
+            img {
+                border-radius: 25%;
+                witdh: 100%;
+                max-width: 42px;
+                height: 100%;
+                max-height: 42px;
+            }
         `
     }
 
@@ -143,7 +151,7 @@ class NameRegistration extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" style="width:100%;" onerror="this.onerror=null;this.style.display='none';">`
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderAvatarButton(nameObj) {
