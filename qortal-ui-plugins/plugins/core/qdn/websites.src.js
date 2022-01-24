@@ -43,6 +43,7 @@ class Websites extends LitElement {
 
             #search {
                display: flex;
+			   width: 50%;
                align-items: center;
             }
 
@@ -142,8 +143,8 @@ class Websites extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
                     <div id="search">
-                    <mwc-textfield style="width:20%;" outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
-                    <mwc-button style="width:10%;" raised icon="search" @click="${(e) => this.doSearch(e)}">Search &nbsp;</mwc-button>
+                        <mwc-textfield outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
+                        <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search &nbsp;</mwc-button>
                     </div><br />
                     <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" aria-label="Search" .items="${this.searchResources}" height-by-rows>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
@@ -321,7 +322,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" style="width:42px; height:42px;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+        return html`<img src="${url}" style="width:100%; height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderSearchName(searchObj) {
