@@ -467,7 +467,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" style="width:42px; height:42px;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+        return html`<img src="${url}" style="width:100%; height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderRelayModeText() {
