@@ -15,14 +15,14 @@ class Websites extends LitElement {
     static get properties() {
         return {
             service: { type: String },
-	    identifier: { type: String },
+	        identifier: { type: String },
             loading: { type: Boolean },
             resources: { type: Array },
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
             selectedAddress: { type: Object },
-	    searchName: { type: String },
+	        searchName: { type: String },
             searchResources: { type: Array },
             searchFollowedNames: { type: Array },
             searchBlockedNames: { type: Array }
@@ -119,7 +119,7 @@ class Websites extends LitElement {
     constructor() {
         super()
         this.service = "WEBSITE"
-	this.identifier = null
+	    this.identifier = null
         this.selectedAddress = {}
         this.resources = []
         this.followedNames = []
@@ -155,7 +155,7 @@ class Websites extends LitElement {
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchStatus(data.item)}`, root)
                         }}></vaadin-grid-column>
-			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+			            <vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchSize(data.item)}`, root)
                         }}></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
@@ -176,7 +176,7 @@ class Websites extends LitElement {
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                             render(html`${this.renderStatus(data.item)}`, root)
                         }}></vaadin-grid-column>
-			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+			            <vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSize(data.item)}`, root)
                         }}></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
@@ -303,12 +303,16 @@ class Websites extends LitElement {
     async searchResult() {
         let searchName = this.shadowRoot.getElementById('searchName').value
         if (searchName.length === 0) {
-	    parentEpml.request('showSnackBar', 'Name cannot be empty!')
+	    parentEpml.request('showSnackBar', 'Name Can Not Be Empty!')
         } else {
             let searchResources = await parentEpml.request('apiCall', {
                 url: `/arbitrary/resources/search?service=${this.service}&query=${searchName}&default=true&limit=5&reverse=false&includestatus=true`
             })
-            this.searchResources = searchResources
+            if (this.isEmptyArray(searchResources)) {
+                parentEpml.request('showSnackBar', 'Name Not Found!')
+            } else {
+                this.searchResources = searchResources
+            }
         }
     }
 
