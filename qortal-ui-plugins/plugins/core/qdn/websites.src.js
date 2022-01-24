@@ -113,8 +113,10 @@ class Websites extends LitElement {
 
             img {
                 border-radius: 25%;
-				width: 42px;
-                height: 42px;
+                witdh: 100%;
+                max-width: 42px;
+                height: 100%;
+                max-height: 42px;
             }
         `
     }
