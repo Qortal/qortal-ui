@@ -2,8 +2,6 @@ import { LitElement, html, css } from 'lit-element'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
-// import { send } from '../../__src.js'
-
 import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
 
 import FileSaver from 'file-saver'
@@ -38,7 +36,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
             backDisabled: { type: Boolean, notify: true },
             backText: { type: String, notify: true },
             hideNav: { type: Boolean, notify: true },
-
             selectedPage: { type: String },
             error: { type: Boolean },
             errorMessage: { type: String },
@@ -97,10 +94,19 @@ class CreateAccountSection extends connect(store)(LitElement) {
                     this.createAccountLoading = true
                     const nameInput = this.shadowRoot.getElementById('nameInput').value
                     const password = this.shadowRoot.getElementById('password').value
+                    const rePassword = this.shadowRoot.getElementById('rePassword').value
 
                     if (password === '') {
                         snackbar.add({
                             labelText: 'Please enter a Password!',
+                            dismiss: true
+                        })
+                        return
+                    }
+
+                    if (password != rePassword) {
+                        snackbar.add({
+                            labelText: 'Passwords not match!',
                             dismiss: true
                         })
                         return
@@ -237,43 +243,47 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 div[hidden] {
                     display:none !important; 
                 }
+
                 .flex {
                     display: flex;
                 }
+
                 .flex.column {
                     flex-direction: column;
                 }
+
                 #createAccountSection {
                     max-height: calc(var(--window-height) - 56px);
                     max-width: 440px;
-                    /* max-height: 500px; */
                     max-height:calc(100% - 100px);
                     padding: 0 12px;
                     overflow-y:auto;
                 }
+
                 #createAccountPages {
                     flex-shrink:1;
                     text-align: left;
-                    /* overflow:auto; */
                     left:0;
                 }
+
                 #createAccountPages [page] {
                     flex-shrink:1;
                 }
-                /* .section-content {
+
+                .section-content {
                     padding:0 24px;
                     padding-bottom:0;
                     overflow:auto;
                     flex-shrink:1;
                     max-height: calc(100vh - 296px);
-                    
-                } */
+                }
 
                 #download-area {
                     border: 2px dashed #ccc;
                     font-family: "Roboto", sans-serif;
                     padding: 10px;
                 }
+
                 #trigger:hover {
                     cursor: pointer;
                 }
@@ -281,6 +291,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
                     background-color:var(--mdc-theme-primary)
                 }
+
                 @media only screen and (max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
                     /* Mobile */
                     #createAccountSection {
@@ -300,16 +311,16 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 #infoContent p {
                     text-align: justify;
                 }
+
                 @keyframes fade {
                     from {
                         opacity: 0;
-                        /* transform: translateX(-20%) */
                     }
                     to {
                         opacity: 1;
-                        /* transform: translateX(0) */
                     }
                 }
+
                 iron-pages .animated {
                     animation-duration: 0.6s;
                     animation-name: fade;
@@ -389,6 +400,10 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             <div style="display:flex;">
                                 <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
                                 <paper-input style="width:100%;" label="Password" id="password" type="password"></paper-input>
+                            </div>
+                            <div style="display:flex;">
+                                <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
+                                <paper-input style="width:100%;" label="Confirm Password" id="rePassword" type="password"></paper-input>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
                                 <label
@@ -495,7 +510,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
 
     stateChanged(state) {
         this.nodeConfig = state.app.nodeConfig
-        // this.loggedIn = state.app.loggedIn
     }
 
     createAccount() {
@@ -506,7 +520,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const state = store.getState()
         const data = await wallet.generateSaveWalletData(this._pass, state.config.crypto.kdfThreads, () => { })
         const dataString = JSON.stringify(data)
-
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
         FileSaver.saveAs(blob, `qortal_backup_${wallet.addresses[0].address}.json`)
     }

@@ -37,7 +37,6 @@ class LoginSection extends connect(store)(LitElement) {
             backDisabled: { type: Boolean, notify: true },
             backText: { type: String, notify: true },
             hideNav: { type: Boolean, notify: true },
-
             loginFunction: { type: Object },
             selectedWallet: { type: Object },
             selectedPage: { type: String },
@@ -63,7 +62,6 @@ class LoginSection extends connect(store)(LitElement) {
         super()
         this.nextHidden = true
         this.backText = 'Back'
-
         this.backedUpSeedLoading = false
         this.hasStoredWallets = Object.keys(store.getState().user.storedWallets).length > 0
         this.selectedPage = this.hasStoredWallets ? 'storedWallet' : 'loginOptions'
@@ -84,7 +82,7 @@ class LoginSection extends connect(store)(LitElement) {
             },
             {
                 page: 'seed',
-                linkText: 'Qortal address seed',
+                linkText: 'Qora address seed',
                 icon: 'clear_all'
             },
             {
@@ -282,7 +280,7 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="seed" id="seedPage">
                             <div>
                                 <div style="display:flex;">
-                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qortal address seed" id="v1SeedInput" type="password"></mwc-textfield>
+                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qora address seed" id="v1SeedInput" type="password"></mwc-textfield>
                                 </div>
                             </div>
                         </div>
@@ -362,10 +360,10 @@ class LoginSection extends connect(store)(LitElement) {
         this.selectedPage = 'unlockStored'
     }
 
-    removeWallet(walletAddress){
-        if(window.confirm('Are you sure you want to remove this wallet from saved wallets?')) {
+    removeWallet(walletAddress) {
+        if (window.confirm('Are you sure you want to remove this wallet from saved wallets?')) {
             delete store.getState().user.storedWallets[walletAddress]
-            this.wallets=store.getState().user.storedWallets
+            this.wallets = store.getState().user.storedWallets
             store.dispatch(
                 doRemoveWallet(walletAddress)
             )//.catch(err => console.error(err))
@@ -439,15 +437,15 @@ class LoginSection extends connect(store)(LitElement) {
     }
 
     showPassword(selectedPage) {
-        let willBeShown= (
+        let willBeShown = (
             this.saveInBrowser && [
                 'unlockBackedUpSeed',
                 'seed',
                 'phrase'
             ].includes(selectedPage)
-            ) || (['unlockBackedUpSeed','unlockStored'].includes(selectedPage))
+        ) || (['unlockBackedUpSeed', 'unlockStored'].includes(selectedPage))
 
-        if(willBeShown)//if the password will be displayed lt's give it focus 
+        if (willBeShown)//if the password will be displayed lt's give it focus 
             this.shadowRoot.getElementById('password').focus()
 
         return willBeShown
@@ -475,10 +473,10 @@ class LoginSection extends connect(store)(LitElement) {
             },
             phrase: () => {
                 const seedPhrase = this.shadowRoot.querySelector('#existingSeedPhraseInput').value
-				if (seedPhrase == "") {
-					throw new Error('Please enter a seedphrase')
-					return
-				}
+                if (seedPhrase == "") {
+                    throw new Error('Please enter a seedphrase')
+                    return
+                }
                 const name = this.shadowRoot.getElementById('nameInput').value
                 const password = this.shadowRoot.getElementById('password').value
                 return {
