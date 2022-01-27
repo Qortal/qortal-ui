@@ -12,6 +12,8 @@ import { checkApiKey } from '../../apiKeyUtils.js'
 
 import snackbar from '../../functional-components/snackbar.js'
 
+import '@cwmr/paper-password-input/paper-password-input.js'
+
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-icon'
@@ -399,11 +401,11 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             </div>
                             <div style="display:flex;">
                                 <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
-                                <paper-input style="width:100%;" label="Password" id="password" type="password"></paper-input>
+                                <paper-password-input style="width:100%;" label="Password" id="password"></paper-password-input>
                             </div>
                             <div style="display:flex;">
                                 <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
-                                <paper-input style="width:100%;" label="Confirm Password" id="rePassword" type="password"></paper-input>
+                                <paper-password-input style="width:100%;" label="Confirm Password" id="rePassword"></paper-password-input>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
                                 <label

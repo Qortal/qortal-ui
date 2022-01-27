@@ -16,6 +16,7 @@ import '@polymer/paper-input/paper-input.js'
 import '@polymer/paper-ripple'
 import '@polymer/iron-collapse'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@cwmr/paper-password-input/paper-password-input.js'
 
 import { doLogin, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet, doRemoveWallet } from '../../redux/user/user-actions.js'
@@ -272,7 +273,8 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="phrase" id="phrasePage">
                             <div style="padding:0;">
                                 <div style="display:flex;">
-                                    <mwc-textfield icon="short_text" style="width:100%;" label="Seedphrase" id="existingSeedPhraseInput" type="password"></mwc-textfield>
+                                    <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">short_text</mwc-icon>
+                                    <paper-password-input style="width:100%;" label="Seedphrase" id="existingSeedPhraseInput"></paper-password-input>
                                 </div>
                             </div>
                         </div>
@@ -280,7 +282,8 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="seed" id="seedPage">
                             <div>
                                 <div style="display:flex;">
-                                    <mwc-textfield style="width:100%;" icon="clear_all" label="Qora address seed" id="v1SeedInput" type="password"></mwc-textfield>
+                                    <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">clear_all</mwc-icon>
+                                    <paper-password-input style="width:100%;" label="Qora address seed" id="v1SeedInput"></paper-password-input>
                                 </div>
                             </div>
                         </div>
@@ -314,7 +317,8 @@ class LoginSection extends connect(store)(LitElement) {
                     </iron-collapse>
                     <iron-collapse style="" ?opened=${this.showPassword(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
-                            <mwc-textfield icon="vpn_key" style="width:100%;" label="Password" id="password" type="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))}></mwc-textfield>
+                            <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
+                            <paper-password-input style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))}></paper-password-input>
                         </div>
                     </iron-collapse>
 
