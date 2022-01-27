@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui-core",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "QORTAL-UI Core",
   "keywords": [
     "QORT",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
+	"@cwmr/paper-password-input": "^3.0.1",
     "@material/mwc-button": "^0.18.0",
     "@material/mwc-checkbox": "^0.18.0",
     "@material/mwc-dialog": "^0.18.0",
