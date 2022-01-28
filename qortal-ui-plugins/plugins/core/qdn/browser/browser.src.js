@@ -111,7 +111,7 @@ class WebBrowser extends LitElement {
 						${this.renderFollowUnfollowButton()}
 					</div>
 					<div class="iframe-container">
-						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms">
+						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms allow-downloads">
 							Your browser doesn't support iframes
 						</iframe>
 					</div>
