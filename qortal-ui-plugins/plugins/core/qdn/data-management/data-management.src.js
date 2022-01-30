@@ -169,6 +169,8 @@ class DataManagement extends LitElement {
 
     firstUpdated() {
 
+        this.showManagement()
+
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
             this._textMenu(event)
@@ -198,9 +200,9 @@ class DataManagement extends LitElement {
                 if (!configLoaded) {
                     setTimeout(this.getFollowedNames, 1)
                     setTimeout(this.getBlockedNames, 1)
-                    setInterval(this.showManagement(), 30 * 1000)
                     setInterval(this.getFollowedNames, 30 * 1000)
                     setInterval(this.getBlockedNames, 30 * 1000)
+                    setInterval(this.getManagementDetails, 30 * 1000)
                     configLoaded = true
                 }
             })
@@ -406,7 +408,7 @@ class DataManagement extends LitElement {
         this.pages = undefined
     }
 
-    async fetchManagementDetails() {
+    getManagementDetails = async () => {
         const myDat = await parentEpml.request('apiCall', {
             url: `/arbitrary/hosted/resources?apiKey=${this.getApiKey()}`
         })
@@ -481,7 +483,7 @@ class DataManagement extends LitElement {
     }
 
     async showManagement() {
-        await this.fetchManagementDetails()
+        await this.getManagementDetails()
         await this.getResourcesGrid()
         await this.updateItemsFromPage(1, true)
     }
