@@ -120,7 +120,8 @@ class SettingsPage extends connect(store)(LitElement) {
             const nodeObject = {
                 protocol: protocolList,
                 domain: domainInput,
-                port: portInput
+                port: portInput,
+                enableManagement: true
             }
 
             store.dispatch(doAddNode(nodeObject))
