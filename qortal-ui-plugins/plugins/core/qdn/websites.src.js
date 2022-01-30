@@ -15,14 +15,14 @@ class Websites extends LitElement {
     static get properties() {
         return {
             service: { type: String },
-	        identifier: { type: String },
+	    identifier: { type: String },
             loading: { type: Boolean },
             resources: { type: Array },
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
             selectedAddress: { type: Object },
-	        searchName: { type: String },
+	    searchName: { type: String },
             searchResources: { type: Array },
             searchFollowedNames: { type: Array },
             searchBlockedNames: { type: Array }
@@ -36,6 +36,42 @@ class Websites extends LitElement {
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
             }
 
+	    #pages {
+		display: flex;
+		flex-wrap: wrap;
+	        padding: 10px 5px 5px 5px;
+		margin: 0px 20px 20px 20px;
+	    }
+
+	    #pages > button {
+		user-select: none;
+		padding: 5px;
+		margin: 0 5px;
+		border-radius: 10%;
+		border: 0;
+		background: transparent;
+		font: inherit;
+		outline: none;
+		cursor: pointer;
+	    }
+
+	    #pages > button:not([disabled]):hover,
+	    #pages > button:focus {
+		color: #ccc;
+		background-color: #eee;
+	    }
+
+	    #pages > button[selected] {
+		font-weight: bold;
+		color: white;
+		background-color: #ccc;
+	    }
+
+	    #pages > button[disabled] {
+		opacity: 0.5;
+		cursor: default;
+	    }
+
             #websites-list-page {
                 background: #fff;
                 padding: 12px 24px;
@@ -43,7 +79,7 @@ class Websites extends LitElement {
 
             #search {
                display: flex;
-			   width: 50%;
+               width: 50%;
                align-items: center;
             }
 
@@ -123,7 +159,7 @@ class Websites extends LitElement {
     constructor() {
         super()
         this.service = "WEBSITE"
-	    this.identifier = null
+	this.identifier = null
         this.selectedAddress = {}
         this.resources = []
         this.followedNames = []
@@ -147,9 +183,9 @@ class Websites extends LitElement {
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
                     <div id="search">
                         <mwc-textfield outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
-                        <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search &nbsp;</mwc-button>
+                        <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search</mwc-button>
                     </div><br />
-                    <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" aria-label="Search" .items="${this.searchResources}" height-by-rows>
+                    <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" height-by-rows>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                                 render(html`${this.renderSearchAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -170,7 +206,7 @@ class Websites extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid><br />
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-                    <vaadin-grid id="resourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" .items="${this.resources}" height-by-rows>
+                    <vaadin-grid id="resourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.resources)}" page-size="20" height-by-rows>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                                 render(html`${this.renderAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -190,6 +226,7 @@ class Websites extends LitElement {
                             render(html`${this.renderBlockUnblockButton(data.item)}`, root);
                         }}></vaadin-grid-column>
                     </vaadin-grid>
+                    <div id="pages"></div>
                     ${this.isEmptyArray(this.resources) ? html`
                         No websites available
                     `: ''}
@@ -200,14 +237,8 @@ class Websites extends LitElement {
     }
 
     firstUpdated() {
-        const getArbitraryResources = async () => {
-            let resources = await parentEpml.request('apiCall', {
-                url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true`
-            })
 
-            this.resources = resources
-            setTimeout(getArbitraryResources, this.config.user.nodeSettings.pingInterval)
-        }
+        this.showWebsites()
 
         const getFollowedNames = async () => {
             let followedNames = await parentEpml.request('apiCall', {
@@ -281,12 +312,13 @@ class Websites extends LitElement {
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
-                    setTimeout(getArbitraryResources, 1)
+                    setTimeout(this.getArbitraryResources, 1)
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
                     setTimeout(getSearchFollowedNames, 1)
                     setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
+                    setInterval(this.getArbitraryResources, 120 * 1000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -298,6 +330,92 @@ class Websites extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    async getResourcesGrid() {
+        this.resourcesGrid = this.shadowRoot.querySelector(`#resourcesGrid`)
+        this.pagesControl = this.shadowRoot.querySelector('#pages')
+        this.pages = undefined
+    }
+
+    getArbitraryResources = async () => {
+        const resources = await parentEpml.request('apiCall', {
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true`
+        })
+        this.resources = resources
+    }
+
+    async updateItemsFromPage(page) {
+        if (page === undefined) {
+            return
+        }
+
+        if (!this.pages) {
+            this.pages = Array.apply(null, { length: Math.ceil(this.resources.length / this.resourcesGrid.pageSize) }).map((item, index) => {
+                return index + 1
+            })
+
+            const prevBtn = document.createElement('button')
+            prevBtn.textContent = '<'
+            prevBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage - 1)
+            })
+            this.pagesControl.appendChild(prevBtn)
+
+            this.pages.forEach((pageNumber) => {
+                const pageBtn = document.createElement('button')
+                pageBtn.textContent = pageNumber
+                pageBtn.addEventListener('click', (e) => {
+                    this.updateItemsFromPage(parseInt(e.target.textContent))
+                })
+                if (pageNumber === page) {
+                    pageBtn.setAttribute('selected', true)
+                }
+                this.pagesControl.appendChild(pageBtn)
+            })
+
+            const nextBtn = window.document.createElement('button')
+            nextBtn.textContent = '>'
+            nextBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage + 1)
+            })
+            this.pagesControl.appendChild(nextBtn)
+        }
+
+        const buttons = Array.from(this.pagesControl.children)
+        buttons.forEach((btn, index) => {
+            if (parseInt(btn.textContent) === page) {
+                btn.setAttribute('selected', true)
+            } else {
+                btn.removeAttribute('selected')
+            }
+            if (index === 0) {
+                if (page === 1) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+            if (index === buttons.length - 1) {
+                if (page === this.pages.length) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+        })
+        let start = (page - 1) * this.resourcesGrid.pageSize
+        let end = page * this.resourcesGrid.pageSize
+
+        this.resourcesGrid.items = this.resources.slice(start, end)
+    }
+
+    async showWebsites() {
+        await this.getArbitraryResources()
+        await this.getResourcesGrid()
+        await this.updateItemsFromPage(1, true)
     }
 
     doSearch(e) {
@@ -470,7 +588,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+        return html`<img src="${url}" onerror="this.src='/img/incognito.png';">`
     }
 
     renderRelayModeText() {
