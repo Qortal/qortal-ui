@@ -42,7 +42,7 @@ class SettingsPage extends connect(store)(LitElement) {
             <mwc-dialog id="settingsDialog" heading="Settings" opened=false>
                 <div style="min-height:450px; min-width: 300px; box-sizing: border-box; position: relative;">
 
-                    <mwc-select id="nodeSelect" label="Node Url" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
+                    <mwc-select icon="link" id="nodeSelect" label="Node Url" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
                             <mwc-list-item value="${index}">${n.protocol + '://' + n.domain + ':' + n.port}</mwc-list-item>
                         `)}
@@ -109,6 +109,7 @@ class SettingsPage extends connect(store)(LitElement) {
             labelText: `UI Set To Node : ${selectedNodeUrl}`,
             dismiss: true
         })
+        this.shadowRoot.querySelector('#settingsDialog').close()
     }
 
     addNode() {
