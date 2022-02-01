@@ -1,4 +1,5 @@
 import * as api from 'qortal-ui-crypto'
+import mykey from './functional-components/mykey-page.js'
 
 'use strict'
 
@@ -33,35 +34,8 @@ export const checkApiKey = async (nodeConfig) => {
     }
     else {
         console.log("API key test failed");
-
-        let apiKeyValid = false;
-
-        while (apiKeyValid === false) {
-
-            let apiKeyPrompt = prompt("Please enter the API key for this node.\n\nIt can be found in a file called 'apikey.txt' in the directory where the core is installed.\n\nAlternatively, click Cancel to use the core with reduced functionality.", "");
-            if (apiKeyPrompt === null) {
-                // Cancel was pushed - so give up
-                return;
-            }
-
-            let testResult = await testApiKey(apiKeyPrompt);
-            if (testResult === true) {
-                console.log("API key prompt test passed");
-                apiKeyValid = true;
-                apiKey = apiKeyPrompt;
-                break;
-            }
-            else {
-                console.log("API key prompt test failed. Re-prompting...");
-            }
-
-        }
+        mykey.show();
     }
-
-    // Store API key
-    selectedNode.apiKey = apiKey;
-    nodeConfig.knownNodes[nodeConfig.node] = selectedNode;
-    localStorage.setItem('myQortalNodes', JSON.stringify(nodeConfig.knownNodes));
 }
 
 export const testApiKey = async (apiKey) => {
