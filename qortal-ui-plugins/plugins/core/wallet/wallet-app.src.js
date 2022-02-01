@@ -966,7 +966,7 @@ async showWallet(){
 							})
 					//fetching the qort transactions						
 						const txsQort = await parentEpml.request('apiCall', {
-							url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=BOTH&reverse=true`,
+							url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true`,
 						})
 						if(this._selectedWallet==coin)
 							this.wallets.get(coin).transactions = txsQort
