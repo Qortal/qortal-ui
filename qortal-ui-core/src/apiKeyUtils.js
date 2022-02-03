@@ -22,6 +22,11 @@ export const checkApiKey = async (nodeConfig) => {
     if (generateRes != null && generateRes.error == null && generateRes.length >= 8) {
         console.log("Generated API key");
         apiKey = generateRes;
+
+        // Store the generated API key
+        selectedNode.apiKey = apiKey;
+        nodeConfig.knownNodes[nodeConfig.node] = selectedNode;
+        localStorage.setItem('myQortalNodes', JSON.stringify(nodeConfig.knownNodes));
     }
     else {
         console.log("Unable to generate API key");
