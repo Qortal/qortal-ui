@@ -1,7 +1,3 @@
-// import '@webcomponents/webcomponentsjs/webcomponents-loader.js'
-// /* Es6 browser but transpi;led code */
-// import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
-
 import { LitElement, html, css } from 'lit-element'
 import { render } from 'lit-html'
 import { Epml } from '../../../epml.js'
@@ -40,6 +36,7 @@ class NameRegistration extends LitElement {
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
             }
+
             #name-registration-page {
                 background: #fff;
                 padding: 12px 24px;
@@ -76,6 +73,7 @@ class NameRegistration extends LitElement {
         this.recipientPublicKey = ''
         this.btnDisable = false
         this.registerNameLoading = false
+        this.fee = 0.001
     }
 
     render() {
@@ -144,65 +142,28 @@ class NameRegistration extends LitElement {
         `
     }
 
-    renderAvatar(nameObj) {
-        let name = nameObj.name
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
-    }
-
-    renderAvatarButton(nameObj) {
-        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;Set Avatar</mwc-button>`
-    }
-
-    async uploadAvatar(nameObj) {
-        let name = nameObj.name
-        window.location.href = `../qdn/publish/index.html?service=THUMBNAIL&identifier=qortal_avatar&name=${name}&uploadType=file&category=Avatar&showName=false&showService=false&showIdentifier=false`
-    }
-
-    // getNamesGrid() {
-
-    //     const myGrid = this.shadowRoot.querySelector('#namesGrid')
-
-    //     myGrid.addEventListener('click', (e) => {
-    //         this.tempMintingAccount = myGrid.getEventContext(e).item
-
-    //         this.shadowRoot.querySelector('#removeRewardShareDialog').show()
-    //     })
-
-    // }
-
-
     firstUpdated() {
-
-        // Call getNamesGrid
-        // this.getNamesGrid()
+        this.unitFee();
 
         window.addEventListener("contextmenu", (event) => {
-
             event.preventDefault();
             this._textMenu(event)
         });
 
         window.addEventListener("click", () => {
-
             parentEpml.request('closeCopyTextMenu', null)
         });
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
-
                 parentEpml.request('closeCopyTextMenu', null)
             }
         }
 
         const fetchNames = () => {
-            // console.log('=========================================')
             parentEpml.request('apiCall', {
                 url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
             }).then(res => {
-
                 setTimeout(() => { this.names = res }, 1)
             })
             setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
@@ -225,16 +186,48 @@ class NameRegistration extends LitElement {
                 this.config = JSON.parse(c)
             })
             parentEpml.subscribe('copy_menu_switch', async value => {
-
                 if (value === 'false' && window.getSelection().toString().length !== 0) {
-
                     this.clearSelection()
                 }
             })
         })
-
-
         parentEpml.imReady()
+    }
+
+    renderAvatar(nameObj) {
+        let name = nameObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+    }
+
+    renderAvatarButton(nameObj) {
+        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;Set Avatar</mwc-button>`
+    }
+
+    async uploadAvatar(nameObj) {
+        let name = nameObj.name
+        window.location.href = `../qdn/publish/index.html?service=THUMBNAIL&identifier=qortal_avatar&name=${name}&uploadType=file&category=Avatar&showName=false&showService=false&showIdentifier=false`
+    }
+
+    async unitFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const url = `${nodeUrl}/transactions/unitfee?txType=REGISTER_NAME`;
+        await fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        })
+        .then((json) => {
+            this.fee = (Number(json) / 1e8).toFixed(8);
+        })
+        .catch((response) => {
+            console.log(response.status, response.statusText, 'Need Core Update');
+        })
     }
 
     getApiKey() {
@@ -244,7 +237,6 @@ class NameRegistration extends LitElement {
     }
 
     clearSelection() {
-
         window.getSelection().removeAllRanges()
         window.parent.getSelection().removeAllRanges()
     }
@@ -252,6 +244,7 @@ class NameRegistration extends LitElement {
     async registerName(e) {
         this.error = false
         this.message = ''
+        const feeInput = this.fee
         const nameInput = this.shadowRoot.getElementById("nameInput").value
         const descInput = this.shadowRoot.getElementById("descInput").value
 
@@ -273,7 +266,6 @@ class NameRegistration extends LitElement {
                 type: 'api',
                 url: `/names/${nameInput}`
             })
-
             return isValid
         };
 
@@ -294,25 +286,20 @@ class NameRegistration extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
-
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 3,
                 nonce: this.selectedAddress.nonce,
                 params: {
+                    fee: feeInput,
                     name: nameInput,
                     value: descInput,
                     lastReference: lastRef,
                 }
             })
-
             return myTxnrequest
         }
 
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
-
         const getTxnRequestResponse = (txnResponse) => {
-
             if (txnResponse.success === false && txnResponse.message) {
                 this.error = true
                 this.message = txnResponse.message
