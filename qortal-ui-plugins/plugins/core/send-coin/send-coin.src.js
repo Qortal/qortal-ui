@@ -29,7 +29,7 @@ class SendMoneyPage extends LitElement {
 			ltcBalance: { type: Number },
 			dogeBalance: { type: Number },
 			selectedCoin: { type: String },
-			satFeePerByte: { type: Number },
+			satFeePerByte: { type: Number }
 		}
 	}
 
@@ -44,23 +44,15 @@ class SendMoneyPage extends LitElement {
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--paper-input-container-focus-color: var(--mdc-theme-primary);
 			}
-			#sendMoneyWrapper {
-				/* Extra 3px for left border */
-				/* overflow: hidden; */
-			}
 
-			/* #sendMoneyWrapper>* {
-                width: auto !important;
-                padding: 0 15px;
-            } */
+			#sendMoneyWrapper {
+			}
 
 			#sendMoneyWrapper paper-button {
 				float: right;
 			}
 
 			#sendMoneyWrapper .buttons {
-				/* --paper-button-ink-color: var(--paper-green-500);
-                    color: var(--paper-green-500); */
 				width: auto !important;
 			}
 
@@ -114,18 +106,23 @@ class SendMoneyPage extends LitElement {
 				left: 10px;
 				top: 10px;
 			}
+
 			.qort.coinName:before  {
 				background-image: url('/img/qort.png');
 			}
+
 			.btc.coinName:before  {
 				background-image: url('/img/btc.png');
 			}
+
 			.ltc.coinName:before  {
 				background-image: url('/img/ltc.png');
 			}
+
 			.doge.coinName:before  {
 				background-image: url('/img/doge.png');
 			}
+
 			.coinName {
 				display: inline-block;
 				height: 25px;
@@ -136,6 +133,63 @@ class SendMoneyPage extends LitElement {
 				--paper-progress-active-color: var(--mdc-theme-primary);
 			}
 		`
+	}
+
+	constructor() {
+		super()
+		this.recipient = ''
+		this.errorMessage = ''
+		this.sendMoneyLoading = false
+		this.btnDisable = false
+		this.selectedAddress = {}
+		this.amount = 0
+		this.satFeePerByte = 100000 // TODO: Set to 0.001 QORT (100000 in sats)
+		this.btcSatMinFee = 20
+		this.btcSatMaxFee = 150
+		this.btcDefaultFee = 100 // 0.000001 BTC per byte
+		this.ltcSatMinFee = 10
+		this.ltcSatMaxFee = 100
+		this.ltcDefaultFee = 30 // 0.0000003 LTC per byte
+		this.dogeSatMinFee = 100
+		this.dogeSatMaxFee = 10000
+		this.dogeDefaultFee = 1000 // 0.00001 DOGE per byte
+		this.isValidAmount = false
+		this.qortBalance = 0
+		this.btcBalance = 0
+		this.ltcBalance = 0
+		this.dogeBalance = 0
+		this.selectedCoin = 'invalid'
+
+		let configLoaded = false
+		parentEpml.ready().then(() => {
+			parentEpml.subscribe('selected_address', async (selectedAddress) => {
+				this.selectedAddress = {}
+				selectedAddress = JSON.parse(selectedAddress)
+				if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+				this.selectedAddress = selectedAddress
+				const addr = selectedAddress.address
+
+				this.updateAccountBalance()
+			})
+			parentEpml.subscribe('config', (c) => {
+				if (!configLoaded) {
+					configLoaded = true
+				}
+				this.config = JSON.parse(c)
+			})
+			parentEpml.subscribe('copy_menu_switch', async (value) => {
+				if (value === 'false' && window.getSelection().toString().length !== 0) {
+					this.clearSelection()
+				}
+			})
+			parentEpml.subscribe('frame_paste_menu_switch', async (res) => {
+				res = JSON.parse(res)
+				if (res.isOpen === false && this.isPasteMenuOpen === true) {
+					this.pasteToTextBox(res.elementId)
+					this.isPasteMenuOpen = false
+				}
+			})
+		})
 	}
 
 	render() {
@@ -205,6 +259,85 @@ class SendMoneyPage extends LitElement {
 				</div>
 			</div>
 		`
+	}
+
+	firstUpdated() {
+		// Get BTC Balance
+		this.updateBTCAccountBalance()
+
+		// Get LTC Balance
+		this.updateLTCAccountBalance()
+
+		// Get DOGE Balance
+		this.updateDOGEAccountBalance()
+
+		window.addEventListener('contextmenu', (event) => {
+			event.preventDefault()
+			this._textMenu(event)
+		})
+
+		window.addEventListener('click', () => {
+			parentEpml.request('closeCopyTextMenu', null)
+		})
+
+		window.onkeyup = (e) => {
+			if (e.keyCode === 27) {
+				parentEpml.request('closeCopyTextMenu', null)
+			}
+		}
+
+		// TODO: Rewrite the context menu event listener to support more elements (for now, I'll do write everything out manually )
+		this.shadowRoot.getElementById('amountInput').addEventListener('contextmenu', (event) => {
+			const getSelectedText = () => {
+				var text = ''
+				if (typeof window.getSelection != 'undefined') {
+					text = window.getSelection().toString()
+				} else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+					text = this.shadowRoot.selection.createRange().text
+				}
+				return text
+			}
+
+			const checkSelectedTextAndShowMenu = () => {
+				let selectedText = getSelectedText()
+				if (selectedText && typeof selectedText === 'string') {
+				} else {
+					this.pasteMenu(event, 'amountInput')
+					this.isPasteMenuOpen = true
+
+					// Prevent Default and Stop Event Bubbling
+					event.preventDefault()
+					event.stopPropagation()
+				}
+			}
+			checkSelectedTextAndShowMenu()
+		})
+
+		this.shadowRoot.getElementById('recipient').addEventListener('contextmenu', (event) => {
+			const getSelectedText = () => {
+				var text = ''
+				if (typeof window.getSelection != 'undefined') {
+					text = window.getSelection().toString()
+				} else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+					text = this.shadowRoot.selection.createRange().text
+				}
+				return text
+			}
+
+			const checkSelectedTextAndShowMenu = () => {
+				let selectedText = getSelectedText()
+				if (selectedText && typeof selectedText === 'string') {
+				} else {
+					this.pasteMenu(event, 'recipient')
+					this.isPasteMenuOpen = true
+
+					// Prevent Default and Stop Event Bubbling
+					event.preventDefault()
+					event.stopPropagation()
+				}
+			}
+			checkSelectedTextAndShowMenu()
+		})
 	}
 
 	_floor(num) {
@@ -611,144 +744,6 @@ class SendMoneyPage extends LitElement {
 			})
 	}
 
-	constructor() {
-		super()
-		this.recipient = ''
-		this.errorMessage = ''
-		this.sendMoneyLoading = false
-		this.btnDisable = false
-		this.selectedAddress = {}
-		this.amount = 0
-		this.satFeePerByte = 100000 // TODO: Set to 0.001 QORT (100000 in sats)
-		this.btcSatMinFee = 20
-		this.btcSatMaxFee = 150
-		this.btcDefaultFee = 100 // 0.000001 BTC per byte
-		this.ltcSatMinFee = 10
-		this.ltcSatMaxFee = 100
-		this.ltcDefaultFee = 30 // 0.0000003 LTC per byte
-		this.dogeSatMinFee = 100
-		this.dogeSatMaxFee = 10000
-		this.dogeDefaultFee = 1000 // 0.00001 DOGE per byte
-		this.isValidAmount = false
-		this.qortBalance = 0
-		this.btcBalance = 0
-		this.ltcBalance = 0
-		this.dogeBalance = 0
-		this.selectedCoin = 'invalid'
-
-		let configLoaded = false
-		parentEpml.ready().then(() => {
-			parentEpml.subscribe('selected_address', async (selectedAddress) => {
-				this.selectedAddress = {}
-				selectedAddress = JSON.parse(selectedAddress)
-				if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-				this.selectedAddress = selectedAddress
-				const addr = selectedAddress.address
-
-				this.updateAccountBalance()
-			})
-			parentEpml.subscribe('config', (c) => {
-				if (!configLoaded) {
-					configLoaded = true
-				}
-				this.config = JSON.parse(c)
-			})
-			parentEpml.subscribe('copy_menu_switch', async (value) => {
-				if (value === 'false' && window.getSelection().toString().length !== 0) {
-					this.clearSelection()
-				}
-			})
-			parentEpml.subscribe('frame_paste_menu_switch', async (res) => {
-				res = JSON.parse(res)
-				if (res.isOpen === false && this.isPasteMenuOpen === true) {
-					this.pasteToTextBox(res.elementId)
-					this.isPasteMenuOpen = false
-				}
-			})
-		})
-	}
-
-	firstUpdated() {
-		// Get BTC Balance
-		this.updateBTCAccountBalance()
-
-		// Get LTC Balance
-		this.updateLTCAccountBalance()
-
-		// Get DOGE Balance
-		this.updateDOGEAccountBalance()
-
-		window.addEventListener('contextmenu', (event) => {
-			event.preventDefault()
-			this._textMenu(event)
-		})
-
-		window.addEventListener('click', () => {
-			parentEpml.request('closeCopyTextMenu', null)
-		})
-
-		window.onkeyup = (e) => {
-			if (e.keyCode === 27) {
-				parentEpml.request('closeCopyTextMenu', null)
-			}
-		}
-
-		// TODO: Rewrite the context menu event listener to support more elements (for now, I'll do write everything out manually )
-		this.shadowRoot.getElementById('amountInput').addEventListener('contextmenu', (event) => {
-			const getSelectedText = () => {
-				var text = ''
-				if (typeof window.getSelection != 'undefined') {
-					text = window.getSelection().toString()
-				} else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-					text = this.shadowRoot.selection.createRange().text
-				}
-				return text
-			}
-
-			const checkSelectedTextAndShowMenu = () => {
-				let selectedText = getSelectedText()
-				if (selectedText && typeof selectedText === 'string') {
-				} else {
-					this.pasteMenu(event, 'amountInput')
-					this.isPasteMenuOpen = true
-
-					// Prevent Default and Stop Event Bubbling
-					event.preventDefault()
-					event.stopPropagation()
-				}
-			}
-
-			checkSelectedTextAndShowMenu()
-		})
-
-		this.shadowRoot.getElementById('recipient').addEventListener('contextmenu', (event) => {
-			const getSelectedText = () => {
-				var text = ''
-				if (typeof window.getSelection != 'undefined') {
-					text = window.getSelection().toString()
-				} else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-					text = this.shadowRoot.selection.createRange().text
-				}
-				return text
-			}
-
-			const checkSelectedTextAndShowMenu = () => {
-				let selectedText = getSelectedText()
-				if (selectedText && typeof selectedText === 'string') {
-				} else {
-					this.pasteMenu(event, 'recipient')
-					this.isPasteMenuOpen = true
-
-					// Prevent Default and Stop Event Bubbling
-					event.preventDefault()
-					event.stopPropagation()
-				}
-			}
-
-			checkSelectedTextAndShowMenu()
-		})
-	}
-
 	selectCoin(e) {
 		const coinType = this.shadowRoot.getElementById('coinType').value
 		this.selectedCoin = coinType
@@ -847,16 +842,16 @@ class SendMoneyPage extends LitElement {
 			})
 	}
 
-	getApiKey() {
+    getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
     }
 
-	clearSelection() {
-		window.getSelection().removeAllRanges()
-		window.parent.getSelection().removeAllRanges()
-	}
+    clearSelection() {
+        window.getSelection().removeAllRanges()
+        window.parent.getSelection().removeAllRanges()
+    }
 }
 
 window.customElements.define('send-coin-page', SendMoneyPage)
