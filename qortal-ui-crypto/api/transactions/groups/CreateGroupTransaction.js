@@ -1,19 +1,11 @@
 "use strict";
 import TransactionBase from "../TransactionBase.js"
+import { QORT_DECIMALS } from "../../constants.js"
 
 export default class CreateGroupTransaction extends TransactionBase {
     constructor() {
         super()
         this.type = 22
-        this.fee = 0.001
-        // this.tests.push(
-        //     () => {
-        //         if (!(this._registrantAddress instanceof Uint8Array && this._registrantAddress.length == 25)) {
-        //             return "Invalid Registrant " + Base58.encode(this._registrantAddress)
-        //         }
-        //         return true
-        //     }
-        // )
     }
 
     render(html) {
@@ -30,20 +22,19 @@ export default class CreateGroupTransaction extends TransactionBase {
         `
     }
 
-    // set registrantAddress(registrantAddress) {
-    //     this._registrantAddress = registrantAddress instanceof Uint8Array ? registrantAddress : this.constructor.Base58.decode(registrantAddress);
-    // }
+    set fee(fee) {
+        this._fee = fee * QORT_DECIMALS
+        this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
+    }
 
     set rGroupName(rGroupName) {
         this._rGroupName = rGroupName;
-
         this._rGroupNameBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupName.toLocaleLowerCase())
         this._rGroupNameLength = this.constructor.utils.int32ToBytes(this._rGroupNameBytes.length)
     }
 
     set rGroupDesc(rGroupDesc) {
         this._rGroupDesc = rGroupDesc;
-
         this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupDesc.toLocaleLowerCase())
         this._rGroupDescLength = this.constructor.utils.int32ToBytes(this._rGroupDescBytes.length)
     }
@@ -61,20 +52,17 @@ export default class CreateGroupTransaction extends TransactionBase {
 
     set rGroupMinimumBlockDelay(rGroupMinimumBlockDelay) {
         this._rGroupMinimumBlockDelay = rGroupMinimumBlockDelay;
-
         this._rGroupMinimumBlockDelayBytes = this.constructor.utils.int32ToBytes(this._rGroupMinimumBlockDelay)
     }
 
     set rGroupMaximumBlockDelay(rGroupMaximumBlockDelay) {
         this._rGroupMaximumBlockDelay = rGroupMaximumBlockDelay;
-
         this._rGroupMaximumBlockDelayBytes = this.constructor.utils.int32ToBytes(this._rGroupMaximumBlockDelay)
     }
 
     get params() {
         const params = super.params;
         params.push(
-            // this._registrantAddress,
             this._rGroupNameLength,
             this._rGroupNameBytes,
             this._rGroupDescLength,
