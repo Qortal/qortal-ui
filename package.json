@@ -17,7 +17,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "dev": "node server.js",
-	"prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
+    "prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
     "build-dev": "node build.js",
     "build": "NODE_ENV=production node build.js",
     "server": "NODE_ENV=production node server.js",
@@ -32,13 +32,13 @@
   },
   "dependencies": {
     "electron-updater": "4.3.9",
-    "electron-log": "4.4.1"
+    "electron-log": "4.4.5"
   },
   "devDependencies": {
     "electron": "11.5.0",
     "electron-builder": "22.14.5",
-	"electron-notarize": "1.1.1",
-	"electron-packager": "15.4.0",
+    "electron-notarize": "1.1.1",
+    "electron-packager": "15.4.0",
     "shelljs": "0.8.4"
   },
   "engines": {

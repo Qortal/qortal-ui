@@ -90,7 +90,7 @@ const createTray = () => {
 const isLock = app.requestSingleInstanceLock();
 
 if (!isLock) {
-    app.quit()
+	app.quit()
 } else {
 	app.on('second-instance', (event, cmd, dir) => {
 		if (myWindow) {
@@ -119,13 +119,13 @@ if (!isLock) {
 		}
 	})
 	ipcMain.on('app_version', (event) => {
-        log.info(app.getVersion());
+		log.info(app.getVersion());
 		mainWindow.webContents.send('app_version', { version: app.getVersion() });
 	});
 	autoUpdater.on('update-available', () => {
 		const n = new Notification({
 			title: 'Update Available!',
-			body: 'It will be downloaded in the background and installed after download.'
+			body: 'It will be downloaded ⌛️ in the background and installed after download.'
 		})
         	n.show();
 	})
@@ -139,9 +139,12 @@ if (!isLock) {
 	autoUpdater.on('update-downloaded', () => {
 		const n = new Notification({
 			title: 'Update Downloaded!',
-			body: 'Restarting to Update'
+			body: 'Restarting in 30 secounds to Update. Please finish your tasks!'
 		})
-		n.show();
+		setTimeout(() => {
+			n.show();
+		}, 30000);
 		autoUpdater.quitAndInstall();
+
 	})
 }
