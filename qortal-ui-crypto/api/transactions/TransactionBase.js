@@ -47,6 +47,10 @@ export default class TransactionBase {
             },
             () => {
                 if (!(this._lastReference instanceof Uint8Array && this._lastReference.byteLength == 64)) {
+                    if (this._lastReference == 0) {
+                        // No prior transactions exist
+                        return 'Invalid last reference. Please ensure that you have at least 0.001 QORT for the transaction fee.'
+                    }
                     return 'Invalid last reference: ' + this._lastReference
                 }
                 return true
