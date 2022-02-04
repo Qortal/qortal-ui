@@ -1,4 +1,3 @@
-
 import { LitElement, html, css } from 'lit-element'
 import { render } from 'lit-html'
 import { Epml } from '../../../epml.js'
@@ -42,6 +41,7 @@ class GroupManagement extends LitElement {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
             }
+
             #group-management-page {
                 background: #fff;
                 padding: 12px 24px;
@@ -68,7 +68,6 @@ class GroupManagement extends LitElement {
             .divCard {
                 border: 1px solid #eee;
                 padding: 1em;
-                /** box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20); **/
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 2em;
             }
@@ -86,14 +85,17 @@ class GroupManagement extends LitElement {
                 display: hidden !important;
                 visibility: none !important;
             }
+
             .details {
                 display: flex;
                 font-size: 18px;
             }
+
             span {
                 font-size: 18px;
                 word-break: break-all;
             }
+
             select {
                 padding: 13px 20px;
                 width: 100%;
@@ -101,19 +103,17 @@ class GroupManagement extends LitElement {
                 color: #555;
                 font-weight: 400;
             }
+
             .title {
                 font-weight:600;
                 font-size:12px;
                 line-height: 32px;
                 opacity: 0.66;
             }
+
             .itemList {
                 padding:0;
             }
-            /* .itemList > * {
-                padding-left:24px;
-                padding-right:24px;
-            } */
         `
     }
 
@@ -128,6 +128,9 @@ class GroupManagement extends LitElement {
         this.recipientPublicKey = ''
         this.btnDisable = false
         this.isLoading = false
+        this.createFee = 0.001
+        this.joinFee = 0.001
+        this.leaveFee = 0.001
     }
 
     render() {
@@ -139,35 +142,34 @@ class GroupManagement extends LitElement {
                 </div>
 
                 <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Your Joined Groups</h3>
+                    <vaadin-grid id="joinedGroupsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.joinedGroups)}" aria-label="Joined Groups" .items="${this.joinedGroups}" height-by-rows>
+                        <vaadin-grid-column header="Name" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Role" .renderer=${(root, column, data) => {
+                            render(html`${this.renderRole(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderManageButton(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                    </vaadin-grid>
+                    ${this.isEmptyArray(this.joinedGroups) ? html`
+                        Not a member of any groups!
+                    `: ''}
+                </div>
+
+                <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Public Groups</h3>
                     <vaadin-grid id="publicGroupsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.publicGroups)}" aria-label="Public Open Groups" .items="${this.publicGroups}" height-by-rows>
                         <vaadin-grid-column path="groupName"></vaadin-grid-column>
                         <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
                         <vaadin-grid-column path="owner"></vaadin-grid-column>
                         <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>Join</mwc-button>`, root)
-            }}></vaadin-grid-column>
-                    </vaadin-grid>
+                            render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>Join</mwc-button>`, root)
+                        }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.publicGroups) ? html`
                         No Open Public Groups available!
-                    `: ''}
-                </div>
-
-                <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Your Joined Groups</h3>
-                    <vaadin-grid id="joinedGroupsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.joinedGroups)}" aria-label="Joined Groups" .items="${this.joinedGroups}" height-by-rows>
-                        <vaadin-grid-column header="Name" path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Role" .renderer=${(root, column, data) => {
-                render(html`${this.renderRole(data.item)}`, root)
-            }}></vaadin-grid-column>
-                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                render(html`${this.renderManageButton(data.item)}`, root)
-            }}></vaadin-grid-column>
-                    </vaadin-grid>
-                    ${this.isEmptyArray(this.joinedGroups) ? html`
-                        Not a member of any groups!
                     `: ''}
                 </div>
 
@@ -415,6 +417,135 @@ class GroupManagement extends LitElement {
         `
     }
 
+    firstUpdated() {
+        this.unitCreateFee()
+        this.unitJoinFee()
+        this.unitLeaveFee()
+
+        const getOpenPublicGroups = async () => {
+            let openG = await parentEpml.request('apiCall', {
+                url: `/groups?limit=0&reverse=true`
+            })
+            let myGs = openG.filter(myG => myG.isOpen === true)
+            return myGs
+        }
+
+        const getJoinedGroups = async () => {
+            let joinedG = await parentEpml.request('apiCall', {
+                url: `/groups/member/${this.selectedAddress.address}`
+            })
+            return joinedG
+        }
+
+        const getOpen_JoinedGroups = async () => {
+            let _joinedGroups = await getJoinedGroups()
+            let _publicGroups = await getOpenPublicGroups()
+            let results = _publicGroups.filter(myOpenGroup => {
+                let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
+                return !value
+            });
+            this.publicGroups = results
+            this.joinedGroups = _joinedGroups
+            setTimeout(getOpen_JoinedGroups, this.config.user.nodeSettings.pingInterval)
+        }
+
+        window.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            this._textMenu(event)
+        });
+
+        window.addEventListener("click", () => {
+            parentEpml.request('closeCopyTextMenu', null)
+        });
+
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        }
+
+        let configLoaded = false
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+            parentEpml.subscribe('config', c => {
+                if (!configLoaded) {
+                    setTimeout(getOpen_JoinedGroups, 1)
+                    configLoaded = true
+                }
+                this.config = JSON.parse(c)
+            })
+            parentEpml.subscribe('copy_menu_switch', async value => {
+                if (value === 'false' && window.getSelection().toString().length !== 0) {
+                    this.clearSelection()
+                }
+            })
+        })
+        parentEpml.imReady()
+    }
+
+    async unitCreateFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_GROUP`;
+        await fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        })
+        .then((json) => {
+            this.createFee = (Number(json) / 1e8).toFixed(8);
+        })
+        .catch((response) => {
+            console.log(response.status, response.statusText, 'Need Core Update');
+        })
+    }
+
+    async unitJoinFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`;
+        await fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        })
+        .then((json) => {
+            this.joinFee = (Number(json) / 1e8).toFixed(8);
+        })
+        .catch((response) => {
+            console.log(response.status, response.statusText, 'Need Core Update');
+        })
+    }
+
+    async unitLeaveFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const url = `${nodeUrl}/transactions/unitfee?txType=LEAVE_GROUP`;
+        await fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        })
+        .then((json) => {
+            this.leaveFee = (Number(json) / 1e8).toFixed(8);
+        })
+        .catch((response) => {
+            console.log(response.status, response.statusText, 'Need Core Update');
+        })
+    }
+
     resetDefaultSettings() {
         this.error = false
         this.message = ''
@@ -424,28 +555,24 @@ class GroupManagement extends LitElement {
     manageGroupOwner(groupObj) {
         this.resetDefaultSettings()
         this.manageGroupObj = groupObj
-
         this.shadowRoot.querySelector('#manageGroupOwnerDialog').show()
     }
 
     manageGroupAdmin(groupObj) {
         this.resetDefaultSettings()
         this.manageGroupObj = groupObj
-
         this.shadowRoot.querySelector('#manageGroupAdminDialog').show()
     }
 
     joinGroup(groupObj) {
         this.resetDefaultSettings()
         this.joinGroupObj = groupObj
-
         this.shadowRoot.querySelector('#joinDialog').show()
     }
 
     leaveGroup(groupObj) {
         this.resetDefaultSettings()
         this.leaveGroupObj = groupObj
-
         this.shadowRoot.querySelector('#leaveDialog').show()
     }
 
@@ -479,7 +606,6 @@ class GroupManagement extends LitElement {
     }
 
     _textMenu(event) {
-
         const getSelectedText = () => {
             var text = "";
             if (typeof window.getSelection != "undefined") {
@@ -493,108 +619,18 @@ class GroupManagement extends LitElement {
         const checkSelectedTextAndShowMenu = () => {
             let selectedText = getSelectedText();
             if (selectedText && typeof selectedText === 'string') {
-
                 let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
                 let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
-
         checkSelectedTextAndShowMenu()
-    }
-
-
-    firstUpdated() {
-
-        // Call getNamesGrid
-        // this.getNamesGrid()
-
-        const getOpenPublicGroups = async () => {
-            let openG = await parentEpml.request('apiCall', {
-                url: `/groups?limit=0&reverse=true`
-            })
-
-            let myGs = openG.filter(myG => myG.isOpen === true)
-            return myGs
-        }
-
-        const getJoinedGroups = async () => {
-            let joinedG = await parentEpml.request('apiCall', {
-                url: `/groups/member/${this.selectedAddress.address}`
-            })
-
-            return joinedG
-        }
-
-        const getOpen_JoinedGroups = async () => {
-            // this.publicGroups = []
-            // this.joinedGroups = []
-
-            let _joinedGroups = await getJoinedGroups()
-            let _publicGroups = await getOpenPublicGroups()
-
-            let results = _publicGroups.filter(myOpenGroup => {
-                let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
-                return !value
-            });
-            this.publicGroups = results
-            this.joinedGroups = _joinedGroups
-            setTimeout(getOpen_JoinedGroups, this.config.user.nodeSettings.pingInterval)
-        }
-
-        window.addEventListener("contextmenu", (event) => {
-
-            event.preventDefault();
-            this._textMenu(event)
-        });
-
-        window.addEventListener("click", () => {
-
-            parentEpml.request('closeCopyTextMenu', null)
-        });
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
-
-        let configLoaded = false
-
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-            parentEpml.subscribe('config', c => {
-                if (!configLoaded) {
-                    setTimeout(getOpen_JoinedGroups, 1)
-                    configLoaded = true
-                }
-                this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
-                }
-            })
-        })
-
-
-        parentEpml.imReady()
     }
 
     async createGroup(e) {
         // Reset Default Settings...
         this.resetDefaultSettings()
-
+        const createFeeInput = this.createFee
         const groupNameInput = this.shadowRoot.getElementById("groupNameInput").value
         const groupDescInput = this.shadowRoot.getElementById("groupDescInput").value
         const groupTypeInput = this.shadowRoot.getElementById("groupTypeInput").value
@@ -628,11 +664,11 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (_groupTypeInput, _groupApprovalInput, _groupMinDelayInput, _groupMaxDelayInput, lastRef) => {
-
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 22,
                 nonce: this.selectedAddress.nonce,
                 params: {
+                    fee: createFeeInput,
                     registrantAddress: this.selectedAddress.address,
                     rGroupName: groupNameInput,
                     rGroupDesc: groupDescInput,
@@ -643,15 +679,10 @@ class GroupManagement extends LitElement {
                     lastReference: lastRef,
                 }
             })
-
             return myTxnrequest
         }
 
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
-
         const getTxnRequestResponse = (txnResponse) => {
-
             if (txnResponse.success === false && txnResponse.message) {
                 this.error = true
                 this.message = txnResponse.message
@@ -695,12 +726,12 @@ class GroupManagement extends LitElement {
             // Call validateReceiver
             validateReceiver()
         }
-        // this.resetDefaultSettings()
     }
 
     async _joinGroup(groupId, groupName) {
         // Reset Default Settings...
         this.resetDefaultSettings()
+        const joinFeeInput = this.joinFee
 
         this.isLoading = true
 
@@ -715,7 +746,6 @@ class GroupManagement extends LitElement {
 
         const validateReceiver = async () => {
             let lastRef = await getLastRef();
-
             this.resetDefaultSettings()
             let myTransaction = await makeTransactionRequest(lastRef)
             getTxnRequestResponse(myTransaction)
@@ -724,26 +754,21 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
-
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 31,
                 nonce: this.selectedAddress.nonce,
                 params: {
+                    fee: joinFeeInput,
                     registrantAddress: this.selectedAddress.address,
                     rGroupName: groupName,
                     rGroupId: groupId,
                     lastReference: lastRef,
                 }
             })
-
             return myTxnrequest
         }
 
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
-
         const getTxnRequestResponse = (txnResponse) => {
-
             if (txnResponse.success === false && txnResponse.message) {
                 this.error = true
                 this.message = txnResponse.message
@@ -757,15 +782,14 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         validateReceiver()
-
         this.resetDefaultSettings()
     }
 
     async _leaveGroup(groupId, groupName) {
         // Reset Default Settings...
         this.resetDefaultSettings()
+        const leaveFeeInput = this.leaveFee
 
         this.isLoading = true
 
@@ -780,7 +804,6 @@ class GroupManagement extends LitElement {
 
         const validateReceiver = async () => {
             let lastRef = await getLastRef();
-
             this.resetDefaultSettings()
             let myTransaction = await makeTransactionRequest(lastRef)
             getTxnRequestResponse(myTransaction)
@@ -789,23 +812,19 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
-
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 32,
                 nonce: this.selectedAddress.nonce,
                 params: {
+                    fee: leaveFeeInput,
                     registrantAddress: this.selectedAddress.address,
                     rGroupName: groupName,
                     rGroupId: groupId,
                     lastReference: lastRef,
                 }
             })
-
             return myTxnrequest
         }
-
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
 
         const getTxnRequestResponse = (txnResponse) => {
 
@@ -822,14 +841,11 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         validateReceiver()
-
         this.resetDefaultSettings()
     }
 
     clearSelection() {
-
         window.getSelection().removeAllRanges()
         window.parent.getSelection().removeAllRanges()
     }
