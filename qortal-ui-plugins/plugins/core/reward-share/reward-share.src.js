@@ -37,6 +37,7 @@ class RewardShare extends LitElement {
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
             }
+
             #reward-share-page {
                 background: #fff;
                 padding: 12px 24px;
@@ -81,8 +82,8 @@ class RewardShare extends LitElement {
                     <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
                     <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
                     <vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
-                render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
-            }}></vaadin-grid-column>
+                        render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
+                    }}></vaadin-grid-column>
                 </vaadin-grid>
 
                 <mwc-dialog id="createRewardShareDialog" scrimClickAction="${this.createRewardShareLoading ? '' : 'close'}">
@@ -91,7 +92,6 @@ class RewardShare extends LitElement {
                     <mwc-textfield style="width:100%;" ?disabled="${this.createRewardShareLoading}" label="Recipient Public Key" id="recipientPublicKey"></mwc-textfield>
                     <p style="margin-bottom:0;">
                         Reward share percentage: ${this.rewardSharePercentage}
-                        <!-- <mwc-textfield style="width:36px;" ?disabled="${this.createRewardShareLoading}" id="createRewardShare"></mwc-textfield> -->
                     </p>
                     <mwc-slider
                         @change="${e => this.rewardSharePercentage = this.shadowRoot.getElementById('rewardSharePercentageSlider').value}"
@@ -133,7 +133,6 @@ class RewardShare extends LitElement {
                         Close
                     </mwc-button>
                 </mwc-dialog>
-
                 ${this.isEmptyArray(this.rewardShares) ? html`
                     Account is not involved in any reward shares
                 `: ''}
@@ -141,32 +140,18 @@ class RewardShare extends LitElement {
         `
     }
 
-    renderRemoveRewardShareButton(rewardShareObject) {
-
-        if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
-
-            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`
-        } else {
-            return ""
-        }
-    }
-
     firstUpdated() {
-
         window.addEventListener("contextmenu", (event) => {
-
             event.preventDefault();
             this._textMenu(event)
         });
 
         window.addEventListener("click", () => {
-
             parentEpml.request('closeCopyTextMenu', null)
         });
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
-
                 parentEpml.request('closeCopyTextMenu', null)
             }
         }
@@ -174,7 +159,6 @@ class RewardShare extends LitElement {
         const textBox = this.shadowRoot.getElementById("recipientPublicKey")
 
         const updateRewardshares = () => {
-
             parentEpml.request('apiCall', {
                 url: `/addresses/rewardshares?involving=${this.selectedAddress.address}`
             }).then(res => {
@@ -186,13 +170,13 @@ class RewardShare extends LitElement {
         let configLoaded = false
 
         parentEpml.ready().then(() => {
-
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
                 selectedAddress = JSON.parse(selectedAddress)
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
             })
+
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(updateRewardshares, 1)
@@ -200,6 +184,7 @@ class RewardShare extends LitElement {
                 }
                 this.config = JSON.parse(c)
             })
+
             parentEpml.subscribe('copy_menu_switch', async value => {
 
                 if (value === 'false' && window.getSelection().toString().length !== 0) {
@@ -207,8 +192,8 @@ class RewardShare extends LitElement {
                     this.clearSelection()
                 }
             })
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
 
+            parentEpml.subscribe('frame_paste_menu_switch', async res => {
                 res = JSON.parse(res)
                 if (res.isOpen === false && this.isPasteMenuOpen === true) {
 
@@ -221,7 +206,6 @@ class RewardShare extends LitElement {
         parentEpml.imReady()
 
         textBox.addEventListener('contextmenu', (event) => {
-
             const getSelectedText = () => {
                 var text = "";
                 if (typeof window.getSelection != "undefined") {
@@ -237,7 +221,6 @@ class RewardShare extends LitElement {
                 if (selectedText && typeof selectedText === 'string') {
                     // ...
                 } else {
-
                     this.pasteMenu(event)
                     this.isPasteMenuOpen = true
 
@@ -247,14 +230,19 @@ class RewardShare extends LitElement {
 
                 }
             }
-
             checkSelectedTextAndShowMenu()
-
         })
     }
 
-    async createRewardShare(e) {
+    renderRemoveRewardShareButton(rewardShareObject) {
+        if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
+            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`
+        } else {
+            return ""
+        }
+    }
 
+    async createRewardShare(e) {
         this.error = false
         this.message = ''
         const recipientPublicKey = this.shadowRoot.getElementById("recipientPublicKey").value
@@ -267,7 +255,6 @@ class RewardShare extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-
             let myRef = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/addresses/lastreference/${this.selectedAddress.address}`
@@ -277,7 +264,6 @@ class RewardShare extends LitElement {
 
         // Get Account Details
         const getAccountDetails = async () => {
-
             let myAccountDetails = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/addresses/${this.selectedAddress.address}`
@@ -287,27 +273,17 @@ class RewardShare extends LitElement {
 
         // Get Reward Relationship if it already exists
         const getRewardShareRelationship = async (minterAddr) => {
-
             let isRewardShareExisting = false
             let myRewardShareArray = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/addresses/rewardshares?minters=${minterAddr}&recipients=${recipientAddress}`
             })
-
             isRewardShareExisting = myRewardShareArray.length !== 0 ? true : false
             return isRewardShareExisting
-
-            // THOUGHTS: At this point, I think I dont wanna further do any check...
-            // myRewardShareArray.forEach(rewsh => {
-            //     if (rewsh.mintingAccount) {
-
-            //     }
-            // })
         }
 
         // Validate Reward Share by Level
         const validateReceiver = async () => {
-
             let accountDetails = await getAccountDetails();
             let lastRef = await getLastRef();
             let isExisting = await getRewardShareRelationship(this.selectedAddress.address)
@@ -402,15 +378,10 @@ class RewardShare extends LitElement {
                     lastReference: mylastRef,
                 }
             })
-
             return myTxnrequest
         }
 
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
-
         const getTxnRequestResponse = (txnResponse) => {
-
             if (txnResponse.success === false && txnResponse.message) {
                 this.error = true
                 this.message = txnResponse.message
@@ -424,14 +395,11 @@ class RewardShare extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         validateReceiver()
-
         this.createRewardShareLoading = false
     }
 
     async removeRewardShare(rewardShareObject) {
-
         const myPercentageShare = -1
 
         // Check for valid...^
@@ -472,15 +440,10 @@ class RewardShare extends LitElement {
                     lastReference: mylastRef,
                 }
             })
-
             return myTxnrequest
         }
 
-        // FAILED txnResponse = {success: false, message: "User declined transaction"}
-        // SUCCESS txnResponse = { success: true, data: true }
-
         const getTxnRequestResponse = (txnResponse) => {
-
             if (txnResponse.success === false && txnResponse.message) {
 
                 this.removeRewardShareLoading = false
@@ -497,13 +460,10 @@ class RewardShare extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         removeReceiver()
-
     }
 
     pasteToTextBox(textBox) {
-
         // Return focus to the window
         window.focus()
 
@@ -515,13 +475,11 @@ class RewardShare extends LitElement {
     }
 
     pasteMenu(event) {
-
         let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
         parentEpml.request('openFramePasteMenu', eventObject)
     }
 
     _textMenu(event) {
-
         const getSelectedText = () => {
             var text = "";
             if (typeof window.getSelection != "undefined") {
@@ -553,7 +511,6 @@ class RewardShare extends LitElement {
     }
 
     clearSelection() {
-
         window.getSelection().removeAllRanges()
         window.parent.getSelection().removeAllRanges()
     }
