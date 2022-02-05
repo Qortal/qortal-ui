@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
-    "@cwmr/paper-password-input": "^3.0.1",
     "@material/mwc-button": "^0.25.3",
     "@material/mwc-checkbox": "^0.25.3",
     "@material/mwc-dialog": "^0.25.3",
@@ -58,6 +57,7 @@
     "@rollup/plugin-node-resolve": "^13.0.6",
     "@rollup/plugin-replace": "^3.0.0",
     "@vaadin/vaadin-app-layout": "^2.2.0",
+    "@vaadin/vaadin-grid": "^5.9.3",
     "asmcrypto.js": "^2.3.2",
     "bcryptjs": "^2.4.3",
     "epml": "^0.3.3",
