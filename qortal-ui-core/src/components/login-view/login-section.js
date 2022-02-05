@@ -16,16 +16,15 @@ import '@polymer/paper-input/paper-input.js'
 import '@polymer/paper-ripple'
 import '@polymer/iron-collapse'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@cwmr/paper-password-input/paper-password-input.js'
+import '@vaadin/vaadin-text-field/vaadin-text-field.js'
+import '@vaadin/vaadin-text-field/vaadin-password-field.js'
 
 import { doLogin, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet, doRemoveWallet } from '../../redux/user/user-actions.js'
-
 import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
 
 import snackbar from '../../functional-components/snackbar.js'
 import '../../custom-elements/frag-file-input.js'
-
 import ripple from '../../functional-components/loading-ripple.js'
 
 class LoginSection extends connect(store)(LitElement) {
@@ -106,12 +105,14 @@ class LoginSection extends connect(store)(LitElement) {
                     --paper-spinner-color: var(--mdc-theme-primary);
                     --paper-spinner-stroke-width: 2px;
                 }
+
                 #loginPages{
                     overflow:visible;
                 }
+
                 #walletsPage {
-                    /*min-width: 500px;*/
                 }
+
                 #wallets {
                     max-height: 50vh;
                     border-bottom: 1px solid #eee;
@@ -121,21 +122,23 @@ class LoginSection extends connect(store)(LitElement) {
                     background: rgb(253 253 253 / 50%);
                     margin: 2vh;
                 }
+
                 .wallet {
-                    /* max-width: 300px; */
                     position: relative;
                     padding: 15px 60px 15px 15px;
                     cursor: pointer;
                     display: flex;
                     border-bottom: solid 1px #dedede;
                 }
+
                 .wallet .wallet-details {
                     float: left;
                     width: auto;
                     height: 60px;
                     display: block;
                 }
-                .wallet .wallet-details p{
+
+                .wallet .wallet-details p {
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -144,26 +147,30 @@ class LoginSection extends connect(store)(LitElement) {
                     font-size: 15px;
                     line-height: 20px;
                 }
-                .wallet .walletAddress{
+
+                .wallet .walletAddress {
                     height: 40px !important;
                     line-height: 40px !important;
                 }
-                .wallet .walletName{
-                   
+
+                .wallet .walletName {
                 }
-                .wallet p span{
+
+                .wallet p span {
                     color: #888;
                     font-size: 12px;
                     width: 50px;
                     display: inline-block;
                 }
-                .removeWallet{
+
+                .removeWallet {
                     position: absolute;
                     right: 5px;
                     top: 20px;
                     color: tomato;
                     --mdc-icon-size: 30px;                      
                 }
+
                 .login-option {
                     max-width: 300px;
                     position: relative;
@@ -171,15 +178,17 @@ class LoginSection extends connect(store)(LitElement) {
                     cursor: pointer;
                     display: flex;
                 }
+
                 .loginIcon {
-                    /* font-size:42px; */
                     padding-right: 12px;
                     margin-top: -2px;
                 }
+
                 *[hidden] { 
                     display:none !important;
                     visibility: hidden;
                 }
+
                 h1 {
                     padding: 24px;
                     padding-top:0;
@@ -187,6 +196,7 @@ class LoginSection extends connect(store)(LitElement) {
                     font-size:24px;
                     font-weight:100;
                 }
+
                 .accountIcon {
                     font-size:42px;
                     padding-top:8px;
@@ -195,6 +205,7 @@ class LoginSection extends connect(store)(LitElement) {
                 #unlockStoredPage {
                     padding: 24px;
                 }
+
                 #unlockStoredPage mwc-icon {
                     font-size:48px;
                 }
@@ -202,26 +213,29 @@ class LoginSection extends connect(store)(LitElement) {
                 @media only screen and (max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
                     /* Mobile */
                     #wallets {
-                        /* max-height: calc(var(--window-height) - 180px);
-                        min-height: calc(var(--window-height) - 180px); */
                         height:100%;
                         overflow-y:auto;
                         overflow-x:hidden;
                     }
+
                     #loginSection {
                         height: calc(var(--window-height) - 56px);
                     }
+
                     .wallet {
                         max-width: 100%;
                     }
                 }
+
                 .backButton {
                     padding:14px;
                     text-align:left;
                 }
+
                 #pagesContainer {
                     max-height: calc(var(--window-height) - 184px);
                 }
+
                 .checkboxLabel:hover{
                     cursor: pointer;
                 }
@@ -246,7 +260,7 @@ class LoginSection extends connect(store)(LitElement) {
                         </div>
 
                         <div page="storedWallet" id="walletsPage">
-                            <div style="padding-left:0;">
+                            <div style="text-align: center; padding-left:0;">
                                 <h1 style="padding:0;">Your accounts</h1>
                                 <p style="margin:0; padding: 0 0 12px 0;">Click your account to login with it</p>
                             </div>
@@ -259,7 +273,6 @@ class LoginSection extends connect(store)(LitElement) {
                                         <div class="selectWallet" @click=${() => this.selectWallet(wallet[1])}>
                                             <paper-ripple></paper-ripple>
                                             <div class='wallet-details'>
-                                                <!--h3 class='walletName'><span>Name : </span>${wallet[1].name || wallet[1].address0.substring(0, 5)}</h3-->
                                                 <p class='walletName'><span>Name</span>${wallet[1].name || "No saved name"}</p>
                                                 <p class="walletAddress"><span>Address</span>${wallet[1].address0}</p>
                                             </div>
@@ -273,8 +286,8 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="phrase" id="phrasePage">
                             <div style="padding:0;">
                                 <div style="display:flex;">
-                                    <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">short_text</mwc-icon>
-                                    <paper-password-input style="width:100%;" label="Seedphrase" id="existingSeedPhraseInput"></paper-password-input>
+                                    <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">short_text</mwc-icon>
+                                    <vaadin-password-field style="width:100%;" label="Seedphrase" id="existingSeedPhraseInput"></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
@@ -282,8 +295,8 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="seed" id="seedPage">
                             <div>
                                 <div style="display:flex;">
-                                    <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">clear_all</mwc-icon>
-                                    <paper-password-input style="width:100%;" label="Qora address seed" id="v1SeedInput"></paper-password-input>
+                                    <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">clear_all</mwc-icon>
+                                    <vaadin-password-field style="width:100%;" label="Qora address seed" id="v1SeedInput"></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
@@ -312,13 +325,14 @@ class LoginSection extends connect(store)(LitElement) {
                     </iron-pages>
                     <iron-collapse style="" ?opened=${this.showName(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
-                            <mwc-textfield icon="perm_identity" style="width:100%;" label="Name" id="nameInput"></mwc-textfield>
+                            <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">perm_identity</mwc-icon>
+                            <vaadin-text-field style="width:100%;" label="Name" id="nameInput"></vaadin-text-field>
                         </div>
                     </iron-collapse>
                     <iron-collapse style="" ?opened=${this.showPassword(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
-                            <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
-                            <paper-password-input style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))}></paper-password-input>
+                            <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
+                            <vaadin-password-field style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))}></vaadin-password-field>
                         </div>
                     </iron-collapse>
 
@@ -326,15 +340,9 @@ class LoginSection extends connect(store)(LitElement) {
                         ${this.loginErrorMessage}
                     </div>
                         ${this.showPasswordCheckboxPages.includes(this.selectedPage) ? html`
-                            <div style="text-align:right; min-height:40px;">
-                                <p style="vertical-align: top; line-height: 40px; margin:0;">
-                                    <label
-                                    for="storeCheckbox"
-                                    class="checkboxLabel"
-                                    @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}
-                                    >Save in this browser</label>
-                                    <mwc-checkbox id="storeCheckbox" style="margin-bottom:-12px;" @click=${e => { this.saveInBrowser = !e.target.checked }} ?checked="${this.saveInBrowser}"></mwc-checkbox>
-                                </p>
+                            <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
+                                <label for="storeCheckbox" class="checkboxLabel" @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}>Save in this browser</label>
+                                <mwc-checkbox style="display: inline;" id="storeCheckbox" @click=${e => { this.saveInBrowser = !e.target.checked }} ?checked="${this.saveInBrowser}"></mwc-checkbox>
                             </div>
                         ` : ''}
                     </div>
@@ -345,7 +353,6 @@ class LoginSection extends connect(store)(LitElement) {
 
     firstUpdated() {
         this.loadingRipple = ripple
-
         const pages = this.shadowRoot.querySelector('#loginPages')
         pages.addEventListener('selected-item-changed', () => {
             if (!pages.selectedItem) {
@@ -370,7 +377,7 @@ class LoginSection extends connect(store)(LitElement) {
             this.wallets = store.getState().user.storedWallets
             store.dispatch(
                 doRemoveWallet(walletAddress)
-            )//.catch(err => console.error(err))
+            )
             this.cleanup()
         }
     }
@@ -570,7 +577,6 @@ class LoginSection extends connect(store)(LitElement) {
 
     // clicks next for parent
     clickNext() {
-
     }
 
     updateNext() {

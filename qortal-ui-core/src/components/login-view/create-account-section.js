@@ -12,8 +12,6 @@ import { checkApiKey } from '../../apiKeyUtils.js'
 
 import snackbar from '../../functional-components/snackbar.js'
 
-import '@cwmr/paper-password-input/paper-password-input.js'
-
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-icon'
@@ -21,6 +19,8 @@ import '@material/mwc-icon'
 import '@polymer/iron-pages'
 import '@polymer/paper-input/paper-input-container.js'
 import '@polymer/paper-input/paper-input.js'
+import '@vaadin/vaadin-text-field/vaadin-text-field.js'
+import '@vaadin/vaadin-text-field/vaadin-password-field.js'
 
 import 'random-sentence-generator'
 
@@ -381,38 +381,32 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 ></paper-icon-button>
                             </div>
                         </div>
-                        <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                            <label
-                                for="hasSavedSeedphraseCheckbox"
-                                @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()}
-                                >I'm an advanced user, show my seed phrase</label>
-                                <mwc-checkbox id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
+                        <div style="text-align: right; vertical-align: top; line-height: 40px; margin:0;">
+                            <label for="hasSavedSeedphraseCheckbox" @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()} >I'm an advanced user, show my seed phrase</label>
+                            <mwc-checkbox style="display: inline; id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
                         </div>
                     </div>
 
                     <div page="password">
                         <div id="saveContent" class="section-content">
-                            <h3>Save in browser</h3>
+                            <h3 style="text-align: center;">Save in browser</h3>
                             <p style="text-align: justify;">Your account is now ready to be created. It will be saved in this browser. If you do not want your new account to be saved in your browser, you can uncheck the box below. 
                             You will still be able to login with your new account(after logging out), using your wallet backup file that you MUST download once you create your account.</p>
-                            <div style="display:flex; margin-bottom: -1.4rem;" ?hidden="${!this.saveAccount}">
-                                <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">perm_identity</mwc-icon>
-                                <paper-input style="width:100%;" label="Name" id="nameInput"></paper-input>
+                            <div style="display:flex;" ?hidden="${!this.saveAccount}">
+                                <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">perm_identity</mwc-icon>
+                                <vaadin-text-field style="width:100%;" label="Name" id="nameInput"></vaadin-text-field>
                             </div>
                             <div style="display:flex;">
-                                <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
-                                <paper-password-input style="width:100%;" label="Password" id="password"></paper-password-input>
+                                <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
+                                <vaadin-password-field style="width:100%;" label="Password" id="password"></vaadin-password-field>
                             </div>
                             <div style="display:flex;">
-                                <mwc-icon style="padding: 20px; padding-left:0; padding-top: 28px;">vpn_key</mwc-icon>
-                                <paper-password-input style="width:100%;" label="Confirm Password" id="rePassword"></paper-password-input>
+                                <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
+                                <vaadin-password-field style="width:100%;" label="Confirm Password" id="rePassword"></vaadin-password-field>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <label
-                                    for="saveInBrowserCheckbox"
-                                    @click=${() => this.shadowRoot.getElementById('saveInBrowserCheckbox').click()}
-                                    >Save in this browser</label>
-                                    <mwc-checkbox id="saveInBrowserCheckbox" @click=${e => { this.saveAccount = !e.target.checked }} ?checked=${this.saveAccount}></mwc-checkbox>
+                                <label for="saveInBrowserCheckbox" @click=${() => this.shadowRoot.getElementById('saveInBrowserCheckbox').click()}>Save in this browser</label>
+                                <mwc-checkbox style="display: inline; id="saveInBrowserCheckbox" @click=${e => { this.saveAccount = !e.target.checked }} ?checked=${this.saveAccount}></mwc-checkbox>
                             </div>
                         </div>
                     </div>
@@ -433,11 +427,8 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 </div>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <label
-                                    for="downloadBackupCheckbox"
-                                    @click=${() => this.shadowRoot.getElementById('downloadBackupCheckbox').click()}
-                                    >Done saving your wallet backup ?</label>
-                                    <mwc-checkbox id="downloadBackupCheckbox" @click=${e => { this.isDownloadedBackup = !e.target.checked; this.updateNext() }} ?checked=${this.isDownloadedBackup}></mwc-checkbox>
+                                <label for="downloadBackupCheckbox" @click=${() => this.shadowRoot.getElementById('downloadBackupCheckbox').click()}>Done saving your wallet backup ?</label>
+                                <mwc-checkbox style="display: inline;" id="downloadBackupCheckbox" @click=${e => { this.isDownloadedBackup = !e.target.checked; this.updateNext() }} ?checked=${this.isDownloadedBackup}></mwc-checkbox>
                             </div>
                         </div>
                     </div>
