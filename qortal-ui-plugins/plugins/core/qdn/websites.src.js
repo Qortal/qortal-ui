@@ -442,7 +442,7 @@ class Websites extends LitElement {
         let name = searchObj.name
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
         return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
@@ -587,7 +587,7 @@ class Websites extends LitElement {
         let name = websiteObj.name
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?apiKey=${this.getApiKey()}`;
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
         return html`<img src="${url}" onerror="this.src='/img/incognito.png';">`
     }
 
