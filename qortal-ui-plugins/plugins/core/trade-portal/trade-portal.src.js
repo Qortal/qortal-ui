@@ -825,44 +825,11 @@ class TradePortal extends LitElement {
 		`;
 	}
 
-	setForeignCoin(coin) {
-		let _this = this
-		this.selectedCoin = coin
-		this.isLoadingHistoricTrades = true
-		this.isLoadingOpenTrades = true
-		this.createConnection()
-		this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
-			root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">Price (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
-		}
-		this.clearSellForm()
-		this.clearBuyForm()
-		this.updateWalletBalance()
-	}
-
-	displayTabContent(tab) {
-		const tabBuyContent = this.shadowRoot.getElementById('tab-buy-content')
-		const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
-		tabBuyContent.style.display = (tab === 'buy') ? 'block' : 'none'
-		tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
-	}
-
-	reRenderHistoricTrades() {
-		this.requestUpdate()
-		this.isLoadingHistoricTrades = false
-	}
-
-	reRenderOpenFilteredOrders() {
-		this.requestUpdate()
-		this.isLoadingOpenTrades = false
-	}
-
-	reRenderMyOpenOrders() {
-		this.requestUpdate()
-		this.isLoadingMyOpenOrders = false
-	}
-
 	firstUpdated() {
 		let _this = this
+                
+                this.updateWalletBalance()
+
 		setTimeout(() => {
 			this.displayTabContent('buy')
 		}, 0)
@@ -882,7 +849,6 @@ class TradePortal extends LitElement {
 		this._myHistoricTradesGrid = this.shadowRoot.getElementById('myHistoricTradesGrid')
 		this._stuckOrdersGrid = this.shadowRoot.getElementById('stuckOrdersGrid')
 
-		// call getOpenOrdersGrid
 		this.getOpenOrdersGrid()
 
 		window.addEventListener(
@@ -938,6 +904,73 @@ class TradePortal extends LitElement {
 
 		// Set Last Seen column's title on OpenOrders grid
 		setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+	}
+
+	updateWalletBalance() {
+		let _url = ``
+		let _body = null
+
+		switch (this.selectedCoin) {
+			case 'LITECOIN':
+				_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+				_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+				break
+			case 'DOGECOIN':
+				_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+				_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+				break
+			default:
+				break
+		}
+
+		parentEpml.request('apiCall', {
+			url: _url,
+			method: 'POST',
+			body: _body,
+		})
+		.then((res) => {
+			if (isNaN(Number(res))) {
+				parentEpml.request('showSnackBar', 'Failed to Fetch Balance. Try again!')
+			} else {
+				this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
+			}
+		})
+	}
+
+	setForeignCoin(coin) {
+		let _this = this
+		this.selectedCoin = coin
+		this.isLoadingHistoricTrades = true
+		this.isLoadingOpenTrades = true
+		this.createConnection()
+		this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
+			root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">Price (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
+		}
+		this.clearSellForm()
+		this.clearBuyForm()
+		this.updateWalletBalance()
+	}
+
+	displayTabContent(tab) {
+		const tabBuyContent = this.shadowRoot.getElementById('tab-buy-content')
+		const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
+		tabBuyContent.style.display = (tab === 'buy') ? 'block' : 'none'
+		tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
+	}
+
+	reRenderHistoricTrades() {
+		this.requestUpdate()
+		this.isLoadingHistoricTrades = false
+	}
+
+	reRenderOpenFilteredOrders() {
+		this.requestUpdate()
+		this.isLoadingOpenTrades = false
+	}
+
+	reRenderMyOpenOrders() {
+		this.requestUpdate()
+		this.isLoadingMyOpenOrders = false
 	}
 
 	fillBuyForm(sellerRequest) {
@@ -1649,37 +1682,6 @@ class TradePortal extends LitElement {
 		.then((res) => {
 			this.listedCoins.get("QORTAL").balance = res
 			this.updateAccountBalanceTimeout = setTimeout(() => this.updateAccountBalance(), 10000)
-		})
-	}
-
-	updateWalletBalance() {
-		let _url = ``
-		let _body = null
-
-		switch (this.selectedCoin) {
-			case 'LITECOIN':
-				_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
-				_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
-				break
-			case 'DOGECOIN':
-				_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
-				_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
-				break
-			default:
-				break
-		}
-
-		parentEpml.request('apiCall', {
-			url: _url,
-			method: 'POST',
-			body: _body,
-		})
-		.then((res) => {
-			if (isNaN(Number(res))) {
-				parentEpml.request('showSnackBar', 'Failed to Fetch Balance. Try again!')
-			} else {
-				this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
-			}
 		})
 	}
 
