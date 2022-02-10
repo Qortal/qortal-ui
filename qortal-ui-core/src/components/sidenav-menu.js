@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 
@@ -27,7 +27,6 @@ class SidenavMenu extends connect(store)(LitElement) {
         }
         .mcd-menu li {
           position: relative;
-          /* height:48px; */
           line-height: 48px;
           outline: none;
           padding: 2px;
@@ -144,7 +143,6 @@ class SidenavMenu extends connect(store)(LitElement) {
         }
 
         .mcd-menu li ul li a {
-          /* padding: 10px; */
           text-align: left;
           border: 0;
           border-bottom: 1px solid #EEE;
@@ -152,7 +150,6 @@ class SidenavMenu extends connect(store)(LitElement) {
           outline: none;
         }
         .mcd-menu li ul li a mwc-icon {
-          /* font-size: 16px; */
           display: inline-block;
           margin: 0 10px 0 0;
         }

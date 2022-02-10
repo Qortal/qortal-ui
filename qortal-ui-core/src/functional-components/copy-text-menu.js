@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store';
 
@@ -45,7 +45,6 @@ class CopyTextMenu extends connect(store)(LitElement) {
                     min-width: 150px;
                     max-width: 300px;
                     background: #F9F9F9;
-                    /* box-shadow: 3px 3px 2px #E9E9E9; */
                     border-radius: 4px;
                 }
 
@@ -90,10 +89,6 @@ class CopyTextMenu extends connect(store)(LitElement) {
             <ul id='items'>
                 <li @click=${() => this.saveToClipboard(this.selectedText)} >Copy</li>
             </ul>
-            <!-- <hr /> -->
-            <!-- <ul id="items">
-                <li>Another Menu Option</li>
-            </ul> -->
         </div>
         `
     }

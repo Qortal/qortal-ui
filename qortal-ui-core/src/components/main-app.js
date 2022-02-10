@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit-element'
+import { LitElement, html } from 'lit'
 import { installRouter } from 'pwa-helpers/router.js'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
@@ -12,7 +12,6 @@ import './login-view/login-view.js'
 import './app-view.js'
 
 import copyTextMenu from '../functional-components/copy-text-menu.js'
-// import pasteMenu from '../functional-components/paste-menu.js';
 import framePasteMenu from '../functional-components/frame-paste-menu.js';
 
 installRouter((location) => store.dispatch(doNavigate(location)))
@@ -30,7 +29,6 @@ class MainApp extends connect(store)(LitElement) {
     }
 
     render() {
-
         return html`${this.renderViews(this.loggedIn)}`
     }
 
@@ -41,33 +39,26 @@ class MainApp extends connect(store)(LitElement) {
 
     renderViews(isLoggedIn) {
         if (isLoggedIn) {
-
             return html`
                 <app-view></app-view>
-                `
+            `
         } else {
-
             return html`
                 <login-view></login-view>
-                `
+            `
         }
     }
 
     stateChanged(state) {
-
         this.loggedIn = state.app.loggedIn
-
         if (this.loggedIn === true && this.initial === 0) {
-
             this.initial = this.initial + 1
             this._loadPlugins()
         }
-
         document.title = state.config.coin.name
     }
 
     _loadPlugins() {
-
         loadPlugins()
     }
 

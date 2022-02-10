@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
@@ -14,7 +14,10 @@ import snackbar from '../../functional-components/snackbar.js'
 
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
+import '@material/mwc-textfield'
 import '@material/mwc-icon'
+import '@material/mwc-dialog'
+import '@material/mwc-formfield'
 
 import '@polymer/iron-pages'
 import '@polymer/paper-input/paper-input-container.js'
@@ -222,23 +225,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
         this.prevEnabled = false
     }
 
-    cleanup() {
-        this.shadowRoot.getElementById('randSentence').generate()
-        this.shadowRoot.getElementById('nameInput').value = ''
-        this.shadowRoot.getElementById('password').value = ''
-        this.showSeedphrase = false
-        this.selectPage('info')
-        this.error = false
-        this.errorMessage = ''
-        this.nextButtonText = 'Next'
-        this.createAccountLoading = false
-        this.saveAccount = true
-        this.isDownloadedBackup = false
-        this._wallet = ''
-        this._pass = ''
-        this._name = ''
-    }
-
     render() {
         return html`
             <style>
@@ -382,8 +368,10 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             </div>
                         </div>
                         <div style="text-align: right; vertical-align: top; line-height: 40px; margin:0;">
-                            <label for="hasSavedSeedphraseCheckbox" @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()} >I'm an advanced user, show my seed phrase</label>
-                            <mwc-checkbox style="display: inline; id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
+                            <mwc-formfield alignEnd label="I'm an advanced user, show my seed phrase.">
+                                <label for="hasSavedSeedphraseCheckbox" @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()} ></label>
+                                <mwc-checkbox style="display: inline; id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
+                            </mwc-formfield>
                         </div>
                     </div>
 
@@ -405,8 +393,10 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 <vaadin-password-field style="width:100%;" label="Confirm Password" id="rePassword"></vaadin-password-field>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <label for="saveInBrowserCheckbox" @click=${() => this.shadowRoot.getElementById('saveInBrowserCheckbox').click()}>Save in this browser</label>
-                                <mwc-checkbox style="display: inline; id="saveInBrowserCheckbox" @click=${e => { this.saveAccount = !e.target.checked }} ?checked=${this.saveAccount}></mwc-checkbox>
+                                <mwc-formfield alignEnd label="Save in this browser.">
+                                    <label for="saveInBrowserCheckbox" @click=${() => this.shadowRoot.getElementById('saveInBrowserCheckbox').click()}></label>
+                                    <mwc-checkbox style="display: inline; id="saveInBrowserCheckbox" @click=${e => { this.saveAccount = !e.target.checked }} ?checked=${this.saveAccount}></mwc-checkbox>
+                                </mwc-formfield>
                             </div>
                         </div>
                     </div>
@@ -427,14 +417,33 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 </div>
                             </div>
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <label for="downloadBackupCheckbox" @click=${() => this.shadowRoot.getElementById('downloadBackupCheckbox').click()}>Done saving your wallet backup ?</label>
-                                <mwc-checkbox style="display: inline;" id="downloadBackupCheckbox" @click=${e => { this.isDownloadedBackup = !e.target.checked; this.updateNext() }} ?checked=${this.isDownloadedBackup}></mwc-checkbox>
+                                <mwc-formfield alignEnd label="Done saving your wallet backup ?">
+                                    <label for="downloadBackupCheckbox" @click=${() => this.shadowRoot.getElementById('downloadBackupCheckbox').click()}></label>
+                                    <mwc-checkbox style="display: inline;" id="downloadBackupCheckbox" @click=${e => { this.isDownloadedBackup = !e.target.checked; this.updateNext() }} ?checked=${this.isDownloadedBackup}></mwc-checkbox>
+                                </mwc-formfield>
                             </div>
                         </div>
                     </div>
                 </iron-pages>
             </div>
         `
+    }
+
+    cleanup() {
+        this.shadowRoot.getElementById('randSentence').generate()
+        this.shadowRoot.getElementById('nameInput').value = ''
+        this.shadowRoot.getElementById('password').value = ''
+        this.showSeedphrase = false
+        this.selectPage('info')
+        this.error = false
+        this.errorMessage = ''
+        this.nextButtonText = 'Next'
+        this.createAccountLoading = false
+        this.saveAccount = true
+        this.isDownloadedBackup = false
+        this._wallet = ''
+        this._pass = ''
+        this._name = ''
     }
 
     _pageChange(newPage, oldPage) {
@@ -506,7 +515,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
     }
 
     createAccount() {
-
     }
 
     async downloadBackup(wallet) {

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -84,7 +84,6 @@ class FragFileInput extends LitElement {
 
     firstUpdated () {
         this._dropArea = this.shadowRoot.getElementById('drop-area')
-        // console.log(this._dropArea)
 
         const preventDefaults = e => {
             e.preventDefault()
@@ -104,17 +103,14 @@ class FragFileInput extends LitElement {
         }
 
             ;['dragenter', 'dragover'].forEach(eventName => {
-            // console.log('dragenter/dragover')
             this._dropArea.addEventListener(eventName, highlight, false)
         })
 
         ;['dragleave', 'drop'].forEach(eventName => {
-            // console.log('drag-leave/drop')
             this._dropArea.addEventListener(eventName, unhighlight, false)
         })
 
         this._dropArea.addEventListener('drop', e => {
-            // console.log('DROPPED')
             const dt = e.dataTransfer
             const file = dt.files[0]
 

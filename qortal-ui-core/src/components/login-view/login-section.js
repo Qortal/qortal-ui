@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
@@ -341,8 +341,10 @@ class LoginSection extends connect(store)(LitElement) {
                     </div>
                         ${this.showPasswordCheckboxPages.includes(this.selectedPage) ? html`
                             <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <label for="storeCheckbox" class="checkboxLabel" @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}>Save in this browser</label>
-                                <mwc-checkbox style="display: inline;" id="storeCheckbox" @click=${e => { this.saveInBrowser = !e.target.checked }} ?checked="${this.saveInBrowser}"></mwc-checkbox>
+                                <mwc-formfield alignEnd label="Save in this browser.">
+                                    <label for="storeCheckbox" class="checkboxLabel" @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}></label>
+                                    <mwc-checkbox style="display: inline;" id="storeCheckbox" @click=${e => { this.saveInBrowser = !e.target.checked }} ?checked="${this.saveInBrowser}"></mwc-checkbox>
+                                </mwc-formfield>
                             </div>
                         ` : ''}
                     </div>

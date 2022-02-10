@@ -1,11 +1,10 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
 
-// Settings View
 import './account-view.js'
 import './security-view.js'
 import './notifications-view.js'
@@ -23,7 +22,6 @@ class UserSettings extends connect(store)(LitElement) {
 
     static get styles() {
         return css`
-
             :host {
                 margin: 0;
                 width: 100%;
@@ -34,11 +32,9 @@ class UserSettings extends connect(store)(LitElement) {
                 color: #333333;
                 line-height: 1.6;
             }
-
             .decline {
                 --mdc-theme-primary: var(--mdc-theme-error)
             }
-
             paper-dialog.userSettings {
                 width: 100%;
                 max-width: 100vw;
@@ -49,27 +45,22 @@ class UserSettings extends connect(store)(LitElement) {
                 line-height: 1.6;
                 overflow-y: auto;
             }
-
             .actions {
                 display:flex;
                 justify-content: space-between;
                 padding: 0 4em;
                 margin: 15px 0 -2px 0;
             }
-
             .close-icon {
                 font-size: 36px;
             }
-
             .close-icon:hover {
                 cursor: pointer;
                 opacity: .6;
             }
-
             .buttons {
                 text-align:right;
             }
-
             .container {
                 max-width: 90vw;
                 margin-left: auto;
@@ -77,13 +68,11 @@ class UserSettings extends connect(store)(LitElement) {
                 margin-top: 20px;
                 padding: .6em;
             }
-
             ul {
                 list-style: none;
                 padding: 0;
                 margin-bottom: 0;
             }
-
             .leftBar {
                 background-color: #fff;
                 color: #333333;
@@ -91,14 +80,12 @@ class UserSettings extends connect(store)(LitElement) {
                 padding: 20px 0 0 0;
                 border-radius: 5px;
             }
-
             .leftBar img {
                 margin: 0 auto;
                 width: 75%;
                 height: 75%;
                 text-align: center;
             }
-
             .leftBar .slug {
                 text-align: center;
                 margin-top: 20px;
@@ -107,16 +94,12 @@ class UserSettings extends connect(store)(LitElement) {
                 font-weight: 600;
                 margin-bottom: 7px;
             }
-
-
             .leftBar ul li {
                 border-bottom: 1px solid #DDD;    
             }
-
             .leftBar ul li:last-child {
                 border-bottom: none;
             }
-
             .leftBar ul li a {
                 color: #333333;
                 font-size: 16px;
@@ -125,31 +108,23 @@ class UserSettings extends connect(store)(LitElement) {
                 padding: .9em;
                 display: block;
             }
-
             .leftBar ul li a i {
                 margin-right: 8px;
                 font-size: 16px;
             }
-
             .leftBar ul li a:hover {
                 background-color: #f6f6f6;
                 color: #515151;
             }
-
             .leftBar ul li:active {
                 border-bottom: none;
             }
-
             .leftBar ul li a.active {
                 color: #515151;
                 background-color: #eee;
                 border-left: 2px solid #515151;
                 margin-left: -2px;
             }
-
-
-            /* Main Profile Page */
-
             .mainPage {
                 background-color: #fff;
                 color: #333333;
@@ -160,56 +135,40 @@ class UserSettings extends connect(store)(LitElement) {
                 text-align: center;
                 min-height: 460px;
             }
-
-
-
-            /* Styles for Smaller Screen Sizes */
-
             @media(max-width:700px) {
                 .mainPage {
                     margin-top: 30px;
                 }
             }
-
-
-            /* Styles for Larger Screen Sizes */
-
             @media(min-width:765px) {
-
                 * {
                     margin: 0;
                     padding: 0;
                     box-sizing: border-box;
                 }
-
                 .actions {
                     display:flex;
                     justify-content: space-between;
                     padding: 0 4em;
                     margin: 15px 0 -25px 0;
                 }
-
                 .container {
                     padding: 2em;
                 }
-
                 .wrapper {
                     display: grid;
                     grid-template-columns: 1fr 3fr;
                     grid-gap: 30px;
                 }
-
                 .wrapper > .mainPage {
                     padding: 2em;
                 }
-
                 .leftBar {
                     text-align: left;
                     max-height: 403px;
                     max-width: 400px;
                     font-size: 16px;
                 }
-
                 .mainPage {
                     font-size: 16px;
                 }
@@ -224,17 +183,11 @@ class UserSettings extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <style>
-                
-            </style>
-
             <paper-dialog id="userSettingsDialog" class="userSettings" modal>
-
                 <div class="actions">
                     <h2></h2>
                     <mwc-icon class="close-icon" @click=${ () => this.closeSettings()} title="Close Settings" >highlight_off</mwc-icon>
                 </div>
-
                 <div class="container">
                     <div class="wrapper">
                         <div class="leftBar" style="display: table; width: 100%;">
@@ -245,19 +198,10 @@ class UserSettings extends connect(store)(LitElement) {
                                 <li @click=${ () => this.setSettingsView('notification')} ><a class=${this.selectedView.id === 'notification' ? 'active' : ''} href="javascript:void(0)">Notifications</a></li>
                             </ul>
                         </div>
-
                         <div class="mainPage">
                             <h1>${ this.selectedView.name}</h1>
                             <hr>
                             ${html`${this.renderSettingViews(this.selectedView)}`}
-                            <!-- <div class="depoAddress">
-                                <h3>Deposit Address</h3>
-
-                                <div class="box">
-                                    <input type="text" placeholder="RNd2ioGJZKKmwaKB7ydWjuy8VUzmRzSNWe">
-                                    <span class="copyAddress">Copy</span>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -270,7 +214,6 @@ class UserSettings extends connect(store)(LitElement) {
     }
 
     renderSettingViews(selectedView) {
-
         if (selectedView.id === 'info') {
             return html`<account-view></account-view>`;
         } else if (selectedView.id === 'security') {
@@ -281,7 +224,6 @@ class UserSettings extends connect(store)(LitElement) {
     }
 
     setSettingsView(pageId) {
-
         if (pageId === 'info') {
             return this.selectedView = { id: 'info', name: 'General Account Info' }
         } else if (pageId === 'security') {
@@ -293,13 +235,11 @@ class UserSettings extends connect(store)(LitElement) {
 
     openSettings() {
         if (this.loggedIn) {
-
             this.shadowRoot.getElementById('userSettingsDialog').open()
         }
     }
 
     closeSettings() {
-
         this.shadowRoot.getElementById('userSettingsDialog').close()
         this.cleanUp()
     }

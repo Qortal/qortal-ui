@@ -35,6 +35,5 @@ export const newMessage = (data) => {
 }
 
 const playSound = (soundUrl) => {
-
     return new Audio(soundUrl)
 }

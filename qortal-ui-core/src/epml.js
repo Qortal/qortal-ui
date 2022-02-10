@@ -1,6 +1,5 @@
 import { Epml, EpmlReadyPlugin, RequestPlugin, ContentWindow as EpmlContentWindowPlugin, EpmlStreamPlugin, EpmlProxyPlugin, EpmlStream } from 'epml'
 
-// Epml.registerPlugin(contentWindowsPlugin)
 Epml.registerPlugin(RequestPlugin)
 Epml.registerPlugin(EpmlReadyPlugin)
 Epml.registerPlugin(EpmlContentWindowPlugin)

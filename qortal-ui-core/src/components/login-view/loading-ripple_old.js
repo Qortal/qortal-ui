@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
@@ -156,21 +156,6 @@ class LoadingRipple extends connect(store)(LitElement) {
             this._ripple.classList.remove('activating-done')
             this._ripple.classList.remove('disabling')
             resolve()
-            // this._ripple.classList.add('disabling')
-            // const rippleFadedEvent = () => {
-            //     console.log('ripple closed event')
-            //     if (rippleClosed) return
-            //     rippleClosed = true
-            //     // Reset the ripple
-            //     TRANSITION_EVENT_NAMES.forEach(name => this._ripple.removeEventListener(name, rippleFadedEvent))
-            //     this._ripple.classList.remove('activating')
-            //     this._ripple.classList.remove('activating-done')
-            //     this._ripple.classList.remove('disabling')
-            //     this.rippleIsOpen = false
-            //     resolve()
-            // }
-            // console.log('==============================================================================================================================================')
-            // TRANSITION_EVENT_NAMES.forEach(name => this._ripple.addEventListener(name, rippleFadedEvent))
         })
     }
 
@@ -195,7 +180,6 @@ class LoadingRipple extends connect(store)(LitElement) {
     }
 
     stateChanged (state) {
-        // this.loggedIn = state.app.loggedIn
     }
 }
 

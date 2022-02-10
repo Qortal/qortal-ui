@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 
@@ -39,7 +39,6 @@ class WalletProfile extends connect(store)(LitElement) {
                     background: rgb(255, 255, 255);
                 }
                 #profileInMenu:hover {
-                    /* cursor:pointer; */
                 }
                 #accountIcon {
                     font-size:48px;
@@ -68,7 +67,6 @@ class WalletProfile extends connect(store)(LitElement) {
                     margin:0;
                     margin-top:8px;
                     font-size:11px;
-                    /* padding-top:8px; */
                 }
             </style>
 

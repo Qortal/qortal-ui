@@ -15,7 +15,6 @@ const aliases = {
 }
 
 const apiComponents = {
-    // All the do stuff imports...such as login(...) and logout()
     api: {
         file: 'api/api.js',
         className: 'api'
@@ -34,7 +33,6 @@ const functionalComponents = {
     }
 }
 
-// Inlines all dependencies... transpiles to es5
 const inlineComponents = [
     {
         className: 'worker',

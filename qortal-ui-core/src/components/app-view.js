@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 
@@ -30,11 +30,9 @@ class AppView extends connect(store)(LitElement) {
             :host {
                 --app-drawer-width: 260px;
             }
-
             app-drawer-layout:not([narrow]) [drawer-toggle]:not(sidenav-menu) {
                 display: none;
             }
-
             app-drawer {
                 box-shadow: var(--shadow-2);
                 background: var(--mdc-theme-surface);
@@ -46,7 +44,6 @@ class AppView extends connect(store)(LitElement) {
                 background: var(--mdc-theme-surface);
                 color: var(--mdc-theme-on-surface);
             }
-
             #sideBar {
                 height: 100vh;
                 display: flex;
@@ -76,56 +73,44 @@ class AppView extends connect(store)(LitElement) {
 
     render() {
         return html`
-        <style>
-        </style>
-        <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-desktop')}' fullbleed >
-            <app-drawer swipe-open slot="drawer" id="appdrawer">
-                <app-header-layout>
-                    <div id="sideBar">
-                        <wallet-profile></wallet-profile>
-                        <div class="sideBarMenu">
-                            <sidenav-menu></sidenav-menu>
+            <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-desktop')}' fullbleed >
+                <app-drawer swipe-open slot="drawer" id="appdrawer">
+                    <app-header-layout>
+                        <div id="sideBar">
+                            <wallet-profile></wallet-profile>
+                            <div class="sideBarMenu">
+                                <sidenav-menu></sidenav-menu>
+                            </div>
+                            <app-info></app-info>
                         </div>
-                        <app-info></app-info>
-
-                    </div>
+                    </app-header-layout>
+                </app-drawer>
+                <app-header-layout style="height: var(--window-height);">
+                    <app-header id='appHeader' slot="header" fixed>
+                        <app-toolbar>
+                            <paper-icon-button class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
+                            <div main-title>
+                                <span class="qora-title">
+                                    <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
+                                </span>
+                            </div>
+                            <div style="display:inline">
+                                <paper-icon-button icon="icons:settings" @click=${ () => this.openSettings()} title="Settings" ></paper-icon-button>
+                            </div>
+                        </app-toolbar>
+                    </app-header>
+                    <show-plugin></show-plugin>
                 </app-header-layout>
-            </app-drawer>
-
-            <app-header-layout style="height: var(--window-height);">
-
-                <app-header id='appHeader' slot="header" fixed>
-                    <app-toolbar>
-
-                        <paper-icon-button class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
-
-                        <div main-title>
-                            <span class="qora-title">
-                                <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
-                            </span>
-                        </div>
-
-                        <div style="display:inline">
-                            <paper-icon-button icon="icons:settings" @click=${ () => this.openSettings()} title="Settings" ></paper-icon-button>
-                        </div>
-                    </app-toolbar>
-                </app-header>
-
-                <show-plugin></show-plugin>
-                    
-            </app-header-layout>
-        </app-drawer-layout>
-        <user-settings></user-settings>
-    `
+            </app-drawer-layout>
+            <user-settings></user-settings>
+        `
     }
 
     constructor() {
         super()
-
     }
 
     firstUpdated() {
-        //
     }
 
     stateChanged(state) {
@@ -133,7 +118,6 @@ class AppView extends connect(store)(LitElement) {
     }
 
     openSettings() {
-
         const settingsDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-settings')
         settingsDialog.openSettings()
     }

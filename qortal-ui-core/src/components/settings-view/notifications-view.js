@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
@@ -29,7 +29,6 @@ class NotificationsView extends connect(store)(LitElement) {
                 position: relative;
                 text-align: center;
             }
-
             .notification-box {
                 display: block;
                 position: relative;
@@ -38,7 +37,6 @@ class NotificationsView extends connect(store)(LitElement) {
                 transform: translate(-50%, 0%);
                 text-align: center;
             }
-
             @media(min-width: 1150px) {
                 .notification-box {
                     display: grid;
@@ -46,7 +44,6 @@ class NotificationsView extends connect(store)(LitElement) {
                     grid-gap: 30px;
                 }
             }
-
             .content-box {
                 border: 1px solid #a1a1a1;
                 padding: 10px 25px;
@@ -56,19 +53,15 @@ class NotificationsView extends connect(store)(LitElement) {
                 min-height: 150px;
                 margin: 20px 0;
             }
-
             h4 {
                 margin-bottom: 0;
             }
-
             mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
                 background-color:var(--mdc-theme-primary)
             }
-
             label:hover {
                 cursor: pointer;
             }
-
             .title {
                 font-weight: 600;
                 font-size: 15px;
@@ -126,16 +119,13 @@ class NotificationsView extends connect(store)(LitElement) {
     }
 
     stateChanged(state) {
-
         this.notificationConfig = state.user.notifications
         this.q_chatConfig = this.notificationConfig.q_chat
         this.blockConfig = this.notificationConfig.block
     }
 
     setQChatNotificationConfig(valueObject) {
-
         if (valueObject.type === 'PLAY_SOUND') {
-
             let data = {
                 playSound: !valueObject.value,
                 showNotification: this.q_chatConfig.showNotification

@@ -9,12 +9,6 @@ export const loadStateFromLocalStorage = (key) => {
     }
 }
 
-// const loadConfigFromAPI = () => {
-//     return fetch(configURL).then(res => res.json())
-// }
-
-// export const loadConfig = async (key) => loadConfigFromLocalStorage() || loadConfigFromAPI()
-
 export const saveStateToLocalStorage = (key, state) => {
     try {
         const stateJSON = JSON.stringify(state)

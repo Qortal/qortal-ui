@@ -6,7 +6,6 @@ const styles = {
     },
     theme: {
         colors: {
-            // primary: '#64ffda', /* Sets the text color to the theme primary color. */
             primary: '#03a9f4', /* Sets the text color to the theme primary color. */
             primaryBg: '#e8eaf6', /* Sets the background color to the theme primary color. */
             onPrimary: '#fff', /* Sets the text color to the color configured for text on the primary color. */
@@ -44,7 +43,6 @@ const styles = {
         dark: {
             // ...
         }
-        // And more... perhaps installable or user definable, like slack (...used to be? haven't been on it in ages)
     }
 }
 

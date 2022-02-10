@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { doPageUrl } from '../redux/app/app-actions.js'
@@ -27,12 +27,10 @@ class AppInfo extends connect(store)(LitElement) {
                 .normal {
                     --mdc-theme-primary: rgb(3, 169, 244);
                 }
-
                 .normal-button {
                     --mdc-theme-primary: rgb(3, 169, 244);
                     --mdc-theme-on-primary: white;
                 }
-
                 mwc-button.normal-button {
                     --mdc-theme-primary: rgb(3, 169, 244);
                     --mdc-theme-on-primary: white;
@@ -40,12 +38,10 @@ class AppInfo extends connect(store)(LitElement) {
                 .test-net {
                     --mdc-theme-primary: black;
                 }
-
                 .test-net-button {
                     --mdc-theme-primary: black;
                     --mdc-theme-on-primary: white;
                 }
-
                 mwc-button.test-net-button {
                     --mdc-theme-primary: black;
                     --mdc-theme-on-primary: white;
@@ -54,10 +50,6 @@ class AppInfo extends connect(store)(LitElement) {
                     flex: 0 0 100px;
                     padding:12px;
                     border-top: 1px solid #eee;
-                    /* position: fixed;
-                    top: 102vh;
-                    left: 0; */
-                    /* margin-top: 2.5rem; */
                 }
                 .info {
                     margin: 0;
@@ -105,7 +97,6 @@ class AppInfo extends connect(store)(LitElement) {
     }
 
     firstUpdated() {
-        // ...
     }
 
     _renderStatus() {
@@ -138,7 +129,6 @@ class AppInfo extends connect(store)(LitElement) {
         this.nodeStatus = state.app.nodeStatus
         this.nodeInfo = state.app.nodeInfo
         this.nodeConfig = state.app.nodeConfig
-
         this.pageUrl = state.app.pageUrl
         if (this.pageUrl.length > 5) {
             this.gotoPage(this.pageUrl)
