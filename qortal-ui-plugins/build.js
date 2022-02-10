@@ -10,7 +10,6 @@ const build = () => {
 
         for (const chunkOrAsset of output) {
             if (chunkOrAsset.type === 'asset') {
-                // console.log('Asset', chunkOrAsset);
             } else {
                 // ..
             }

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 
 class ChainMessaging extends LitElement {
     static get properties() {
@@ -42,54 +42,20 @@ class ChainMessaging extends LitElement {
         `
     }
 
-
     firstUpdated() {
 
         window.addEventListener("contextmenu", (event) => {
-
             event.preventDefault();
-            // this._textMenu(event)
         });
 
         window.addEventListener("click", () => {
-
-            // parentEpml.request('closeCopyTextMenu', null)
         });
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
-
-                // parentEpml.request('closeCopyTextMenu', null)
             }
         }
     }
-
-    // _textMenu(event) {
-
-    //     const getSelectedText = () => {
-    //         var text = "";
-    //         if (typeof window.getSelection != "undefined") {
-    //             text = window.getSelection().toString();
-    //         } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-    //             text = this.shadowRoot.selection.createRange().text;
-    //         }
-    //         return text;
-    //     }
-
-    //     const checkSelectedTextAndShowMenu = () => {
-    //         let selectedText = getSelectedText();
-    //         if (selectedText && typeof selectedText === 'string') {
-
-    //             let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-    //             let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-    //             parentEpml.request('openCopyTextMenu', textMenuObject)
-    //         }
-    //     }
-
-    //     checkSelectedTextAndShowMenu()
-    // }
 
     isEmptyArray(arr) {
         if (!arr) { return true }

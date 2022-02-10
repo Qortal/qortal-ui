@@ -1,5 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
-// import { render } from 'lit-html'
+import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
 import '@material/mwc-icon'
@@ -19,48 +18,39 @@ class ChatHead extends LitElement {
 
     static get styles() {
         return css`
-
-    li {
-        padding: 10px 2px 20px 5px;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    li:hover {
-        background-color: #eee;
-    }
-
-    .active {
-        background: #ebebeb;
-        border-left: 4px solid #3498db;
-    }
-
-    .img-icon {
-        float: left;
-        font-size:40px;
-    }
-
-    .about {
-        margin-top: 8px;
-    }
-
-    .about {
-        padding-left: 8px;
-    }
-
-    .status {
-        color: #92959e;
-    }
-
-    .clearfix:after {
-        visibility: hidden;
-        display: block;
-        font-size: 0;
-        content: " ";
-        clear: both;
-        height: 0;
-    }
-
+            li {
+                padding: 10px 2px 20px 5px;
+                cursor: pointer;
+                width: 100%;
+            }
+            li:hover {
+                background-color: #eee;
+            }
+            .active {
+                background: #ebebeb;
+                border-left: 4px solid #3498db;
+            }
+            .img-icon {
+                float: left;
+                font-size:40px;
+            }
+            .about {
+                margin-top: 8px;
+            }
+            .about {
+                padding-left: 8px;
+            }
+            .status {
+                color: #92959e;
+            }
+            .clearfix:after {
+                visibility: hidden;
+                display: block;
+                font-size: 0;
+                content: " ";
+                clear: both;
+                height: 0;
+            }
         `
     }
 
@@ -80,7 +70,6 @@ class ChatHead extends LitElement {
     }
 
     render() {
-
         return html`
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 <mwc-icon class="img-icon">account_circle</mwc-icon>
@@ -91,46 +80,8 @@ class ChatHead extends LitElement {
         `
     }
 
-
-    // renderEncryptedIcon(chatInfo) {
-
-    //     if (chatInfo.groupId !== undefined) {
-    //         this.iconName = 'lock_open'
-    //     } else {
-
-    //         parentEpml.request('apiCall', {
-    //             type: 'api',
-    //             url: `/addresses/publickey/${chatInfo.address}`
-    //         }).then(res => {
-
-    //             if (res.error === 102) {
-    //                 // Do something here...
-    //             } else if (res !== false) {
-    //                 this.iconName = 'lock'
-    //             } else {
-    //                 this.iconName = 'lock'
-    //             }
-    //         })
-
-    //     }
-
-    // }
-
-    getUrl(chatUrl) {
-
-        this.onPageNavigation(`/app/q-chat/${chatUrl}`)
-    }
-
-    onPageNavigation(pageUrl) {
-
-        parentEpml.request('setPageUrl', pageUrl)
-    }
-
     firstUpdated() {
         let configLoaded = false
-
-        // this.renderEncryptedIcon(this.chatInfo)
-
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -145,12 +96,16 @@ class ChatHead extends LitElement {
                 this.config = JSON.parse(c)
             })
         })
-
-
         parentEpml.imReady()
     }
 
+    getUrl(chatUrl) {
+        this.onPageNavigation(`/app/q-chat/${chatUrl}`)
+    }
 
+    onPageNavigation(pageUrl) {
+        parentEpml.request('setPageUrl', pageUrl)
+    }
 }
 
 window.customElements.define('chat-head', ChatHead)

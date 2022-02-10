@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit-element'
-import { render } from 'lit-html'
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 
 // Not sure if these are imported in the proper way:

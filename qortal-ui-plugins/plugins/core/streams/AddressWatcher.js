@@ -38,24 +38,11 @@ export class AddressWatcher {
     }
 
     async testBlock (block) {
-        // console.log('TESTING BLOCK')
         const pendingUpdateAddresses = []
-
-        // blockTests.forEach(fn => {
-
-        // })
-        // transactionTests.forEach(fn => {
-        // 
         const transactions = await parentEpml.request('apiCall', { url: `/transactions/block/${block.signature}` })
         transactions.forEach(transaction => {
-            // console.log(this)
-            // fn(transaction, Object.keys(this._addresses))
             // Guess the block needs transactions
             for (const addr of Object.keys(this._addresses)) {
-                // const addrChanged = transactionTests.some(fn => {
-                //     return fn(transaction, addr)
-                // })
-                // console.log('checking ' + addr)
                 const addrChanged = true // Just update it every block...for now
                 if (!addrChanged) return
 
@@ -71,7 +58,6 @@ export class AddressWatcher {
     }
 
     async updateAddress (addr) {
-        // console.log('UPPPDDAAATTTINGGG AADDDRRR', addr)
         let addressRequest = await parentEpml.request('apiCall', {
             type: 'explorer',
             data: {
@@ -79,23 +65,15 @@ export class AddressWatcher {
                 txOnPage: 10
             }
         })
-        // addressRequest = JSON.parse(addressRequest)
-        // console.log(addressRequest, 'AAADDDREESS REQQUEESTT')
-        // console.log('response: ', addressRequest)
-
         const addressInfo = addressRequest.success ? addressRequest.data : DEFAULT_ADDRESS_INFO
-        // const addressInfo = addressRequest.success ? addressRequest.data : DEFAULT_ADDRESS_INFO
         addressInfo.transactions = []
 
         for (let i = addressInfo.start; i >= addressInfo.end; i--) {
             addressInfo.transactions.push(addressInfo[i])
             delete addressInfo[i]
         }
-        // console.log('ADDRESS INFO', addressInfo)
         if (!(addr in this._addresses)) return
-
         this._addresses[addr] = addressInfo
-        // console.log('---------------------------Emitting-----------------------------', this._addresses[addr], this._addressStreams[addr])
         this._addressStreams[addr].emit(addressInfo)
     }
 }

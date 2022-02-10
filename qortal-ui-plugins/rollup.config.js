@@ -1,5 +1,3 @@
-// From original frag-ui build
-
 import babel from '@rollup/plugin-babel'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import builtins from 'rollup-plugin-node-builtins'
@@ -9,8 +7,6 @@ import commonjs from '@rollup/plugin-commonjs'
 import sass from 'rollup-plugin-sass'
 import autoprefixer from 'autoprefixer'
 import postcss from 'postcss'
-
-// import minifyHTML from 'rollup-plugin-minify-html-literals'
 import { terser } from 'rollup-plugin-terser'
 
 const sassOptions = {
@@ -22,22 +18,13 @@ const sassOptions = {
 
 const babelOptions = {
     babelHelpers: 'bundled',
-    // exclude: 'node_modules/**',
     exclude: ['node_modules/babel-runtime/**', /[\/\\]core-js/, 'node_modules/@babel/runtime-corejs3/**', 'node_modules/@webcomponentsjs/**'],
-    // exclude: 'node_modules/core-js/**',
     ignore: [/[\/\\]core-js/, 'node_modules/@babel/runtime-corejs3/**', 'node_modules/@webcomponentsjs/**'],
     runtimeHelpers: true,
     presets: [
         [
             '@babel/preset-env',
             {
-                // 'targets': 'Chrome 60, Firefox 66',
-                // debug: true,
-                // modules: 'false',
-                // targets: {
-                //     browsers: 'Edge 16, Firefox 60, Chrome 61, Safari 11, Android 67, ChromeAndroid 73, FirefoxAndroid 66'
-                // },
-                // useBuiltIns: 'usage',
                 useBuiltIns: 'entry',
                 corejs: '3'
             }
@@ -65,7 +52,6 @@ const plugins = [
 
 if (process.env.NODE_ENV === 'production') {
     plugins.push(
-        // minifyHTML(),
         terser()
     )
 }
@@ -121,16 +107,6 @@ export default [
         ],
         plugins: plugins.concat([babel({
             ...babelOptions//,
-            // presets: [
-            //     [
-            //         '@babel/preset-env',
-            //         {
-            //             useBuiltIns: 'usage',
-            //             targets: 'IE 10',
-            //             corejs: '3'
-            //         }
-            //     ]
-            // ]
         })])
     },
     {

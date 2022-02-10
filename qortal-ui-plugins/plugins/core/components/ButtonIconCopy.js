@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
 import '@material/mwc-icon-button'

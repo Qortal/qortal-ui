@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
 
@@ -60,11 +60,6 @@ class ToolTip extends LitElement {
         `
     }
 
-    // attributeChangedCallback(name, oldVal, newVal) {
-    //     console.log('attribute change: ', name, newVal.address);
-    //     super.attributeChangedCallback(name, oldVal, newVal);
-    // }
-
     constructor() {
         super()
         this.selectedAddress = {}
@@ -80,31 +75,10 @@ class ToolTip extends LitElement {
     }
 
     render() {
-
-        console.log(this.toolTipMessage, "tool");
-
         return html`
             <span id="myTool" class="tooltiptext">${this.toolTipMessage}</span>
         `
     }
-
-
-    //     {
-    //     "type": "CHAT",
-    //     "timestamp": 1589189772000,
-    //     "reference": "1111111111111111111111111111111111111111111111111111111111111111",
-    //     "fee": "0.00000000",
-    //     "signature": "7gXr4sZ3W6Lq7sRHwoxQ6nEq4LvV7aiVkhfi2xtsf6v1P4M2v4oYptMowRXvbtEhJQfg2wfr3BMDmhCEcrAENRn",
-    //     "txGroupId": 0,
-    //     "approvalStatus": "NOT_REQUIRED",
-    //     "creatorAddress": "QdevPHFK86KNuzoYKLqFz7DPkr2x4juzvi",
-    //     "senderPublicKey": "31J8KD24kFbNtdrQg5iUEHXGxGSxKC9jxLDakE1QChyG",
-    //     "sender": "QdevPHFK86KNuzoYKLqFz7DPkr2x4juzvi",
-    //     "nonce": 89955,
-    //     "data": "35sYULUFnjz7SCRSb",
-    //     "isText": false,
-    //     "isEncrypted": false
-    //   }
 
     firstUpdated() {
         let configLoaded = false
@@ -124,12 +98,8 @@ class ToolTip extends LitElement {
                 this.config = JSON.parse(c)
             })
         })
-
-
         parentEpml.imReady()
     }
-
-
 }
 
 window.customElements.define('tool-tip', ToolTip)

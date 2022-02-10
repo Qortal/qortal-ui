@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
 import { escape, unescape } from 'html-escaper';
@@ -91,15 +91,6 @@ class ChatPage extends LitElement {
     }
 
     updated(changedProps) {
-        // changedProps.forEach((OldProp, name) => {
-        //     if (name === 'messages') {
-        //         this.scrollDownPage()
-        //     }
-
-        //     // if (name === 'newMessages') {
-        //     //     this.updateChatHistory(this.newMessages)
-        //     // }
-        // });
     }
 
     constructor() {

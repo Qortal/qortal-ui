@@ -1,4 +1,3 @@
-
 const PLUGINS = 'plugins'
 const BUILD = 'build'
 const WATCH = 'watch'
