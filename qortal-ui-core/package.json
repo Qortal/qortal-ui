@@ -61,7 +61,7 @@
     "bcryptjs": "^2.4.3",
     "epml": "^0.3.3",
     "file-saver": "^2.0.5",
-    "lit": "^2.1.2",
+    "lit": "^2.1.3",
     "postcss": "^8.4.6",
     "pwa-helpers": "^0.9.1",
     "random-sentence-generator": "^0.0.8",
