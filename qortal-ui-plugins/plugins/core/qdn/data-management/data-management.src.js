@@ -363,7 +363,7 @@ class DataManagement extends LitElement {
 
         if (ret === true) {
             // Successfully deleted - so refresh the page
-            this.getArbitraryResources();
+            window.location.reload();
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to delete this resource. Please try again')
