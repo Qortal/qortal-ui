@@ -336,12 +336,10 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             </p>
                             <p style="margin-bottom:0;">
                                 Create your QORT account by clicking Next below. 
-                                A ‘seedphrase’ will be randomly generated and this is used as your private key generator for your blockchain account in QORT. 
-                                <strong>ONLY</strong> show your seedphrase if you are an <strong>ADVANCED USER</strong>. And when you do, Please be careful and make sure it is safely and securely stored. 
-                                This is extremely important information for your QORT account.
+                                A ‘seedphrase’ will be randomly generated but not displayed, and this is used as your private key generator for your blockchain account in QORT.
                             </p>
 
-                            <div id="seedBox" ?hidden="${!this.showSeedphrase}" style="border-radius: 4px; padding-top: 8px; background: rgba(3,169,244,0.1); margin-top: 24px;">
+                            <div id="seedBox" style="display: none; border-radius: 4px; padding-top: 8px; background: rgba(3,169,244,0.1); margin-top: 24px;">
                                 <div style="display: inline-block; padding:12px; width:calc(100% - 84px);">
                                     <random-sentence-generator
                                         template="adverb verb noun adjective noun adverb verb noun adjective noun adjective verbed adjective noun"
@@ -367,7 +365,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 ></paper-icon-button>
                             </div>
                         </div>
-                        <div style="text-align: right; vertical-align: top; line-height: 40px; margin:0;">
+                        <div style="display: none; text-align: right; vertical-align: top; line-height: 40px; margin:0;">
                             <mwc-formfield alignEnd label="I'm an advanced user, show my seed phrase.">
                                 <label for="hasSavedSeedphraseCheckbox" @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()} ></label>
                                 <mwc-checkbox style="display: inline; id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
