@@ -6,9 +6,6 @@ let haveRegisteredNodeManagement = false
 
 
 parentEpml.ready().then(() => {
-    // THOUGHTS: DONE: The request to register urls should be made once...
-
-
     // pluginUrlsConf
     let pluginUrlsConf = [
         {
@@ -116,12 +113,13 @@ parentEpml.ready().then(() => {
         parentEpml.request('registerUrl', pluginInfo)
     }
 
+    const checkNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
     parentEpml.subscribe('config', c => {
         config = JSON.parse(c)
 
         // Only register node management if node management is enabled and it hasn't already been registered
-        if (!haveRegisteredNodeManagement && config.user.knownNodes[config.user.node].enableManagement) {
+        if (!haveRegisteredNodeManagement && checkNode.enableManagement) {
             haveRegisteredNodeManagement = true
 
             let nodeManagementConf = {
