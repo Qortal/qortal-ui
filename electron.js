@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const server = require('./server.js');
 const log = require('electron-log');
@@ -125,26 +125,30 @@ if (!isLock) {
 	autoUpdater.on('update-available', () => {
 		const n = new Notification({
 			title: 'Update Available!',
-			body: 'It will be downloaded ⌛️ in the background and installed after download.'
+			body: 'It will be downloaded ⌛️ in the background!'
 		})
         	n.show();
+	})
+	autoUpdater.on('update-downloaded', (event) => {
+		const dialogOpts = {
+			type: 'info',
+			buttons: ['Restart now', 'Install after next restart'],
+			title: 'Update available',
+			detail: 'A new Qortal UI version has been downloaded. Click RESTART NOW to apply update, or INSTALL AFTER NEXT RESTART to install after next start.'
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				autoUpdater.quitAndInstall()
+			} else {
+				return
+			}
+		})
 	})
 	autoUpdater.on('error', (err) => {
 		const n = new Notification({
 			title: 'Error while Updating...',
 			body: err
 		})
-		// n.show();
-	})
-	autoUpdater.on('update-downloaded', () => {
-		const n = new Notification({
-			title: 'Update Downloaded!',
-			body: 'Restarting in 30 secounds to Update. Please finish your tasks!'
-		})
-		setTimeout(() => {
-			n.show();
-		}, 30000);
-		autoUpdater.quitAndInstall();
-
+		n.show();
 	})
 }
