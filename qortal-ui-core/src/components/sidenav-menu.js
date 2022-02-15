@@ -244,7 +244,6 @@ class SidenavMenu extends connect(store)(LitElement) {
   async logout(e) {
     if(window.confirm('Are you sure you want to logout?')) {
       store.dispatch(doLogout());
-	  window.location.reload();
     }
   }
 }
