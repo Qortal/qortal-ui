@@ -3,7 +3,7 @@ import { LitElement, html, css } from 'lit'
 class ChainMessaging extends LitElement {
     static get properties() {
         return {
-            loading: { type: Boolean },
+            loading: { type: Boolean }
         }
     }
 
@@ -30,13 +30,11 @@ class ChainMessaging extends LitElement {
 
     constructor() {
         super()
-        // ...
     }
 
     render() {
         return html`
             <div id="chain-messaging-page">
-
                 <h2 style="text-align: center; margin-top: 3rem;">Coming Soon!</h2>
             </div>
         `

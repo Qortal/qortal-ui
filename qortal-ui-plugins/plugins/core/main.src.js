@@ -98,7 +98,7 @@ parentEpml.ready().then(() => {
             menus: [],
             parent: false
         },
-	{
+        {
             url: 'puzzles',
             domain: 'core',
             page: 'puzzles/index.html',
@@ -106,7 +106,7 @@ parentEpml.ready().then(() => {
             icon: 'extension',
             menus: [],
             parent: false
-	}
+        }
     ]
 
     const registerPlugins = (pluginInfo) => {

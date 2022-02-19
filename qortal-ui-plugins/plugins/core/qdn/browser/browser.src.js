@@ -12,23 +12,23 @@ import '@polymer/paper-progress/paper-progress.js'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class WebBrowser extends LitElement {
-	static get properties() {
-		return {
-			url: { type: String },
-			name: { type: String },
-			service: { type: String },
-			identifier: { type: String },
-			followedNames: { type: Array },
-            blockedNames: { type: Array },
-		}
-	}
+    static get properties() {
+        return {
+            url: { type: String },
+            name: { type: String },
+            service: { type: String },
+            identifier: { type: String },
+            followedNames: { type: Array },
+            blockedNames: { type: Array }
+        }
+    }
 
-	static get observers() {
-		return ['_kmxKeyUp(amount)']
-	}
+    static get observers() {
+        return ['_kmxKeyUp(amount)']
+    }
 
-	static get styles() {
-		return css`
+    static get styles() {
+        return css`
 			* {
 				--mdc-theme-primary: rgb(3, 169, 244);
 				--mdc-theme-secondary: var(--mdc-theme-primary);
@@ -40,8 +40,6 @@ class WebBrowser extends LitElement {
 			}
 
 			#websitesWrapper .buttons {
-				/* --paper-button-ink-color: var(--paper-green-500);
-                    color: var(--paper-green-500); */
 				width: auto !important;
 			}
 
@@ -94,10 +92,10 @@ class WebBrowser extends LitElement {
 			}
 		
 		`
-	}
+    }
 
-	render() {
-		return html`
+    render() {
+        return html`
 			<div id="websitesWrapper" style="width:auto; padding:10px; background: #fff;">
 				<div class="layout horizontal center">
 					<div class="address-bar">
@@ -118,9 +116,9 @@ class WebBrowser extends LitElement {
 				</div>
 			</div>
 		`
-	}
+    }
 
-	renderFollowUnfollowButton() {
+    renderFollowUnfollowButton() {
         // Only show the follow/unfollow button if we have permission to modify the list on this node
         if (this.followedNames == null || !Array.isArray(this.followedNames)) {
             return html``
@@ -153,50 +151,50 @@ class WebBrowser extends LitElement {
     }
 
 
-	// Navigation
+    // Navigation
 
-	goBack() {
-		window.history.back();
+    goBack() {
+        window.history.back();
     }
 
-	goForward() {
-		window.history.forward();
+    goForward() {
+        window.history.forward();
     }
 
-	refresh() {
-		window.location.reload();
-	}
-
-	goBackToList() {
-		window.location="../index.html";
+    refresh() {
+        window.location.reload();
     }
 
-	follow() {
-		this.followName(this.name);
+    goBackToList() {
+        window.location = "../index.html";
     }
 
-	unfollow() {
-		this.unfollowName(this.name);
+    follow() {
+        this.followName(this.name);
     }
 
-	block() {
-		this.blockName(this.name);
+    unfollow() {
+        this.unfollowName(this.name);
     }
 
-	unblock() {
-		this.unblockName(this.name);
+    block() {
+        this.blockName(this.name);
     }
 
-	delete() {
-		this.deleteCurrentResource();
+    unblock() {
+        this.unblockName(this.name);
+    }
+
+    delete() {
+        this.deleteCurrentResource();
     }
 
 
-	async followName(name) {
+    async followName(name) {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -211,7 +209,7 @@ class WebBrowser extends LitElement {
             // Successfully followed - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.followedNames = this.followedNames.filter(item => item != name); 
+            this.followedNames = this.followedNames.filter(item => item != name);
             this.followedNames.push(name)
         }
         else {
@@ -225,7 +223,7 @@ class WebBrowser extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -238,7 +236,7 @@ class WebBrowser extends LitElement {
 
         if (ret === true) {
             // Successfully unfollowed - remove from local list
-            this.followedNames = this.followedNames.filter(item => item != name); 
+            this.followedNames = this.followedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
@@ -251,7 +249,7 @@ class WebBrowser extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -266,7 +264,7 @@ class WebBrowser extends LitElement {
             // Successfully blocked - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.blockedNames = this.blockedNames.filter(item => item != name); 
+            this.blockedNames = this.blockedNames.filter(item => item != name);
             this.blockedNames.push(name)
         }
         else {
@@ -280,7 +278,7 @@ class WebBrowser extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -293,7 +291,7 @@ class WebBrowser extends LitElement {
 
         if (ret === true) {
             // Successfully unblocked - remove from local list
-            this.blockedNames = this.blockedNames.filter(item => item != name); 
+            this.blockedNames = this.blockedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
@@ -302,14 +300,14 @@ class WebBrowser extends LitElement {
         return ret
     }
 
-	async deleteCurrentResource() {
-		if (this.followedNames.indexOf(this.name) != -1) {
+    async deleteCurrentResource() {
+        if (this.followedNames.indexOf(this.name) != -1) {
             // Following name - so deleting won't work
-			parentEpml.request('showSnackBar', "Can't delete data from followed names. Please unfollow first.");
-			return;
+            parentEpml.request('showSnackBar', "Can't delete data from followed names. Please unfollow first.");
+            return;
         }
 
-		let identifier = this.identifier == null ? "default" : resource.identifier;
+        let identifier = this.identifier == null ? "default" : resource.identifier;
 
         let ret = await parentEpml.request('apiCall', {
             url: `/arbitrary/resource/${this.service}/${this.name}/${identifier}?apiKey=${this.getApiKey()}`,
@@ -328,52 +326,51 @@ class WebBrowser extends LitElement {
 
 
 
-	// Helper Functions (Re-Used in Most part of the UI )
+    // Helper Functions (Re-Used in Most part of the UI )
 
-	textColor(color) {
-		return color == 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
-	}
+    textColor(color) {
+        return color == 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
+    }
 
-	_textMenu(event) {
-		const getSelectedText = () => {
-			var text = ''
-			if (typeof window.getSelection != 'undefined') {
-				text = window.getSelection().toString()
-			} else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-				text = this.shadowRoot.selection.createRange().text
-			}
-			return text
-		}
+    _textMenu(event) {
+        const getSelectedText = () => {
+            var text = ''
+            if (typeof window.getSelection != 'undefined') {
+                text = window.getSelection().toString()
+            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                text = this.shadowRoot.selection.createRange().text
+            }
+            return text
+        }
 
-		const checkSelectedTextAndShowMenu = () => {
-			let selectedText = getSelectedText()
-			if (selectedText && typeof selectedText === 'string') {
-				let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
+        const checkSelectedTextAndShowMenu = () => {
+            let selectedText = getSelectedText()
+            if (selectedText && typeof selectedText === 'string') {
+                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
 
-				let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
+                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
 
-				parentEpml.request('openCopyTextMenu', textMenuObject)
-			}
-		}
+                parentEpml.request('openCopyTextMenu', textMenuObject)
+            }
+        }
 
-		checkSelectedTextAndShowMenu()
-	}
+        checkSelectedTextAndShowMenu()
+    }
 
-	constructor() {
-		super()
-		this.url = 'about:blank'
+    constructor() {
+        super()
+        this.url = 'about:blank'
 
-		const urlParams = new URLSearchParams(window.location.search);
-		this.name = urlParams.get('name');
-		this.service = urlParams.get('service');
-		this.identifier = null; // FUTURE: add support for identifiers
-
-		this.followedNames = []
+        const urlParams = new URLSearchParams(window.location.search);
+        this.name = urlParams.get('name');
+        this.service = urlParams.get('service');
+        // FUTURE: add support for identifiers
+        this.identifier = null;
+        this.followedNames = []
         this.blockedNames = []
 
 
-		const getFollowedNames = async () => {
-            // this.followedNames = []
+        const getFollowedNames = async () => {
 
             let followedNames = await parentEpml.request('apiCall', {
                 url: `/lists/followedNames?apiKey=${this.getApiKey()}`
@@ -384,7 +381,6 @@ class WebBrowser extends LitElement {
         }
 
         const getBlockedNames = async () => {
-            // this.blockedNames = []
 
             let blockedNames = await parentEpml.request('apiCall', {
                 url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
@@ -394,28 +390,28 @@ class WebBrowser extends LitElement {
             setTimeout(getBlockedNames, this.config.user.nodeSettings.pingInterval)
         }
 
-		const render = () => {
-			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-			this.url = `${nodeUrl}/render/${this.service}/${this.name}`;
+        const render = () => {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            this.url = `${nodeUrl}/render/${this.service}/${this.name}`;
         }
 
-		const authorizeAndRender = () => {
+        const authorizeAndRender = () => {
             parentEpml.request('apiCall', {
                 url: `/render/authorize/${this.name}?apiKey=${this.getApiKey()}`,
-				method: "POST"
+                method: "POST"
             }).then(res => {
-				console.log(res)
-				if (res.error) {
-					// Authorization problem - API key incorrect?
-				}
-				else {
-					render()
-				}
+                console.log(res)
+                if (res.error) {
+                    // Authorization problem - API key incorrect?
+                }
+                else {
+                    render()
+                }
             })
         }
 
-		let configLoaded = false
+        let configLoaded = false
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -424,10 +420,10 @@ class WebBrowser extends LitElement {
                 this.selectedAddress = selectedAddress
             })
             parentEpml.subscribe('config', c => {
-				this.config = JSON.parse(c)
+                this.config = JSON.parse(c)
                 if (!configLoaded) {
                     authorizeAndRender()
-					setTimeout(getFollowedNames, 1)
+                    setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
                     configLoaded = true
                 }
@@ -440,36 +436,36 @@ class WebBrowser extends LitElement {
                 }
             })
         })
-	}
+    }
 
-	firstUpdated() {
+    firstUpdated() {
 
-		window.addEventListener('contextmenu', (event) => {
-			event.preventDefault()
-			this._textMenu(event)
-		})
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            this._textMenu(event)
+        })
 
-		window.addEventListener('click', () => {
-			parentEpml.request('closeCopyTextMenu', null)
-		})
+        window.addEventListener('click', () => {
+            parentEpml.request('closeCopyTextMenu', null)
+        })
 
-		window.onkeyup = (e) => {
-			if (e.keyCode === 27) {
-				parentEpml.request('closeCopyTextMenu', null)
-			}
-		}
-	}
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        }
+    }
 
-	getApiKey() {
+    getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
     }
 
-	clearSelection() {
-		window.getSelection().removeAllRanges()
-		window.parent.getSelection().removeAllRanges()
-	}
+    clearSelection() {
+        window.getSelection().removeAllRanges()
+        window.parent.getSelection().removeAllRanges()
+    }
 }
 
 window.customElements.define('web-browser', WebBrowser)

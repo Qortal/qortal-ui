@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
-
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ToolTip extends LitElement {
@@ -92,7 +91,6 @@ class ToolTip extends LitElement {
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
-                    // setTimeout(getGroupIdFromURL, 1)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)

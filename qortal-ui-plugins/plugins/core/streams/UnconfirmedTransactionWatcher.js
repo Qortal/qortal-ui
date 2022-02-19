@@ -1,7 +1,7 @@
 import { parentEpml } from '../connect.js'
 
 export class UnconfirmedTransactionWatcher {
-    constructor () {
+    constructor() {
         this._unconfirmedTransactionStreams = {}
         this.reset() // Sets defaults
 
@@ -10,13 +10,13 @@ export class UnconfirmedTransactionWatcher {
         }, 10 * 1000)
     }
 
-    reset () {
+    reset() {
         this._addresses = {}
         this._addressesUnconfirmedTransactions = {}
     }
 
     // Adds an address to watch
-    addAddress (address) {
+    addAddress(address) {
         const addr = address.address
         this._addresses[addr] = address
         this._addressesUnconfirmedTransactions[addr] = []
@@ -24,13 +24,13 @@ export class UnconfirmedTransactionWatcher {
         this._unconfirmedTransactionStreams[addr] = new EpmlStream(`unconfirmedOfAddress/${addr}`, () => this._addressesUnconfirmedTransactions[addr])
     }
 
-    check () {
+    check() {
         const c = this._addressTransactionCheck()
             .then(() => setTimeout(() => this.check(), 5000))
             .catch(() => setTimeout(() => this.check(), 5000))
     }
 
-    async _addressTransactionCheck () {
+    async _addressTransactionCheck() {
         return Promise.all(Object.keys(this._addresses).map(addr => {
             return parentEpml.request('apiCall', {
                 type: 'api',

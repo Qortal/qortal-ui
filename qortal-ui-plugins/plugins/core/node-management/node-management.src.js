@@ -1,42 +1,42 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
-import { Epml } from "../../../epml.js";
+import { Epml } from '../../../epml.js'
 
-import "@polymer/paper-spinner/paper-spinner-lite.js";
-import "@vaadin/vaadin-grid/vaadin-grid.js";
-import "@vaadin/vaadin-grid/theme/material/all-imports.js";
-import "@material/mwc-icon";
-import "@material/mwc-textfield";
-import "@material/mwc-button";
-import "@material/mwc-dialog";
+import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@material/mwc-icon'
+import '@material/mwc-textfield'
+import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 
-const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
+const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
 
 class NodeManagement extends LitElement {
-  static get properties() {
-    return {
-      loading: { type: Boolean },
-      upTime: { type: String },
-      mintingAccounts: { type: Array },
-      peers: { type: Array },
-      addMintingAccountLoading: { type: Boolean },
-      removeMintingAccountLoading: { type: Boolean },
-      addPeerLoading: { type: Boolean },
-      confPeerLoading: { type: Boolean },
-      addMintingAccountKey: { type: String },
-      removeMintingAccountKey: { type: String },
-      addPeerMessage: { type: String },
-      confPeerMessage: { type: String },
-      addMintingAccountMessage: { type: String },
-      removeMintingAccountMessage: { type: String },
-      tempMintingAccount: { type: Object },
-      nodeConfig: { type: Object },
-      nodeDomain: { type: String },
-    };
-  }
+    static get properties() {
+        return {
+            loading: { type: Boolean },
+            upTime: { type: String },
+            mintingAccounts: { type: Array },
+            peers: { type: Array },
+            addMintingAccountLoading: { type: Boolean },
+            removeMintingAccountLoading: { type: Boolean },
+            addPeerLoading: { type: Boolean },
+            confPeerLoading: { type: Boolean },
+            addMintingAccountKey: { type: String },
+            removeMintingAccountKey: { type: String },
+            addPeerMessage: { type: String },
+            confPeerMessage: { type: String },
+            addMintingAccountMessage: { type: String },
+            removeMintingAccountMessage: { type: String },
+            tempMintingAccount: { type: Object },
+            nodeConfig: { type: Object },
+            nodeDomain: { type: String }
+        };
+    }
 
-  static get styles() {
-    return css`
+    static get styles() {
+        return css`
         * {
             --mdc-theme-primary: rgb(3, 169, 244);
             --paper-input-container-focus-color: var(--mdc-theme-primary);
@@ -72,7 +72,6 @@ class NodeManagement extends LitElement {
         }
 
         .node-card {
-            /* margin:12px; */
             padding: 12px 24px;
             background: #fff;
             border-radius: 2px;
@@ -95,38 +94,39 @@ class NodeManagement extends LitElement {
             display: hidden !important;
             visibility: none !important;
         }
+
         .details {
             display: flex;
             font-size: 18px;
         }
     `;
-  }
+    }
 
-  constructor() {
-      super();
-      this.upTime = "";
-      this.mintingAccounts = [];
-      this.peers = [];
-      this.addPeerLoading = false;
-      this.confPeerLoading = false;
-      this.addMintingAccountLoading = false;
-      this.removeMintingAccountLoading = false;
-      this.addMintingAccountKey = "";
-      this.addPeerMessage = "";
-      this.confPeerMessage = "";
-      this.addMintingAccountMessage = "";
-      this.tempMintingAccount = {};
-      this.config = {
-          user: {
-              node: {},
-          },
-      };
-      this.nodeConfig = {};
-      this.nodeDomain = "";
-  }
+    constructor() {
+        super();
+        this.upTime = "";
+        this.mintingAccounts = [];
+        this.peers = [];
+        this.addPeerLoading = false;
+        this.confPeerLoading = false;
+        this.addMintingAccountLoading = false;
+        this.removeMintingAccountLoading = false;
+        this.addMintingAccountKey = "";
+        this.addPeerMessage = "";
+        this.confPeerMessage = "";
+        this.addMintingAccountMessage = "";
+        this.tempMintingAccount = {};
+        this.config = {
+            user: {
+                node: {},
+            },
+        };
+        this.nodeConfig = {};
+        this.nodeDomain = "";
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div id="node-management-page">
         <div class="node-card">
           <h2>Node management for: ${this.nodeDomain}</h2>
@@ -143,7 +143,7 @@ class NodeManagement extends LitElement {
               <mwc-button
                 style="float:right;"
                 @click=${() =>
-                  this.shadowRoot
+                this.shadowRoot
                     .querySelector("#addMintingAccountDialog")
                     .show()}
                 ><mwc-icon>add</mwc-icon>Add minting account</mwc-button
@@ -201,7 +201,7 @@ class NodeManagement extends LitElement {
               </mwc-button>
             </mwc-dialog>
 
-            <vaadin-grid id="mintingAccountsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" aria-label="Minting Accounts" .items="${this.mintingAccounts}" height-by-rows>
+            <vaadin-grid theme="compact" id="mintingAccountsGrid" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" .items="${this.mintingAccounts}" aria-label="Minting Accounts" all-rows-visible>
               	<vaadin-grid-column auto-width header="Minting Account" path="mintingAccount"></vaadin-grid-column>
               	<vaadin-grid-column auto-width header="Recipient Account" path="recipientAccount"></vaadin-grid-column>
                 <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
@@ -253,12 +253,12 @@ class NodeManagement extends LitElement {
               </mwc-button>
             </mwc-dialog>
 
-            <vaadin-grid id="peersGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.peers)}" aria-label="Peers" .items="${this.peers}" height-by-rows>
+            <vaadin-grid theme="compact" id="peersGrid" ?hidden="${this.isEmptyArray(this.peers)}" .items="${this.peers}" aria-label="Peers" all-rows-visible>
                 <vaadin-grid-column path="address"></vaadin-grid-column>
                 <vaadin-grid-column path="lastHeight"></vaadin-grid-column>
                 <vaadin-grid-column path="version" header="Build Version"></vaadin-grid-column>
                 <vaadin-grid-column path="age" header="Connected for"></vaadin-grid-column>
-				        <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
+	            <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
                     render(html`<mwc-button class="red" @click=${() => this.removePeer(data.item.address, data.index)}><mwc-icon>delete</mwc-icon>Remove</mwc-button><mwc-button class="green" @click=${() => this.forceSyncPeer(data.item.address, data.index)}>Force Sync</mwc-button>`, root)
                 }}></vaadin-grid-column>
             </vaadin-grid>
@@ -269,81 +269,81 @@ class NodeManagement extends LitElement {
         </div>
       </div>
     `;
-  }
-	
-  forceSyncPeer (peerAddress, rowIndex) {
-    parentEpml
-      .request("apiCall", {
-        url: `/admin/forcesync?apiKey=${this.getApiKey()}`,
-        method: "POST",
-        body: peerAddress,
-      })
-      .then((res) => {
-        parentEpml.request('showSnackBar', "Starting Sync with Peer: " + peerAddress );
-      });
-  }
-	
-  removePeer(peerAddress, rowIndex) {
-    parentEpml
-      .request("apiCall", {
-        url: `/peers?apiKey=${this.getApiKey()}`,
-        method: "DELETE",
-        body: peerAddress,
-      })
-      .then((res) => {
-        parentEpml.request('showSnackBar', "Successfully removed Peer: " + peerAddress );
-        this.peers.splice(rowIndex, 1);
-      });
-  }
-	
-  onPageNavigation(pageUrl) {
-    parentEpml.request("setPageUrl", pageUrl);
-  }
+    }
 
-  addPeer(e) {
-    this.addPeerLoading = true;
-    const addPeerAddress = this.shadowRoot.querySelector("#addPeerAddress")
-      .value;
+    forceSyncPeer(peerAddress, rowIndex) {
+        parentEpml
+            .request("apiCall", {
+                url: `/admin/forcesync?apiKey=${this.getApiKey()}`,
+                method: "POST",
+                body: peerAddress,
+            })
+            .then((res) => {
+                parentEpml.request('showSnackBar', "Starting Sync with Peer: " + peerAddress);
+            });
+    }
 
-    parentEpml
-      .request("apiCall", {
-        url: `/peers?apiKey=${this.getApiKey()}`,
-        method: "POST",
-        body: addPeerAddress,
-      })
-      .then((res) => {
-        this.addPeerMessage = res.message;
-        this.addPeerLoading = false;
-      });
-  }
+    removePeer(peerAddress, rowIndex) {
+        parentEpml
+            .request("apiCall", {
+                url: `/peers?apiKey=${this.getApiKey()}`,
+                method: "DELETE",
+                body: peerAddress,
+            })
+            .then((res) => {
+                parentEpml.request('showSnackBar', "Successfully removed Peer: " + peerAddress);
+                this.peers.splice(rowIndex, 1);
+            });
+    }
 
-  addMintingAccount(e) {
-    this.addMintingAccountLoading = true;
-    this.addMintingAccountMessage = "Loading...";
+    onPageNavigation(pageUrl) {
+        parentEpml.request("setPageUrl", pageUrl);
+    }
 
-    this.addMintingAccountKey = this.shadowRoot.querySelector(
-      "#addMintingAccountKey"
-    ).value;
+    addPeer(e) {
+        this.addPeerLoading = true;
+        const addPeerAddress = this.shadowRoot.querySelector("#addPeerAddress")
+            .value;
 
-    parentEpml
-      .request("apiCall", {
-        url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
-        method: "POST",
-        body: this.addMintingAccountKey,
-      })
-      .then((res) => {
-        if (res === true) {
-          this.updateMintingAccounts();
-          this.addMintingAccountKey = "";
-          this.addMintingAccountMessage = "Minting Node Added Successfully!";
-          this.addMintingAccountLoading = false;
-        } else {
-          this.addMintingAccountKey = "";
-          this.addMintingAccountMessage = "Failed to Add Minting Node!"; // Corrected an error here thanks to crow (-_-)
-          this.addMintingAccountLoading = false;
-        }
-      });
-  }
+        parentEpml
+            .request("apiCall", {
+                url: `/peers?apiKey=${this.getApiKey()}`,
+                method: "POST",
+                body: addPeerAddress,
+            })
+            .then((res) => {
+                this.addPeerMessage = res.message;
+                this.addPeerLoading = false;
+            });
+    }
+
+    addMintingAccount(e) {
+        this.addMintingAccountLoading = true;
+        this.addMintingAccountMessage = "Loading...";
+
+        this.addMintingAccountKey = this.shadowRoot.querySelector(
+            "#addMintingAccountKey"
+        ).value;
+
+        parentEpml
+            .request("apiCall", {
+                url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
+                method: "POST",
+                body: this.addMintingAccountKey,
+            })
+            .then((res) => {
+                if (res === true) {
+                    this.updateMintingAccounts();
+                    this.addMintingAccountKey = "";
+                    this.addMintingAccountMessage = "Minting Node Added Successfully!";
+                    this.addMintingAccountLoading = false;
+                } else {
+                    this.addMintingAccountKey = "";
+                    this.addMintingAccountMessage = "Failed to Add Minting Node!"; // Corrected an error here thanks to crow (-_-)
+                    this.addMintingAccountLoading = false;
+                }
+            });
+    }
 
     updateMintingAccounts() {
         parentEpml.request("apiCall", {
@@ -358,9 +358,9 @@ class NodeManagement extends LitElement {
         const getSelectedText = () => {
             var text = "";
             if (typeof window.getSelection != "undefined") {
-            text = window.getSelection().toString();
+                text = window.getSelection().toString();
             } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-            text = this.shadowRoot.selection.createRange().text;
+                text = this.shadowRoot.selection.createRange().text;
             }
             return text;
         }
@@ -369,18 +369,18 @@ class NodeManagement extends LitElement {
             let selectedText = getSelectedText();
             if (selectedText && typeof selectedText === 'string') {
 
-            let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
+                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
 
-            let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
+                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
 
-            parentEpml.request('openCopyTextMenu', textMenuObject)
+                parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
 
         checkSelectedTextAndShowMenu()
     }
 
-	removeMintingAccount(publicKey) {        
+    removeMintingAccount(publicKey) {
         this.removeMintingAccountLoading = true;
 
         parentEpml.request("apiCall", {
@@ -397,116 +397,116 @@ class NodeManagement extends LitElement {
                 parentEpml.request('showSnackBar', "Failed to Remove Minting Account!");
             }
         });
-	}
-
-  firstUpdated() {
-
-    // Call updateMintingAccounts
-    this.updateMintingAccounts();
-
-    window.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-      this._textMenu(event)
-    });
-    window.addEventListener("click", () => {
-      parentEpml.request('closeCopyTextMenu', null)
-    });
-    window.onkeyup = (e) => {
-      if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
     }
 
-    // Calculate HH MM SS from Milliseconds...
-    const convertMsToTime = (milliseconds) => {
-      let day, hour, minute, seconds;
-      seconds = Math.floor(milliseconds / 1000);
-      minute = Math.floor(seconds / 60);
-      seconds = seconds % 60;
-      hour = Math.floor(minute / 60);
-      minute = minute % 60;
-      day = Math.floor(hour / 24);
-      hour = hour % 24;
-      if (isNaN(day)) {
-        return "offline";
-      }
-      return day + "d " + hour + "h " + minute + "m";
-    };
+    firstUpdated() {
 
-    const getNodeUpTime = () => {
-      parentEpml
-        .request("apiCall", {
-          url: `/admin/uptime`,
-        })
-        .then((res) => {
-          this.upTime = "";
-          setTimeout(() => {
-            this.upTime = convertMsToTime(res);
-          }, 1);
+        // Call updateMintingAccounts
+        this.updateMintingAccounts();
+
+        window.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            this._textMenu(event)
         });
-
-      setTimeout(getNodeUpTime, this.config.user.nodeSettings.pingInterval);
-    };
-
-    const updatePeers = () => {
-      parentEpml
-        .request("apiCall", {
-          url: `/peers`,
-        })
-        .then((res) => {
-          setTimeout(() => {
-            this.peers = res;
-          }, 1);
+        window.addEventListener("click", () => {
+            parentEpml.request('closeCopyTextMenu', null)
         });
-
-      setTimeout(updatePeers, this.config.user.nodeSettings.pingInterval);
-    };
-
-    const getNodeConfig = () => {
-      parentEpml.request("getNodeConfig").then((res) => {
-        setTimeout(() => {
-          this.nodeConfig = res;
-        }, 1);
-        let myNode = window.parent.reduxStore.getState().app.nodeConfig
-          .knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        this.nodeDomain = myNode.domain + ":" + myNode.port;
-      });
-
-      setTimeout(getNodeConfig, 1000);
-    };
-
-    let configLoaded = false;
-    parentEpml.ready().then(() => {
-      parentEpml.subscribe("config", async c => {
-        if (!configLoaded) {
-          setTimeout(getNodeUpTime, 1);
-          setTimeout(updatePeers, 1);
-          setTimeout(this.updateMintingAccounts, 1);
-          setTimeout(getNodeConfig, 1);
-          configLoaded = true;
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
         }
-        this.config = JSON.parse(c);
-      })
-      parentEpml.subscribe('copy_menu_switch', async value => {
-          if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection();
-      })
-    });
-    parentEpml.imReady();
-  }
 
-  getApiKey() {
-    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-    let apiKey = myNode.apiKey;
-    return apiKey;
-  }
+        // Calculate HH MM SS from Milliseconds...
+        const convertMsToTime = (milliseconds) => {
+            let day, hour, minute, seconds;
+            seconds = Math.floor(milliseconds / 1000);
+            minute = Math.floor(seconds / 60);
+            seconds = seconds % 60;
+            hour = Math.floor(minute / 60);
+            minute = minute % 60;
+            day = Math.floor(hour / 24);
+            hour = hour % 24;
+            if (isNaN(day)) {
+                return "offline";
+            }
+            return day + "d " + hour + "h " + minute + "m";
+        };
 
-  clearSelection() {
-    window.getSelection().removeAllRanges()
-    window.parent.getSelection().removeAllRanges()
-  }
+        const getNodeUpTime = () => {
+            parentEpml
+                .request("apiCall", {
+                    url: `/admin/uptime`,
+                })
+                .then((res) => {
+                    this.upTime = "";
+                    setTimeout(() => {
+                        this.upTime = convertMsToTime(res);
+                    }, 1);
+                });
 
-  isEmptyArray(arr) {
-    if (!arr) return true;
-    return arr.length === 0;
-  }
+            setTimeout(getNodeUpTime, this.config.user.nodeSettings.pingInterval);
+        };
+
+        const updatePeers = () => {
+            parentEpml
+                .request("apiCall", {
+                    url: `/peers`,
+                })
+                .then((res) => {
+                    setTimeout(() => {
+                        this.peers = res;
+                    }, 1);
+                });
+
+            setTimeout(updatePeers, this.config.user.nodeSettings.pingInterval);
+        };
+
+        const getNodeConfig = () => {
+            parentEpml.request("getNodeConfig").then((res) => {
+                setTimeout(() => {
+                    this.nodeConfig = res;
+                }, 1);
+                let myNode = window.parent.reduxStore.getState().app.nodeConfig
+                    .knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+                this.nodeDomain = myNode.domain + ":" + myNode.port;
+            });
+
+            setTimeout(getNodeConfig, 1000);
+        };
+
+        let configLoaded = false;
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe("config", async c => {
+                if (!configLoaded) {
+                    setTimeout(getNodeUpTime, 1);
+                    setTimeout(updatePeers, 1);
+                    setTimeout(this.updateMintingAccounts, 1);
+                    setTimeout(getNodeConfig, 1);
+                    configLoaded = true;
+                }
+                this.config = JSON.parse(c);
+            })
+            parentEpml.subscribe('copy_menu_switch', async value => {
+                if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection();
+            })
+        });
+        parentEpml.imReady();
+    }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
+
+    clearSelection() {
+        window.getSelection().removeAllRanges()
+        window.parent.getSelection().removeAllRanges()
+    }
+
+    isEmptyArray(arr) {
+        if (!arr) return true;
+        return arr.length === 0;
+    }
 }
 
 window.customElements.define("node-management", NodeManagement);

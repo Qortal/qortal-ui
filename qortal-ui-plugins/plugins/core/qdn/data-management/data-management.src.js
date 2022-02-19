@@ -4,9 +4,8 @@ import { Epml } from '../../../../epml'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
-
-import '@vaadin/vaadin-grid/vaadin-grid.js'
-import '@vaadin/vaadin-grid/theme/material/all-imports.js'
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -147,7 +146,7 @@ class DataManagement extends LitElement {
                 </div>
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Data hosted by this node</h3>
-                    <vaadin-grid id="resourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.datres)}" page-size="20" height-by-rows>
+                    <vaadin-grid theme="compact" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.datres)}" aria-label="Data Hosted" page-size="20" all-rows-visible>
                         <vaadin-grid-column header="Registered Name" path="name"></vaadin-grid-column>
                         <vaadin-grid-column header="Service" path="service"></vaadin-grid-column>
 			<vaadin-grid-column header="Identifier" .renderer=${(root, column, data) => {

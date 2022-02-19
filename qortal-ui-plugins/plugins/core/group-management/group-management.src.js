@@ -6,11 +6,9 @@ import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-dialog'
-
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/vaadin-grid/vaadin-grid.js'
-import '@vaadin/vaadin-grid/theme/material/all-imports.js'
-
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -143,7 +141,7 @@ class GroupManagement extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Your Joined Groups</h3>
-                    <vaadin-grid id="joinedGroupsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.joinedGroups)}" aria-label="Joined Groups" .items="${this.joinedGroups}" height-by-rows>
+                    <vaadin-grid theme="compact" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
                         <vaadin-grid-column header="Name" path="groupName"></vaadin-grid-column>
                         <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
                         <vaadin-grid-column width="9.8rem" flex-grow="0" header="Role" .renderer=${(root, column, data) => {
@@ -160,7 +158,7 @@ class GroupManagement extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Public Groups</h3>
-                    <vaadin-grid id="publicGroupsGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.publicGroups)}" aria-label="Public Open Groups" .items="${this.publicGroups}" height-by-rows>
+                    <vaadin-grid theme="compact" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
                         <vaadin-grid-column path="groupName"></vaadin-grid-column>
                         <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
                         <vaadin-grid-column path="owner"></vaadin-grid-column>
@@ -494,18 +492,18 @@ class GroupManagement extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_GROUP`;
         await fetch(url)
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        })
-        .then((json) => {
-            this.createFee = (Number(json) / 1e8).toFixed(8);
-        })
-        .catch((response) => {
-            console.log(response.status, response.statusText, 'Need Core Update');
-        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            })
+            .then((json) => {
+                this.createFee = (Number(json) / 1e8).toFixed(8);
+            })
+            .catch((response) => {
+                console.log(response.status, response.statusText, 'Need Core Update');
+            })
     }
 
     async unitJoinFee() {
@@ -513,18 +511,18 @@ class GroupManagement extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`;
         await fetch(url)
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        })
-        .then((json) => {
-            this.joinFee = (Number(json) / 1e8).toFixed(8);
-        })
-        .catch((response) => {
-            console.log(response.status, response.statusText, 'Need Core Update');
-        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            })
+            .then((json) => {
+                this.joinFee = (Number(json) / 1e8).toFixed(8);
+            })
+            .catch((response) => {
+                console.log(response.status, response.statusText, 'Need Core Update');
+            })
     }
 
     async unitLeaveFee() {
@@ -532,18 +530,18 @@ class GroupManagement extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=LEAVE_GROUP`;
         await fetch(url)
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        })
-        .then((json) => {
-            this.leaveFee = (Number(json) / 1e8).toFixed(8);
-        })
-        .catch((response) => {
-            console.log(response.status, response.statusText, 'Need Core Update');
-        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            })
+            .then((json) => {
+                this.leaveFee = (Number(json) / 1e8).toFixed(8);
+            })
+            .catch((response) => {
+                console.log(response.status, response.statusText, 'Need Core Update');
+            })
     }
 
     resetDefaultSettings() {

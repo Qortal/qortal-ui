@@ -46,7 +46,6 @@ class TimeAgo extends LitElement {
     }
 
     firstUpdated() {
-        // ...
     }
 }
 

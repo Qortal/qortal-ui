@@ -2,11 +2,9 @@ import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 
 import { escape, unescape } from 'html-escaper';
-import { inputKeyCodes } from '../../utils/keyCodes.js';
-
+import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
 import './TimeAgo.js'
-
 import { EmojiPicker } from 'emoji-picker-js';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 

@@ -15,20 +15,20 @@ blockTests.push((block, addr) => {
 })
 
 export class AddressWatcher {
-    constructor (addresses) {
+    constructor(addresses) {
         addresses = addresses || []
         this.reset()
 
         addresses.forEach(addr => this.addAddress(addr))
     }
 
-    reset () {
+    reset() {
         this._addresses = {}
         this._addressStreams = {}
     }
 
     // Adds an address to watch
-    addAddress (address) {
+    addAddress(address) {
         const addr = address.address
         this._addresses[addr] = address
 
@@ -37,7 +37,7 @@ export class AddressWatcher {
         this.updateAddress(addr)
     }
 
-    async testBlock (block) {
+    async testBlock(block) {
         const pendingUpdateAddresses = []
         const transactions = await parentEpml.request('apiCall', { url: `/transactions/block/${block.signature}` })
         transactions.forEach(transaction => {
@@ -57,7 +57,7 @@ export class AddressWatcher {
         pendingUpdateAddresses.forEach(addr => this.updateAddress(addr))
     }
 
-    async updateAddress (addr) {
+    async updateAddress(addr) {
         let addressRequest = await parentEpml.request('apiCall', {
             type: 'explorer',
             data: {

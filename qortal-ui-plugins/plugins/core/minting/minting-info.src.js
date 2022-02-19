@@ -1,13 +1,13 @@
-import { LitElement, html, css } from "lit";
-import { render } from "lit/html.js";
-import { Epml } from "../../../epml.js";
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../epml.js'
 
-import "@material/mwc-icon";
-import "@material/mwc-button";
-import "@material/mwc-dialog";
-import "@material/mwc-textfield";
+import '@material/mwc-icon'
+import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@material/mwc-textfield'
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class MintingInfo extends LitElement {
     static get properties() {
@@ -18,7 +18,7 @@ class MintingInfo extends LitElement {
             nodeInfo: { type: Array },
             sampleBlock: { type: Array },
             addressInfo: { type: Array },
-            addressLevel: { type: Array },
+            addressLevel: { type: Array }
         }
     }
 
@@ -195,8 +195,8 @@ class MintingInfo extends LitElement {
     }
 
     render() {
-	if (this.renderMintingPage() === "false") {
-        return html`
+        if (this.renderMintingPage() === "false") {
+            return html`
             <div>
                 <div>
                     <span class="header-title">General Minting Details</span>
@@ -247,7 +247,7 @@ class MintingInfo extends LitElement {
                 </mwc-dialog>
             </div>
         `} else {
-        return html`
+            return html`
             <div>
                 <div>
                     <span class="header-title">General Minting Details</span>
@@ -356,14 +356,14 @@ class MintingInfo extends LitElement {
 
     firstUpdated() {
         const getAdminInfo = () => {
-            parentEpml.request("apiCall", {url: `/admin/info`}).then((res) => {
-                setTimeout(() => {this.adminInfo = res;}, 1);
+            parentEpml.request("apiCall", { url: `/admin/info` }).then((res) => {
+                setTimeout(() => { this.adminInfo = res; }, 1);
             });
             setTimeout(getAdminInfo, 30000);
         };
 
         const getNodeInfo = () => {
-            parentEpml.request("apiCall", {url: `/admin/status`}).then((res) => {
+            parentEpml.request("apiCall", { url: `/admin/status` }).then((res) => {
                 this.nodeInfo = res;
                 // Now look up the sample block
                 getSampleBlock()
@@ -373,21 +373,21 @@ class MintingInfo extends LitElement {
 
         const getSampleBlock = () => {
             let callBlock = parseFloat(this.nodeInfo.height) - 10000;
-            parentEpml.request("apiCall", {url: `/blocks/byheight/${callBlock}`}).then((res) => {
-                setTimeout(() => {this.sampleBlock = res;}, 1);
+            parentEpml.request("apiCall", { url: `/blocks/byheight/${callBlock}` }).then((res) => {
+                setTimeout(() => { this.sampleBlock = res; }, 1);
             });
         };
 
         const getAddressInfo = () => {
-            parentEpml.request('apiCall', {url: `/addresses/${window.parent.reduxStore.getState().app.selectedAddress.address}`}).then((res) => {
-                setTimeout(() => {this.addressInfo = res;}, 1);
+            parentEpml.request('apiCall', { url: `/addresses/${window.parent.reduxStore.getState().app.selectedAddress.address}` }).then((res) => {
+                setTimeout(() => { this.addressInfo = res; }, 1);
             });
             setTimeout(getAddressInfo, 30000);
         };
 
         const getAddressLevel = () => {
-            parentEpml.request('apiCall', {url: `/addresses/online/levels`}).then((res) => {
-                setTimeout(() => {this.addressLevel = res;}, 1);
+            parentEpml.request('apiCall', { url: `/addresses/online/levels` }).then((res) => {
+                setTimeout(() => { this.addressLevel = res; }, 1);
             });
             setTimeout(getAddressLevel, 30000);
         };
@@ -432,30 +432,30 @@ class MintingInfo extends LitElement {
 
     renderActivateHelp() {
         if (this.renderMintingPage() === "false") {
-            return html `Activate Account Details <div class="level-blue">==></div> Not Activated<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#activateAccountDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
+            return html`Activate Account Details <div class="level-blue">==></div> Not Activated<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#activateAccountDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
         } else {
             return "No Details";
         }
     }
     _averageBlockTime() {
         let avgBlockString = (this.adminInfo.currentTimestamp - this.sampleBlock.timestamp).toString();
-	let averageTimeString = ((avgBlockString / 1000) / 10000).toFixed(2);
-	let averageBlockTimeString = (averageTimeString).toString();
+        let averageTimeString = ((avgBlockString / 1000) / 10000).toFixed(2);
+        let averageBlockTimeString = (averageTimeString).toString();
         return "" + averageBlockTimeString;
     }
 
     _timeCalc() {
         let timeString = (this.adminInfo.currentTimestamp - this.sampleBlock.timestamp).toString();
-	let averageString = ((timeString / 1000) / 10000).toFixed(2);
-	let averageBlockDay = (86400 / averageString).toFixed(2);
-	let averageBlockDayString = (averageBlockDay).toString();
+        let averageString = ((timeString / 1000) / 10000).toFixed(2);
+        let averageBlockDay = (86400 / averageString).toFixed(2);
+        let averageBlockDayString = (averageBlockDay).toString();
         return "" + averageBlockDayString;
     }
 
     _dayReward() {
         let rewardString = (this._timeCalc() * this._blockReward()).toFixed(2);
-	let rewardDayString = (rewardString).toString();
-        return "" + rewardDayString ;
+        let rewardDayString = (rewardString).toString();
+        return "" + rewardDayString;
     }
 
     _mintingStatus() {
@@ -478,7 +478,7 @@ class MintingInfo extends LitElement {
 
     renderMintingHelp() {
         if (this._mintingStatus() === "Not Minting") {
-            return html `Minting Account Details <div class="level-blue">==></div> Not A Minter<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#becomeMinterDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
+            return html`Minting Account Details <div class="level-blue">==></div> Not A Minter<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#becomeMinterDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
         } else {
             return "Minting Account Details";
         }

@@ -2,13 +2,10 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml.js'
 
-// Components
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
-
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -296,11 +293,10 @@ class Chat extends LitElement {
             </div>
 
             <div class="chat">
-                <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${ () => this.scrollToBottom()}>
+                <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
                     <span style="flex: 1;">New Message</span>
                     <span>(Click to scroll down) <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
                 </div>
-
                 <div class="chat-history">
                     ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
                 </div>
@@ -474,9 +470,7 @@ class Chat extends LitElement {
             })
             parentEpml.subscribe('chat_heads', chatHeads => {
                 chatHeads = JSON.parse(chatHeads)
-                // setTimeout(() => {
                 this.getChatHeadFromState(chatHeads)
-                // }, 5000)
             })
             parentEpml.request('apiCall', {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`

@@ -40,7 +40,6 @@ class Messaging extends LitElement {
                 color: rgb(3, 169, 244);
                 margin-top: .5rem;
                 font-weight: 400;
-                /* font-size: 19px; */
                 text-align: center;
             }
 
@@ -60,7 +59,6 @@ class Messaging extends LitElement {
             .divCard {
                 border: 1px solid #eee;
                 padding: 1em;
-                /** box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20); **/
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 1.5rem;
             }

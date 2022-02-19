@@ -5,9 +5,8 @@ import { Epml } from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
-
-import '@vaadin/vaadin-grid/vaadin-grid.js'
-import '@vaadin/vaadin-grid/theme/material/all-imports.js'
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -15,14 +14,14 @@ class Websites extends LitElement {
     static get properties() {
         return {
             service: { type: String },
-	    identifier: { type: String },
+            identifier: { type: String },
             loading: { type: Boolean },
             resources: { type: Array },
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
             selectedAddress: { type: Object },
-	    searchName: { type: String },
+            searchName: { type: String },
             searchResources: { type: Array },
             searchFollowedNames: { type: Array },
             searchBlockedNames: { type: Array }
@@ -159,7 +158,7 @@ class Websites extends LitElement {
     constructor() {
         super()
         this.service = "WEBSITE"
-	this.identifier = null
+        this.identifier = null
         this.selectedAddress = {}
         this.resources = []
         this.followedNames = []
@@ -185,15 +184,15 @@ class Websites extends LitElement {
                         <mwc-textfield outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
                         <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search</mwc-button>
                     </div><br />
-                    <vaadin-grid id="searchResourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" height-by-rows>
+                    <vaadin-grid theme="compact" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-                                render(html`${this.renderSearchAvatar(data.item)}`, root)
+                            render(html`${this.renderSearchAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
                         <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchName(data.item)}`, root)
                         }}></vaadin-grid-column>
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchStatus(data.item)}`, root)
+                             render(html`${this.renderSearchStatus(data.item)}`, root)
                         }}></vaadin-grid-column>
 			            <vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchSize(data.item)}`, root)
@@ -205,10 +204,12 @@ class Websites extends LitElement {
                             render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
                         }}></vaadin-grid-column>
                     </vaadin-grid><br />
+                </div>
+                <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-                    <vaadin-grid id="resourcesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.resources)}" page-size="20" height-by-rows>
+                    <vaadin-grid theme="compact" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-                                render(html`${this.renderAvatar(data.item)}`, root)
+                            render(html`${this.renderAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
                         <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
                             render(html`${this.renderName(data.item)}`, root)
@@ -246,7 +247,7 @@ class Websites extends LitElement {
             })
 
             this.followedNames = followedNames
-            setTimeout(getFollowedNames, this.config.user.nodeSettings.pingInterval)
+            setTimeout(getFollowedNames, 60000)
         }
 
         const getBlockedNames = async () => {
@@ -255,7 +256,7 @@ class Websites extends LitElement {
             })
 
             this.blockedNames = blockedNames
-            setTimeout(getBlockedNames, this.config.user.nodeSettings.pingInterval)
+            setTimeout(getBlockedNames, 60000)
         }
 
         const getSearchFollowedNames = async () => {
@@ -264,7 +265,7 @@ class Websites extends LitElement {
             })
 
             this.searchFollowedNames = searchFollowedNames
-            setTimeout(getSearchFollowedNames, this.config.user.nodeSettings.pingInterval)
+            setTimeout(getSearchFollowedNames, 60000)
         }
 
         const getSearchBlockedNames = async () => {
@@ -273,7 +274,7 @@ class Websites extends LitElement {
             })
 
             this.searchBlockedNames = searchBlockedNames
-            setTimeout(getSearchBlockedNames, this.config.user.nodeSettings.pingInterval)
+            setTimeout(getSearchBlockedNames, 60000)
         }
 
         const getRelayMode = async () => {
@@ -282,7 +283,7 @@ class Websites extends LitElement {
             })
 
             this.relayMode = relayMode;
-            setTimeout(getRelayMode, this.config.user.nodeSettings.pingInterval)
+            setTimeout(getRelayMode, 60000)
         }
 
 
@@ -318,7 +319,7 @@ class Websites extends LitElement {
                     setTimeout(getSearchFollowedNames, 1)
                     setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
-                    setInterval(this.getArbitraryResources, 120 * 1000)
+                    setInterval(this.getArbitraryResources, 120000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -419,13 +420,13 @@ class Websites extends LitElement {
     }
 
     doSearch(e) {
-	this.searchResult()
+        this.searchResult()
     }
 
     async searchResult() {
         let searchName = this.shadowRoot.getElementById('searchName').value
         if (searchName.length === 0) {
-	    parentEpml.request('showSnackBar', 'Name Can Not Be Empty!')
+            parentEpml.request('showSnackBar', 'Name Can Not Be Empty!')
         } else {
             let searchResources = await parentEpml.request('apiCall', {
                 url: `/arbitrary/resources/search?service=${this.service}&query=${searchName}&default=true&limit=5&reverse=false&includestatus=true`
@@ -481,7 +482,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
             method: 'POST',
@@ -491,7 +492,7 @@ class Websites extends LitElement {
             body: `${namesJsonString}`
         })
         if (ret === true) {
-            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name); 
+            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
             this.searchFollowedNames.push(name)
         }
         else {
@@ -505,7 +506,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
             method: 'DELETE',
@@ -515,7 +516,7 @@ class Websites extends LitElement {
             body: `${namesJsonString}`
         })
         if (ret === true) {
-            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name); 
+            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
@@ -541,7 +542,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
             method: 'POST',
@@ -551,7 +552,7 @@ class Websites extends LitElement {
             body: `${namesJsonString}`
         })
         if (ret === true) {
-            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name); 
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
             this.searchBlockedNames.push(name)
         }
         else {
@@ -565,7 +566,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
             method: 'DELETE',
@@ -575,7 +576,7 @@ class Websites extends LitElement {
             body: `${namesJsonString}`
         })
         if (ret === true) {
-            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name); 
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
@@ -619,7 +620,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -634,7 +635,7 @@ class Websites extends LitElement {
             // Successfully followed - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.followedNames = this.followedNames.filter(item => item != name); 
+            this.followedNames = this.followedNames.filter(item => item != name);
             this.followedNames.push(name)
         }
         else {
@@ -649,7 +650,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -662,7 +663,7 @@ class Websites extends LitElement {
 
         if (ret === true) {
             // Successfully unfollowed - remove from local list
-            this.followedNames = this.followedNames.filter(item => item != name); 
+            this.followedNames = this.followedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
@@ -676,7 +677,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -691,7 +692,7 @@ class Websites extends LitElement {
             // Successfully blocked - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.blockedNames = this.blockedNames.filter(item => item != name); 
+            this.blockedNames = this.blockedNames.filter(item => item != name);
             this.blockedNames.push(name)
         }
         else {
@@ -706,7 +707,7 @@ class Websites extends LitElement {
         let items = [
             name
         ]
-        let namesJsonString = JSON.stringify({"items": items})
+        let namesJsonString = JSON.stringify({ "items": items })
 
         let ret = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -719,7 +720,7 @@ class Websites extends LitElement {
 
         if (ret === true) {
             // Successfully unblocked - remove from local list
-            this.blockedNames = this.blockedNames.filter(item => item != name); 
+            this.blockedNames = this.blockedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
@@ -796,7 +797,7 @@ class Websites extends LitElement {
         if (bytes == 0) return '0 bytes';
         var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-     }
+    }
 
     _textMenu(event) {
 

@@ -7,10 +7,9 @@ import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-dialog'
 import '@material/mwc-slider'
-
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/vaadin-grid/vaadin-grid.js'
-import '@vaadin/vaadin-grid/theme/material/all-imports.js'
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -43,6 +42,12 @@ class RewardShare extends LitElement {
                 padding: 12px 24px;
             }
 
+            .divCard {
+                border: 1px solid #eee;
+                padding: 1em;
+                box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
+            }
+
             h2 {
                 margin:0;
             }
@@ -73,18 +78,21 @@ class RewardShare extends LitElement {
         return html`
             <div id="reward-share-page">
                 <div style="min-height:48px; display: flex; padding-bottom: 6px;">
-                    <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Rewardshares involving this account</h3>
+                    <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Rewardshares</h3>
                     <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createRewardShareDialog').show()}><mwc-icon>add</mwc-icon>Create reward share</mwc-button>
                 </div>
 
-                <vaadin-grid id="accountRewardSharesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" height-by-rows>
-                    <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
-                    <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
-                    <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
-                    <vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
-                        render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
-                    }}></vaadin-grid-column>
-                </vaadin-grid>
+                <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Rewardshares Involving In This Account</h3>
+                    <vaadin-grid theme="compact" id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
+                        <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
+                        <vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
+                        }}></vaadin-grid-column>
+                    </vaadin-grid>
+                </div>
 
                 <mwc-dialog id="createRewardShareDialog" scrimClickAction="${this.createRewardShareLoading ? '' : 'close'}">
                     <div>Level 1 - 4 can create a Self Share and Level 5 or above can create a Reward Share!</div>
@@ -248,7 +256,7 @@ class RewardShare extends LitElement {
         const recipientPublicKey = this.shadowRoot.getElementById("recipientPublicKey").value
         const percentageShare = this.shadowRoot.getElementById("rewardSharePercentageSlider").value
 
-        // Check for valid...^
+        // Check for valid...
         this.createRewardShareLoading = true
 
         let recipientAddress = window.parent.base58PublicKeyToAddress(recipientPublicKey)
@@ -339,8 +347,8 @@ class RewardShare extends LitElement {
                     this.error = true
                     this.message = `CANNOT CREATE SELF SHARE! at level ${accountDetails.level}`
                 }
-            } else { //Check for creating reward shares
-
+            } else {
+                //Check for creating reward shares
                 if (accountDetails.level >= 5) {
 
                     this.error = false
@@ -402,7 +410,7 @@ class RewardShare extends LitElement {
     async removeRewardShare(rewardShareObject) {
         const myPercentageShare = -1
 
-        // Check for valid...^
+        // Check for valid...
         this.removeRewardShareLoading = true
 
         // Get Last Ref

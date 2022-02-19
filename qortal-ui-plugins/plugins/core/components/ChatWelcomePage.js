@@ -406,7 +406,7 @@ class ChatWelcomePage extends LitElement {
         getAddressPublicKey()
     }
 
-   _textMenu(event) {
+    _textMenu(event) {
         const getSelectedText = () => {
             var text = "";
             if (typeof window.getSelection != "undefined") {

@@ -6,10 +6,9 @@ import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-dialog'
-
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/vaadin-grid/vaadin-grid.js'
-import '@vaadin/vaadin-grid/theme/material/all-imports.js'
+import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/theme/material/all-imports.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -86,10 +85,10 @@ class NameRegistration extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Registered Names</h3>
-                    <vaadin-grid id="namesGrid" style="height:auto;" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Names" .items="${this.names}" height-by-rows>
+                    <vaadin-grid theme="compact" id="namesGrid" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Names" .items="${this.names}" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                             render(html`${this.renderAvatar(data.item)}`, root)
-                        }}></vaadin-grid-column>    
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column path="name"></vaadin-grid-column>
                         <vaadin-grid-column path="owner"></vaadin-grid-column>
                         <vaadin-grid-column width="12rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
@@ -216,18 +215,18 @@ class NameRegistration extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=REGISTER_NAME`;
         await fetch(url)
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        })
-        .then((json) => {
-            this.fee = (Number(json) / 1e8).toFixed(8);
-        })
-        .catch((response) => {
-            console.log(response.status, response.statusText, 'Need Core Update');
-        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            })
+            .then((json) => {
+                this.fee = (Number(json) / 1e8).toFixed(8);
+            })
+            .catch((response) => {
+                console.log(response.status, response.statusText, 'Need Core Update');
+            })
     }
 
     getApiKey() {
@@ -248,7 +247,7 @@ class NameRegistration extends LitElement {
         const nameInput = this.shadowRoot.getElementById("nameInput").value
         const descInput = this.shadowRoot.getElementById("descInput").value
 
-        // Check for valid...^
+        // Check for valid...
         this.registerNameLoading = true
 
         // Get Last Ref
