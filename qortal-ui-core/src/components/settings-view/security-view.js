@@ -4,9 +4,7 @@ import { store } from '../../store.js'
 
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
-
-import '@vaadin/vaadin-text-field/vaadin-password-field.js'
-
+import '@vaadin/password-field/vaadin-password-field.js'
 import FileSaver from 'file-saver'
 
 class SecurityView extends connect(store)(LitElement) {

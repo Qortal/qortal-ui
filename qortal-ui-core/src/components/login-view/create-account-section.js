@@ -3,30 +3,23 @@ import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 
 import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
-
 import FileSaver from 'file-saver'
-
 import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet } from '../../redux/user/user-actions.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
-
 import snackbar from '../../functional-components/snackbar.js'
-
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
-
 import '@polymer/iron-pages'
 import '@polymer/paper-input/paper-input-container.js'
 import '@polymer/paper-input/paper-input.js'
-import '@vaadin/vaadin-text-field/vaadin-text-field.js'
-import '@vaadin/vaadin-text-field/vaadin-password-field.js'
-
+import '@vaadin/text-field/vaadin-text-field.js'
+import '@vaadin/password-field/vaadin-password-field.js'
 import 'random-sentence-generator'
-
 import ripple from '../../functional-components/loading-ripple.js'
 
 let lastPassword = ''
