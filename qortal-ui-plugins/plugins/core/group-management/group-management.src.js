@@ -8,6 +8,8 @@ import '@material/mwc-textfield'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid/vaadin-grid-filter-column.js'
+import '@vaadin/grid/vaadin-grid-sort-column.js'
 import '@vaadin/grid/theme/material/all-imports.js'
 import '@github/time-elements'
 
@@ -141,8 +143,8 @@ class GroupManagement extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Your Joined Groups</h3>
-                    <vaadin-grid theme="compact" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
-                        <vaadin-grid-column header="Name" path="groupName"></vaadin-grid-column>
+                    <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
+                        <vaadin-grid-column header="Group Name" path="groupName"></vaadin-grid-column>
                         <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
                         <vaadin-grid-column width="9.8rem" flex-grow="0" header="Role" .renderer=${(root, column, data) => {
                             render(html`${this.renderRole(data.item)}`, root)
@@ -158,10 +160,10 @@ class GroupManagement extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Public Groups</h3>
-                    <vaadin-grid theme="compact" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
-                        <vaadin-grid-column path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column path="owner"></vaadin-grid-column>
+                    <vaadin-grid theme="large" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
+                        <vaadin-grid-filter-column header="Group Name" path="groupName"></vaadin-grid-filter-column>
+                        <vaadin-grid-filter-column header="Description" path="description"></vaadin-grid-filter-column>
+                        <vaadin-grid-filter-column header="Owner" path="owner"></vaadin-grid-filter-column>
                         <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
                             render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>Join</mwc-button>`, root)
                         }}></vaadin-grid-column>

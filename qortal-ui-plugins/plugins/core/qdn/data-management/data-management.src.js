@@ -146,18 +146,21 @@ class DataManagement extends LitElement {
                 </div>
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Data hosted by this node</h3>
-                    <vaadin-grid theme="compact" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.datres)}" aria-label="Data Hosted" page-size="20" all-rows-visible>
+                    <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.datres)}" aria-label="Data Hosted" page-size="20" all-rows-visible>
                         <vaadin-grid-column header="Registered Name" path="name"></vaadin-grid-column>
                         <vaadin-grid-column header="Service" path="service"></vaadin-grid-column>
 			<vaadin-grid-column header="Identifier" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderIdentifier(data.item)}`, root)
-            		}}></vaadin-grid-column>
+            		}}>
+                        </vaadin-grid-column>
 			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderDeleteButton(data.item)}`, root);
-            		}}></vaadin-grid-column>
+            		}}>
+                        </vaadin-grid-column>
 			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-            		}}></vaadin-grid-column>
+            		}}>
+                        </vaadin-grid-column>
                     </vaadin-grid>
                     <div id="pages"></div>
 		    ${this.renderDefaultText()}

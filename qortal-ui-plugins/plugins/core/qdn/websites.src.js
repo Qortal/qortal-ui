@@ -184,48 +184,60 @@ class Websites extends LitElement {
                         <mwc-textfield outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
                         <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search</mwc-button>
                     </div><br />
-                    <vaadin-grid theme="compact" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
+                    <vaadin-grid theme="large" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchAvatar(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchName(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                              render(html`${this.renderSearchStatus(data.item)}`, root)
-                        }}></vaadin-grid-column>
-			            <vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+                        }}>
+                        </vaadin-grid-column>
+			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchSize(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchFollowUnfollowButton(data.item)}`, root);
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                             render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                     </vaadin-grid><br />
                 </div>
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-                    <vaadin-grid theme="compact" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
+                    <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                             render(html`${this.renderAvatar(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
                             render(html`${this.renderName(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
                             render(html`${this.renderStatus(data.item)}`, root)
-                        }}></vaadin-grid-column>
-			            <vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+                        }}>
+                        </vaadin-grid-column>
+			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
                             render(html`${this.renderSize(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
                             render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                             render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                     </vaadin-grid>
                     <div id="pages"></div>
                     ${this.isEmptyArray(this.resources) ? html`

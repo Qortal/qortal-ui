@@ -85,14 +85,15 @@ class Puzzles extends LitElement {
 					<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Puzzles</h3>
 				</div>
                                 <div class="divCard">
-				    <vaadin-grid theme="compact" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
+				    <vaadin-grid theme="large" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
 				        <vaadin-grid-column auto-width header="Reward" .renderer=${(root, column, data) => {
                             			if (data.item.isSolved) {
                                 			render(html`<span style="font-size: smaller;">SOLVED by ${data.item.winner}</span>`, root)
                             			} else {
                                 			render(html`<span>${data.item.reward} QORT</span>`, root)
                             			}
-                        		}}></vaadin-grid-column>
+                        		}}>
+                                        </vaadin-grid-column>
 					<vaadin-grid-column auto-width path="name"></vaadin-grid-column>
 					<vaadin-grid-column auto-width path="description"></vaadin-grid-column>
 					<vaadin-grid-column auto-width path="clue" style="font-family: monospace; font-size: smaller;"></vaadin-grid-column>

@@ -201,7 +201,7 @@ class NodeManagement extends LitElement {
               </mwc-button>
             </mwc-dialog>
 
-            <vaadin-grid theme="compact" id="mintingAccountsGrid" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" .items="${this.mintingAccounts}" aria-label="Minting Accounts" all-rows-visible>
+            <vaadin-grid theme="large" id="mintingAccountsGrid" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" .items="${this.mintingAccounts}" aria-label="Minting Accounts" all-rows-visible>
               	<vaadin-grid-column auto-width header="Minting Account" path="mintingAccount"></vaadin-grid-column>
               	<vaadin-grid-column auto-width header="Recipient Account" path="recipientAccount"></vaadin-grid-column>
                 <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
@@ -253,7 +253,7 @@ class NodeManagement extends LitElement {
               </mwc-button>
             </mwc-dialog>
 
-            <vaadin-grid theme="compact" id="peersGrid" ?hidden="${this.isEmptyArray(this.peers)}" .items="${this.peers}" aria-label="Peers" all-rows-visible>
+            <vaadin-grid theme="large" id="peersGrid" ?hidden="${this.isEmptyArray(this.peers)}" .items="${this.peers}" aria-label="Peers" all-rows-visible>
                 <vaadin-grid-column path="address"></vaadin-grid-column>
                 <vaadin-grid-column path="lastHeight"></vaadin-grid-column>
                 <vaadin-grid-column path="version" header="Build Version"></vaadin-grid-column>

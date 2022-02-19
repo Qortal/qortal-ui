@@ -84,13 +84,14 @@ class RewardShare extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Rewardshares Involving In This Account</h3>
-                    <vaadin-grid theme="compact" id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
+                    <vaadin-grid theme="large" id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
                         <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
                         <vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
                             render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
-                        }}></vaadin-grid-column>
+                        }}>
+                        </vaadin-grid-column>
                     </vaadin-grid>
                 </div>
 
