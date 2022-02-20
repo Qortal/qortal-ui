@@ -119,6 +119,9 @@ class NameRegistration extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>The current name registration fee is ${this.fee} QORT.</b>
                         </span>
                     </div>
                     
@@ -222,7 +225,7 @@ class NameRegistration extends LitElement {
                 return Promise.reject(response);
             })
             .then((json) => {
-                this.fee = (Number(json) / 1e8).toFixed(8);
+                this.fee = (Number(json) / 1e8).toFixed(2);
             })
             .catch((response) => {
                 console.log(response.status, response.statusText, 'Need Core Update');
