@@ -15,6 +15,12 @@ class SecurityView extends connect(store)(LitElement) {
 
     static get styles() {
         return css`
+		    * {
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
+            }
             .center-box {
                 position: relative;
                 top: 45%;
