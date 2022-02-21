@@ -11,9 +11,8 @@ import '@material/mwc-tab'
 import '@material/mwc-list/mwc-list-item'
 import '@material/mwc-select'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/grid/vaadin-grid.js'
+import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
-import '@vaadin/grid/theme/material/all-imports.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -41,328 +40,330 @@ class TradePortal extends LitElement {
 
     static get styles() {
         return css`
+		* {
+			--mdc-theme-primary: rgb(3, 169, 244);
+			--mdc-theme-secondary: var(--mdc-theme-primary);
+			--paper-input-container-focus-color: var(--mdc-theme-primary);
+                	--lumo-primary-text-color: rgb(0, 167, 245);
+                	--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                	--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                	--lumo-primary-color: hsl(199, 100%, 48%);
+		}
+
+		#tabs-1 {
+			--mdc-tab-height: 50px;
+			border-left: 1px solid rgb(102, 102, 102);
+			border-top: 1px solid rgb(102, 102, 102);
+			border-right: 1px solid rgb(102, 102, 102);
+		}
+
+		#tab-buy[active] {
+			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
+		}
+
+		#tabs-1-content {
+			height: 100%;
+			padding-bottom: 10px;
+		}
+
+		#tabs-1-content > div {
+			height: 100%;
+			border: 1px solid rgb(102, 102, 102);
+		}
+
+		#tabs-1-content .card {
+			border: none;
+		}
+
+		#tabs-1-content .btn-clear {
+			--mdc-icon-button-size: 40px;
+		}
+
+		#tab-sell[active] {
+			--mdc-theme-primary: rgb(255, 89, 89); 
+		}
+
+		#trade-portal-page {
+			background: #fff;
+			padding: 12px 24px;
+		}
+
+		.divCard {
+			border: 1px solid #eee;
+			padding: 1em;
+			box-shadow: 0 0.3px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		h2 {
+			margin: 0;
+		}
+
+		h2,
+		h3,
+		h4,
+		h5 {
+			color: #333;
+			font-weight: 400;
+		}
+
+		header {
+			display: flex;
+			flex: 0 1 auto;
+			align-items: center;
+			justify-content: center;
+			padding: 0px 15px;
+			font-size: 16px;
+			color: #fff;
+			background-color: rgb(106, 108, 117);
+			min-height: 40px;
+		}
+
+		p {
+			margin-bottom: 15px;
+		}
+
+		#trade-portal {
+			max-width: 100vw;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.box {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-flow: column;
+			height: 100%;
+		}
+
+		#first-trade-section {
+			margin-bottom: 10px;
+		}
+
+		#first-trade-section > div {
+		}
+
+		#second-trade-section {
+			margin-bottom: 10px;
+		}
+
+		#second-trade-section > div {
+		}
+
+		#third-trade-section {
+			margin-bottom: 10px;
+		}
+
+		#third-trade-section > div {
+		}
+
+		.trade-chart {
+			background-color: #eee;
+			border: 2px #ddd solid;
+			text-align: center;
+		}
+
+		.open-trades {
+			text-align: center;
+		}
+
+		.no-last-seen {
+			background: rgb(255, 89, 89);
+			padding: 9px 1.3px;
+			border-radius: 50%;
+			width: 1rem;
+			margin: 0 auto;
+		}
+
+		.open-market-container {
+			text-align: center;
+		}
+
+		.buy-sell {
+		}
+
+		.card {
+			padding: 1em;
+			border: 1px #666 solid;
+			flex: 1 1 auto;
+			display: flex;
+			flex-flow: column;
+			justify-content: space-evenly;
+			min-height: inherit;
+		}
+
+		.cancel {
+			--mdc-theme-primary: rgb(255, 89, 89);
+		}
+
+		.border-wrapper {
+			border: 1px #666 solid;
+			overflow: hidden;
+		}
+
+		.you-have {
+			color: #555;
+			font-size: 15px;
+			text-align: right;
+			margin-top: 2px;
+			margin-bottom: 10px;
+		}
+
+		.historic-trades {
+			text-align: center;
+		}
+
+		.my-open-orders {
+			text-align: center;
+		}
+
+		.my-historic-trades {
+			text-align: center;
+		}
+
+		.buttons {
+			width: auto !important;
+		}
+
+		.buy-button {
+			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
+		}
+
+		.sell-button {
+			--mdc-theme-primary: rgb(255, 89, 89);
+		}
+
+		.full-width {
+			background-color: #fff;
+			border: 2px #ddd solid;
+			height: 100px;
+			text-align: center;
+		}
+
+		vaading-grid {
+			font-size: .8em;
+		}
+
+		vaadin-grid-column {
+			flex-grow: 1;
+		}
+
+		.loadingContainer {
+			height: 100%;
+			width: 100%;
+		}
+
+		.loading,
+		.loading:after {
+			border-radius: 50%;
+			width: 5em;
+			height: 5em;
+		}
+
+		.loading {
+			margin: 45% auto;
+			border-width: .6em;
+			border-style: solid;
+			border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+			font-size: 10px;
+			position: relative;
+			text-indent: -9999em;
+			transform: translateZ(0px);
+			animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+		}
+
+		mwc-select#coinSelectionMenu {
+			font-size: 24px;
+		}
+
+		mwc-select#coinSelectionMenu mwc-list-item {
+			line-height: 30px;
+		}
+
+		.coinName::before  {
+			content: "";
+			display: inline-block;
+			height: 26px;
+			width: 45px;
+			position: absolute;
+			background-repeat: no-repeat;
+			background-size: cover;
+			left: 10px;
+			top: 10px;
+		}
+
+		.ltc.coinName:before  {
+			background-image: url('/img/qortltc.png');
+		}
+
+		.doge.coinName:before  {
+			background-image: url('/img/qortdoge.png');
+		}
+
+		.coinName {
+			display: inline-block;
+			height: 26px;
+			padding-left: 45px;
+		}
+
+		@-webkit-keyframes loadingAnimation {
+			0% {
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100% {
+				-webkit-transform: rotate(360deg);
+				transform: rotate(360deg);
+			}
+		}
+
+		@keyframes loadingAnimation {
+			0% {
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100% {
+				-webkit-transform: rotate(360deg);
+				transform: rotate(360deg);
+			}
+		}
+			
+		@media (min-width: 701px) {
 			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--paper-input-container-focus-color: var(--mdc-theme-primary);
 			}
-
-			#tabs-1 {
-				--mdc-tab-height: 50px;
-				border-left: 1px solid rgb(102, 102, 102);
-				border-top: 1px solid rgb(102, 102, 102);
-				border-right: 1px solid rgb(102, 102, 102);
-			}
-
-			#tab-buy[active] {
-				--mdc-theme-primary: rgba(55, 160, 51, 0.9);
-			}
-
-			#tabs-1-content {
-				height: 100%;
-				padding-bottom: 10px;
-			}
-
-			#tabs-1-content > div {
-				height: 100%;
-				border: 1px solid rgb(102, 102, 102);
-			}
-
-			#tabs-1-content .card {
-				border: none;
-			}
-
-			#tabs-1-content .btn-clear {
-				--mdc-icon-button-size: 40px;
-			}
-
-			#tab-sell[active] {
-				--mdc-theme-primary: rgb(255, 89, 89); 
-			}
-
-			#trade-portal-page {
-				background: #fff;
-				padding: 12px 24px;
-			}
-
-			.divCard {
-				border: 1px solid #eee;
-				padding: 1em;
-				box-shadow: 0 0.3px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-			}
-
-			h2 {
-				margin: 0;
-			}
-
-			h2,
-			h3,
-			h4,
-			h5 {
-				color: #333;
-				font-weight: 400;
-			}
-
-			header {
-				display: flex;
-				flex: 0 1 auto;
-				align-items: center;
-				justify-content: center;
-				padding: 0px 15px;
-				font-size: 16px;
-				color: #fff;
-				background-color: rgb(106, 108, 117);
-				min-height: 40px;
-			}
-
-			p {
-				margin-bottom: 15px;
-			}
-
-			#trade-portal {
-				max-width: 100vw;
-				margin-left: auto;
-				margin-right: auto;
-			}
-
-			.box {
-				margin: 0;
-				padding: 0;
-				display: flex;
-				flex-flow: column;
-				height: 100%;
-			}
+			#trade-portal {}
 
 			#first-trade-section {
+				display: grid;
+				grid-template-columns:1fr 1fr 2fr;
+				grid-auto-rows: max(450px);
+				column-gap: 0.5em;
+				row-gap: 0.4em;
+				justify-items: stretch;
+				align-items: stretch;
 				margin-bottom: 10px;
-			}
-
-			#first-trade-section > div {
 			}
 
 			#second-trade-section {
+				display: grid;
+				grid-template-columns: 2fr  1fr;
+				grid-auto-rows: max(450px);
+				column-gap: 0.5em;
+				row-gap: 0.4em;
+				justify-items: stretch;
+				align-items: stretch;
 				margin-bottom: 10px;
-			}
-
-			#second-trade-section > div {
-			}
-
-			#third-trade-section {
-				margin-bottom: 10px;
-			}
-
-			#third-trade-section > div {
-			}
-
-			.trade-chart {
-				background-color: #eee;
-				border: 2px #ddd solid;
-				text-align: center;
-			}
-
-			.open-trades {
-				text-align: center;
-			}
-
-			.no-last-seen {
-				background: rgb(255, 89, 89);
-				padding: 9px 1.3px;
-				border-radius: 50%;
-				width: 1rem;
-				margin: 0 auto;
-			}
-
-			.open-market-container {
-				text-align: center;
 			}
 
 			.buy-sell {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				grid-auto-rows: max(450px);
+				column-gap: 0.5em;
+				row-gap: 0.4em;
 			}
-
-			.card {
-				padding: 1em;
-				border: 1px #666 solid;
-				flex: 1 1 auto;
-				display: flex;
-				flex-flow: column;
-				justify-content: space-evenly;
-				min-height: inherit;
-			}
-
-			.cancel {
-				--mdc-theme-primary: rgb(255, 89, 89);
-			}
-
-			.border-wrapper {
-				border: 1px #666 solid;
-				overflow: hidden;
-			}
-
-			.you-have {
-				color: #555;
-				font-size: 15px;
-				text-align: right;
-				margin-top: 2px;
-				margin-bottom: 10px;
-			}
-
-			.historic-trades {
-				text-align: center;
-			}
-
-			.my-open-orders {
-				text-align: center;
-			}
-
-			.my-historic-trades {
-				text-align: center;
-			}
-
-			.buttons {
-				width: auto !important;
-			}
-
-			.buy-button {
-				--mdc-theme-primary: rgba(55, 160, 51, 0.9);
-			}
-
-			.sell-button {
-				--mdc-theme-primary: rgb(255, 89, 89);
-			}
-
-			.full-width {
-				background-color: #fff;
-				border: 2px #ddd solid;
-				height: 100px;
-				text-align: center;
-			}
-
-			vaading-grid{
-				font-size: .8em;
-			}
-
-			vaadin-grid-column {
-				flex-grow: 1;
-			}
-
-			.loadingContainer {
-				height: 100%;
-				width: 100%;
-			}
-
-			.loading,
-			.loading:after {
-				border-radius: 50%;
-				width: 5em;
-				height: 5em;
-			}
-
-			.loading {
-				margin: 45% auto;
-				border-width: .6em;
-				border-style: solid;
-				border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
-				font-size: 10px;
-				position: relative;
-				text-indent: -9999em;
-				transform: translateZ(0px);
-				animation: 1.1s linear 0s infinite normal none running loadingAnimation;
-			}
-
-			mwc-select#coinSelectionMenu {
-				font-size: 24px;
-			}
-
-			mwc-select#coinSelectionMenu mwc-list-item {
-				line-height: 30px;
-			}
-
-			.coinName::before  {
-				content: "";
-				display: inline-block;
-				height: 26px;
-				width: 45px;
-				position: absolute;
-				background-repeat: no-repeat;
-				background-size: cover;
-				left: 10px;
-				top: 10px;
-			}
-
-			.ltc.coinName:before  {
-				background-image: url('/img/qortltc.png');
-			}
-
-			.doge.coinName:before  {
-				background-image: url('/img/qortdoge.png');
-			}
-
-			.coinName {
-				display: inline-block;
-				height: 26px;
-				padding-left: 45px;
-			}
-
-			@-webkit-keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-
-			@keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-			
-			@media (min-width: 701px) {
-				* {
-				}
-
-				#trade-portal {}
-
-				#first-trade-section {
-					display: grid;
-					grid-template-columns:1fr 1fr 2fr;
-					grid-auto-rows: max(450px);
-					column-gap: 0.5em;
-					row-gap: 0.4em;
-					justify-items: stretch;
-					align-items: stretch;
-					margin-bottom: 10px;
-				}
-
-				#second-trade-section {
-					display: grid;
-					grid-template-columns: 2fr  1fr;
-					grid-auto-rows: max(450px);
-					column-gap: 0.5em;
-					row-gap: 0.4em;
-					justify-items: stretch;
-					align-items: stretch;
-					margin-bottom: 10px;
-				}
-
-				.buy-sell {
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					grid-auto-rows: max(450px);
-					column-gap: 0.5em;
-					row-gap: 0.4em;
-				}
-
-			}
-		`;
+		}
+	`;
     }
 
     constructor() {

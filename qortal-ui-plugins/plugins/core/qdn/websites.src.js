@@ -5,8 +5,7 @@ import { Epml } from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
-import '@vaadin/grid/vaadin-grid.js'
-import '@vaadin/grid/theme/material/all-imports.js'
+import '@vaadin/grid'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -33,6 +32,10 @@ class Websites extends LitElement {
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
             }
 
 	    #pages {

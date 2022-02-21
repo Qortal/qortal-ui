@@ -12,8 +12,7 @@ import '@material/mwc-textfield'
 import '@material/mwc-dialog'
 import '@material/mwc-slider'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/grid/vaadin-grid.js'
-import '@vaadin/grid/theme/material/all-imports.js'
+import '@vaadin/grid'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -36,34 +35,38 @@ class Puzzles extends LitElement {
 
     static get styles() {
         return css`
-			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--paper-input-container-focus-color: var(--mdc-theme-primary);
-			}
-			#puzzle-page {
-				background: #fff;
-				padding: 12px 24px;
-			}
+		* {
+			--mdc-theme-primary: rgb(3, 169, 244);
+			--mdc-theme-secondary: var(--mdc-theme-primary);
+			--paper-input-container-focus-color: var(--mdc-theme-primary);
+                        --lumo-primary-text-color: rgb(0, 167, 245);
+                        --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                        --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                        --lumo-primary-color: hsl(199, 100%, 48%);
+		}
+		#puzzle-page {
+			background: #fff;
+			padding: 12px 24px;
+		}
 
-			h2 {
-				margin:0;
-			}
+		h2 {
+			margin:0;
+		}
 
-			h2, h3, h4, h5 {
-				color:#333;
-				font-weight: 400;
-			}
+		h2, h3, h4, h5 {
+			color:#333;
+			font-weight: 400;
+		}
 
-			.red {
-				--mdc-theme-primary: #F44336;
-			}
+		.red {
+			--mdc-theme-primary: #F44336;
+		}
 
-			.clue {
-				font-family: monospaced;
-				font-size: smaller;
-			}
-		`
+		.clue {
+			font-family: monospaced;
+			font-size: smaller;
+		}
+	`
     }
 
     constructor() {
@@ -85,7 +88,7 @@ class Puzzles extends LitElement {
 					<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Puzzles</h3>
 				</div>
                                 <div class="divCard">
-				    <vaadin-grid theme="large" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
+				    <vaadin-grid theme="compact" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
 				        <vaadin-grid-column auto-width header="Reward" .renderer=${(root, column, data) => {
                             			if (data.item.isSolved) {
                                 			render(html`<span style="font-size: smaller;">SOLVED by ${data.item.winner}</span>`, root)

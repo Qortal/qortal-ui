@@ -7,8 +7,7 @@ import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/grid/vaadin-grid.js'
-import '@vaadin/grid/theme/material/all-imports.js'
+import '@vaadin/grid'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -34,8 +33,11 @@ class NameRegistration extends LitElement {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
             }
-
             #name-registration-page {
                 background: #fff;
                 padding: 12px 24px;
@@ -61,6 +63,10 @@ class NameRegistration extends LitElement {
                 max-width: 42px;
                 height: 100%;
                 max-height: 42px;
+            }
+
+            .red {
+                --mdc-theme-primary: #F44336;
             }
         `
     }

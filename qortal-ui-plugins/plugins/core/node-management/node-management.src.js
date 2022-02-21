@@ -40,6 +40,10 @@ class NodeManagement extends LitElement {
         * {
             --mdc-theme-primary: rgb(3, 169, 244);
             --paper-input-container-focus-color: var(--mdc-theme-primary);
+            --lumo-primary-text-color: rgb(0, 167, 245);
+            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+            --lumo-primary-color: hsl(199, 100%, 48%);
         }
 
         paper-spinner-lite {

@@ -7,8 +7,7 @@ import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@vaadin/grid/vaadin-grid.js'
-import '@vaadin/grid/theme/material/all-imports.js'
+import '@vaadin/grid'
 import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -30,444 +29,457 @@ class MultiWallet extends LitElement {
     }
 
     static get styles() {
-        return [
-            css`
-				#pages {
-					display: flex;
-					flex-wrap: wrap;
-					/* margin: 20px; */
-					padding: 10px 5px 5px 5px;
-					margin: 0px 20px 20px 20px;
-				}
+	return [
+		css`
+			* {
+				box-sizing: border-box;
+                		--lumo-primary-text-color: rgb(0, 167, 245);
+                		--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                		--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                		--lumo-primary-color: hsl(199, 100%, 48%);
+			}
 
-				#pages > button {
-					user-select: none;
-					padding: 5px;
-					margin: 0 5px;
-					border-radius: 10%;
-					border: 0;
-					background: transparent;
-					font: inherit;
-					outline: none;
-					cursor: pointer;
-				}
+			#pages {
+				display: flex;
+				flex-wrap: wrap;
+				padding: 10px 5px 5px 5px;
+				margin: 0px 20px 20px 20px;
+			}
 
-				#pages > button:not([disabled]):hover,
-				#pages > button:focus {
-					color: #ccc;
-					background-color: #eee;
-				}
+			#pages > button {
+				user-select: none;
+				padding: 5px;
+				margin: 0 5px;
+				border-radius: 10%;
+				border: 0;
+				background: transparent;
+				font: inherit;
+				outline: none;
+				cursor: pointer;
+			}
 
-				#pages > button[selected] {
-					font-weight: bold;
-					color: white;
-					background-color: #ccc;
-				}
+			#pages > button:not([disabled]):hover,
+			#pages > button:focus {
+				color: #ccc;
+				background-color: #eee;
+			}
 
-				#pages > button[disabled] {
-					opacity: 0.5;
-					cursor: default;
-				}
-				.red {
-					color: var(--paper-red-500);
-				}
-				.green {
-					color: var(--paper-green-500);
-				}
-				paper-spinner-lite {
-					height: 75px;
-					width: 75px;
-					--paper-spinner-color: var(--primary-color);
-					--paper-spinner-stroke-width: 2px;
-				}
-				.unconfirmed {
-					font-style: italic;
-				}
-				.roboto {
-					font-family: 'Roboto', sans-serif;
-				}
-				.mono {
-					font-family: 'Roboto Mono', monospace;
-				}
-				.weight-100 {
-					font-weight: 100;
-				}
+			#pages > button[selected] {
+				font-weight: bold;
+				color: white;
+				background-color: #ccc;
+			}
 
-				.text-white-primary {
-					color: var(--white-primary);
-				}
-				.text-white-secondary {
-					color: var(--white-secondary);
-				}
-				.text-white-disabled {
-					color: var(--white-disabled);
-				}
-				.text-white-hint {
-					color: var(--white-divider);
-				}
+			#pages > button[disabled] {
+				opacity: 0.5;
+				cursor: default;
+			}
 
-				table {
-					border: none;
-				}
-				table td,
-				th {
-					white-space: nowrap;
-					text-align: left;
-					font-size: 14px;
-					padding: 0 12px;
-					font-family: 'Roboto', sans-serif;
-				}
-				table tr {
-					height: 48px;
-				}
-				table tr:hover td {
-					background: #eee;
-				}
-				table tr th {
-					color: #666;
-					font-size: 12px;
-				}
-				table tr td {
-					margin: 0;
-				}
-				.white-bg {
-					height: 100vh;
-					background: #fff;
-				}
-				span {
-					font-size: 18px;
-					word-break: break-all;
-				}
-				.title {
-					font-weight: 600;
-					font-size: 12px;
-					line-height: 32px;
-					opacity: 0.66;
-				}
-				#transactionList {
-					padding: 0;
-				}
-				#transactionList > * {
-				}
-				.color-in {
-					color: #02977e;
-					background-color: rgba(0, 201, 167, 0.2);
-					font-weight: 700;
-					font-size: 0.60938rem;
-					border-radius: 0.25rem !important;
-					padding: 0.2rem 0.5rem;
-					margin-left: 4px;
-				}
-				.color-out {
-					color: #b47d00;
-					background-color: rgba(219, 154, 4, 0.2);
-					font-weight: 700;
-					font-size: 0.60938rem;
-					border-radius: 0.25rem !important;
-					padding: 0.2rem 0.5rem;
-					margin-left: 4px;
-				}
-				* {
-					box-sizing: border-box;
-				}
+			.red {
+				color: var(--paper-red-500);
+			}
 
-				body {
-					margin: 0;
-					padding: 0;
-					background: white;
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-				}
+			.green {
+				color: var(--paper-green-500);
+			}
 
-				h2 {
-					margin: 0;
-					font-weight: 400;
-					color: #707584;
-					font: 24px/24px 'Open Sans', sans-serif;
-				}
+			paper-spinner-lite {
+				height: 75px;
+				width: 75px;
+				--paper-spinner-color: var(--primary-color);
+				--paper-spinner-stroke-width: 2px;
+			}
 
-				h3 {
-					margin: 0 0 5px;
-					font-weight: 600;
-					font-size: 18px;
-					line-height: 18px;
-				}
+			.unconfirmed {
+				font-style: italic;
+			}
 
-				/* Styles for Larger Screen Sizes */
-				@media (min-width: 765px) {
-					.wrapper {
-						display: grid;
-						grid-template-columns: 0.5fr 3.5fr;
-					}
-				}
+			.roboto {
+				font-family: 'Roboto', sans-serif;
+			}
 
+			.mono {
+				font-family: 'Roboto Mono', monospace;
+			}
+
+			.weight-100 {
+				font-weight: 100;
+			}
+
+
+			.text-white-primary {
+				color: var(--white-primary);
+			}
+
+			.text-white-secondary {
+				color: var(--white-secondary);
+			}
+			.text-white-disabled {
+				color: var(--white-disabled);
+			}
+			.text-white-hint {
+				color: var(--white-divider);
+			}
+
+			table {
+				border: none;
+			}
+			table td,
+			th {
+				white-space: nowrap;
+				text-align: left;
+				font-size: 14px;
+				padding: 0 12px;
+				font-family: 'Roboto', sans-serif;
+			}
+			table tr {
+				height: 48px;
+			}
+			table tr:hover td {
+				background: #eee;
+			}
+			table tr th {
+				color: #666;
+				font-size: 12px;
+			}
+			table tr td {
+				margin: 0;
+			}
+			.white-bg {
+				height: 100vh;
+				background: #fff;
+			}
+			span {
+				font-size: 18px;
+				word-break: break-all;
+			}
+			.title {
+				font-weight: 600;
+				font-size: 12px;
+				line-height: 32px;
+				opacity: 0.66;
+			}
+			#transactionList {
+				padding: 0;
+			}
+			#transactionList > * {
+			}
+			.color-in {
+				color: #02977e;
+				background-color: rgba(0, 201, 167, 0.2);
+				font-weight: 700;
+				font-size: 0.60938rem;
+				border-radius: 0.25rem !important;
+				padding: 0.2rem 0.5rem;
+				margin-left: 4px;
+			}
+			.color-out {
+				color: #b47d00;
+				background-color: rgba(219, 154, 4, 0.2);
+				font-weight: 700;
+				font-size: 0.60938rem;
+				border-radius: 0.25rem !important;
+				padding: 0.2rem 0.5rem;
+				margin-left: 4px;
+			}
+
+			body {
+				margin: 0;
+				padding: 0;
+				background: white;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+
+			h2 {
+				margin: 0;
+				font-weight: 400;
+				color: #707584;
+				font: 24px/24px 'Open Sans', sans-serif;
+			}
+
+			h3 {
+				margin: 0 0 5px;
+				font-weight: 600;
+				font-size: 18px;
+				line-height: 18px;
+			}
+
+			/* Styles for Larger Screen Sizes */
+			@media (min-width: 765px) {
 				.wrapper {
-					margin: 0 auto;
-					height: 100%;
-					overflow: hidden;
-					border-radius: 8px;
-					background-color: #fff;
+					display: grid;
+					grid-template-columns: 0.5fr 3.5fr;
 				}
+			}
 
-				.wallet {
-					width: 170px;
-					height: 100vh;
-					border-top-left-radius: inherit;
-					border-bottom-left-radius: inherit;
+			.wrapper {
+				margin: 0 auto;
+				height: 100%;
+				overflow: hidden;
+				border-radius: 8px;
+				background-color: #fff;
+			}
+
+			.wallet {
+				width: 170px;
+				height: 100vh;
+				border-top-left-radius: inherit;
+				border-bottom-left-radius: inherit;
     				border-right: 1px solid #eee;
-				}
+			}
 
-				.transactions-wrapper {
-					width: 100%;
-					padding: 50px 0 0 0;
-					height: 100%;
-				}
+			.transactions-wrapper {
+				width: 100%;
+				padding: 50px 0 0 0;
+				height: 100%;
+			}
 
-				.wallet-header {
-					margin: 0 20px;
-				}
+			.wallet-header {
+				margin: 0 20px;
+			}
 
-				.wallet-address {
-					display: flex;
-					align-items: center;
-					font-size: 18px; 
-					color: var(--mdc-theme-primary, #444750); 
-					margin: 4px 0 20px;
-				}
+			.wallet-address {
+				display: flex;
+				align-items: center;
+				font-size: 18px; 
+				color: var(--mdc-theme-primary, #444750); 
+				margin: 4px 0 20px;
+			}
 
-				.wallet-balance {
-					display: inline-block;
-					font-weight: 600;
-					font-size: 32px;
-					color: var(--mdc-theme-primary, #444750); 
-				}
+			.wallet-balance {
+				display: inline-block;
+				font-weight: 600;
+				font-size: 32px;
+				color: var(--mdc-theme-primary, #444750); 
+			}
 
-				#transactions {
-					margin-top: 60px;
-					margin-left: 20px;
-					margin-right: 20px;
-					border-top: 1px solid #e5e5e5;
-					padding-top: 0px;
-					height: 100%;
-				}
+			#transactions {
+				margin-top: 60px;
+				margin-left: 20px;
+				margin-right: 20px;
+				border-top: 1px solid #e5e5e5;
+				padding-top: 0px;
+				height: 100%;
+			}
 
-				.show {
-					animation: fade-in 0.3s 1;
-				}
+			.show {
+				animation: fade-in 0.3s 1;
+			}
 
-				.transaction-item {
-					display: flex;
-					justify-content: space-between;
-					position: relative;
-					padding-left: 40px;
-					margin-bottom: 45px;
-					margin-right: 50px;
-				}
-				.transaction-item::before {
-					position: absolute;
-					content: '';
-					border: 2px solid #e1e1e1;
-					border-radius: 50%;
-					height: 25px;
-					width: 25px;
-					left: 0;
-					top: 10px;
-					box-sizing: border-box;
-					vertical-align: middle;
-					color: #666666;
-				}
+			.transaction-item {
+				display: flex;
+				justify-content: space-between;
+				position: relative;
+				padding-left: 40px;
+				margin-bottom: 45px;
+				margin-right: 50px;
+			}
+			.transaction-item::before {
+				position: absolute;
+				content: '';
+				border: 2px solid #e1e1e1;
+				border-radius: 50%;
+				height: 25px;
+				width: 25px;
+				left: 0;
+				top: 10px;
+				box-sizing: border-box;
+				vertical-align: middle;
+				color: #666666;
+			}
 
-				.credit::before {
-					content: '+';
-					font-size: 25px;
-					line-height: 19px;
-					padding: 0 4px 0;
-				}
+			.credit::before {
+				content: '+';
+				font-size: 25px;
+				line-height: 19px;
+				padding: 0 4px 0;
+			}
 
-				.debit::before {
-					content: '-';
-					font-size: 20px;
-					line-height: 21px;
-					padding: 0 5px;
-				}
+			.debit::before {
+				content: '-';
+				font-size: 20px;
+				line-height: 21px;
+				padding: 0 5px;
+			}
 
-				.transaction-item .details {
-					font-size: 14px;
-					line-height: 14px;
-					color: #999;
-				}
+			.transaction-item .details {
+				font-size: 14px;
+				line-height: 14px;
+				color: #999;
+			}
 
-				.transaction-item_details {
-					width: 270px;
-				}
+			.transaction-item_details {
+				width: 270px;
+			}
 
-				.transaction-item_amount .amount {
-					font-weight: 600;
-					font-size: 18px;
-					line-height: 45px;
-					position: relative;
-					margin: 0;
-					display: inline-block;
-				}
+			.transaction-item_amount .amount {
+				font-weight: 600;
+				font-size: 18px;
+				line-height: 45px;
+				position: relative;
+				margin: 0;
+				display: inline-block;
+			}
 
-				.currency-box {
-				  display: flex;
-					background-color: #fff;
-					text-align: center;
-					padding: 12px;
-					cursor: pointer;
-					transition: 0.1s ease-in-out;
-				}
-				.currency-box:not(:last-child) {
-				  border-bottom: 1px solid #eee;
-				}
+			.currency-box {
+				display: flex;
+				background-color: #fff;
+				text-align: center;
+				padding: 12px;
+				cursor: pointer;
+				transition: 0.1s ease-in-out;
+			}
+			.currency-box:not(:last-child) {
+				border-bottom: 1px solid #eee;
+			}
 
-				.active {
-				  background: #ddd;
-				}
+			.active {
+				background: #ddd;
+			}
 
-				.currency-image {
-					display: inline-block;
-					height: 42px;
-					width: 42px;
-					background-repeat: no-repeat;
-					background-size: cover;
-					border-radius: 3px;
-    			                filter: grayscale(100%);
-				}
-				.currency-box.active .currency-image,
-				.currency-box:hover .currency-image {
-				  filter: none;
-				}
-				.currency-box:hover {
-				  background: #bbb;
-				}
-				.currency-box.active,
-				.currency-box:hover .currency-text {
-				  font-weight: 500;
-				}				
+			.currency-image {
+				display: inline-block;
+				height: 42px;
+				width: 42px;
+				background-repeat: no-repeat;
+				background-size: cover;
+				border-radius: 3px;
+    		                filter: grayscale(100%);
+			}
+			.currency-box.active .currency-image,
+			.currency-box:hover .currency-image {
+				filter: none;
+			}
+			.currency-box:hover {
+				background: #bbb;
+			}
+			.currency-box.active,
+			.currency-box:hover .currency-text {
+				font-weight: 500;
+			}				
 				
-				.currency-text {
-				  margin: auto 0;
-				  margin-left: 8px;
-					font-size: 20px;
-					color: #777;
-				}
+			.currency-text {
+				margin: auto 0;
+				margin-left: 8px;
+				font-size: 20px;
+				color: #777;
+			}
 
-				.qort .currency-image {
-					background-image: url('/img/qort.png');
-				}
+			.qort .currency-image {
+				background-image: url('/img/qort.png');
+			}
 
-				.btc .currency-image {
-					background-image: url('/img/btc.png');
-				}
+			.btc .currency-image {
+				background-image: url('/img/btc.png');
+			}
 
-				.ltc .currency-image {
-					background-image: url('/img/ltc.png');
-				}
+			.ltc .currency-image {
+				background-image: url('/img/ltc.png');
+			}
 
-				.doge .currency-image {
-					background-image: url('/img/doge.png');
-				}
+			.doge .currency-image {
+				background-image: url('/img/doge.png');
+			}
 
-				.card-list {
-					margin-top: 20px;
-				}
+			.card-list {
+				margin-top: 20px;
+			}
 
-				.card-list .currency-image {
-					cursor: pointer;
-					margin-right: 15px;
-					transition: 0.1s;
-				}
+			.card-list .currency-image {
+				cursor: pointer;
+				margin-right: 15px;
+				transition: 0.1s;
+			}
 
-				.card-list .currency-image:hover {
-					transform: scale(1.1);
-				}
+			.card-list .currency-image:hover {
+				transform: scale(1.1);
+			}
 
-				/* animations */
-				@keyframes fade-in {
-					0% {
-						opacity: 0;
-					}
-					100% {
-						opacity: 1;
-					}
+			/* animations */
+			@keyframes fade-in {
+				0% {
+					opacity: 0;
 				}
+				100% {
+					opacity: 1;
+				}
+			}
 
-				/* media queries */
-				@media (max-width: 863px) {
-					.wallet {
-						width: 100%;
-						height: max-content;
-						border-top-right-radius: inherit;
-						padding-bottom: 25px;
-					}
-					.cards {
-						margin-top: 25px;
-					}
-					.currency-box:nth-of-type(2) {
-						margin-right: 0;
-					}
+			/* media queries */
+			@media (max-width: 863px) {
+				.wallet {
+					width: 100%;
+					height: max-content;
+					border-top-right-radius: inherit;
+					padding-bottom: 25px;
 				}
+				.cards {
+					margin-top: 25px;
+				}
+				.currency-box:nth-of-type(2) {
+					margin-right: 0;
+				}
+			}
 
-				@media (max-width: 764px) {
-					.wallet {
-						width: 100%;
-						height: max-content;
-						border-top-right-radius: inherit;
-						padding-bottom: 25px;
-					}
-					.cards {
-						margin-top: 25px;
-					}
-					.currency-box {
-						width: calc(50% - 25px);
-						max-width: 260px;
-						display: inline-block;
-						margin-right: 25px;
-						margin-bottom: 25px;
-					}
-					.currency-box:nth-of-type(2) {
-						margin-right: 0;
-					}
+			@media (max-width: 764px) {
+				.wallet {
+					width: 100%;
+					height: max-content;
+					border-top-right-radius: inherit;
+					padding-bottom: 25px;
 				}
+				.cards {
+					margin-top: 25px;
+				}
+				.currency-box {
+					width: calc(50% - 25px);
+					max-width: 260px;
+					display: inline-block;
+					margin-right: 25px;
+					margin-bottom: 25px;
+				}
+				.currency-box:nth-of-type(2) {
+					margin-right: 0;
+				}
+			}
 
-				@media (max-width: 530px) {
-					h3 {
-						line-height: 24px;
-					}
-					.cards {
-						text-align: center;
-					}
-					.currency-box {
-						width: calc(100% - 25px);
-						max-width: 260px;
-					}
-					.currency-box:nth-of-type(2) {
-						margin-right: 25px;
-					}
-					.currency-box:last-of-type {
-						margin-bottom: 0;
-					}
-					.wallet-balance {
-						font-size: 22px;
-					}
+			@media (max-width: 530px) {
+				h3 {
+					line-height: 24px;
 				}
+				.cards {
+					text-align: center;
+				}
+				.currency-box {
+					width: calc(100% - 25px);
+					max-width: 260px;
+				}
+				.currency-box:nth-of-type(2) {
+					margin-right: 25px;
+				}
+				.currency-box:last-of-type {
+					margin-bottom: 0;
+				}
+				.wallet-balance {
+					font-size: 22px;
+				}
+			}
 
-				@media (max-width: 390px) {
-					.wallet {
-						height: max-content;
-						padding: 50px 25px;
-					}
-					.transactions-wrapper {
-						padding: 50px 25px;
-					}
-					h2 {
-						font: 18px/24px 'Open Sans', sans-serif;
-					}
+			@media (max-width: 390px) {
+				.wallet {
+					height: max-content;
+					padding: 50px 25px;
 				}
-			`,
-        ]
+				.transactions-wrapper {
+					padding: 50px 25px;
+				}
+				h2 {
+					font: 18px/24px 'Open Sans', sans-serif;
+				}
+			}
+		`,
+	]
     }
 
     constructor() {
@@ -676,20 +688,20 @@ class MultiWallet extends LitElement {
 				</template>
 			</dom-module>
 			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}">Address has no transactions yet.</div>
-			<vaadin-grid theme="${coin}" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="20" all-rows-visible>
+			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
 				<vaadin-grid-column
 					auto-width
 					.renderer=${(root, column, data) => {
-                if (!currentBlockHeight) {
-                    return render(html``, root)
-                }
-                const confirmed = data.item.confirmations >= requiredConfirmations
-                if (confirmed) {
-                    render(html`<mwc-icon title="${data.item.confirmations} Confirmations" style="color: #00C851">check</mwc-icon>`, root)
-                } else {
-                    render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} Confirmations" style="color: #777">schedule</mwc-icon>`, root)
-                }
-            }}
+                				if (!currentBlockHeight) {
+                    					return render(html``, root)
+                				}
+               					const confirmed = data.item.confirmations >= requiredConfirmations
+                				if (confirmed) {
+                    					render(html`<mwc-icon title="${data.item.confirmations} Confirmations" style="color: #00C851">check</mwc-icon>`, root)
+                				} else {
+                    					render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} Confirmations" style="color: #777">schedule</mwc-icon>`, root)
+                				}
+            				}}
 				>
 				</vaadin-grid-column>
 				<vaadin-grid-column
@@ -697,8 +709,8 @@ class MultiWallet extends LitElement {
 					resizable
 					header="Type"
 					.renderer=${(root, column, data) => {
-                render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
-            }}
+                				render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+            				}}
 				>
 				</vaadin-grid-column>
 				<vaadin-grid-column auto-width resizable header="Sender" path="creatorAddress"></vaadin-grid-column>
@@ -710,9 +722,9 @@ class MultiWallet extends LitElement {
 					resizable
 					header="Time"
 					.renderer=${(root, column, data) => {
-                const time = new Date(data.item.timestamp)
-                render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-            }}
+                				const time = new Date(data.item.timestamp)
+                				render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+            				}}
 				>
 				</vaadin-grid-column>
 			</vaadin-grid>
@@ -723,16 +735,16 @@ class MultiWallet extends LitElement {
     renderBTCLikeTransactions(transactions, coin) {
         return html`
 			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}">Address has no transactions yet.</div>
-			<vaadin-grid id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="20" all-rows-visible>
+			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
 				<vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
 				<vaadin-grid-column
 					auto-width
 					resizable
 					header="Total Amount"
 					.renderer=${(root, column, data) => {
-                const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
-                render(html`${amount}`, root)
-            }}
+                				const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                				render(html`${amount}`, root)
+            				}}
 				>
 				</vaadin-grid-column>
 				<vaadin-grid-column
@@ -740,9 +752,9 @@ class MultiWallet extends LitElement {
 					resizable
 					header="Time"
 					.renderer=${(root, column, data) => {
-                const time = new Date(data.item.timestamp * 1000)
-                render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-            }}
+                				const time = new Date(data.item.timestamp * 1000)
+                				render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+            				}}
 				>
 				</vaadin-grid-column>
 			</vaadin-grid>
