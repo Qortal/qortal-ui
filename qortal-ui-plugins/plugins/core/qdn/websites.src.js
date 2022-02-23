@@ -5,7 +5,12 @@ import { Epml } from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
+import '@vaadin/button'
 import '@vaadin/grid'
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@vaadin/text-field'
+
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -184,8 +189,13 @@ class Websites extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
                     <div id="search">
-                        <mwc-textfield outlined label="Name To Search" id="searchName" type="text" value="${this.searchName}"></mwc-textfield>&nbsp;&nbsp;<br>
-                        <mwc-button raised icon="search" @click="${(e) => this.doSearch(e)}">Search</mwc-button>
+                        <vaadin-text-field theme="medium" id="searchName" placeholder="Name to search" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
+                            <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+                        </vaadin-text-field>&nbsp;&nbsp;<br>
+                        <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+                            <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+                            Search
+                        </vaadin-button>
                     </div><br />
                     <vaadin-grid theme="large" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
                         <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
@@ -301,7 +311,6 @@ class Websites extends LitElement {
             setTimeout(getRelayMode, 60000)
         }
 
-
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
@@ -346,6 +355,12 @@ class Websites extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    searchListener(e) {
+        if (e.key === 'Enter') {
+            this.doSearch(e);
+        }
     }
 
     async getResourcesGrid() {
