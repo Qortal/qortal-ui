@@ -15,8 +15,10 @@ import '@material/mwc-icon'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
 import '@polymer/iron-pages'
+import '@polymer/paper-button/paper-button.js'
 import '@polymer/paper-input/paper-input-container.js'
 import '@polymer/paper-input/paper-input.js'
+import '@polymer/paper-tooltip/paper-tooltip.js'
 import '@vaadin/text-field/vaadin-text-field.js'
 import '@vaadin/password-field/vaadin-password-field.js'
 import 'random-sentence-generator'
@@ -58,6 +60,9 @@ class CreateAccountSection extends connect(store)(LitElement) {
                     --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                     --lumo-primary-color: hsl(199, 100%, 48%);
                 }
+                .red {
+                    --mdc-theme-primary: red;
+                }
             `
         ]
     }
@@ -73,7 +78,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         this.nextButtonText = 'Next'
         this.saveAccount = true
         this.showSeedphrase = false
-        this.isDownloadedBackup = false
+        this.isDownloadedBackup = true
         this.createAccountLoading = false
         const welcomeMessage = 'Welcome to Qortal'
         this.welcomeMessage = welcomeMessage
@@ -149,7 +154,6 @@ class CreateAccountSection extends connect(store)(LitElement) {
                         }))
                         .then(wallet => {
                             this._wallet = wallet
-
                             return ripple.fade()
                         })
                         .then(() => {
@@ -175,7 +179,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 next: e => {
                     if (!this.isDownloadedBackup) {
                         snackbar.add({
-                            labelText: 'Please Download Your Wallet BackUp file!',
+                            labelText: 'Your Wallet BackUp file get downloaded!',
                             dismiss: true
                         })
                     } else {
@@ -236,6 +240,14 @@ class CreateAccountSection extends connect(store)(LitElement) {
 
                 .flex.column {
                     flex-direction: column;
+                }
+
+                .horizontal-center {
+                    margin: 0;
+                    position: absolute;
+                    left: 50%;
+                    -ms-transform: translateX(-50%);
+                    transform: translateX(-50%);
                 }
 
                 #createAccountSection {
@@ -319,12 +331,19 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 paper-icon-button {
                     --paper-icon-button-ink-color: var(--mdc-theme-primary);
                 }
+
+                paper-button {
+                    color: var(--mdc-theme-primary);
+                    text-transform: none;
+                    margin: 0;
+                    padding: 0;
+                }
             </style>
             
             <div id="createAccountSection" class="flex column">
                 <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="createAccountPages">
                     <div page="info">
-                        <div id="infoContent" class="section-content" style="">
+                        <div id="infoContent" class="section-content">
                             <br>
                             <h3 style="text-align:center; margin-top: 0; font-weight: 100; font-family: 'Roboto Mono', monospace;">Create account</h3>
                             <p>
@@ -333,42 +352,42 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                 giving you both more of the QORT block reward and also larger influence over the network in terms of voting on decisions for the platform. 
                             </p>
                             <p style="margin-bottom:0;">
-                                Create your QORT account by clicking Next below. 
-                                A ‘seedphrase’ will be randomly generated but not displayed, and this is used as your private key generator for your blockchain account in QORT.
+                                A ‘<paper-button id="myseedshow" @click=${() => this.shadowRoot.querySelector('#mySeedDialog').show()}>seedphrase</paper-button><paper-tooltip for="myseedshow" position="top" animation-delay="0">Click to view seedphrase</paper-tooltip>’ will be randomly generated in background. This is used as your private key generator for your blockchain account in QORT.
                             </p>
-
-                            <div id="seedBox" style="display: none; border-radius: 4px; padding-top: 8px; background: rgba(3,169,244,0.1); margin-top: 24px;">
-                                <div style="display: inline-block; padding:12px; width:calc(100% - 84px);">
-                                    <random-sentence-generator
-                                        template="adverb verb noun adjective noun adverb verb noun adjective noun adjective verbed adjective noun"
-                                        id="randSentence"></random-sentence-generator>
+                            <p style="margin-bottom:0; text-align:center;">
+                                Create your QORT account by clicking NEXT below.
+                            </p><br>
+                        </div>
+                        <mwc-dialog id="mySeedDialog" heading="Your created Seedphrase">
+                            <div style="min-height:250px; min-width: 300px; box-sizing: border-box; position: relative;">
+                                <div style="border-radius: 4px; padding-top: 8px; background: rgba(3,169,244,0.1); margin-top: 24px;">
+                                    <div style="display: inline-block; padding:12px; width:calc(100% - 84px);">
+                                        <random-sentence-generator
+                                            template="adverb verb noun adjective noun adverb verb noun adjective noun adjective verbed adjective noun"
+                                            id="randSentence"
+                                        >
+                                        </random-sentence-generator>
+                                    </div>
+                                    <!--
+                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        Calculations
+                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        403 adjectives
+                                        60 interjections
+                                        243 adverbs
+                                        2353 nouns
+                                        3387 verbs
+                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        sooo 243*3387*403*2353*3387*403*2353*403*2353 ~ 2^92
+                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                    -->
+                                </div><br>
+                                <div class="horizontal-center">
+                                   <mwc-button raised label="Save Seedphrase" icon="save" @click=${() => this.downloadSeedphrase()}></mwc-button>
                                 </div>
-                                        <!--
-                                            --- --- --- --- --- --- --- --- --- --- --- -
-                                            Calculations
-                                            --- --- --- --- --- --- --- --- --- --- --- -
-                                            403 adjectives
-                                            60 interjections
-                                            243 adverbs
-                                            2353 nouns
-                                            3387 verbs
-                                            --- --- --- --- --- --- --- --- --- --- --- -
-                                            sooo 243*3387*403*2353*3387*403*2353*403*2353 ~ 2^92
-                                            --- --- --- --- --- --- --- --- --- --- --- -
-                                            -->
-                                <paper-icon-button
-                                    icon="icons:autorenew"
-                                    style="top:-12px; margin:8px;"
-                                    @click=${() => this.shadowRoot.getElementById('randSentence').generate()}
-                                ></paper-icon-button>
                             </div>
-                        </div>
-                        <div style="display: none; text-align: right; vertical-align: top; line-height: 40px; margin:0;">
-                            <mwc-formfield alignEnd label="I'm an advanced user, show my seed phrase.">
-                                <label for="hasSavedSeedphraseCheckbox" @click=${() => this.shadowRoot.getElementById('showSeedphraseCheckbox').click()} ></label>
-                                <mwc-checkbox style="display: inline; id="showSeedphraseCheckbox" @click=${e => { this.showSeedphrase = !e.target.checked; this.updateNext() }} ?checked=${this.showSeedphrase}></mwc-checkbox>
-                            </mwc-formfield>
-                        </div>
+                            <mwc-button slot="primaryAction" dialogAction="cancel" class="red">Close</mwc-button>
+                        </mwc-dialog>
                     </div>
 
                     <div page="password">
@@ -399,25 +418,11 @@ class CreateAccountSection extends connect(store)(LitElement) {
 
                     <div page="backup">
                         <div id="downloadBackup" class="section-content">
-                            <h3>Download Wallet BackUp File</h3>
+                            <h3 style="text-align: center;">Save Wallet BackUp File</h3>
                             <p style="text-align: justify;">Your account is now created${this.saveAccount ? ' and will be saved in this browser.' : '.'}</p>
                             <p style="margin:0;">
                                 This file is the <strong>ONLY</strong> way to access your account on a system that doesn't have it saved to the app/browser. <strong>BE SURE TO BACKUP THIS FILE IN MULTIPLE PLACES.</strong> The file is encrypted very securely and decrypted with your local password you created in the previous step. You can save it anywhere securely, but be sure to do that in multiple locations.
                             </p>
-                            <div id="download-area">
-                                <div style="line-height:40px;">
-                                    <span style="padding-top:6px; margin-right: 10px;">Download Wallet BackUp File</span>
-                                    <slot id="trigger" name="inputTrigger" @click=${() => this.downloadBackup(this._wallet)} style="dispay:inline;">
-                                        <mwc-button><mwc-icon>cloud_download</mwc-icon>&nbsp; Save</mwc-button>
-                                    </slot>
-                                </div>
-                            </div>
-                            <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <mwc-formfield alignEnd label="Done saving your wallet backup ?">
-                                    <label for="downloadBackupCheckbox" @click=${() => this.shadowRoot.getElementById('downloadBackupCheckbox').click()}></label>
-                                    <mwc-checkbox style="display: inline;" id="downloadBackupCheckbox" @click=${e => { this.isDownloadedBackup = !e.target.checked; this.updateNext() }} ?checked=${this.isDownloadedBackup}></mwc-checkbox>
-                                </mwc-formfield>
-                            </div>
                         </div>
                     </div>
                 </iron-pages>
@@ -429,6 +434,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         this.shadowRoot.getElementById('randSentence').generate()
         this.shadowRoot.getElementById('nameInput').value = ''
         this.shadowRoot.getElementById('password').value = ''
+        this.shadowRoot.getElementById('rePassword').value = ''
         this.showSeedphrase = false
         this.selectPage('info')
         this.error = false
@@ -436,7 +442,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         this.nextButtonText = 'Next'
         this.createAccountLoading = false
         this.saveAccount = true
-        this.isDownloadedBackup = false
+        this.isDownloadedBackup = true
         this._wallet = ''
         this._pass = ''
         this._name = ''
@@ -474,11 +480,11 @@ class CreateAccountSection extends connect(store)(LitElement) {
             this.nextDisabled = false
             this.nextText = 'Create Account'
         } else if (this.selectedPage === 'backup') {
-            this.nextDisabled = !this.isDownloadedBackup
+            this.downloadBackup(this._wallet)
+            this.nextDisabled = false
             this.backHidden = true
             this.nextText = 'Continue'
         }
-
         this.updatedProperty()
     }
 
@@ -519,6 +525,12 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
         FileSaver.saveAs(blob, `qortal_backup_${wallet.addresses[0].address}.json`)
+    }
+
+    downloadSeedphrase() {
+        const seed = this.shadowRoot.getElementById('randSentence').parsedString
+        const blob = new Blob([seed], { type: 'text/plain;charset=utf-8' })
+        FileSaver.saveAs(blob, `qortal_seedphrase.txt`)
     }
 }
 
