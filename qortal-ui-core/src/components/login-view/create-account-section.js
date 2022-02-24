@@ -347,15 +347,15 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             <br>
                             <h3 style="text-align:center; margin-top: 0; font-weight: 100; font-family: 'Roboto Mono', monospace;">Create account</h3>
                             <p>
-                                Welcome to QORT, you will find it to be similar to that of an RPG game, 
-                                you, as a minter on the QORT network (if you choose to become one) will have the chance to level your account up, 
+                                Welcome to Qortal, you will find it to be similar to that of an RPG game, 
+                                you, as a minter on the Qortal network (if you choose to become one) will have the chance to level your account up, 
                                 giving you both more of the QORT block reward and also larger influence over the network in terms of voting on decisions for the platform. 
                             </p>
                             <p style="margin-bottom:0;">
-                                A ‘<paper-button id="myseedshow" @click=${() => this.shadowRoot.querySelector('#mySeedDialog').show()}>seedphrase</paper-button><paper-tooltip for="myseedshow" position="top" animation-delay="0">Click to view seedphrase</paper-tooltip>’ will be randomly generated in background. This is used as your private key generator for your blockchain account in QORT.
+                                A ‘<paper-button id="myseedshow" @click=${() => this.shadowRoot.querySelector('#mySeedDialog').show()}>seedphrase</paper-button><paper-tooltip for="myseedshow" position="top" animation-delay="0">Click to view seedphrase</paper-tooltip>’ will be randomly generated in background. This is used as your private key generator for your blockchain account in Qortal.
                             </p>
                             <p style="margin-bottom:0; text-align:center;">
-                                Create your QORT account by clicking NEXT below.
+                                Create your Qortal account by clicking NEXT below.
                             </p><br>
                         </div>
                         <mwc-dialog id="mySeedDialog" heading="Your created Seedphrase">
