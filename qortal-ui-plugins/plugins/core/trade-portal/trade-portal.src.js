@@ -44,10 +44,10 @@ class TradePortal extends LitElement {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
-                	--lumo-primary-text-color: rgb(0, 167, 245);
-                	--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
-                	--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
-                	--lumo-primary-color: hsl(199, 100%, 48%);
+            --lumo-primary-text-color: rgb(0, 167, 245);
+            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+            --lumo-primary-color: hsl(199, 100%, 48%);
 		}
 
 		#tabs-1 {
@@ -452,9 +452,9 @@ class TradePortal extends LitElement {
 								resizable
 								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-                                    render(html`${price}`, root)
-                                }}
+									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+									render(html`${price}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -462,8 +462,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${data.item.foreignAmount} </span>`, root)
-                                }}
+									render(html`<span> ${data.item.foreignAmount} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 						</vaadin-grid>
@@ -488,8 +488,8 @@ class TradePortal extends LitElement {
 								id="qortAmountColumn"
 								path="qortAmount"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${this.round(data.item.qortAmount)} </span>`, root)
-                                }}
+									render(html`<span> ${this.round(data.item.qortAmount)} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -499,8 +499,8 @@ class TradePortal extends LitElement {
 								id="priceColumn"
 								path="price"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${this.round(data.item.price)} </span>`, root)
-                                }}
+									render(html`<span> ${this.round(data.item.price)} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -508,8 +508,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${data.item.foreignAmount} </span>`, root)
-                                }}
+									render(html`<span> ${data.item.foreignAmount} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -517,8 +517,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Seller"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${data.item.qortalCreator} </span>`, root)
-                                }}
+									render(html`<span> ${data.item.qortalCreator} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 						</vaadin-grid>
@@ -673,9 +673,9 @@ class TradePortal extends LitElement {
 								resizable
 								header="Date"
 								.renderer=${(root, column, data) => {
-                                    const dateString = new Date(data.item.timestamp).toLocaleString()
-                                    render(html`${dateString}`, root)
-                                }}
+									const dateString = new Date(data.item.timestamp).toLocaleString()
+									render(html`${dateString}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -683,8 +683,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Status"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span id="${data.item.atAddress}"> ${data.item._tradeState} </span>`, root)
-                                }}
+									render(html`<span id="${data.item.atAddress}"> ${data.item._tradeState} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -692,9 +692,9 @@ class TradePortal extends LitElement {
 								resizable
 								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-                                    render(html`${price}`, root)
-                                }}
+									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+									render(html`${price}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -714,8 +714,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Action"
 								.renderer=${(root, column, data) => {
-                                    render(html`${this.renderCancelButton(data.item)}`, root)
-                                }}
+									 render(html`${this.renderCancelButton(data.item)}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 						</vaadin-grid>
@@ -737,9 +737,9 @@ class TradePortal extends LitElement {
 								resizable
 								header="Date"
 								.renderer=${(root, column, data) => {
-                                    const dateString = new Date(data.item.timestamp).toLocaleString()
-                                    render(html`${dateString}`, root)
-                                }}
+									const dateString = new Date(data.item.timestamp).toLocaleString()
+									render(html`${dateString}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -747,10 +747,10 @@ class TradePortal extends LitElement {
 								resizable
 								header="Status"
 								.renderer=${(root, column, data) => {
-                                    if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${data.item.mode} </span>`, root)
-                                    if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${data.item.mode} </span>`, root)
-                                    return render(html`<span> ${data.item.mode} </span>`, root)
-                                }}
+									if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${data.item.mode} </span>`, root)
+									if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${data.item.mode} </span>`, root)
+									return render(html`<span> ${data.item.mode} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -758,9 +758,9 @@ class TradePortal extends LitElement {
 								resizable
 								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-                                    render(html`${price}`, root)
-                                }}
+									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+									render(html`${price}`, root)
+								}}
 							>
 							</vaadin-grid-column>
 							<vaadin-grid-column
@@ -774,8 +774,8 @@ class TradePortal extends LitElement {
 								resizable
 								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								.renderer=${(root, column, data) => {
-                                    render(html`<span> ${data.item.foreignAmount} </span>`, root)
-                                }}
+									render(html`<span> ${data.item.foreignAmount} </span>`, root)
+								}}
 							>
 							</vaadin-grid-column>
 						</vaadin-grid>
@@ -1331,6 +1331,7 @@ class TradePortal extends LitElement {
         const updateStateItem = () => {
             this._myOrdersGrid.items.forEach((item, index) => {
                 if (item.atAddress === state.atAddress) {
+                    this.reRenderMyOpenOrders()
                     this._myOrdersGrid.items.splice(index, 1)
                     this._myOrdersGrid.items.unshift(stateItem)
                     this._myOrdersGrid.clearCache()
@@ -1344,6 +1345,7 @@ class TradePortal extends LitElement {
     handleCompletedState(state) {
         this._myOrdersGrid.items.forEach((item, index) => {
             if (item.atAddress === state.atAddress) {
+                this.reRenderMyOpenOrders()
                 this._myOrdersGrid.items.splice(index, 1)
                 this._myOrdersGrid.clearCache()
             }
@@ -1927,6 +1929,7 @@ class TradePortal extends LitElement {
         this._openOrdersGrid.clearCache()
         this._myHistoricTradesGrid.clearCache()
         this._historicTradesGrid.clearCache()
+        this._myOrdersGrid.clearCache()
     }
 
     createConnection() {
