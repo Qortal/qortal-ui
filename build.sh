@@ -64,7 +64,7 @@ for PACKAGE in "${YARN_PACKAGE_DEPS[@]}"; do
         echo "Installing and linking ${PACKAGE}..."
         yarn --cwd "${PACKAGE}" install
         yarn --cwd "${PACKAGE}" link
-        yarn --cwd qortal-ui link "${PACKAGE}"
+        yarn link "${PACKAGE}"
     else
         echo "${PACKAGE} is already linked."
     fi
@@ -79,20 +79,20 @@ fi
 
 if [ "${YARN_WATCH}" -eq 1 ]; then
     echo "Building qortal-ui in watch mode..."
-    yarn --cwd qortal-ui run watch &
+    yarn run watch &
     echo "$!" > "watch.pid";
 else
-    yarn --cwd qortal-ui run build
+    yarn run build
 fi
 
 if [ "${RUN_SERVER}" -eq 1 ]; then
     echo "Running UI server..."
     trap : INT
-    yarn --cwd qortal-ui run server
+    yarn run server
 elif [ "${RUN_ELECTRON}" -eq 1 ]; then
     echo "Starting electron..."
     trap : INT
-    yarn --cwd qortal-ui run start-electron
+    yarn run start-electron
 fi
 
 WATCH_PID=$(cat "watch.pid" || echo "")
