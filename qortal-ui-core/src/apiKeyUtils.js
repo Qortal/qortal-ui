@@ -6,11 +6,6 @@ import mykey from './functional-components/mykey-page.js'
 export const checkApiKey = async (nodeConfig) => {
 
     let selectedNode = nodeConfig.knownNodes[nodeConfig.node];
-    if (selectedNode.enableManagement === false) {
-        console.log("Skipping API key check because enableManagement is false");
-        return;
-    }
-
     let apiKey = selectedNode.apiKey;
 
     // Attempt to generate an API key
