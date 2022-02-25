@@ -14,7 +14,7 @@ async function watch(options, outputs, outputOptions, inputOptions) {
         }
     }
     const watcher = rollup.watch(watchOptions)
-    watcher.on('event', event => {.
+    watcher.on('event', event => {
     })
 }
 
