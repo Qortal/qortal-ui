@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Make necessary config and add LOTW Softwares apt repo
+# Make necessary config and add Qortal Softwares apt repo
 
 # SCript to run UI without sandbox
 echo \'/opt/${productFilename}/qortal-ui\' --no-sandbox > '/opt/${productFilename}/run-ui'
@@ -21,7 +21,6 @@ if ! which curl; then sudo apt-get --yes install curl; fi
 
 # Install apt repository source list if it does not exist
 if ! grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep qortal.list; then
-    curl -sS https://lotw.qortal.org/lotw_pub.gpg | sudo apt-key add -
-    echo "deb [arch=amd64] https://lotw.qortal.org/debian stable main" \
-	 | sudo tee /etc/apt/sources.list.d/qortal.list
+    curl -sS https://update.qortal.online/repo/qortal.gpg | sudo apt-key add -
+    echo 'deb https://update.qortal.online/repo/ ./ ' >  /etc/apt/sources.list.d/qortal.list
 fi

@@ -4,7 +4,6 @@
 
 # Remove apt repository source list when user uninstalls app
 if grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep qortal.list; then
-	sudo apt-key del 5025E50F;
 	sudo rm /etc/apt/sources.list.d/qortal.list;
 fi
 
