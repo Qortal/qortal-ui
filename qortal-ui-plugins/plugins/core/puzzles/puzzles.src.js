@@ -63,7 +63,7 @@ class Puzzles extends LitElement {
 		}
 
 		.clue {
-			font-family: monospaced;
+			font-family: "Lucida Console", "Courier New", monospace;
 			font-size: smaller;
 		}
 	`
@@ -88,19 +88,21 @@ class Puzzles extends LitElement {
 					<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Puzzles</h3>
 				</div>
                                 <div class="divCard">
-				    <vaadin-grid theme="compact" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
-				        <vaadin-grid-column auto-width header="Reward" .renderer=${(root, column, data) => {
+				    <vaadin-grid theme="compact, wrap-cell-content" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
+				        <vaadin-grid-column width="20em" header="Reward" .renderer=${(root, column, data) => {
                             			if (data.item.isSolved) {
-                                			render(html`<span style="font-size: smaller;">SOLVED by ${data.item.winner}</span>`, root)
+                                			render(html`<span style="font-size: smaller;">SOLVED by<br>${data.item.winner}</span>`, root)
                             			} else {
                                 			render(html`<span>${data.item.reward} QORT</span>`, root)
                             			}
                         		}}>
                                         </vaadin-grid-column>
-					<vaadin-grid-column auto-width path="name"></vaadin-grid-column>
-					<vaadin-grid-column auto-width path="description"></vaadin-grid-column>
-					<vaadin-grid-column auto-width path="clue" style="font-family: monospace; font-size: smaller;"></vaadin-grid-column>
-					<vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
+					<vaadin-grid-column width="16em" path="name"></vaadin-grid-column>
+					<vaadin-grid-column width="40%" path="description"></vaadin-grid-column>
+					<vaadin-grid-column width="24em" header="Clue / Answer" .renderer=${(root, column, data) => {
+							render(html`<span class="clue">${data.item.clue}</span>`, root)
+						}}></vaadin-grid-column>
+					<vaadin-grid-column width="10em" header="Action" .renderer=${(root, column, data) => {
                         			if (data.item.isSolved) {
                             				render(html``, root)
                         			} else {
@@ -121,11 +123,11 @@ class Puzzles extends LitElement {
 					<div style="text-align:right; height:36px;">
 						<span ?hidden="${!this.loading}">
 							<!-- loading message -->
-							Claiming your reward... &nbsp;
+							Checking your guess... &nbsp;
 							<paper-spinner-lite
 								style="margin-top:12px;"
 								?active="${this.loading}"
-								alt="Claiming puzzle reward">
+								alt="Checking puzzle guess">
 							</paper-spinner-lite>
 						</span>
 						<span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
@@ -250,7 +252,7 @@ class Puzzles extends LitElement {
                         isSolved: _isSolved
                     }
 
-                    if (!_isSolved && _nameData.clue)
+                    if (_nameData.clue)
                         _puzzle.clue = _nameData.clue;
 
                     if (_isSolved) {
