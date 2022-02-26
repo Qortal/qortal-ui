@@ -28,7 +28,10 @@ class Websites extends LitElement {
             searchName: { type: String },
             searchResources: { type: Array },
             searchFollowedNames: { type: Array },
-            searchBlockedNames: { type: Array }
+            searchBlockedNames: { type: Array },
+            webResources: { type: Array },
+            webFollowedNames: { type: Array },
+            webBlockedNames: { type: Array }
         }
     }
 
@@ -177,6 +180,9 @@ class Websites extends LitElement {
         this.searchResources = []
         this.searchFollowedNames = []
         this.searchBlockedNames = []
+        this.webResources = []
+        this.webFollowedNames = []
+        this.webBlockedNames = []
     }
 
     render() {
@@ -223,6 +229,38 @@ class Websites extends LitElement {
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid><br />
+                </div>
+                <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Followed Websites</h3>
+                    <vaadin-grid theme="large" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
+                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebAvatar(data.item)}`, root)
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebName(data.item)}`, root)
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebStatus(data.item)}`, root)
+                        }}>
+                        </vaadin-grid-column>
+			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebSize(data.item)}`, root)
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebFollowUnfollowButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderWebBlockUnblockButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                    </vaadin-grid>
+                    ${this.isEmptyArray(this.webResources) ? html`
+                        You not follow any website
+                    `: ''}
                 </div>
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
@@ -284,6 +322,24 @@ class Websites extends LitElement {
             setTimeout(getBlockedNames, 60000)
         }
 
+        const getWebFollowedNames = async () => {
+            let webFollowedNames = await parentEpml.request('apiCall', {
+                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.webFollowedNames = webFollowedNames
+            setTimeout(getWebFollowedNames, 60000)
+        }
+
+        const getWebBlockedNames = async () => {
+            let webBlockedNames = await parentEpml.request('apiCall', {
+                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.webBlockedNames = webBlockedNames
+            setTimeout(getWebBlockedNames, 60000)
+        }
+
         const getSearchFollowedNames = async () => {
             let searchFollowedNames = await parentEpml.request('apiCall', {
                 url: `/lists/followedNames?apiKey=${this.getApiKey()}`
@@ -338,12 +394,16 @@ class Websites extends LitElement {
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(this.getArbitraryResources, 1)
+                    setTimeout(this.getFollowedWebsites, 1)
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
+                    setTimeout(getWebFollowedNames, 1)
+                    setTimeout(getWebBlockedNames, 1)
                     setTimeout(getSearchFollowedNames, 1)
                     setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
                     setInterval(this.getArbitraryResources, 120000)
+                    setInterval(this.getFollowedWebsites, 60000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -451,6 +511,168 @@ class Websites extends LitElement {
 
     doSearch(e) {
         this.searchResult()
+    }
+
+    getFollowedWebsites = async () => {
+	let data = [];
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const namesUrl = `${nodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`;
+        const jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true`;
+
+	const jsonRes = await fetch(jsonUrl);
+	const jsonData = await jsonRes.json();
+	const response = await fetch(namesUrl);
+	const names = await response.json();
+
+	let webres = jsonData.filter((elm) => names.includes(elm.name));
+
+        this.webResources = webres;
+    }
+
+    renderWebAvatar(webObj) {
+        let name = webObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+    }
+
+    renderWebName(webObj) {
+        let name = webObj.name
+        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
+    }
+
+    renderWebStatus(webObj) {
+        return html`<span title="${webObj.status.description}">${webObj.status.title}</span>`
+    }
+
+    renderWebSize(webObj) {
+        if (webObj.size === null) {
+            return html``
+        }
+        let sizeWebReadable = this.bytesToSize(webObj.size);
+        return html`<span>${sizeWebReadable}</span>`
+    }
+
+    renderWebFollowUnfollowButton(webObj) {
+        let name = webObj.name
+        if (this.webFollowedNames == null || !Array.isArray(this.webFollowedNames)) {
+            return html``
+        }
+        if (this.webFollowedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.webFollowName(webObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.webUnfollowName(webObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+        }
+    }
+
+    async webFollowName(webObj) {
+        let name = webObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.webFollowedNames = this.webFollowedNames.filter(item => item != name);
+            this.webFollowedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async webUnfollowName(webObj) {
+        let name = webObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.webFollowedNames = this.webFollowedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    renderWebBlockUnblockButton(webObj) {
+        let name = webObj.name
+        if (this.webBlockedNames == null || !Array.isArray(this.webBlockedNames)) {
+            return html``
+        }
+        if (this.webBlockedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.webBlockName(webObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.webUnblockName(webObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+        }
+    }
+
+    async webBlockName(webObj) {
+        let name = webObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.webBlockedNames = this.webBlockedNames.filter(item => item != name);
+            this.webBlockedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async webUnblockName(webObj) {
+        let name = webObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.webBlockedNames = this.webBlockedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+        }
+        return ret
     }
 
     async searchResult() {
