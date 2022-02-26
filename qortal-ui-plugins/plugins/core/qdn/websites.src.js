@@ -4,6 +4,7 @@ import { Epml } from '../../../epml.js'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
+import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
 import '@vaadin/button'
 import '@vaadin/grid'
@@ -31,7 +32,10 @@ class Websites extends LitElement {
             searchBlockedNames: { type: Array },
             webResources: { type: Array },
             webFollowedNames: { type: Array },
-            webBlockedNames: { type: Array }
+            webBlockedNames: { type: Array },
+            blockResources: { type: Array },
+            blockFollowedNames: { type: Array },
+            blockBlockedNames: { type: Array }
         }
     }
 
@@ -44,6 +48,15 @@ class Websites extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+            }
+
+            #tabs-1 {
+		--mdc-tab-height: 50px;
+            }
+
+            #tabs-1-content {
+		height: 100%;
+		padding-bottom: 10px;
             }
 
 	    #pages {
@@ -183,126 +196,188 @@ class Websites extends LitElement {
         this.webResources = []
         this.webFollowedNames = []
         this.webBlockedNames = []
+        this.blockResources = []
+        this.blockFollowedNames = []
+        this.blockBlockedNames = []
     }
 
     render() {
         return html`
             <div id="websites-list-page">
-                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Browse Websites</h2>
-                    ${this.renderPublishButton()}
-                </div>
-                <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
-                    <div id="search">
-                        <vaadin-text-field theme="medium" id="searchName" placeholder="Name to search" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
-                            <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
-                        </vaadin-text-field>&nbsp;&nbsp;<br>
-                        <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
-                            <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
-                            Search
-                        </vaadin-button>
-                    </div><br />
-                    <vaadin-grid theme="large" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
-                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchAvatar(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchName(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-                             render(html`${this.renderSearchStatus(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchSize(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchFollowUnfollowButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                    </vaadin-grid><br />
-                </div>
-                <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Followed Websites</h3>
-                    <vaadin-grid theme="large" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
-                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebAvatar(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebName(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebStatus(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebSize(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebFollowUnfollowButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                            render(html`${this.renderWebBlockUnblockButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                    </vaadin-grid>
-                    ${this.isEmptyArray(this.webResources) ? html`
-                        You not follow any website
-                    `: ''}
-                </div>
-                <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-                    <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
-                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-                            render(html`${this.renderAvatar(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-                            render(html`${this.renderName(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-                            render(html`${this.renderStatus(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-			<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-                            render(html`${this.renderSize(data.item)}`, root)
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-                        }}>
-                        </vaadin-grid-column>
-                    </vaadin-grid>
-                    <div id="pages"></div>
-                    ${this.isEmptyArray(this.resources) ? html`
-                        No websites available
-                    `: ''}
-                </div>
-                ${this.renderRelayModeText()}
-            </div>
+                <mwc-tab-bar id="tabs-1" activeIndex="0">
+                    <mwc-tab label="Browse Websites" icon="travel_explore" @click="${(e) => this.displayTabContent('browse')}"></mwc-tab>
+                    <mwc-tab label="Followed Websites" icon="desktop_windows" @click="${(e) => this.displayTabContent('followed')}"></mwc-tab>
+                    <mwc-tab label="Blocked Websites" icon="block" @click="${(e) => this.displayTabContent('blocked')}"></mwc-tab>
+                </mwc-tab-bar>
+                <z id="tabs-1-content">
+                    <div id="tab-browse-content">
+	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Browse Websites</h2>
+                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                </div>
+        	        <div class="divCard">
+                    	    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search Websites</h3>
+	                    <div id="search">
+	                        <vaadin-text-field theme="medium" id="searchName" placeholder="Name to search" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
+	                            <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	                        </vaadin-text-field>&nbsp;&nbsp;<br>
+	                        <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+	                            <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                            Search
+	                        </vaadin-button>
+	                    </div><br />
+	                    <vaadin-grid theme="large" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
+	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSearchAvatar(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSearchName(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+	                             render(html`${this.renderSearchStatus(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSearchSize(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSearchFollowUnfollowButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                    </vaadin-grid><br />
+	                </div>
+	                <div class="divCard">
+	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
+	                    <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
+	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderAvatar(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderName(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderStatus(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderSize(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                    </vaadin-grid>
+	                    <div id="pages"></div>
+	                    ${this.isEmptyArray(this.resources) ? html`
+	                        No websites available
+	                    `: ''}
+	                </div>
+	                ${this.renderRelayModeText()}
+	            </div>
+                    <div id="tab-followed-content">
+	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your followed Webistes</h2>
+                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                </div>
+	                <div class="divCard">
+	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Followed Websites</h3>
+	                    <vaadin-grid theme="large" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
+	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebAvatar(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebName(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebStatus(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebSize(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebFollowUnfollowButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderWebBlockUnblockButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                    </vaadin-grid>
+	                    ${this.isEmptyArray(this.webResources) ? html`
+	                        You not follow any website
+	                    `: ''}
+	                </div>
+	                ${this.renderRelayModeText()}
+	            </div>
+                    <div id="tab-blocked-content">
+	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your blocked Webistes</h2>
+                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                </div>
+	                <div class="divCard">
+	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Blocked Websites</h3>
+	                    <vaadin-grid theme="large" id="blockResourcesGrid" ?hidden="${this.isEmptyArray(this.blockResources)}" .items="${this.blockResources}" aria-label="Followed Websites" all-rows-visible>
+	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockAvatar(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockName(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockStatus(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockSize(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockFollowUnfollowButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockBlockUnblockButton(data.item)}`, root);
+	                        }}>
+	                        </vaadin-grid-column>
+	                    </vaadin-grid>
+	                    ${this.isEmptyArray(this.blockResources) ? html`
+	                        You have not blocked any website
+	                    `: ''}
+	                </div>
+	                ${this.renderRelayModeText()}
+	            </div>
+	        </div>
+	    </div>
         `
     }
 
     firstUpdated() {
 
         this.showWebsites()
+
+        setTimeout(() => {
+            this.displayTabContent('browse')
+        }, 0)
 
         const getFollowedNames = async () => {
             let followedNames = await parentEpml.request('apiCall', {
@@ -338,6 +413,24 @@ class Websites extends LitElement {
 
             this.webBlockedNames = webBlockedNames
             setTimeout(getWebBlockedNames, 60000)
+        }
+
+        const getBlockFollowedNames = async () => {
+            let blockFollowedNames = await parentEpml.request('apiCall', {
+                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.blockFollowedNames = blockFollowedNames
+            setTimeout(getBlockFollowedNames, 60000)
+        }
+
+        const getBlockBlockedNames = async () => {
+            let blockBlockedNames = await parentEpml.request('apiCall', {
+                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.blockBlockedNames = blockBlockedNames
+            setTimeout(getBlockBlockedNames, 60000)
         }
 
         const getSearchFollowedNames = async () => {
@@ -395,15 +488,19 @@ class Websites extends LitElement {
                 if (!configLoaded) {
                     setTimeout(this.getArbitraryResources, 1)
                     setTimeout(this.getFollowedWebsites, 1)
+                    setTimeout(this.getBlockedWebsites, 1)
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
                     setTimeout(getWebFollowedNames, 1)
                     setTimeout(getWebBlockedNames, 1)
+                    setTimeout(getBlockFollowedNames, 1)
+                    setTimeout(getBlockBlockedNames, 1)
                     setTimeout(getSearchFollowedNames, 1)
                     setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
                     setInterval(this.getArbitraryResources, 120000)
                     setInterval(this.getFollowedWebsites, 60000)
+                    setInterval(this.getBlockedWebsites, 60000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -415,6 +512,15 @@ class Websites extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    displayTabContent(tab) {
+        const tabBrowseContent = this.shadowRoot.getElementById('tab-browse-content')
+        const tabFollowedContent = this.shadowRoot.getElementById('tab-followed-content')
+        const tabBlockedContent = this.shadowRoot.getElementById('tab-blocked-content')
+        tabBrowseContent.style.display = (tab === 'browse') ? 'block' : 'none'
+        tabFollowedContent.style.display = (tab === 'followed') ? 'block' : 'none'
+        tabBlockedContent.style.display = (tab === 'blocked') ? 'block' : 'none'
     }
 
     searchListener(e) {
@@ -668,6 +774,168 @@ class Websites extends LitElement {
         })
         if (ret === true) {
             this.webBlockedNames = this.webBlockedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+        }
+        return ret
+    }
+
+    getBlockedWebsites = async () => {
+	let data = [];
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`;
+        const blockedJsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true`;
+
+	const blockedJsonRes = await fetch(blockedJsonUrl);
+	const blockedJsonData = await blockedJsonRes.json();
+	const blockedResponse = await fetch(blockedNamesUrl);
+	const blockednames = await blockedResponse.json();
+
+	let blockedres = blockedJsonData.filter((elm) => blockednames.includes(elm.name));
+
+        this.blockResources = blockedres;
+    }
+
+    renderBlockAvatar(blockObj) {
+        let name = blockObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
+    }
+
+    renderBlockName(blockObj) {
+        let name = blockObj.name
+        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
+    }
+
+    renderBlockStatus(blockObj) {
+        return html`<span title="${blockObj.status.description}">${blockObj.status.title}</span>`
+    }
+
+    renderBlockSize(blockObj) {
+        if (blockObj.size === null) {
+            return html``
+        }
+        let sizeBlockReadable = this.bytesToSize(blockObj.size);
+        return html`<span>${sizeBlockReadable}</span>`
+    }
+
+    renderBlockFollowUnfollowButton(blockObj) {
+        let name = blockObj.name
+        if (this.blockFollowedNames == null || !Array.isArray(this.blockFollowedNames)) {
+            return html``
+        }
+        if (this.blockFollowedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.blockFollowName(blockObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.blockUnfollowName(blockObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+        }
+    }
+
+    async blockFollowName(blockObj) {
+        let name = blockObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.blockFollowedNames = this.blockFollowedNames.filter(item => item != name);
+            this.blockFollowedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async blockUnfollowName(blockObj) {
+        let name = blockObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.blockFollowedNames = this.blockFollowedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+        }
+        return ret
+    }
+
+    renderBlockBlockUnblockButton(blockObj) {
+        let name = blockObj.name
+        if (this.blockBlockedNames == null || !Array.isArray(this.blockBlockedNames)) {
+            return html``
+        }
+        if (this.blockBlockedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.blockBlockName(blockObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.blockUnblockName(blockObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+        }
+    }
+
+    async blockBlockName(blockObj) {
+        let name = blockObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.blockBlockedNames = this.blockBlockedNames.filter(item => item != name);
+            this.blockBlockedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+        }
+        return ret
+    }
+
+    async blockUnblockName(blockObj) {
+        let name = blockObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+        if (ret === true) {
+            this.blockBlockedNames = this.blockBlockedNames.filter(item => item != name);
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
