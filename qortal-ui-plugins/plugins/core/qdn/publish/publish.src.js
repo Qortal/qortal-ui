@@ -94,7 +94,7 @@ class PublishData extends LitElement {
 						<mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
 					</div>
 					<paper-card style="width:100%; max-width:740px;">
-						<div style="background-color: ${this.selectedAddress.color}; margin:0; margin-top:20px; color: ${this.textColor(this.selectedAddress.textColor)};">
+						<div style="margin:0; margin-top:20px;">
 							<h3 style="margin:0; padding:8px 0; text-transform:capitalize;">Publish / Update ${this.category}</h3>
 							<p style="font-style:italic; font-size:14px;" ?hidden="${this.portForwardingEnabled}">Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.</p>
 						</div>
@@ -432,7 +432,9 @@ class PublishData extends LitElement {
 
                 setTimeout(() => {
                     this.names = res
-                    this.registeredName = res[0].name;
+                    if (res[0] != null) {
+                        this.registeredName = res[0].name;
+                    }
                 }, 1)
             })
             setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
