@@ -1355,14 +1355,14 @@ class TradePortal extends LitElement {
     initSocket() {
         let _relatedCoin = ""
         let presenceTxns = null
+        let tradePresenceTxns = null
         let offeringTrades = null
-        let filteredOffers = []
 
         self.addEventListener('message', function (event) {
             switch (event.data.type) {
                 case 'open_orders':
                     offeringTrades = event.data.content
-                    handleOfferingTrades()
+                    processOffersWithPresence()
                     break
                 case 'set_coin':
                     _relatedCoin = event.data.content
@@ -1378,34 +1378,42 @@ class TradePortal extends LitElement {
             return timestamp > thirtyMinsAgo
         }
 
+        const filterOffersUsingEitherPresence = (offeringTrade) => {
+            return lessThanThirtyMinsAgo(offeringTrade.lastSeen) || offeringTrade.tradePresenceExpiry > Date.now();
+        }
+
         const processOffersWithPresence = () => {
+            if (offeringTrades === null) return
+
             const waitFor = (ms) => new Promise((r) => setTimeout(r, ms))
             async function asyncForEach(array, callback) {
                 for (let index = 0; index < array.length; index++) {
                     await callback(array[index], index, array)
                 }
             }
+
             const startOfferPresenceMapping = async () => {
-                await asyncForEach(presenceTxns, async (presence) => {
-                    await waitFor(5)
-                    let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
-                    offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
-                })
-                filteredOffers = offeringTrades.filter((offeringTrade) => lessThanThirtyMinsAgo(offeringTrade.lastSeen))
+                if (presenceTxns !== null) {
+                    await asyncForEach(presenceTxns, async (presence) => {
+                        await waitFor(5)
+                        let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
+                        offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
+                    })
+                }
+
+                if (tradePresenceTxns !== null) {
+                    await asyncForEach(tradePresenceTxns, async (tradePresence) => {
+                        await waitFor(5)
+                        let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
+                        offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
+                    })
+                }
+
+                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingEitherPresence(offeringTrade))
                 self.postMessage({ type: 'PRESENCE', data: { offers: offeringTrades, filteredOffers: filteredOffers, relatedCoin: _relatedCoin } })
-                filteredOffers = []
             }
+
             startOfferPresenceMapping()
-        }
-
-        const handleOfferingTrades = () => {
-            if (presenceTxns === null) return
-            processOffersWithPresence()
-        }
-
-        const handlePresence = () => {
-            if (offeringTrades === null) return
-            processOffersWithPresence()
         }
 
         const initTradeOffersWebSocket = (restarted = false) => {
@@ -1480,6 +1488,37 @@ class TradePortal extends LitElement {
             }
         }
 
+        const initTradePresenceWebSocket = (restarted = false) => {
+            let socketTimeout
+            let socketLink = `ws://NODEURL/websockets/crosschain/tradepresence`
+            const socket = new WebSocket(socketLink)
+            // Open Connection
+            socket.onopen = () => {
+                setTimeout(pingSocket, 50)
+            }
+            // Message Event
+            socket.onmessage = (e) => {
+                tradePresenceTxns = JSON.parse(e.data)
+                processOffersWithPresence()
+                restarted = false
+            }
+            // Closed Event
+            socket.onclose = () => {
+                clearTimeout(socketTimeout)
+                // Restart Socket Connection
+                restartTradePresenceWebSocket()
+            }
+            // Error Event
+            socket.onerror = (e) => {
+                clearTimeout(socketTimeout)
+            }
+            const pingSocket = () => {
+                socket.send('ping')
+                socketTimeout = setTimeout(pingSocket, 295000)
+            }
+        }
+
+        // Will be removed in future - being replaced by tradepresence above
         const initPresenceWebSocket = (restarted = false) => {
             let socketTimeout
             let socketLink = `ws://NODEURL/websockets/presence?presenceType=TRADE_BOT`
@@ -1491,7 +1530,7 @@ class TradePortal extends LitElement {
             // Message Event
             socket.onmessage = (e) => {
                 presenceTxns = JSON.parse(e.data)
-                handlePresence()
+                processOffersWithPresence()
                 restarted = false
             }
             // Closed Event
@@ -1514,6 +1553,10 @@ class TradePortal extends LitElement {
             setTimeout(() => initPresenceWebSocket(true), 3000)
         }
 
+        const restartTradePresenceWebSocket = () => {
+            setTimeout(() => initTradePresenceWebSocket(true), 3000)
+        }
+
         const restartTradeOffersWebSocket = () => {
             setTimeout(() => initTradeOffersWebSocket(true), 3000)
         }
@@ -1527,6 +1570,9 @@ class TradePortal extends LitElement {
 
         // Start PresenceWebSocket
         initPresenceWebSocket()
+
+        // Start TradePresenceWebSocket
+        initTradePresenceWebSocket()
 
         // Start TradeBotWebSocket
         initTradeBotWebSocket()
