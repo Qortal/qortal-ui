@@ -3,7 +3,6 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
     <meta charset="UTF-8">
     <meta name="Description" content="Qortal Platform UI">
 
@@ -21,9 +20,9 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
     <link rel="manifest" href="/img/favicon/manifest.json">
+
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
-
     <meta name="theme-color" content="#ffffff">
 
     <style>
@@ -99,11 +98,10 @@
                 });
         }
 
-        const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm'
+        const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 
         loadWebAssembly(path)
             .then(wasmModule => {
-
                 window.sbrk = sbrk
                 window.memory = memory
                 window.heap = heap
