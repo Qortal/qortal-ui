@@ -4,7 +4,11 @@ import { Epml } from '../../../../epml'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
+import '@vaadin/button'
 import '@vaadin/grid'
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@vaadin/text-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -12,6 +16,9 @@ class DataManagement extends LitElement {
     static get properties() {
         return {
             loading: { type: Boolean },
+            searchBlockedNames: { type: Array },
+            searchFollowedNames: { type: Array },
+            searchDatres: { type: Array },
             blockedNames: { type: Array },
             followedNames: { type: Array },
             datres: { type: Array }
@@ -68,6 +75,12 @@ class DataManagement extends LitElement {
             #websites-list-page {
                 background: #fff;
                 padding: 12px 24px;
+            }
+
+            #search {
+               display: flex;
+               width: 50%;
+               align-items: center;
             }
 
             .divCard {
@@ -135,6 +148,9 @@ class DataManagement extends LitElement {
     constructor() {
         super()
         this.selectedAddress = {}
+        this.searchBlockedNames = []
+        this.searchFollowedNames = []
+        this.searchDatres = []
         this.blockedNames = []
         this.followedNames = []
         this.datres = []
@@ -147,6 +163,34 @@ class DataManagement extends LitElement {
                 <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
                     <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Data Management</h2>
                 </div>
+        	<div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search in hosted data by this node</h3>
+	            <div id="search">
+	                <vaadin-text-field theme="medium" id="searchName" placeholder="Data to search" value="${this.searchData}" @keydown="${this.searchListener}" clear-button-visible>
+	                    <vaadin-icon slot="prefix" icon="vaadin:database"></vaadin-icon>
+	                </vaadin-text-field>&nbsp;&nbsp;<br />
+	                <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+	                    <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                    Search
+	                </vaadin-button>
+	            </div><br />
+                    <vaadin-grid theme="large" id="searchDataHostedGrid" ?hidden="${this.isEmptyArray(this.searchDatres)}" .items="${this.searchDatres}" aria-label="Search Data Hosted" all-rows-visible>
+                        <vaadin-grid-column header="Registered Name" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column header="Service" path="service"></vaadin-grid-column>
+			<vaadin-grid-column header="Identifier" .renderer=${(root, column, data) => {
+                	    render(html`${this.renderSearchIdentifier(data.item)}`, root)
+            		}}>
+                        </vaadin-grid-column>
+			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                	    render(html`${this.renderSearchDeleteButton(data.item)}`, root);
+            		}}>
+                        </vaadin-grid-column>
+			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                	    render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
+            		}}>
+                        </vaadin-grid-column>
+                    </vaadin-grid>
+	        </div><br />
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Data hosted by this node</h3>
                     <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.datres)}" aria-label="Data Hosted" page-size="20" all-rows-visible>
@@ -207,6 +251,10 @@ class DataManagement extends LitElement {
                     setTimeout(this.getBlockedNames, 1)
                     setInterval(this.getFollowedNames, 30 * 1000)
                     setInterval(this.getBlockedNames, 30 * 1000)
+                    setTimeout(this.getSearchFollowedNames, 1)
+                    setTimeout(this.getSearchBlockedNames, 1)
+                    setInterval(this.getSearchFollowedNames, 30 * 1000)
+                    setInterval(this.getSearchBlockedNames, 30 * 1000)
                     setInterval(this.getManagementDetails, 30 * 1000)
                     configLoaded = true
                 }
@@ -222,6 +270,32 @@ class DataManagement extends LitElement {
         parentEpml.imReady()
     }
 
+    searchListener(e) {
+        if (e.key === 'Enter') {
+            this.doSearch(e);
+        }
+    }
+
+    doSearch(e) {
+        this.searchResult()
+    }
+
+    async searchResult() {
+        let searchName = this.shadowRoot.getElementById('searchName').value
+        if (searchName.length === 0) {
+            parentEpml.request('showSnackBar', 'Data Name Can Not Be Empty!')
+        } else {
+            let searchDatres = await parentEpml.request('apiCall', {
+                url: `/arbitrary/hosted/resources?includestatus=true&limit=20&offset=0&query=${searchName}&apiKey=${this.getApiKey()}`
+            })
+            if (this.isEmptyArray(searchDatres)) {
+                parentEpml.request('showSnackBar', 'Data Not Found!')
+            } else {
+                this.searchDatres = searchDatres
+            }
+        }
+    }
+
     renderDefaultText() {
         if (this.datres == null || !Array.isArray(this.datres)) {
             return html`<br />Couldn't fetch hosted data list from node`
@@ -230,6 +304,151 @@ class DataManagement extends LitElement {
             return html`<br />This node isn't hosting any data`;
         }
         return '';
+    }
+
+    renderSearchIdentifier(search) {
+        return search.identifier == null ? html`<span class="default-identifier">default</span>` : html`${search.identifier}`
+    }
+
+    renderSearchDeleteButton(search) {
+        let name = search.name
+
+        // Only show the block/unblock button if we have permission to modify the list on this node
+        // We can use the blocked names list for this, as it won't be a valid array if we have no access
+        if (this.searchBlockedNames == null || !Array.isArray(this.searchBlockedNames)) {
+            return html``
+        }
+
+        // We need to check if we are following this name, as if we are, there is no point in deleting anything
+        // as it will be re-fetched immediately. In these cases we should show an UNFOLLOW button.
+        if (this.searchFollowedNames.indexOf(name) != -1) {
+            // render unfollow button
+            return html`<mwc-button @click=${() => this.searchUnfollowName(search)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+        }
+
+        // render delete button
+        return html`<mwc-button @click=${() => this.deleteSearchResource(search)} onclick="this.blur();"><mwc-icon>delete</mwc-icon>&nbsp;Delete</mwc-button>`
+    }
+
+    renderSearchBlockUnblockButton(search) {
+        let name = search.name
+
+        // Only show the block/unblock button if we have permission to modify the list on this node
+        if (this.searchBlockedNames == null || !Array.isArray(this.searchBlockedNames)) {
+            return html``
+        }
+
+        if (this.searchBlockedNames.indexOf(name) === -1) {
+            // render block button
+            return html`<mwc-button @click=${() => this.searchBlockName(search)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+        }
+        else {
+            // render unblock button
+            return html`<mwc-button @click=${() => this.searchUnblockName(search)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+        }
+    }
+
+    async searchBlockName(search) {
+        let name = search.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully blocked - add to local list
+            // Remove it first by filtering the list - doing it this way ensures the UI updates
+            // immediately, as apposed to only adding if it doesn't already exist
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
+            this.searchBlockedNames.push(name)
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+        }
+
+        return ret
+    }
+
+    async searchUnfollowName(search) {
+        let name = search.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully unfollowed - remove from local list
+            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+        }
+
+        return ret
+    }
+
+    async searchUnblockName(search) {
+        let name = search.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully unblocked - remove from local list
+            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+        }
+
+        return ret
+    }
+
+    async deleteSearchResource(search) {
+        let identifier = search.identifier == null ? "default" : search.identifier;
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/arbitrary/resource/${search.service}/${search.name}/${identifier}?apiKey=${this.getApiKey()}`,
+            method: 'DELETE'
+        })
+
+        if (ret === true) {
+            // Successfully deleted - so refresh the page
+            window.location.reload();
+        }
+        else {
+            parentEpml.request('showSnackBar', 'Error occurred when trying to delete this resource. Please try again')
+        }
+
+        return ret
     }
 
     renderIdentifier(resource) {
@@ -493,23 +712,31 @@ class DataManagement extends LitElement {
         await this.updateItemsFromPage(1, true)
     }
 
+    getSearchBlockedNames = async () => {
+        let searchBlockedNames = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+        })
+        this.searchBlockedNames = searchBlockedNames
+    }
 
+    getSearchFollowedNames = async () => {
+        let searchFollowedNames = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+        })
+        this.searchFollowedNames = searchFollowedNames
+    }
 
     getBlockedNames = async () => {
-
         let blockedNames = await parentEpml.request('apiCall', {
             url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
         })
-
         this.blockedNames = blockedNames
     }
 
     getFollowedNames = async () => {
-
         let followedNames = await parentEpml.request('apiCall', {
             url: `/lists/followedNames?apiKey=${this.getApiKey()}`
         })
-
         this.followedNames = followedNames
     }
 
