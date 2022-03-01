@@ -22,7 +22,11 @@ class PublishData extends LitElement {
             showName: { type: Boolean },
             showService: { type: Boolean },
             showIdentifier: { type: Boolean },
+            showMetadata: { type: Boolean },
+            tags: { type: Array },
             serviceLowercase: { type: String },
+            metadata: { type: Array },
+            categories: { type: Array },
             names: { type: Array },
             registeredName: { type: String },
             selectedName: { type: String },
@@ -101,11 +105,37 @@ class PublishData extends LitElement {
 					</paper-card>
 					<!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
 					<p style="display: ${this.showName ? 'block' : 'none'}">
-						<mwc-select id="registeredName" label="Select Name" index="0" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
-							<mwc-list-item value="${this.registeredName}">${this.registeredName}</mwc-list-item>
+						<mwc-select id="registeredName" label="Select Name" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
+                            <mwc-list-item selected value=""></mwc-list-item>
+                            <mwc-list-item value="${this.registeredName}">${this.registeredName}</mwc-list-item>
 						</mwc-select>
 					</p>
+
+                    <div style="display: ${this.showMetadata ? 'block' : 'none'}">
+                        <p>
+						    <mwc-textfield style="width:100%;" label="Title" id="title" type="text" value="${this.metadata != null && this.metadata.title != null ? this.metadata.title : ''}" maxLength="80"></mwc-textfield><!--charCounter="true"-->
+                        </p>
+                        <p>
+                            <mwc-textfield style="width:100%;" label="Description" id="description" type="text" value="${this.metadata != null && this.metadata.description != null ? this.metadata.description : ''}" maxLength="500"></mwc-textfield><!--charCounter="true"-->
+                        </p>
+                        <p>
+                            <mwc-select id="category" label="Select Category" index="0" style="min-width: 130px; max-width:100%; width:100%;">
+                                ${this.categories.map((c, index) => html`
+                                    <mwc-list-item value="${c.id}">${c.name}</mwc-list-item>
+                                `)}
+                            </mwc-select>
+					    </p>
+                        <p>
+                            <mwc-textfield style="width:19.5%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="Tag 1" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.5%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="Tag 2" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.5%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="Tag 3" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.5%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="Tag 4" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.5%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="Tag 5" maxLength="20"></mwc-textfield>
+                        </p>
+					</div>
+
 					${this.renderUploadField()}
+
 					<p style="display: ${this.showService ? 'block' : 'none'}">
 						<mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
 					</p>
@@ -279,15 +309,27 @@ class PublishData extends LitElement {
                 postBody = Buffer.from(fileBuffer).toString('base64');
             }
 
-            let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}`
+            // Optional metadata
+            let title = encodeURIComponent(this.shadowRoot.getElementById('title').value);
+            let description = encodeURIComponent(this.shadowRoot.getElementById('description').value);
+            let category = encodeURIComponent(this.shadowRoot.getElementById('category').value);
+            let tag1 = encodeURIComponent(this.shadowRoot.getElementById('tag1').value);
+            let tag2 = encodeURIComponent(this.shadowRoot.getElementById('tag2').value);
+            let tag3 = encodeURIComponent(this.shadowRoot.getElementById('tag3').value);
+            let tag4 = encodeURIComponent(this.shadowRoot.getElementById('tag4').value);
+            let tag5 = encodeURIComponent(this.shadowRoot.getElementById('tag5').value);
+
+            let metadataQueryString = `title=${title}&description=${description}&category=${category}&tags=${tag1}&tags=${tag2}&tags=${tag3}&tags=${tag4}&tags=${tag5}`
+
+            let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
             if (identifier != null && identifier.trim().length > 0) {
-                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}`
+                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQuery}&apiKey=${this.getApiKey()}`
             }
 
             let uploadDataRes = await parentEpml.request('apiCall', {
                 type: 'api',
                 method: 'POST',
-                url: `${uploadDataUrl}?apiKey=${this.getApiKey()}`,
+                url: `${uploadDataUrl}`,
                 body: `${postBody}`,
             })
 
@@ -389,6 +431,7 @@ class PublishData extends LitElement {
         this.showName = false;
         this.showService = false
         this.showIdentifier = false
+        this.showMetadata = false;
 
         const urlParams = new URLSearchParams(window.location.search)
         this.name = urlParams.get('name')
@@ -406,12 +449,18 @@ class PublishData extends LitElement {
         if (urlParams.get('showIdentifier') === "true") {
             this.showIdentifier = true
         }
+        if (urlParams.get('showMetadata') === "true") {
+            this.showMetadata = true
+        }
 
         if (this.identifier != null) {
             if (this.identifier === "null" || this.identifier.trim().length == 0) {
                 this.identifier = null
             }
         }
+
+        this.categories = [];
+        this.tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"];
 
         // Default to true so the message doesn't appear and disappear quickly
         this.portForwardingEnabled = true
@@ -440,6 +489,17 @@ class PublishData extends LitElement {
             setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
         }
 
+        const fetchCategories = () => {
+            parentEpml.request('apiCall', {
+                url: `/arbitrary/categories`
+            }).then(res => {
+
+                setTimeout(() => {
+                    this.categories = res
+                }, 1)
+            })
+        }
+
         const fetchPeersSummary = () => {
             parentEpml.request('apiCall', {
                 url: `/peers/summary`
@@ -463,6 +523,7 @@ class PublishData extends LitElement {
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(fetchNames, 1)
+                    setTimeout(fetchCategories, 1)
                     setTimeout(fetchPeersSummary, 1)
                     configLoaded = true
                 }
@@ -496,9 +557,30 @@ class PublishData extends LitElement {
         }
     }
 
-    selectName(e) {
-        const name = this.shadowRoot.getElementById('registeredName').innerHTML
+    fetchResourceMetadata() {
+        let identifier = this.identifier != null ? this.identifier : "default";
+
+        parentEpml.request('apiCall', {
+            url: `/arbitrary/metadata/${this.service}/${this.name}/${identifier}?apiKey=${this.getApiKey()}`
+        }).then(res => {
+
+            setTimeout(() => {
+                this.metadata = res
+                if (this.metadata != null && this.metadata.category != null) {
+                    this.shadowRoot.getElementById('category').value = this.metadata.category;
+                }
+                else {
+                    this.shadowRoot.getElementById('category').value = "";
+                }
+            }, 1)
+        })
+    }
+
+    selectName() {
+        const name = this.shadowRoot.getElementById('registeredName').value
         this.selectedName = name
+        this.name = name
+        this.fetchResourceMetadata();
     }
 
     getApiKey() {
