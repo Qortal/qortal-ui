@@ -157,6 +157,25 @@ class Websites extends LitElement {
                 opacity: 0.66;
             }
 
+            .resourceTitle {
+                font-size:15px;
+                line-height: 32px;
+            }
+
+            .resourceDescription {
+                font-size:11px;
+                padding-bottom: 5px;
+            }
+
+            .resourceCategoryTags {
+                font-size:11px;
+                padding-bottom: 10px;
+            }
+
+            .registeredName {
+                font-size:15px;
+            }
+
             .itemList {
                 padding:0;
             }
@@ -172,9 +191,9 @@ class Websites extends LitElement {
 
             img {
                 border-radius: 25%;
-                max-width: 42px;
+                max-width: 65px;
                 height: 100%;
-                max-height: 42px;
+                max-height: 65px;
             }
         `
     }
@@ -226,62 +245,57 @@ class Websites extends LitElement {
 	                            Search
 	                        </vaadin-button>
 	                    </div><br />
-	                    <vaadin-grid theme="large" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
-	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSearchAvatar(data.item)}`, root)
+	                    <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
+	                        <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderAvatar(data.item)}`, root)
 	                        }}>
 	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSearchName(data.item)}`, root)
+	                        <vaadin-grid-column header="Details" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderInfo(data.item)}`, root)
 	                        }}>
 	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-	                             render(html`${this.renderSearchStatus(data.item)}`, root)
+                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderName(data.item)}`, root)
+	                        }}>
+                            </vaadin-grid-column>
+	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
 	                        }}>
 	                        </vaadin-grid-column>
-				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSearchSize(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSearchFollowUnfollowButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
+	                        <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
 	                        }}>
 	                        </vaadin-grid-column>
 	                    </vaadin-grid><br />
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-	                    <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
-	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+	                    <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
+	                        <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderAvatar(data.item)}`, root)
 	                        }}>
 	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
+	                        <vaadin-grid-column header="Details" .renderer=${(root, column, data) => {
+	                            render(html`${this.renderInfo(data.item)}`, root)
+	                        }}>
+	                        </vaadin-grid-column>
+                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderName(data.item)}`, root)
 	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderStatus(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderSize(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            </vaadin-grid-column>
+	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
 	                        }}>
 	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                        <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
 	                        }}>
 	                        </vaadin-grid-column>
 	                    </vaadin-grid>
 	                    <div id="pages"></div>
+                        ${this.resources == null ? html`
+	                        Loading...
+	                    `: ''}
 	                    ${this.isEmptyArray(this.resources) ? html`
 	                        No websites available
 	                    `: ''}
@@ -295,34 +309,33 @@ class Websites extends LitElement {
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Followed Websites</h3>
-	                    <vaadin-grid theme="large" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
-	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebAvatar(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebName(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebStatus(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebSize(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebFollowUnfollowButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderWebBlockUnblockButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
+	                    <vaadin-grid theme="wrap-cell-content" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
+                            <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                                render(html`${this.renderAvatar(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column header="Details" .renderer=${(root, column, data) => {
+                                render(html`${this.renderInfo(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
+                                render(html`${this.renderName(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
+                                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                            }}>
+                            </vaadin-grid-column>
 	                    </vaadin-grid>
+                        ${this.webResources == null ? html`
+	                        Loading...
+	                    `: ''}
 	                    ${this.isEmptyArray(this.webResources) ? html`
-	                        You not follow any website
+	                        You aren't following any websites
 	                    `: ''}
 	                </div>
 	                ${this.renderRelayModeText()}
@@ -334,34 +347,33 @@ class Websites extends LitElement {
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Blocked Websites</h3>
-	                    <vaadin-grid theme="large" id="blockResourcesGrid" ?hidden="${this.isEmptyArray(this.blockResources)}" .items="${this.blockResources}" aria-label="Followed Websites" all-rows-visible>
-	                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockAvatar(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Name" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockName(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="Status" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockStatus(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-				<vaadin-grid-column header="Size" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockSize(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockFollowUnfollowButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockBlockUnblockButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
+	                    <vaadin-grid theme="wrap-cell-content" id="blockResourcesGrid" ?hidden="${this.isEmptyArray(this.blockResources)}" .items="${this.blockResources}" aria-label="Followed Websites" all-rows-visible>
+                            <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                                render(html`${this.renderAvatar(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column header="Details" .renderer=${(root, column, data) => {
+                                render(html`${this.renderInfo(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
+                                render(html`${this.renderName(data.item)}`, root)
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
+                                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+                            }}>
+                            </vaadin-grid-column>
+                            <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                            }}>
+                            </vaadin-grid-column>
 	                    </vaadin-grid>
+                        ${this.blockResources == null ? html`
+	                        Loading...
+	                    `: ''}
 	                    ${this.isEmptyArray(this.blockResources) ? html`
-	                        You have not blocked any website
+	                        You have not blocked any websites
 	                    `: ''}
 	                </div>
 	                ${this.renderRelayModeText()}
@@ -537,7 +549,7 @@ class Websites extends LitElement {
 
     getArbitraryResources = async () => {
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`
         })
         this.resources = resources
     }
@@ -624,7 +636,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const namesUrl = `${nodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`;
-        const jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true`;
+        const jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`;
 
 	const jsonRes = await fetch(jsonUrl);
 	const jsonData = await jsonRes.json();
@@ -636,157 +648,12 @@ class Websites extends LitElement {
         this.webResources = webres;
     }
 
-    renderWebAvatar(webObj) {
-        let name = webObj.name
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
-    }
-
-    renderWebName(webObj) {
-        let name = webObj.name
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
-    }
-
-    renderWebStatus(webObj) {
-        return html`<span title="${webObj.status.description}">${webObj.status.title}</span>`
-    }
-
-    renderWebSize(webObj) {
-        if (webObj.size === null) {
-            return html``
-        }
-        let sizeWebReadable = this.bytesToSize(webObj.size);
-        return html`<span>${sizeWebReadable}</span>`
-    }
-
-    renderWebFollowUnfollowButton(webObj) {
-        let name = webObj.name
-        if (this.webFollowedNames == null || !Array.isArray(this.webFollowedNames)) {
-            return html``
-        }
-        if (this.webFollowedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.webFollowName(webObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.webUnfollowName(webObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
-        }
-    }
-
-    async webFollowName(webObj) {
-        let name = webObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.webFollowedNames = this.webFollowedNames.filter(item => item != name);
-            this.webFollowedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async webUnfollowName(webObj) {
-        let name = webObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.webFollowedNames = this.webFollowedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    renderWebBlockUnblockButton(webObj) {
-        let name = webObj.name
-        if (this.webBlockedNames == null || !Array.isArray(this.webBlockedNames)) {
-            return html``
-        }
-        if (this.webBlockedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.webBlockName(webObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.webUnblockName(webObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
-        }
-    }
-
-    async webBlockName(webObj) {
-        let name = webObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.webBlockedNames = this.webBlockedNames.filter(item => item != name);
-            this.webBlockedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async webUnblockName(webObj) {
-        let name = webObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.webBlockedNames = this.webBlockedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
-        }
-        return ret
-    }
-
     getBlockedWebsites = async () => {
 	let data = [];
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`;
-        const blockedJsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true`;
+        const blockedJsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`;
 
 	const blockedJsonRes = await fetch(blockedJsonUrl);
 	const blockedJsonData = await blockedJsonRes.json();
@@ -798,158 +665,13 @@ class Websites extends LitElement {
         this.blockResources = blockedres;
     }
 
-    renderBlockAvatar(blockObj) {
-        let name = blockObj.name
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
-    }
-
-    renderBlockName(blockObj) {
-        let name = blockObj.name
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
-    }
-
-    renderBlockStatus(blockObj) {
-        return html`<span title="${blockObj.status.description}">${blockObj.status.title}</span>`
-    }
-
-    renderBlockSize(blockObj) {
-        if (blockObj.size === null) {
-            return html``
-        }
-        let sizeBlockReadable = this.bytesToSize(blockObj.size);
-        return html`<span>${sizeBlockReadable}</span>`
-    }
-
-    renderBlockFollowUnfollowButton(blockObj) {
-        let name = blockObj.name
-        if (this.blockFollowedNames == null || !Array.isArray(this.blockFollowedNames)) {
-            return html``
-        }
-        if (this.blockFollowedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.blockFollowName(blockObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.blockUnfollowName(blockObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
-        }
-    }
-
-    async blockFollowName(blockObj) {
-        let name = blockObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.blockFollowedNames = this.blockFollowedNames.filter(item => item != name);
-            this.blockFollowedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async blockUnfollowName(blockObj) {
-        let name = blockObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.blockFollowedNames = this.blockFollowedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    renderBlockBlockUnblockButton(blockObj) {
-        let name = blockObj.name
-        if (this.blockBlockedNames == null || !Array.isArray(this.blockBlockedNames)) {
-            return html``
-        }
-        if (this.blockBlockedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.blockBlockName(blockObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.blockUnblockName(blockObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
-        }
-    }
-
-    async blockBlockName(blockObj) {
-        let name = blockObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.blockBlockedNames = this.blockBlockedNames.filter(item => item != name);
-            this.blockBlockedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async blockUnblockName(blockObj) {
-        let name = blockObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.blockBlockedNames = this.blockBlockedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
-        }
-        return ret
-    }
-
     async searchResult() {
         let searchName = this.shadowRoot.getElementById('searchName').value
         if (searchName.length === 0) {
             parentEpml.request('showSnackBar', 'Name Can Not Be Empty!')
         } else {
             let searchResources = await parentEpml.request('apiCall', {
-                url: `/arbitrary/resources/search?service=${this.service}&query=${searchName}&default=true&limit=5&reverse=false&includestatus=true`
+                url: `/arbitrary/resources/search?service=${this.service}&query=${searchName}&default=true&limit=5&reverse=false&includestatus=true&includemetadata=true`
             })
             if (this.isEmptyArray(searchResources)) {
                 parentEpml.request('showSnackBar', 'Name Not Found!')
@@ -959,157 +681,12 @@ class Websites extends LitElement {
         }
     }
 
-    renderSearchAvatar(searchObj) {
-        let name = searchObj.name
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
-    }
-
-    renderSearchName(searchObj) {
-        let name = searchObj.name
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
-    }
-
-    renderSearchStatus(searchObj) {
-        return html`<span title="${searchObj.status.description}">${searchObj.status.title}</span>`
-    }
-
-    renderSearchSize(searchObj) {
-        if (searchObj.size === null) {
-            return html``
-        }
-        let sizeSearchReadable = this.bytesToSize(searchObj.size);
-        return html`<span>${sizeSearchReadable}</span>`
-    }
-
-    renderSearchFollowUnfollowButton(searchObj) {
-        let name = searchObj.name
-        if (this.searchFollowedNames == null || !Array.isArray(this.searchFollowedNames)) {
-            return html``
-        }
-        if (this.searchFollowedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.searchFollowName(searchObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;Follow</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.searchUnfollowName(searchObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
-        }
-    }
-
-    async searchFollowName(searchObj) {
-        let name = searchObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
-            this.searchFollowedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async searchUnfollowName(searchObj) {
-        let name = searchObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
-        }
-        return ret
-    }
-
-    renderSearchBlockUnblockButton(searchObj) {
-        let name = searchObj.name
-        if (this.searchBlockedNames == null || !Array.isArray(this.searchBlockedNames)) {
-            return html``
-        }
-        if (this.searchBlockedNames.indexOf(name) === -1) {
-            return html`<mwc-button @click=${() => this.searchBlockName(searchObj)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
-        }
-        else {
-            return html`<mwc-button @click=${() => this.searchUnblockName(searchObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
-        }
-    }
-
-    async searchBlockName(searchObj) {
-        let name = searchObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
-            this.searchBlockedNames.push(name)
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
-        }
-        return ret
-    }
-
-    async searchUnblockName(searchObj) {
-        let name = searchObj.name
-        let items = [
-            name
-        ]
-        let namesJsonString = JSON.stringify({ "items": items })
-        let ret = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: `${namesJsonString}`
-        })
-        if (ret === true) {
-            this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
-        }
-        else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
-        }
-        return ret
-    }
-
     renderAvatar(websiteObj) {
         let name = websiteObj.name
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.src='/img/incognito.png';">`
+        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}"><img src="${url}" onerror="this.src='/img/incognito.png';"></a>`
     }
 
     renderRelayModeText() {
@@ -1132,7 +709,7 @@ class Websites extends LitElement {
     }
 
     publishWebsite() {
-        window.location.href = `publish/index.html?service=${this.service}&identifier=${this.identifier}&uploadType=zip&category=Website&showName=true&showService=false&showIdentifier=false`
+        window.location.href = `publish/index.html?service=${this.service}&identifier=${this.identifier}&uploadType=zip&category=Website&showName=true&showService=false&showIdentifier=false&showMetadata=true`
     }
 
     async followName(websiteObj) {
@@ -1259,9 +836,44 @@ class Websites extends LitElement {
         }
     }
 
-    renderName(websiteObj) {
+    renderInfo(websiteObj) {
         let name = websiteObj.name
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${name}</a>`
+        let title = name;
+        let description = "";
+        let categoryName = "Uncategorized";
+        let tags = "";
+        let sizeReadable = "";
+
+        if (websiteObj.metadata != null) {
+            title = websiteObj.metadata.title;
+            description = websiteObj.metadata.description;
+            categoryName = websiteObj.metadata.categoryName;
+            if (websiteObj.metadata.tags != null && websiteObj.metadata.tags.length > 0) {
+                tags = "Tags: " + websiteObj.metadata.tags.join(", ");
+            }
+        }
+        if (websiteObj.size != null) {
+            sizeReadable = this.bytesToSize(websiteObj.size);
+        }
+
+        return html`
+        <div class="resourceTitle">
+            <a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${title}</a>
+        </div>
+        <div class="resourceDescription">
+            ${description}
+        </div>
+        <div class="resourceCategoryTags">
+            ${categoryName}&nbsp;
+            ${tags.length > 0 ? " | " : ""}
+            &nbsp;${tags}&nbsp;
+            ${sizeReadable.length > 0 ? " | " : ""}
+            &nbsp;Size: ${sizeReadable}
+        </div>`;
+    }
+
+    renderName(websiteObj) {
+        return html`<span class="registeredName">${websiteObj.name}</span>`;
     }
 
     renderStatus(websiteObj) {
