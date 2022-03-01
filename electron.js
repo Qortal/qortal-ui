@@ -105,7 +105,9 @@ if (!isLock) {
 		if (process.platform === 'win32') {
 			app.setAppUserModelId("org.qortal.QortalUI");
 		}
-		autoUpdater.checkForUpdatesAndNotify();
+		setInterval(() => {
+			autoUpdater.checkForUpdatesAndNotify();
+		}, 1000 * 60 * 15)
 	})
 	app.on('window-all-closed', function () {
 		if (process.platform !== 'darwin') {
