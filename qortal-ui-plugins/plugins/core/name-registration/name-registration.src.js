@@ -123,7 +123,7 @@ class NameRegistration extends LitElement {
                                 ?active="${this.registerNameLoading}"
                                 alt="Registering Name"></paper-spinner-lite>
                         </span>
-                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
+                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
                             ${this.message}
                         </span><br>
                         <span>
