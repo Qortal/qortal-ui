@@ -270,6 +270,14 @@ class SendMoneyPage extends LitElement {
         // Get DOGE Balance
         this.updateDOGEAccountBalance()
 
+	setInterval(() => {
+	    this.errorMessage = '';
+	}, 5000)
+
+	setInterval(() => {
+	    this.successMessage = '';
+	}, 5000)
+
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
             this._textMenu(event)
@@ -561,7 +569,6 @@ class SendMoneyPage extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         validateReceiver(recipient)
     }
 
