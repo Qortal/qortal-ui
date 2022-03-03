@@ -102,6 +102,7 @@ class PublishData extends LitElement {
 					<!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
 					<p style="display: ${this.showName ? 'block' : 'none'}">
 						<mwc-select id="registeredName" label="Select Name" index="0" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
+                            <mwc-list-item selected value=""></mwc-list-item>
 							<mwc-list-item value="${this.registeredName}">${this.registeredName}</mwc-list-item>
 						</mwc-select>
 					</p>
@@ -497,7 +498,7 @@ class PublishData extends LitElement {
     }
 
     selectName(e) {
-        const name = this.shadowRoot.getElementById('registeredName').innerHTML
+        const name = this.shadowRoot.getElementById('registeredName').value
         this.selectedName = name
     }
 
