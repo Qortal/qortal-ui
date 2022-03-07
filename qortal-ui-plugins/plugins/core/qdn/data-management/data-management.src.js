@@ -21,7 +21,8 @@ class DataManagement extends LitElement {
             searchDatres: { type: Array },
             blockedNames: { type: Array },
             followedNames: { type: Array },
-            datres: { type: Array }
+            datres: { type: Array },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -34,12 +35,18 @@ class DataManagement extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
             }
 
-	    #pages {
+            #pages {
 		display: flex;
 		flex-wrap: wrap;
-	        padding: 10px 5px 5px 5px;
+		padding: 10px 5px 5px 5px;
 		margin: 0px 20px 20px 20px;
 	    }
 
@@ -53,6 +60,7 @@ class DataManagement extends LitElement {
 		font: inherit;
 		outline: none;
 		cursor: pointer;
+                color: var(--black);
 	    }
 
 	    #pages > button:not([disabled]):hover,
@@ -63,7 +71,7 @@ class DataManagement extends LitElement {
 
 	    #pages > button[selected] {
 		font-weight: bold;
-		color: white;
+		color: var(--white);
 		background-color: #ccc;
 	    }
 
@@ -73,7 +81,7 @@ class DataManagement extends LitElement {
 	    }
 
             #websites-list-page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
@@ -95,12 +103,12 @@ class DataManagement extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
             a.visitSite {
-                color: #000;
+                color: var(--black);
                 text-decoration: none;
             }
 
@@ -155,6 +163,7 @@ class DataManagement extends LitElement {
         this.followedNames = []
         this.datres = []
         this.isLoading = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -218,6 +227,10 @@ class DataManagement extends LitElement {
 
     firstUpdated() {
 
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         this.showManagement()
 
         window.addEventListener('contextmenu', (event) => {
@@ -268,6 +281,16 @@ class DataManagement extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     searchListener(e) {

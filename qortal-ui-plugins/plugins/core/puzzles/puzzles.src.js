@@ -29,7 +29,8 @@ class Puzzles extends LitElement {
             selectedAddress: { type: Object },
             selectedPuzzle: { type: Object },
             error: { type: Boolean },
-            message: { type: String }
+            message: { type: String },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -43,9 +44,16 @@ class Puzzles extends LitElement {
                         --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                         --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                         --lumo-primary-color: hsl(199, 100%, 48%);
+			--lumo-base-color: var(--white);
+			--lumo-body-text-color: var(--black);
+			--lumo-secondary-text-color: var(--sectxt);
+			--lumo-contrast-60pct: var(--vdicon);
+			--_lumo-grid-border-color: var(--border);
+			--_lumo-grid-secondary-border-color: var(--border2);
 		}
+
 		#puzzle-page {
-			background: #fff;
+			background: var(--white);
 			padding: 12px 24px;
 		}
 
@@ -54,7 +62,7 @@ class Puzzles extends LitElement {
 		}
 
 		h2, h3, h4, h5 {
-			color:#333;
+			color: var(--black);
 			font-weight: 400;
 		}
 
@@ -65,6 +73,13 @@ class Puzzles extends LitElement {
 		.clue {
 			font-family: "Lucida Console", "Courier New", monospace;
 			font-size: smaller;
+		}
+
+		.divCard {
+			border: 1px solid #eee;
+			padding: 1em;
+			box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
+			margin-bottom: 2em;
 		}
 	`
     }
@@ -79,6 +94,7 @@ class Puzzles extends LitElement {
         this.selectedPuzzle = {}
         this.error = false
         this.message = ''
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -154,6 +170,11 @@ class Puzzles extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
@@ -340,6 +361,16 @@ class Puzzles extends LitElement {
 
             checkSelectedTextAndShowMenu()
         })
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     async guessPuzzle(puzzle) {

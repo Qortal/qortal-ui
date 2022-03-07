@@ -35,7 +35,8 @@ class Websites extends LitElement {
             webBlockedNames: { type: Array },
             blockResources: { type: Array },
             blockFollowedNames: { type: Array },
-            blockBlockedNames: { type: Array }
+            blockBlockedNames: { type: Array },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -48,6 +49,12 @@ class Websites extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
             }
 
             #tabs-1 {
@@ -59,10 +66,16 @@ class Websites extends LitElement {
 		padding-bottom: 10px;
             }
 
-	    #pages {
+	    mwc-tab-bar {
+		--mdc-text-transform: none;
+		--mdc-tab-color-default: var(--black);
+		--mdc-tab-text-label-color-default: var(--black);
+	    }
+
+            #pages {
 		display: flex;
 		flex-wrap: wrap;
-	        padding: 10px 5px 5px 5px;
+		padding: 10px 5px 5px 5px;
 		margin: 0px 20px 20px 20px;
 	    }
 
@@ -76,6 +89,7 @@ class Websites extends LitElement {
 		font: inherit;
 		outline: none;
 		cursor: pointer;
+                color: var(--black);
 	    }
 
 	    #pages > button:not([disabled]):hover,
@@ -86,7 +100,7 @@ class Websites extends LitElement {
 
 	    #pages > button[selected] {
 		font-weight: bold;
-		color: white;
+		color: var(--white);
 		background-color: #ccc;
 	    }
 
@@ -96,7 +110,7 @@ class Websites extends LitElement {
 	    }
 
             #websites-list-page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
@@ -118,12 +132,12 @@ class Websites extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
             a.visitSite {
-                color: #000;
+                color: var(--black);
                 text-decoration: none;
             }
 
@@ -167,7 +181,7 @@ class Websites extends LitElement {
                 word-break:normal;
                 font-size:14px;
                 line-height:20px;
-                color:rgb(100,100,100);
+                color: var(--relaynodetxt);
             }
 
             img {
@@ -199,6 +213,7 @@ class Websites extends LitElement {
         this.blockResources = []
         this.blockFollowedNames = []
         this.blockBlockedNames = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -283,7 +298,7 @@ class Websites extends LitElement {
 	                    </vaadin-grid>
 	                    <div id="pages"></div>
 	                    ${this.isEmptyArray(this.resources) ? html`
-	                        No websites available
+	                        <span style="color: var(--black);">No websites available</span>
 	                    `: ''}
 	                </div>
 	                ${this.renderRelayModeText()}
@@ -322,7 +337,7 @@ class Websites extends LitElement {
 	                        </vaadin-grid-column>
 	                    </vaadin-grid>
 	                    ${this.isEmptyArray(this.webResources) ? html`
-	                        You not follow any website
+	                        <span style="color: var(--black);">You not follow any website</span>
 	                    `: ''}
 	                </div>
 	                ${this.renderRelayModeText()}
@@ -361,7 +376,7 @@ class Websites extends LitElement {
 	                        </vaadin-grid-column>
 	                    </vaadin-grid>
 	                    ${this.isEmptyArray(this.blockResources) ? html`
-	                        You have not blocked any website
+	                        <span style="color: var(--black);">You have not blocked any website</span>
 	                    `: ''}
 	                </div>
 	                ${this.renderRelayModeText()}
@@ -372,6 +387,10 @@ class Websites extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
 
         this.showWebsites()
 
@@ -512,6 +531,16 @@ class Websites extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     displayTabContent(tab) {

@@ -5,16 +5,26 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class Messaging extends LitElement {
     static get properties() {
-        return {}
+        return {
+            theme: { type: String, reflect: true }
+        }
     }
 
     static get styles() {
         return css`
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
+                --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
             }
+
             #page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
@@ -24,7 +34,7 @@ class Messaging extends LitElement {
             }
 
             h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -64,17 +74,18 @@ class Messaging extends LitElement {
             }
 
             p {
-                color:#333;
+                color: var(--black);
             }
 
             ul, ul li {
-                color:#333;
+                color: var(--black);
             }
         `
     }
 
     constructor() {
         super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -94,8 +105,6 @@ class Messaging extends LitElement {
                     <p style="font-size: 17px;">A long-term message that is stored <strong>ON CHAIN</strong>. 
                     These messages <strong>are able</strong> to be <strong>sent to groups or individual accounts</strong>, and are essentially <strong>the 'e-mail' of Qortal</strong>. 
                     Use these messages if you intend on the message being a <strong>PERMANENT message</strong> that stays when and where you send it.</p>
-
-                    <!-- <span style="display: block; text-align: center"><strong>- more info -</strong></span> -->
 
                     <ul>
                         <li style="font-size: 17px; padding: 10px;">There are no @ in Qortal Chain Messaging, only 'registered names'. As the registered names on the chain can only be registered ONCE. Therefore, there are NO DUPLICATES.</li>
@@ -125,17 +134,11 @@ class Messaging extends LitElement {
         `
     }
 
-    getUrl(pageId) {
-        this.onPageNavigation(`/app/${pageId}`)
-
-    }
-
-    onPageNavigation(pageUrl) {
-        parentEpml.request('setPageUrl', pageUrl)
-    }
-
-
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
 
         window.addEventListener("contextmenu", (event) => {
 
@@ -178,9 +181,25 @@ class Messaging extends LitElement {
                 }
             })
         })
-
-
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    getUrl(pageId) {
+        this.onPageNavigation(`/app/${pageId}`)
+    }
+
+    onPageNavigation(pageUrl) {
+        parentEpml.request('setPageUrl', pageUrl)
     }
 
     _textMenu(event) {

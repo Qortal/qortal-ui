@@ -23,26 +23,34 @@ class ChatHead extends LitElement {
                 cursor: pointer;
                 width: 100%;
             }
+
             li:hover {
-                background-color: #eee;
+                background-color: var(--chatmenuhover);
             }
+
             .active {
-                background: #ebebeb;
+                background: var(--chatmenuactive);
                 border-left: 4px solid #3498db;
             }
+
             .img-icon {
                 float: left;
                 font-size:40px;
+                color: var(--black);
             }
+
             .about {
                 margin-top: 8px;
             }
+
             .about {
                 padding-left: 8px;
             }
+
             .status {
                 color: #92959e;
             }
+
             .clearfix:after {
                 visibility: hidden;
                 display: block;
@@ -74,7 +82,7 @@ class ChatHead extends LitElement {
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 <mwc-icon class="img-icon">account_circle</mwc-icon>
                 <div class="about">
-                    <div class="name"><span style="float:left; padding-left: 8px;">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem;">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
+                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--black);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--black);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
                 </div>
             </li>
         `

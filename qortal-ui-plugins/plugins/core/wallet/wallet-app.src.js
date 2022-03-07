@@ -24,6 +24,7 @@ class MultiWallet extends LitElement {
             isTextMenuOpen: { type: Boolean },
             wallets: { type: Map },
             _selectedWallet: 'qort',
+            theme: { type: String, reflect: true },
             balanceString: 'Fetching balance ...'
         }
     }
@@ -37,6 +38,10 @@ class MultiWallet extends LitElement {
                 		--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 		--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 		--lumo-primary-color: hsl(199, 100%, 48%);
+				--lumo-base-color: var(--white);
+				--lumo-body-text-color: var(--black);
+				--_lumo-grid-border-color: var(--border);
+				--_lumo-grid-secondary-border-color: var(--border2);
 			}
 
 			#pages {
@@ -56,6 +61,7 @@ class MultiWallet extends LitElement {
 				font: inherit;
 				outline: none;
 				cursor: pointer;
+                                color: var(--black);
 			}
 
 			#pages > button:not([disabled]):hover,
@@ -66,7 +72,7 @@ class MultiWallet extends LitElement {
 
 			#pages > button[selected] {
 				font-weight: bold;
-				color: white;
+				color: var(--white);
 				background-color: #ccc;
 			}
 
@@ -108,7 +114,7 @@ class MultiWallet extends LitElement {
 
 
 			.text-white-primary {
-				color: var(--white-primary);
+				color: var(--white);
 			}
 
 			.text-white-secondary {
@@ -124,6 +130,7 @@ class MultiWallet extends LitElement {
 			table {
 				border: none;
 			}
+
 			table td,
 			th {
 				white-space: nowrap;
@@ -131,39 +138,51 @@ class MultiWallet extends LitElement {
 				font-size: 14px;
 				padding: 0 12px;
 				font-family: 'Roboto', sans-serif;
+                                color: var(--black);
+                                background: var(--white);
 			}
+
 			table tr {
 				height: 48px;
 			}
+
 			table tr:hover td {
 				background: #eee;
 			}
+
 			table tr th {
 				color: #666;
 				font-size: 12px;
 			}
+
 			table tr td {
 				margin: 0;
 			}
+
 			.white-bg {
 				height: 100vh;
-				background: #fff;
+				background: var(--white);
 			}
+
 			span {
 				font-size: 18px;
 				word-break: break-all;
 			}
+
 			.title {
 				font-weight: 600;
 				font-size: 12px;
 				line-height: 32px;
 				opacity: 0.66;
 			}
+
 			#transactionList {
 				padding: 0;
 			}
+
 			#transactionList > * {
 			}
+
 			.color-in {
 				color: #02977e;
 				background-color: rgba(0, 201, 167, 0.2);
@@ -173,6 +192,7 @@ class MultiWallet extends LitElement {
 				padding: 0.2rem 0.5rem;
 				margin-left: 4px;
 			}
+
 			.color-out {
 				color: #b47d00;
 				background-color: rgba(219, 154, 4, 0.2);
@@ -186,7 +206,7 @@ class MultiWallet extends LitElement {
 			body {
 				margin: 0;
 				padding: 0;
-				background: white;
+				background: var(--white);
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
 			}
@@ -194,7 +214,7 @@ class MultiWallet extends LitElement {
 			h2 {
 				margin: 0;
 				font-weight: 400;
-				color: #707584;
+				color: var(--black);
 				font: 24px/24px 'Open Sans', sans-serif;
 			}
 
@@ -218,7 +238,7 @@ class MultiWallet extends LitElement {
 				height: 100%;
 				overflow: hidden;
 				border-radius: 8px;
-				background-color: #fff;
+				background-color: var(--white);
 			}
 
 			.wallet {
@@ -243,7 +263,7 @@ class MultiWallet extends LitElement {
 				display: flex;
 				align-items: center;
 				font-size: 18px; 
-				color: var(--mdc-theme-primary, #444750); 
+				color: var(--black); 
 				margin: 4px 0 20px;
 			}
 
@@ -251,7 +271,7 @@ class MultiWallet extends LitElement {
 				display: inline-block;
 				font-weight: 600;
 				font-size: 32px;
-				color: var(--mdc-theme-primary, #444750); 
+				color: var(--black); 
 			}
 
 			#transactions {
@@ -275,6 +295,7 @@ class MultiWallet extends LitElement {
 				margin-bottom: 45px;
 				margin-right: 50px;
 			}
+
 			.transaction-item::before {
 				position: absolute;
 				content: '';
@@ -324,18 +345,19 @@ class MultiWallet extends LitElement {
 
 			.currency-box {
 				display: flex;
-				background-color: #fff;
+				background-color: var(--white);
 				text-align: center;
 				padding: 12px;
 				cursor: pointer;
 				transition: 0.1s ease-in-out;
 			}
+
 			.currency-box:not(:last-child) {
 				border-bottom: 1px solid #eee;
 			}
 
 			.active {
-				background: #ddd;
+				background: #bbb;
 			}
 
 			.currency-image {
@@ -347,13 +369,16 @@ class MultiWallet extends LitElement {
 				border-radius: 3px;
     		                filter: grayscale(100%);
 			}
+
 			.currency-box.active .currency-image,
 			.currency-box:hover .currency-image {
 				filter: none;
 			}
+
 			.currency-box:hover {
 				background: #bbb;
 			}
+
 			.currency-box.active,
 			.currency-box:hover .currency-text {
 				font-weight: 500;
@@ -363,7 +388,7 @@ class MultiWallet extends LitElement {
 				margin: auto 0;
 				margin-left: 8px;
 				font-size: 20px;
-				color: #777;
+				color: var(--black);
 			}
 
 			.qort .currency-image {
@@ -496,6 +521,8 @@ class MultiWallet extends LitElement {
 
         this.selectWallet = this.selectWallet.bind(this)
 
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
+
         this.wallets = new Map()
         let coinProp = {
             balance: 0,
@@ -539,7 +566,7 @@ class MultiWallet extends LitElement {
         return html`
 			<div class="wrapper">
 				<div class="wallet">
-					<div style="font-size: 20px; color: #777; padding: 16px; border-bottom: 1px solid #eee;">Wallets</div>
+					<div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid #eee;">Wallets</div>
 					<div class="cards">
 						<div coin="qort" class="currency-box qort active">
 							<div class="currency-image"></div>
@@ -572,7 +599,7 @@ class MultiWallet extends LitElement {
 								textToCopy=${this.getSelectedWalletAddress()}
 								buttonSize="28px"
 								iconSize="16px"
-								color="#707584"
+								color="var(--copybutton)"
 								offsetLeft="4px"
 							>
 							</button-icon-copy> 
@@ -631,12 +658,166 @@ class MultiWallet extends LitElement {
 		`
     }
 
+    firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
+        // DOM refs
+        this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
+        this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
+
+        // Attach eventlisteners to the cuurency boxes
+        this.currencyBoxes.forEach((currencyBox) => {
+            currencyBox.addEventListener('click', this.selectWallet)
+        })
+
+        this.showWallet()
+
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            this.isTextMenuOpen = true
+            this._textMenu(event)
+        })
+        window.addEventListener('click', () => {
+            if (this.isTextMenuOpen) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        })
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        }
+    }
+
+    selectWallet(event) {
+        event.preventDefault()
+
+        const target = event.currentTarget
+
+        // if (target.classList.contains('active')) return
+        // removed to allow one click wallet refresh
+
+        this.currencyBoxes.forEach((currencyBox) => {
+            if (currencyBox.classList.contains('active')) {
+                currencyBox.classList.remove('active')
+            }
+        })
+        target.classList.add('active')
+        this._selectedWallet = target.attributes.coin.value
+        this.showWallet()
+    }
+
+    async showWallet() {
+        this.transactionsDOM.hidden = true
+        this.loading = true
+
+        if (this._selectedWallet == 'qort') {
+            if (!window.parent.reduxStore.getState().app.blockInfo.height) {
+                // we make sure that `blockHeight` is set before rendering QORT transactions
+                await parentEpml.request('apiCall', { url: `/blocks/height`, type: 'api' })
+                    .then(height => parentEpml.request('updateBlockInfo', { height }))
+            }
+        }
+        const coin = this._selectedWallet
+        await this.fetchWalletDetails(this._selectedWallet)
+        if (this._selectedWallet == coin) {
+            //if the wallet didn't switch
+            await this.renderTransactions()
+            await this.getTransactionGrid(this._selectedWallet)
+            await this.updateItemsFromPage(1, true)
+            this.loading = false
+            this.transactionsDOM.hidden = false
+        }
+    }
+    async fetchWalletDetails(coin) {
+        //this function will fetch the balance and transactions of the given wallet
+        this.balanceString = "Fetching balance ..."
+        switch (coin) {
+            case 'qort':
+                //fetching the qort balance
+                parentEpml
+                    .request('apiCall', {
+                        url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
+                    })
+                    .then((res) => {
+                        if (isNaN(Number(res))) {
+                            parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
+                        } else {
+                            if (this._selectedWallet == coin) {
+                                //check if we are still fetching wallet balance ...
+                                this.wallets.get(coin).balance = res
+                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            }
+                        }
+                    })
+                //fetching the qort transactions						
+                const txsQort = await parentEpml.request('apiCall', {
+                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true`,
+                })
+                if (this._selectedWallet == coin)
+                    this.wallets.get(coin).transactions = txsQort
+
+                break
+            case 'btc':
+            case 'ltc':
+            case 'doge':
+                //fetching the balance
+                const walletName = `${coin}Wallet`
+                parentEpml
+                    .request('apiCall', {
+                        url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
+                        method: 'POST',
+                        body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
+                    })
+                    .then((res) => {
+                        if (isNaN(Number(res))) {
+                            parentEpml.request('showSnackBar', `Failed to Fetch ${coin.toLocaleUpperCase()} Balance. Try again!`)
+                        } else {
+                            if (this._selectedWallet == coin) {
+                                //check if we are still fetching wallet balance ...
+                                this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
+                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            }
+                        }
+                    })
+                //fetching transactions
+                const txs = await parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/wallettransactions?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
+                })
+                const compareFn = (a, b) => {
+                    return b.timestamp - a.timestamp
+                }
+                const sortedTransactions = txs.sort(compareFn)
+
+                if (this._selectedWallet == coin) {
+                    this.wallets.get(this._selectedWallet).transactions = sortedTransactions
+                }
+                break
+            default:
+                break
+        }
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
     getSelectedWalletAddress() {
         return this._selectedWallet === 'qort'
             ? this.wallets.get(this._selectedWallet).wallet.address
             : this.wallets.get(this._selectedWallet).wallet.address
     }
-
 
     async getTransactionGrid(coin) {
         this.transactionsGrid = this.shadowRoot.querySelector(`#${coin}TransactionsGrid`)
@@ -675,19 +856,7 @@ class MultiWallet extends LitElement {
         }
 
         return html`
-			<dom-module id="vaadin-grid-qort-theme" theme-for="vaadin-grid">
-				<template>
-					<style>
-						:host([theme~="qort"]) table thead tr > th:first-of-type,
-						:host([theme~="qort"]) table tbody tr > td:first-of-type {
-							min-width: 56px;
-							max-width: 56px;
-							padding: 4px 0;
-						}
-					</style>
-				</template>
-			</dom-module>
-			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}">Address has no transactions yet.</div>
+			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
 			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
 				<vaadin-grid-column
 					auto-width
@@ -734,7 +903,7 @@ class MultiWallet extends LitElement {
 
     renderBTCLikeTransactions(transactions, coin) {
         return html`
-			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}">Address has no transactions yet.</div>
+			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
 			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
 				<vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
 				<vaadin-grid-column
@@ -878,146 +1047,6 @@ class MultiWallet extends LitElement {
                 </div>
             </div>
         `
-    }
-
-    firstUpdated() {
-        // DOM refs
-        this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
-        this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
-
-        // Attach eventlisteners to the cuurency boxes
-        this.currencyBoxes.forEach((currencyBox) => {
-            currencyBox.addEventListener('click', this.selectWallet)
-        })
-
-        this.showWallet()
-
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this.isTextMenuOpen = true
-            this._textMenu(event)
-        })
-        window.addEventListener('click', () => {
-            if (this.isTextMenuOpen) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        })
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
-    }
-
-    selectWallet(event) {
-        event.preventDefault()
-
-        const target = event.currentTarget
-
-        // if (target.classList.contains('active')) return
-        // removed to allow one click wallet refresh
-
-        this.currencyBoxes.forEach((currencyBox) => {
-            if (currencyBox.classList.contains('active')) {
-                currencyBox.classList.remove('active')
-            }
-        })
-        target.classList.add('active')
-        this._selectedWallet = target.attributes.coin.value
-        this.showWallet()
-    }
-
-    async showWallet() {
-        this.transactionsDOM.hidden = true
-        this.loading = true
-
-        if (this._selectedWallet == 'qort') {
-            if (!window.parent.reduxStore.getState().app.blockInfo.height) {
-                // we make sure that `blockHeight` is set before rendering QORT transactions
-                await parentEpml.request('apiCall', { url: `/blocks/height`, type: 'api' })
-                    .then(height => parentEpml.request('updateBlockInfo', { height }))
-            }
-        }
-        const coin = this._selectedWallet
-        await this.fetchWalletDetails(this._selectedWallet)
-        if (this._selectedWallet == coin) {
-            //if the wallet didn't switch
-            await this.renderTransactions()
-            await this.getTransactionGrid(this._selectedWallet)
-            await this.updateItemsFromPage(1, true)
-            this.loading = false
-            this.transactionsDOM.hidden = false
-        }
-    }
-    async fetchWalletDetails(coin) {
-        //this function will fetch the balance and transactions of the given wallet
-        this.balanceString = "Fetching balance ..."
-        switch (coin) {
-            case 'qort':
-                //fetching the qort balance
-                parentEpml
-                    .request('apiCall', {
-                        url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
-                    })
-                    .then((res) => {
-                        if (isNaN(Number(res))) {
-                            parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
-                        } else {
-                            if (this._selectedWallet == coin) {
-                                //check if we are still fetching wallet balance ...
-                                this.wallets.get(coin).balance = res
-                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
-                            }
-                        }
-                    })
-                //fetching the qort transactions						
-                const txsQort = await parentEpml.request('apiCall', {
-                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true`,
-                })
-                if (this._selectedWallet == coin)
-                    this.wallets.get(coin).transactions = txsQort
-
-                break
-            case 'btc':
-            case 'ltc':
-            case 'doge':
-                //fetching the balance
-                const walletName = `${coin}Wallet`
-                parentEpml
-                    .request('apiCall', {
-                        url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
-                        method: 'POST',
-                        body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
-                    })
-                    .then((res) => {
-                        if (isNaN(Number(res))) {
-                            parentEpml.request('showSnackBar', `Failed to Fetch ${coin.toLocaleUpperCase()} Balance. Try again!`)
-                        } else {
-                            if (this._selectedWallet == coin) {
-                                //check if we are still fetching wallet balance ...
-                                this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
-                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
-                            }
-                        }
-                    })
-                //fetching transactions
-                const txs = await parentEpml.request('apiCall', {
-                    url: `/crosschain/${coin}/wallettransactions?apiKey=${this.getApiKey()}`,
-                    method: 'POST',
-                    body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
-                })
-                const compareFn = (a, b) => {
-                    return b.timestamp - a.timestamp
-                }
-                const sortedTransactions = txs.sort(compareFn)
-
-                if (this._selectedWallet == coin) {
-                    this.wallets.get(this._selectedWallet).transactions = sortedTransactions
-                }
-                break
-            default:
-                break
-        }
     }
 
     showTransactionDetails(myTransaction, allTransactions) {

@@ -39,11 +39,13 @@ class ChatPage extends LitElement {
         html {
             scroll-behavior: smooth;
         }
+
         .chat-text-area {
             display: flex;
             justify-content: center;
             overflow: hidden;
         }
+
         .chat-text-area .typing-area {
             display: flex;
             flex-direction: row;
@@ -53,12 +55,16 @@ class ChatPage extends LitElement {
             box-sizing: border-box;
             padding: 5px;
             margin-bottom: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--black);
             border-radius: 10px;
+            background: #f1f1f1;
+            color: var(--black);
         }
+
         .chat-text-area .typing-area textarea {
             display: none;
         }
+
         .chat-text-area .typing-area .chat-editor {
             border-color: transparent;
             flex: 1;
@@ -68,6 +74,7 @@ class ChatPage extends LitElement {
             padding: 0;
             border: none;
         }
+
         .chat-text-area .typing-area .emoji-button {
             width: 45px;
             height: 40px;
@@ -77,7 +84,9 @@ class ChatPage extends LitElement {
             background: transparent;
             cursor: pointer;
             max-height: 40px;
+            color: var(--black);
         }
+
         .float-left {
             float: left;
         }
@@ -88,15 +97,11 @@ class ChatPage extends LitElement {
         `
     }
 
-    updated(changedProps) {
-    }
-
     constructor() {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
-
         this.selectedAddress = {}
         this.chatId = ''
         this.myAddress = ''
@@ -122,7 +127,7 @@ class ChatPage extends LitElement {
 
             <div class="chat-text-area">
                 <div class="typing-area">
-                    <textarea tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                    <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
 
                     <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
                     <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
@@ -131,6 +136,113 @@ class ChatPage extends LitElement {
                 </div>
             </div>
         `
+    }
+
+    firstUpdated() {
+        // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
+
+        this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
+        this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
+        this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
+
+        document.addEventListener('keydown', (e) => {
+            if (!this.chatEditor.content.body.matches(':focus')) {
+                // WARNING: Deprecated methods from KeyBoard Event
+                if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
+                    this.chatEditor.insertText('&nbsp;');
+                } else if (inputKeyCodes.includes(e.keyCode)) {
+                    this.chatEditor.insertText(e.key);
+                    return this.chatEditor.focus();
+                } else {
+                    return this.chatEditor.focus();
+                }
+            };
+        });
+
+        // Init EmojiPicker
+        this.emojiPicker = new EmojiPicker({
+            style: "twemoji",
+            twemojiBaseUrl: '/emoji/',
+            showPreview: false,
+            showVariants: false,
+            showAnimation: false,
+            position: 'top-start',
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+        });
+
+        this.emojiPicker.on('emoji', selection => {
+            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
+            this.chatEditor.insertEmoji(emojiHtmlString);
+        });
+
+        // Attach Event Handler
+        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
+
+        const getAddressPublicKey = () => {
+
+            parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/publickey/${this._chatId}`
+            }).then(res => {
+
+                if (res.error === 102) {
+
+                    this._publicKey.key = ''
+                    this._publicKey.hasPubKey = false
+                    this.fetchChatMessages(this._chatId)
+                } else if (res !== false) {
+
+                    this._publicKey.key = res
+                    this._publicKey.hasPubKey = true
+                    this.fetchChatMessages(this._chatId)
+                } else {
+
+                    this._publicKey.key = ''
+                    this._publicKey.hasPubKey = false
+                    this.fetchChatMessages(this._chatId)
+                }
+            })
+        };
+
+        setTimeout(() => {
+            this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
+            this._chatId = this.chatId.split('/')[1];
+
+            const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : 'Message...';
+            this.chatEditorPlaceholder = placeholder;
+
+            this.isReceipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
+
+            // Init ChatEditor
+            this.initChatEditor();
+        }, 100)
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+            parentEpml.request('apiCall', {
+                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
+            }).then(res => {
+                this.balance = res
+            })
+            parentEpml.subscribe('frame_paste_menu_switch', async res => {
+
+                res = JSON.parse(res)
+                if (res.isOpen === false && this.isPasteMenuOpen === true) {
+
+                    this.pasteToTextBox(textarea)
+                    this.isPasteMenuOpen = false
+                }
+            })
+        })
+        parentEpml.imReady();
+    }
+
+    updated(changedProps) {
     }
 
     renderChatScroller(initialMessages) {
@@ -204,8 +316,6 @@ class ChatPage extends LitElement {
             this.newMessages = this.newMessages.concat(_newMessages)
 
         }
-
-
     }
 
     /**
@@ -572,112 +682,6 @@ class ChatPage extends LitElement {
         }
         const observer = new IntersectionObserver(this._downObserverhandler, options)
         observer.observe(downObserver)
-    }
-
-
-    firstUpdated() {
-        // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
-        this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
-        this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
-        this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
-
-        document.addEventListener('keydown', (e) => {
-            if (!this.chatEditor.content.body.matches(':focus')) {
-                // WARNING: Deprecated methods from KeyBoard Event
-                if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-                    this.chatEditor.insertText('&nbsp;');
-                } else if (inputKeyCodes.includes(e.keyCode)) {
-                    this.chatEditor.insertText(e.key);
-                    return this.chatEditor.focus();
-                } else {
-                    return this.chatEditor.focus();
-                }
-            };
-        });
-
-        // Init EmojiPicker
-        this.emojiPicker = new EmojiPicker({
-            style: "twemoji",
-            twemojiBaseUrl: '/emoji/',
-            showPreview: false,
-            showVariants: false,
-            showAnimation: false,
-            position: 'top-start',
-            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
-        });
-
-        this.emojiPicker.on('emoji', selection => {
-            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
-            this.chatEditor.insertEmoji(emojiHtmlString);
-        });
-
-        // Attach Event Handler
-        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
-
-        const getAddressPublicKey = () => {
-
-            parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/publickey/${this._chatId}`
-            }).then(res => {
-
-                if (res.error === 102) {
-
-                    this._publicKey.key = ''
-                    this._publicKey.hasPubKey = false
-                    this.fetchChatMessages(this._chatId)
-                } else if (res !== false) {
-
-                    this._publicKey.key = res
-                    this._publicKey.hasPubKey = true
-                    this.fetchChatMessages(this._chatId)
-                } else {
-
-                    this._publicKey.key = ''
-                    this._publicKey.hasPubKey = false
-                    this.fetchChatMessages(this._chatId)
-                }
-            })
-        };
-
-        setTimeout(() => {
-            this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
-            this._chatId = this.chatId.split('/')[1];
-
-            const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : 'Message...';
-            this.chatEditorPlaceholder = placeholder;
-
-            this.isReceipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
-
-            // Init ChatEditor
-            this.initChatEditor();
-        }, 100)
-
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-            parentEpml.request('apiCall', {
-                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-            }).then(res => {
-                this.balance = res
-            })
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
-
-                res = JSON.parse(res)
-                if (res.isOpen === false && this.isPasteMenuOpen === true) {
-
-                    this.pasteToTextBox(textarea)
-                    this.isPasteMenuOpen = false
-                }
-            })
-        })
-
-        parentEpml.imReady();
     }
 
     pasteToTextBox(textarea) {

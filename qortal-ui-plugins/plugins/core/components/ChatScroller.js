@@ -43,6 +43,7 @@ class ChatScroller extends LitElement {
             margin: 0;
             padding: 20px;
         }
+
         .chat-list {
             overflow-y: auto;
             height: 91vh;
@@ -51,6 +52,10 @@ class ChatScroller extends LitElement {
 
         .message-data {
             margin-bottom: 15px;
+        }
+
+        .message-data-name {
+            color: var(--black);
         }
 
         .message-data-time {
