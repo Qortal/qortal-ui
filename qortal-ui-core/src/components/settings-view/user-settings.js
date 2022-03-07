@@ -28,39 +28,46 @@ class UserSettings extends connect(store)(LitElement) {
                 max-width: 100vw;
                 height: 100%;
                 max-height: 100vh;
-                background-color: #fff;
-                color: #333333;
+                background-color: var(--white);
+                color: var(--black);
                 line-height: 1.6;
             }
+
             .decline {
                 --mdc-theme-primary: var(--mdc-theme-error)
             }
+
             paper-dialog.userSettings {
                 width: 100%;
                 max-width: 100vw;
                 height: 100%;
                 max-height: 100vh;
-                background-color: #fff;
-                color: #333333;
+                background-color: var(--white);
+                color: var(--black);
                 line-height: 1.6;
                 overflow-y: auto;
             }
+
             .actions {
                 display:flex;
                 justify-content: space-between;
                 padding: 0 4em;
                 margin: 15px 0 -2px 0;
             }
+
             .close-icon {
                 font-size: 36px;
             }
+
             .close-icon:hover {
                 cursor: pointer;
                 opacity: .6;
             }
+
             .buttons {
                 text-align:right;
             }
+
             .container {
                 max-width: 90vw;
                 margin-left: auto;
@@ -68,66 +75,78 @@ class UserSettings extends connect(store)(LitElement) {
                 margin-top: 20px;
                 padding: .6em;
             }
+
             ul {
                 list-style: none;
                 padding: 0;
                 margin-bottom: 0;
             }
+
             .leftBar {
-                background-color: #fff;
-                color: #333333;
+                background-color: var(--white);
+                color: var(--black);
                 border: 1px solid #a1a1a1;
                 padding: 20px 0 0 0;
                 border-radius: 5px;
             }
+
             .leftBar img {
                 margin: 0 auto;
                 width: 75%;
                 height: 75%;
                 text-align: center;
             }
+
             .leftBar .slug {
                 text-align: center;
                 margin-top: 20px;
-                color: #333333;
+                color: var(--black);
                 font-size: 16px;
                 font-weight: 600;
                 margin-bottom: 7px;
             }
+
             .leftBar ul li {
                 border-bottom: 1px solid #DDD;    
             }
+
             .leftBar ul li:last-child {
                 border-bottom: none;
             }
+
             .leftBar ul li a {
-                color: #333333;
+                color: var(--black);
                 font-size: 16px;
                 font-weight: 400;
                 text-decoration: none;
                 padding: .9em;
                 display: block;
             }
+
             .leftBar ul li a i {
                 margin-right: 8px;
                 font-size: 16px;
             }
+
             .leftBar ul li a:hover {
                 background-color: #f6f6f6;
                 color: #515151;
             }
+
             .leftBar ul li:active {
                 border-bottom: none;
             }
+
             .leftBar ul li a.active {
                 color: #515151;
                 background-color: #eee;
                 border-left: 2px solid #515151;
                 margin-left: -2px;
             }
+
             .mainPage {
-                background-color: #fff;
-                color: #333333;
+                background-color: var(--white);
+                color: var(--black);
                 border: 1px solid #a1a1a1;
                 padding: 20px 0 10px 0;
                 border-radius: 5px;
@@ -135,40 +154,48 @@ class UserSettings extends connect(store)(LitElement) {
                 text-align: center;
                 min-height: 460px;
             }
+
             @media(max-width:700px) {
                 .mainPage {
                     margin-top: 30px;
                 }
             }
+
             @media(min-width:765px) {
                 * {
                     margin: 0;
                     padding: 0;
                     box-sizing: border-box;
                 }
+
                 .actions {
                     display:flex;
                     justify-content: space-between;
                     padding: 0 4em;
                     margin: 15px 0 -25px 0;
                 }
+
                 .container {
                     padding: 2em;
                 }
+
                 .wrapper {
                     display: grid;
                     grid-template-columns: 1fr 3fr;
                     grid-gap: 30px;
                 }
+
                 .wrapper > .mainPage {
                     padding: 2em;
                 }
+
                 .leftBar {
                     text-align: left;
                     max-height: 403px;
                     max-width: 400px;
                     font-size: 16px;
                 }
+
                 .mainPage {
                     font-size: 16px;
                 }

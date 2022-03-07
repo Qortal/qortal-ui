@@ -15,12 +15,17 @@ class SecurityView extends connect(store)(LitElement) {
 
     static get styles() {
         return css`
-		    * {
+            * {
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
             }
+
             .center-box {
                 position: relative;
                 top: 45%;
@@ -28,6 +33,7 @@ class SecurityView extends connect(store)(LitElement) {
                 transform: translate(-50%, 0%);
                 text-align: center;
             }
+
             .q-button {
                 display: inline-flex;
                 flex-direction: column;
@@ -61,7 +67,7 @@ class SecurityView extends connect(store)(LitElement) {
                         </p>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width:100%;" label="Password" id="downloadBackupPassword"></vaadin-password-field>
+                            <vaadin-password-field style="width: 100%; color: var(--black);" label="Password" id="downloadBackupPassword"></vaadin-password-field>
                         </div>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <div @click=${() => this.downloadBackup()} class="q-button"> Download BackUp File </div>
