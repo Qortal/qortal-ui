@@ -3,7 +3,7 @@ html {
   --white: #ffffff;
   --black: #080808;
   --gray: #c8c8c8;
-  --graylight: #dddddd;
+  --graylight: #bbbbbb;
   --plugback: #ffffff;
 }
 
@@ -11,5 +11,6 @@ html[theme="dark"] {
   --white: #36393f;
   --black: #f8f8f8;
   --gray: #d8d8d8;
+  --graylight: #dddddd;
   --plugback: #36393f;
 }
