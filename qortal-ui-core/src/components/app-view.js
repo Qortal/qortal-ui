@@ -9,6 +9,7 @@ import './wallet-profile.js'
 import './app-info.js'
 import './sidenav-menu.js'
 import './show-plugin.js'
+import './qort-theme-toggle.js'
 
 import '@material/mwc-drawer'
 
@@ -27,47 +28,56 @@ class AppView extends connect(store)(LitElement) {
     static get styles() {
         return [
             css`
-            :host {
-                --app-drawer-width: 260px;
-            }
-            app-drawer-layout:not([narrow]) [drawer-toggle]:not(sidenav-menu) {
-                display: none;
-            }
-            app-drawer {
-                box-shadow: var(--shadow-2);
-                background: var(--mdc-theme-surface);
-            }
-            app-header {
-                box-shadow: var(--shadow-2);
-            }
-            app-toolbar {
-                background: var(--mdc-theme-surface);
-                color: var(--mdc-theme-on-surface);
-            }
-            #sideBar {
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-            .sideBarMenu{
-                overflow-y: auto;
-                flex: 1 1;
-            }
-            #sideBar::-webkit-scrollbar {
-                width: 7px;
-                background-color: transparent;
-            }
+                :host {
+                    --app-drawer-width: 260px;
+                }
 
-            #sideBar::-webkit-scrollbar-track {
-                background-color: transparent;
-            }
+                app-drawer-layout:not([narrow]) [drawer-toggle]:not(sidenav-menu) {
+                    display: none;
+                }
 
-            #sideBar::-webkit-scrollbar-thumb {
-                background-color: #333;
-                border-radius: 6px;
-                border: 3px solid #333;
-            }
-        `
+                app-drawer {
+                    box-shadow: var(--shadow-2);
+                    background: var(--white);
+                }
+
+                app-header {
+                    box-shadow: var(--shadow-2);
+                }
+
+                app-toolbar {
+                    background: var(--white);
+                    color: var(--black);
+                    border-top: 1px solid rgb(238, 238, 238);
+                }
+
+                #sideBar {
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    background: var(--white);
+                }
+
+                .sideBarMenu{
+                    overflow-y: auto;
+                    flex: 1 1;
+                }
+
+                #sideBar::-webkit-scrollbar {
+                    width: 7px;
+                    background-color: transparent;
+                }
+
+                #sideBar::-webkit-scrollbar-track {
+                     background-color: transparent;
+                }
+
+                #sideBar::-webkit-scrollbar-thumb {
+                     background-color: #333;
+                     border-radius: 6px;
+                    border: 3px solid #333;
+                }
+            `
         ]
     }
 
@@ -94,6 +104,8 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+                            <qort-theme-toggle></qort-theme-toggle>
+                            <div>&nbsp;&nbsp;</div>
                             <div style="display:inline">
                                 <paper-icon-button icon="icons:settings" @click=${ () => this.openSettings()} title="Settings" ></paper-icon-button>
                             </div>

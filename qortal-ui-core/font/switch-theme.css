@@ -1,0 +1,39 @@
+html {
+  --white: #ffffff;
+  --black: #080808;
+  --gray: #c8c8c8;
+  --plugback: #ffffff;
+  --border: #d0d6de;
+  --border2: #dde2e8;
+  --copybutton: #707584;
+  --sectxt: #576374;
+  --vdicon: #707b8a;
+  --tradehead: #6a6c75;
+  --tradeborder: #666666;
+  --tradehave: #555555;
+  --txtfieldborder: #666666;
+  --txtfieldhoverborder: #00000;
+  --relaynodetxt: #646464;
+  --chatmenuhover: #eeeeee;
+  --chatmenuactive: #ebebeb;
+}
+
+html[theme="dark"] {
+  --white: #36393f;
+  --black: #f8f8f8;
+  --gray: #d8d8d8;
+  --plugback: #36393f;
+  --border: #fcfcfc;
+  --border2: #fdfdfd;
+  --copybutton: #d0d6de;
+  --sectxt: #bbc3cd;
+  --vdicon: #d0d6de;
+  --tradehead: #e8ebf0;
+  --tradeborder: #cccccc;
+  --tradehave: #dddddd;
+  --txtfieldborder: #cccccc;
+  --txtfieldhoverborder: #ffffff;
+  --relaynodetxt: #d4d4d4;
+  --chatmenuhover: #666666;
+  --chatmenuactive: #6b6b6b;
+}
