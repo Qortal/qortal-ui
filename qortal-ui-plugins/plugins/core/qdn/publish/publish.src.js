@@ -28,7 +28,7 @@ class PublishData extends LitElement {
             metadata: { type: Array },
             categories: { type: Array },
             names: { type: Array },
-            registeredName: { type: String },
+            myRegisteredName: { type: String },
             selectedName: { type: String },
             path: { type: String },
             portForwardingEnabled: { type: Boolean },
@@ -465,7 +465,7 @@ class PublishData extends LitElement {
         // Default to true so the message doesn't appear and disappear quickly
         this.portForwardingEnabled = true
         this.names = []
-        this.registeredName = ''
+        this.myRegisteredName = ''
         this.selectedName = 'invalid'
         this.path = ''
         this.successMessage = ''
@@ -482,7 +482,7 @@ class PublishData extends LitElement {
                 setTimeout(() => {
                     this.names = res
                     if (res[0] != null) {
-                        this.registeredName = res[0].name;
+                        this.myRegisteredName = res[0].name;
                     }
                 }, 1)
             })
@@ -509,7 +509,7 @@ class PublishData extends LitElement {
                     this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0);
                 }, 1)
             })
-            setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
+            setTimeout(fetchPeersSummary, this.config.user.nodeSettings.pingInterval)
         }
 
         let configLoaded = false

@@ -29,7 +29,8 @@ class GroupManagement extends LitElement {
             error: { type: Boolean },
             message: { type: String },
             removeError: { type: Boolean },
-            removeMessage: { type: String }
+            removeMessage: { type: String },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -42,10 +43,16 @@ class GroupManagement extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
             }
 
             #group-management-page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
@@ -68,7 +75,7 @@ class GroupManagement extends LitElement {
             }
 
             .divCard {
-                border: 1px solid #eee;
+                border: 1px solid var(--border);
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 2em;
@@ -79,7 +86,7 @@ class GroupManagement extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -133,12 +140,13 @@ class GroupManagement extends LitElement {
         this.createFee = 0.001
         this.joinFee = 0.001
         this.leaveFee = 0.001
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
         return html`
             <div id="group-management-page">
-                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+                <div style="min-height: 48px; display: flex; padding-bottom: 6px; margin: 2px;">
                     <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Qortal Groups</h2>
                     <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createGroupDialog').show()}><mwc-icon>add</mwc-icon>Create Group</mwc-button>
                 </div>
@@ -156,7 +164,7 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.joinedGroups) ? html`
-                        Not a member of any groups!
+                        <span style="color: var(--black);">Not a member of any groups!</span>
                     `: ''}
                 </div>
 
@@ -171,7 +179,7 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.publicGroups) ? html`
-                        No Open Public Groups available!
+                        <span style="color: var(--black);">No Open Public Groups available!</span>
                     `: ''}
                 </div>
 
@@ -182,7 +190,7 @@ class GroupManagement extends LitElement {
                         <hr>
                     </div>
                     
-                    <mwc-textfield style="width:100%;" ?disabled="${this.isLoading}" label="Group Name" id="groupNameInput"></mwc-textfield>
+                    <mwc-textfield style="width: 100%;" ?disabled="${this.isLoading}" label="Group Name" id="groupNameInput"></mwc-textfield>
                     <p style="margin-bottom:0;">
                         <mwc-textfield style="width:100%;" ?disabled="${this.isLoading}" label="Description" id="groupDescInput"></mwc-textfield>
                     </p>
@@ -420,6 +428,11 @@ class GroupManagement extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         this.unitCreateFee()
         this.unitJoinFee()
         this.unitLeaveFee()
@@ -489,6 +502,16 @@ class GroupManagement extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     async unitCreateFee() {

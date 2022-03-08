@@ -35,10 +35,12 @@ class WalletProfile extends connect(store)(LitElement) {
             <style>
                 #profileInMenu {
                     padding: 12px;
-                    border-top: 1px solid rgb(238, 238, 238);
-                    background: rgb(255, 255, 255);
+                    border-top: var(--border);
+                    background: var(--white);
+                    color: var(--black);
                 }
                 #profileInMenu:hover {
+                    /* cursor:pointer; */
                 }
                 #accountIcon {
                     font-size:48px;
@@ -63,7 +65,6 @@ class WalletProfile extends connect(store)(LitElement) {
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-
                     margin:0;
                     margin-top:8px;
                     font-size:11px;

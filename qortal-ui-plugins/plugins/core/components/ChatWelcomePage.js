@@ -18,12 +18,24 @@ class ChatWelcomePage extends LitElement {
             messages: { type: Array },
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
-            balance: { type: Number }
+            balance: { type: Number },
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return css`
+        * {
+            --mdc-theme-primary: rgb(3, 169, 244);
+            --paper-input-container-focus-color: var(--mdc-theme-primary);
+            --lumo-primary-text-color: rgb(0, 167, 245);
+            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+            --lumo-primary-color: hsl(199, 100%, 48%);
+            --lumo-base-color: var(--white);
+            --lumo-body-text-color: var(--black);
+        }
+
         @keyframes moveInBottom {
             0% {
                 opacity: 0;
@@ -47,7 +59,7 @@ class ChatWelcomePage extends LitElement {
             display: block;
             overflow: hidden;
             font-size: 40px;
-            color: black;
+            color: var(--black);
             font-weight: 400;
             text-align: center;
             white-space: pre-wrap;
@@ -72,6 +84,7 @@ class ChatWelcomePage extends LitElement {
 
         .img-icon {
             font-size: 150px;
+            color: var(--black);
         }
 
         .start-chat {
@@ -83,8 +96,8 @@ class ChatWelcomePage extends LitElement {
             border-radius: 20px;
             padding-left: 25px;
             padding-right: 25px;
-            color: white;
-            background: #6a6c75;
+            color: var(--white);
+            background: var(--tradehead);
             width: 50%;
             font-size: 17px;
             cursor: pointer;
@@ -125,7 +138,7 @@ class ChatWelcomePage extends LitElement {
         }
 
         h2, h3, h4, h5 {
-            color:#333;
+            color:# var(--black);
             font-weight: 400;
         }
 
@@ -179,6 +192,7 @@ class ChatWelcomePage extends LitElement {
         this.messages = []
         this.btnDisable = false
         this.isLoading = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -191,7 +205,7 @@ class ChatWelcomePage extends LitElement {
                 <div class="sub-main">
                     <div class="center-box">
                         <mwc-icon class="img-icon">chat</mwc-icon><br>
-                        <span style="font-size: 20px;">${this.myAddress.address}</span>
+                        <span style="font-size: 20px; color: var(--black);">${this.myAddress.address}</span>
                         <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>New Private Message</div>
                     </div>
                 </div>
@@ -224,6 +238,11 @@ class ChatWelcomePage extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 250)
+
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();
             return false;
@@ -258,6 +277,16 @@ class ChatWelcomePage extends LitElement {
         })
 
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     _sendMessage() {

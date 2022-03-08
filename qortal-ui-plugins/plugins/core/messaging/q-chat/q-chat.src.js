@@ -23,16 +23,22 @@ class Chat extends LitElement {
             messages: { type: Array },
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
-            balance: { type: Number }
+            balance: { type: Number },
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return css`
-        
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
             }
 
             paper-spinner-lite{
@@ -56,7 +62,7 @@ class Chat extends LitElement {
             .container {
                 margin: 0 auto;
                 width: 100%;
-                background: #fff;
+                background: var(--white);
             }
 
             .people-list {
@@ -76,8 +82,8 @@ class Chat extends LitElement {
                 border: none;
                 display: inline-block;
                 padding: 14px;
-                color: white;
-                background: #6a6c75;
+                color: var(--white);
+                background: var(--tradehead);
                 width: 90%;
                 font-size: 15px;
                 text-align: center;
@@ -100,7 +106,7 @@ class Chat extends LitElement {
                 width: 80vw;
                 height: 100vh;
                 float: left;
-                background: #fff;
+                background: var(--white);
                 border-top-right-radius: 5px;
                 border-bottom-right-radius: 5px;
                 color: #434651;
@@ -120,8 +126,8 @@ class Chat extends LitElement {
                 left: 20vw;
                 right: 0;
                 z-index: 5;
-                background: #6a6c75;
-                color: white;
+                background: var(--tradehead);
+                color: var(--white);
                 border-radius: 0 0 8px 8px;
                 min-height: 25px;
                 transition: opacity .15s;
@@ -146,7 +152,7 @@ class Chat extends LitElement {
                 right: 0;
                 bottom: 100%;
                 left: 20vw;
-                border-bottom: 2px solid white;
+                border-bottom: 2px solid var(--white);
                 overflow-y: hidden;
                 height: 100vh;
                 box-sizing: border-box;
@@ -202,6 +208,7 @@ class Chat extends LitElement {
                 clear: both;
                 height: 0;
             }
+
             .red {
                 --mdc-theme-primary: red;
             }
@@ -211,7 +218,7 @@ class Chat extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -219,16 +226,19 @@ class Chat extends LitElement {
                 display: hidden !important;
                 visibility: none !important;
             }
+
             .details {
                 display: flex;
                 font-size: 18px;
             }
+
             .title {
                 font-weight:600;
                 font-size:12px;
                 line-height: 32px;
                 opacity: 0.66;
             }
+
             .input {
                 width: 100%;
                 border: none;
@@ -239,6 +249,7 @@ class Chat extends LitElement {
                 resize: none;
                 background: #eee;
             }
+
             .textarea {
                 width: 100%;
                 border: none;
@@ -271,17 +282,13 @@ class Chat extends LitElement {
         this.messages = []
         this.btnDisable = false
         this.isLoading = false
-
         this.showNewMesssageBar = this.showNewMesssageBar.bind(this)
         this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
         return html`
-            <style>
-
-            </style>
-
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
                 <div class="search">
@@ -336,62 +343,11 @@ class Chat extends LitElement {
         `
     }
 
-    renderChatWelcomePage() {
-        return html`<chat-welcome-page myAddress=${JSON.stringify(this.selectedAddress)}></chat-welcome-page>`
-    }
-
-    renderChatHead(chatHeadArr) {
-
-        let tempUrl = document.location.href
-        let splitedUrl = decodeURI(tempUrl).split('?')
-        let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
-
-        return chatHeadArr.map(eachChatHead => {
-            return html`<chat-head activeChatHeadUrl=${activeChatHeadUrl} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
-        })
-    }
-
-    renderChatPage(chatId) {
-        // Check for the chat ID from and render chat messages
-        // Else render Welcome to Q-CHat
-
-        // TODO: DONE: Do the above in the ChatPage 
-
-        return html`<chat-page .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${chatId}></chat-page>`
-    }
-
-    setChatHeads(chatObj) {
-
-        let groupList = chatObj.groups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
-        let directList = chatObj.direct.map(dc => {
-            return { ...dc, url: `direct/${dc.address}` }
-        })
-        const compareNames = (a, b) => {
-            return a.groupName.localeCompare(b.groupName)
-        }
-        groupList.sort(compareNames)
-        let chatHeadMasterList = [...groupList, ...directList]
-
-        const compareArgs = (a, b) => {
-            return b.timestamp - a.timestamp
-        }
-
-        this.chatHeads = chatHeadMasterList.sort(compareArgs)
-    }
-
-    getChatHeadFromState(chatObj) {
-
-        if (chatObj === undefined) {
-            return
-        } else {
-
-            this.chatHeadsObj = chatObj
-            this.setChatHeads(chatObj)
-        }
-    }
-
-
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 250)
 
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();
@@ -455,6 +411,7 @@ class Chat extends LitElement {
         }
 
         let configLoaded = false
+
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -485,8 +442,71 @@ class Chat extends LitElement {
                 }
             })
         })
-
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    renderChatWelcomePage() {
+        return html`<chat-welcome-page myAddress=${JSON.stringify(this.selectedAddress)}></chat-welcome-page>`
+    }
+
+    renderChatHead(chatHeadArr) {
+
+        let tempUrl = document.location.href
+        let splitedUrl = decodeURI(tempUrl).split('?')
+        let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
+
+        return chatHeadArr.map(eachChatHead => {
+            return html`<chat-head activeChatHeadUrl=${activeChatHeadUrl} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
+        })
+    }
+
+    renderChatPage(chatId) {
+        // Check for the chat ID from and render chat messages
+        // Else render Welcome to Q-CHat
+
+        // TODO: DONE: Do the above in the ChatPage 
+
+        return html`<chat-page .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${chatId}></chat-page>`
+    }
+
+    setChatHeads(chatObj) {
+
+        let groupList = chatObj.groups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
+        let directList = chatObj.direct.map(dc => {
+            return { ...dc, url: `direct/${dc.address}` }
+        })
+        const compareNames = (a, b) => {
+            return a.groupName.localeCompare(b.groupName)
+        }
+        groupList.sort(compareNames)
+        let chatHeadMasterList = [...groupList, ...directList]
+
+        const compareArgs = (a, b) => {
+            return b.timestamp - a.timestamp
+        }
+
+        this.chatHeads = chatHeadMasterList.sort(compareArgs)
+    }
+
+    getChatHeadFromState(chatObj) {
+
+        if (chatObj === undefined) {
+            return
+        } else {
+
+            this.chatHeadsObj = chatObj
+            this.setChatHeads(chatObj)
+        }
     }
 
     _sendMessage() {

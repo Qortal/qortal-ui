@@ -27,10 +27,12 @@ class AppInfo extends connect(store)(LitElement) {
                 .normal {
                     --mdc-theme-primary: rgb(3, 169, 244);
                 }
+
                 .normal-button {
                     --mdc-theme-primary: rgb(3, 169, 244);
                     --mdc-theme-on-primary: white;
                 }
+
                 mwc-button.normal-button {
                     --mdc-theme-primary: rgb(3, 169, 244);
                     --mdc-theme-on-primary: white;
@@ -38,10 +40,12 @@ class AppInfo extends connect(store)(LitElement) {
                 .test-net {
                     --mdc-theme-primary: black;
                 }
+
                 .test-net-button {
                     --mdc-theme-primary: black;
                     --mdc-theme-on-primary: white;
                 }
+
                 mwc-button.test-net-button {
                     --mdc-theme-primary: black;
                     --mdc-theme-on-primary: white;
@@ -49,7 +53,8 @@ class AppInfo extends connect(store)(LitElement) {
                 #profileInMenu {
                     flex: 0 0 100px;
                     padding:12px;
-                    border-top: 1px solid #eee;
+                    border-top: 1px solid var(--border);
+                    background: var(--white);
                 }
                 .info {
                     margin: 0;
@@ -58,6 +63,7 @@ class AppInfo extends connect(store)(LitElement) {
                     display: inline-block;
                     width:100%;
                     padding-bottom:8px;
+                    color: var(--black);
                 }
                 .blue {
                     color: #03a9f4;
@@ -67,7 +73,7 @@ class AppInfo extends connect(store)(LitElement) {
                     display: inline;
                 }
                 .black {
-                    color: black;
+                    color: var(--black);
                     margin: 0;
                     font-size: 14px;
                     font-weight:200;

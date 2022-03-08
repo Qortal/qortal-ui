@@ -20,11 +20,12 @@ class SidenavMenu extends connect(store)(LitElement) {
         .mcd-menu {
           list-style: none;
           padding: 0px 0px;
-          background: rgb(255, 255, 255);
+          background:  var(--white);
           border-radius: 2px;
           width: 100%;
           outline: none;
         }
+
         .mcd-menu li {
           position: relative;
           line-height: 48px;
@@ -32,17 +33,19 @@ class SidenavMenu extends connect(store)(LitElement) {
           padding: 2px;
           list-style: none;
         }
+
         .mcd-menu li a {
           display: block;
           text-decoration: none;
           padding-left: 20px;
-          color: var(--mdc-theme-on-surface);
+          color: var(--mainmenutext);
           text-align: left;
           height: 48px;
           position: relative;
-          border-bottom: 1px solid #EEE;
+          border-bottom: 1px solid var(--border);
           outline: none;
         }
+
         .mcd-menu li a mwc-icon {  
           float: left;
           margin: 0 10px 0 0;
@@ -65,21 +68,24 @@ class SidenavMenu extends connect(store)(LitElement) {
         .mcd-menu li:hover > a mwc-icon {
             opacity: 1;
         }
+
         .mcd-menu li:hover a span {
             opacity: 1;
             outline: none;
         }
 
         .mcd-menu li:hover > a {
-            background: #f8f8f8;
-            color: #515151;
+            background: var(--menuhover);
+            color: var(--mainmenutexthover);
         }
+
         .mcd-menu li a.active {
           position: relative;
           color: #515151;
-          background-color: #eee;
+          background-color: var(--menuactive);
           outline: none;
         }
+
         .mcd-menu li a.active:before {
           content: "";
           position: absolute;
@@ -123,6 +129,7 @@ class SidenavMenu extends connect(store)(LitElement) {
           border-left: 4px solid #515151;
           outline: none;
         }
+
         .mcd-menu li ul:before {
           content: "";
           position: absolute;
@@ -133,6 +140,7 @@ class SidenavMenu extends connect(store)(LitElement) {
           border-top: 5px solid transparent;
           outline: none;
         }
+
         .mcd-menu li:hover > ul,
         .mcd-menu li ul li:hover > ul {
           display: block;
@@ -145,21 +153,24 @@ class SidenavMenu extends connect(store)(LitElement) {
         .mcd-menu li ul li a {
           text-align: left;
           border: 0;
-          border-bottom: 1px solid #EEE;
+          border-bottom: 1px solid var(--border);
           height: auto;
           outline: none;
         }
+
         .mcd-menu li ul li a mwc-icon {
           display: inline-block;
           margin: 0 10px 0 0;
         }
+
         .mcd-menu li ul li ul {
           left: 230px;
           top: 0;
           border: 0;
           border-left: 4px solid #515151;
           outline: none;
-        }  
+        }
+
         .mcd-menu li ul li ul:before {
           content: "";
           position: absolute;
@@ -170,6 +181,7 @@ class SidenavMenu extends connect(store)(LitElement) {
           border-top: 5px solid transparent;
           outline: none;
         }
+
         .mcd-menu li ul li:hover > ul {
           top: 0px;
           left: 200px;
@@ -186,10 +198,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 
   render() {
     return html`
-            <style>
-
-            </style>
-            
             <div>
                 <ul class="mcd-menu">
                     ${this.urls.map(myPlugin => myPlugin.menus.length === 0 ? html`

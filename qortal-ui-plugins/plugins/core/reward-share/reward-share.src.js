@@ -24,7 +24,8 @@ class RewardShare extends LitElement {
             removeRewardShareLoading: { type: Boolean },
             rewardSharePercentage: { type: Number },
             error: { type: Boolean },
-            message: { type: String }
+            message: { type: String },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -38,15 +39,24 @@ class RewardShare extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
+            }
+
+            .myGridColor {
+                background-color: var(--white) !important;
+                color: var(--black);
             }
 
             #reward-share-page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
             .divCard {
-                border: 1px solid #eee;
+                border: 1px solid var(--border);
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
             }
@@ -56,7 +66,7 @@ class RewardShare extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -75,6 +85,7 @@ class RewardShare extends LitElement {
         this.btnDisable = false
         this.createRewardShareLoading = false
         this.removeRewardShareLoading = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -87,7 +98,7 @@ class RewardShare extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Rewardshares Involving In This Account</h3>
-                    <vaadin-grid theme="large" id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
+                    <vaadin-grid id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
                         <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
@@ -146,13 +157,18 @@ class RewardShare extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
                 ${this.isEmptyArray(this.rewardShares) ? html`
-                    Account is not involved in any reward shares
+                    <span style="color: var(--black);">Account is not involved in any reward shares</span>
                 `: ''}
             </div>
         `
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
@@ -244,6 +260,16 @@ class RewardShare extends LitElement {
             }
             checkSelectedTextAndShowMenu()
         })
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     renderRemoveRewardShareButton(rewardShareObject) {

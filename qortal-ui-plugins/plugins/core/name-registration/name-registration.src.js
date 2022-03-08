@@ -23,7 +23,8 @@ class NameRegistration extends LitElement {
             error: { type: Boolean },
             message: { type: String },
             removeError: { type: Boolean },
-            removeMessage: { type: String }
+            removeMessage: { type: String },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -37,14 +38,19 @@ class NameRegistration extends LitElement {
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
             }
+
             #name-registration-page {
-                background: #fff;
+                background: var(--white);
                 padding: 12px 24px;
             }
 
             .divCard {
-                border: 1px solid #eee;
+                border: 1px solid var(--border);
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
             }
@@ -54,7 +60,7 @@ class NameRegistration extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:#333;
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -79,6 +85,7 @@ class NameRegistration extends LitElement {
         this.btnDisable = false
         this.registerNameLoading = false
         this.fee = 0.001
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -102,7 +109,7 @@ class NameRegistration extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.names) ? html`
-                        No names registered by this account!
+                        <span style="color: var(--black);">No names registered by this account!</span>
                     `: ''}
                 </div>
 
@@ -123,7 +130,7 @@ class NameRegistration extends LitElement {
                                 ?active="${this.registerNameLoading}"
                                 alt="Registering Name"></paper-spinner-lite>
                         </span>
-                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
+                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
                             ${this.message}
                         </span><br>
                         <span>
@@ -151,6 +158,11 @@ class NameRegistration extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         this.unitFee();
 
         window.addEventListener("contextmenu", (event) => {
@@ -200,6 +212,16 @@ class NameRegistration extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     renderAvatar(nameObj) {

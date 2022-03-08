@@ -34,7 +34,8 @@ class TradePortal extends LitElement {
             selectedCoin: { type: String },
             isLoadingHistoricTrades: { type: Boolean },
             isLoadingOpenTrades: { type: Boolean },
-            isLoadingMyOpenOrders: { type: Boolean }
+            isLoadingMyOpenOrders: { type: Boolean },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -43,18 +44,40 @@ class TradePortal extends LitElement {
 		* {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
+			--mdc-theme-error: rgb(255, 89, 89);
+                        --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+			--mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+			--mdc-text-field-label-ink-color: var(--black);
+			--mdc-text-field-ink-color: var(--black);
+                        --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
+			--mdc-select-label-ink-color: var(--black);
+			--mdc-select-ink-color: var(--black);
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
-            --lumo-primary-text-color: rgb(0, 167, 245);
-            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
-            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
-            --lumo-primary-color: hsl(199, 100%, 48%);
+			--lumo-primary-text-color: rgb(0, 167, 245);
+			--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+			--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+			--lumo-primary-color: hsl(199, 100%, 48%);
+			--lumo-base-color: var(--white);
+			--lumo-body-text-color: var(--black);
+			--lumo-secondary-text-color: var(--sectxt);
+			--lumo-contrast-60pct: var(--vdicon);
+			--_lumo-grid-border-color: var(--border);
+			--_lumo-grid-secondary-border-color: var(--border2);
+		}
+
+		mwc-tab-bar {
+			--mdc-text-transform: none;
+			--mdc-tab-color-default: var(--black);
+			--mdc-tab-text-label-color-default: var(--black);
 		}
 
 		#tabs-1 {
 			--mdc-tab-height: 50px;
-			border-left: 1px solid rgb(102, 102, 102);
-			border-top: 1px solid rgb(102, 102, 102);
-			border-right: 1px solid rgb(102, 102, 102);
+			border-left: 1px solid var(--tradeborder);
+			border-top: 1px solid var(--tradeborder);
+			border-right: 1px solid var(--tradeborder);
+                        color: var(--black);
 		}
 
 		#tab-buy[active] {
@@ -68,7 +91,7 @@ class TradePortal extends LitElement {
 
 		#tabs-1-content > div {
 			height: 100%;
-			border: 1px solid rgb(102, 102, 102);
+			border: 1px solid var(--tradeborder);
 		}
 
 		#tabs-1-content .card {
@@ -77,6 +100,7 @@ class TradePortal extends LitElement {
 
 		#tabs-1-content .btn-clear {
 			--mdc-icon-button-size: 40px;
+			color: var(--black);
 		}
 
 		#tab-sell[active] {
@@ -84,12 +108,12 @@ class TradePortal extends LitElement {
 		}
 
 		#trade-portal-page {
-			background: #fff;
+			background: var(--white);
 			padding: 12px 24px;
 		}
 
 		.divCard {
-			border: 1px solid #eee;
+			border: 1px solid var(--black);
 			padding: 1em;
 			box-shadow: 0 0.3px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 		}
@@ -102,7 +126,7 @@ class TradePortal extends LitElement {
 		h3,
 		h4,
 		h5 {
-			color: #333;
+			color: var(--black);
 			font-weight: 400;
 		}
 
@@ -113,8 +137,11 @@ class TradePortal extends LitElement {
 			justify-content: center;
 			padding: 0px 15px;
 			font-size: 16px;
-			color: #fff;
-			background-color: rgb(106, 108, 117);
+			color: var(--white);
+			background-color: var(--tradehead);
+			border-left: 1px solid var(--tradeborder);
+			border-top: 1px solid var(--tradeborder);
+			border-right: 1px solid var(--tradeborder);
 			min-height: 40px;
 		}
 
@@ -158,7 +185,7 @@ class TradePortal extends LitElement {
 		}
 
 		.trade-chart {
-			background-color: #eee;
+			background-color: var(--white);
 			border: 2px #ddd solid;
 			text-align: center;
 		}
@@ -184,7 +211,7 @@ class TradePortal extends LitElement {
 
 		.card {
 			padding: 1em;
-			border: 1px #666 solid;
+			border: 1px var(--tradeborder) solid;
 			flex: 1 1 auto;
 			display: flex;
 			flex-flow: column;
@@ -197,12 +224,12 @@ class TradePortal extends LitElement {
 		}
 
 		.border-wrapper {
-			border: 1px #666 solid;
+			border: 1px var(--tradeborder) solid;
 			overflow: hidden;
 		}
 
 		.you-have {
-			color: #555;
+			color: var(--tradehave);
 			font-size: 15px;
 			text-align: right;
 			margin-top: 2px;
@@ -234,7 +261,7 @@ class TradePortal extends LitElement {
 		}
 
 		.full-width {
-			background-color: #fff;
+			background-color: var(--white);
 			border: 2px #ddd solid;
 			height: 100px;
 			text-align: center;
@@ -435,6 +462,7 @@ class TradePortal extends LitElement {
         this.isLoadingHistoricTrades = true
         this.isLoadingOpenTrades = true
         this.isLoadingMyOpenOrders = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     // TODO: Move each template to a separate components! Maybe
@@ -544,7 +572,7 @@ class TradePortal extends LitElement {
 								</div>
 								<p>
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="buyAmountInput"
 										required readOnly label="Amount (QORT)"
 										placeholder="0.0000"
@@ -556,7 +584,7 @@ class TradePortal extends LitElement {
 								</p>
 								<p>
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="buyPriceInput"
 										required readOnly
 										label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
@@ -569,7 +597,7 @@ class TradePortal extends LitElement {
 								</p>
 								<p style="margin-bottom: 10px;">
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="buyTotalInput"
 										required readOnly
 										label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
@@ -607,7 +635,7 @@ class TradePortal extends LitElement {
 								</div>										
 								<p>
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="sellAmountInput"
 										required label="Amount (QORT)"
 										placeholder="0.0000"
@@ -620,7 +648,7 @@ class TradePortal extends LitElement {
 								</p>
 								<p>
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="sellPriceInput"
 										required label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
 										placeholder="0.0000"
@@ -633,7 +661,7 @@ class TradePortal extends LitElement {
 								</p>
 								<p style="margin-bottom: 10px;">
 									<mwc-textfield
-										style="width:100%;"
+										style="width: 100%; color: var(--black);"
 										id="sellTotalInput"
 										required readOnly
 										label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
@@ -829,6 +857,10 @@ class TradePortal extends LitElement {
     firstUpdated() {
         let _this = this
 
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         this.updateWalletBalance()
 
         setTimeout(() => {
@@ -905,6 +937,16 @@ class TradePortal extends LitElement {
 
         // Set Last Seen column's title on OpenOrders grid
         setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     updateWalletBalance() {

@@ -29,7 +29,8 @@ class SendMoneyPage extends LitElement {
             ltcBalance: { type: Number },
             dogeBalance: { type: Number },
             selectedCoin: { type: String },
-            satFeePerByte: { type: Number }
+            satFeePerByte: { type: Number },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -39,99 +40,111 @@ class SendMoneyPage extends LitElement {
 
     static get styles() {
         return css`
-			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--paper-input-container-focus-color: var(--mdc-theme-primary);
-			}
+		* {
+			--mdc-theme-primary: rgb(3, 169, 244);
+			--mdc-theme-secondary: var(--mdc-theme-primary);
+			--paper-input-container-focus-color: var(--mdc-theme-primary);
+		}
 
-			#sendMoneyWrapper {
-			}
+		h2,
+		h3,
+		h4,
+		h5 {
+			color: var(--black);
+			font-weight: 400;
+		}
 
-			#sendMoneyWrapper paper-button {
-				float: right;
-			}
+		#sendMoneyWrapper {
+		}
 
-			#sendMoneyWrapper .buttons {
-				width: auto !important;
-			}
+		#sendMoneyWrapper paper-button {
+			float: right;
+		}
 
-			.address-item {
-				--paper-item-focused: {
-					background: transparent;
-				}
-				--paper-item-focused-before: {
-					opacity: 0;
-				}
-			}
+		#sendMoneyWrapper .buttons {
+			width: auto !important;
+		}
 
-			.address-balance {
-				font-size: 42px;
-				font-weight: 100;
+		.address-item {
+			--paper-item-focused: {
+				background: transparent;
 			}
+			--paper-item-focused-before: {
+				opacity: 0;
+			}
+		}
 
-			.show-transactions {
-				cursor: pointer;
-			}
+		.address-balance {
+			font-size: 42px;
+			font-weight: 100;
+		}
 
-			.address-icon {
-				border-radius: 50%;
-				border: 5px solid;
-				padding: 8px;
-			}
+		.show-transactions {
+			cursor: pointer;
+		}
 
-			mwc-textfield {
-				margin: 0;
-			}
+		.address-icon {
+			border-radius: 50%;
+			border: 5px solid;
+			padding: 8px;
+		}
 
-			.selectedBalance {
-				display: none;
-				font-size: 14px;
-			}
+		.baltxt {
+			color: var(--black);
+		}
 
-			.selectedBalance .balance {
-				font-size: 22px;
-				font-weight: 100;
-			}
-			
-			.coinName::before  {
-				content: "";
-				display: inline-block;
-				height: 25px;
-				width: 25px;
-				position: absolute;
-				background-repeat: no-repeat;
-				background-size: cover;
-				left: 10px;
-				top: 10px;
-			}
+		mwc-textfield {
+			margin: 0;
+		}
 
-			.qort.coinName:before  {
-				background-image: url('/img/qort.png');
-			}
+		.selectedBalance {
+			display: none;
+			font-size: 14px;
+		}
 
-			.btc.coinName:before  {
-				background-image: url('/img/btc.png');
-			}
+		.selectedBalance .balance {
+			font-size: 22px;
+			font-weight: 100;
+		}
 
-			.ltc.coinName:before  {
-				background-image: url('/img/ltc.png');
-			}
+		.coinName::before  {
+			content: "";
+			display: inline-block;
+			height: 25px;
+			width: 25px;
+			position: absolute;
+			background-repeat: no-repeat;
+			background-size: cover;
+			left: 10px;
+			top: 10px;
+		}
 
-			.doge.coinName:before  {
-				background-image: url('/img/doge.png');
-			}
+		.qort.coinName:before  {
+			background-image: url('/img/qort.png');
+		}
 
-			.coinName {
-				display: inline-block;
-				height: 25px;
-				padding-left: 25px;
-			}
-			
-			paper-progress {
-				--paper-progress-active-color: var(--mdc-theme-primary);
-			}
-		`
+		.btc.coinName:before  {
+			background-image: url('/img/btc.png');
+		}
+
+		.ltc.coinName:before  {
+			background-image: url('/img/ltc.png');
+		}
+
+		.doge.coinName:before  {
+			background-image: url('/img/doge.png');
+		}
+
+		.coinName {
+			display: inline-block;
+			height: 25px;
+			padding-left: 25px;
+		}
+	
+		paper-progress {
+			--paper-progress-active-color: var(--mdc-theme-primary);
+		}
+	`
     }
 
     constructor() {
@@ -158,6 +171,7 @@ class SendMoneyPage extends LitElement {
         this.ltcBalance = 0
         this.dogeBalance = 0
         this.selectedCoin = 'invalid'
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 
         let configLoaded = false
         parentEpml.ready().then(() => {
@@ -193,15 +207,14 @@ class SendMoneyPage extends LitElement {
 
     render() {
         return html`
-			<div id="sendMoneyWrapper" style="width:auto; padding:10px; background: #fff; height:100vh;">
-				<div class="layout horizontal center" style=" padding:12px 15px;">
+			<div id="sendMoneyWrapper" style="width:auto; padding:10px; background: var(--white); height:100vh;">
+				<div class="layout horizontal center" style="padding:12px 15px;">
 					<paper-card style="width:100%; max-width:740px;">
 						<div style="background-color: ${this.selectedAddress.color}; margin:0; color: ${this.textColor(this.selectedAddress.textColor)};">
-							<h3 style="margin:0; padding:8px 0;">Send Coin</h3>
+							<h3 style="margin: 0; padding: 8px 0;">Send Coin</h3>
 
 							<div class="selectedBalance">
-								<span id="balance"></span> available for transfer from
-								<span id="address"></span>
+								<span id="balance" class="baltxt"></span> <span class="baltxt">available for transfer from</span> <span id="address" class="baltxt"></span>
 							</div>
 						</div>
 					</paper-card>
@@ -231,7 +244,7 @@ class SendMoneyPage extends LitElement {
 					</p>
 
 					<div style="${this.selectedCoin === 'invalid' || this.selectedCoin === 'qort' ? 'visibility: hidden; margin-bottom: -5em;' : 'visibility: visible; margin-bottom: 0;'}">
-						<p style="margin-bottom:0;">Fee per byte: ${(this.satFeePerByte / 1e8).toFixed(8)} ${this.selectedCoin === 'invalid' ? 'QORT' : this.selectedCoin.toLocaleUpperCase()}</p>
+						<p style="margin-bottom: 0; color: var(--black);">Fee per byte: ${(this.satFeePerByte / 1e8).toFixed(8)} ${this.selectedCoin === 'invalid' ? 'QORT' : this.selectedCoin.toLocaleUpperCase()}</p>
 						<mwc-slider
 							@change="${(e) => (this.satFeePerByte = e.target.value)}"
 							id="feeSlider"
@@ -245,8 +258,8 @@ class SendMoneyPage extends LitElement {
 						</mwc-slider>
 					</div>
 
-					<p style="color:red">${this.errorMessage}</p>
-					<p style="color:green;word-break: break-word;">${this.successMessage}</p>
+					<p style="color: red;">${this.errorMessage}</p>
+					<p style="color: green; word-break: break-word;">${this.successMessage}</p>
 
 					${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
 
@@ -261,6 +274,11 @@ class SendMoneyPage extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         // Get BTC Balance
         this.updateBTCAccountBalance()
 
@@ -269,6 +287,14 @@ class SendMoneyPage extends LitElement {
 
         // Get DOGE Balance
         this.updateDOGEAccountBalance()
+
+	setInterval(() => {
+	    this.errorMessage = '';
+	}, 5000)
+
+	setInterval(() => {
+	    this.successMessage = '';
+	}, 5000)
 
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
@@ -337,6 +363,16 @@ class SendMoneyPage extends LitElement {
             }
             checkSelectedTextAndShowMenu()
         })
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     _floor(num) {
@@ -561,7 +597,6 @@ class SendMoneyPage extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-
         validateReceiver(recipient)
     }
 

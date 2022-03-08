@@ -18,7 +18,8 @@ class MintingInfo extends LitElement {
             nodeInfo: { type: Array },
             sampleBlock: { type: Array },
             addressInfo: { type: Array },
-            addressLevel: { type: Array }
+            addressLevel: { type: Array },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -45,14 +46,14 @@ class MintingInfo extends LitElement {
             font-weight:600;
             font-size:20px;
             line-height: 28px;
-            color:#000000;
+            color: var(--black);
         }
 
         .header-title {
             display: block;
             overflow: hidden;
             font-size: 40px;
-            color: black;
+            color: var(--black);
             font-weight: 400;
             text-align: center;
             white-space: pre-wrap;
@@ -64,7 +65,7 @@ class MintingInfo extends LitElement {
 
         .level-black {
             font-size: 32px;
-            color: black;
+            color: var(--black);
             font-weight: 400;
             text-align: center;
             margin-top: 2rem;
@@ -95,7 +96,7 @@ class MintingInfo extends LitElement {
         }
 
         .content-box {
-            border: 1px solid #a1a1a1;
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 10px 25px;
             text-align: center;
@@ -165,7 +166,7 @@ class MintingInfo extends LitElement {
         }
 
         .black {
-            color: #000000;
+            color: var(--black);
         }
 
         .red {
@@ -192,6 +193,7 @@ class MintingInfo extends LitElement {
         this.sampleBlock = [];
         this.addressInfo = [];
         this.addressLevel = [];
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
     }
 
     render() {
@@ -238,10 +240,10 @@ class MintingInfo extends LitElement {
                     </div>
                     <div>
                         <h3>Introduction</h3><br />
-							To "activate" your account, an OUTGOING transaction needs to take place.
-							Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account,
-							or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain.
-							Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.
+			    To "activate" your account, an OUTGOING transaction needs to take place.
+			    Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account,
+			    or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain.
+			    Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.
                     </div>
                    <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">Close</mwc-button>
                 </mwc-dialog>
@@ -355,6 +357,11 @@ class MintingInfo extends LitElement {
     }
 
     firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
         const getAdminInfo = () => {
             parentEpml.request("apiCall", { url: `/admin/info` }).then((res) => {
                 setTimeout(() => { this.adminInfo = res; }, 1);
@@ -420,6 +427,16 @@ class MintingInfo extends LitElement {
         });
 
         parentEpml.imReady();
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     renderMintingPage() {

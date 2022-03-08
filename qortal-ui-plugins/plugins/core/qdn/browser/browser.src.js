@@ -19,7 +19,8 @@ class WebBrowser extends LitElement {
             service: { type: String },
             identifier: { type: String },
             followedNames: { type: Array },
-            blockedNames: { type: Array }
+            blockedNames: { type: Array },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -49,7 +50,7 @@ class WebBrowser extends LitElement {
 				left: 0;
 				right: 0;
 				height: 100px;
-				background-color: white;
+				background-color: var(--white);
 				height: 36px;
 			}
 
@@ -63,7 +64,7 @@ class WebBrowser extends LitElement {
 				left: 0;
 				right: 0;
 				bottom: 0;
-				border-top: 1px solid #000000;
+				border-top: 1px solid var(--black);
 			}
 
 			.iframe-container iframe {
@@ -71,7 +72,7 @@ class WebBrowser extends LitElement {
 				width: 100%;
 				height: 100%;
 				border: none;
-				background-color: #ffffff;
+				background-color: var(--white);
 			}
 
 			input[type=text] {
@@ -80,7 +81,7 @@ class WebBrowser extends LitElement {
 				border: 0;
 				height: 34px;
 				font-size: 16px;
-				background-color: #ffffff;
+				background-color: var(--white);
 			}
 
 			paper-progress {
@@ -94,28 +95,142 @@ class WebBrowser extends LitElement {
 		`
     }
 
+    constructor() {
+        super()
+        this.url = 'about:blank'
+
+        const urlParams = new URLSearchParams(window.location.search);
+        this.name = urlParams.get('name');
+        this.service = urlParams.get('service');
+        // FUTURE: add support for identifiers
+        this.identifier = null;
+        this.followedNames = []
+        this.blockedNames = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+
+        const getFollowedNames = async () => {
+
+            let followedNames = await parentEpml.request('apiCall', {
+                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.followedNames = followedNames
+            setTimeout(getFollowedNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        const getBlockedNames = async () => {
+
+            let blockedNames = await parentEpml.request('apiCall', {
+                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+            })
+
+            this.blockedNames = blockedNames
+            setTimeout(getBlockedNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        const render = () => {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            this.url = `${nodeUrl}/render/${this.service}/${this.name}`;
+        }
+
+        const authorizeAndRender = () => {
+            parentEpml.request('apiCall', {
+                url: `/render/authorize/${this.name}?apiKey=${this.getApiKey()}`,
+                method: "POST"
+            }).then(res => {
+                console.log(res)
+                if (res.error) {
+                    // Authorization problem - API key incorrect?
+                }
+                else {
+                    render()
+                }
+            })
+        }
+
+        let configLoaded = false
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+            parentEpml.subscribe('config', c => {
+                this.config = JSON.parse(c)
+                if (!configLoaded) {
+                    authorizeAndRender()
+                    setTimeout(getFollowedNames, 1)
+                    setTimeout(getBlockedNames, 1)
+                    configLoaded = true
+                }
+            })
+            parentEpml.subscribe('copy_menu_switch', async value => {
+
+                if (value === 'false' && window.getSelection().toString().length !== 0) {
+
+                    this.clearSelection()
+                }
+            })
+        })
+    }
+
     render() {
         return html`
-			<div id="websitesWrapper" style="width:auto; padding:10px; background: #fff;">
+			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
 				<div class="layout horizontal center">
 					<div class="address-bar">
 						<mwc-button @click=${() => this.goBack()} title="Back" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
 						<mwc-button @click=${() => this.goForward()} title="Forward" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
 						<mwc-button @click=${() => this.refresh()} title="Reload" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
 						<mwc-button @click=${() => this.goBackToList()} title="Back to list" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-						<input disabled style="width:550px;" id="address" type="text" value="qortal://${this.service.toLowerCase()}/${this.name}"></input>
+						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="qortal://${this.service.toLowerCase()}/${this.name}"></input>
 						<mwc-button @click=${() => this.delete()} title="Delete ${this.service} ${this.name} from node" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
 						${this.renderBlockUnblockButton()}
 						${this.renderFollowUnfollowButton()}
 					</div>
 					<div class="iframe-container">
 						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms allow-downloads">
-							Your browser doesn't support iframes
+							<span style="color: var(--black);">Your browser doesn't support iframes</span>
 						</iframe>
 					</div>
 				</div>
 			</div>
 		`
+    }
+
+    firstUpdated() {
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            this._textMenu(event)
+        })
+
+        window.addEventListener('click', () => {
+            parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        }
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     renderFollowUnfollowButton() {
@@ -355,105 +470,6 @@ class WebBrowser extends LitElement {
         }
 
         checkSelectedTextAndShowMenu()
-    }
-
-    constructor() {
-        super()
-        this.url = 'about:blank'
-
-        const urlParams = new URLSearchParams(window.location.search);
-        this.name = urlParams.get('name');
-        this.service = urlParams.get('service');
-        // FUTURE: add support for identifiers
-        this.identifier = null;
-        this.followedNames = []
-        this.blockedNames = []
-
-
-        const getFollowedNames = async () => {
-
-            let followedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.followedNames = followedNames
-            setTimeout(getFollowedNames, this.config.user.nodeSettings.pingInterval)
-        }
-
-        const getBlockedNames = async () => {
-
-            let blockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.blockedNames = blockedNames
-            setTimeout(getBlockedNames, this.config.user.nodeSettings.pingInterval)
-        }
-
-        const render = () => {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            this.url = `${nodeUrl}/render/${this.service}/${this.name}`;
-        }
-
-        const authorizeAndRender = () => {
-            parentEpml.request('apiCall', {
-                url: `/render/authorize/${this.name}?apiKey=${this.getApiKey()}`,
-                method: "POST"
-            }).then(res => {
-                console.log(res)
-                if (res.error) {
-                    // Authorization problem - API key incorrect?
-                }
-                else {
-                    render()
-                }
-            })
-        }
-
-        let configLoaded = false
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-            parentEpml.subscribe('config', c => {
-                this.config = JSON.parse(c)
-                if (!configLoaded) {
-                    authorizeAndRender()
-                    setTimeout(getFollowedNames, 1)
-                    setTimeout(getBlockedNames, 1)
-                    configLoaded = true
-                }
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
-                }
-            })
-        })
-    }
-
-    firstUpdated() {
-
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        })
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
     }
 
     getApiKey() {
