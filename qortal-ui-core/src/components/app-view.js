@@ -48,7 +48,7 @@ class AppView extends connect(store)(LitElement) {
                 app-toolbar {
                     background: var(--white);
                     color: var(--black);
-                    border-top: 1px solid rgb(238, 238, 238);
+                    border-top: var(--border);
                 }
 
                 #sideBar {

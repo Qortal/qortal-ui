@@ -35,7 +35,7 @@ class WalletProfile extends connect(store)(LitElement) {
             <style>
                 #profileInMenu {
                     padding: 12px;
-                    border-top: 1px solid rgb(238, 238, 238);
+                    border-top: var(--border);
                     background: var(--white);
                     color: var(--black);
                 }

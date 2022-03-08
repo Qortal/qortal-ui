@@ -38,11 +38,11 @@ class SidenavMenu extends connect(store)(LitElement) {
           display: block;
           text-decoration: none;
           padding-left: 20px;
-          color: var(--black);
+          color: var(--mainmenutext);
           text-align: left;
           height: 48px;
           position: relative;
-          border-bottom: 1px solid #EEE;
+          border-bottom: 1px solid var(--border);
           outline: none;
         }
 
@@ -75,14 +75,14 @@ class SidenavMenu extends connect(store)(LitElement) {
         }
 
         .mcd-menu li:hover > a {
-            background: #f8f8f8;
-            color: #515151;
+            background: var(--menuhover);
+            color: var(--mainmenutexthover);
         }
 
         .mcd-menu li a.active {
           position: relative;
           color: #515151;
-          background-color: #eee;
+          background-color: var(--menuactive);
           outline: none;
         }
 
@@ -153,7 +153,7 @@ class SidenavMenu extends connect(store)(LitElement) {
         .mcd-menu li ul li a {
           text-align: left;
           border: 0;
-          border-bottom: 1px solid #EEE;
+          border-bottom: 1px solid var(--border);
           height: auto;
           outline: none;
         }

@@ -25,11 +25,11 @@ class ChatHead extends LitElement {
             }
 
             li:hover {
-                background-color: var(--chatmenuhover);
+                background-color: var(--menuhover);
             }
 
             .active {
-                background: var(--chatmenuactive);
+                background: var(--menuactive);
                 border-left: 4px solid #3498db;
             }
 

@@ -41,7 +41,7 @@ class CopyTextMenu extends connect(store)(LitElement) {
                     position: absolute;
                     pointer-events: none;
                     padding: 5px, 0;
-                    border: 1px solid #B2B2B2;
+                    border: 1px solid var(--border);
                     min-width: 150px;
                     max-width: 300px;
                     background: #F9F9F9;

@@ -53,7 +53,7 @@ class AppInfo extends connect(store)(LitElement) {
                 #profileInMenu {
                     flex: 0 0 100px;
                     padding:12px;
-                    border-top: 1px solid #eee;
+                    border-top: 1px solid var(--border);
                     background: var(--white);
                 }
                 .info {

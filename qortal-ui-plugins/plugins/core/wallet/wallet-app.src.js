@@ -246,7 +246,7 @@ class MultiWallet extends LitElement {
 				height: 100vh;
 				border-top-left-radius: inherit;
 				border-bottom-left-radius: inherit;
-    				border-right: 1px solid #eee;
+    			border-right: 1px solid var(--border);
 			}
 
 			.transactions-wrapper {
@@ -278,7 +278,7 @@ class MultiWallet extends LitElement {
 				margin-top: 60px;
 				margin-left: 20px;
 				margin-right: 20px;
-				border-top: 1px solid #e5e5e5;
+				border-top: 1px solid var(--border);
 				padding-top: 0px;
 				height: 100%;
 			}
@@ -353,11 +353,11 @@ class MultiWallet extends LitElement {
 			}
 
 			.currency-box:not(:last-child) {
-				border-bottom: 1px solid #eee;
+				border-bottom: var(--border);
 			}
 
 			.active {
-				background: #bbb;
+				background: var(--menuactive);
 			}
 
 			.currency-image {
@@ -376,7 +376,7 @@ class MultiWallet extends LitElement {
 			}
 
 			.currency-box:hover {
-				background: #bbb;
+				background: var(--menuhover);
 			}
 
 			.currency-box.active,
@@ -566,7 +566,7 @@ class MultiWallet extends LitElement {
         return html`
 			<div class="wrapper">
 				<div class="wallet">
-					<div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid #eee;">Wallets</div>
+					<div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">Wallets</div>
 					<div class="cards">
 						<div coin="qort" class="currency-box qort active">
 							<div class="currency-image"></div>

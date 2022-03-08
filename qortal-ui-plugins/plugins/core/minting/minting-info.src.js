@@ -96,7 +96,7 @@ class MintingInfo extends LitElement {
         }
 
         .content-box {
-            border: 1px solid #a1a1a1;
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 10px 25px;
             text-align: center;

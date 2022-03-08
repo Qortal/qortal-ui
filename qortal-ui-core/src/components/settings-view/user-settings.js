@@ -85,7 +85,7 @@ class UserSettings extends connect(store)(LitElement) {
             .leftBar {
                 background-color: var(--white);
                 color: var(--black);
-                border: 1px solid #a1a1a1;
+                border: 1px solid var(--border);
                 padding: 20px 0 0 0;
                 border-radius: 5px;
             }
@@ -107,7 +107,7 @@ class UserSettings extends connect(store)(LitElement) {
             }
 
             .leftBar ul li {
-                border-bottom: 1px solid #DDD;    
+                border-bottom: 1px solid var(--border);
             }
 
             .leftBar ul li:last-child {
@@ -129,7 +129,7 @@ class UserSettings extends connect(store)(LitElement) {
             }
 
             .leftBar ul li a:hover {
-                background-color: #f6f6f6;
+                background-color: var(--menuhover);
                 color: #515151;
             }
 
@@ -139,7 +139,7 @@ class UserSettings extends connect(store)(LitElement) {
 
             .leftBar ul li a.active {
                 color: #515151;
-                background-color: #eee;
+                background-color: var(--menuactive);
                 border-left: 2px solid #515151;
                 margin-left: -2px;
             }
@@ -147,7 +147,7 @@ class UserSettings extends connect(store)(LitElement) {
             .mainPage {
                 background-color: var(--white);
                 color: var(--black);
-                border: 1px solid #a1a1a1;
+                border: 1px solid var(--border);
                 padding: 20px 0 10px 0;
                 border-radius: 5px;
                 font-size: 16px;
