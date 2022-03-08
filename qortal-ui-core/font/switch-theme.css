@@ -19,6 +19,8 @@ html {
   --menuactive: #ebebeb;
   --mainmenutext:#080808;
   --mainmenutexthover:#080808;
+  --switchbackground: #cccccc;
+  --switchborder: #333333;
 }
 
 html[theme="dark"] {
@@ -42,4 +44,6 @@ html[theme="dark"] {
   --menuactive: #008fd5;
   --mainmenutext:#008fd5;
   --mainmenutexthover:#0f1a2e;
+  --switchbackground: #eeeeee;
+  --switchborder: #03a9f4;
 }
