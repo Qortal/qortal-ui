@@ -1,17 +1,8 @@
-import { LitElement, html } from 'lit-element'
+import { LitElement, html } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 
 class AppTheme extends connect(store)(LitElement) {
-    // static get styles () {
-    //     return [
-    //         css`
-    //             html, * {
-    //                 color: var(--color, green);
-    //             }
-    //         `
-    //     ]
-    // }
 
     static get properties () {
         return {
