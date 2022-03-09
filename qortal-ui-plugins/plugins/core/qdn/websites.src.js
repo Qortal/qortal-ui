@@ -388,6 +388,8 @@ class Websites extends LitElement {
 
     firstUpdated() {
 
+        this.changeTheme()
+
 	setInterval(() => {
 	    this.changeTheme();
 	}, 100)
@@ -404,7 +406,7 @@ class Websites extends LitElement {
             })
 
             this.followedNames = followedNames
-            setTimeout(getFollowedNames, 60000)
+            setTimeout(getFollowedNames, 120000)
         }
 
         const getBlockedNames = async () => {
@@ -413,7 +415,7 @@ class Websites extends LitElement {
             })
 
             this.blockedNames = blockedNames
-            setTimeout(getBlockedNames, 60000)
+            setTimeout(getBlockedNames, 120000)
         }
 
         const getWebFollowedNames = async () => {
@@ -422,7 +424,7 @@ class Websites extends LitElement {
             })
 
             this.webFollowedNames = webFollowedNames
-            setTimeout(getWebFollowedNames, 60000)
+            setTimeout(getWebFollowedNames, 120000)
         }
 
         const getWebBlockedNames = async () => {
@@ -431,7 +433,7 @@ class Websites extends LitElement {
             })
 
             this.webBlockedNames = webBlockedNames
-            setTimeout(getWebBlockedNames, 60000)
+            setTimeout(getWebBlockedNames, 120000)
         }
 
         const getBlockFollowedNames = async () => {
@@ -440,7 +442,7 @@ class Websites extends LitElement {
             })
 
             this.blockFollowedNames = blockFollowedNames
-            setTimeout(getBlockFollowedNames, 60000)
+            setTimeout(getBlockFollowedNames, 120000)
         }
 
         const getBlockBlockedNames = async () => {
@@ -449,7 +451,7 @@ class Websites extends LitElement {
             })
 
             this.blockBlockedNames = blockBlockedNames
-            setTimeout(getBlockBlockedNames, 60000)
+            setTimeout(getBlockBlockedNames, 120000)
         }
 
         const getSearchFollowedNames = async () => {
@@ -458,7 +460,7 @@ class Websites extends LitElement {
             })
 
             this.searchFollowedNames = searchFollowedNames
-            setTimeout(getSearchFollowedNames, 60000)
+            setTimeout(getSearchFollowedNames, 120000)
         }
 
         const getSearchBlockedNames = async () => {
@@ -467,7 +469,7 @@ class Websites extends LitElement {
             })
 
             this.searchBlockedNames = searchBlockedNames
-            setTimeout(getSearchBlockedNames, 60000)
+            setTimeout(getSearchBlockedNames, 120000)
         }
 
         const getRelayMode = async () => {
@@ -476,7 +478,7 @@ class Websites extends LitElement {
             })
 
             this.relayMode = relayMode;
-            setTimeout(getRelayMode, 60000)
+            setTimeout(getRelayMode, 120000)
         }
 
         window.addEventListener("contextmenu", (event) => {
@@ -518,8 +520,8 @@ class Websites extends LitElement {
                     setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
                     setInterval(this.getArbitraryResources, 120000)
-                    setInterval(this.getFollowedWebsites, 60000)
-                    setInterval(this.getBlockedWebsites, 60000)
+                    setInterval(this.getFollowedWebsites, 120000)
+                    setInterval(this.getBlockedWebsites, 120000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)

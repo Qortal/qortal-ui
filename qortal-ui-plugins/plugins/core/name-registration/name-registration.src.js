@@ -159,6 +159,8 @@ class NameRegistration extends LitElement {
 
     firstUpdated() {
 
+        this.changeTheme()
+
 	setInterval(() => {
 	    this.changeTheme();
 	}, 100)

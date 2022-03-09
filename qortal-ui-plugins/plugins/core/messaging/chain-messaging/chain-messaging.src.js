@@ -3,7 +3,8 @@ import { LitElement, html, css } from 'lit'
 class ChainMessaging extends LitElement {
     static get properties() {
         return {
-            loading: { type: Boolean }
+            loading: { type: Boolean },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -22,7 +23,7 @@ class ChainMessaging extends LitElement {
             }
 
             #chain-messaging-page {
-                background:#fff;
+                background: var(--white);
             }
 
         `
@@ -30,17 +31,24 @@ class ChainMessaging extends LitElement {
 
     constructor() {
         super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
         return html`
             <div id="chain-messaging-page">
-                <h2 style="text-align: center; margin-top: 3rem;">Coming Soon!</h2>
+                <h2 style="text-align: center; margin-top: 3rem; color: var(--black)">Coming Soon!</h2>
             </div>
         `
     }
 
     firstUpdated() {
+
+        this.changeTheme()
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
 
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
@@ -53,6 +61,16 @@ class ChainMessaging extends LitElement {
             if (e.keyCode === 27) {
             }
         }
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     isEmptyArray(arr) {

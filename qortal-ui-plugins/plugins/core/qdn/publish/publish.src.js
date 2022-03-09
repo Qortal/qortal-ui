@@ -33,7 +33,8 @@ class PublishData extends LitElement {
             successMessage: { type: String },
             errorMessage: { type: String },
             loading: { type: Boolean },
-            btnDisable: { type: Boolean }
+            btnDisable: { type: Boolean },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -47,6 +48,16 @@ class PublishData extends LitElement {
 				--mdc-theme-primary: rgb(3, 169, 244);
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--paper-input-container-focus-color: var(--mdc-theme-primary);
+				--lumo-primary-text-color: rgb(0, 167, 245);
+				--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+				--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+				--lumo-primary-color: hsl(199, 100%, 48%);
+				--lumo-base-color: var(--white);
+				--lumo-body-text-color: var(--black);
+				--lumo-secondary-text-color: var(--sectxt);
+				--lumo-contrast-60pct: var(--vdicon);
+				--_lumo-grid-border-color: var(--border);
+				--_lumo-grid-secondary-border-color: var(--border2);
 			}
 
 			#publishWrapper paper-button {
@@ -68,6 +79,7 @@ class PublishData extends LitElement {
 			.upload-text {
 				display: block;
 				font-size: 14px;
+                                color: var(--black);
 			}
 
 			.address-bar {
@@ -76,7 +88,7 @@ class PublishData extends LitElement {
 				left: 0;
 				right: 0;
 				height: 100px;
-				background-color: white;
+				background-color: var(--white);
 				height: 36px;
 			}
 
@@ -86,52 +98,181 @@ class PublishData extends LitElement {
 		`
     }
 
+    constructor() {
+        super()
+
+        this.showName = false;
+        this.showService = false
+        this.showIdentifier = false
+
+        const urlParams = new URLSearchParams(window.location.search)
+        this.name = urlParams.get('name')
+        this.service = urlParams.get('service')
+        this.identifier = urlParams.get('identifier')
+        this.category = urlParams.get('category')
+        this.uploadType = urlParams.get('uploadType') !== "null" ? urlParams.get('uploadType') : "file"
+
+        if (urlParams.get('showName') === "true") {
+            this.showName = true
+        }
+        if (urlParams.get('showService') === "true") {
+            this.showService = true
+        }
+        if (urlParams.get('showIdentifier') === "true") {
+            this.showIdentifier = true
+        }
+
+        if (this.identifier != null) {
+            if (this.identifier === "null" || this.identifier.trim().length == 0) {
+                this.identifier = null
+            }
+        }
+
+        // Default to true so the message doesn't appear and disappear quickly
+        this.portForwardingEnabled = true
+        this.names = []
+        this.myRegisteredName = ''
+        this.selectedName = 'invalid'
+        this.path = ''
+        this.successMessage = ''
+        this.generalMessage = ''
+        this.errorMessage = ''
+        this.loading = false
+        this.btnDisable = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+
+        const fetchNames = () => {
+            parentEpml.request('apiCall', {
+                url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
+            }).then(res => {
+
+                setTimeout(() => {
+                    this.names = res
+                    if (res[0] != null) {
+                        this.myRegisteredName = res[0].name;
+                    }
+                }, 1)
+            })
+            setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        const fetchPeersSummary = () => {
+            parentEpml.request('apiCall', {
+                url: `/peers/summary`
+            }).then(res => {
+
+                setTimeout(() => {
+                    this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0);
+                }, 1)
+            })
+            setTimeout(fetchPeersSummary, this.config.user.nodeSettings.pingInterval)
+        }
+
+        let configLoaded = false
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+            parentEpml.subscribe('config', c => {
+                if (!configLoaded) {
+                    setTimeout(fetchNames, 1)
+                    setTimeout(fetchPeersSummary, 1)
+                    configLoaded = true
+                }
+                this.config = JSON.parse(c)
+            })
+            parentEpml.subscribe('copy_menu_switch', async value => {
+
+                if (value === 'false' && window.getSelection().toString().length !== 0) {
+                    this.clearSelection()
+                }
+            })
+        })
+    }
+
     render() {
         return html`
-			<div id="publishWrapper" style="width:auto; padding:10px; background: #fff; height:100vh;">
-				<div class="layout horizontal center" style=" padding:12px 15px;">
-					<div class="address-bar">
-						<mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
+		<div id="publishWrapper" style="width: auto; padding:10px; background: var(--white); height: 100vh;">
+			<div class="layout horizontal center" style=" padding:12px 15px;">
+				<div class="address-bar">
+					<mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
+				</div>
+				<paper-card style="width:100%; max-width:740px;">
+					<div style="margin:0; margin-top:20px;">
+						<h3 style="margin:0; padding:8px 0; text-transform: capitalize; color: var(--black);">Publish / Update ${this.category}</h3>
+						<p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.</p>
 					</div>
-					<paper-card style="width:100%; max-width:740px;">
-						<div style="margin:0; margin-top:20px;">
-							<h3 style="margin:0; padding:8px 0; text-transform:capitalize;">Publish / Update ${this.category}</h3>
-							<p style="font-style:italic; font-size:14px;" ?hidden="${this.portForwardingEnabled}">Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.</p>
-						</div>
-					</paper-card>
-					<!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
-					<p style="display: ${this.showName ? 'block' : 'none'}">
-						<mwc-select id="registeredName" label="Select Name" index="0" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
-							<mwc-list-item value=""></mwc-list-item>
-							<mwc-list-item value="${this.myRegisteredName}">${this.myRegisteredName}</mwc-list-item>
-						</mwc-select>
-					</p>
-					${this.renderUploadField()}
-					<p style="display: ${this.showService ? 'block' : 'none'}">
-						<mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
-					</p>
-					<p style="display: ${this.showIdentifier ? 'block' : 'none'}">
-						<mwc-textfield style="width:100%;" label="Identifier" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
-					</p>
-					
-					<p style="break-word;">${this.generalMessage}</p>
-					<p style="color:red">${this.errorMessage}</p>
-					<p style="color:green;word-break: break-word;">${this.successMessage}</p>
+				</paper-card>
+				<!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
+				<p style="display: ${this.showName ? 'block' : 'none'}">
+					<mwc-select id="registeredName" label="Select Name" index="0" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
+						<mwc-list-item value=""></mwc-list-item>
+						<mwc-list-item value="${this.myRegisteredName}">${this.myRegisteredName}</mwc-list-item>
+					</mwc-select>
+				</p>
+				${this.renderUploadField()}
+				<p style="display: ${this.showService ? 'block' : 'none'}">
+					<mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
+				</p>
+				<p style="display: ${this.showIdentifier ? 'block' : 'none'}">
+					<mwc-textfield style="width:100%;" label="Identifier" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
+				</p>
 
-					${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
+				<p style="color: var(--black); word-break: break-word;">${this.generalMessage}</p>
+				<p style="color: red;">${this.errorMessage}</p>
+				<p style="color: green; word-break: break-word;">${this.successMessage}</p>
 
-					<div class="buttons">
-						<div>
-							<mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}>Publish &nbsp;</mwc-button>
-						</div>
+				${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
+
+				<div class="buttons">
+					<div>
+						<mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}>Publish &nbsp;</mwc-button>
 					</div>
 				</div>
 			</div>
-		`
+		</div>
+	`
+    }
+
+    firstUpdated() {
+
+        this.changeTheme()
+
+	setInterval(() => {
+	    this.changeTheme();
+	}, 100)
+
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            this._textMenu(event)
+        })
+
+        window.addEventListener('click', () => {
+            parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
+        }
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark';
+        } else {
+            this.theme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', this.theme);
     }
 
     // Navigation
-
     goBack() {
         window.history.back();
     }
@@ -140,13 +281,13 @@ class PublishData extends LitElement {
     renderUploadField() {
         if (this.uploadType === "file") {
             return html`<p>
-				<input style="width:100%;" id="file" type="file" />
+				<input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file">
 			</p>`;
         }
         else if (this.uploadType === "zip") {
             return html`<p>
 				<span class="upload-text">Select zip file containing static content:</span><br />
-				<input style="width:100%;" id="file" type="file" accept=".zip" />
+				<input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file" accept=".zip">
 			</p>`;
         }
         else {
@@ -291,7 +432,6 @@ class PublishData extends LitElement {
                 url: `${uploadDataUrl}?apiKey=${this.getApiKey()}`,
                 body: `${postBody}`,
             })
-
             return uploadDataRes
         }
 
@@ -302,7 +442,6 @@ class PublishData extends LitElement {
                 url: `/transactions/convert`,
                 body: `${transactionBytesBase58}`,
             })
-
             return convertedBytes
         }
 
@@ -345,18 +484,9 @@ class PublishData extends LitElement {
             else {
                 myResponse = response
             }
-
             return myResponse
         }
-
         validate()
-    }
-
-
-    // Helper Functions (Re-Used in Most part of the UI )
-
-    textColor(color) {
-        return color == 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
     }
 
     _textMenu(event) {
@@ -380,121 +510,7 @@ class PublishData extends LitElement {
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
-
         checkSelectedTextAndShowMenu()
-    }
-
-    constructor() {
-        super()
-
-        this.showName = false;
-        this.showService = false
-        this.showIdentifier = false
-
-        const urlParams = new URLSearchParams(window.location.search)
-        this.name = urlParams.get('name')
-        this.service = urlParams.get('service')
-        this.identifier = urlParams.get('identifier')
-        this.category = urlParams.get('category')
-        this.uploadType = urlParams.get('uploadType') !== "null" ? urlParams.get('uploadType') : "file"
-
-        if (urlParams.get('showName') === "true") {
-            this.showName = true
-        }
-        if (urlParams.get('showService') === "true") {
-            this.showService = true
-        }
-        if (urlParams.get('showIdentifier') === "true") {
-            this.showIdentifier = true
-        }
-
-        if (this.identifier != null) {
-            if (this.identifier === "null" || this.identifier.trim().length == 0) {
-                this.identifier = null
-            }
-        }
-
-        // Default to true so the message doesn't appear and disappear quickly
-        this.portForwardingEnabled = true
-        this.names = []
-        this.myRegisteredName = ''
-        this.selectedName = 'invalid'
-        this.path = ''
-        this.successMessage = ''
-        this.generalMessage = ''
-        this.errorMessage = ''
-        this.loading = false
-        this.btnDisable = false
-
-        const fetchNames = () => {
-            parentEpml.request('apiCall', {
-                url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
-            }).then(res => {
-
-                setTimeout(() => {
-                    this.names = res
-                    if (res[0] != null) {
-                        this.myRegisteredName = res[0].name;
-                    }
-                }, 1)
-            })
-            setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
-        }
-
-        const fetchPeersSummary = () => {
-            parentEpml.request('apiCall', {
-                url: `/peers/summary`
-            }).then(res => {
-
-                setTimeout(() => {
-                    this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0);
-                }, 1)
-            })
-            setTimeout(fetchPeersSummary, this.config.user.nodeSettings.pingInterval)
-        }
-
-        let configLoaded = false
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-            parentEpml.subscribe('config', c => {
-                if (!configLoaded) {
-                    setTimeout(fetchNames, 1)
-                    setTimeout(fetchPeersSummary, 1)
-                    configLoaded = true
-                }
-                this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
-                }
-            })
-        })
-    }
-
-    firstUpdated() {
-
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        })
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
     }
 
     selectName(e) {

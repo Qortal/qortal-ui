@@ -358,6 +358,8 @@ class MintingInfo extends LitElement {
 
     firstUpdated() {
 
+        this.changeTheme()
+
 	setInterval(() => {
 	    this.changeTheme();
 	}, 100)
