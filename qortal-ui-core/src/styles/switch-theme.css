@@ -4,16 +4,48 @@ html {
   --gray: #c8c8c8;
   --graylight: #bbbbbb;
   --plugback: #ffffff;
-  --switchbackground: #cccccc;
+  --border: #d0d6de;
+  --border2: #dde2e8;
+  --copybutton: #707584;
+  --sectxt: #576374;
+  --vdicon: #707b8a;
+  --tradehead: #6a6c75;
+  --tradeborder: #666666;
+  --tradehave: #555555;
+  --txtfieldborder: #666666;
+  --txtfieldhoverborder: #00000;
+  --relaynodetxt: #646464;
+  --menuhover: #eeeeee;
+  --menuactive: #ebebeb;
+  --mainmenutext:#080808;
+  --mainmenutexthover:#080808;
+  --switchbackground: #666666;
   --switchborder: #333333;
+  --sidetopbar:  #ffffff;
 }
 
 html[theme="dark"] {
-  --white: #36393f;
-  --black: #f8f8f8;
+  --white: #0f1a2e;
+  --black: #c9d2d9;
   --gray: #d8d8d8;
-  --graylight: #dddddd;
-  --plugback: #36393f;
+  --graylight: #0b305e;
+  --plugback: #0f1a2e;
+  --border: #0b305e;
+  --border2: #0b305e;
+  --copybutton: #d0d6de;
+  --sectxt: #bbc3cd;
+  --vdicon: #d0d6de;
+  --tradehead: #008fd5;
+  --tradeborder: #0b305e;
+  --tradehave: #dddddd;
+  --txtfieldborder: #0b305e;
+  --txtfieldhoverborder: #ffffff;
+  --relaynodetxt: #d4d4d4;
+  --menuhover: #008fd5;
+  --menuactive: #008fd5;
+  --mainmenutext:#008fd5;
+  --mainmenutexthover:#0f1a2e;
   --switchbackground: #eeeeee;
   --switchborder: #03a9f4;
+  --sidetopbar:  #070d19;
 }
