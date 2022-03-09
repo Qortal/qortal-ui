@@ -38,7 +38,7 @@ class AppView extends connect(store)(LitElement) {
 
                 app-drawer {
                     box-shadow: var(--shadow-2);
-                    background: var(--white);
+                    background: var(--sidetopbar);
                 }
 
                 app-header {
@@ -46,7 +46,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 app-toolbar {
-                    background: var(--white);
+                    background: var(--sidetopbar);
                     color: var(--black);
                     border-top: var(--border);
                 }
@@ -55,7 +55,7 @@ class AppView extends connect(store)(LitElement) {
                     height: 100vh;
                     display: flex;
                     flex-direction: column;
-                    background: var(--white);
+                    background: var(--sidetopbar);
                 }
 
                 .sideBarMenu{
@@ -75,7 +75,7 @@ class AppView extends connect(store)(LitElement) {
                 #sideBar::-webkit-scrollbar-thumb {
                      background-color: #333;
                      border-radius: 6px;
-                    border: 3px solid #333;
+                     border: 3px solid #333;
                 }
             `
         ]

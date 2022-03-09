@@ -36,17 +36,19 @@ class WalletProfile extends connect(store)(LitElement) {
                 #profileInMenu {
                     padding: 12px;
                     border-top: var(--border);
-                    background: var(--white);
+                    background: var(--sidetopbar);
                     color: var(--black);
                 }
+
                 #profileInMenu:hover {
-                    /* cursor:pointer; */
                 }
+
                 #accountIcon {
                     font-size:48px;
                     color: var(--mdc-theme-primary);
                     display: inline-block;
                 }
+
                 #accountName {
                     margin: 0;
                     font-size: 18px;
@@ -55,12 +57,14 @@ class WalletProfile extends connect(store)(LitElement) {
                     width:100%;
                     padding-bottom:8px;
                 }
+
                 #blocksMinted {
                     margin:0;
                     margin-top: 0;
                     font-size: 11px;
                     color: #03a9f4;
                 }
+
                 #address {
                     white-space: nowrap;
                     overflow: hidden;
