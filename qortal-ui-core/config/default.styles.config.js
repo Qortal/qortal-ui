@@ -34,15 +34,6 @@ const styles = {
             '#2196f3',
             '#d81b60'
         ]
-    },
-    // Will make theme be calculated from config.styles.themes[config.user.theme]... or make theme the base..so it becomes theme = {...config.styles.theme, ...config.styles.themes[config.user.theme]}
-    themes: {
-        light: {
-            // ...
-        },
-        dark: {
-            // ...
-        }
     }
 }
 

@@ -6,7 +6,6 @@ const user = {
         pingInterval: 10 * 1000, // (10 secs)
     },
     language: 'english', // default...english
-    theme: 'light',
     server: {
         writeHosts: {
             enabled: true,
