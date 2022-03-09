@@ -97,7 +97,7 @@ const obj4 = {
     protocol: 'http',
     domain: '127.0.0.1',
     port: 62391,
-    enableManagement: false
+    enableManagement: true
 }
 
 const obj5 = {
