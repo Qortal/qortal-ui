@@ -19,8 +19,9 @@ html {
   --menuactive: #ebebeb;
   --mainmenutext:#080808;
   --mainmenutexthover:#080808;
-  --switchbackground: #cccccc;
+  --switchbackground: #666666;
   --switchborder: #333333;
+  --sidetopbar:  #ffffff;
 }
 
 html[theme="dark"] {
@@ -46,4 +47,5 @@ html[theme="dark"] {
   --mainmenutexthover:#0f1a2e;
   --switchbackground: #eeeeee;
   --switchborder: #03a9f4;
+  --sidetopbar:  #070d19;
 }
