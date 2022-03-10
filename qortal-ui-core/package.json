@@ -59,6 +59,7 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-replace": "^4.0.0",
     "@vaadin/grid": "^23.0.1",
+	"@vaadin/icons": "^23.0.1",
     "@vaadin/password-field": "^23.0.1",
     "asmcrypto.js": "^2.3.2",
     "bcryptjs": "^2.4.3",
