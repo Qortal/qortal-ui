@@ -481,7 +481,7 @@ class PublishData extends LitElement {
 
             let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
             if (identifier != null && identifier.trim().length > 0) {
-                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQuery}&apiKey=${this.getApiKey()}`
+                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
             }
 
             let uploadDataRes = await parentEpml.request('apiCall', {
@@ -593,7 +593,10 @@ class PublishData extends LitElement {
     selectName(e) {
         let name = this.shadowRoot.getElementById('registeredName')
         this.selectedName = (name.value)
-        this.name = (name.value)
+        // Update the current name if one has been selected
+        if (name.length > 0) {
+            this.name = (name.value)
+        }
         this.fetchResourceMetadata();
     }
 
