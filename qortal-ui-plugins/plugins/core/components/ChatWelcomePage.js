@@ -239,9 +239,11 @@ class ChatWelcomePage extends LitElement {
 
     firstUpdated() {
 
+        this.changeTheme()
+
 	setInterval(() => {
 	    this.changeTheme();
-	}, 250)
+	}, 100)
 
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();

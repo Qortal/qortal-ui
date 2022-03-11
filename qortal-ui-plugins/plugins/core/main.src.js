@@ -13,7 +13,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'minting/index.html',
             title: 'Minting Details',
-            icon: 'info',
+            icon: 'vaadin:info-circle',
             menus: [],
             parent: false
         },
@@ -22,7 +22,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'wallet/index.html',
             title: 'Wallet',
-            icon: 'account_balance_wallet',
+            icon: 'vaadin:wallet',
             menus: [],
             parent: false
         },
@@ -31,7 +31,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'send-coin/index.html',
             title: 'Send Coin',
-            icon: 'send',
+            icon: 'vaadin:coin-piles',
             menus: [],
             parent: false
         },
@@ -40,7 +40,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'trade-portal/index.html',
             title: 'Trade Portal',
-            icon: 'toc',
+            icon: 'vaadin:bullets',
             menus: [],
             parent: false
         },
@@ -49,7 +49,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'reward-share/index.html',
             title: 'Reward Share',
-            icon: 'call_split',
+            icon: 'vaadin:share-square',
             menus: [],
             parent: false
         },
@@ -58,7 +58,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'name-registration/index.html',
             title: 'Name Registration',
-            icon: 'assignment_ind',
+            icon: 'vaadin:user-check',
             menus: [],
             parent: false
         },
@@ -67,7 +67,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'qdn/index.html',
             title: 'Websites',
-            icon: 'computer',
+            icon: 'vaadin:desktop',
             menus: [],
             parent: false
         },
@@ -76,7 +76,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'qdn/data-management/index.html',
             title: 'Data Management',
-            icon: 'dns',
+            icon: 'vaadin:database',
             menus: [],
             parent: false
         },
@@ -85,7 +85,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'messaging/q-chat/index.html',
             title: 'Q-Chat',
-            icon: 'message',
+            icon: 'vaadin:chat',
             menus: [],
             parent: false
         },
@@ -94,7 +94,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'group-management/index.html',
             title: 'Group Management',
-            icon: 'group',
+            icon: 'vaadin:group',
             menus: [],
             parent: false
         },
@@ -103,7 +103,7 @@ parentEpml.ready().then(() => {
             domain: 'core',
             page: 'puzzles/index.html',
             title: 'Puzzles',
-            icon: 'extension',
+            icon: 'vaadin:puzzle-piece',
             menus: [],
             parent: false
         }
@@ -127,7 +127,7 @@ parentEpml.ready().then(() => {
                 domain: 'core',
                 page: 'node-management/index.html',
                 title: 'Node Management',
-                icon: 'cloud',
+                icon: 'vaadin:cloud',
                 menus: [],
                 parent: false
             }

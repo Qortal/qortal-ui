@@ -4,7 +4,7 @@ import { EpmlStream } from 'epml'
 const LOGIN_STREAM_NAME = 'logged_in'
 const CONFIG_STREAM_NAME = 'config'
 const SELECTED_ADDRESS_STREAM_NAME = 'selected_address'
-// const APP_INFO_STATE = 'app_info_state'
+const APP_INFO_STATE = 'app_info_state'
 const CHAT_HEADS_STREAM_NAME = 'chat_heads'
 const NODE_CONFIG_STREAM_NAME = 'node_config'
 const COPY_MENU_SWITCH = 'copy_menu_switch'
@@ -13,7 +13,7 @@ const FRAME_PASTE_MENU_SWITCH = 'frame_paste_menu_switch'
 export const loggedInStream = new EpmlStream(LOGIN_STREAM_NAME, () => store.getState().app.loggedIn)
 export const configStream = new EpmlStream(CONFIG_STREAM_NAME, () => store.getState().config)
 export const selectedAddressStream = new EpmlStream(SELECTED_ADDRESS_STREAM_NAME, () => store.getState().app.selectedAddress)
-// export const appInfoStateStream = new EpmlStream(APP_INFO_STATE, () => store.getState().app.appInfo)
+export const appInfoStateStream = new EpmlStream(APP_INFO_STATE, () => store.getState().app.appInfo)
 export const chatHeadsStateStream = new EpmlStream(CHAT_HEADS_STREAM_NAME, () => store.getState().app.chatHeads)
 export const nodeConfigStream = new EpmlStream(NODE_CONFIG_STREAM_NAME, () => store.getState().app.nodeConfig)
 export const copyMenuSwitchStream = new EpmlStream(COPY_MENU_SWITCH, () => store.getState().app.copyMenuSwitch)
@@ -59,8 +59,9 @@ store.subscribe(() => {
         chatHeadsStateStream.emit(state.app.chatHeads)
     }
 
-    // if (oldState.app.appInfo !== state.app.appInfo) {
-    //     appInfoStateStream.emit(state.app.appInfo)
-    // }
+    if (oldState.app.appInfo !== state.app.appInfo) {
+        appInfoStateStream.emit(state.app.appInfo)
+    }
+
     oldState = state
 })

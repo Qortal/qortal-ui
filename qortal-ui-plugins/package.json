@@ -45,7 +45,7 @@
     "epml": "^0.3.3",
     "html-escaper": "^3.0.3",
     "lit": "^2.2.0",
-    "rollup": "^2.68.0",
+    "rollup": "^2.70.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-terser": "^7.0.2"

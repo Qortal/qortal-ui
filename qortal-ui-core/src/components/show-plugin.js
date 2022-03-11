@@ -42,7 +42,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             
             iframe#showPluginFrame {
                 width:100%;
-                height:calc(var(--window-height) - 68px);
+                height:calc(var(--window-height) - 64px);
                 border:0;
                 padding:0;
                 margin:0;

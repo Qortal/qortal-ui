@@ -19,6 +19,17 @@ html {
   --menuactive: #ebebeb;
   --mainmenutext:#080808;
   --mainmenutexthover:#080808;
+  --switchbackground: #666666;
+  --switchborder: #333333;
+  --sidetopbar:  #ffffff;
+  --nav-selected-color: #dddddd;
+  --nav-selected-color-text: #333333;
+  --nav-color-active: #d1d1d1;
+  --nav-color-hover: #eeeeee;
+  --nav-text-color: #080808;
+  --nav-icon-color: #080808;
+  --nav-border-color: #eeeeee;
+  --nav-border-selected-color: #03a9f4;
 }
 
 html[theme="dark"] {
@@ -42,4 +53,15 @@ html[theme="dark"] {
   --menuactive: #008fd5;
   --mainmenutext:#008fd5;
   --mainmenutexthover:#0f1a2e;
+  --switchbackground: #eeeeee;
+  --switchborder: #03a9f4;
+  --sidetopbar:  #070d19;
+  --nav-selected-color: #0f1a2e;
+  --nav-selected-color-text: #76c8f5;
+  --nav-color-active: #d1d1d1;
+  --nav-color-hover: #444444;
+  --nav-text-color: #008fd5;
+  --nav-icon-color: #008fd5;
+  --nav-border-color: #0b305e;
+  --nav-border-selected-color: #76c8f5;
 }

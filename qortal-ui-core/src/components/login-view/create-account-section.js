@@ -423,6 +423,14 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             <p style="margin:0;">
                                 This file is the <strong>ONLY</strong> way to access your account on a system that doesn't have it saved to the app/browser. <strong>BE SURE TO BACKUP THIS FILE IN MULTIPLE PLACES.</strong> The file is encrypted very securely and decrypted with your local password you created in the previous step. You can save it anywhere securely, but be sure to do that in multiple locations.
                             </p>
+                            <div id="download-area">
+                                <div style="line-height:40px;">
+                                    <span style="padding-top:6px; margin-right: 10px;">Download Wallet BackUp File</span>
+                                    <slot id="trigger" name="inputTrigger" @click=${() => this.downloadBackup(this._wallet)} style="dispay: inline;">
+                                        <mwc-button><mwc-icon>cloud_download</mwc-icon>&nbsp; Save</mwc-button>
+                                    </slot>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </iron-pages>

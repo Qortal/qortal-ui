@@ -47,8 +47,9 @@ class QortThemeToggle extends LitElement {
         height: 16px;
         top: 50%;
         transform: translateY(-50%);
+        background-color: var(--switchbackground);
+        border: 2px solid var(--switchborder);
         border-radius: 1rem;
-        background-color: var(--graylight);
         transition: all .4s ease;
       }
 
@@ -58,8 +59,8 @@ class QortThemeToggle extends LitElement {
         display: inline-block;
         position: absolute;
         top: 50%;
-        background: var(--graylight);
-        border: 2px solid var(--gray);
+        background: var(--switchbackground);
+        border: 2px solid var(--switchborder);
         border-radius: 50%;
         transition: transform 300ms ease;
       }
@@ -70,7 +71,7 @@ class QortThemeToggle extends LitElement {
 
       input:checked ~ .icon,
       :host([theme="dark"]) .icon {
-        transform: translate(calc(100% - 18px), -50%);
+        transform: translate(calc(100% - 12px), -50%);
       }
 
       .moon {

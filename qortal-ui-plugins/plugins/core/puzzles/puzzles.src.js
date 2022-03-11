@@ -171,6 +171,8 @@ class Puzzles extends LitElement {
 
     firstUpdated() {
 
+        this.changeTheme()
+
 	setInterval(() => {
 	    this.changeTheme();
 	}, 100)

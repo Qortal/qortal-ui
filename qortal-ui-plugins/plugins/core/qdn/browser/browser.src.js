@@ -131,7 +131,7 @@ class WebBrowser extends LitElement {
         const render = () => {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            this.url = `${nodeUrl}/render/${this.service}/${this.name}`;
+            this.url = `${nodeUrl}/render/${this.service}/${this.name}?theme=${this.theme}`;
         }
 
         const authorizeAndRender = () => {
@@ -202,6 +202,8 @@ class WebBrowser extends LitElement {
     }
 
     firstUpdated() {
+
+        this.changeTheme()
 
 	setInterval(() => {
 	    this.changeTheme();

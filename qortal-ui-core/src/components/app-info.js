@@ -54,7 +54,7 @@ class AppInfo extends connect(store)(LitElement) {
                     flex: 0 0 100px;
                     padding:12px;
                     border-top: 1px solid var(--border);
-                    background: var(--white);
+                    background: var(--sidetopbar);
                 }
                 .info {
                     margin: 0;

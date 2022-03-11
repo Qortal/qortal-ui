@@ -855,7 +855,10 @@ class TradePortal extends LitElement {
     }
 
     firstUpdated() {
+
         let _this = this
+
+        this.changeTheme()
 
 	setInterval(() => {
 	    this.changeTheme();

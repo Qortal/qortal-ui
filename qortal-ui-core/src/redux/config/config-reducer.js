@@ -17,7 +17,6 @@ const DEFAULT_INITIAL_STATE = {
     },
     user: {
         language: 'english',
-        theme: 'light',
         server: {},
         node: 0,
         knownNodes: [{}]
