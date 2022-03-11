@@ -319,7 +319,7 @@ class Websites extends LitElement {
 	            </div>
                     <div id="tab-followed-content">
 	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your followed Webistes</h2>
+        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your Followed Websites</h2>
                 	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                </div>
 	                <div class="divCard">
@@ -357,7 +357,7 @@ class Websites extends LitElement {
 	            </div>
                     <div id="tab-blocked-content">
 	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your blocked Webistes</h2>
+        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">Your Blocked Websites</h2>
                 	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                </div>
 	                <div class="divCard">
