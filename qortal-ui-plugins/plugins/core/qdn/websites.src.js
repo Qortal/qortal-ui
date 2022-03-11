@@ -186,8 +186,13 @@ class Websites extends LitElement {
                 padding-bottom: 10px;
             }
 
-            .registeredName {
+            .resourceRegisteredName {
                 font-size:15px;
+                line-height: 32px;
+            }
+
+            .resourceStatus, .resourceStatus span {
+                font-size:11px;
             }
 
             .itemList {
@@ -270,7 +275,7 @@ class Websites extends LitElement {
 	                        }}>
 	                        </vaadin-grid-column>
                             <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderName(data.item)}`, root)
+	                            render(html`${this.renderPublishedBy(data.item)}`, root)
 	                        }}>
                             </vaadin-grid-column>
 	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
@@ -295,7 +300,7 @@ class Websites extends LitElement {
 	                        }}>
 	                        </vaadin-grid-column>
                             <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderName(data.item)}`, root)
+	                            render(html`${this.renderPublishedBy(data.item)}`, root)
 	                        }}>
                             </vaadin-grid-column>
 	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
@@ -334,7 +339,7 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
                             <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
-                                render(html`${this.renderName(data.item)}`, root)
+                                render(html`${this.renderPublishedBy(data.item)}`, root)
                             }}>
                             </vaadin-grid-column>
                             <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
@@ -372,7 +377,7 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
                             <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
-                                render(html`${this.renderName(data.item)}`, root)
+                                render(html`${this.renderPublishedBy(data.item)}`, root)
                             }}>
                             </vaadin-grid-column>
                             <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
@@ -903,12 +908,9 @@ class Websites extends LitElement {
         </div>`;
     }
 
-    renderName(websiteObj) {
-        return html`<span class="registeredName">${websiteObj.name}</span>`;
-    }
-
-    renderStatus(websiteObj) {
-        return html`<span title="${websiteObj.status.description}">${websiteObj.status.title}</span>`
+    renderPublishedBy(websiteObj) {
+        return html`<div class="resourceRegisteredName">${websiteObj.name}</div>
+        <div class="resourceStatus">Status: <span title="${websiteObj.status.description}">${websiteObj.status.title}</span></div>`;
     }
 
     renderSize(websiteObj) {
