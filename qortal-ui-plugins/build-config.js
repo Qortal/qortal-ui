@@ -72,10 +72,6 @@ const generateForPlugins = () => {
             out: "plugins/core/trade-portal/trade-portal.js",
         },
         {
-            in: "plugins/core/send-coin/send-coin.src.js",
-            out: "plugins/core/send-coin/send-coin.js",
-        },
-        {
             in: "plugins/core/wallet/wallet-app.src.js",
             out: "plugins/core/wallet/wallet-app.js",
         },
@@ -91,10 +87,6 @@ const generateForPlugins = () => {
             in: "plugins/core/group-management/group-management.src.js",
             out: "plugins/core/group-management/group-management.js",
         },
-        // {
-        //     in: 'plugins/core/group-management/group-transaction/group-transaction.src.js',
-        //     out: 'plugins/core/group-management/group-transaction/group-transaction.js'
-        // },
         {
             in: "plugins/core/name-registration/name-registration.src.js",
             out: "plugins/core/name-registration/name-registration.js",
@@ -134,7 +126,7 @@ const generateForPlugins = () => {
         {
             in: "plugins/core/puzzles/puzzles.src.js",
             out: "plugins/core/puzzles/puzzles.js",
-        },
+        }
     ].map((file) => {
         return generateRollupConfig(
             path.join(__dirname, file.in),
@@ -144,4 +136,5 @@ const generateForPlugins = () => {
 
     return configs;
 };
+
 module.exports = generateForPlugins;
