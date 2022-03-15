@@ -589,7 +589,7 @@ class PublishData extends LitElement {
         let name = this.shadowRoot.getElementById('registeredName')
         this.selectedName = (name.value)
         // Update the current name if one has been selected
-        if (name.length > 0) {
+        if (name.value.length > 0) {
             this.name = (name.value)
         }
         this.fetchResourceMetadata();
