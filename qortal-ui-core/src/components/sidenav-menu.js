@@ -61,9 +61,6 @@ class SidenavMenu extends connect(store)(LitElement) {
                     <side-menu-item label="WALLETS" href="/app/wallet" selected>
                         <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
                     </side-menu-item>
-                    <side-menu-item label="SEND COIN" href="/app/send-coin">
-                        <vaadin-icon icon="vaadin:coin-piles" slot="icon"></vaadin-icon>
-                    </side-menu-item>
                     <side-menu-item label="TRADE PORTAL" href="/app/trade-portal">
                         <vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
                     </side-menu-item>
