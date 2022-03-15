@@ -6,7 +6,6 @@ import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-select'
 import '@material/mwc-list/mwc-list-item.js'
-import '@material/mwc-slider'
 import '@polymer/paper-progress/paper-progress.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -48,58 +47,58 @@ class PublishData extends LitElement {
 
     static get styles() {
         return css`
-			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--paper-input-container-focus-color: var(--mdc-theme-primary);
-				--lumo-primary-text-color: rgb(0, 167, 245);
-				--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
-				--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
-				--lumo-primary-color: hsl(199, 100%, 48%);
-				--lumo-base-color: var(--white);
-				--lumo-body-text-color: var(--black);
-				--lumo-secondary-text-color: var(--sectxt);
-				--lumo-contrast-60pct: var(--vdicon);
-				--_lumo-grid-border-color: var(--border);
-				--_lumo-grid-secondary-border-color: var(--border2);
-			}
+            * {
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
+            }
 
-			#publishWrapper paper-button {
-				float: right;
-			}
+            #publishWrapper paper-button {
+                float: right;
+            }
 
-			#publishWrapper .buttons {
-				width: auto !important;
-			}
+            #publishWrapper .buttons {
+                width: auto !important;
+            }
 
-			mwc-textfield {
-				margin: 0;
-			}
+            mwc-textfield {
+                margin: 0;
+            }
 
-			paper-progress {
-				--paper-progress-active-color: var(--mdc-theme-primary);
-			}
+            paper-progress {
+                --paper-progress-active-color: var(--mdc-theme-primary);
+            }
 
-			.upload-text {
-				display: block;
-				font-size: 14px;
-                                color: var(--black);
-			}
+            .upload-text {
+                display: block;
+                font-size: 14px;
+                color: var(--black);
+            }
 
-			.address-bar {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				height: 100px;
-				background-color: var(--white);
-				height: 36px;
-			}
+            .address-bar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 100px;
+                background-color: var(--white);
+                height: 36px;
+            }
 
-			.address-bar-button mwc-icon {
-				width: 30px;
-			}
-		`
+            .address-bar-button mwc-icon {
+                width: 30px;
+            }
+        `
     }
 
     constructor() {
@@ -108,7 +107,7 @@ class PublishData extends LitElement {
         this.showName = false;
         this.showService = false
         this.showIdentifier = false
-		this.showMetadata = false
+	this.showMetadata = false
 
         const urlParams = new URLSearchParams(window.location.search)
         this.name = urlParams.get('name')
@@ -120,13 +119,16 @@ class PublishData extends LitElement {
         if (urlParams.get('showName') === "true") {
             this.showName = true
         }
+
         if (urlParams.get('showService') === "true") {
             this.showService = true
         }
+
         if (urlParams.get('showIdentifier') === "true") {
             this.showIdentifier = true
         }
-		if (urlParams.get('showMetadata') === "true") {
+
+	if (urlParams.get('showMetadata') === "true") {
             this.showMetadata = true
         }
 
@@ -150,10 +152,7 @@ class PublishData extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 
         const fetchNames = () => {
-            parentEpml.request('apiCall', {
-                url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
-            }).then(res => {
-
+            parentEpml.request('apiCall', {url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`}).then(res => {
                 setTimeout(() => {
                     this.names = res
                     if (res[0] != null) {
@@ -165,21 +164,16 @@ class PublishData extends LitElement {
         }
 
         const fetchCategories = () => {
-            parentEpml.request('apiCall', {
-                url: `/arbitrary/categories`
-            }).then(res => {
-
+            parentEpml.request('apiCall', {url: `/arbitrary/categories`}).then(res => {
                 setTimeout(() => {
                     this.categories = res
                 }, 1)
             })
+            setTimeout(fetchCategories, this.config.user.nodeSettings.pingInterval)
         }
 
         const fetchPeersSummary = () => {
-            parentEpml.request('apiCall', {
-                url: `/peers/summary`
-            }).then(res => {
-
+            parentEpml.request('apiCall', {url: `/peers/summary`}).then(res => {
                 setTimeout(() => {
                     this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0);
                 }, 1)
@@ -188,6 +182,7 @@ class PublishData extends LitElement {
         }
 
         let configLoaded = false
+
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -195,6 +190,7 @@ class PublishData extends LitElement {
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
             })
+
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(fetchNames, 1)
@@ -204,10 +200,9 @@ class PublishData extends LitElement {
                 }
                 this.config = JSON.parse(c)
             })
+
             parentEpml.subscribe('copy_menu_switch', async value => {
-
                 if (value === 'false' && window.getSelection().toString().length !== 0) {
-
                     this.clearSelection()
                 }
             })
@@ -216,28 +211,27 @@ class PublishData extends LitElement {
 
     render() {
         return html`
-		<div id="publishWrapper" style="width: auto; padding:10px; background: var(--white); height: 100vh;">
-			<div class="layout horizontal center" style=" padding:12px 15px;">
-				<div class="address-bar">
-					<mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
-				</div>
-				    <paper-card style="width:100%; max-width:740px;">
+            <div id="publishWrapper" style="width: auto; padding:10px; background: var(--white); height: 100vh;">
+                <div class="layout horizontal center" style=" padding:12px 15px;">
+                    <div class="address-bar">
+                        <mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
+                    </div>
+                    <paper-card style="width:100%; max-width:740px;">
                         <div style="margin:0; margin-top:20px;">
                             <h3 style="margin:0; padding:8px 0; text-transform: capitalize; color: var(--black);">Publish / Update ${this.category}</h3>
                             <p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.</p>
                         </div>
-					</paper-card>
-					<!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
-					<p style="display: ${this.showName ? 'block' : 'none'}">
-						<mwc-select id="registeredName" label="Select Name" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
+                    </paper-card>
+                    <!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
+                    <p style="display: ${this.showName ? 'block' : 'none'}">
+                        <mwc-select id="registeredName" label="Select Name" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
                             <mwc-list-item selected value=""></mwc-list-item>
                             <mwc-list-item value="${this.myRegisteredName}">${this.myRegisteredName}</mwc-list-item>
-						</mwc-select>
-					</p>
-
+                        </mwc-select>
+                    </p>
                     <div style="display: ${this.showMetadata ? 'block' : 'none'}">
                         <p>
-						    <mwc-textfield style="width:100%;" label="Title" id="title" type="text" value="${this.metadata != null && this.metadata.title != null ? this.metadata.title : ''}" maxLength="80"></mwc-textfield><!--charCounter="true"-->
+                            <mwc-textfield style="width:100%;" label="Title" id="title" type="text" value="${this.metadata != null && this.metadata.title != null ? this.metadata.title : ''}" maxLength="80"></mwc-textfield><!--charCounter="true"-->
                         </p>
                         <p>
                             <mwc-textfield style="width:100%;" label="Description" id="description" type="text" value="${this.metadata != null && this.metadata.description != null ? this.metadata.description : ''}" maxLength="500"></mwc-textfield><!--charCounter="true"-->
@@ -248,39 +242,33 @@ class PublishData extends LitElement {
                                     <mwc-list-item value="${c.id}">${c.name}</mwc-list-item>
                                 `)}
                             </mwc-select>
-					    </p>
-                        <p>
-                            <mwc-textfield style="width:19.5%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="Tag 1" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.5%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="Tag 2" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.5%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="Tag 3" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.5%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="Tag 4" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.5%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="Tag 5" maxLength="20"></mwc-textfield>
                         </p>
-					</div>
-
-					${this.renderUploadField()}
-
-					<p style="display: ${this.showService ? 'block' : 'none'}">
-						<mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
-					</p>
-					<p style="display: ${this.showIdentifier ? 'block' : 'none'}">
-						<mwc-textfield style="width:100%;" label="Identifier" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
-					</p>
-					
-					<p style="break-word; color: var(--black);">${this.generalMessage}</p>
-					<p style="color:red">${this.errorMessage}</p>
-					<p style="color:green;word-break: break-word;">${this.successMessage}</p>
-
-					${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
-
-					<div class="buttons">
-						<div>
-							<mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}>Publish &nbsp;</mwc-button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                        <p>
+                            <mwc-textfield style="width:19.85%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="Tag 1" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="Tag 2" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="Tag 3" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="Tag 4" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="Tag 5" maxLength="20"></mwc-textfield>
+                        </p>
+                    </div>
+                    ${this.renderUploadField()}
+                    <p style="display: ${this.showService ? 'block' : 'none'}">
+                        <mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
+                    </p>
+                    <p style="display: ${this.showIdentifier ? 'block' : 'none'}">
+                        <mwc-textfield style="width:100%;" label="Identifier" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
+                    </p>
+                    <p style="break-word; color: var(--black);">${this.generalMessage}</p>
+                    <p style="color:red">${this.errorMessage}</p>
+                    <p style="color:green;word-break: break-word;">${this.successMessage}</p>
+                    ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
+                    <div class="buttons">
+                        <div>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}>Publish &nbsp;</mwc-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 	`
     }
 
@@ -326,20 +314,26 @@ class PublishData extends LitElement {
 
     renderUploadField() {
         if (this.uploadType === "file") {
-            return html`<p>
-				<input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file">
-			</p>`;
+            return html`
+                <p>
+                    <input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file">
+                </p>
+            `
         }
         else if (this.uploadType === "zip") {
-            return html`<p>
-				<span class="upload-text">Select zip file containing static content:</span><br />
-				<input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file" accept=".zip">
-			</p>`;
+            return html`
+                <p>
+                    <span class="upload-text">Select zip file containing static content:</span><br />
+                    <input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file" accept=".zip">
+                </p>
+            `
         }
         else {
-            return html`<p>
-				<mwc-textfield style="width:100%;" label="Local path to static files" id="path" type="text" value="${this.path}"></mwc-textfield>
-			</p>`;
+            return html`
+                <p>
+                    <mwc-textfield style="width:100%;" label="Local path to static files" id="path" type="text" value="${this.path}"></mwc-textfield>
+                </p>
+            `
         }
     }
 
@@ -590,6 +584,7 @@ class PublishData extends LitElement {
             }, 1)
         })
     }
+
     selectName(e) {
         let name = this.shadowRoot.getElementById('registeredName')
         this.selectedName = (name.value)
