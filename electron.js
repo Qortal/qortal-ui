@@ -134,9 +134,9 @@ if (!isLock) {
 	autoUpdater.on('update-downloaded', (event) => {
 		const dialogOpts = {
 			type: 'info',
-			buttons: ['Restart now', 'Install after next restart'],
+			buttons: ['Restart now', 'Install after close Qortal UI'],
 			title: 'Update available',
-			detail: 'A new Qortal UI version has been downloaded. Click RESTART NOW to apply update, or INSTALL AFTER NEXT RESTART to install after next start.'
+			detail: 'A new Qortal UI version has been downloaded. Click RESTART NOW to apply update, or INSTALL AFTER CLOSE QORTAL UI to install after you quit the UI.'
 		}
 		dialog.showMessageBox(dialogOpts).then((returnValue) => {
 			if (returnValue.response === 0) {
