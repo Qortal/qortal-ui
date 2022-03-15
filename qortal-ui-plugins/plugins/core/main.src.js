@@ -27,15 +27,6 @@ parentEpml.ready().then(() => {
             parent: false
         },
         {
-            url: 'send-coin',
-            domain: 'core',
-            page: 'send-coin/index.html',
-            title: 'Send Coin',
-            icon: 'vaadin:coin-piles',
-            menus: [],
-            parent: false
-        },
-        {
             url: 'trade-portal',
             domain: 'core',
             page: 'trade-portal/index.html',
