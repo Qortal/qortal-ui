@@ -3,7 +3,6 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
 import commonjs from '@rollup/plugin-commonjs'
-
 import sass from 'rollup-plugin-sass'
 import autoprefixer from 'autoprefixer'
 import postcss from 'postcss'
@@ -128,19 +127,6 @@ export default [
         output: [
             {
                 file: 'plugins/core/main.js',
-                format: 'iife'
-            }
-        ],
-        plugins: plugins.concat([
-            babel.babel(babelOptions)
-        ])
-    },
-    {
-        context: 'window',
-        input: 'plugins/core/send-coin/send-coin.src.js',
-        output: [
-            {
-                file: 'plugins/core/send-coin/send-coin.js',
                 format: 'iife'
             }
         ],
