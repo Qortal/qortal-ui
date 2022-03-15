@@ -3,11 +3,19 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 
 import '../components/ButtonIconCopy'
-import '@material/mwc-icon'
 import '@material/mwc-button'
+import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
+import '@material/mwc-formfield'
+import '@material/mwc-icon'
+import '@material/mwc-textfield'
+import '@polymer/paper-progress/paper-progress.js'
+import '@polymer/paper-slider/paper-slider.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@vaadin/button'
 import '@vaadin/grid'
+import '@vaadin/icon'
+import '@vaadin/icons'
 import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -25,486 +33,499 @@ class MultiWallet extends LitElement {
             wallets: { type: Map },
             _selectedWallet: 'qort',
             theme: { type: String, reflect: true },
+            amount: { type: Number },
+            recipient: { type: String },
+            btcRecipient: { type: String },
+            btcAmount: { type: Number },
+            ltcRecipient: { type: String },
+            ltcAmount: { type: Number },
+            dogeRecipient: { type: String },
+            dogeAmount: { type: Number },
+            errorMessage: { type: String },
+            successMessage: { type: String },
+            sendMoneyLoading: { type: Boolean },
+            btnDisable: { type: Boolean },
+            isValidAmount: { type: Boolean },
+            balance: { type: Number },
+            btcFeePerByte: { type: Number },
+            ltcFeePerByte: { type: Number },
+            dogeFeePerByte: { type: Number },
             balanceString: 'Fetching balance ...'
         }
     }
 
+    static get observers() {
+        return ['_kmxKeyUp(amount)']
+    }
+
     static get styles() {
-	return [
-		css`
-			* {
-				box-sizing: border-box;
-                		--lumo-primary-text-color: rgb(0, 167, 245);
-                		--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
-                		--lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
-                		--lumo-primary-color: hsl(199, 100%, 48%);
-				--lumo-base-color: var(--white);
-				--lumo-body-text-color: var(--black);
-				--_lumo-grid-border-color: var(--border);
-				--_lumo-grid-secondary-border-color: var(--border2);
-			}
+        return css`
+            * {
+                box-sizing: border-box;
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
+                --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --lumo-primary-text-color: rgb(0, 167, 245);
+                --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                --lumo-primary-color: hsl(199, 100%, 48%);
+                --lumo-base-color: var(--white);
+                --lumo-body-text-color: var(--black);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
+            }
 
-			#pages {
-				display: flex;
-				flex-wrap: wrap;
-				padding: 10px 5px 5px 5px;
-				margin: 0px 20px 20px 20px;
-			}
+            #pages {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px 5px 5px 5px;
+                margin: 0px 20px 20px 20px;
+            }
 
-			#pages > button {
-				user-select: none;
-				padding: 5px;
-				margin: 0 5px;
-				border-radius: 10%;
-				border: 0;
-				background: transparent;
-				font: inherit;
-				outline: none;
-				cursor: pointer;
-                                color: var(--black);
-			}
+            #pages > button {
+                user-select: none;
+                padding: 5px;
+                margin: 0 5px;
+                border-radius: 10%;
+                border: 0;
+                background: transparent;
+                font: inherit;
+                outline: none;
+                cursor: pointer;
+                color: var(--black);
+            }
 
-			#pages > button:not([disabled]):hover,
-			#pages > button:focus {
-				color: #ccc;
-				background-color: #eee;
-			}
+            #pages > button:not([disabled]):hover,
+            #pages > button:focus {
+                color: #ccc;
+                background-color: #eee;
+            }
 
-			#pages > button[selected] {
-				font-weight: bold;
-				color: var(--white);
-				background-color: #ccc;
-			}
+            #pages > button[selected] {
+                font-weight: bold;
+                color: var(--white);
+                background-color: #ccc;
+            }
 
-			#pages > button[disabled] {
-				opacity: 0.5;
-				cursor: default;
-			}
+            #pages > button[disabled] {
+                opacity: 0.5;
+                cursor: default;
+            }
 
-			.red {
-				color: var(--paper-red-500);
-			}
+            paper-slider.blue {
+                --paper-slider-knob-color: var(--paper-light-blue-500);
+                --paper-slider-active-color: var(--paper-light-blue-500);
+                --paper-slider-pin-color: var(--paper-light-blue-500);
+            }
 
-			.green {
-				color: var(--paper-green-500);
-			}
+            paper-progress {
+                --paper-progress-active-color: var(--mdc-theme-primary);
+            }
 
-			paper-spinner-lite {
-				height: 75px;
-				width: 75px;
-				--paper-spinner-color: var(--primary-color);
-				--paper-spinner-stroke-width: 2px;
-			}
+            .red {
+                --mdc-theme-primary: #F44336;
+            }
 
-			.unconfirmed {
-				font-style: italic;
-			}
+            .green {
+                color: var(--paper-green-500);
+            }
 
-			.roboto {
-				font-family: 'Roboto', sans-serif;
-			}
+            paper-spinner-lite {
+                height: 75px;
+                width: 75px;
+                --paper-spinner-color: var(--mdc-theme-primary);
+                --paper-spinner-stroke-width: 3px;
+            }
 
-			.mono {
-				font-family: 'Roboto Mono', monospace;
-			}
+            .unconfirmed {
+                font-style: italic;
+            }
 
-			.weight-100 {
-				font-weight: 100;
-			}
+            .roboto {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .mono {
+                font-family: 'Roboto Mono', monospace;
+            }
+
+            .weight-100 {
+                font-weight: 100;
+            }
+
+            .text-white-primary {
+                color: var(--white);
+            }
+
+            .text-white-secondary {
+                color: var(--white-secondary);
+            }
+
+            .text-white-disabled {
+                color: var(--white-disabled);
+            }
+
+            .text-white-hint {
+                color: var(--white-divider);
+            }
+
+            .white-bg {
+                height: 100vh;
+                background: var(--white);
+            }
+
+            span {
+                font-size: 18px;
+                word-break: break-all;
+            }
+
+            .title {
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 32px;
+                opacity: 0.66;
+            }
+
+            #transactionList {
+                padding: 0;
+            }
+
+            .color-in {
+                color: #02977e;
+                background-color: rgba(0, 201, 167, 0.2);
+                font-weight: 700;
+                font-size: 0.60938rem;
+                border-radius: 0.25rem !important;
+                padding: 0.2rem 0.5rem;
+                margin-left: 4px;
+            }
+
+            .color-out {
+                color: #b47d00;
+                background-color: rgba(219, 154, 4, 0.2);
+                font-weight: 700;
+                font-size: 0.60938rem;
+                border-radius: 0.25rem !important;
+                padding: 0.2rem 0.5rem;
+                margin-left: 4px;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: var(--white);
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
 
 
-			.text-white-primary {
-				color: var(--white);
-			}
+            h2 {
+                margin: 0;
+                font-weight: 400;
+                font: 24px/24px 'Open Sans', sans-serif;
+            }
 
-			.text-white-secondary {
-				color: var(--white-secondary);
-			}
-			.text-white-disabled {
-				color: var(--white-disabled);
-			}
-			.text-white-hint {
-				color: var(--white-divider);
-			}
+            h3 {
+                margin: 0 0 5px;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 18px;
+            }
 
-			table {
-				border: none;
-			}
+            @media (min-width: 765px) {
+                .wrapper {
+                    display: grid;
+                    grid-template-columns: 0.5fr 3.5fr;
+                }
+            }
 
-			table td,
-			th {
-				white-space: nowrap;
-				text-align: left;
-				font-size: 14px;
-				padding: 0 12px;
-				font-family: 'Roboto', sans-serif;
-                                color: var(--black);
-                                background: var(--white);
-			}
+            .wrapper {
+                margin: 0 auto;
+                height: 100%;
+                overflow: hidden;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
 
-			table tr {
-				height: 48px;
-			}
+            .wallet {
+                width: 170px;
+                height: 100vh;
+                border-top-left-radius: inherit;
+                border-bottom-left-radius: inherit;
+                border-right: 1px solid var(--border);
+            }
 
-			table tr:hover td {
-				background: #eee;
-			}
+            .transactions-wrapper {
+                width: 100%;
+                padding: 50px 0 0 0;
+                height: 100%;
+            }
 
-			table tr th {
-				color: #666;
-				font-size: 12px;
-			}
+            .wallet-header {
+                margin: 0 20px;
+                color: var(--black);
+            }
 
-			table tr td {
-				margin: 0;
-			}
+            .wallet-address {
+                display: flex;
+                align-items: center;
+                font-size: 18px; 
+                color: var(--black); 
+                margin: 4px 0 20px;
+            }
 
-			.white-bg {
-				height: 100vh;
-				background: var(--white);
-			}
+            .wallet-balance {
+                display: inline-block;
+                font-weight: 600;
+                font-size: 32px;
+                color: var(--black); 
+            }
 
-			span {
-				font-size: 18px;
-				word-break: break-all;
-			}
+            #transactions {
+                margin-top: 60px;
+                margin-left: 20px;
+                margin-right: 20px;
+                border-top: 1px solid var(--border);
+                padding-top: 0px;
+                height: 100%;
+            }
 
-			.title {
-				font-weight: 600;
-				font-size: 12px;
-				line-height: 32px;
-				opacity: 0.66;
-			}
+            .show {
+                animation: fade-in 0.3s 1;
+            }
 
-			#transactionList {
-				padding: 0;
-			}
+            .transaction-item {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+                padding-left: 40px;
+                margin-bottom: 45px;
+                margin-right: 50px;
+            }
 
-			#transactionList > * {
-			}
+            .transaction-item::before {
+                position: absolute;
+                content: '';
+                border: 2px solid #e1e1e1;
+                border-radius: 50%;
+                height: 25px;
+                width: 25px;
+                left: 0;
+                top: 10px;
+                box-sizing: border-box;
+                vertical-align: middle;
+                color: #666666;
+            }
 
-			.color-in {
-				color: #02977e;
-				background-color: rgba(0, 201, 167, 0.2);
-				font-weight: 700;
-				font-size: 0.60938rem;
-				border-radius: 0.25rem !important;
-				padding: 0.2rem 0.5rem;
-				margin-left: 4px;
-			}
+            .credit::before {
+                content: '+';
+                font-size: 25px;
+                line-height: 19px;
+                padding: 0 4px 0;
+            }
 
-			.color-out {
-				color: #b47d00;
-				background-color: rgba(219, 154, 4, 0.2);
-				font-weight: 700;
-				font-size: 0.60938rem;
-				border-radius: 0.25rem !important;
-				padding: 0.2rem 0.5rem;
-				margin-left: 4px;
-			}
+            .debit::before {
+                content: '-';
+                font-size: 20px;
+                line-height: 21px;
+                padding: 0 5px;
+            }
 
-			body {
-				margin: 0;
-				padding: 0;
-				background: var(--white);
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
+            .transaction-item .details {
+                font-size: 14px;
+                line-height: 14px;
+                color: #999;
+            }
 
-			h2 {
-				margin: 0;
-				font-weight: 400;
-				color: var(--black);
-				font: 24px/24px 'Open Sans', sans-serif;
-			}
+            .transaction-item_details {
+                width: 270px;
+            }
 
-			h3 {
-				margin: 0 0 5px;
-				font-weight: 600;
-				font-size: 18px;
-				line-height: 18px;
-			}
+            .transaction-item_amount .amount {
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 45px;
+                position: relative;
+                margin: 0;
+                display: inline-block;
+            }
 
-			/* Styles for Larger Screen Sizes */
-			@media (min-width: 765px) {
-				.wrapper {
-					display: grid;
-					grid-template-columns: 0.5fr 3.5fr;
-				}
-			}
+            .currency-box {
+                display: flex;
+                background-color: var(--white);
+                text-align: center;
+                padding: 12px;
+                cursor: pointer;
+                transition: 0.1s ease-in-out;
+            }
 
-			.wrapper {
-				margin: 0 auto;
-				height: 100%;
-				overflow: hidden;
-				border-radius: 8px;
-				background-color: var(--white);
-			}
+            .currency-box:not(:last-child) {
+                border-bottom: var(--border);
+            }
 
-			.wallet {
-				width: 170px;
-				height: 100vh;
-				border-top-left-radius: inherit;
-				border-bottom-left-radius: inherit;
-    			border-right: 1px solid var(--border);
-			}
+            .active {
+                background: var(--menuactive);
+            }
 
-			.transactions-wrapper {
-				width: 100%;
-				padding: 50px 0 0 0;
-				height: 100%;
-			}
+            .currency-image {
+                display: inline-block;
+                height: 42px;
+                width: 42px;
+                background-repeat: no-repeat;
+                background-size: cover;
+                border-radius: 3px;
+                filter: grayscale(100%);
+            }
 
-			.wallet-header {
-				margin: 0 20px;
-			}
+            .currency-box.active .currency-image,
+            .currency-box:hover .currency-image {
+                filter: none;
+            }
 
-			.wallet-address {
-				display: flex;
-				align-items: center;
-				font-size: 18px; 
-				color: var(--black); 
-				margin: 4px 0 20px;
-			}
+            .currency-box:hover {
+                background: var(--menuhover);
+            }
 
-			.wallet-balance {
-				display: inline-block;
-				font-weight: 600;
-				font-size: 32px;
-				color: var(--black); 
-			}
-
-			#transactions {
-				margin-top: 60px;
-				margin-left: 20px;
-				margin-right: 20px;
-				border-top: 1px solid var(--border);
-				padding-top: 0px;
-				height: 100%;
-			}
-
-			.show {
-				animation: fade-in 0.3s 1;
-			}
-
-			.transaction-item {
-				display: flex;
-				justify-content: space-between;
-				position: relative;
-				padding-left: 40px;
-				margin-bottom: 45px;
-				margin-right: 50px;
-			}
-
-			.transaction-item::before {
-				position: absolute;
-				content: '';
-				border: 2px solid #e1e1e1;
-				border-radius: 50%;
-				height: 25px;
-				width: 25px;
-				left: 0;
-				top: 10px;
-				box-sizing: border-box;
-				vertical-align: middle;
-				color: #666666;
-			}
-
-			.credit::before {
-				content: '+';
-				font-size: 25px;
-				line-height: 19px;
-				padding: 0 4px 0;
-			}
-
-			.debit::before {
-				content: '-';
-				font-size: 20px;
-				line-height: 21px;
-				padding: 0 5px;
-			}
-
-			.transaction-item .details {
-				font-size: 14px;
-				line-height: 14px;
-				color: #999;
-			}
-
-			.transaction-item_details {
-				width: 270px;
-			}
-
-			.transaction-item_amount .amount {
-				font-weight: 600;
-				font-size: 18px;
-				line-height: 45px;
-				position: relative;
-				margin: 0;
-				display: inline-block;
-			}
-
-			.currency-box {
-				display: flex;
-				background-color: var(--white);
-				text-align: center;
-				padding: 12px;
-				cursor: pointer;
-				transition: 0.1s ease-in-out;
-			}
-
-			.currency-box:not(:last-child) {
-				border-bottom: var(--border);
-			}
-
-			.active {
-				background: var(--menuactive);
-			}
-
-			.currency-image {
-				display: inline-block;
-				height: 42px;
-				width: 42px;
-				background-repeat: no-repeat;
-				background-size: cover;
-				border-radius: 3px;
-    		                filter: grayscale(100%);
-			}
-
-			.currency-box.active .currency-image,
-			.currency-box:hover .currency-image {
-				filter: none;
-			}
-
-			.currency-box:hover {
-				background: var(--menuhover);
-			}
-
-			.currency-box.active,
-			.currency-box:hover .currency-text {
-				font-weight: 500;
-			}				
+            .currency-box.active,
+            .currency-box:hover .currency-text {
+                font-weight: 500;
+            }				
 				
-			.currency-text {
-				margin: auto 0;
-				margin-left: 8px;
-				font-size: 20px;
-				color: var(--black);
-			}
+            .currency-text {
+                margin: auto 0;
+                margin-left: 8px;
+                font-size: 20px;
+                color: var(--black);
+            }
 
-			.qort .currency-image {
-				background-image: url('/img/qort.png');
-			}
+            .qort .currency-image {
+                background-image: url('/img/qort.png');
+            }
 
-			.btc .currency-image {
-				background-image: url('/img/btc.png');
-			}
+            .btc .currency-image {
+                background-image: url('/img/btc.png');
+            }
 
-			.ltc .currency-image {
-				background-image: url('/img/ltc.png');
-			}
+            .ltc .currency-image {
+                background-image: url('/img/ltc.png');
+            }
 
-			.doge .currency-image {
-				background-image: url('/img/doge.png');
-			}
+            .doge .currency-image {
+                background-image: url('/img/doge.png');
+            }
 
-			.card-list {
-				margin-top: 20px;
-			}
+            .card-list {
+                margin-top: 20px;
+            }
 
-			.card-list .currency-image {
-				cursor: pointer;
-				margin-right: 15px;
-				transition: 0.1s;
-			}
+            .card-list .currency-image {
+                cursor: pointer;
+                margin-right: 15px;
+                transition: 0.1s;
+            }
 
-			.card-list .currency-image:hover {
-				transform: scale(1.1);
-			}
+            .card-list .currency-image:hover {
+                transform: scale(1.1);
+            }
 
-			/* animations */
-			@keyframes fade-in {
-				0% {
-					opacity: 0;
-				}
-				100% {
-					opacity: 1;
-				}
-			}
+            .buttons {
+                width: auto !important;
+            }
 
-			/* media queries */
-			@media (max-width: 863px) {
-				.wallet {
-					width: 100%;
-					height: max-content;
-					border-top-right-radius: inherit;
-					padding-bottom: 25px;
-				}
-				.cards {
-					margin-top: 25px;
-				}
-				.currency-box:nth-of-type(2) {
-					margin-right: 0;
-				}
-			}
+            .send-coin-dialog {
+                min-height: 300px;
+                min-width: 300px;
+                box-sizing: border-box;
+                position: relative;
+            }
 
-			@media (max-width: 764px) {
-				.wallet {
-					width: 100%;
-					height: max-content;
-					border-top-right-radius: inherit;
-					padding-bottom: 25px;
-				}
-				.cards {
-					margin-top: 25px;
-				}
-				.currency-box {
-					width: calc(50% - 25px);
-					max-width: 260px;
-					display: inline-block;
-					margin-right: 25px;
-					margin-bottom: 25px;
-				}
-				.currency-box:nth-of-type(2) {
-					margin-right: 0;
-				}
-			}
+            @keyframes fade-in {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
 
-			@media (max-width: 530px) {
-				h3 {
-					line-height: 24px;
-				}
-				.cards {
-					text-align: center;
-				}
-				.currency-box {
-					width: calc(100% - 25px);
-					max-width: 260px;
-				}
-				.currency-box:nth-of-type(2) {
-					margin-right: 25px;
-				}
-				.currency-box:last-of-type {
-					margin-bottom: 0;
-				}
-				.wallet-balance {
-					font-size: 22px;
-				}
-			}
+            @media (max-width: 863px) {
+                .wallet {
+                    width: 100%;
+                    height: max-content;
+                    border-top-right-radius: inherit;
+                    padding-bottom: 25px;
+                }
+                .cards {
+                    margin-top: 25px;
+                }
+                .currency-box:nth-of-type(2) {
+                    margin-right: 0;
+                }
+            }
 
-			@media (max-width: 390px) {
-				.wallet {
-					height: max-content;
-					padding: 50px 25px;
-				}
-				.transactions-wrapper {
-					padding: 50px 25px;
-				}
-				h2 {
-					font: 18px/24px 'Open Sans', sans-serif;
-				}
-			}
-		`,
-	]
+            .checkboxLabel:hover{
+                cursor: pointer;
+            }
+
+            @media (max-width: 764px) {
+                .wallet {
+                    width: 100%;
+                    height: max-content;
+                    border-top-right-radius: inherit;
+                    padding-bottom: 25px;
+                }
+                .cards {
+                    margin-top: 25px;
+                }
+                .currency-box {
+                    width: calc(50% - 25px);
+                    max-width: 260px;
+                    display: inline-block;
+                    margin-right: 25px;
+                    margin-bottom: 25px;
+                }
+                .currency-box:nth-of-type(2) {
+                    margin-right: 0;
+                }
+            }
+
+            @media (max-width: 530px) {
+                h3 {
+                    line-height: 24px;
+                }
+                .cards {
+                    text-align: center;
+                }
+                .currency-box {
+                    width: calc(100% - 25px);
+                    max-width: 260px;
+                }
+                .currency-box:nth-of-type(2) {
+                    margin-right: 25px;
+                }
+                .currency-box:last-of-type {
+                    margin-bottom: 0;
+                }
+                .wallet-balance {
+                    font-size: 22px;
+                }
+            }
+
+            @media (max-width: 390px) {
+                .wallet {
+                    height: max-content;
+                    padding: 50px 25px;
+                }
+                .transactions-wrapper {
+                    padding: 50px 25px;
+                }
+                h2 {
+                    font: 18px/24px 'Open Sans', sans-serif;
+                }
+            }
+        `
     }
 
     constructor() {
@@ -514,7 +535,6 @@ class MultiWallet extends LitElement {
             height: 0,
         }
 
-
         this.selectedTransaction = {}
         this.isTextMenuOpen = false
         this.loading = true
@@ -523,7 +543,32 @@ class MultiWallet extends LitElement {
 
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 
+        this.recipient = ''
+        this.btcRecipient = ''
+        this.ltcRecipient = ''
+        this.dogeRecipient = ''
+        this.errorMessage = ''
+        this.successMessage = ''
+        this.sendMoneyLoading = false
+        this.isValidAmount = false
+        this.btnDisable = false
+	this.balance = 0
+        this.amount = 0
+        this.btcAmount = 0
+        this.ltcAmount = 0
+        this.dogeAmount = 0
+        this.btcFeePerByte = 100
+        this.btcSatMinFee = 20
+        this.btcSatMaxFee = 150
+        this.ltcFeePerByte = 30
+        this.ltcSatMinFee = 10
+        this.ltcSatMaxFee = 100
+        this.dogeFeePerByte = 1000
+        this.dogeSatMinFee = 100
+        this.dogeSatMaxFee = 10000
+
         this.wallets = new Map()
+
         let coinProp = {
             balance: 0,
             wallet: null,
@@ -531,6 +576,7 @@ class MultiWallet extends LitElement {
             fetchingWalletBalance: false,
             fetchingWalletTransactions: false
         }
+
         coinsNames.forEach((c, i) => {
             this.wallets.set(c, { ...coinProp })
         }, this)
@@ -564,98 +610,390 @@ class MultiWallet extends LitElement {
 
     render() {
         return html`
-			<div class="wrapper">
-				<div class="wallet">
-					<div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">Wallets</div>
-					<div class="cards">
-						<div coin="qort" class="currency-box qort active">
-							<div class="currency-image"></div>
-							<div class="currency-text">Qort</div>
-						</div>
-						<div coin="btc" class="currency-box btc">
-							<div class="currency-image"></div>
-							<div class="currency-text">Bitcoin</div>
-						</div>
-						<div coin="ltc" class="currency-box ltc">
-							<div class="currency-image"></div>
-							<div class="currency-text">Litecoin</div>
-						</div>
-						<div coin="doge" class="currency-box doge">
-							<div class="currency-image"></div>
-							<div class="currency-text">Dogecoin</div>
-						</div>
-					</div>
-				</div>
+            <div class="wrapper">
+                <div class="wallet">
+                    <div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">Wallets</div>
+                    <div class="cards">
+                        <div coin="qort" class="currency-box qort active">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Qort</div>
+                        </div>
+                        <div coin="btc" class="currency-box btc">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Bitcoin</div>
+                        </div>
+                        <div coin="ltc" class="currency-box ltc">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Litecoin</div>
+                        </div>
+                        <div coin="doge" class="currency-box doge">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Dogecoin</div>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="transactions-wrapper">
-					<h2 class="wallet-header">
-						Current Wallet
-						<div class="wallet-address">
-							<span>${this.getSelectedWalletAddress()}</span>
-							<button-icon-copy 
-								title="Copy wallet address to clipboard"
-								onSuccessMessage="Address copied to clipboard"
-								onErrorMessage="Unable to copy address"
-								textToCopy=${this.getSelectedWalletAddress()}
-								buttonSize="28px"
-								iconSize="16px"
-								color="var(--copybutton)"
-								offsetLeft="4px"
-							>
-							</button-icon-copy> 
-						</div>
-						<span class="wallet-balance">${this.balanceString}</span>
-					</h2>
-					<div id="transactions">
-						${this.loading ? html`<paper-spinner-lite style="display: block; margin: 0 auto;" active></paper-spinner-lite>` : ''}
-						<div id="transactionsDOM"></div>
-					</div>
-				</div>
+                <div class="transactions-wrapper">
+                    <h2 class="wallet-header">
+                        Current Wallet
+                        <div class="wallet-address">
+                            <span>${this.getSelectedWalletAddress()}</span>
+                            <button-icon-copy 
+                                title="Copy wallet address to clipboard"
+                                onSuccessMessage="Address copied to clipboard"
+                                onErrorMessage="Unable to copy address"
+                                textToCopy=${this.getSelectedWalletAddress()}
+                                buttonSize="28px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy> 
+                        </div>
+                        <span class="wallet-balance">
+                            ${this.balanceString}<br><br>
+                            ${this.renderSendButton()}
+                        </span>
+                    </h2>
+                    <div id="transactions">
+                        ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
+                        <div id="transactionsDOM"></div>
+                    </div>
+                </div>
 
-				<div>
-					<mwc-dialog id="showTransactionDetailsDialog" scrimClickAction="${this.showTransactionDetailsLoading ? '' : 'close'}">
-						<div style="text-align:center">
-							<h1>Transaction Details</h1>
-							<hr />
-						</div>
-						<div id="transactionList">
-							<span class="title"> Transaction Type </span>
-							<br />
-							<div>
-								<span class="">${this.selectedTransaction.type}</span>
-								${this.selectedTransaction.txnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
-							</div>
-							<span class="title">Sender</span>
-							<br />
-							<div><span class="">${this.selectedTransaction.creatorAddress}</span></div>
-							<span class="title">Receiver</span>
-							<br />
-							<div><span class="">${this.selectedTransaction.recipient}</span></div>
-							${!this.selectedTransaction.amount ? '' : html`
-								<span class="title">Amount</span>
-								<br />
-								<div><span class="">${this.selectedTransaction.amount} QORT</span></div>
-							`}
-							<span class="title"> Transaction Fee </span>
-							<br />
-							<div><span class="">${this.selectedTransaction.fee}</span></div>
+                <mwc-dialog id="showTransactionDetailsDialog" scrimClickAction="${this.showTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>Transaction Details</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> Transaction Type </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.type}</span>
+                            ${this.selectedTransaction.txnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                        </div>
+                        <span class="title">Sender</span>
+                        <br />
+                        <div><span>${this.selectedTransaction.creatorAddress}</span></div>
+                        <span class="title">Receiver</span>
+                        <br />
+                        <div><span>${this.selectedTransaction.recipient}</span></div>
+                        ${!this.selectedTransaction.amount ? '' : html`
+                            <span class="title">Amount</span>
+                            <br />
+                            <div><span>${this.selectedTransaction.amount} QORT</span></div>
+                        `}
+                        <span class="title"> Transaction Fee </span>
+                        <br />
+                        <div><span>${this.selectedTransaction.fee}</span></div>
+                        <span class="title">Block</span>
+                        <br />
+                        <div><span>${this.selectedTransaction.blockHeight}</span></div>
+                        <span class="title">Time</span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> Transaction Signature </span>
+                        <br />
+                        <div><span>${this.selectedTransaction.signature}</span></div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
 
-							<span class="title">Block</span>
-							<br />
-							<div><span class="">${this.selectedTransaction.blockHeight}</span></div>
+                <mwc-dialog id="sendQortDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/qort.png" width="32" height="32">
+                            <h2> Send QORT</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>From address:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>Available balance:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="amountInput"
+                                label="Amount (QORT)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.amount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="recipient"
+                                label="To (address or name)"
+                                type="text"
+                                value="${this.recipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">Current static fee: <span style="font-weight: bold;">0.001 QORT<span></p>
+                        </div>
+                        <p style="color: red;">${this.errorMessage}</p>
+                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendQort()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    Send QORT
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
 
-							<span class="title">Time</span>
-							<br />
-							<div><span class="">${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                <mwc-dialog id="sendBtcDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/btc.png" width="32" height="32">
+                            <h2>Send BTC</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>From address:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>Available balance:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="btcAmountInput"
+                                label="Amount (BTC)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.btcAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="btcRecipient"
+                                label="To (address)"
+                                type="text"
+                                value="${this.btcRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">Current fee per byte: <span style="font-weight: bold;">${(this.btcFeePerByte / 1e8).toFixed(8)} BTC</span><br>Low fees may result in slow or unconfirmed transactions.</p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.btcFeePerByte = e.target.value)}"
+                                id="btcFeeSlider"
+                                min="${this.btcSatMinFee}"
+                                max="${this.btcSatMaxFee}"
+                                value="${this.btcFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        <p style="color: red;">${this.errorMessage}</p>
+                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendBtc()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    Send BTC
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
 
-							<span class="title"> Transaction Signature </span>
-							<br />
-							<div><span class="">${this.selectedTransaction.signature}</span></div>
-						</div>
-					</mwc-dialog>
-				</div>
-			</div>
-		`
+                <mwc-dialog id="sendLtcDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/ltc.png" width="32" height="32">
+                            <h2>Send LTC</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>From address:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>Available balance:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="ltcAmountInput"
+                                label="Amount (LTC)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.ltcAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="ltcRecipient"
+                                label="To (address)"
+                                type="text"
+                                value="${this.ltcRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">Current fee per byte: <span style="font-weight: bold;">${(this.ltcFeePerByte / 1e8).toFixed(8)} LTC</span><br>Low fees may result in slow or unconfirmed transactions.</p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.ltcFeePerByte = e.target.value)}"
+                                id="ltcFeeSlider"
+                                min="${this.ltcSatMinFee}"
+                                max="${this.ltcSatMaxFee}"
+                                value="${this.ltcFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        <p style="color: red;">${this.errorMessage}</p>
+                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendLtc()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    Send LTC
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="sendDogeDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/doge.png" width="32" height="32">
+                            <h2>Send DOGE</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>From address:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>Available balance:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="dogeAmountInput"
+                                label="Amount (DOGE)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.dogeAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="dogeRecipient"
+                                label="To (address)"
+                                type="text"
+                                value="${this.dogeRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">
+                                Current fee per byte: <span style="font-weight: bold;">${(this.dogeFeePerByte / 1e8).toFixed(8)} DOGE</span><br>Low fees may result in slow or unconfirmed transactions.
+                            </p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.dogeFeePerByte = e.target.value)}"
+                                id="dogeFeeSlider"
+                                min="${this.dogeSatMinFee}"
+                                max="${this.dogeSatMaxFee}"
+                                value="${this.dogeFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        <p style="color: red;">${this.errorMessage}</p>
+                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendDoge()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    Send DOGE
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
+            </div>
+        `
     }
 
     firstUpdated() {
@@ -666,11 +1004,17 @@ class MultiWallet extends LitElement {
 	    this.changeTheme();
 	}, 100)
 
-        // DOM refs
+	setInterval(() => {
+	    this.errorMessage = '';
+	}, 5000)
+
+	setInterval(() => {
+	    this.successMessage = '';
+	}, 5000)
+
         this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
 
-        // Attach eventlisteners to the cuurency boxes
         this.currencyBoxes.forEach((currencyBox) => {
             currencyBox.addEventListener('click', this.selectWallet)
         })
@@ -682,25 +1026,208 @@ class MultiWallet extends LitElement {
             this.isTextMenuOpen = true
             this._textMenu(event)
         })
+
         window.addEventListener('click', () => {
             if (this.isTextMenuOpen) {
                 parentEpml.request('closeCopyTextMenu', null)
             }
         })
+
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
                 parentEpml.request('closeCopyTextMenu', null)
             }
         }
+
+        this.shadowRoot.getElementById('amountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'amountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('recipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'recipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('btcAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'btcAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('btcRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'btcRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('ltcAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'ltcAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('ltcRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'ltcRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('dogeAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'dogeAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('dogeRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'dogeRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
     }
 
     selectWallet(event) {
         event.preventDefault()
 
         const target = event.currentTarget
-
-        // if (target.classList.contains('active')) return
-        // removed to allow one click wallet refresh
 
         this.currencyBoxes.forEach((currencyBox) => {
             if (currencyBox.classList.contains('active')) {
@@ -712,13 +1239,337 @@ class MultiWallet extends LitElement {
         this.showWallet()
     }
 
+    _checkAmount(e) {
+        const targetAmount = e.target.value
+        const target = e.target
+
+        if (targetAmount.length === 0) {
+            this.isValidAmount = false
+            this.btnDisable = true
+
+            e.target.blur()
+            e.target.focus()
+
+            e.target.invalid = true
+            e.target.validationMessage = 'Invalid Amount!'
+        } else {
+            this.btnDisable = false
+        }
+
+        e.target.blur()
+        e.target.focus()
+
+        e.target.validityTransform = (newValue, nativeValidity) => {
+            if (newValue.includes('-') === true) {
+                this.btnDisable = true
+                target.validationMessage = 'Invalid Amount!'
+
+                return {
+                    valid: false,
+                }
+            } else if (!nativeValidity.valid) {
+                if (newValue.includes('.') === true) {
+                    let myAmount = newValue.split('.')
+                    if (myAmount[1].length > 8) {
+                        this.btnDisable = true
+                        target.validationMessage = 'Invalid Amount!'
+                    } else {
+                        return {
+                            valid: true,
+                        }
+                    }
+                }
+            } else {
+                this.btnDisable = false
+            }
+        }
+    }
+
+    pasteToTextBox(elementId) {
+        window.focus()
+        navigator.clipboard.readText().then((clipboardText) => {
+            let element = this.shadowRoot.getElementById(elementId)
+            element.value += clipboardText
+            element.focus()
+        })
+    }
+
+    pasteMenu(event, elementId) {
+        let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY, elementId }
+        parentEpml.request('openFramePasteMenu', eventObject)
+    }
+
+    async sendQort() {
+        const amount = this.shadowRoot.getElementById('amountInput').value
+        let recipient = this.shadowRoot.getElementById('recipient').value
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.balance)) {
+            this.sendMoneyLoading = false
+            this.btnDisable = false
+            parentEpml.request('showSnackBar', 'Insufficient Funds!')
+            return false
+        }
+
+        if (parseFloat(amount) <= 0) {
+            this.sendMoneyLoading = false
+            this.btnDisable = false
+            parentEpml.request('showSnackBar', 'Invalid Amount!')
+            return false
+        }
+
+        if (recipient.length === 0) {
+            this.sendMoneyLoading = false
+            this.btnDisable = false
+            parentEpml.request('showSnackBar', 'Receiver cannot be empty!')
+            return false
+        }
+
+        const getLastRef = async () => {
+            let myRef = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
+            })
+            return myRef
+        }
+
+        const validateName = async (receiverName) => {
+            let myRes
+            let myNameRes = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/names/${receiverName}`,
+            })
+
+            if (myNameRes.error === 401) {
+                myRes = false
+            } else {
+                myRes = myNameRes
+            }
+            return myRes
+        }
+
+        const validateAddress = async (receiverAddress) => {
+            let myAddress = await window.parent.validateAddress(receiverAddress)
+            return myAddress
+        }
+
+        const validateReceiver = async (recipient) => {
+            let lastRef = await getLastRef()
+            let isAddress
+
+            try {
+                isAddress = await validateAddress(recipient)
+            } catch (err) {
+                isAddress = false
+            }
+
+            if (isAddress) {
+                let myTransaction = await makeTransactionRequest(recipient, lastRef)
+                getTxnRequestResponse(myTransaction)
+            } else {
+                let myNameRes = await validateName(recipient)
+                if (myNameRes !== false) {
+                    let myNameAddress = myNameRes.owner
+                    let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
+                    getTxnRequestResponse(myTransaction)
+                } else {
+                    console.error('INVALID_RECEIVER')
+                    this.errorMessage = 'INVALID_RECEIVER'
+                    this.sendMoneyLoading = false
+                    this.btnDisable = false
+                }
+            }
+        }
+
+        const makeTransactionRequest = async (receiver, lastRef) => {
+            let myReceiver = receiver
+            let mylastRef = lastRef
+
+            let myTxnrequest = await parentEpml.request('transaction', {
+                type: 2,
+                nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
+                params: {
+                    recipient: myReceiver,
+                    amount: amount,
+                    lastReference: mylastRef,
+                    fee: 0.001,
+                },
+            })
+            return myTxnrequest
+        }
+
+        const getTxnRequestResponse = (txnResponse) => {
+            if (txnResponse.success === false && txnResponse.message) {
+                this.errorMessage = txnResponse.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else if (txnResponse.success === true && !txnResponse.data.error) {
+                this.shadowRoot.getElementById('amountInput').value = ''
+                this.shadowRoot.getElementById('recipient').value = ''
+                this.errorMessage = ''
+                this.recipient = ''
+                this.amount = 0
+                this.successMessage = 'Transaction Successful!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else {
+                this.errorMessage = txnResponse.data.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            }
+        }
+        validateReceiver(recipient)
+        this.showWallet()
+    }
+
+    async sendBtc() {
+        const btcAmount = this.shadowRoot.getElementById('btcAmountInput').value
+        let btcRecipient = this.shadowRoot.getElementById('btcRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: btcRecipient,
+                bitcoinAmount: btcAmount,
+                feePerByte: (this.btcFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendBtc', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('btcAmountInput').value = 0
+                this.shadowRoot.getElementById('btcRecipient').value = ''
+                this.errorMessage = ''
+                this.btcRecipient = ''
+                this.btcAmount = 0
+                this.successMessage = 'Transaction Successful!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = 'Transaction Failed!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
+    async sendLtc() {
+        const ltcAmount = this.shadowRoot.getElementById('ltcAmountInput').value
+        const ltcRecipient = this.shadowRoot.getElementById('ltcRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: ltcRecipient,
+                litecoinAmount: ltcAmount,
+                feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendLtc', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('ltcAmountInput').value = 0
+                this.shadowRoot.getElementById('ltcRecipient').value = ''
+                this.errorMessage = ''
+                this.ltcRecipient = ''
+                this.ltcAmount = 0
+                this.successMessage = 'Transaction Successful!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = 'Transaction Failed!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
+    async sendDoge() {
+        const dogeAmount = this.shadowRoot.getElementById('dogeAmountInput').value
+        let dogeRecipient = this.shadowRoot.getElementById('dogeRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: dogeRecipient,
+                dogecoinAmount: dogeAmount,
+                feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendDoge', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('dogeAmountInput').value = 0
+                this.shadowRoot.getElementById('dogeRecipient').value = ''
+                this.errorMessage = ''
+                this.dogeRecipient = ''
+                this.dogeAmount = 0
+                this.successMessage = 'Transaction Successful!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = 'Transaction Failed!'
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
     async showWallet() {
         this.transactionsDOM.hidden = true
         this.loading = true
 
         if (this._selectedWallet == 'qort') {
             if (!window.parent.reduxStore.getState().app.blockInfo.height) {
-                // we make sure that `blockHeight` is set before rendering QORT transactions
                 await parentEpml.request('apiCall', { url: `/blocks/height`, type: 'api' })
                     .then(height => parentEpml.request('updateBlockInfo', { height }))
             }
@@ -726,7 +1577,6 @@ class MultiWallet extends LitElement {
         const coin = this._selectedWallet
         await this.fetchWalletDetails(this._selectedWallet)
         if (this._selectedWallet == coin) {
-            //if the wallet didn't switch
             await this.renderTransactions()
             await this.getTransactionGrid(this._selectedWallet)
             await this.updateItemsFromPage(1, true)
@@ -734,66 +1584,63 @@ class MultiWallet extends LitElement {
             this.transactionsDOM.hidden = false
         }
     }
+
     async fetchWalletDetails(coin) {
-        //this function will fetch the balance and transactions of the given wallet
         this.balanceString = "Fetching balance ..."
         switch (coin) {
             case 'qort':
-                //fetching the qort balance
-                parentEpml
-                    .request('apiCall', {
-                        url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
-                    })
-                    .then((res) => {
-                        if (isNaN(Number(res))) {
-                            parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
-                        } else {
-                            if (this._selectedWallet == coin) {
-                                //check if we are still fetching wallet balance ...
-                                this.wallets.get(coin).balance = res
-                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
-                            }
+                parentEpml.request('apiCall', {
+                    url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
+                })
+                .then((res) => {
+                    if (isNaN(Number(res))) {
+                        parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
+                    } else {
+                        if (this._selectedWallet == coin) {
+                            this.wallets.get(coin).balance = res
+                            this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            this.balance = this.wallets.get(this._selectedWallet).balance
                         }
-                    })
-                //fetching the qort transactions						
+                    }
+                })					
                 const txsQort = await parentEpml.request('apiCall', {
                     url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true`,
                 })
-                if (this._selectedWallet == coin)
+                if (this._selectedWallet == coin) {
                     this.wallets.get(coin).transactions = txsQort
-
+                }
                 break
             case 'btc':
             case 'ltc':
             case 'doge':
-                //fetching the balance
                 const walletName = `${coin}Wallet`
-                parentEpml
-                    .request('apiCall', {
-                        url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
-                        method: 'POST',
-                        body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
-                    })
-                    .then((res) => {
-                        if (isNaN(Number(res))) {
-                            parentEpml.request('showSnackBar', `Failed to Fetch ${coin.toLocaleUpperCase()} Balance. Try again!`)
-                        } else {
-                            if (this._selectedWallet == coin) {
-                                //check if we are still fetching wallet balance ...
-                                this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
-                                this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
-                            }
+                parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
+                })
+                .then((res) => {
+                    if (isNaN(Number(res))) {
+                        parentEpml.request('showSnackBar', `Failed to Fetch ${coin.toLocaleUpperCase()} Balance. Try again!`)
+                    } else {
+                        if (this._selectedWallet == coin) {
+                            this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
+                            this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            this.balance = this.wallets.get(this._selectedWallet).balance
                         }
-                    })
-                //fetching transactions
+                    }
+                })
+
                 const txs = await parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/wallettransactions?apiKey=${this.getApiKey()}`,
                     method: 'POST',
                     body: `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`,
                 })
+
                 const compareFn = (a, b) => {
                     return b.timestamp - a.timestamp
                 }
+
                 const sortedTransactions = txs.sort(compareFn)
 
                 if (this._selectedWallet == coin) {
@@ -803,6 +1650,36 @@ class MultiWallet extends LitElement {
             default:
                 break
         }
+    }
+
+    renderSendButton() {
+        if ( this._selectedWallet === "qort" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send QORT</vaadin-button>`
+        } else if ( this._selectedWallet === "btc" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendBtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send BTC</vaadin-button>`
+        } else if ( this._selectedWallet === "ltc" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendLtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send LTC</vaadin-button>`
+        } else if ( this._selectedWallet === "doge" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDoge()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send DOGE</vaadin-button>`
+        } else {
+            return html``
+        }
+    }
+
+    openSendQort() {
+        this.shadowRoot.querySelector("#sendQortDialog").show();
+    }
+
+    openSendBtc() {
+        this.shadowRoot.querySelector("#sendBtcDialog").show();
+    }
+
+    openSendLtc() {
+        this.shadowRoot.querySelector("#sendLtcDialog").show();
+    }
+
+    openSendDoge() {
+        this.shadowRoot.querySelector("#sendDogeDialog").show();
     }
 
     changeTheme() {
@@ -847,8 +1724,7 @@ class MultiWallet extends LitElement {
     }
 
     renderQortTransactions(transactions, coin) {
-        const requiredConfirmations = 3 // arbitrary value
-        // initially `currentBlockHeight` might not be set in the store
+        const requiredConfirmations = 3
         const currentBlockHeight = window.parent.reduxStore.getState().app.blockInfo.height
         if (Array.isArray(transactions)) {
             transactions = transactions.map(tx => {
@@ -858,79 +1734,115 @@ class MultiWallet extends LitElement {
         }
 
         return html`
-			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
-			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
-				<vaadin-grid-column
-					auto-width
-					.renderer=${(root, column, data) => {
-                				if (!currentBlockHeight) {
-                    					return render(html``, root)
-                				}
-               					const confirmed = data.item.confirmations >= requiredConfirmations
-                				if (confirmed) {
-                    					render(html`<mwc-icon title="${data.item.confirmations} Confirmations" style="color: #00C851">check</mwc-icon>`, root)
-                				} else {
-                    					render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} Confirmations" style="color: #777">schedule</mwc-icon>`, root)
-                				}
-            				}}
-				>
-				</vaadin-grid-column>
-				<vaadin-grid-column
-					auto-width
-					resizable
-					header="Type"
-					.renderer=${(root, column, data) => {
-                				render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
-            				}}
-				>
-				</vaadin-grid-column>
-				<vaadin-grid-column auto-width resizable header="Sender" path="creatorAddress"></vaadin-grid-column>
-				<vaadin-grid-column auto-width resizable header="Receiver" path="recipient"></vaadin-grid-column>
-				<vaadin-grid-column auto-width resizable path="fee"></vaadin-grid-column>
-				<vaadin-grid-column auto-width resizable path="amount"></vaadin-grid-column>
-				<vaadin-grid-column
-					auto-width
-					resizable
-					header="Time"
-					.renderer=${(root, column, data) => {
-                				const time = new Date(data.item.timestamp)
-                				render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-            				}}
-				>
-				</vaadin-grid-column>
-			</vaadin-grid>
-			<div id="pages"></div>
-		`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="Status"
+                    .renderer=${(root, column, data) => {
+                        if (!currentBlockHeight) {
+                            return render(html``, root)
+                        }
+                        const confirmed = data.item.confirmations >= requiredConfirmations
+                        if (confirmed) {
+                            render(html`<mwc-icon title="${data.item.confirmations} Confirmations" style="color: #00C851">check</mwc-icon>`, root)
+                        } else {
+                            render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} Confirmations" style="color: #777">schedule</mwc-icon>`, root)
+                        }
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Type"
+                    .renderer=${(root, column, data) => {
+                        render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="Sender" path="creatorAddress"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="Receiver" path="recipient"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable path="fee"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable path="amount"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Time"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
     }
 
     renderBTCLikeTransactions(transactions, coin) {
         return html`
-			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
-			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
-				<vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
-				<vaadin-grid-column
-					auto-width
-					resizable
-					header="Total Amount"
-					.renderer=${(root, column, data) => {
-                				const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
-                				render(html`${amount}`, root)
-            				}}
-				>
-				</vaadin-grid-column>
-				<vaadin-grid-column
-					auto-width
-					resizable
-					header="Time"
-					.renderer=${(root, column, data) => {
-                				const time = new Date(data.item.timestamp * 1000)
-                				render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-            				}}
-				>
-				</vaadin-grid-column>
-			</vaadin-grid>
-			<div id="pages"></div>
-		`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="Status"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Type"
+                    .renderer=${(root, column, data) => {
+                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Sender"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Receiver"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Total Amount"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Time"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
     }
 
     async updateItemsFromPage(page, changeWallet = false) {
@@ -1012,6 +1924,7 @@ class MultiWallet extends LitElement {
             }
             return text
         }
+
         const checkSelectedTextAndShowMenu = () => {
             let selectedText = getSelectedText()
             if (selectedText && typeof selectedText === 'string') {
@@ -1022,7 +1935,6 @@ class MultiWallet extends LitElement {
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
-
         checkSelectedTextAndShowMenu()
     }
 
@@ -1054,7 +1966,6 @@ class MultiWallet extends LitElement {
     showTransactionDetails(myTransaction, allTransactions) {
         allTransactions.forEach((transaction) => {
             if (myTransaction.signature === transaction.signature) {
-                // Do something...
                 let txnFlow = myTransaction.creatorAddress === this.wallets.get('qort').wallet.address ? 'OUT' : 'IN'
                 this.selectedTransaction = { ...transaction, txnFlow }
                 if (this.selectedTransaction.signature.length != 0) {
@@ -1078,7 +1989,6 @@ class MultiWallet extends LitElement {
 
     decimals(num) {
         num = parseFloat(num)
-        // So that conversion to string can get rid of insignificant zeros
         return num % 1 > 0 ? (num + '').split('.')[1] : '0'
     }
 
@@ -1094,9 +2004,6 @@ class MultiWallet extends LitElement {
         return num.toLocaleString()
     }
 
-    textColor(color) {
-        return color === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
-    }
     _unconfirmedClass(unconfirmed) {
         return unconfirmed ? 'unconfirmed' : ''
     }
