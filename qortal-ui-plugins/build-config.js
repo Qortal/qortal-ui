@@ -1,29 +1,27 @@
-const babel = require("@rollup/plugin-babel");
+require('events').EventEmitter.defaultMaxListeners = 0
+const path = require("path");
 const { nodeResolve } = require("@rollup/plugin-node-resolve");
-const replace = require('@rollup/plugin-replace')
+const progress = require("rollup-plugin-progress");
+const replace = require('@rollup/plugin-replace');
 const globals = require("rollup-plugin-node-globals");
 const commonjs = require("@rollup/plugin-commonjs");
-const progress = require("rollup-plugin-progress");
-const { terser } = require("rollup-plugin-terser");
-const path = require("path");
 const alias = require("@rollup/plugin-alias");
+const { terser } = require('rollup-plugin-terser');
+const babel = require("@rollup/plugin-babel");
 
-const aliases = {
-    // 'qortal-ui-crypto': 'node_modules/qortal-ui-crypto/api.js'
-};
+const aliases = {};
 
 const generateRollupConfig = (inputFile, outputFile) => {
     return {
         inputOptions: {
-            onwarn(warning, warn) {
-                if (warning.code === 'THIS_IS_UNDEFINED') return;
-                if (warning.code !== 'CIRCULAR_DEPENDENCY') throw new Error(warning.message);
-                warn(warning);
+            onwarn: (warning, rollupWarn) => {
+                if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+                    rollupWarn(warning)
+                }
             },
             input: inputFile,
             plugins: [
                 alias({
-                    // entries: {}
                     entries: Object.keys(aliases).map((find) => {
                         return {
                             find,
@@ -133,7 +131,6 @@ const generateForPlugins = () => {
             path.join(__dirname, file.out)
         );
     });
-
     return configs;
 };
 
