@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui-core",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "QORTAL-UI Core",
   "keywords": [
     "QORT",
@@ -65,8 +65,8 @@
     "bcryptjs": "^2.4.3",
     "epml": "^0.3.3",
     "file-saver": "^2.0.5",
-    "lit": "^2.2.0",
-    "postcss": "^8.4.8",
+    "lit": "^2.2.1",
+    "postcss": "^8.4.12",
     "pwa-helpers": "^0.9.1",
     "random-sentence-generator": "^0.0.8",
     "redux": "^4.1.2",
