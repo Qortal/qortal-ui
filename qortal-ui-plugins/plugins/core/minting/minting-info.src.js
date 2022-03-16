@@ -25,6 +25,10 @@ class MintingInfo extends LitElement {
 
     static get styles() {
         return css`
+            * {
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
+            }
         @keyframes moveInBottom {
             0% {
                 opacity: 0;

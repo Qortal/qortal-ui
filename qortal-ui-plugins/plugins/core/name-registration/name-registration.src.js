@@ -34,6 +34,8 @@ class NameRegistration extends LitElement {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);

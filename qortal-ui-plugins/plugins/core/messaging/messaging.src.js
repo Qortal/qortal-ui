@@ -14,6 +14,8 @@ class Messaging extends LitElement {
         return css`
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
