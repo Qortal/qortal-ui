@@ -22,6 +22,7 @@ class Websites extends LitElement {
             identifier: { type: String },
             loading: { type: Boolean },
             resources: { type: Array },
+            pageRes: { type: Array },
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
@@ -223,6 +224,7 @@ class Websites extends LitElement {
         this.identifier = null
         this.selectedAddress = {}
         this.resources = []
+        this.pageRes = []
         this.followedNames = []
         this.blockedNames = []
         this.relayMode = null
@@ -585,9 +587,19 @@ class Websites extends LitElement {
 
     getArbitraryResources = async () => {
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
         })
         this.resources = resources
+    }
+
+    async getData(offset) {
+      const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+      const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+      let jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`;
+      const jsonRes = await fetch(jsonUrl);
+      const jsonData = await jsonRes.json();
+
+      this.pageRes = jsonData;
     }
 
     async updateItemsFromPage(page) {
@@ -611,7 +623,14 @@ class Websites extends LitElement {
             this.pages.forEach((pageNumber) => {
                 const pageBtn = document.createElement('button')
                 pageBtn.textContent = pageNumber
+                let offset = 1;
                 pageBtn.addEventListener('click', (e) => {
+                    if (parseInt(e.target.textContent) > 1) {
+                        offset = (parseInt(e.target.textContent) - 1) * 20;
+                    } else {
+                        offset = 0;
+                    }
+                    this.getData(offset);
                     this.updateItemsFromPage(parseInt(e.target.textContent))
                 })
                 if (pageNumber === page) {
@@ -654,12 +673,13 @@ class Websites extends LitElement {
         let start = (page - 1) * this.resourcesGrid.pageSize
         let end = page * this.resourcesGrid.pageSize
 
-        this.resourcesGrid.items = this.resources.slice(start, end)
+        this.resourcesGrid.items = this.pageRes
     }
 
     async showWebsites() {
         await this.getArbitraryResources()
         await this.getResourcesGrid()
+        await this.getData(0)
         await this.updateItemsFromPage(1, true)
     }
 
