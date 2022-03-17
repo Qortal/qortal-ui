@@ -55,7 +55,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: background: var(--plugback);
+            background: var(--plugback);
             overflow: hidden;
         }
     </style>
@@ -66,6 +66,13 @@
 
 
     <script>
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            newtheme = 'dark';
+        } else {
+            newtheme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', newtheme);
 
         const memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
         const heap = new Uint8Array(memory.buffer);
