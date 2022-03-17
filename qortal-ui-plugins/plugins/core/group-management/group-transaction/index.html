@@ -3,6 +3,16 @@
 
 <head>
     <link rel="stylesheet" href="/font/material-icons.css">
+    <link rel="stylesheet" href="/font/switch-theme.css">
+    <script>
+        const checkBack = localStorage.getItem('qortalTheme')
+        if (checkBack === 'dark') {
+            newtheme = 'dark';
+        } else {
+            newtheme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', newtheme);
+    </script>
     <style>
         html {
             --scrollbarBG: #a1a1a1;
@@ -32,7 +42,7 @@
         body {
             margin: 0;
             font-family: "Roboto", sans-serif;
-            background-color: #fff;
+            background: var(--plugback);
         }
     </style>
 </head>
