@@ -276,10 +276,10 @@ class Websites extends LitElement {
 	                            render(html`${this.renderInfo(data.item)}`, root)
 	                        }}>
 	                        </vaadin-grid-column>
-                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
+                                <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderPublishedBy(data.item)}`, root)
 	                        }}>
-                            </vaadin-grid-column>
+                                </vaadin-grid-column>
 	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
 	                        }}>
@@ -292,7 +292,7 @@ class Websites extends LitElement {
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Websites</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.resources)}" aria-label="Websites" page-size="20" all-rows-visible>
+	                    <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.pageRes)}" .items="${this.pageRes}" aria-label="Websites" all-rows-visible>
 	                        <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderAvatar(data.item)}`, root)
 	                        }}>
@@ -301,10 +301,10 @@ class Websites extends LitElement {
 	                            render(html`${this.renderInfo(data.item)}`, root)
 	                        }}>
 	                        </vaadin-grid-column>
-                            <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
+                                <vaadin-grid-column width="12rem" flex-grow="0" header="Published by" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderPublishedBy(data.item)}`, root)
 	                        }}>
-                            </vaadin-grid-column>
+                                </vaadin-grid-column>
 	                        <vaadin-grid-column width="11rem" flex-grow="0" header="Actions" .renderer=${(root, column, data) => {
 	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
 	                        }}>
@@ -315,10 +315,10 @@ class Websites extends LitElement {
 	                        </vaadin-grid-column>
 	                    </vaadin-grid>
 	                    <div id="pages"></div>
-                        ${this.resources == null ? html`
+                            ${this.pageRes == null ? html`
 	                        Loading...
 	                    `: ''}
-	                    ${this.isEmptyArray(this.resources) ? html`
+	                    ${this.isEmptyArray(this.pageRes) ? html`
 	                        <span style="color: var(--black);">No websites available</span>
 	                    `: ''}
 	                </div>
@@ -353,7 +353,7 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
 	                    </vaadin-grid>
-                        ${this.webResources == null ? html`
+                            ${this.webResources == null ? html`
 	                        Loading...
 	                    `: ''}
 	                    ${this.isEmptyArray(this.webResources) ? html`
@@ -391,7 +391,7 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
 	                    </vaadin-grid>
-                        ${this.blockResources == null ? html`
+                            ${this.blockResources == null ? html`
 	                        Loading...
 	                    `: ''}
 	                    ${this.isEmptyArray(this.blockResources) ? html`
@@ -595,11 +595,11 @@ class Websites extends LitElement {
     async getData(offset) {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-      let jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`;
-      const jsonRes = await fetch(jsonUrl);
-      const jsonData = await jsonRes.json();
+      let jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
+      const jsonRes = await fetch(jsonUrl)
+      const jsonData = await jsonRes.json()
 
-      this.pageRes = jsonData;
+      this.pageRes = jsonData
     }
 
     async updateItemsFromPage(page) {
@@ -608,13 +608,21 @@ class Websites extends LitElement {
         }
 
         if (!this.pages) {
-            this.pages = Array.apply(null, { length: Math.ceil(this.resources.length / this.resourcesGrid.pageSize) }).map((item, index) => {
+            this.pages = Array.apply(null, { length: Math.ceil(this.resources.length / 20) }).map((item, index) => {
                 return index + 1
             })
+
+            let offset = 0;
 
             const prevBtn = document.createElement('button')
             prevBtn.textContent = '<'
             prevBtn.addEventListener('click', () => {
+                if (parseInt(this.pagesControl.querySelector('[selected]').textContent) > 1) {
+                    offset = (parseInt(this.pagesControl.querySelector('[selected]').textContent) - 2) * 20;
+                } else {
+                    offset = 0;
+                }
+                this.getData(offset);
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage - 1)
             })
@@ -623,7 +631,7 @@ class Websites extends LitElement {
             this.pages.forEach((pageNumber) => {
                 const pageBtn = document.createElement('button')
                 pageBtn.textContent = pageNumber
-                let offset = 1;
+                let offset = 0;
                 pageBtn.addEventListener('click', (e) => {
                     if (parseInt(e.target.textContent) > 1) {
                         offset = (parseInt(e.target.textContent) - 1) * 20;
@@ -642,6 +650,12 @@ class Websites extends LitElement {
             const nextBtn = window.document.createElement('button')
             nextBtn.textContent = '>'
             nextBtn.addEventListener('click', () => {
+                if (parseInt(this.pagesControl.querySelector('[selected]').textContent) >= 1) {
+                    offset = ((parseInt(this.pagesControl.querySelector('[selected]').textContent) + 1) * 20) - 20;
+                } else {
+                    offset = 0;
+                }
+                this.getData(offset);
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage + 1)
             })
@@ -670,16 +684,12 @@ class Websites extends LitElement {
                 }
             }
         })
-        let start = (page - 1) * this.resourcesGrid.pageSize
-        let end = page * this.resourcesGrid.pageSize
-
-        this.resourcesGrid.items = this.pageRes
     }
 
     async showWebsites() {
         await this.getArbitraryResources()
-        await this.getResourcesGrid()
         await this.getData(0)
+        await this.getResourcesGrid()
         await this.updateItemsFromPage(1, true)
     }
 
