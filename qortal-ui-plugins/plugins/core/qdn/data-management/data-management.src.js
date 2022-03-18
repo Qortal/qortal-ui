@@ -619,11 +619,6 @@ class DataManagement extends LitElement {
         return ret
     }
 
-
-    textColor(color) {
-        return color == 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
-    }
-
     _textMenu(event) {
         const getSelectedText = () => {
             var text = ''
@@ -639,9 +634,7 @@ class DataManagement extends LitElement {
             let selectedText = getSelectedText()
             if (selectedText && typeof selectedText === 'string') {
                 let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
                 let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }

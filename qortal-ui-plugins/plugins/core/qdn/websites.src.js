@@ -29,14 +29,8 @@ class Websites extends LitElement {
             selectedAddress: { type: Object },
             searchName: { type: String },
             searchResources: { type: Array },
-            searchFollowedNames: { type: Array },
-            searchBlockedNames: { type: Array },
-            webResources: { type: Array },
-            webFollowedNames: { type: Array },
-            webBlockedNames: { type: Array },
-            blockResources: { type: Array },
-            blockFollowedNames: { type: Array },
-            blockBlockedNames: { type: Array },
+            followedResources: { type: Array },
+            blockedResources: { type: Array },
             theme: { type: String, reflect: true }
         }
     }
@@ -231,14 +225,8 @@ class Websites extends LitElement {
         this.isLoading = false
         this.searchName = ''
         this.searchResources = []
-        this.searchFollowedNames = []
-        this.searchBlockedNames = []
-        this.webResources = []
-        this.webFollowedNames = []
-        this.webBlockedNames = []
-        this.blockResources = []
-        this.blockFollowedNames = []
-        this.blockBlockedNames = []
+        this.followedResources = []
+        this.blockedResources = []
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -331,7 +319,7 @@ class Websites extends LitElement {
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Followed Websites</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="webResourcesGrid" ?hidden="${this.isEmptyArray(this.webResources)}" .items="${this.webResources}" aria-label="Followed Websites" all-rows-visible>
+	                    <vaadin-grid theme="wrap-cell-content" id="followedResourcesGrid" ?hidden="${this.isEmptyArray(this.followedResources)}" .items="${this.followedResources}" aria-label="Followed Websites" all-rows-visible>
                             <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                                 render(html`${this.renderAvatar(data.item)}`, root)
                             }}>
@@ -353,10 +341,10 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
 	                    </vaadin-grid>
-                            ${this.webResources == null ? html`
+                            ${this.followedResources == null ? html`
 	                        Loading...
 	                    `: ''}
-	                    ${this.isEmptyArray(this.webResources) ? html`
+	                    ${this.isEmptyArray(this.followedResources) ? html`
 	                        <span style="color: var(--black);">You aren't following any websites</span>
 	                    `: ''}
 	                </div>
@@ -369,7 +357,7 @@ class Websites extends LitElement {
 	                </div>
 	                <div class="divCard">
 	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Blocked Websites</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="blockResourcesGrid" ?hidden="${this.isEmptyArray(this.blockResources)}" .items="${this.blockResources}" aria-label="Followed Websites" all-rows-visible>
+	                    <vaadin-grid theme="wrap-cell-content" id="blockedResourcesGrid" ?hidden="${this.isEmptyArray(this.blockedResources)}" .items="${this.blockedResources}" aria-label="Blocked Websites" all-rows-visible>
                             <vaadin-grid-column width="7rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
                                 render(html`${this.renderAvatar(data.item)}`, root)
                             }}>
@@ -391,10 +379,10 @@ class Websites extends LitElement {
                             }}>
                             </vaadin-grid-column>
 	                    </vaadin-grid>
-                            ${this.blockResources == null ? html`
+                            ${this.blockedResources == null ? html`
 	                        Loading...
 	                    `: ''}
-	                    ${this.isEmptyArray(this.blockResources) ? html`
+	                    ${this.isEmptyArray(this.blockedResources) ? html`
 	                        <span style="color: var(--black);">You have not blocked any websites</span>
 	                    `: ''}
 	                </div>
@@ -437,60 +425,6 @@ class Websites extends LitElement {
             setTimeout(getBlockedNames, 600000)
         }
 
-        const getWebFollowedNames = async () => {
-            let webFollowedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.webFollowedNames = webFollowedNames
-            setTimeout(getWebFollowedNames, 600000)
-        }
-
-        const getWebBlockedNames = async () => {
-            let webBlockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.webBlockedNames = webBlockedNames
-            setTimeout(getWebBlockedNames, 600000)
-        }
-
-        const getBlockFollowedNames = async () => {
-            let blockFollowedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.blockFollowedNames = blockFollowedNames
-            setTimeout(getBlockFollowedNames, 600000)
-        }
-
-        const getBlockBlockedNames = async () => {
-            let blockBlockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.blockBlockedNames = blockBlockedNames
-            setTimeout(getBlockBlockedNames, 600000)
-        }
-
-        const getSearchFollowedNames = async () => {
-            let searchFollowedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.searchFollowedNames = searchFollowedNames
-            setTimeout(getSearchFollowedNames, 600000)
-        }
-
-        const getSearchBlockedNames = async () => {
-            let searchBlockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.searchBlockedNames = searchBlockedNames
-            setTimeout(getSearchBlockedNames, 600000)
-        }
-
         const getRelayMode = async () => {
             let relayMode = await parentEpml.request('apiCall', {
                 url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
@@ -526,21 +460,10 @@ class Websites extends LitElement {
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
-                    setTimeout(this.getArbitraryResources, 1)
-                    setTimeout(this.getFollowedWebsites, 1)
-                    setTimeout(this.getBlockedWebsites, 1)
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
-                    setTimeout(getWebFollowedNames, 1)
-                    setTimeout(getWebBlockedNames, 1)
-                    setTimeout(getBlockFollowedNames, 1)
-                    setTimeout(getBlockBlockedNames, 1)
-                    setTimeout(getSearchFollowedNames, 1)
-                    setTimeout(getSearchBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
                     setInterval(this.getArbitraryResources, 600000)
-                    setInterval(this.getFollowedWebsites, 600000)
-                    setInterval(this.getBlockedWebsites, 600000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -586,20 +509,37 @@ class Websites extends LitElement {
     }
 
     getArbitraryResources = async () => {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const followedNamesUrl = `${nodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`
+        const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`
+
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`
         })
+
         this.resources = resources
+
+	const followedResponse = await fetch(followedNamesUrl)
+	const followednames = await followedResponse.json()
+	let followedres = resources.filter((elm) => followednames.includes(elm.name))
+        this.followedResources = followedres
+
+	const blockedResponse = await fetch(blockedNamesUrl)
+	const blockednames = await blockedResponse.json()
+	let blockedres = resources.filter((elm) => blockednames.includes(elm.name))
+        this.blockedResources = blockedres
     }
 
     async getData(offset) {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-      let jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
-      const jsonRes = await fetch(jsonUrl)
-      const jsonData = await jsonRes.json()
+      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
 
-      this.pageRes = jsonData
+      const jsonOffsetRes = await fetch(jsonOffsetUrl)
+      const jsonOffsetData = await jsonOffsetRes.json()
+
+      this.pageRes = jsonOffsetData
     }
 
     async updateItemsFromPage(page) {
@@ -687,48 +627,14 @@ class Websites extends LitElement {
     }
 
     async showWebsites() {
-        await this.getArbitraryResources()
         await this.getData(0)
+        await this.getArbitraryResources()
         await this.getResourcesGrid()
         await this.updateItemsFromPage(1, true)
     }
 
     doSearch(e) {
         this.searchResult()
-    }
-
-    getFollowedWebsites = async () => {
-	let data = [];
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-        const namesUrl = `${nodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`;
-        const jsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`;
-
-	const jsonRes = await fetch(jsonUrl);
-	const jsonData = await jsonRes.json();
-	const response = await fetch(namesUrl);
-	const names = await response.json();
-
-	let webres = jsonData.filter((elm) => names.includes(elm.name));
-
-        this.webResources = webres;
-    }
-
-    getBlockedWebsites = async () => {
-	let data = [];
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-        const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`;
-        const blockedJsonUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`;
-
-	const blockedJsonRes = await fetch(blockedJsonUrl);
-	const blockedJsonData = await blockedJsonRes.json();
-	const blockedResponse = await fetch(blockedNamesUrl);
-	const blockednames = await blockedResponse.json();
-
-	let blockedres = blockedJsonData.filter((elm) => blockednames.includes(elm.name));
-
-        this.blockResources = blockedres;
     }
 
     async searchResult() {
@@ -798,14 +704,16 @@ class Websites extends LitElement {
             // Successfully followed - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.followedNames = this.followedNames.filter(item => item != name);
+            this.followedNames = this.followedNames.filter(item => item != name)
             this.followedNames.push(name)
+            this.getArbitraryResources()
+            window.location.reload()
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
         }
-
         return ret
+        this.displayTabContent('followed')
     }
 
     async unfollowName(websiteObj) {
@@ -826,13 +734,15 @@ class Websites extends LitElement {
 
         if (ret === true) {
             // Successfully unfollowed - remove from local list
-            this.followedNames = this.followedNames.filter(item => item != name);
+            this.followedNames = this.followedNames.filter(item => item != name)
+            this.getArbitraryResources()
+            window.location.reload()
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
         }
-
         return ret
+        this.displayTabContent('followed')
     }
 
     async blockName(websiteObj) {
@@ -855,14 +765,16 @@ class Websites extends LitElement {
             // Successfully blocked - add to local list
             // Remove it first by filtering the list - doing it this way ensures the UI updates
             // immediately, as apposed to only adding if it doesn't already exist
-            this.blockedNames = this.blockedNames.filter(item => item != name);
+            this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
+            this.getArbitraryResources()
+            window.location.reload()
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
         }
-
         return ret
+        this.displayTabContent('blocked')
     }
 
     async unblockName(websiteObj) {
@@ -883,23 +795,15 @@ class Websites extends LitElement {
 
         if (ret === true) {
             // Successfully unblocked - remove from local list
-            this.blockedNames = this.blockedNames.filter(item => item != name);
+            this.blockedNames = this.blockedNames.filter(item => item != name)
+            this.getArbitraryResources()
+            window.location.reload()
         }
         else {
             parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
         }
-
         return ret
-    }
-
-    renderRole(groupObj) {
-        if (groupObj.owner === this.selectedAddress.address) {
-            return "Owner"
-        } else if (groupObj.isAdmin === true) {
-            return "Admin"
-        } else {
-            return "Member"
-        }
+        this.displayTabContent('blocked')
     }
 
     renderInfo(websiteObj) {
@@ -995,7 +899,6 @@ class Websites extends LitElement {
     }
 
     _textMenu(event) {
-
         const getSelectedText = () => {
             var text = "";
             if (typeof window.getSelection != "undefined") {

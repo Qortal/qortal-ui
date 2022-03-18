@@ -556,9 +556,7 @@ class PublishData extends LitElement {
             let selectedText = getSelectedText()
             if (selectedText && typeof selectedText === 'string') {
                 let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
                 let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }

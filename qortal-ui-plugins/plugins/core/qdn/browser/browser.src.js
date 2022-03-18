@@ -3,11 +3,7 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
 
 import '@material/mwc-button'
-import '@material/mwc-textfield'
-import '@material/mwc-select'
-import '@material/mwc-list/mwc-list-item.js'
-import '@material/mwc-slider'
-import '@polymer/paper-progress/paper-progress.js'
+import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -441,14 +437,6 @@ class WebBrowser extends LitElement {
         return ret
     }
 
-
-
-    // Helper Functions (Re-Used in Most part of the UI )
-
-    textColor(color) {
-        return color == 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)'
-    }
-
     _textMenu(event) {
         const getSelectedText = () => {
             var text = ''
@@ -464,13 +452,10 @@ class WebBrowser extends LitElement {
             let selectedText = getSelectedText()
             if (selectedText && typeof selectedText === 'string') {
                 let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
                 let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
-
         checkSelectedTextAndShowMenu()
     }
 
