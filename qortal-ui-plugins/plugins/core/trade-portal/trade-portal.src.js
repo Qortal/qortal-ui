@@ -53,6 +53,8 @@ class TradePortal extends LitElement {
 			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-select-label-ink-color: var(--black);
 			--mdc-select-ink-color: var(--black);
+			--mdc-theme-surface: var(--white);
+			--mdc-dialog-content-ink-color: var(--black);
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
 			--lumo-primary-text-color: rgb(0, 167, 245);
 			--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -64,6 +66,13 @@ class TradePortal extends LitElement {
 			--lumo-contrast-60pct: var(--vdicon);
 			--_lumo-grid-border-color: var(--border);
 			--_lumo-grid-secondary-border-color: var(--border2);
+		}
+
+		paper-spinner-lite {
+			height: 30px;
+			width: 30px;
+			--paper-spinner-color: var(--mdc-theme-primary);
+			--paper-spinner-stroke-width: 3px;
 		}
 
 		mwc-tab-bar {
@@ -389,8 +398,9 @@ class TradePortal extends LitElement {
 				column-gap: 0.5em;
 				row-gap: 0.4em;
 			}
+
 		}
-	`;
+	`
     }
 
     constructor() {
@@ -468,390 +478,390 @@ class TradePortal extends LitElement {
     // TODO: Move each template to a separate components! Maybe
     historicTradesTemplate() {
         return html`
-			<div class="historic-trades">
-				<div class="box">
-					<header><span>HISTORIC MARKET TRADES</span></header>
-					<div class="border-wrapper">
-						<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingHistoricTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
-						<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="historicTradesGrid" aria-label="Historic Trades" .items="${this.listedCoins.get(this.selectedCoin).historicTrades}">
-							<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-									render(html`${price}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${data.item.foreignAmount} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-						</vaadin-grid>
-					</div>
+		<div class="historic-trades">
+			<div class="box">
+				<header><span>HISTORIC MARKET TRADES</span></header>
+				<div class="border-wrapper">
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingHistoricTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="historicTradesGrid" aria-label="Historic Trades" .items="${this.listedCoins.get(this.selectedCoin).historicTrades}">
+						<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+								render(html`${price}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${data.item.foreignAmount} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+					</vaadin-grid>
 				</div>
 			</div>
-		`;
+		</div>
+	`
     }
 
     openTradesTemplate() {
         return html`
-			<div class="open-trades">
-				<div class="box">
-					<header><span>OPEN MARKET SELL ORDERS</span></header>
-					<div class="border-wrapper">
-						<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
-						<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="openOrdersGrid" aria-label="Open Orders" .items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}">
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Amount (QORT)"
-								id="qortAmountColumn"
-								path="qortAmount"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${this.round(data.item.qortAmount)} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								id="priceColumn"
-								path="price"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${this.round(data.item.price)} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${data.item.foreignAmount} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Seller"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${data.item.qortalCreator} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-						</vaadin-grid>
-					</div>
+		<div class="open-trades">
+			<div class="box">
+				<header><span>OPEN MARKET SELL ORDERS</span></header>
+				<div class="border-wrapper">
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="openOrdersGrid" aria-label="Open Orders" .items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}">
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Amount (QORT)"
+							id="qortAmountColumn"
+							path="qortAmount"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${this.round(data.item.qortAmount)} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							id="priceColumn"
+							path="price"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${this.round(data.item.price)} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${data.item.foreignAmount} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Seller"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${data.item.qortalCreator} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+					</vaadin-grid>
 				</div>
 			</div>
-		`;
+		</div>
+	`
     }
 
     openMarketTemplate() {
         return html`
-			<div class="open-market-container">
-				<div class="box">
-					<mwc-tab-bar id="tabs-1" activeIndex="0">
-						<mwc-tab id="tab-buy" label="Buy" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
-						<mwc-tab id="tab-sell" label="Sell" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
-					</mwc-tab-bar>
-					<z id="tabs-1-content">
-						<div id="tab-buy-content">
-							<div class="card">
-								<div style="margin-left: auto">
-									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
-								</div>
-								<p>
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="buyAmountInput"
-										required readOnly label="Amount (QORT)"
-										placeholder="0.0000"
-										type="text" 
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-								</p>
-								<p>
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="buyPriceInput"
-										required readOnly
-										label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
-										placeholder="0.0000"
-										type="text"
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-								</p>
-								<p style="margin-bottom: 10px;">
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="buyTotalInput"
-										required readOnly
-										label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
-										placeholder="0.0000"
-										type="text"
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-									<mwc-textfield
-										style="display: none; visibility: hidden;"
-										id="qortalAtAddress"
-										required readOnly
-										label="Qortal AT Address"
-										type="text"
-										auto-validate="false"
-										outlined
-									>
-									</mwc-textfield>
-								</p>
-								<span class="you-have">You have: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
-								<div class="buttons">
-									<div>
-										<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
-											${this.isBuyLoading === false ? 'BUY' : html`<paper-spinner-lite active></paper-spinner-lite>`}
-										</mwc-button>
-									</div>
-								</div>
+		<div class="open-market-container">
+			<div class="box">
+				<mwc-tab-bar id="tabs-1" activeIndex="0">
+					<mwc-tab id="tab-buy" label="Buy" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
+					<mwc-tab id="tab-sell" label="Sell" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
+				</mwc-tab-bar>
+				<z id="tabs-1-content">
+					<div id="tab-buy-content">
+						<div class="card">
+							<div style="margin-left: auto">
+								<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 							</div>
-						</div>
-						<div id="tab-sell-content">
-							<div class="card">
-								<div style="margin-left: auto">
-									<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
-								</div>										
-								<p>
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="sellAmountInput"
-										required label="Amount (QORT)"
-										placeholder="0.0000"
-										@input="${(e) => { this._checkSellAmount(e) }}"
-										type="number"
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-								</p>
-								<p>
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="sellPriceInput"
-										required label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
-										placeholder="0.0000"
-										@input="${(e) => { this._checkSellAmount(e) }}"
-										type="number"
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-								</p>
-								<p style="margin-bottom: 10px;">
-									<mwc-textfield
-										style="width: 100%; color: var(--black);"
-										id="sellTotalInput"
-										required readOnly
-										label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
-										placeholder="0.0000"
-										type="text"
-										auto-validate="false"
-										outlined value="${this.initialAmount}"
-									>
-									</mwc-textfield>
-								</p>
-								<span class="you-have">You have: ${this.listedCoins.get("QORTAL").balance} QORT</span>
-								<div class="buttons">
-									<div>
-										<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
-											${this.isSellLoading === false ? 'SELL' : html`<paper-spinner-lite active></paper-spinner-lite>`}
-										</mwc-button>
-									</div>
+							<p>
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="buyAmountInput"
+									required readOnly label="Amount (QORT)"
+									placeholder="0.0000"
+									type="text" 
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+							</p>
+							<p>
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="buyPriceInput"
+									required readOnly
+									label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									placeholder="0.0000"
+									type="text"
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+							</p>
+							<p style="margin-bottom: 10px;">
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="buyTotalInput"
+									required readOnly
+									label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									placeholder="0.0000"
+									type="text"
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+								<mwc-textfield
+									style="display: none; visibility: hidden;"
+									id="qortalAtAddress"
+									required readOnly
+									label="Qortal AT Address"
+									type="text"
+									auto-validate="false"
+									outlined
+								>
+								</mwc-textfield>
+							</p>
+							<span class="you-have">You have: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+							<div class="buttons">
+								<div>
+									<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
+										${this.isBuyLoading === false ? 'BUY' : html`<paper-spinner-lite active></paper-spinner-lite>`}
+									</mwc-button>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>	
-			</div>
-		`;
+					<div id="tab-sell-content">
+						<div class="card">
+							<div style="margin-left: auto">
+								<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
+							</div>										
+							<p>
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="sellAmountInput"
+									required label="Amount (QORT)"
+									placeholder="0.0000"
+									@input="${(e) => { this._checkSellAmount(e) }}"
+									type="number"
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+							</p>
+							<p>
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="sellPriceInput"
+									required label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									placeholder="0.0000"
+									@input="${(e) => { this._checkSellAmount(e) }}"
+									type="number"
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+							</p>
+							<p style="margin-bottom: 10px;">
+								<mwc-textfield
+									style="width: 100%; color: var(--black);"
+									id="sellTotalInput"
+									required readOnly
+									label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									placeholder="0.0000"
+									type="text"
+									auto-validate="false"
+									outlined value="${this.initialAmount}"
+								>
+								</mwc-textfield>
+							</p>
+							<span class="you-have">You have: ${this.listedCoins.get("QORTAL").balance} QORT</span>
+							<div class="buttons">
+								<div>
+									<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
+										${this.isSellLoading === false ? 'SELL' : html`<paper-spinner-lite active></paper-spinner-lite>`}
+									</mwc-button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+	`
     }
 
     myOpenOrdersTemplate() {
         return html`
-			<div class="my-open-orders">
-				<div class="box">
-					<header><span>MY ORDERS</span><mwc-icon-button title="Stuck Orders" icon="more_vert" @click=${() => this.showStuckOrdersDialog()}></mwc-icon-button></header>
-					<div class="border-wrapper">
-						<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
-						<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="myOrdersGrid" aria-label="My Orders" .items="${this.listedCoins.get(this.selectedCoin).myOrders}">
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Date"
-								.renderer=${(root, column, data) => {
-									const dateString = new Date(data.item.timestamp).toLocaleString()
-									render(html`${dateString}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Status"
-								.renderer=${(root, column, data) => {
-									render(html`<span id="${data.item.atAddress}"> ${data.item._tradeState} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-									render(html`${price}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Amount (QORT)" path="qortAmount"
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="foreignAmount"
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Action"
-								.renderer=${(root, column, data) => {
-									 render(html`${this.renderCancelButton(data.item)}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-						</vaadin-grid>
-					</div>
+		<div class="my-open-orders">
+			<div class="box">
+				<header><span>MY ORDERS</span><mwc-icon-button title="Stuck Orders" icon="more_vert" @click=${() => this.showStuckOrdersDialog()}></mwc-icon-button></header>
+				<div class="border-wrapper">
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="myOrdersGrid" aria-label="My Orders" .items="${this.listedCoins.get(this.selectedCoin).myOrders}">
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Date"
+							.renderer=${(root, column, data) => {
+								const dateString = new Date(data.item.timestamp).toLocaleString()
+								render(html`${dateString}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Status"
+							.renderer=${(root, column, data) => {
+								render(html`<span id="${data.item.atAddress}"> ${data.item._tradeState} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+								render(html`${price}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Amount (QORT)" path="qortAmount"
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="foreignAmount"
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Action"
+							.renderer=${(root, column, data) => {
+								 render(html`${this.renderCancelButton(data.item)}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+					</vaadin-grid>
 				</div>
 			</div>
-		`;
+		</div>
+	`
     }
 
     myHistoricTradesTemplate() {
         return html`
-			<div class="my-historic-trades">
-				<div class="box">
-					<header>MY TRADE HISTORY</header>
-					<div class="border-wrapper">
-						<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="myHistoricTradesGrid" aria-label="My Open Orders" .items="${this.listedCoins.get(this.selectedCoin).myHistoricTrades}">
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Date"
-								.renderer=${(root, column, data) => {
-									const dateString = new Date(data.item.timestamp).toLocaleString()
-									render(html`${dateString}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Status"
-								.renderer=${(root, column, data) => {
-									if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${data.item.mode} </span>`, root)
-									if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${data.item.mode} </span>`, root)
-									return render(html`<span> ${data.item.mode} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
-									render(html`${price}`, root)
-								}}
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Amount (QORT)" path="qortAmount"
-							>
-							</vaadin-grid-column>
-							<vaadin-grid-column
-								auto-width
-								resizable
-								header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
-								.renderer=${(root, column, data) => {
-									render(html`<span> ${data.item.foreignAmount} </span>`, root)
-								}}
-							>
-							</vaadin-grid-column>
-						</vaadin-grid>
-					</div>
+		<div class="my-historic-trades">
+			<div class="box">
+				<header>MY TRADE HISTORY</header>
+				<div class="border-wrapper">
+					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="myHistoricTradesGrid" aria-label="My Open Orders" .items="${this.listedCoins.get(this.selectedCoin).myHistoricTrades}">
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Date"
+							.renderer=${(root, column, data) => {
+								const dateString = new Date(data.item.timestamp).toLocaleString()
+								render(html`${dateString}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Status"
+							.renderer=${(root, column, data) => {
+								if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${data.item.mode} </span>`, root)
+								if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${data.item.mode} </span>`, root)
+								return render(html`<span> ${data.item.mode} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
+								render(html`${price}`, root)
+							}}
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Amount (QORT)" path="qortAmount"
+						>
+						</vaadin-grid-column>
+						<vaadin-grid-column
+							auto-width
+							resizable
+							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							.renderer=${(root, column, data) => {
+								render(html`<span> ${data.item.foreignAmount} </span>`, root)
+							}}
+						>
+						</vaadin-grid-column>
+					</vaadin-grid>
 				</div>
 			</div>
-		`;
+		</div>
+	`
     }
 
     render() {
         return html`
-			<div id="trade-portal-page">
-				<div style="min-height: 40px; display: flex; padding-bottom: 0px; margin: 2px 2px 0px 2px ;">
-					<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal Trade Portal - &nbsp;</h2>
-					<mwc-select outlined id="coinSelectionMenu" label="Select Trading Pair">
-						<mwc-list-item value="LITECOIN" selected></span><span class="coinName ltc">QORT / LTC</span></mwc-list-item>
-						<mwc-list-item value="DOGECOIN"><span class="coinName doge">QORT / DOGE</span></mwc-list-item>
-					</mwc-select>
+		<div id="trade-portal-page">
+			<div style="min-height: 40px; display: flex; padding-bottom: 0px; margin: 2px 2px 0px 2px ;">
+				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal Trade Portal - &nbsp;</h2>
+				<mwc-select outlined id="coinSelectionMenu" label="Select Trading Pair">
+					<mwc-list-item value="LITECOIN" selected></span><span class="coinName ltc">QORT / LTC</span></mwc-list-item>
+					<mwc-list-item value="DOGECOIN"><span class="coinName doge">QORT / DOGE</span></mwc-list-item>
+				</mwc-select>
+			</div>
+			<div id="trade-portal">
+				<div id="first-trade-section">
+					${this.historicTradesTemplate()}
+					${this.myHistoricTradesTemplate()}
+					${this.openTradesTemplate()}
 				</div>
-				<div id="trade-portal">
-					<div id="first-trade-section">
-						${this.historicTradesTemplate()}
-						${this.myHistoricTradesTemplate()}
-						${this.openTradesTemplate()}
-					</div>
-					<div id="second-trade-section">
-						${this.myOpenOrdersTemplate()}
-						${this.openMarketTemplate()}
-					</div>
+				<div id="second-trade-section">
+					${this.myOpenOrdersTemplate()}
+					${this.openMarketTemplate()}
 				</div>
 			</div>
-			<!-- Manage Stuck Orders Dialog -->
-			<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
-				<div style="text-align:center">
-					<h1>Stuck Offers</h1>
-					<hr />
-				</div>
-				<div>
-					<vaadin-grid style="width: 500px" theme="compact column-borders row-stripes wrap-cell-content" id="stuckOrdersGrid" aria-label="My Offering Orders" .items="${this.listedCoins.get(this.selectedCoin).myOfferingOrders}">
-						<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
-						<vaadin-grid-column auto-width resizable header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})" path="price"></vaadin-grid-column>
-						<vaadin-grid-column auto-width resizable header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="expectedForeignAmount"></vaadin-grid-column>
-						<vaadin-grid-column auto-width resizable header="Action" .renderer=${(root, column, data) => { render(html`${this.renderCancelStuckOfferButton(data.item)}`, root) }}></vaadin-grid-column>
-					</vaadin-grid>
-				</div>
-				<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">Close</mwc-button>
-			</mwc-dialog>
-		`;
+		</div>
+		<!-- Manage Stuck Orders Dialog -->
+		<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
+			<div style="text-align: center;">
+				<h1>Stuck Offers</h1>
+				<hr />
+			</div>
+			<div>
+				<vaadin-grid style="width: 500px" theme="compact column-borders row-stripes wrap-cell-content" id="stuckOrdersGrid" aria-label="My Offering Orders" .items="${this.listedCoins.get(this.selectedCoin).myOfferingOrders}">
+					<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})" path="price"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="expectedForeignAmount"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="Action" .renderer=${(root, column, data) => { render(html`${this.renderCancelStuckOfferButton(data.item)}`, root) }}></vaadin-grid-column>
+				</vaadin-grid>
+			</div>
+			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">Close</mwc-button>
+		</mwc-dialog>
+	`
     }
 
     firstUpdated() {
