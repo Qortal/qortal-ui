@@ -259,7 +259,7 @@ class MultiWallet extends LitElement {
 
             .transactions-wrapper {
                 width: 100%;
-                padding: 50px 0 0 0;
+                padding: 30px 0 0 0;
                 height: 100%;
             }
 
@@ -284,7 +284,7 @@ class MultiWallet extends LitElement {
             }
 
             #transactions {
-                margin-top: 60px;
+                margin-top: 30px;
                 margin-left: 20px;
                 margin-right: 20px;
                 border-top: 1px solid var(--border);
