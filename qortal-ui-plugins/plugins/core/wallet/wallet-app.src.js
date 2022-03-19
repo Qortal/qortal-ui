@@ -706,6 +706,156 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
+                <mwc-dialog id="showBtcTransactionDetailsDialog" scrimClickAction="${this.showBtcTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>Transaction Details</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> Transaction Type </span>
+                        <br />
+                        <div>
+                            <span>PAYMENT</span>
+                            ${this.selectedTransaction.btcTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                        </div>
+                        <span class="title"> Sender </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.btcSender}</span>
+                        </div>
+                         <span class="title"> Receiver </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.btcReceiver}</span>
+                        </div>
+                        <span class="title"> Transaction Fee </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} BTC</span>
+                        </div>
+                        <span class="title"> Total Amount </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} BTC</span>
+                        </div>
+                        <span class="title"> Time </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> Transaction Hash </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="showLtcTransactionDetailsDialog" scrimClickAction="${this.showLtcTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>Transaction Details</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> Transaction Type </span>
+                        <br />
+                        <div>
+                            <span>PAYMENT</span>
+                            ${this.selectedTransaction.ltcTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                        </div>
+                        <span class="title"> Sender </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.ltcSender}</span>
+                        </div>
+                         <span class="title"> Receiver </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.ltcReceiver}</span>
+                        </div>
+                        <span class="title"> Transaction Fee </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} LTC</span>
+                        </div>
+                        <span class="title"> Total Amount </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} LTC</span>
+                        </div>
+                        <span class="title"> Time </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> Transaction Hash </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="showDogeTransactionDetailsDialog" scrimClickAction="${this.showDogeTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>Transaction Details</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> Transaction Type </span>
+                        <br />
+                        <div>
+                            <span>PAYMENT</span>
+                            ${this.selectedTransaction.dogeTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                        </div>
+                        <span class="title"> Sender </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.dogeSender}</span>
+                        </div>
+                         <span class="title"> Receiver </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.dogeReceiver}</span>
+                        </div>
+                        <span class="title"> Transaction Fee </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} DOGE</span>
+                        </div>
+                        <span class="title"> Total Amount </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} DOGE</span>
+                        </div>
+                        <span class="title"> Time </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> Transaction Hash </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                    </mwc-button>
+                </mwc-dialog>
+
                 <mwc-dialog id="sendQortDialog">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
@@ -1642,7 +1792,7 @@ class MultiWallet extends LitElement {
                 }
 
                 const sortedTransactions = txs.sort(compareFn)
-
+                console.log(sortedTransactions)
                 if (this._selectedWallet == coin) {
                     this.wallets.get(this._selectedWallet).transactions = sortedTransactions
                 }
@@ -1704,8 +1854,35 @@ class MultiWallet extends LitElement {
             this.transactionsGrid.addEventListener(
                 'click',
                 (e) => {
-                    let myItem = this.transactionsGrid.getEventContext(e).item
-                    this.showTransactionDetails(myItem, this.wallets.get(this._selectedWallet).transactions)
+                    let qortItem = this.transactionsGrid.getEventContext(e).item
+                    this.showQortTransactionDetails(qortItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
+        } else if (coin === 'btc') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let btcItem = this.transactionsGrid.getEventContext(e).item
+                    this.showBtcTransactionDetails(btcItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
+        } else if (coin === 'ltc') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let ltcItem = this.transactionsGrid.getEventContext(e).item
+                    this.showLtcTransactionDetails(ltcItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
+        } else if (coin === 'doge') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let dogeItem = this.transactionsGrid.getEventContext(e).item
+                    this.showDogeTransactionDetails(dogeItem, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
@@ -1718,8 +1895,12 @@ class MultiWallet extends LitElement {
     async renderTransactions() {
         if (this._selectedWallet === 'qort') {
             render(this.renderQortTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-        } else {
-            render(this.renderBTCLikeTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+        } else if (this._selectedWallet === 'btc') {
+            render(this.renderBtcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+        } else if (this._selectedWallet === 'ltc') {
+            render(this.renderLtcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+        } else if (this._selectedWallet === 'doge') {
+            render(this.renderDogeTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         }
     }
 
@@ -1780,7 +1961,137 @@ class MultiWallet extends LitElement {
 	`
     }
 
-    renderBTCLikeTransactions(transactions, coin) {
+    renderBtcTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="Status"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Type"
+                    .renderer=${(root, column, data) => {
+                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Sender"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Receiver"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Total Amount"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Time"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
+    renderLtcTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="Status"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Type"
+                    .renderer=${(root, column, data) => {
+                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Sender"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Receiver"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Total Amount"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="Time"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
+    renderDogeTransactions(transactions, coin) {
         return html`
             <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
@@ -1963,13 +2274,55 @@ class MultiWallet extends LitElement {
         `
     }
 
-    showTransactionDetails(myTransaction, allTransactions) {
+    showQortTransactionDetails(myTransaction, allTransactions) {
         allTransactions.forEach((transaction) => {
             if (myTransaction.signature === transaction.signature) {
                 let txnFlow = myTransaction.creatorAddress === this.wallets.get('qort').wallet.address ? 'OUT' : 'IN'
                 this.selectedTransaction = { ...transaction, txnFlow }
                 if (this.selectedTransaction.signature.length != 0) {
                     this.shadowRoot.querySelector('#showTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+    showBtcTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let btcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let btcSender = myTransaction.inputs[0].address
+                let btcReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, btcTxnFlow, btcSender, btcReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showBtcTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+    showLtcTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let ltcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let ltcSender = myTransaction.inputs[0].address
+                let ltcReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, ltcTxnFlow, ltcSender, ltcReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+    showDogeTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let dogeTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let dogeSender = myTransaction.inputs[0].address
+                let dogeReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, dogeTxnFlow, dogeSender, dogeReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').show()
                 }
             }
         })
