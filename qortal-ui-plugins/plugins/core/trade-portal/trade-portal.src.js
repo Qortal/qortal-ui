@@ -829,8 +829,8 @@ class TradePortal extends LitElement {
 			<div style="min-height: 40px; display: flex; padding-bottom: 0px; margin: 2px 2px 0px 2px ;">
 				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal Trade Portal - &nbsp;</h2>
 				<mwc-select outlined id="coinSelectionMenu" label="Select Trading Pair">
-					<mwc-list-item value="LITECOIN" selected></span><span class="coinName ltc">QORT / LTC</span></mwc-list-item>
-					<mwc-list-item value="DOGECOIN"><span class="coinName doge">QORT / DOGE</span></mwc-list-item>
+					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">QORT / LTC</span></mwc-list-item>
+					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
