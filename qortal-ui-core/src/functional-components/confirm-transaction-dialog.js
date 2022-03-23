@@ -16,21 +16,32 @@ class ConfirmTransactionDialog extends connect(store)(LitElement) {
 
     static get styles() {
         return css`
+            * {
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
+            }
+
             .decline {
                 --mdc-theme-primary: var(--mdc-theme-error)
             }
+
             #txInfo {
-                text-align:left;
-                max-width:520px;
+                text-align: left;
+                max-width: 520px;
+                color: var(--black);
             }
 
             .buttons {
                 text-align:right;
             }
+
             table td, th{
                 padding:4px;
                 text-align:left;
                 font-size:14px;
+                color: var(--black);
             }
         `
     }
@@ -46,12 +57,8 @@ class ConfirmTransactionDialog extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <style>
-                
-            </style>
-
-            <paper-dialog id="confirmDialog" modal>
-                <h2>Transaction request</h2>
+            <paper-dialog style="background: var(--white);" id="confirmDialog" modal>
+                <h2 style="color: var(--black);">Transaction request</h2>
                 <div id="txInfo">
                     ${this.txInfo}
                 </div>
@@ -85,7 +92,6 @@ class ConfirmTransactionDialog extends connect(store)(LitElement) {
     }
 
     decline(e) {
-
         this._reject(new Error('User declined transaction'))
     }
 }
