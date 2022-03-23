@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
-import { doLogout } from '../redux/app/actions/login'
 
 import '@material/mwc-icon'
 import '@polymer/paper-ripple'
@@ -86,9 +85,6 @@ class SidenavMenu extends connect(store)(LitElement) {
                         <vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
                     </side-menu-item>
                     ${this.renderNodeManagement()}
-                    <side-menu-item label="LOGOUT" href="javascript:void(0)" @click=${ e => this.logout(e)}>
-                        <vaadin-icon icon="vaadin:sign-out" slot="icon"></vaadin-icon>
-                    </side-menu-item>
                 </side-menu>
             </div>
         `
@@ -115,12 +111,6 @@ class SidenavMenu extends connect(store)(LitElement) {
     stateChanged(state) {
         this.config = state.config
         this.urls = state.app.registeredUrls
-    }
-
-    async logout(e) {
-        if(window.confirm('Are you sure you want to logout?')) {
-            store.dispatch(doLogout());
-        }
     }
 }
 
