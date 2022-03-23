@@ -401,7 +401,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                             </div>
                             <div style="display:flex;">
                                 <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                                <vaadin-password-field style="width:100%;" label="Password" id="password"></vaadin-password-field>
+                                <vaadin-password-field style="width:100%;" label="Password" id="password" autofocus></vaadin-password-field>
                             </div>
                             <div style="display:flex;">
                                 <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
