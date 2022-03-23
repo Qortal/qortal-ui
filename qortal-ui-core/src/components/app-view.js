@@ -17,6 +17,7 @@ import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
 
 import './settings-view/user-settings.js'
+import './logout-view/logout-view.js'
 
 class AppView extends connect(store)(LitElement) {
     static get properties() {
@@ -105,16 +106,22 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <qort-theme-toggle></qort-theme-toggle>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div style="display:inline">
+                                <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="Settings"></paper-icon-button>
+                            </div>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display:inline">
-                                <paper-icon-button icon="icons:settings" @click=${ () => this.openSettings()} title="Settings" ></paper-icon-button>
+                                <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="Logout"></paper-icon-button>
                             </div>
+                            <div>&nbsp;&nbsp;</div>
                         </app-toolbar>
                     </app-header>
                     <show-plugin></show-plugin>
                 </app-header-layout>
             </app-drawer-layout>
             <user-settings></user-settings>
+            <logout-view></logout-view>
         `
     }
 
@@ -132,6 +139,11 @@ class AppView extends connect(store)(LitElement) {
     openSettings() {
         const settingsDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-settings')
         settingsDialog.openSettings()
+    }
+
+    openLogout() {
+        const logoutDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('logout-view')
+        logoutDialog.openLogout()
     }
 }
 
