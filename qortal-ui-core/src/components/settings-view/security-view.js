@@ -67,7 +67,7 @@ class SecurityView extends connect(store)(LitElement) {
                         </p>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width: 100%; color: var(--black);" label="Password" id="downloadBackupPassword"></vaadin-password-field>
+                            <vaadin-password-field style="width: 100%; color: var(--black);" label="Password" id="downloadBackupPassword" autofocus></vaadin-password-field>
                         </div>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <div @click=${() => this.downloadBackup()} class="q-button"> Download BackUp File </div>
