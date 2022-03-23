@@ -35,7 +35,7 @@
     "electron-log": "4.4.6"
   },
   "devDependencies": {
-    "electron": "11.5.0",
+    "electron": "17.1.2",
     "electron-builder": "22.14.13",
     "electron-notarize": "1.1.1",
     "electron-packager": "15.4.0",
