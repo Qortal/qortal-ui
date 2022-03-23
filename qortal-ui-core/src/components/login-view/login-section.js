@@ -334,7 +334,7 @@ class LoginSection extends connect(store)(LitElement) {
                     <iron-collapse style="" ?opened=${this.showPassword(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))}></vaadin-password-field>
+                            <vaadin-password-field style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))} autofocus></vaadin-password-field>
                         </div>
                     </iron-collapse>
 
