@@ -31,15 +31,15 @@
     "publish": "electron-builder -p always"
   },
   "dependencies": {
-    "electron-updater": "4.3.9",
+    "electron-updater": "4.6.5",
     "electron-log": "4.4.6"
   },
   "devDependencies": {
     "electron": "17.1.2",
     "electron-builder": "22.14.13",
-    "electron-notarize": "1.1.1",
+    "electron-notarize": "1.2.1",
     "electron-packager": "15.4.0",
-    "shelljs": "0.8.4"
+    "shelljs": "0.8.5"
   },
   "engines": {
     "node": ">=14.17.0"
