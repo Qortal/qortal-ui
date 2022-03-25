@@ -552,7 +552,7 @@ class MultiWallet extends LitElement {
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
-	this.balance = 0
+	    this.balance = 0
         this.amount = 0
         this.btcAmount = 0
         this.ltcAmount = 0
@@ -1747,7 +1747,7 @@ class MultiWallet extends LitElement {
                         parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
                     } else {
                         if (this._selectedWallet == coin) {
-                            this.wallets.get(coin).balance = res
+                            this.wallets.get(coin).balance = Number(res).toFixed(8)
                             this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
                             this.balance = this.wallets.get(this._selectedWallet).balance
                         }
