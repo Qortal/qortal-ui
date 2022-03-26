@@ -11,12 +11,12 @@ export default class CreateGroupTransaction extends TransactionBase {
     render(html) {
         return html`
             You are requesting to creating the group below:
-            <div style="background:#eee; padding:8px; margin:8px 0; border-radius:2px;">
-                <div>Group Name: <span>${this._rGroupName}</span></div>
+            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <div>Group Name: <span style="color: #000;">${this._rGroupName}</span></div>
                 <br>
-                <div>Group Description: <span>${this._rGroupDesc}</span></div>
+                <div>Group Description: <span style="color: #000;">${this._rGroupDesc}</span></div>
                 <br>
-                <div>Group Type: <span>${this.myGroupType === 1 ? "Public" : "Private"}</span></div>
+                <div>Group Type: <span style="color: #000;">${this.myGroupType === 1 ? "Public" : "Private"}</span></div>
             </div>
             On pressing confirm, the group request will be sent!
         `

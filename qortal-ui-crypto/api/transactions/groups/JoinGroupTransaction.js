@@ -19,8 +19,8 @@ export default class JoinGroupTransaction extends TransactionBase {
     render(html) {
         return html`
             You are requesting to join the group below:
-            <div style="background:#eee; padding:8px; margin:8px 0; border-radius:2px;">
-                <span>${this._rGroupName}</span>
+            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <span style="color: #000;">${this._rGroupName}</span>
             </div>
             On pressing confirm, the group request will be sent!
         `
