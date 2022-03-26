@@ -1,6 +1,5 @@
-import publicKeyToAddress from '../../wallet/publicKeyToAddress.js'
-
 "use strict";
+import publicKeyToAddress from '../../wallet/publicKeyToAddress.js'
 import TransactionBase from "../TransactionBase.js"
 import nacl from '../../deps/nacl-fast.js'
 import ed2curve from '../../deps/ed2curve.js'
@@ -16,8 +15,8 @@ export default class RewardShareTransaction extends TransactionBase {
         return html`
             Would you like to create a reward share transaction, sharing <strong>${this._percentageShare / 1e8}%</strong> of your minting rewards with <strong>${this.constructor.Base58.encode(this._recipient)}</strong>? 
             If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.
-            <div style="background:#eee; padding:8px; margin:8px 0; border-radius:2px;">
-                <span>${this._base58RewardShareSeed}</span>
+            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <span style="color: #000;">${this._base58RewardShareSeed}</span>
             </div>
             On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.
         `

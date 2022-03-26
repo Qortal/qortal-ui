@@ -11,8 +11,8 @@ export default class RegisterNameTransaction extends TransactionBase {
     render(html) {
         return html`
             You are registering the name below:
-            <div style="background:#eee; padding:8px; margin:8px 0; border-radius:2px;">
-                <span>${this.nameText}</span>
+            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <span style="color: #000;">${this.nameText}</span>
             </div>
             On pressing confirm, the name will be registered!
         `
