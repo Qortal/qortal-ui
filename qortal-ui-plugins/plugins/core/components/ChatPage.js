@@ -1,12 +1,18 @@
 import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
+import './BlockAddress.js'
 import './TimeAgo.js'
 import { EmojiPicker } from 'emoji-picker-js';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+
+import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -120,15 +126,11 @@ class ChatPage extends LitElement {
     }
 
     render() {
-
-        // TODO: Build a nice preloader for loading messages...
         return html`
             ${this.isLoadingMessages ? html`<h1>Loading Messages...</h1>` : this.renderChatScroller(this._initialMessages)}
-
             <div class="chat-text-area">
                 <div class="typing-area">
                     <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-
                     <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
                     <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                         ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
@@ -326,6 +328,7 @@ class ChatPage extends LitElement {
     */
     chatMessageTemplate(messageObj) {
         let avatarImg = '';
+        let blockButton = '';
         if (messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -333,11 +336,18 @@ class ChatPage extends LitElement {
             avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
         }
 
+        if (messageObj.sender === this.selectedAddress.address) {
+            blockButton = ``
+        } else {
+            blockButton = `<block-address toblockaddress="${messageObj.sender}"></block-address>`
+        }
+
         return `
             <li class="clearfix">
                 <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "align-right" : ""}">
                     <span class="message-data-name">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
+                    <span class="message-data-block">${blockButton}</span>
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
@@ -990,7 +1000,6 @@ class ChatPage extends LitElement {
 
         this.chatEditor = new ChatEditor(editorConfig);
     }
-
 }
 
 window.customElements.define('chat-page', ChatPage)

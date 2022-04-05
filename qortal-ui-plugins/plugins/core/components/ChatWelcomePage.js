@@ -6,6 +6,7 @@ import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@vaadin/grid'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -209,7 +210,7 @@ class ChatWelcomePage extends LitElement {
                         <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>New Private Message</div>
                     </div>
                 </div>
-                
+
                 <!-- Start Chatting Dialog -->
                 <mwc-dialog id="startSecondChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
@@ -292,7 +293,6 @@ class ChatWelcomePage extends LitElement {
     }
 
     _sendMessage() {
-
         this.isLoading = true
 
         const recipient = this.shadowRoot.getElementById('sendTo').value
@@ -464,6 +464,17 @@ class ChatWelcomePage extends LitElement {
 
     _textArea(e) {
         if (e.keyCode === 13 && !e.shiftKey) this._sendMessage()
+    }
+
+    isEmptyArray(arr) {
+        if (!arr) { return true }
+        return arr.length === 0
+    }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
     }
 }
 

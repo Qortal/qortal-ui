@@ -99,7 +99,7 @@ class ChatMessage extends LitElement {
                     <span class="message-data-name">${this.message.sender}</span> &nbsp;
                     <span class="message-data-time">10:10 AM, Today</span>
                 </div>
-                <div class="message ${this.message.sender === this.selectedAddress.address ? "my-message float-right" : "other-message"}">
+                <div class="message ${this.message.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">
                     ${this.message.decodedMessage}
                 </div>
             </li>
