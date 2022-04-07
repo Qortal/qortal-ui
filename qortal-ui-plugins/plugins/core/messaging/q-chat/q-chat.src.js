@@ -5,10 +5,13 @@ import { Epml } from '../../../../epml.js'
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
+import snackbar from '../../components/snackbar.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
+import '@material/mwc-icon'
+import '@material/mwc-snackbar'
+import '@vaadin/grid'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -24,7 +27,9 @@ class Chat extends LitElement {
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
             balance: { type: Number },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            blockedUsers: { type: Array },
+            blockedUserList: { type: Array }
         }
     }
 
@@ -32,6 +37,7 @@ class Chat extends LitElement {
         return css`
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --mdc-theme-surface: var(--white);
                 --mdc-dialog-content-ink-color: var(--black);
@@ -41,9 +47,12 @@ class Chat extends LitElement {
                 --lumo-primary-color: hsl(199, 100%, 48%);
                 --lumo-base-color: var(--white);
                 --lumo-body-text-color: var(--black);
+                --_lumo-grid-border-color: var(--border);
+                --_lumo-grid-secondary-border-color: var(--border2);
+                --mdc-dialog-min-width: 750px;
             }
 
-            paper-spinner-lite{
+            paper-spinner-lite {
                 height: 24px;
                 width: 24px;
                 --paper-spinner-color: var(--mdc-theme-primary);
@@ -75,18 +84,39 @@ class Chat extends LitElement {
                 border-right: 3px #ddd solid;
             }
 
+            .people-list .blockedusers {
+                position: absolute;
+                bottom: 0;
+                width: 20vw;
+                height: 60px;
+                background: var(--white);
+                border-top: 1px solid var(--border);
+                border-right: 3px #ddd solid;
+            }
+
             .people-list .search {
-                padding: 20px;
+                padding-top: 20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .center {
+                margin: 0;
+                position: absolute;
+                padding-top: 12px;
+                left: 50%;
+                -ms-transform: translateX(-50%);
+                transform: translateX(-50%);
             }
 
             .people-list .create-chat {
-                border-radius: 3px;
+                border-radius: 5px;
                 border: none;
                 display: inline-block;
                 padding: 14px;
-                color: var(--white);
+                color: #fff;
                 background: var(--tradehead);
-                width: 90%;
+                width: 100%;
                 font-size: 15px;
                 text-align: center;
                 cursor: pointer;
@@ -287,31 +317,38 @@ class Chat extends LitElement {
         this.showNewMesssageBar = this.showNewMesssageBar.bind(this)
         this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.blockedUsers = []
+        this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
     }
 
     render() {
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
-                <div class="search">
-                    <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>New Private Message</div>
+                    <div class="search">
+                        <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>New Private Message</div>
+                    </div>
+                    <ul class="list">
+                        ${this.isEmptyArray(this.chatHeads) ? "Loading..." : this.renderChatHead(this.chatHeads)}
+                    </ul>
+                    <div class="blockedusers">
+                        <div class="center">
+                            <mwc-button raised label="Blocked Users" icon="person_off" @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}></mwc-button>
+                        </div>
+                    </div>
                 </div>
-                <ul class="list">
-                    ${this.isEmptyArray(this.chatHeads) ? "Loading..." : this.renderChatHead(this.chatHeads)}
-                </ul>
-            </div>
 
-            <div class="chat">
-                <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
-                    <span style="flex: 1;">New Message</span>
-                    <span>(Click to scroll down) <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
+                <div class="chat">
+                    <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
+                        <span style="flex: 1;">New Message</span>
+                        <span>(Click to scroll down) <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
+                    </div>
+                    <div class="chat-history">
+                        ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
+                    </div>
                 </div>
-                <div class="chat-history">
-                    ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
-                </div>
-            </div>
 
-            <!-- Start Chatting Dialog -->
+                <!-- Start Chatting Dialog -->
                 <mwc-dialog id="startChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
                         <h1>New Private Message</h1>
@@ -319,39 +356,82 @@ class Chat extends LitElement {
                     </div>
 
                     <p>Type the name or address of who you want to chat with to send a private message!</p>
-                    
+
                     <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="Name / Address" rows="1"></textarea>
                     <p style="margin-bottom:0;">
                         <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="Message..." rows="1"></textarea>
                     </p>
-                    
+
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
                         @click=${this._sendMessage}
-                        >
-                        ${this.isLoading === false ? "Send" : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                    >
+                    ${this.isLoading === false ? "Send" : html`<paper-spinner-lite active></paper-spinner-lite>`}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
-                    </mwc-button>
+                        class="red"
+                    >
+                    Close
+                   </mwc-button>
                 </mwc-dialog>
-        </div>
+
+                <!-- Blocked User Dialog -->
+                <mwc-dialog id="blockedUserDialog">
+                    <div style="text-align:center">
+                        <h1>Blocked Users List</h1>
+                        <hr>
+                        <br>
+                    </div>
+                    <vaadin-grid theme="compact" id="blockedGrid" ?hidden="${this.isEmptyArray(this.blockedUserList)}" aria-label="Blocked List" .items="${this.blockedUserList}" all-rows-visible>
+                        <vaadin-grid-column auto-width header="Name" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="Owner" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                            render(html`${this.renderUnblockButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                    </vaadin-grid>
+                    ${this.isEmptyArray(this.blockedUserList) ? html`
+                        <span style="color: var(--black); text-align: center;">Account not have any blocked users.</span>
+                    `: ''}
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    Close
+                   </mwc-button>
+                </mwc-dialog>
+            </div>
   
         `
     }
 
     firstUpdated() {
 
+        this.getChatBlockedList()
+
+	setInterval(() => {
+	    this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
+	}, 1000)
+
         this.changeTheme()
 
 	setInterval(() => {
-	    this.changeTheme();
+	    this.changeTheme()
 	}, 100)
+
+        const getBlockedUsers = async () => {
+            let blockedUsers = await parentEpml.request('apiCall', {
+                url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+            })
+
+            this.blockedUsers = blockedUsers
+            setTimeout(getBlockedUsers, 60000)
+        }
 
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();
@@ -425,6 +505,7 @@ class Chat extends LitElement {
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
+                    setTimeout(getBlockedUsers, 1)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -447,6 +528,79 @@ class Chat extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    getChatBlockedList() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+
+        localStorage.removeItem("ChatBlockedAddresses")
+
+        var obj = [];
+
+        fetch(blockedAddressesUrl).then(response => {
+            return response.json()
+        }).then(data => {
+            return data.map(item => {
+                const noName = {
+                    name: 'No registered name',
+                    owner: item
+                }
+                fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {
+                    return res.json()
+                }).then(jsonRes => {
+                    if(jsonRes.length) {
+                        jsonRes.map (item => {
+                            obj.push(item)
+                        })
+                    } else {
+                        obj.push(noName)
+                    }
+                    localStorage.setItem("ChatBlockedAddresses", JSON.stringify(obj))
+                })
+            })
+        })
+    }
+
+    async unblockUser(websiteObj) {
+        let owner = websiteObj.owner
+
+        let items = [
+            owner
+        ]
+
+        let ownersJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${ownersJsonString}`
+        })
+
+        if (ret === true) {
+            this.blockedUsers = this.blockedUsers.filter(item => item != owner)
+            this.getChatBlockedList()
+            this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
+            snackbar.add({
+                labelText: `Successfully unblocked this user.`,
+                dismiss: true
+            })
+        }
+        else {
+            snackbar.add({
+                labelText: `Error occurred when trying to unblock this user. Please try again.`,
+                dismiss: true
+            })
+        }
+        return ret
+    }
+
+    renderUnblockButton(websiteObj) {
+        return html`<mwc-button dense unelevated label="unblock" icon="person_remove" @click="${() => this.unblockUser(websiteObj)}"></mwc-button>`
     }
 
     changeTheme() {
@@ -708,6 +862,12 @@ class Chat extends LitElement {
     isEmptyArray(arr) {
         if (!arr) { return true }
         return arr.length === 0
+    }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
     }
 
     scrollToBottom() {
