@@ -80,8 +80,9 @@ class BlockAddress extends LitElement {
         if (ret === true) {
             this.chatBlockedAdresses = this.chatBlockedAdresses.filter(item => item != address)
             this.chatBlockedAdresses.push(address)
+            this.getChatBlockedList()
             snackbar.add({
-                labelText: `Success blocked this user.`,
+                labelText: `Successfully blocked this user.`,
                 dismiss: true
             })
         } else {
@@ -91,6 +92,40 @@ class BlockAddress extends LitElement {
             })
         }
         return ret
+    }
+
+    getChatBlockedList() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+        const emptyName = 'No registered name'
+
+        localStorage.removeItem("ChatBlockedAddresses")
+
+        var obj = [];
+
+        fetch(blockedAddressesUrl).then(response => {
+            return response.json()
+        }).then(data => {
+            return data.map(item => {
+                const noName = {
+                    name: emptyName,
+                    owner: item
+                }
+                fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {
+                    return res.json()
+                }).then(jsonRes => {
+                    if(jsonRes.length) {
+                        jsonRes.map (item => {
+                            obj.push(item)
+                        })
+                    } else {
+                        obj.push(noName)
+                    }
+                    localStorage.setItem("ChatBlockedAddresses", JSON.stringify(obj))
+                })
+            })
+        })
     }
 
     getApiKey() {
