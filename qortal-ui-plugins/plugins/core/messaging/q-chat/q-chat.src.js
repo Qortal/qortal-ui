@@ -395,7 +395,7 @@ class Chat extends LitElement {
                         </vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.blockedUserList) ? html`
-                        <span style="color: var(--black); text-align: center;">Account not have any blocked users.</span>
+                        <span style="color: var(--black); text-align: center;">This account has not blocked any users.</span>
                     `: ''}
                     <mwc-button
                         slot="primaryAction"
