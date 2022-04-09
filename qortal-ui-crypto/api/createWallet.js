@@ -1,4 +1,3 @@
-
 import { kdf } from './kdf.js'
 import PhraseWallet from './PhraseWallet.js'
 import Base58 from './deps/Base58.js'
