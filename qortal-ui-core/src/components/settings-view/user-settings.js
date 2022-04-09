@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
@@ -16,7 +17,8 @@ class UserSettings extends connect(store)(LitElement) {
         return {
             loggedIn: { type: Boolean },
             pages: { type: Array },
-            selectedView: { type: Object }
+            selectedView: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -206,6 +208,7 @@ class UserSettings extends connect(store)(LitElement) {
     constructor() {
         super()
         this.selectedView = { id: 'info', name: 'General Account Info' }
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -218,15 +221,15 @@ class UserSettings extends connect(store)(LitElement) {
                 <div class="container">
                     <div class="wrapper">
                         <div class="leftBar" style="display: table; width: 100%;">
-                            <div class="slug">Qortal UI Settings</div>
+                            <div class="slug">Qortal UI ${translate("settings.settings")}</div>
                             <ul>
-                                <li @click=${ () => this.setSettingsView('info')} ><a class=${this.selectedView.id === 'info' ? 'active' : ''} href="javascript:void(0)">Account</a></li>
-                                <li @click=${ () => this.setSettingsView('security')} ><a class=${this.selectedView.id === 'security' ? 'active' : ''} href="javascript:void(0)">Security</a></li>
-                                <li @click=${ () => this.setSettingsView('notification')} ><a class=${this.selectedView.id === 'notification' ? 'active' : ''} href="javascript:void(0)">Notifications</a></li>
+                                <li @click=${ () => this.setSettingsView('info')} ><a class=${this.selectedView.id === 'info' ? 'active' : ''} href="javascript:void(0)">${translate("settings.account")}</a></li>
+                                <li @click=${ () => this.setSettingsView('security')} ><a class=${this.selectedView.id === 'security' ? 'active' : ''} href="javascript:void(0)">${translate("settings.security")}</a></li>
+                                <li @click=${ () => this.setSettingsView('notification')} ><a class=${this.selectedView.id === 'notification' ? 'active' : ''} href="javascript:void(0)">${translate("settings.notifications")}</a></li>
                             </ul>
                         </div>
                         <div class="mainPage">
-                            <h1>${ this.selectedView.name}</h1>
+                            <h1>${this.renderHeaderViews()}</h1>
                             <hr>
                             ${html`${this.renderSettingViews(this.selectedView)}`}
                         </div>
@@ -247,6 +250,16 @@ class UserSettings extends connect(store)(LitElement) {
             return html`<security-view></security-view>`;
         } else if (selectedView.id === 'notification') {
             return html`<notifications-view></notifications-view>`;
+        }
+    }
+
+    renderHeaderViews() {
+        if (this.selectedView.id === 'info') {
+            return html`${translate("settings.generalinfo")}`;
+        } else if (this.selectedView.id === 'security') {
+            return html`${translate("settings.accountsecurity")}`;
+        } else if (this.selectedView.id === 'notification') {
+            return html`UI ${translate("settings.notifications")}`;
         }
     }
 

@@ -16,7 +16,8 @@ let mykeyDialog
 class MykeyPage extends connect(store)(LitElement) {
     static get properties() {
         return {
-            nodeConfig: { type: Object }
+            nodeConfig: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -31,6 +32,7 @@ class MykeyPage extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nodeConfig = {}
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
     }
 
     render() {

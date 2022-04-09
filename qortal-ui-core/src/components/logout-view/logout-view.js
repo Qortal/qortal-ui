@@ -1,15 +1,16 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
+import { doLogout } from '../../redux/app/app-actions.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
 
-import { doLogout } from '../../redux/app/app-actions.js'
-
 class LogoutView extends connect(store)(LitElement) {
     static get properties() {
         return {
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -34,6 +35,7 @@ class LogoutView extends connect(store)(LitElement) {
 
     constructor() {
         super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -44,11 +46,11 @@ class LogoutView extends connect(store)(LitElement) {
                     <hr>
                 </div>
                 <div style="text-align: center;">
-                    <h2 style="color: var(--black);">Are you sure you want to logout?</h2>
+                    <h2 style="color: var(--black);">${translate("logout.confirmlogout")}</h2>
                 </div>
                 <div class="buttons">
-                    <mwc-button class='decline' @click=${e => this.decline(e)} dialog-dismiss>NO</mwc-button>
-                    <mwc-button class='confirm' @click=${e => this.confirm(e)} dialog-confirm autofocus>YES</mwc-button>
+                    <mwc-button class='decline' @click=${e => this.decline(e)} dialog-dismiss>${translate("general.no")}</mwc-button>
+                    <mwc-button class='confirm' @click=${e => this.confirm(e)} dialog-confirm autofocus>${translate("general.yes")}</mwc-button>
                 </div>
             </paper-dialog>
         `

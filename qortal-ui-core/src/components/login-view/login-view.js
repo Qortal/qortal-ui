@@ -27,20 +27,18 @@ class LoginView extends connect(store)(LitElement) {
             rippleIsOpen: { type: Boolean },
             config: { type: Object },
             rippleLoadingMessage: { type: String },
-            selectedPageElement: {}
+            selectedPageElement: {},
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return [
-            css`
-                
-            `
+            css``
         ]
     }
 
     getPreSelectedPage() {
-
         return 'welcome'
     }
 
@@ -55,6 +53,7 @@ class LoginView extends connect(store)(LitElement) {
             login: 2
         }
         this.rippleLoadingMessage = 'Getting information'
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     firstUpdated() {
@@ -107,7 +106,7 @@ class LoginView extends connect(store)(LitElement) {
                 }
             
                 .login-page {
-                    background: url("/img/qortal_background_light_.jpg");
+                    background: var(--background);
                     background-repeat: no-repeat;
                     background-attachment: fixed;
                     background-position: center;

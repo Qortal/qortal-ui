@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
@@ -10,8 +11,10 @@ import './app-info.js'
 import './sidenav-menu.js'
 import './show-plugin.js'
 import './qort-theme-toggle.js'
+import './language-selector.js'
 
 import '@material/mwc-drawer'
+import '@material/mwc-icon'
 
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
@@ -22,13 +25,20 @@ import './logout-view/logout-view.js'
 class AppView extends connect(store)(LitElement) {
     static get properties() {
         return {
-            config: { type: Object }
+            config: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return [
             css`
+                * {
+		    --mdc-theme-primary: rgb(3, 169, 244);
+		    --mdc-theme-secondary: var(--mdc-theme-primary);
+		    --mdc-theme-error: rgb(255, 89, 89);
+                }
+
                 :host {
                     --app-drawer-width: 260px;
                 }
@@ -82,6 +92,11 @@ class AppView extends connect(store)(LitElement) {
         ]
     }
 
+    constructor() {
+        super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+    }
+
     render() {
         return html`
             <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-desktop')}' fullbleed >
@@ -105,13 +120,21 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+                            <div style="display: inline;">
+                                <span>
+                                    <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
+                                </span>
+                            </div>
+                            <div>&nbsp;&nbsp;</div>
+                            <language-selector></language-selector>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <qort-theme-toggle></qort-theme-toggle>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
-                            <div style="display:inline">
+                            <div style="display: inline;">
                                 <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="Settings"></paper-icon-button>
                             </div>
                             <div>&nbsp;&nbsp;</div>
-                            <div style="display:inline">
+                            <div style="display: inline;">
                                 <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="Logout"></paper-icon-button>
                             </div>
                             <div>&nbsp;&nbsp;</div>
@@ -125,11 +148,8 @@ class AppView extends connect(store)(LitElement) {
         `
     }
 
-    constructor() {
-        super()
-    }
-
     firstUpdated() {
+        // ...
     }
 
     stateChanged(state) {

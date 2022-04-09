@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
@@ -10,6 +11,7 @@ import FileSaver from 'file-saver'
 class SecurityView extends connect(store)(LitElement) {
     static get properties() {
         return {
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -58,19 +60,24 @@ class SecurityView extends connect(store)(LitElement) {
         `
     }
 
+    constructor() {
+        super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+    }
+
     render() {
         return html`
                 <div style="position: relative;" >
                     <div class="center-box">
                         <p>
-                            Please choose a password to encrypt your backup with (this can be the same as the one you logged in with, or different)
+                            ${translate("settings.choose")}
                         </p>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width: 100%; color: var(--black);" label="Password" id="downloadBackupPassword" autofocus></vaadin-password-field>
+                            <vaadin-password-field style="width: 100%; color: var(--black);" label="${translate("settings.password")}" id="downloadBackupPassword" autofocus></vaadin-password-field>
                         </div>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
-                            <div @click=${() => this.downloadBackup()} class="q-button"> Download BackUp File </div>
+                            <div @click=${() => this.downloadBackup()} class="q-button"> ${translate("settings.download")} </div>
                         </div>
                     </div>
                 </div>

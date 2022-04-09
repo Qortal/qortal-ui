@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-
 import { doSetQChatNotificationConfig } from '../../redux/user/user-actions.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-checkbox'
 
@@ -12,7 +12,8 @@ class NotificationsView extends connect(store)(LitElement) {
         return {
             notificationConfig: { type: Object },
             q_chatConfig: { type: Object },
-            blockConfig: { type: Object }
+            blockConfig: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -21,6 +22,7 @@ class NotificationsView extends connect(store)(LitElement) {
         this.notificationConfig = {}
         this.q_chatConfig = {}
         this.blockConfig = {}
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     static get styles() {
@@ -29,6 +31,7 @@ class NotificationsView extends connect(store)(LitElement) {
                 position: relative;
                 text-align: center;
             }
+
             .notification-box {
                 display: block;
                 position: relative;
@@ -37,6 +40,7 @@ class NotificationsView extends connect(store)(LitElement) {
                 transform: translate(-50%, 0%);
                 text-align: center;
             }
+
             @media(min-width: 1150px) {
                 .notification-box {
                     display: grid;
@@ -44,6 +48,7 @@ class NotificationsView extends connect(store)(LitElement) {
                     grid-gap: 30px;
                 }
             }
+
             .content-box {
                 border: 1px solid #a1a1a1;
                 padding: 10px 25px;
@@ -53,15 +58,19 @@ class NotificationsView extends connect(store)(LitElement) {
                 min-height: 150px;
                 margin: 20px 0;
             }
+
             h4 {
                 margin-bottom: 0;
             }
+
             mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
                 background-color:var(--mdc-theme-primary)
             }
+
             label:hover {
                 cursor: pointer;
             }
+
             .title {
                 font-weight: 600;
                 font-size: 15px;
@@ -82,14 +91,14 @@ class NotificationsView extends connect(store)(LitElement) {
                 <div class="sub-main">
                     <div class="notification-box">
                         <div class="content-box">
-                            <h4> Q-Chat Notifications </h4>
+                            <h4> Q-Chat ${translate("settings.notifications")} </h4>
 
                             <div style="line-height: 3rem;">
                                 <mwc-checkbox id="qChatPlaySound" @click=${e => this.setQChatNotificationConfig({ type: 'PLAY_SOUND', value: e.target.checked })} ?checked=${this.q_chatConfig.playSound}></mwc-checkbox>
                                 <label
                                 for="qChatPlaySound"
                                 @click=${() => this.shadowRoot.getElementById('qChatPlaySound').click()}
-                                >Play Sound</label>
+                                >${translate("settings.playsound")}</label>
                             </div>
 
                             <div style="line-height: 3rem;">
@@ -97,20 +106,20 @@ class NotificationsView extends connect(store)(LitElement) {
                                 <label
                                 for="qChatShowNotification"
                                 @click=${() => this.shadowRoot.getElementById('qChatShowNotification').click()}
-                                >Show Notifications</label>
+                                >${translate("settings.shownotifications")}</label>
                             </div>
                         </div>
                         <div class="content-box">
-                            <h4> Block Notifications ("Coming Soon...") </h4>
+                            <h4> ${translate("settings.block")} </h4>
 
                             <div style="line-height: 3rem;">
                                 <mwc-checkbox indeterminate disabled id="blockPlaySound"></mwc-checkbox>
-                                <label for="blockPlaySound">Play Sound</label>
+                                <label for="blockPlaySound">${translate("settings.playsound")}</label>
                             </div>
 
                             <div style="line-height: 3rem;">
                                 <mwc-checkbox indeterminate disabled id="blockShowNotification"></mwc-checkbox>
-                                <label for="blockShowNotification">Show Notifications</label>
+                                <label for="blockShowNotification">${translate("settings.shownotifications")}</label>
                             </div>
                         </div>
                     </div>

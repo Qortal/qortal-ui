@@ -3,12 +3,12 @@ import { css } from 'lit'
 export const sideMenuItemStyle = css`
   :host {
     --font-family: "Roboto", sans-serif;
-    --item-font-size: 1rem;
-    --sub-item-font-size: 0.85rem;
-    --item-padding: 1rem;
-    --item-content-padding: 1rem;
-    --icon-height: 1.25rem;
-    --icon-width: 1.25rem;
+    --item-font-size: 0.9375rem;
+    --sub-item-font-size: 0.75rem;
+    --item-padding: 0.875rem;
+    --item-content-padding: 0.875rem;
+    --icon-height: 1.125rem;
+    --icon-width: 1.125rem;
     --item-border-radius: 5px;
     --item-selected-color: #dddddd;
     --item-selected-color-text: #333333;

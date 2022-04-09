@@ -3,15 +3,13 @@ import { LitElement, html, css } from 'lit'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 
+import { translate, translateUnsafeHTML } from 'lit-translate'
+
 class FragFileInput extends LitElement {
     static get properties () {
         return {
-            accept: {
-                type: String
-            },
-            readAs: {
-                type: String
-            }
+            accept: { type: String },
+            readAs: { type: String }
         }
     }
 
@@ -22,18 +20,23 @@ class FragFileInput extends LitElement {
                 font-family: "Roboto", sans-serif;
                 padding: 20px;
             }
+
             #trigger:hover {
                 cursor: pointer;
             }
+
             #drop-area.highlight {
                 border-color: var(--mdc-theme-primary, #000);
             }
+
             p {
                 margin-top: 0;
             }
+
             form {
                 margin-bottom: 10px;
             }
+
             #fileInput {
                 display: none;
             }
@@ -47,30 +50,21 @@ class FragFileInput extends LitElement {
 
     render () {
         return html`
-            <style>
-                
-            </style>
-            
             <div id="drop-area">
                 <slot name="info-text"></slot>
-
-                <div style="line-height:40px;">
+                <div style="line-height: 40px; text-align: center;">
                     <slot id="trigger" name="inputTrigger" @click=${() => this.shadowRoot.getElementById('fileInput').click()} style="dispay:inline;">
-                        <mwc-button><mwc-icon>cloud_upload</mwc-icon>&nbsp; Select file</mwc-button>
-                    </slot>
-                    <span style="padding-top:6px;">Drag and drop backup here</span>
+                        <mwc-button><mwc-icon>cloud_upload</mwc-icon><span style="color: var(--black);">&nbsp; ${translate("fragfile.selectfile")}</span></mwc-button>
+                    </slot><br>
+                    <span style="text-align: center; padding-top: 4px; color: var(--black);">${translate("fragfile.dragfile")}</span>
                 </div>
             </div>
-
-            
-
             <input type="file" id="fileInput" accept="${this.accept}" @change="${e => this.readFile(e.target.files[0])}">
         `
     }
 
     readFile (file) {
         const fr = new FileReader()
-
         fr.onload = () => {
             this.dispatchEvent(new CustomEvent('file-read-success', {
                 detail: { result: fr.result },
@@ -78,7 +72,6 @@ class FragFileInput extends LitElement {
                 composed: true
             }))
         }
-
         fr['readAs' + this.readAs](file)
     }
 

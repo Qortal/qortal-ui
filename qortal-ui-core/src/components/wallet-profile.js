@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-toast'
 import '@material/mwc-icon-button'
@@ -10,7 +11,8 @@ class WalletProfile extends connect(store)(LitElement) {
         return {
             wallet: { type: Object },
             nodeConfig: { type: Object },
-            accountInfo: { type: Object }
+            accountInfo: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -28,6 +30,7 @@ class WalletProfile extends connect(store)(LitElement) {
             names: [],
             addressInfo: {}
         }
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -81,8 +84,8 @@ class WalletProfile extends connect(store)(LitElement) {
                     <span id="accountName">
                         ${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : ''}
                     </span>
-                    ${this.accountInfo.addressInfo ? html`<span style="margin-bottom: 8px; display: inline-block; font-size: 14px;">Minter Level - <span style="color: #03a9f4;">${this.accountInfo.addressInfo.level} ${this.accountInfo.addressInfo.flags === 1 ? html`<strong>(F)</strong>` : ''}</span>` : ''}
-                    <p id="blocksMinted">Blocks Minted - ${this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment}</p>
+                    ${this.accountInfo.addressInfo ? html`<span style="margin-bottom: 8px; display: inline-block; font-size: 14px;">${translate("walletprofile.minterlevel")} - <span style="color: #03a9f4;">${this.accountInfo.addressInfo.level} ${this.accountInfo.addressInfo.flags === 1 ? html`<strong>(F)</strong>` : ''}</span>` : ''}
+                    <p id="blocksMinted">${translate("walletprofile.blocksminted")} - ${this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment}</p>
                     <p id="address">${this.wallet.addresses[0].address}</p>
                 </div>
             </div>

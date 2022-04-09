@@ -1,11 +1,13 @@
 import { LitElement, html, css } from 'lit';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store.js';
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 class AccountView extends connect(store)(LitElement) {
     static get properties() {
         return {
-            accountInfo: { type: Object }
+            accountInfo: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -62,7 +64,8 @@ class AccountView extends connect(store)(LitElement) {
 
     constructor() {
         super()
-        this.accountInfo = { names: [], addressInfo: {} };
+        this.accountInfo = { names: [], addressInfo: {} }
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -74,10 +77,10 @@ class AccountView extends connect(store)(LitElement) {
                         ${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : 'No Registered Name'}
                     </span>
                     <div class="content-box">
-                        <span class="title">Address: </span>
+                        <span class="title">${translate("settings.address")}: </span>
                         <span class="value">${store.getState().app.selectedAddress.address}</span>
                         <br/>
-                        <span class="title">Public Key: </span>
+                        <span class="title">${translate("settings.publickey")}: </span>
                         <span class="value">${store.getState().app.selectedAddress.base58PublicKey}</span>
                     </div>
                 </div>

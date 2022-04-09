@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
@@ -43,19 +44,40 @@ class LoginSection extends connect(store)(LitElement) {
             saveInBrowser: { type: Boolean },
             backedUpWalletJSON: { type: Object },
             backedUpSeedLoading: { type: Boolean },
-            nodeConfig: { type: Object }
+            nodeConfig: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return [
             css`
-                * {
+	        * {
+		    --mdc-theme-primary: rgb(3, 169, 244);
+                    --mdc-theme-secondary: var(--mdc-theme-primary);
+                    --paper-input-container-focus-color: var(--mdc-theme-primary);
+                    --mdc-theme-surface: var(--white);
+                    --mdc-dialog-content-ink-color: var(--black);
+                    --mdc-checkbox-unchecked-color: var(--black);
                     --lumo-primary-text-color: rgb(0, 167, 245);
                     --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                     --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                     --lumo-primary-color: hsl(199, 100%, 48%);
-                }  
+                    --lumo-base-color: var(--white);
+                    --lumo-body-text-color: var(--black);
+                    --lumo-secondary-text-color: var(--sectxt);
+                    --lumo-contrast-60pct: var(--vdicon);
+                    --_lumo-grid-border-color: var(--border);
+                    --_lumo-grid-secondary-border-color: var(--border2);
+                }
+
+                mwc-formfield {
+                    color: var(--black);
+                }
+
+                .red {
+                    --mdc-theme-primary: red;
+                }
             `
         ]
     }
@@ -63,33 +85,34 @@ class LoginSection extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nextHidden = true
-        this.backText = 'Back'
+        this.backText = this.renderBackText()
         this.backedUpSeedLoading = false
         this.hasStoredWallets = Object.keys(store.getState().user.storedWallets).length > 0
         this.selectedPage = this.hasStoredWallets ? 'storedWallet' : 'loginOptions'
         this.selectedWallet = {}
         this.loginErrorMessage = ''
         this.saveInBrowser = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 
         this.loginOptions = [
             {
                 page: 'phrase',
-                linkText: 'Seedphrase',
+                linkText: this.renderSeedText(),
                 icon: 'short_text'
             },
             {
                 page: 'storedWallet',
-                linkText: 'Saved account',
+                linkText: this.renderSavedText(),
                 icon: 'save'
             },
             {
                 page: 'seed',
-                linkText: 'Qora address seed',
+                linkText: this.renderQoraText(),
                 icon: 'clear_all'
             },
             {
                 page: 'backedUpSeed',
-                linkText: 'Qortal wallet backup',
+                linkText: this.renderBackupText(),
                 icon: 'insert_drive_file'
             }
         ]
@@ -121,7 +144,7 @@ class LoginSection extends connect(store)(LitElement) {
                     border-top: 1px solid #eee;
                     overflow-y: auto;
                     box-shadow: 0 0 15px 0px rgb(0 0 0 / 10%);
-                    background: rgb(253 253 253 / 50%);
+                    background: var(--white);
                     margin: 2vh;
                 }
 
@@ -153,13 +176,15 @@ class LoginSection extends connect(store)(LitElement) {
                 .wallet .walletAddress {
                     height: 40px !important;
                     line-height: 40px !important;
+                    color: var(--black);
                 }
 
                 .wallet .walletName {
+                    color: var(--black);
                 }
 
                 .wallet p span {
-                    color: #888;
+                    color: var(--black);
                     font-size: 12px;
                     width: 50px;
                     display: inline-block;
@@ -184,6 +209,7 @@ class LoginSection extends connect(store)(LitElement) {
                 .loginIcon {
                     padding-right: 12px;
                     margin-top: -2px;
+                    color: var(--black);
                 }
 
                 *[hidden] { 
@@ -247,7 +273,7 @@ class LoginSection extends connect(store)(LitElement) {
                 <div id="pagesContainer">
                     <iron-pages style="padding: 0;" selected="${this.selectedPage}" attr-for-selected="page" id="loginPages">
                         <div page="loginOptions">
-                            <h3>How would you like to login?</h3>
+                            <h3 style="color: var(--black);">${translate("login.howlogin")}</h3>
                             ${this.loginOptions.map(({ page, linkText, icon }) => html`
                                 <div class="login-option" @click=${() => { this.selectedPage = page }}>
                                     <paper-ripple></paper-ripple>
@@ -255,7 +281,7 @@ class LoginSection extends connect(store)(LitElement) {
                                         <mwc-icon class='loginIcon'>${icon}</mwc-icon>
                                     </div>
                                     <div>
-                                        ${linkText}
+                                        <span style="color: var(--black)">${linkText}</span>
                                     </div>
                                 </div>
                             `)}
@@ -263,23 +289,44 @@ class LoginSection extends connect(store)(LitElement) {
 
                         <div page="storedWallet" id="walletsPage">
                             <div style="text-align: center; padding-left:0;">
-                                <h1 style="padding:0;">Your accounts</h1>
-                                <p style="margin:0; padding: 0 0 12px 0;">Click your account to login with it</p>
+                                <h1 style="padding:0; color: var(--black);">${translate("login.youraccounts")}</h1>
+                                <p style="margin:0; padding: 0 0 12px 0; color: var(--black);">${translate("login.click")}</p>
                             </div>
                             <div id="wallets">
                                 ${(Object.entries(this.wallets || {}).length < 1) ? html`
-                                    <p style="padding: 0 0 6px 0;">You need to create or save an account before you can log in!</p>
+                                    <p style="color: var(--black); padding: 0 0 6px 0;">${translate("login.needcreate")}</p>
                                 ` : ''}
                                 ${Object.entries(this.wallets || {}).map(wallet => html`
                                     <div class="wallet">
                                         <div class="selectWallet" @click=${() => this.selectWallet(wallet[1])}>
                                             <paper-ripple></paper-ripple>
                                             <div class='wallet-details'>
-                                                <p class='walletName'><span>Name</span>${wallet[1].name || "No saved name"}</p>
-                                                <p class="walletAddress"><span>Address</span>${wallet[1].address0}</p>
+                                                <p class='walletName'><span style="color: var(--black);">${translate("login.name")}</span>${wallet[1].name || "No saved name"}</p>
+                                                <p class="walletAddress"><span style="color: var(--black);">${translate("login.address")}</span>${wallet[1].address0}</p>
                                             </div>
                                         </div>
-                                        <mwc-icon-button class="removeWallet" @click=${(e) => this.removeWallet(wallet[1].address0)} icon="clear"></mwc-icon-button>
+                                        <mwc-icon-button class="removeWallet" @click="${(e) => this.toDeleteWallet(wallet[1].address0)}" icon="clear"></mwc-icon-button>
+                                        <mwc-dialog id="deleteWalletDialog">
+                                            <div style="text-align: center;">
+                                                <h2>Qortal UI</h2>
+                                                <hr>
+                                            </div>
+                                            <br>
+                                            <p>${translate("login.areyousure")}</p>
+                                            <mwc-button
+                                                slot="primaryAction"
+                                                @click="${(e) => this.removeWallet(this.myToDeleteWallet)}"
+                                            >
+                                            ${translate("general.yes")}
+                                            </mwc-button>
+                                            <mwc-button
+                                                slot="secondaryAction"
+                                                dialogAction="cancel"
+                                                class="red"
+                                            >
+                                            ${translate("general.no")}
+                                            </mwc-button>
+                                        </mwc-dialog>
                                     </div>
                                 `)}
                             </div>
@@ -288,32 +335,32 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="phrase" id="phrasePage">
                             <div style="padding:0;">
                                 <div style="display:flex;">
-                                    <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">short_text</mwc-icon>
-                                    <vaadin-password-field style="width:100%;" label="Seedphrase" id="existingSeedPhraseInput"></vaadin-password-field>
+                                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">short_text</mwc-icon>
+                                    <vaadin-password-field style="width:100%;" label="${translate("login.seed")}" id="existingSeedPhraseInput" autofocus></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
 
                         <div page="seed" id="seedPage">
                             <div>
-                                <div style="display:flex;">
-                                    <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">clear_all</mwc-icon>
-                                    <vaadin-password-field style="width:100%;" label="Qora address seed" id="v1SeedInput"></vaadin-password-field>
+                                <div style="display: flex;">
+                                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">clear_all</mwc-icon>
+                                    <vaadin-password-field style="width: 100%;" label="${translate("login.qora")}" id="v1SeedInput" autofocus></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
 
                         <div page="unlockStored" id="unlockStoredPage">
                             <div style="text-align:center;">
-                                <mwc-icon id='accountIcon' style=" padding-bottom:24px;">account_circle</mwc-icon>
+                                <mwc-icon id='accountIcon' style="padding-bottom: 24px; color: var(--black);">account_circle</mwc-icon>
                                 <br>
-                                <span style="font-size:14px; font-weight:100; font-family: 'Roboto Mono', monospace;">${this.selectedWallet.address0}</span>
+                                <span style="font-size:14px; font-weight: 100; font-family: 'Roboto Mono', monospace; color: var(--black);">${this.selectedWallet.address0}</span>
                             </div>
                         </div>
 
                         <div page="backedUpSeed">
                             ${!this.backedUpSeedLoading ? html`
-                                <h3>Upload your qortal backup</h3>
+                                <h3 style="color: var(--black);">${translate("login.upload")}</h3>
                                 <frag-file-input accept=".zip,.json" @file-read-success="${e => this.loadBackup(e.detail.result)}"></frag-file-input>
                             ` : html`
                                 <paper-spinner-lite active style="display: block; margin: 0 auto;"></paper-spinner-lite>
@@ -321,20 +368,20 @@ class LoginSection extends connect(store)(LitElement) {
                         </div>
 
                         <div page="unlockBackedUpSeed">
-                            <h3>Decrypt backup</h3>
+                            <h3 style="text-align: center; color: var(--black);">${translate("login.decrypt")}</h3>
                         </div>
-
                     </iron-pages>
+
                     <iron-collapse style="" ?opened=${this.showName(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
-                            <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">perm_identity</mwc-icon>
-                            <vaadin-text-field style="width:100%;" label="Name" id="nameInput"></vaadin-text-field>
+                            <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">perm_identity</mwc-icon>
+                            <vaadin-text-field style="width:100%;" label="${translate("login.name")}" id="nameInput"></vaadin-text-field>
                         </div>
                     </iron-collapse>
                     <iron-collapse style="" ?opened=${this.showPassword(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
-                            <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width:100%;" label="Password" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))} autofocus></vaadin-password-field>
+                            <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                            <vaadin-password-field style="width:100%;" label="${translate("login.password")}" id="password" @keyup=${e => this.keyupEnter(e, e => this.emitNext(e))} autofocus></vaadin-password-field>
                         </div>
                     </iron-collapse>
 
@@ -342,9 +389,9 @@ class LoginSection extends connect(store)(LitElement) {
                         ${this.loginErrorMessage}
                     </div>
                         ${this.showPasswordCheckboxPages.includes(this.selectedPage) ? html`
-                            <div style="text-align:right; vertical-align: top; line-height: 40px; margin:0;">
-                                <mwc-formfield alignEnd label="Save in this browser.">
-                                    <label for="storeCheckbox" class="checkboxLabel" @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}></label>
+                            <div style="text-align: right; vertical-align: top; line-height: 40px; margin:0;">
+                                <mwc-formfield alignEnd>
+                                    <label for="storeCheckbox" class="checkboxLabel" @click=${() => this.shadowRoot.getElementById('storeCheckbox').click()}><span style="color: var(--black);">${translate("login.save")}</span></label>
                                     <mwc-checkbox style="display: inline;" id="storeCheckbox" @click=${e => { this.saveInBrowser = !e.target.checked }} ?checked="${this.saveInBrowser}"></mwc-checkbox>
                                 </mwc-formfield>
                             </div>
@@ -370,20 +417,63 @@ class LoginSection extends connect(store)(LitElement) {
         })
     }
 
+    renderBackText() {
+        return html`${translate("general.back")}`
+    }
+
+    renderNextText() {
+        return html`${translate("general.next")}`
+    }
+
+    renderLoginText() {
+        return html`${translate("login.login")}`
+    }
+
+    renderSeedText() {
+        return html`${translate("login.seed")}`
+    }
+
+    renderSavedText() {
+        return html`${translate("login.saved")}`
+    }
+
+    renderQoraText() {
+        return html`${translate("login.qora")}`
+    }
+
+    renderBackupText() {
+        return html`${translate("login.backup")}`
+    }
+
+    renderPrepareText() {
+        return html`${translate("login.prepare")}`
+    }
+
+    renderError1Text() {
+        return html`${translate("login.error1")}`
+    }
+
+    renderError2Text() {
+        return html`${translate("login.error2")}`
+    }
+
     selectWallet(wallet) {
         this.selectedWallet = wallet
         this.selectedPage = 'unlockStored'
     }
 
+    toDeleteWallet(deleteAddress) {
+        this.myToDeleteWallet = deleteAddress
+        this.shadowRoot.querySelector('#deleteWalletDialog').show()
+    }
+
     removeWallet(walletAddress) {
-        if (window.confirm('Are you sure you want to remove this wallet from saved wallets?')) {
-            delete store.getState().user.storedWallets[walletAddress]
-            this.wallets = store.getState().user.storedWallets
-            store.dispatch(
-                doRemoveWallet(walletAddress)
-            )
-            this.cleanup()
-        }
+        delete store.getState().user.storedWallets[walletAddress]
+        this.wallets = store.getState().user.storedWallets
+        store.dispatch(
+            doRemoveWallet(walletAddress)
+        )
+        this.cleanup()
     }
 
     stateChanged(state) {
@@ -414,7 +504,7 @@ class LoginSection extends connect(store)(LitElement) {
         try {
             pf = JSON.parse(file)
         } catch (e) {
-            this.loginErrorMessage = 'Backup must be valid JSON'
+            this.loginErrorMessage = this.renderError1Text()
         }
 
         try {
@@ -460,7 +550,7 @@ class LoginSection extends connect(store)(LitElement) {
             ].includes(selectedPage)
         ) || (['unlockBackedUpSeed', 'unlockStored'].includes(selectedPage))
 
-        if (willBeShown)//if the password will be displayed lt's give it focus 
+        if (willBeShown)
             this.shadowRoot.getElementById('password').focus()
 
         return willBeShown
@@ -522,11 +612,11 @@ class LoginSection extends connect(store)(LitElement) {
         type = type === 'unlockBackedUpSeed' ? 'backedUpSeed' : type
 
         if (!this.loginOptionIsSelected(type)) {
-            throw new Error('Login option not selected page')
+            throw new Error(this.renderError2Text())
         }
 
         // First decrypt...
-        this.loadingRipple.welcomeMessage = 'Preparing Your Account'
+        this.loadingRipple.welcomeMessage = this.renderPrepareText()
         this.loadingRipple.open({
             x: e.clientX,
             y: e.clientY
@@ -585,12 +675,12 @@ class LoginSection extends connect(store)(LitElement) {
 
     updateNext() {
         if (['phrase', 'seed', 'unlockStored', 'unlockBackedUpSeed'].includes(this.selectedPage)) {
-            this.nextText = 'Login'
+            this.nextText = this.renderLoginText()
             this.nextHidden = false
             // Should enable/disable the next button based on whether or not password are inputted
         } else if (['storedWallet', 'loginOptions', 'backedUpSeed'].includes(this.selectedPage)) {
             this.nextHidden = true
-            this.nextText = 'Next'
+            this.nextText = this.renderNextText()
         }
 
         this.updatedProperty()
@@ -618,6 +708,7 @@ class LoginSection extends connect(store)(LitElement) {
         this.shadowRoot.querySelector('#password').value = ''
         this.hasStoredWallets = Object.keys(store.getState().user.storedWallets).length > 0
         this.selectedPage = this.hasStoredWallets ? 'storedWallet' : 'loginOptions'
+        this.shadowRoot.querySelector('#deleteWalletDialog').close()
     }
 }
 

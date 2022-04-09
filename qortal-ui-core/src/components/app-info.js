@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { doPageUrl } from '../redux/app/app-actions.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -13,7 +14,8 @@ class AppInfo extends connect(store)(LitElement) {
             nodeStatus: { type: Object },
             nodeInfo: { type: Object },
             nodeConfig: { type: Object },
-            pageUrl: { type: String }
+            pageUrl: { type: String },
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -89,13 +91,14 @@ class AppInfo extends connect(store)(LitElement) {
         this.nodeInfo = {}
         this.nodeStatus = {}
         this.pageUrl = ''
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
         return html`
             <div id="profileInMenu">
-                <span class="info">Block Height: ${this.blockInfo.height ? this.blockInfo.height : ''}  <span class=${this.cssStatus}>${this._renderStatus()}</span></span>
-                <span class="info">UI Version: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</span>
+                <span class="info">${translate("appinfo.blockheight")}: ${this.blockInfo.height ? this.blockInfo.height : ''}  <span class=${this.cssStatus}>${this._renderStatus()}</span></span>
+                <span class="info">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</span>
                 ${this._renderCoreVersion()}
                 <a id="pageLink"></a>
             </div>
@@ -108,13 +111,13 @@ class AppInfo extends connect(store)(LitElement) {
     _renderStatus() {
         if (this.nodeStatus.isMintingPossible === true && this.nodeStatus.isSynchronizing === true) {
             this.cssStatus = 'blue'
-            return '(Minting)'
+            return html`${translate("appinfo.minting")}`
         } else if (this.nodeStatus.isMintingPossible === true && this.nodeStatus.isSynchronizing === false) {
             this.cssStatus = 'blue'
-            return '(Minting)'
+            return html`${translate("appinfo.minting")}`
         } else if (this.nodeStatus.isMintingPossible === false && this.nodeStatus.isSynchronizing === true) {
             this.cssStatus = 'black'
-            return `(Synchronizing... ${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''})`
+            return `(${translate("appinfo.synchronizing")}... ${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''})`
         } else if (this.nodeStatus.isMintingPossible === false && this.nodeStatus.isSynchronizing === false) {
             this.cssStatus = 'black'
             return ''
@@ -124,7 +127,7 @@ class AppInfo extends connect(store)(LitElement) {
     }
 
     _renderCoreVersion() {
-        return html`<span class="info">Core Version: ${this.nodeInfo.buildVersion ? this.nodeInfo.buildVersion : ''}</span>`
+        return html`<span class="info">${translate("appinfo.coreversion")}: ${this.nodeInfo.buildVersion ? this.nodeInfo.buildVersion : ''}</span>`
         setTimeout(_renderCoreVersion(), 60000)
     }
 

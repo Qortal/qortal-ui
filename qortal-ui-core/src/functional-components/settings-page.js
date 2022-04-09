@@ -1,18 +1,17 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
-
 import { doAddNode, doSetNode } from '../redux/app/app-actions.js'
+import snackbar from './snackbar.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
+import '../components/language-selector.js'
 
 import '@material/mwc-dialog'
 import '@material/mwc-button'
 import '@material/mwc-select'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
-
 import '@material/mwc-list/mwc-list-item.js'
-
-import snackbar from './snackbar.js'
 
 let settingsDialog
 
@@ -20,12 +19,32 @@ class SettingsPage extends connect(store)(LitElement) {
     static get properties() {
         return {
             lastSelected: { type: Number },
-            nodeConfig: { type: Object }
+            nodeConfig: { type: Object },
+            theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return css`
+            * {
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-theme-surface: var(--white);
+                --mdc-theme-text-primary-on-background: var(--black);
+            }
+
+            #main {
+                width: 210px;
+                display: flex;
+                align-items: center;
+            }
+
+            .globe {
+                color: var(--black);
+                --mdc-icon-size: 36px;
+            }
+
             .red {
                 --mdc-theme-primary: red;
             }
@@ -35,55 +54,77 @@ class SettingsPage extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nodeConfig = {}
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
     }
 
     render() {
         return html`
-            <mwc-dialog id="settingsDialog" heading="Settings" opened=false>
-                <div style="min-height:450px; min-width: 300px; box-sizing: border-box; position: relative;">
-
-                    <mwc-select icon="link" id="nodeSelect" label="Node Url" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
+            <mwc-dialog id="settingsDialog" opened=false>
+                <div style="display: inline; text-align: center;">
+                    <h1>${translate("settings.settings")}</h1>
+                    <hr>
+                </div>
+                <br>
+                <div style="min-height: 250px; min-width: 300px; box-sizing: border-box; position: relative;">
+                    <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
                             <mwc-list-item value="${index}">${n.protocol + '://' + n.domain + ':' + n.port}</mwc-list-item>
                         `)}
                     </mwc-select>
-
-                    <p style="margin-top: 45px;">Select a node from the default list of nodes above or add a custom node to the list above by clicking on the button below</p>
-
-                    <mwc-button outlined style="display: block; position: absolute; left: 30%;" @click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"><mwc-icon>add</mwc-icon>Add Custom Node</mwc-button>
+                    <p style="margin-top: 30px;">${translate("settings.nodehint")}</p>
+                    <center>
+                        <mwc-button outlined @click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"><mwc-icon>add</mwc-icon>${translate("settings.addcustomnode")}</mwc-button>
+                    </center>
+                </div>
+                <div style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;">
+                    <hr><br>
+                    <center>
+                    <div id="main">
+                        <mwc-icon class="globe">language</mwc-icon>&nbsp;<language-selector></language-selector>
+                    </div>
+                    </center>
                 </div>
                 <mwc-button
                     slot="primaryAction"
                     dialogAction="close"
                     class="red"
                 >
-                Close
+                ${translate("general.close")}
                 </mwc-button>
             </mwc-dialog>
 
-            <mwc-dialog id="addNodeDialog" heading="Add Custom Node">
-                <mwc-select id="protocolList" label="Protocol" style="width:100%;">
+            <mwc-dialog id="addNodeDialog">
+                <div style="text-align: center;">
+                    <h2>${translate("settings.addcustomnode")}</h2>
+                    <hr>
+                </div>
+                <br>
+                <mwc-select id="protocolList" label="${translate("settings.protocol")}" style="width:100%;">
                     <mwc-list-item value="http">http</mwc-list-item>
                     <mwc-list-item value="https">https</mwc-list-item>
                 </mwc-select>
                 <br>
-                <mwc-textfield id="domainInput" style="width:100%;" label="Domain"></mwc-textfield>
-                <mwc-textfield id="portInput" style="width:100%;" label="Port"></mwc-textfield>
+                <mwc-textfield id="domainInput" style="width:100%;" label="${translate("settings.domain")}"></mwc-textfield>
+                <mwc-textfield id="portInput" style="width:100%;" label="${translate("settings.port")}"></mwc-textfield>
                 <mwc-button
                     slot="secondaryAction"
                     dialogAction="close"
                     class="red"
                 >
-                Close
+                ${translate("general.close")}
                 </mwc-button>
                 <mwc-button
                     slot="primaryAction"
                     @click="${this.addNode}"
                 >
-                Add And Save
+                ${translate("settings.addandsave")}
                 </mwc-button>
             </mwc-dialog>
         `
+    }
+
+    firstUpdated() {
+        // ...
     }
 
     stateChanged(state) {
