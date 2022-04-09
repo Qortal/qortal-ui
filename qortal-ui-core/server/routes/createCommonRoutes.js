@@ -27,6 +27,18 @@ const createRoutes = config => [
     },
     {
         method: 'GET',
+        path: '/language/{param*}',
+        handler: {
+            directory: {
+                path: path.join(__dirname, '../../language'),
+                redirectToSlash: true,
+                index: true
+            }
+        },
+        options: routesOptions
+    },
+    {
+        method: 'GET',
         path: '/font/{param*}',
         handler: {
             directory: {

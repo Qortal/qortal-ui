@@ -5,7 +5,6 @@ const user = {
     nodeSettings: {
         pingInterval: 10 * 1000, // (10 secs)
     },
-    language: 'english', // default...english
     server: {
         writeHosts: {
             enabled: true,
