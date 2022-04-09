@@ -104,7 +104,7 @@ class RewardShare extends LitElement {
                         <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
                         <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
-                        <vaadin-grid-column width="12em" header="Action" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="12em" header="Action / Type" .renderer=${(root, column, data) => {
                             render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
                         }}>
                         </vaadin-grid-column>
@@ -218,9 +218,7 @@ class RewardShare extends LitElement {
             })
 
             parentEpml.subscribe('copy_menu_switch', async value => {
-
                 if (value === 'false' && window.getSelection().toString().length !== 0) {
-
                     this.clearSelection()
                 }
             })
@@ -228,7 +226,6 @@ class RewardShare extends LitElement {
             parentEpml.subscribe('frame_paste_menu_switch', async res => {
                 res = JSON.parse(res)
                 if (res.isOpen === false && this.isPasteMenuOpen === true) {
-
                     this.pasteToTextBox(textBox)
                     this.isPasteMenuOpen = false
                 }
@@ -278,9 +275,9 @@ class RewardShare extends LitElement {
 
     renderRemoveRewardShareButton(rewardShareObject) {
         if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
-            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`
+            return html`Own Rewardshare`
         } else {
-            return ""
+            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`
         }
     }
 

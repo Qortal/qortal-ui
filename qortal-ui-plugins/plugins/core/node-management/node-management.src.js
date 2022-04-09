@@ -350,8 +350,8 @@ class NodeManagement extends LitElement {
                         this.peers = res;
                     }, 1);
                 });
-
-            setTimeout(updatePeers, this.config.user.nodeSettings.pingInterval);
+                console.log(this.peers)
+                setTimeout(updatePeers, this.config.user.nodeSettings.pingInterval);
         };
 
         const getNodeConfig = () => {

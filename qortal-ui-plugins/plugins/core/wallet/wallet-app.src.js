@@ -552,7 +552,7 @@ class MultiWallet extends LitElement {
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
-	    this.balance = 0
+	this.balance = 0
         this.amount = 0
         this.btcAmount = 0
         this.ltcAmount = 0

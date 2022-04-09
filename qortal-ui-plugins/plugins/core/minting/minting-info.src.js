@@ -385,7 +385,7 @@ class MintingInfo extends LitElement {
         };
 
         const getSampleBlock = () => {
-            let callBlock = parseFloat(this.nodeInfo.height) - 1440;
+            let callBlock = parseFloat(this.nodeInfo.height) - 10000;
             parentEpml.request("apiCall", { url: `/blocks/byheight/${callBlock}` }).then((res) => {
                 setTimeout(() => { this.sampleBlock = res; }, 1);
             });
@@ -462,14 +462,14 @@ class MintingInfo extends LitElement {
     }
     _averageBlockTime() {
         let avgBlockString = (this.adminInfo.currentTimestamp - this.sampleBlock.timestamp).toString();
-        let averageTimeString = ((avgBlockString / 1000) / 1440).toFixed(2);
+        let averageTimeString = ((avgBlockString / 1000) / 10000).toFixed(2);
         let averageBlockTimeString = (averageTimeString).toString();
         return "" + averageBlockTimeString;
     }
 
     _timeCalc() {
         let timeString = (this.adminInfo.currentTimestamp - this.sampleBlock.timestamp).toString();
-        let averageString = ((timeString / 1000) / 1440).toFixed(2);
+        let averageString = ((timeString / 1000) / 10000).toFixed(2);
         let averageBlockDay = (86400 / averageString).toFixed(2);
         let averageBlockDayString = (averageBlockDay).toString();
         return "" + averageBlockDayString;
