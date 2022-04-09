@@ -22,7 +22,7 @@
     "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "7.17.9",
     "@github/time-elements": "3.1.2",
     "@material/mwc-button": "0.25.3",
     "@material/mwc-checkbox": "0.25.3",

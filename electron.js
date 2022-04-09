@@ -62,6 +62,7 @@ function createWindow() {
 			nodeIntegration: false,
 			partition: 'persist:webviewsession',
 			enableRemoteModule: false,
+                        nativeWindowOpen: false,
 			sandbox: true
 		},
 		show: false

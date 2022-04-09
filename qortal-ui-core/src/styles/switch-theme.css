@@ -30,6 +30,7 @@ html {
   --nav-icon-color: #080808;
   --nav-border-color: #eeeeee;
   --nav-border-selected-color: #03a9f4;
+  --background: url("/img/qortal_background_light_.jpg");
 }
 
 html[theme="dark"] {
@@ -64,4 +65,5 @@ html[theme="dark"] {
   --nav-icon-color: #008fd5;
   --nav-border-color: #0b305e;
   --nav-border-selected-color: #76c8f5;
+  --background: url("/img/qortal_background_dark_.jpg");
 }

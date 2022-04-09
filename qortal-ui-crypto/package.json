@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui-crypto",
-  "version": "2.1.3",
+  "version": "2.2.1",
   "description": "QORTAL-UI Crypto",
   "keywords": [
     "QORT",
@@ -17,10 +17,11 @@
   "author": "QORTAL <admin@qortal.org>",
   "license": "GPL-3.0",
   "dependencies": {
-    "asmcrypto.js": "^2.3.2",
-    "buffer": "^6.0.3",
-    "jssha": "^3.2.0",
-    "lodash": "^4.17.21"
+    "asmcrypto.js": "2.3.2",
+    "buffer": "6.0.3",
+    "jssha": "3.2.0",
+    "lodash": "4.17.21",
+    "lit-translate": "2.0.0-rc.1"
   },
   "engines": {
     "node": ">=14.17.0"
