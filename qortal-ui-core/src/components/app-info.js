@@ -117,7 +117,7 @@ class AppInfo extends connect(store)(LitElement) {
             return html`${translate("appinfo.minting")}`
         } else if (this.nodeStatus.isMintingPossible === false && this.nodeStatus.isSynchronizing === true) {
             this.cssStatus = 'black'
-            return `(${translate("appinfo.synchronizing")}... ${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''})`
+            return html`(${translate("appinfo.synchronizing")}... ${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''})`
         } else if (this.nodeStatus.isMintingPossible === false && this.nodeStatus.isSynchronizing === false) {
             this.cssStatus = 'black'
             return ''

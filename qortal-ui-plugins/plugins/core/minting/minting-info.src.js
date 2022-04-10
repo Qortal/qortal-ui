@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -205,27 +210,27 @@ class MintingInfo extends LitElement {
             return html`
             <div>
                 <div>
-                    <span class="header-title">General Minting Details</span>
+                    <span class="header-title">${translate("mintingpage.mchange1")}</span>
                     <hr style="color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                 </div>
                 <div class="sub-main">
                     <div class="center-box">
                         <div>
-                            <span class="level-black">Blockchain Statistics</span>
+                            <span class="level-black">${translate("mintingpage.mchange2")}</span>
                             <hr style="width: 50%; color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                         </div><br>
                         <div class="content-box">
-                            <span class="title">Avg. Qortal Blocktime</span>
+                            <span class="title">${translate("mintingpage.mchange3")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._averageBlockTime()} Seconds</h4>
+                            <h4>${this._averageBlockTime()} ${translate("mintingpage.mchange25")}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Avg. Blocks Per Day</span>
+                            <span class="title">${translate("mintingpage.mchange4")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._timeCalc()} Blocks</h4>
+                            <h4>${this._timeCalc()} ${translate("mintingpage.mchange26")}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Avg. Created QORT Per Day</span>
+                            <span class="title">${translate("mintingpage.mchange5")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._dayReward()} QORT</h4>
                         </div><br><br><br>
@@ -239,44 +244,41 @@ class MintingInfo extends LitElement {
                 <!-- Activate Account Dialog -->
                 <mwc-dialog id="activateAccountDialog">
                     <div style="text-align:center">
-                        <h2>Activate Your Account</h2>
+                        <h2>${translate("mintingpage.mchange12")}</h2>
                         <hr>
                     </div>
                     <div>
-                        <h3>Introduction</h3><br />
-			    To "activate" your account, an OUTGOING transaction needs to take place.
-			    Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account,
-			    or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain.
-			    Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.
+                        <h3>${translate("mintingpage.mchange13")}</h3><br />
+                        ${translate("mintingpage.mchange14")}
                     </div>
-                   <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">Close</mwc-button>
+                   <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">${translate("general.close")}</mwc-button>
                 </mwc-dialog>
             </div>
         `} else {
             return html`
             <div>
                 <div>
-                    <span class="header-title">General Minting Details</span>
+                    <span class="header-title">${translate("mintingpage.mchange1")}</span>
                     <hr style="color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                 </div>
                 <div class="sub-main">
                     <div class="center-box">
                         <div>
-                            <span class="level-black">Blockchain Statistics</span>
+                            <span class="level-black">${translate("mintingpage.mchange2")}</span>
                             <hr style="width: 50%; color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                         </div><br>
                         <div class="content-box">
-                            <span class="title">Avg. Qortal Blocktime</span>
+                            <span class="title">${translate("mintingpage.mchange3")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._averageBlockTime()} Seconds</h4>
+                            <h4>${this._averageBlockTime()} ${translate("mintingpage.mchange25")}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Avg. Blocks Per Day</span>
+                            <span class="title">${translate("mintingpage.mchange4")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._timeCalc()} Blocks</h4>
+                            <h4>${this._timeCalc()} ${translate("mintingpage.mchange26")}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Avg. Created QORT Per Day</span>
+                            <span class="title">${translate("mintingpage.mchange5")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._dayReward()} QORT</h4>
                         </div><br><br><br>
@@ -285,49 +287,49 @@ class MintingInfo extends LitElement {
                             <hr style="width: 50%;color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                         </div><br>
                         <div class="content-box">
-                            <span class="title">Current Status</span>
+                            <span class="title">${translate("mintingpage.mchange15")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4><span class=${this.cssMinting}>${this._mintingStatus()}</span></h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Current Level</span>
+                            <span class="title">${translate("mintingpage.mchange16")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>Level ${this.addressInfo.level}</h4>
+                            <h4>${translate("mintingpage.mchange27")} ${this.addressInfo.level}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Blocks To Next Level</span>
+                            <span class="title">${translate("mintingpage.mchange17")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._levelUpBlocks()} Blocks</h4>
+                            <h4>${this._levelUpBlocks()} ${translate("mintingpage.mchange26")}</h4>
                         </div><br>
                         <div>
-		            <span class="level-black">If you continue minting 24/7 you will reach level <div class="level-blue">${this._levelUp()}</div> in <div class="level-blue">${this._levelUpDays()}</div> days !</span>
+		            <span class="level-black">${translate("mintingpage.mchange18")} <div class="level-blue">${this._levelUp()}</div> ${translate("mintingpage.mchange38")} <div class="level-blue">${this._levelUpDays()}</div> ${translate("mintingpage.mchange29")} !</span>
                         </div><br><br><br>
                         <div>
-                            <span class="level-black">Minting Rewards Info</span>
+                            <span class="level-black">${translate("mintingpage.mchange19")}</span>
                             <hr style="width: 50%; color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                         </div><br>
                         <div class="content-box">
-                            <span class="title">Current Tier</span>
+                            <span class="title">${translate("mintingpage.mchange20")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._currentTier()}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Total Minters in The Tier</span>
+                            <span class="title">${translate("mintingpage.mchange21")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
-                            <h4>${this._countLevels()} Minters</h4>
+                            <h4>${this._countLevels()} ${translate("mintingpage.mchange30")}</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Tier Share Per Block</span>
+                            <span class="title">${translate("mintingpage.mchange22")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._tierPercent()} %</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Est. Reward Per Block</span>
+                            <span class="title">${translate("mintingpage.mchange23")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._countReward()} QORT</h4>
                         </div>
                         <div class="content-box">
-                            <span class="title">Est. Reward Per Day</span>
+                            <span class="title">${translate("mintingpage.mchange24")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._countRewardDay()} QORT</h4>
                         </div>
@@ -337,23 +339,20 @@ class MintingInfo extends LitElement {
                 <!-- Become A Minter Dialog -->
                 <mwc-dialog id="becomeMinterDialog">
                     <div style="text-align:center">
-                        <h2>Become A Minter</h2>
+                        <h2>${translate("mintingpage.mchange32")}</h2>
                         <hr>
                     </div>
                     <div>
-                        <h3>Introduction</h3><br />
-                        In Qortal, in order to become a minter and begin earning QORT rewards with your increase in Minter Level, you must first become ‘sponsored’.
-                        A sponsor in Qortal is any other minter of level 5 or higher, or a Qortal Founder. You will obtain a sponsorship key from the sponsor, and use that key to get to level 1.
-                        Once you have reached level 1, you will be able to create your own minting key and start earning rewards for helping secure the Qortal Blockchain.
+                        <h3>${translate("mintingpage.mchange33")}</h3><br />
+                        ${translate("mintingpage.mchange34")}
                     </div>
                     <div>
-                        <h3>Sponsorship</h3><br />
-                        Your sponsor will issue you a ‘Sponsorship Key’ which you will use to add to your node, and begin minting (for no rewards until reaching level 1.)
-                        Once you reach level 1, you create/assign your own ‘Minting Key’ and begin earning rewards. You have XXXX blocks remaining in your sponsorship period.
+                        <h3>${translate("mintingpage.mchange35")}</h3><br />
+                        ${translate("mintingpage.mchange36")}
                         <br />
-                        Simply reach out to a minter in Qortal who is high enough level to issue a sponsorship key, obtain that key, then come back here and input the key to begin your minting journey !
+                        ${translate("mintingpage.mchange37")}
                     </div>
-                   <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">Close</mwc-button>
+                   <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">${translate("general.close")}</mwc-button>
                 </mwc-dialog>
 
             </div>
@@ -365,7 +364,13 @@ class MintingInfo extends LitElement {
         this.changeTheme()
 
 	setInterval(() => {
-	    this.changeTheme();
+	    this.changeTheme()
+	}, 100)
+
+        this.changeLanguage()
+
+	setInterval(() => {
+	    this.changeLanguage()
 	}, 100)
 
         const getAdminInfo = () => {
@@ -445,6 +450,17 @@ class MintingInfo extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
     renderMintingPage() {
         if (this.addressInfo.error === 124) {
             return "false"
@@ -455,7 +471,7 @@ class MintingInfo extends LitElement {
 
     renderActivateHelp() {
         if (this.renderMintingPage() === "false") {
-            return html`Activate Account Details <div class="level-blue">==></div> Not Activated<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#activateAccountDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
+            return html`${translate("mintingpage.mchange10")} <div class="level-blue">==></div> ${translate("mintingpage.mchange11")}<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#activateAccountDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;${translate("mintingpage.mchange31")}</mwc-button>`;
         } else {
             return "No Details";
         }
@@ -484,16 +500,16 @@ class MintingInfo extends LitElement {
     _mintingStatus() {
         if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === true) {
             this.cssMinting = "blue"
-            return "Minting"
+            return html`${translate("appinfo.minting")}`
         } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false) {
             this.cssMinting = "blue"
-            return "Minting"
+            return html`${translate("appinfo.minting")}`
         } else if (this.nodeInfo.isMintingPossible === false && this.nodeInfo.isSynchronizing === true) {
             this.cssMinting = "red"
-            return `(Synchronizing... ${this.nodeInfo.syncPercent !== undefined ? this.nodeInfo.syncPercent + '%' : ''})`
+            return html`(${translate("appinfo.synchronizing")}... ${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''})`
         } else if (this.nodeInfo.isMintingPossible === false && this.nodeInfo.isSynchronizing === false) {
             this.cssMinting = "red"
-            return "Not Minting"
+            return html`${translate("mintingpage.mchange9")}`
         } else {
             return "No Status"
         }
@@ -501,9 +517,9 @@ class MintingInfo extends LitElement {
 
     renderMintingHelp() {
         if (this._mintingStatus() === "Not Minting") {
-            return html`Minting Account Details <div class="level-blue">==></div> Not A Minter<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#becomeMinterDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;Press For Help</mwc-button>`;
+            return html`${translate("mintingpage.mchange9")} <div class="level-blue">==></div> ${translate("mintingpage.mchange7")}<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#becomeMinterDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;${translate("mintingpage.mchange31")}</mwc-button>`;
         } else {
-            return "Minting Account Details";
+            return html`${translate("mintingpage.mchange6")}`
         }
     }
 
@@ -568,27 +584,27 @@ class MintingInfo extends LitElement {
 
     _currentTier() {
         if (this.addressInfo.level === 0) {
-            return "Tier 0 (Level 0)"
+            return html`${translate("mintingpage.mchange28")} 0 (${translate("mintingpage.mchange27")} 0)`
         } else if (this.addressInfo.level === 1) {
-            return "Tier 1 (Level 1 + 2)"
+            return html`${translate("mintingpage.mchange28")} 1 (${translate("mintingpage.mchange27")} 1 + 2)`
         } else if (this.addressInfo.level === 2) {
-            return "Tier 1 (Level 1 + 2)"
+            return html`${translate("mintingpage.mchange28")} 1 (${translate("mintingpage.mchange27")} 1 + 2)`
         } else if (this.addressInfo.level === 3) {
-            return "Tier 2 (Level 3 + 4)"
+            return html`${translate("mintingpage.mchange28")} 2 (${translate("mintingpage.mchange27")} 3 + 4)`
         } else if (this.addressInfo.level === 4) {
-            return "Tier 2 (Level 3 + 4)"
+            return html`${translate("mintingpage.mchange28")} 2 (${translate("mintingpage.mchange27")} 3 + 4)`
         } else if (this.addressInfo.level === 5) {
-            return "Tier 3 (Level 5 + 6)"
+            return html`${translate("mintingpage.mchange28")} 3 (${translate("mintingpage.mchange27")} 5 + 6)`
         } else if (this.addressInfo.level === 6) {
-            return "Tier 3 (Level 5 + 6)"
+            return html`${translate("mintingpage.mchange28")} 3 (${translate("mintingpage.mchange27")} 5 + 6)`
         } else if (this.addressInfo.level === 7) {
-            return "Tier 4 (Level 7 + 8)"
+            return html`${translate("mintingpage.mchange28")} 4 (${translate("mintingpage.mchange27")} 7 + 8)`
         } else if (this.addressInfo.level === 8) {
-            return "Tier 4 (Level 7 + 8)"
+            return html`${translate("mintingpage.mchange28")} 4 (${translate("mintingpage.mchange27")} 7 + 8)`
         } else if (this.addressInfo.level === 9) {
-            return "Tier 5 (Level 9 + 10)"
+            return html`${translate("mintingpage.mchange28")} 5 (${translate("mintingpage.mchange27")} 9 + 10)`
         } else if (this.addressInfo.level === 10) {
-            return "Tier 5 (Level 9 + 10)"
+            return html`${translate("mintingpage.mchange28")} 5 (${translate("mintingpage.mchange27")} 9 + 10)`
         }
     }
 
