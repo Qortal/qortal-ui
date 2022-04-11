@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-button'
 import '@material/mwc-textfield'
@@ -35,7 +40,9 @@ class TradePortal extends LitElement {
             isLoadingHistoricTrades: { type: Boolean },
             isLoadingOpenTrades: { type: Boolean },
             isLoadingMyOpenOrders: { type: Boolean },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            amountString: { type: String },
+            priceString: { type: String }
         }
     }
 
@@ -409,6 +416,7 @@ class TradePortal extends LitElement {
             name: "QORTAL",
             balance: "0",
             coinCode: "QORT",
+            coinAmount: this.amountString
         }
 
         let litecoin = {
@@ -422,7 +430,8 @@ class TradePortal extends LitElement {
             myHistoricTrades: [],
             myOfferingOrders: [],
             openTradeOrders: null,
-            tradeOffersSocketCounter: 1
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString
         }
 
         let dogecoin = {
@@ -436,13 +445,17 @@ class TradePortal extends LitElement {
             myHistoricTrades: [],
             myOfferingOrders: [],
             openTradeOrders: null,
-            tradeOffersSocketCounter: 1
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString
         }
 
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
+
+        this.amountString = this.renderAmountText()
+        this.priceString = this.renderPriceText()
 
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
@@ -480,15 +493,15 @@ class TradePortal extends LitElement {
         return html`
 		<div class="historic-trades">
 			<div class="box">
-				<header><span>HISTORIC MARKET TRADES</span></header>
+				<header><span>${translate("tradepage.tchange3")}</span></header>
 				<div class="border-wrapper">
 					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingHistoricTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="historicTradesGrid" aria-label="Historic Trades" .items="${this.listedCoins.get(this.selectedCoin).historicTrades}">
-						<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
+						<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange8")} (QORT)" path="qortAmount"></vaadin-grid-column>
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
 								render(html`${price}`, root)
@@ -498,7 +511,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								render(html`<span> ${data.item.foreignAmount} </span>`, root)
 							}}
@@ -515,14 +528,13 @@ class TradePortal extends LitElement {
         return html`
 		<div class="open-trades">
 			<div class="box">
-				<header><span>OPEN MARKET SELL ORDERS</span></header>
+				<header><span>${translate("tradepage.tchange5")}</span></header>
 				<div class="border-wrapper">
 					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
 					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="openOrdersGrid" aria-label="Open Orders" .items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}">
 						<vaadin-grid-column
 							auto-width
-							resizable
-							header="Amount (QORT)"
+							header="${translate("tradepage.tchange8")} (QORT)"
 							id="qortAmountColumn"
 							path="qortAmount"
 							.renderer=${(root, column, data) => {
@@ -533,7 +545,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							id="priceColumn"
 							path="price"
 							.renderer=${(root, column, data) => {
@@ -544,7 +556,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								render(html`<span> ${data.item.foreignAmount} </span>`, root)
 							}}
@@ -553,7 +565,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Seller"
+							header="${translate("tradepage.tchange13")}"
 							.renderer=${(root, column, data) => {
 								render(html`<span> ${data.item.qortalCreator} </span>`, root)
 							}}
@@ -571,20 +583,20 @@ class TradePortal extends LitElement {
 		<div class="open-market-container">
 			<div class="box">
 				<mwc-tab-bar id="tabs-1" activeIndex="0">
-					<mwc-tab id="tab-buy" label="Buy" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
-					<mwc-tab id="tab-sell" label="Sell" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
+					<mwc-tab id="tab-buy" label="${translate("tradepage.tchange18")}" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
+					<mwc-tab id="tab-sell" label="${translate("tradepage.tchange19")}" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
 				</mwc-tab-bar>
 				<z id="tabs-1-content">
 					<div id="tab-buy-content">
 						<div class="card">
 							<div style="margin-left: auto">
-								<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
+								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 							</div>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="buyAmountInput"
-									required readOnly label="Amount (QORT)"
+									required readOnly label="${translate("tradepage.tchange8")} (QORT)"
 									placeholder="0.0000"
 									type="text" 
 									auto-validate="false"
@@ -597,7 +609,7 @@ class TradePortal extends LitElement {
 									style="width: 100%; color: var(--black);"
 									id="buyPriceInput"
 									required readOnly
-									label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label="${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 									placeholder="0.0000"
 									type="text"
 									auto-validate="false"
@@ -610,7 +622,7 @@ class TradePortal extends LitElement {
 									style="width: 100%; color: var(--black);"
 									id="buyTotalInput"
 									required readOnly
-									label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 									placeholder="0.0000"
 									type="text"
 									auto-validate="false"
@@ -628,11 +640,11 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="you-have">You have: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+							<span class="you-have">${translate("tradepage.tchange16")}: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
-										${this.isBuyLoading === false ? 'BUY' : html`<paper-spinner-lite active></paper-spinner-lite>`}
+										${this.isBuyLoading === false ? html`${translate("tradepage.tchange18")}` : html`<paper-spinner-lite active></paper-spinner-lite>`}
 									</mwc-button>
 								</div>
 							</div>
@@ -641,13 +653,13 @@ class TradePortal extends LitElement {
 					<div id="tab-sell-content">
 						<div class="card">
 							<div style="margin-left: auto">
-								<mwc-icon-button class="btn-clear" title="Clear Form" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
+								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
 							</div>										
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="sellAmountInput"
-									required label="Amount (QORT)"
+									required label="${translate("tradepage.tchange8")} (QORT)"
 									placeholder="0.0000"
 									@input="${(e) => { this._checkSellAmount(e) }}"
 									type="number"
@@ -660,7 +672,7 @@ class TradePortal extends LitElement {
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="sellPriceInput"
-									required label="Price Ea. (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									required label="${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 									placeholder="0.0000"
 									@input="${(e) => { this._checkSellAmount(e) }}"
 									type="number"
@@ -674,7 +686,7 @@ class TradePortal extends LitElement {
 									style="width: 100%; color: var(--black);"
 									id="sellTotalInput"
 									required readOnly
-									label="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 									placeholder="0.0000"
 									type="text"
 									auto-validate="false"
@@ -682,11 +694,11 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="you-have">You have: ${this.listedCoins.get("QORTAL").balance} QORT</span>
+							<span class="you-have">${translate("tradepage.tchange16")}: ${this.listedCoins.get("QORTAL").balance} QORT</span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
-										${this.isSellLoading === false ? 'SELL' : html`<paper-spinner-lite active></paper-spinner-lite>`}
+										${this.isSellLoading === false ? html`${translate("tradepage.tchange19")}` : html`<paper-spinner-lite active></paper-spinner-lite>`}
 									</mwc-button>
 								</div>
 							</div>
@@ -702,14 +714,14 @@ class TradePortal extends LitElement {
         return html`
 		<div class="my-open-orders">
 			<div class="box">
-				<header><span>MY ORDERS</span><mwc-icon-button title="Stuck Orders" icon="more_vert" @click=${() => this.showStuckOrdersDialog()}></mwc-icon-button></header>
+				<header><span>${translate("tradepage.tchange6")}</span><mwc-icon-button title="${translate("tradepage.tchange7")}" icon="more_vert" @click=${() => this.showStuckOrdersDialog()}></mwc-icon-button></header>
 				<div class="border-wrapper">
 					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
 					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="myOrdersGrid" aria-label="My Orders" .items="${this.listedCoins.get(this.selectedCoin).myOrders}">
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Date"
+							header="${translate("tradepage.tchange11")}"
 							.renderer=${(root, column, data) => {
 								const dateString = new Date(data.item.timestamp).toLocaleString()
 								render(html`${dateString}`, root)
@@ -719,7 +731,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Status"
+							header="${translate("tradepage.tchange12")}"
 							.renderer=${(root, column, data) => {
 								render(html`<span id="${data.item.atAddress}"> ${data.item._tradeState} </span>`, root)
 							}}
@@ -728,7 +740,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
 								render(html`${price}`, root)
@@ -738,19 +750,20 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Amount (QORT)" path="qortAmount"
+							header="${translate("tradepage.tchange8")} (QORT)" path="qortAmount"
 						>
 						</vaadin-grid-column>
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="foreignAmount"
+							header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
+                                                        path="foreignAmount"
 						>
 						</vaadin-grid-column>
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Action"
+							header="${translate("tradepage.tchange17")}"
 							.renderer=${(root, column, data) => {
 								 render(html`${this.renderCancelButton(data.item)}`, root)
 							}}
@@ -767,13 +780,13 @@ class TradePortal extends LitElement {
         return html`
 		<div class="my-historic-trades">
 			<div class="box">
-				<header>MY TRADE HISTORY</header>
+				<header>${translate("tradepage.tchange4")}</header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="myHistoricTradesGrid" aria-label="My Open Orders" .items="${this.listedCoins.get(this.selectedCoin).myHistoricTrades}">
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Date"
+							header="${translate("tradepage.tchange11")}"
 							.renderer=${(root, column, data) => {
 								const dateString = new Date(data.item.timestamp).toLocaleString()
 								render(html`${dateString}`, root)
@@ -783,10 +796,10 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Status"
+							header="${translate("tradepage.tchange12")}"
 							.renderer=${(root, column, data) => {
-								if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${data.item.mode} </span>`, root)
-								if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${data.item.mode} </span>`, root)
+								if (data.item.mode === 'SOLD') return render(html`<span style="color: red"> ${translate("tradepage.tchange31")} </span>`, root)
+								if (data.item.mode === 'BOUGHT') return render(html`<span style="color: green"> ${translate("tradepage.tchange32")} </span>`, root)
 								return render(html`<span> ${data.item.mode} </span>`, root)
 							}}
 						>
@@ -794,7 +807,7 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								const price = this.round(parseFloat(data.item.foreignAmount) / parseFloat(data.item.qortAmount))
 								render(html`${price}`, root)
@@ -804,13 +817,13 @@ class TradePortal extends LitElement {
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Amount (QORT)" path="qortAmount"
+							header="${translate("tradepage.tchange8")} (QORT)" path="qortAmount"
 						>
 						</vaadin-grid-column>
 						<vaadin-grid-column
 							auto-width
 							resizable
-							header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})"
+							header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							.renderer=${(root, column, data) => {
 								render(html`<span> ${data.item.foreignAmount} </span>`, root)
 							}}
@@ -827,8 +840,8 @@ class TradePortal extends LitElement {
         return html`
 		<div id="trade-portal-page">
 			<div style="min-height: 40px; display: flex; padding-bottom: 0px; margin: 2px 2px 0px 2px ;">
-				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal Trade Portal - &nbsp;</h2>
-				<mwc-select outlined id="coinSelectionMenu" label="Select Trading Pair">
+				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal ${translate("tradepage.tchange1")} - &nbsp;</h2>
+				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
 					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">QORT / LTC</span></mwc-list-item>
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 				</mwc-select>
@@ -848,18 +861,18 @@ class TradePortal extends LitElement {
 		<!-- Manage Stuck Orders Dialog -->
 		<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
 			<div style="text-align: center;">
-				<h1>Stuck Offers</h1>
+				<h1>${translate("tradepage.tchange7")}</h1>
 				<hr />
 			</div>
 			<div>
 				<vaadin-grid style="width: 500px" theme="compact column-borders row-stripes wrap-cell-content" id="stuckOrdersGrid" aria-label="My Offering Orders" .items="${this.listedCoins.get(this.selectedCoin).myOfferingOrders}">
-					<vaadin-grid-column auto-width resizable header="Amount (QORT)" path="qortAmount"></vaadin-grid-column>
-					<vaadin-grid-column auto-width resizable header="Price (${this.listedCoins.get(this.selectedCoin).coinCode})" path="price"></vaadin-grid-column>
-					<vaadin-grid-column auto-width resizable header="Total (${this.listedCoins.get(this.selectedCoin).coinCode})" path="expectedForeignAmount"></vaadin-grid-column>
-					<vaadin-grid-column auto-width resizable header="Action" .renderer=${(root, column, data) => { render(html`${this.renderCancelStuckOfferButton(data.item)}`, root) }}></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange8")} (QORT)" path="qortAmount"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})" path="price"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})" path="expectedForeignAmount"></vaadin-grid-column>
+					<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange17")}" .renderer=${(root, column, data) => { render(html`${this.renderCancelStuckOfferButton(data.item)}`, root) }}></vaadin-grid-column>
 				</vaadin-grid>
 			</div>
-			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">Close</mwc-button>
+			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
 	`
     }
@@ -874,6 +887,12 @@ class TradePortal extends LitElement {
 	    this.changeTheme();
 	}, 100)
 
+        this.changeLanguage()
+
+	setInterval(() => {
+	    this.changeLanguage()
+	}, 100)
+
         this.updateWalletBalance()
 
         setTimeout(() => {
@@ -882,6 +901,7 @@ class TradePortal extends LitElement {
 
         // Set Trade Panes
         this._openOrdersGrid = this.shadowRoot.getElementById('openOrdersGrid')
+
         this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
             root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">Price (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
         }
@@ -962,6 +982,25 @@ class TradePortal extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderAmountText() {
+        return html`${translate("tradepage.tchange8")}`
+    }
+
+    renderPriceText() {
+        return html`${translate("tradepage.tchange9")}`
+    }
+
     updateWalletBalance() {
         let _url = ``
         let _body = null
@@ -986,7 +1025,7 @@ class TradePortal extends LitElement {
         })
             .then((res) => {
                 if (isNaN(Number(res))) {
-                    parentEpml.request('showSnackBar', 'Failed to Fetch Balance. Try again!')
+                    parentEpml.request('showSnackBar', `${translate("tradepage.tchange30")}`)
                 } else {
                     this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
                 }
@@ -1674,18 +1713,18 @@ class TradePortal extends LitElement {
             } else if (response === false) {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
-                parentEpml.request('showSnackBar', 'Failed to Create Trade. Try again!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange20")}`)
             } else {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
-                parentEpml.request('showSnackBar', `Failed to Create Trade. ERROR_CODE: ${response.message}`)
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange21")}: ${response.message}`)
             }
         }
 
         if (this.round(parseFloat(fundingQortAmount) + parseFloat(0.002)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
             this.isSellLoading = false
             this.sellBtnDisable = false
-            parentEpml.request('showSnackBar', 'Insufficient Funds!')
+            parentEpml.request('showSnackBar', `${translate("tradepage.tchange22")}`)
             return false
         } else {
             const res = await makeRequest()
@@ -1727,15 +1766,15 @@ class TradePortal extends LitElement {
                 this.shadowRoot.getElementById('buyPriceInput').value = this.initialAmount
                 this.shadowRoot.getElementById('buyTotalInput').value = this.initialAmount
                 this.shadowRoot.getElementById('qortalAtAddress').value = ''
-                parentEpml.request('showSnackBar', 'Buy Request Successful!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange23")}`)
             } else if (response === false) {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
-                parentEpml.request('showSnackBar', 'Buy Request Existing!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange24")}`)
             } else {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
-                parentEpml.request('showSnackBar', `Failed to Create Trade. ERROR_CODE: ${response.message}`)
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange25")}: ${response.message}`)
             }
         }
 
@@ -1761,15 +1800,15 @@ class TradePortal extends LitElement {
             if (response === true) {
                 button.remove()
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', 'Trade Cancelling In Progress!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange26")}`)
             } else if (response === false) {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', 'Failed to Cancel Trade. Try again!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange27")}`)
             } else {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', `Failed to Cancel Trade. ERROR_CODE: ${response.message}`)
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange28")}: ${response.message}`)
             }
         }
 
@@ -1791,7 +1830,7 @@ class TradePortal extends LitElement {
 
     renderCancelButton(stateItem) {
         if (stateItem.tradeState === 'BOB_WAITING_FOR_MESSAGE') {
-            return html`<mwc-button id="${stateItem.atAddress}" ?disabled=${this.cancelBtnDisable} class="cancel" @click=${(e) => this.cancelAction(stateItem)}>CANCEL</mwc-button>`
+            return html`<mwc-button id="${stateItem.atAddress}" ?disabled=${this.cancelBtnDisable} class="cancel" @click=${(e) => this.cancelAction(stateItem)}>${translate("tradepage.tchange29")}</mwc-button>`
         } else {
             return ''
         }
@@ -1815,13 +1854,13 @@ class TradePortal extends LitElement {
         const manageResponse = (response) => {
             if (response === true) {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', 'Trade Cancelling In Progress!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange26")}`)
             } else if (response === false) {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', 'Failed to Cancel Trade. Try again!')
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange27")}`)
             } else {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', `Failed to Cancel Trade. ERROR_CODE: ${response.message}`)
+                parentEpml.request('showSnackBar', `${translate("tradepage.tchange28")}: ${response.message}`)
             }
         }
 
