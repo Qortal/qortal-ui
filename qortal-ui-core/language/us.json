@@ -29,7 +29,7 @@
     "address": "Address",
     "password": "Password",
     "youraccounts": "Your accounts",
-    "click": "Click your account to login with it",
+    "clickto": "Click your account to login with it",
     "needcreate": "You need to create or save an account before you can log in!",
     "upload": "Upload your qortal backup",
     "howlogin": "How would you like to login?",

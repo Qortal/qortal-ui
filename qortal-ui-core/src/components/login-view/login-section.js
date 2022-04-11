@@ -290,7 +290,7 @@ class LoginSection extends connect(store)(LitElement) {
                         <div page="storedWallet" id="walletsPage">
                             <div style="text-align: center; padding-left:0;">
                                 <h1 style="padding:0; color: var(--black);">${translate("login.youraccounts")}</h1>
-                                <p style="margin:0; padding: 0 0 12px 0; color: var(--black);">${translate("login.click")}</p>
+                                <p style="margin:0; padding: 0 0 12px 0; color: var(--black);">${translate("login.clickto")}</p>
                             </div>
                             <div id="wallets">
                                 ${(Object.entries(this.wallets || {}).length < 1) ? html`
