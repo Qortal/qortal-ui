@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '../components/ButtonIconCopy'
 import '@material/mwc-button'
@@ -50,7 +55,7 @@ class MultiWallet extends LitElement {
             btcFeePerByte: { type: Number },
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
-            balanceString: 'Fetching balance ...'
+            balanceString: { type: String }
         }
     }
 
@@ -535,6 +540,7 @@ class MultiWallet extends LitElement {
             height: 0,
         }
 
+        this.balanceString = this.renderFetchText()
         this.selectedTransaction = {}
         this.isTextMenuOpen = false
         this.loading = true
@@ -612,7 +618,7 @@ class MultiWallet extends LitElement {
         return html`
             <div class="wrapper">
                 <div class="wallet">
-                    <div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">Wallets</div>
+                    <div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">${translate("walletpage.wchange22")}</div>
                     <div class="cards">
                         <div coin="qort" class="currency-box qort active">
                             <div class="currency-image"></div>
@@ -635,13 +641,13 @@ class MultiWallet extends LitElement {
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
-                        Current Wallet
+                        ${translate("walletpage.wchange2")}
                         <div class="wallet-address">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy 
-                                title="Copy wallet address to clipboard"
-                                onSuccessMessage="Address copied to clipboard"
-                                onErrorMessage="Unable to copy address"
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
                                 textToCopy=${this.getSelectedWalletAddress()}
                                 buttonSize="28px"
                                 iconSize="16px"
@@ -663,37 +669,37 @@ class MultiWallet extends LitElement {
 
                 <mwc-dialog id="showTransactionDetailsDialog" scrimClickAction="${this.showTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
-                        <h1>Transaction Details</h1>
+                        <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
                     </div>
                     <div id="transactionList">
-                        <span class="title"> Transaction Type </span>
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.type}</span>
-                            ${this.selectedTransaction.txnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                            ${this.selectedTransaction.txnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
                         </div>
-                        <span class="title">Sender</span>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
                         <br />
                         <div><span>${this.selectedTransaction.creatorAddress}</span></div>
-                        <span class="title">Receiver</span>
+                        <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div><span>${this.selectedTransaction.recipient}</span></div>
                         ${!this.selectedTransaction.amount ? '' : html`
-                            <span class="title">Amount</span>
+                            <span class="title"> ${translate("walletpage.wchange11")} </span>
                             <br />
                             <div><span>${this.selectedTransaction.amount} QORT</span></div>
                         `}
-                        <span class="title"> Transaction Fee </span>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
                         <br />
                         <div><span>${this.selectedTransaction.fee}</span></div>
-                        <span class="title">Block</span>
+                        <span class="title"> ${translate("walletpage.wchange13")} </span>
                         <br />
                         <div><span>${this.selectedTransaction.blockHeight}</span></div>
-                        <span class="title">Time</span>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
                         <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
-                        <span class="title"> Transaction Signature </span>
+                        <span class="title"> ${translate("walletpage.wchange15")} </span>
                         <br />
                         <div><span>${this.selectedTransaction.signature}</span></div>
                     </div>
@@ -702,46 +708,46 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <mwc-dialog id="showBtcTransactionDetailsDialog" scrimClickAction="${this.showBtcTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
-                        <h1>Transaction Details</h1>
+                        <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
                     </div>
                     <div id="transactionList">
-                        <span class="title"> Transaction Type </span>
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
                         <br />
                         <div>
-                            <span>PAYMENT</span>
-                            ${this.selectedTransaction.btcTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.btcTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
                         </div>
-                        <span class="title"> Sender </span>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.btcSender}</span>
                         </div>
-                         <span class="title"> Receiver </span>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.btcReceiver}</span>
                         </div>
-                        <span class="title"> Transaction Fee </span>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} BTC</span>
                         </div>
-                        <span class="title"> Total Amount </span>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} BTC</span>
                         </div>
-                        <span class="title"> Time </span>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
                         <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
-                        <span class="title"> Transaction Hash </span>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.txHash}</span>
@@ -752,46 +758,46 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <mwc-dialog id="showLtcTransactionDetailsDialog" scrimClickAction="${this.showLtcTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
-                        <h1>Transaction Details</h1>
+                        <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
                     </div>
                     <div id="transactionList">
-                        <span class="title"> Transaction Type </span>
+                        <span class="title"> ${translate("walletpage.wchange6")}e </span>
                         <br />
                         <div>
-                            <span>PAYMENT</span>
-                            ${this.selectedTransaction.ltcTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.ltcTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
                         </div>
-                        <span class="title"> Sender </span>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.ltcSender}</span>
                         </div>
-                         <span class="title"> Receiver </span>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div>
-                            <span>${this.selectedTransaction.ltcReceiver}</span>
+                            <span> ${this.selectedTransaction.ltcReceiver} </span>
                         </div>
-                        <span class="title"> Transaction Fee </span>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
                         <br />
                         <div>
-                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} LTC</span>
+                            <span> ${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} LTC </span>
                         </div>
-                        <span class="title"> Total Amount </span>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
                         <br />
                         <div>
-                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} LTC</span>
+                            <span> ${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} LTC </span>
                         </div>
-                        <span class="title"> Time </span>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
                         <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
-                        <span class="title"> Transaction Hash </span>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.txHash}</span>
@@ -802,46 +808,46 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <mwc-dialog id="showDogeTransactionDetailsDialog" scrimClickAction="${this.showDogeTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
-                        <h1>Transaction Details</h1>
+                        <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
                     </div>
                     <div id="transactionList">
-                        <span class="title"> Transaction Type </span>
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
                         <br />
                         <div>
-                            <span>PAYMENT</span>
-                            ${this.selectedTransaction.dogeTxnFlow === 'OUT' ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`}
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.dogeTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
                         </div>
-                        <span class="title"> Sender </span>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.dogeSender}</span>
                         </div>
-                         <span class="title"> Receiver </span>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.dogeReceiver}</span>
                         </div>
-                        <span class="title"> Transaction Fee </span>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} DOGE</span>
                         </div>
-                        <span class="title"> Total Amount </span>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} DOGE</span>
                         </div>
-                        <span class="title"> Time </span>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
                         <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
-                        <span class="title"> Transaction Hash </span>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
                         <br />
                         <div>
                             <span>${this.selectedTransaction.txHash}</span>
@@ -852,7 +858,7 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -860,15 +866,15 @@ class MultiWallet extends LitElement {
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/qort.png" width="32" height="32">
-                            <h2> Send QORT</h2>
+                            <h2> ${translate("walletpage.wchange17")} QORT</h2>
                             <hr />
                         </div>
                         <p>
-                            <span>From address:</span><br />
+                            <span>${translate("walletpage.wchange18")}:</span><br />
                             <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
                         </p>
                         <p>
-                            <span>Available balance:</span><br />
+                            <span>${translate("walletpage.wchange19")}:</span><br />
                             <span style="font-weight: bold;">${this.balanceString}</span>
                         </p>
                         <p>
@@ -877,7 +883,7 @@ class MultiWallet extends LitElement {
                                 required
                                 @input="${(e) => { this._checkAmount(e) }}"
                                 id="amountInput"
-                                label="Amount (QORT)"
+                                label="${translate("walletpage.wchange11")} (QORT)"
                                 type="number"
                                 auto-validate="false"
                                 value="${this.amount}"
@@ -889,14 +895,14 @@ class MultiWallet extends LitElement {
                                 style="width: 100%;"
                                 required
                                 id="recipient"
-                                label="To (address or name)"
+                                label="${translate("walletpage.wchange20")}"
                                 type="text"
                                 value="${this.recipient}"
                             >
                             </mwc-textfield>
                         </p>
                         <div style="margin-bottom: 0;">
-                            <p style="margin-bottom: 0;">Current static fee: <span style="font-weight: bold;">0.001 QORT<span></p>
+                            <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">0.001 QORT<span></p>
                         </div>
                         <p style="color: red;">${this.errorMessage}</p>
                         <p style="color: green;">${this.successMessage}</p>
@@ -905,7 +911,7 @@ class MultiWallet extends LitElement {
                             <div>
                                 <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendQort()}>
                                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
-                                    Send QORT
+                                    ${translate("walletpage.wchange17")} QORT
                                 </vaadin-button>
                             </div>
                         </div>
@@ -915,7 +921,7 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -923,7 +929,7 @@ class MultiWallet extends LitElement {
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/btc.png" width="32" height="32">
-                            <h2>Send BTC</h2>
+                            <h2>${translate("walletpage.wchange17")} BTC</h2>
                             <hr />
                         </div>
                         <p>
@@ -940,7 +946,7 @@ class MultiWallet extends LitElement {
                                 required
                                 @input="${(e) => { this._checkAmount(e) }}"
                                 id="btcAmountInput"
-                                label="Amount (BTC)"
+                                label="${translate("walletpage.wchange11")} (BTC)"
                                 type="number"
                                 auto-validate="false"
                                 value="${this.btcAmount}"
@@ -959,7 +965,7 @@ class MultiWallet extends LitElement {
                             </mwc-textfield>
                         </p>
                         <div style="margin-bottom: 0;">
-                            <p style="margin-bottom: 0;">Current fee per byte: <span style="font-weight: bold;">${(this.btcFeePerByte / 1e8).toFixed(8)} BTC</span><br>Low fees may result in slow or unconfirmed transactions.</p>
+                            <p style="margin-bottom: 0;">${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.btcFeePerByte / 1e8).toFixed(8)} BTC</span><br>${translate("walletpage.wchange25")}</p>
                             <paper-slider
                                 class="blue"
                                 style="width: 100%;"
@@ -979,7 +985,7 @@ class MultiWallet extends LitElement {
                             <div>
                                 <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendBtc()}>
                                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
-                                    Send BTC
+                                    ${translate("walletpage.wchange17")} BTC
                                 </vaadin-button>
                             </div>
                         </div>
@@ -989,7 +995,7 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -997,15 +1003,15 @@ class MultiWallet extends LitElement {
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/ltc.png" width="32" height="32">
-                            <h2>Send LTC</h2>
+                            <h2>${translate("walletpage.wchange17")} LTC</h2>
                             <hr />
                         </div>
                         <p>
-                            <span>From address:</span><br />
+                            <span>${translate("walletpage.wchange18")}:</span><br />
                             <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
                         </p>
                         <p>
-                            <span>Available balance:</span><br />
+                            <span>${translate("walletpage.wchange19")}:</span><br />
                             <span style="font-weight: bold;">${this.balanceString}</span>
                         </p>
                         <p>
@@ -1014,7 +1020,7 @@ class MultiWallet extends LitElement {
                                 required
                                 @input="${(e) => { this._checkAmount(e) }}"
                                 id="ltcAmountInput"
-                                label="Amount (LTC)"
+                                label="${translate("walletpage.wchange11")} (LTC)"
                                 type="number"
                                 auto-validate="false"
                                 value="${this.ltcAmount}"
@@ -1026,14 +1032,14 @@ class MultiWallet extends LitElement {
                                 style="width: 100%;"
                                 required
                                 id="ltcRecipient"
-                                label="To (address)"
+                                label="${translate("walletpage.wchange23")}"
                                 type="text"
                                 value="${this.ltcRecipient}"
                             >
                             </mwc-textfield>
                         </p>
                         <div style="margin-bottom: 0;">
-                            <p style="margin-bottom: 0;">Current fee per byte: <span style="font-weight: bold;">${(this.ltcFeePerByte / 1e8).toFixed(8)} LTC</span><br>Low fees may result in slow or unconfirmed transactions.</p>
+                            <p style="margin-bottom: 0;">${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.ltcFeePerByte / 1e8).toFixed(8)} LTC</span><br>${translate("walletpage.wchange25")}</p>
                             <paper-slider
                                 class="blue"
                                 style="width: 100%;"
@@ -1053,7 +1059,7 @@ class MultiWallet extends LitElement {
                             <div>
                                 <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendLtc()}>
                                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
-                                    Send LTC
+                                    ${translate("walletpage.wchange17")} LTC
                                 </vaadin-button>
                             </div>
                         </div>
@@ -1063,7 +1069,7 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -1071,15 +1077,15 @@ class MultiWallet extends LitElement {
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/doge.png" width="32" height="32">
-                            <h2>Send DOGE</h2>
+                            <h2>${translate("walletpage.wchange17")} DOGE</h2>
                             <hr />
                         </div>
                         <p>
-                            <span>From address:</span><br />
+                            <span>${translate("walletpage.wchange18")}:</span><br />
                             <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
                         </p>
                         <p>
-                            <span>Available balance:</span><br />
+                            <span>${translate("walletpage.wchange19")}:</span><br />
                             <span style="font-weight: bold;">${this.balanceString}</span>
                         </p>
                         <p>
@@ -1088,7 +1094,7 @@ class MultiWallet extends LitElement {
                                 required
                                 @input="${(e) => { this._checkAmount(e) }}"
                                 id="dogeAmountInput"
-                                label="Amount (DOGE)"
+                                label="${translate("walletpage.wchange11")} (DOGE)"
                                 type="number"
                                 auto-validate="false"
                                 value="${this.dogeAmount}"
@@ -1100,7 +1106,7 @@ class MultiWallet extends LitElement {
                                 style="width: 100%;"
                                 required
                                 id="dogeRecipient"
-                                label="To (address)"
+                                label="${translate("walletpage.wchange23")}"
                                 type="text"
                                 value="${this.dogeRecipient}"
                             >
@@ -1108,7 +1114,7 @@ class MultiWallet extends LitElement {
                         </p>
                         <div style="margin-bottom: 0;">
                             <p style="margin-bottom: 0;">
-                                Current fee per byte: <span style="font-weight: bold;">${(this.dogeFeePerByte / 1e8).toFixed(8)} DOGE</span><br>Low fees may result in slow or unconfirmed transactions.
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dogeFeePerByte / 1e8).toFixed(8)} DOGE</span><br>L${translate("walletpage.wchange25")}
                             </p>
                             <paper-slider
                                 class="blue"
@@ -1129,7 +1135,7 @@ class MultiWallet extends LitElement {
                             <div>
                                 <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendDoge()}>
                                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
-                                    Send DOGE
+                                    ${translate("walletpage.wchange17")} DOGE
                                 </vaadin-button>
                             </div>
                         </div>
@@ -1139,7 +1145,7 @@ class MultiWallet extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
             </div>
@@ -1152,6 +1158,12 @@ class MultiWallet extends LitElement {
 
 	setInterval(() => {
 	    this.changeTheme();
+	}, 100)
+
+        this.changeLanguage()
+
+	setInterval(() => {
+	    this.changeLanguage()
 	}, 100)
 
 	setInterval(() => {
@@ -1374,6 +1386,42 @@ class MultiWallet extends LitElement {
         })
     }
 
+    renderFetchText() {
+        return html`${translate("walletpage.wchange1")}`
+    }
+
+    renderFundsText() {
+        return html`${translate("walletpage.wchange26")}`
+    }
+
+    renderInvalidText() {
+        return html`${translate("walletpage.wchange27")}`
+    }
+
+    renderEmptyText() {
+        return html`${translate("walletpage.wchange28")}`
+    }
+
+    renderReceiverText() {
+        return html`${translate("walletpage.wchange29")}`
+    }
+
+    renderSuccessText() {
+        return html`${translate("walletpage.wchange30")}`
+    }
+
+    renderFailText() {
+        return html`${translate("walletpage.wchange31")}`
+    }
+
+    renderOutText() {
+        return html`${translate("walletpage.wchange7")}`
+    }
+
+    renderInText() {
+        return html`${translate("walletpage.wchange8")}`
+    }
+
     selectWallet(event) {
         event.preventDefault()
 
@@ -1401,7 +1449,7 @@ class MultiWallet extends LitElement {
             e.target.focus()
 
             e.target.invalid = true
-            e.target.validationMessage = 'Invalid Amount!'
+            e.target.validationMessage = this.renderInvalidText()
         } else {
             this.btnDisable = false
         }
@@ -1412,7 +1460,7 @@ class MultiWallet extends LitElement {
         e.target.validityTransform = (newValue, nativeValidity) => {
             if (newValue.includes('-') === true) {
                 this.btnDisable = true
-                target.validationMessage = 'Invalid Amount!'
+                target.validationMessage = this.renderInvalidText()
 
                 return {
                     valid: false,
@@ -1422,7 +1470,7 @@ class MultiWallet extends LitElement {
                     let myAmount = newValue.split('.')
                     if (myAmount[1].length > 8) {
                         this.btnDisable = true
-                        target.validationMessage = 'Invalid Amount!'
+                        target.validationMessage = this.renderInvalidText()
                     } else {
                         return {
                             valid: true,
@@ -1459,21 +1507,21 @@ class MultiWallet extends LitElement {
         if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.balance)) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', 'Insufficient Funds!')
+            parentEpml.request('showSnackBar', this.renderFundsText())
             return false
         }
 
         if (parseFloat(amount) <= 0) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', 'Invalid Amount!')
+            parentEpml.request('showSnackBar', this.renderInvalidText())
             return false
         }
 
         if (recipient.length === 0) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', 'Receiver cannot be empty!')
+            parentEpml.request('showSnackBar', this.renderEmptyText())
             return false
         }
 
@@ -1525,8 +1573,8 @@ class MultiWallet extends LitElement {
                     let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
                     getTxnRequestResponse(myTransaction)
                 } else {
-                    console.error('INVALID_RECEIVER')
-                    this.errorMessage = 'INVALID_RECEIVER'
+                    console.error(this.renderReceiverText())
+                    this.errorMessage = this.renderReceiverText()
                     this.sendMoneyLoading = false
                     this.btnDisable = false
                 }
@@ -1562,7 +1610,7 @@ class MultiWallet extends LitElement {
                 this.errorMessage = ''
                 this.recipient = ''
                 this.amount = 0
-                this.successMessage = 'Transaction Successful!'
+                this.successMessage = this.renderReceiverText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
             } else {
@@ -1602,11 +1650,11 @@ class MultiWallet extends LitElement {
                 this.errorMessage = ''
                 this.btcRecipient = ''
                 this.btcAmount = 0
-                this.successMessage = 'Transaction Successful!'
+                this.successMessage = this.renderSuccessText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
             } else if (response === false) {
-                this.errorMessage = 'Transaction Failed!'
+                this.errorMessage = this.renderFailText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
                 throw new Error(txnResponse)
@@ -1648,11 +1696,11 @@ class MultiWallet extends LitElement {
                 this.errorMessage = ''
                 this.ltcRecipient = ''
                 this.ltcAmount = 0
-                this.successMessage = 'Transaction Successful!'
+                this.successMessage = this.renderSuccessText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
             } else if (response === false) {
-                this.errorMessage = 'Transaction Failed!'
+                this.errorMessage = this.renderFailText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
                 throw new Error(txnResponse)
@@ -1694,11 +1742,11 @@ class MultiWallet extends LitElement {
                 this.errorMessage = ''
                 this.dogeRecipient = ''
                 this.dogeAmount = 0
-                this.successMessage = 'Transaction Successful!'
+                this.successMessage = this.renderSuccessText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
             } else if (response === false) {
-                this.errorMessage = 'Transaction Failed!'
+                this.errorMessage = this.renderFailText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
                 throw new Error(txnResponse)
@@ -1736,7 +1784,7 @@ class MultiWallet extends LitElement {
     }
 
     async fetchWalletDetails(coin) {
-        this.balanceString = "Fetching balance ..."
+        this.balanceString = this.renderFetchText()
         switch (coin) {
             case 'qort':
                 parentEpml.request('apiCall', {
@@ -1744,7 +1792,7 @@ class MultiWallet extends LitElement {
                 })
                 .then((res) => {
                     if (isNaN(Number(res))) {
-                        parentEpml.request('showSnackBar', `Failed to Fetch QORT Balance. Try again!`)
+                        parentEpml.request('showSnackBar', `${translate("walletpage.wchange32")}`)
                     } else {
                         if (this._selectedWallet == coin) {
                             this.wallets.get(coin).balance = Number(res).toFixed(8)
@@ -1771,7 +1819,7 @@ class MultiWallet extends LitElement {
                 })
                 .then((res) => {
                     if (isNaN(Number(res))) {
-                        parentEpml.request('showSnackBar', `Failed to Fetch ${coin.toLocaleUpperCase()} Balance. Try again!`)
+                        parentEpml.request('showSnackBar', `${translate("walletpage.wchange33")} ${coin.toLocaleUpperCase()} ${translate("walletpage.wchange34")}!`)
                     } else {
                         if (this._selectedWallet == coin) {
                             this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
@@ -1804,13 +1852,13 @@ class MultiWallet extends LitElement {
 
     renderSendButton() {
         if ( this._selectedWallet === "qort" ) {
-            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send QORT</vaadin-button>`
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
         } else if ( this._selectedWallet === "btc" ) {
-            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendBtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send BTC</vaadin-button>`
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendBtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} BTC</vaadin-button>`
         } else if ( this._selectedWallet === "ltc" ) {
-            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendLtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send LTC</vaadin-button>`
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendLtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} LTC</vaadin-button>`
         } else if ( this._selectedWallet === "doge" ) {
-            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDoge()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> Send DOGE</vaadin-button>`
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDoge()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DOGE</vaadin-button>`
         } else {
             return html``
         }
@@ -1840,6 +1888,17 @@ class MultiWallet extends LitElement {
             this.theme = 'light';
         }
         document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
     }
 
     getSelectedWalletAddress() {
@@ -1915,20 +1974,20 @@ class MultiWallet extends LitElement {
         }
 
         return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
                 <vaadin-grid-column
                     auto-width
-                    header="Status"
+                    header="${translate("walletpage.wchange41")}"
                     .renderer=${(root, column, data) => {
                         if (!currentBlockHeight) {
                             return render(html``, root)
                         }
                         const confirmed = data.item.confirmations >= requiredConfirmations
                         if (confirmed) {
-                            render(html`<mwc-icon title="${data.item.confirmations} Confirmations" style="color: #00C851">check</mwc-icon>`, root)
+                            render(html`<mwc-icon title="${data.item.confirmations} ${translate("walletpage.wchange42")}" style="color: #00C851">check</mwc-icon>`, root)
                         } else {
-                            render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} Confirmations" style="color: #777">schedule</mwc-icon>`, root)
+                            render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} ${translate("walletpage.wchange42")}" style="color: #777">schedule</mwc-icon>`, root)
                         }
                     }}
                 >
@@ -1936,20 +1995,20 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Type"
+                    header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
-                        render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                        render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="Sender" path="creatorAddress"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="Receiver" path="recipient"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable path="fee"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable path="amount"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange9")}" path="creatorAddress"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange10")}" path="recipient"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange36")}" path="fee"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Time"
+                    header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
@@ -1963,11 +2022,11 @@ class MultiWallet extends LitElement {
 
     renderBtcTransactions(transactions, coin) {
         return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
                 <vaadin-grid-column
                     auto-width
-                    header="Status"
+                    header="${translate("walletpage.wchange41")}"
                     .renderer=${(root, column, data) => {
                         render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
                     }}
@@ -1976,16 +2035,16 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Type"
+                    header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
-                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Sender"
+                    header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
                     }}
@@ -1994,17 +2053,17 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Receiver"
+                    header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
                     }}
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Total Amount"
+                    header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
                         render(html`${amount}`, root)
@@ -2014,7 +2073,7 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Time"
+                    header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp * 1000)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
@@ -2028,11 +2087,11 @@ class MultiWallet extends LitElement {
 
     renderLtcTransactions(transactions, coin) {
         return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
                 <vaadin-grid-column
                     auto-width
-                    header="Status"
+                    header="${translate("walletpage.wchange41")}"
                     .renderer=${(root, column, data) => {
                         render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
                     }}
@@ -2041,16 +2100,16 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Type"
+                    header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
-                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Sender"
+                    header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
                     }}
@@ -2059,17 +2118,17 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Receiver"
+                    header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
                     }}
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Total Amount"
+                    header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
                         render(html`${amount}`, root)
@@ -2079,7 +2138,7 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Time"
+                    header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp * 1000)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
@@ -2093,11 +2152,11 @@ class MultiWallet extends LitElement {
 
     renderDogeTransactions(transactions, coin) {
         return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">Address has no transactions yet.</span></div>
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
                 <vaadin-grid-column
                     auto-width
-                    header="Status"
+                    header="${translate("walletpage.wchange41")}"
                     .renderer=${(root, column, data) => {
                         render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
                     }}
@@ -2106,16 +2165,16 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Type"
+                    header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
-                        render(html` PAYMENT ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">OUT</span>` : html`<span class="color-in">IN</span>`} `, root)
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Sender"
+                    header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
                     }}
@@ -2124,17 +2183,17 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Receiver"
+                    header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
                     }}
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="Transaction Hash" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Total Amount"
+                    header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
                         render(html`${amount}`, root)
@@ -2144,7 +2203,7 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     resizable
-                    header="Time"
+                    header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp * 1000)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
