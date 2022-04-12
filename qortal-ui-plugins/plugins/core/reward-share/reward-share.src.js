@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -94,17 +99,17 @@ class RewardShare extends LitElement {
         return html`
             <div id="reward-share-page">
                 <div style="min-height:48px; display: flex; padding-bottom: 6px;">
-                    <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Rewardshares</h3>
-                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createRewardShareDialog').show()}><mwc-icon>add</mwc-icon>Create reward share</mwc-button>
+                    <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">${translate("rewardsharepage.rchange1")}</h3>
+                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createRewardShareDialog').show()}><mwc-icon>add</mwc-icon>${translate("rewardsharepage.rchange2")}</mwc-button>
                 </div>
 
                 <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Rewardshares Involving In This Account</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("rewardsharepage.rchange3")}</h3>
                     <vaadin-grid id="accountRewardSharesGrid" ?hidden="${this.isEmptyArray(this.rewardShares)}" .items="${this.rewardShares}" all-rows-visible>
-                        <vaadin-grid-column auto-width path="mintingAccount"></vaadin-grid-column>
-                        <vaadin-grid-column auto-width path="sharePercent"></vaadin-grid-column>
-                        <vaadin-grid-column auto-width path="recipient"></vaadin-grid-column>
-                        <vaadin-grid-column width="12em" header="Action / Type" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column auto-width header="${translate("rewardsharepage.rchange4")}" path="mintingAccount"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="${translate("rewardsharepage.rchange5")}" path="sharePercent"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="${translate("rewardsharepage.rchange6")}" path="recipient"></vaadin-grid-column>
+                        <vaadin-grid-column width="12em" header="${translate("rewardsharepage.rchange7")} / ${translate("rewardsharepage.rchange8")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderRemoveRewardShareButton(data.item)}`, root)
                         }}>
                         </vaadin-grid-column>
@@ -112,11 +117,11 @@ class RewardShare extends LitElement {
                 </div>
 
                 <mwc-dialog id="createRewardShareDialog" scrimClickAction="${this.createRewardShareLoading ? '' : 'close'}">
-                    <div>Level 1 - 4 can create a Self Share and Level 5 or above can create a Reward Share!</div>
+                    <div>${translate("rewardsharepage.rchange9")}</div>
                     <br>
-                    <mwc-textfield style="width:100%;" ?disabled="${this.createRewardShareLoading}" label="Recipient Public Key" id="recipientPublicKey"></mwc-textfield>
+                    <mwc-textfield style="width:100%;" ?disabled="${this.createRewardShareLoading}" label="${translate("rewardsharepage.rchange10")}" id="recipientPublicKey"></mwc-textfield>
                     <p style="margin-bottom:0;">
-                        Reward share percentage: ${this.rewardSharePercentage}
+                        ${translate("rewardsharepage.rchange11")}: ${this.rewardSharePercentage}
                     </p>
                     <mwc-slider
                         @change="${e => this.rewardSharePercentage = this.shadowRoot.getElementById('rewardSharePercentageSlider').value}"
@@ -131,11 +136,11 @@ class RewardShare extends LitElement {
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.createRewardShareLoading}">
                             <!-- loading message -->
-                            Doing something delicious &nbsp;
+                            ${translate("rewardsharepage.rchange13")} &nbsp;
                             <paper-spinner-lite
                                 style="margin-top:12px;"
                                 ?active="${this.createRewardShareLoading}"
-                                alt="Adding minting account"></paper-spinner-lite>
+                                alt="${translate("rewardsharepage.rchange13")}"></paper-spinner-lite>
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
@@ -146,20 +151,20 @@ class RewardShare extends LitElement {
                         ?disabled="${this.createRewardShareLoading}"
                         slot="primaryAction"
                         @click=${this.createRewardShare}
-                        >
-                        <!--dialogAction="add"-->
-                        Add
+                    >
+                    ${translate("rewardsharepage.rchange14")}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.createRewardShareLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                     >
+                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
                 ${this.isEmptyArray(this.rewardShares) ? html`
-                    <span style="color: var(--black);">Account is not involved in any reward shares</span>
+                    <span style="color: var(--black);">${translate("rewardsharepage.rchange15")}</span>
                 `: ''}
             </div>
         `
@@ -171,6 +176,12 @@ class RewardShare extends LitElement {
 
 	setInterval(() => {
 	    this.changeTheme();
+	}, 100)
+
+        this.changeLanguage()
+
+	setInterval(() => {
+	    this.changeLanguage()
 	}, 100)
 
         window.addEventListener("contextmenu", (event) => {
@@ -273,11 +284,30 @@ class RewardShare extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderSuccessText() {
+        return html`${translate("rewardsharepage.rchange21")}`
+    }
+
+    renderRemovedText() {
+        return html`${translate("rewardsharepage.rchange22")}`
+    }
+
     renderRemoveRewardShareButton(rewardShareObject) {
         if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
-            return html`Own Rewardshare`
+            return html`${translate("rewardsharepage.rchange16")}`
         } else {
-            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`
+            return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>${translate("rewardsharepage.rchange17")}</mwc-button>`
         }
     }
 
@@ -352,7 +382,7 @@ class RewardShare extends LitElement {
                     if (isExisting === true) {
 
                         this.error = true
-                        this.message = `Cannot Create Multiple Self Shares!`
+                        this.message = `${translate("rewardsharepage.rchange18")}`
                     } else {
                         // Send the transaction for confirmation by the user
                         this.error = false
@@ -367,7 +397,7 @@ class RewardShare extends LitElement {
                     if (isExisting === true) {
 
                         this.error = true
-                        this.message = `Cannot Create Multiple Self Shares!`
+                        this.message = `${translate("rewardsharepage.rchange19")}`
                     } else {
                         // Send the transaction for confirmation by the user
                         this.error = false
@@ -376,7 +406,7 @@ class RewardShare extends LitElement {
                     }
                 } else {
                     this.error = true
-                    this.message = `CANNOT CREATE SELF SHARE! at level ${accountDetails.level}`
+                    this.message = `${translate("rewardsharepage.rchange20")} ${accountDetails.level}`
                 }
             } else {
                 //Check for creating reward shares
@@ -388,7 +418,7 @@ class RewardShare extends LitElement {
                     if (isExisting === true) {
 
                         this.error = true
-                        this.message = `Cannot Create Multiple Reward Shares!`
+                        this.message = `${translate("rewardsharepage.rchange18")}`
                     } else {
                         // Send the transaction for confirmation by the user
                         this.error = false
@@ -398,7 +428,7 @@ class RewardShare extends LitElement {
                 } else {
 
                     this.error = true
-                    this.message = `CANNOT CREATE REWARD SHARE! at level ${accountDetails.level}`
+                    this.message = `${translate("rewardsharepage.rchange20")} ${accountDetails.level}`
                 }
             }
         }
@@ -426,7 +456,7 @@ class RewardShare extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = 'Reward Share Successful!'
+                this.message = this.renderSuccessText()
                 this.error = false
             } else {
                 this.error = true
@@ -491,7 +521,7 @@ class RewardShare extends LitElement {
             } else if (txnResponse.success === true && !txnResponse.data.error) {
 
                 this.removeRewardShareLoading = false
-                parentEpml.request('showSnackBar', 'Reward Share Removed Successfully!')
+                parentEpml.request('showSnackBar', this.renderRemovedText())
             } else {
 
                 this.removeRewardShareLoading = false

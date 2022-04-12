@@ -239,5 +239,29 @@
     "tchange30": "Guthaben konnte nicht abgerufen werden. Versuchen Sie es nochmal!",
     "tchange31": "VERKAUFT",
     "tchange32": "GEKAUFT"
+  },
+  "rewardsharepage": {
+    "rchange1": "Belohnungsanteile",
+    "rchange2": "Belohnungsanteil erstellen",
+    "rchange3": "Belohnungsanteile, die sich auf dieses Konto beziehen",
+    "rchange4": "Minting Konto",
+    "rchange5": "Prozent Anteil",
+    "rchange6": "Empfänger",
+    "rchange7": "Aktion",
+    "rchange8": "Typ",
+    "rchange9": "Level 1 - 4 können einen Self Share erstellen und Level 5 oder höher können einen Reward Share erstellen!",
+    "rchange10": "Öffentlicher Schlüssel des Empfängers",
+    "rchange11": "Belohnungsanteil in Prozent",
+    "rchange12": "Mache Etwas Leckeres",
+    "rchange13": "Füge Minting Konto hinzu",
+    "rchange14": "Hinzufügen",
+    "rchange15": "Dieses Konto ist nicht an Belohnungsanteile beteiligt",
+    "rchange16": "Eigener Belohnungsanteil",
+    "rchange17": "Entfernen",
+    "rchange18": "Es können nicht mehrere Belohnungsanteile erstellt werden!",
+    "rchange19": "Es können nicht mehrere eigene Belohnungsanteile erstellt werden!",
+    "rchange20": "BELOHNUNGSANTEIL KANN NICHT ERSTELLT WERDEN! auf Ebene",
+    "rchange21": "Belohnungsanteil erfolgreich!",
+    "rchange22": "Belohnungsanteil wurde erfolgreich entfernt!"
   }
 }

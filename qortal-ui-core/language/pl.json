@@ -239,5 +239,29 @@
     "tchange30": "Failed to Fetch Balance. Try again!",
     "tchange31": "SOLD",
     "tchange32": "BOUGHT"
+  },
+  "rewardsharepage": {
+    "rchange1": "Rewardshares",
+    "rchange2": "Create reward share",
+    "rchange3": "Rewardshares Involving In This Account",
+    "rchange4": "Minting Account",
+    "rchange5": "Share Percent",
+    "rchange6": "Recipient",
+    "rchange7": "Action",
+    "rchange8": "Type",
+    "rchange9": "Level 1 - 4 can create a Self Share and Level 5 or above can create a Reward Share!",
+    "rchange10": "Recipient Public Key",
+    "rchange11": "Reward share percentage",
+    "rchange12": "Doing something delicious",
+    "rchange13": "Adding minting account",
+    "rchange14": "Add",
+    "rchange15": "Account is not involved in any reward shares",
+    "rchange16": "Own Rewardshare",
+    "rchange17": "Remove",
+    "rchange18": "Cannot Create Multiple Reward Shares!",
+    "rchange19": "Cannot Create Multiple Self Shares!",
+    "rchange20": "CANNOT CREATE REWARD SHARE! at level",
+    "rchange21": "Reward Share Successful!",
+    "rchange22": "Reward Share Removed Successfully!"
   }
 }
