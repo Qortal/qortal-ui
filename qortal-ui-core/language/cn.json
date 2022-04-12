@@ -263,5 +263,25 @@
     "rchange20": "CANNOT CREATE REWARD SHARE! at level",
     "rchange21": "Reward Share Successful!",
     "rchange22": "Reward Share Removed Successfully!"
+  },
+  "registernamepage": {
+    "nchange1": "Name Registration",
+    "nchange2": "Register Name",
+    "nchange3": "Registered Names",
+    "nchange4": "Avatar",
+    "nchange5": "Name",
+    "nchange6": "Owner",
+    "nchange7": "Action",
+    "nchange8": "No names registered by this account!",
+    "nchange9": "Register a Name!",
+    "nchange10": "Description (optional)",
+    "nchange11": "Doing something delicious",
+    "nchange12": "Registering Name",
+    "nchange13": "The current name registration fee is",
+    "nchange14": "Register",
+    "nchange15": "Set Avatar",
+    "nchange16": "Need Core Update",
+    "nchange17": "Name Already Exists!",
+    "nchange18": "Name Registration Successful!"
   }
 }

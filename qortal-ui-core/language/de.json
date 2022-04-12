@@ -263,5 +263,25 @@
     "rchange20": "BELOHNUNGSANTEIL KANN NICHT ERSTELLT WERDEN! auf Ebene",
     "rchange21": "Belohnungsanteil erfolgreich!",
     "rchange22": "Belohnungsanteil wurde erfolgreich entfernt!"
+  },
+  "registernamepage": {
+    "nchange1": "Namensregistrierung",
+    "nchange2": "Registrieren Sie einen Namen",
+    "nchange3": "Eingetragene Namen",
+    "nchange4": "Avatar",
+    "nchange5": "Name",
+    "nchange6": "Eigentümer",
+    "nchange7": "Aktion",
+    "nchange8": "Keine Namen von diesem Konto registriert!",
+    "nchange9": "Registrieren Sie einen Namen!",
+    "nchange10": "Beschreibung (optional)",
+    "nchange11": "Mache Etwas Leckeres",
+    "nchange12": "Registriere den Name",
+    "nchange13": "Die aktuelle Namensregistrierungsgebühr beträgt",
+    "nchange14": "Registrieren",
+    "nchange15": "Avatar festlegen",
+    "nchange16": "Core-Update erforderlich",
+    "nchange17": "Name existiert bereits!",
+    "nchange18": "Namensregistrierung erfolgreich!"
   }
 }

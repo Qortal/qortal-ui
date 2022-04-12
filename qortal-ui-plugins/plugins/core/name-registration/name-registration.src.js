@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -94,49 +99,49 @@ class NameRegistration extends LitElement {
         return html`
             <div id="name-registration-page">
                 <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Name Registration</h2>
-                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#registerNameDialog').show()}><mwc-icon>add</mwc-icon>Register Name</mwc-button>
+                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("registernamepage.nchange1")}</h2>
+                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#registerNameDialog').show()}><mwc-icon>add</mwc-icon>${translate("registernamepage.nchange2")}</mwc-button>
                 </div>
 
                 <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Registered Names</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("registernamepage.nchange3")}</h3>
                     <vaadin-grid theme="large" id="namesGrid" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Names" .items="${this.names}" all-rows-visible>
-                        <vaadin-grid-column width="5rem" flex-grow="0" header="Avatar" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="5rem" flex-grow="0" header="${translate("registernamepage.nchange4")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderAvatar(data.item)}`, root)
                         }}></vaadin-grid-column>
-                        <vaadin-grid-column path="name"></vaadin-grid-column>
-                        <vaadin-grid-column path="owner"></vaadin-grid-column>
-                        <vaadin-grid-column width="12rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("registernamepage.nchange6")}" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderAvatarButton(data.item)}`, root)
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.names) ? html`
-                        <span style="color: var(--black);">No names registered by this account!</span>
+                        <span style="color: var(--black);">${translate("registernamepage.nchange8")}</span>
                     `: ''}
                 </div>
 
                 <!-- Register Name Dialog -->
                 <mwc-dialog id="registerNameDialog" scrimClickAction="${this.registerNameLoading ? '' : 'close'}">
-                    <div>Register a Name!</div>
+                    <div>${translate("registernamepage.nchange9")}</div>
                     <br>
-                    <mwc-textfield style="width:100%;" ?disabled="${this.registerNameLoading}" label="Name" id="nameInput"></mwc-textfield>
+                    <mwc-textfield style="width:100%;" ?disabled="${this.registerNameLoading}" label="${translate("registernamepage.nchange5")}" id="nameInput"></mwc-textfield>
                     <p style="margin-bottom:0;">
-                        <mwc-textfield style="width:100%;" ?disabled="${this.registerNameLoading}" label="Description (optional)" id="descInput"></mwc-textfield>
+                        <mwc-textfield style="width:100%;" ?disabled="${this.registerNameLoading}" label="${translate("registernamepage.nchange10")}" id="descInput"></mwc-textfield>
                     </p>
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.registerNameLoading}">
                             <!-- loading message -->
-                            Doing something delicious &nbsp;
+                            ${translate("registernamepage.nchange11")} &nbsp;
                             <paper-spinner-lite
                                 style="margin-top:12px;"
                                 ?active="${this.registerNameLoading}"
-                                alt="Registering Name"></paper-spinner-lite>
+                                alt="${translate("registernamepage.nchange12")}"></paper-spinner-lite>
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
                             ${this.message}
                         </span><br>
                         <span>
-                            <b>The current name registration fee is ${this.fee} QORT.</b>
+                            <b>${translate("registernamepage.nchange13")} ${this.fee} QORT.</b>
                         </span>
                     </div>
                     
@@ -144,15 +149,16 @@ class NameRegistration extends LitElement {
                         ?disabled="${this.registerNameLoading}"
                         slot="primaryAction"
                         @click=${this.registerName}
-                        >
-                        Register
+                    >
+                    ${translate("registernamepage.nchange14")}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.registerNameLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
             </div>
@@ -165,6 +171,12 @@ class NameRegistration extends LitElement {
 
 	setInterval(() => {
 	    this.changeTheme();
+	}, 100)
+
+        this.changeLanguage()
+
+	setInterval(() => {
+	    this.changeLanguage()
 	}, 100)
 
         this.unitFee();
@@ -228,6 +240,29 @@ class NameRegistration extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderCoreText() {
+        return html`${translate("registernamepage.nchange16")}`
+    }
+
+    renderSuccessText() {
+        return html`${translate("registernamepage.nchange18")}`
+    }
+
+    renderFailText() {
+        return html`${translate("registernamepage.nchange17")}`
+    }
+
     renderAvatar(nameObj) {
         let name = nameObj.name
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -237,7 +272,7 @@ class NameRegistration extends LitElement {
     }
 
     renderAvatarButton(nameObj) {
-        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;Set Avatar</mwc-button>`
+        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;${translate("registernamepage.nchange15")}</mwc-button>`
     }
 
     async uploadAvatar(nameObj) {
@@ -260,7 +295,7 @@ class NameRegistration extends LitElement {
                 this.fee = (Number(json) / 1e8).toFixed(2);
             })
             .catch((response) => {
-                console.log(response.status, response.statusText, 'Need Core Update');
+                console.log(response.status, response.statusText, this.renderCoreText());
             })
     }
 
@@ -314,7 +349,7 @@ class NameRegistration extends LitElement {
                 getTxnRequestResponse(myTransaction)
             } else {
                 this.error = true
-                this.message = `Name Already Exists!`
+                this.message = this.renderFailText()
             }
         }
 
@@ -339,7 +374,7 @@ class NameRegistration extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = 'Name Registration Successful!'
+                this.message = this.renderSuccessText()
                 this.error = false
             } else {
                 this.error = true
