@@ -320,5 +320,32 @@
     "schange33": "Name to search",
     "schange34": "Name can not be empty!",
     "schange35": "Search"
+  },
+  "publishpage": {
+    "pchange1": "Publish",
+    "pchange2": "Update",
+    "pchange3": "Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.",
+    "pchange4": "Select Name",
+    "pchange5": "Title",
+    "pchange6": "Description",
+    "pchange7": "Select Category",
+    "pchange8": "Tag",
+    "pchange9": "Service",
+    "pchange10": "Identifier",
+    "pchange11": "Publish",
+    "pchange12": "Select zip file containing static content",
+    "pchange13": "Local path to static files",
+    "pchange14": "Please select a registered name to publish data for",
+    "pchange15": "Please select a file to host",
+    "pchange16": "Please select a zip file to host",
+    "pchange17": "Please enter the directory path containing the static content",
+    "pchange18": "Please enter a service name",
+    "pchange19": "Processing data... this can take some time...",
+    "pchange20": "Error:",
+    "pchange21": "Internal Server Error when publishing data",
+    "pchange22": "Computing proof of work... this can take some time...",
+    "pchange23": "Transaction successful!",
+    "pchange24": "Unable to sign and process transaction",
+    "pchange25": "Choose File"
   }
 }

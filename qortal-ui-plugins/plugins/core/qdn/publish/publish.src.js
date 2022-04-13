@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-button'
 import '@material/mwc-textfield'
@@ -61,6 +66,27 @@ class PublishData extends LitElement {
                 --lumo-contrast-60pct: var(--vdicon);
                 --_lumo-grid-border-color: var(--border);
                 --_lumo-grid-secondary-border-color: var(--border2);
+            }
+
+
+            input[type=text] {
+                padding: 6px 6px 6px 6px;
+                color: var(--black);
+            }
+
+            input[type=file]::file-selector-button {
+                border: 1px solid transparent;
+                padding: 6px 6px 6px 6px;
+                border-radius: 5px;
+                color: #fff;
+                background-color: var(--mdc-theme-primary);
+                transition: 1s;
+            }
+
+            input[type=file]::file-selector-button:hover {
+                color: #000;
+                background-color: #81ecec;
+                border: 1px solid transparent;
             }
 
             #publishWrapper paper-button {
@@ -214,57 +240,57 @@ class PublishData extends LitElement {
             <div id="publishWrapper" style="width: auto; padding:10px; background: var(--white); height: 100vh;">
                 <div class="layout horizontal center" style=" padding:12px 15px;">
                     <div class="address-bar">
-                        <mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> Back</mwc-button>
+                        <mwc-button @click=${() => this.goBack()} class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon> ${translate("general.back")}</mwc-button>
                     </div>
                     <paper-card style="width:100%; max-width:740px;">
                         <div style="margin:0; margin-top:20px;">
-                            <h3 style="margin:0; padding:8px 0; text-transform: capitalize; color: var(--black);">Publish / Update ${this.category}</h3>
-                            <p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.</p>
+                            <h3 style="margin:0; padding:8px 0; text-transform: capitalize; color: var(--black);">${translate("publishpage.pchange1")} / ${translate("publishpage.pchange2")} ${this.category}</h3>
+                            <p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">${translate("publishpage.pchange3")}</p>
                         </div>
                     </paper-card>
                     <!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
                     <p style="display: ${this.showName ? 'block' : 'none'}">
-                        <mwc-select id="registeredName" label="Select Name" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
+                        <mwc-select id="registeredName" label="${translate("publishpage.pchange4")}" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
                             <mwc-list-item selected value=""></mwc-list-item>
                             <mwc-list-item value="${this.myRegisteredName}">${this.myRegisteredName}</mwc-list-item>
                         </mwc-select>
                     </p>
                     <div style="display: ${this.showMetadata ? 'block' : 'none'}">
                         <p>
-                            <mwc-textfield style="width:100%;" label="Title" id="title" type="text" value="${this.metadata != null && this.metadata.title != null ? this.metadata.title : ''}" maxLength="80"></mwc-textfield><!--charCounter="true"-->
+                            <mwc-textfield style="width:100%;" label="${translate("publishpage.pchange5")}" id="title" type="text" value="${this.metadata != null && this.metadata.title != null ? this.metadata.title : ''}" maxLength="80"></mwc-textfield><!--charCounter="true"-->
                         </p>
                         <p>
-                            <mwc-textfield style="width:100%;" label="Description" id="description" type="text" value="${this.metadata != null && this.metadata.description != null ? this.metadata.description : ''}" maxLength="500"></mwc-textfield><!--charCounter="true"-->
+                            <mwc-textfield style="width:100%;" label="${translate("publishpage.pchange6")}" id="description" type="text" value="${this.metadata != null && this.metadata.description != null ? this.metadata.description : ''}" maxLength="500"></mwc-textfield><!--charCounter="true"-->
                         </p>
                         <p>
-                            <mwc-select id="category" label="Select Category" index="0" style="min-width: 130px; max-width:100%; width:100%;">
+                            <mwc-select id="category" label="${translate("publishpage.pchange7")}" index="0" style="min-width: 130px; max-width:100%; width:100%;">
                                 ${this.categories.map((c, index) => html`
                                     <mwc-list-item value="${c.id}">${c.name}</mwc-list-item>
                                 `)}
                             </mwc-select>
                         </p>
                         <p>
-                            <mwc-textfield style="width:19.85%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="Tag 1" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="Tag 2" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="Tag 3" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="Tag 4" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="Tag 5" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="${translate("publishpage.pchange8")} 1" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="${translate("publishpage.pchange8")} 2" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="${translate("publishpage.pchange8")} 3" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="${translate("publishpage.pchange8")} 4" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.85%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="${translate("publishpage.pchange8")} 5" maxLength="20"></mwc-textfield>
                         </p>
                     </div>
                     ${this.renderUploadField()}
                     <p style="display: ${this.showService ? 'block' : 'none'}">
-                        <mwc-textfield style="width:100%;" label="Service" id="service" type="text" value="${this.service}"></mwc-textfield>
+                        <mwc-textfield style="width:100%;" label="${translate("publishpage.pchange9")}" id="service" type="text" value="${this.service}"></mwc-textfield>
                     </p>
                     <p style="display: ${this.showIdentifier ? 'block' : 'none'}">
-                        <mwc-textfield style="width:100%;" label="Identifier" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
+                        <mwc-textfield style="width:100%;" label="${translate("publishpage.pchange10")}" id="identifier" type="text" value="${this.identifier != null ? this.identifier : ''}"></mwc-textfield>
                     </p>
                     <p style="break-word; color: var(--black);">${this.generalMessage}</p>
                     <p style="color:red">${this.errorMessage}</p>
-                    <p style="color:green;word-break: break-word;">${this.successMessage}</p>
+                    <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
                         <div>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}>Publish &nbsp;</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}> ${translate("publishpage.pchange11")}</mwc-button>
                         </div>
                     </div>
                 </div>
@@ -275,10 +301,7 @@ class PublishData extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        this.changeLanguage()
 
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
@@ -287,6 +310,20 @@ class PublishData extends LitElement {
 
         window.addEventListener('click', () => {
             parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
         })
 
         window.onkeyup = (e) => {
@@ -306,6 +343,17 @@ class PublishData extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
     // Navigation
     goBack() {
         window.history.back();
@@ -323,15 +371,15 @@ class PublishData extends LitElement {
         else if (this.uploadType === "zip") {
             return html`
                 <p>
-                    <span class="upload-text">Select zip file containing static content:</span><br />
-                    <input style="width: 100%; background: var(--white); color: var(--black)" id="file" type="file" accept=".zip">
+                    <span class="upload-text">${translate("publishpage.pchange12")}:</span><br />
+                    <input style="color: var(--black)" id="file" type="file" accept=".zip">
                 </p>
             `
         }
         else {
             return html`
                 <p>
-                    <mwc-textfield style="width:100%;" label="Local path to static files" id="path" type="text" value="${this.path}"></mwc-textfield>
+                    <mwc-textfield style="width:100%;" label="${translate("publishpage.pchange13")}" id="path" type="text" value="${this.path}"></mwc-textfield>
                 </p>
             `
         }
@@ -364,19 +412,24 @@ class PublishData extends LitElement {
 
         if (registeredName === '') {
             this.showName = true
-            parentEpml.request('showSnackBar', 'Please select a registered name to publish data for')
+            let err1string = get("publishpage.pchange14")
+            parentEpml.request('showSnackBar', `${err1string}`)
         }
         else if (this.uploadType === "file" && file == null) {
-            parentEpml.request('showSnackBar', 'Please select a file to host')
+            let err2string = get("publishpage.pchange15")
+            parentEpml.request('showSnackBar', `${err2string}`)
         }
         else if (this.uploadType === "zip" && file == null) {
-            parentEpml.request('showSnackBar', 'Please select a zip file to host')
+            let err3string = get("publishpage.pchange16")
+            parentEpml.request('showSnackBar', `${err3string}`)
         }
         else if (this.uploadType === "path" && path === '') {
-            parentEpml.request('showSnackBar', 'Please enter the directory path containing the static content')
+            let err4string = get("publishpage.pchange17")
+            parentEpml.request('showSnackBar', `${err4string}`)
         }
         else if (service === '') {
-            parentEpml.request('showSnackBar', 'Please enter a service name')
+            let err5string = get("publishpage.pchange18")
+            parentEpml.request('showSnackBar', `${err5string}`)
         }
         else {
             this.publishData(registeredName, path, file, service, identifier)
@@ -412,34 +465,41 @@ class PublishData extends LitElement {
                 throw new Error(this.errorMessage);
             }
 
-            this.generalMessage = "Processing data... this can take some time...";
+            let err6string = get("publishpage.pchange19")
+            this.generalMessage = `${err6string}`
 
             let transactionBytes = await uploadData(registeredName, path, file)
             if (transactionBytes.error) {
-                this.errorMessage = "Error: " + transactionBytes.message
+                let err7string = get("publishpage.pchange20")
+                this.errorMessage = `${err7string}` + transactionBytes.message
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
             }
             else if (transactionBytes.includes("Error 500 Internal Server Error")) {
-                this.errorMessage = "Internal Server Error when publishing data"
+                let err8string = get("publishpage.pchange21")
+                this.errorMessage = `${err8string}`
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
             }
 
-            this.generalMessage = "Computing proof of work... this can take some time...";
+            let err9string = get("publishpage.pchange22")
+            this.generalMessage = `${err9string}`
 
             let signAndProcessRes = await signAndProcess(transactionBytes)
             if (signAndProcessRes.error) {
-                this.errorMessage = "Error: " + signAndProcessRes.message
+                let err10string = get("publishpage.pchange20")
+                this.errorMessage = `${err10string}` + signAndProcessRes.message
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
             }
+
+            let err11string = get("publishpage.pchange23")
 
             this.btnDisable = false
             this.loading = false
             this.errorMessage = ''
             this.generalMessage = ''
-            this.successMessage = 'Transaction successful!'
+            this.successMessage = `${err11string}`
         }
 
         const uploadData = async (registeredName, path, file) => {
@@ -500,7 +560,8 @@ class PublishData extends LitElement {
         const signAndProcess = async (transactionBytesBase58) => {
             let convertedBytesBase58 = await convertBytesForSigning(transactionBytesBase58)
             if (convertedBytesBase58.error) {
-                this.errorMessage = "Error: " + convertedBytesBase58.message
+                let err12string = get("publishpage.pchange20")
+                this.errorMessage = `${err12string}` + convertedBytesBase58.message
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
             }
@@ -531,7 +592,8 @@ class PublishData extends LitElement {
 
             let myResponse = { error: '' }
             if (response === false) {
-                myResponse.error = "Unable to sign and process transaction"
+                let err13string = get("publishpage.pchange24")
+                myResponse.error = `${err13string}`
             }
             else {
                 myResponse = response

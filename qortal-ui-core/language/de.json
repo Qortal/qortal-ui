@@ -320,5 +320,32 @@
     "schange33": "Name zu suchen",
     "schange34": "Name darf nicht leer sein!",
     "schange35": "Suchen"
+  },
+  "publishpage": {
+    "pchange1": "Veröffentlichen",
+    "pchange2": "Aktualisieren",
+    "pchange3": "Hinweis: Es wird empfohlen, dass Sie die Portweiterleitung einrichten, bevor Sie Daten hosten, damit Peers im Netzwerk leichter darauf zugreifen können.",
+    "pchange4": "Namen wählen",
+    "pchange5": "Titel",
+    "pchange6": "Beschreibung",
+    "pchange7": "Kategorie wählen",
+    "pchange8": "Stichwort",
+    "pchange9": "Service",
+    "pchange10": "Kennung",
+    "pchange11": "Veröffentlichen",
+    "pchange12": "Wählen Sie eine ZIP-Datei mit statischem Inhalt aus",
+    "pchange13": "Lokaler Pfad zu statischen Dateien",
+    "pchange14": "Bitte wählen Sie einen registrierten Namen aus, für den die Daten veröffentlicht werden sollen",
+    "pchange15": "Bitte wählen Sie eine zu hostende Datei aus",
+    "pchange16": "Bitte wählen Sie eine ZIP-Datei zum Hosten aus",
+    "pchange17": "Bitte geben Sie den Verzeichnispfad ein, der den statischen Inhalt enthält",
+    "pchange18": "Bitte geben Sie einen Dienstnamen ein",
+    "pchange19": "Daten werden verarbeitet ... dies kann einige Zeit dauern ...",
+    "pchange20": "Fehler:",
+    "pchange21": "Interner Serverfehler beim Veröffentlichen von Daten",
+    "pchange22": "Berechnung des Arbeitsnachweises ... dies kann einige Zeit dauern ...",
+    "pchange23": "Transaktion Erfolgreich!",
+    "pchange24": "Transaktion kann nicht signiert und verarbeitet werden",
+    "pchange25": "Datei wählen"
   }
 }
