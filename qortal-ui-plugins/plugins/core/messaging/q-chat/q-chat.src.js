@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
@@ -326,22 +331,22 @@ class Chat extends LitElement {
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
                     <div class="search">
-                        <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>New Private Message</div>
+                        <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>${translate("chatpage.cchange1")}</div>
                     </div>
                     <ul class="list">
-                        ${this.isEmptyArray(this.chatHeads) ? "Loading..." : this.renderChatHead(this.chatHeads)}
+                        ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
                     <div class="blockedusers">
                         <div class="center">
-                            <mwc-button raised label="Blocked Users" icon="person_off" @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}></mwc-button>
+                            <mwc-button raised label="${translate("chatpage.cchange3")}" icon="person_off" @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}></mwc-button>
                         </div>
                     </div>
                 </div>
 
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
-                        <span style="flex: 1;">New Message</span>
-                        <span>(Click to scroll down) <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
+                        <span style="flex: 1;">${translate("chatpage.cchange4")}</span>
+                        <span>${translate("chatpage.cchange5")} <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
                     </div>
                     <div class="chat-history">
                         ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
@@ -351,15 +356,15 @@ class Chat extends LitElement {
                 <!-- Start Chatting Dialog -->
                 <mwc-dialog id="startChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
-                        <h1>New Private Message</h1>
+                        <h1>${translate("chatpage.cchange1")}</h1>
                         <hr>
                     </div>
 
-                    <p>Type the name or address of who you want to chat with to send a private message!</p>
+                    <p>${translate("chatpage.cchange6")}</p>
 
-                    <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="Name / Address" rows="1"></textarea>
+                    <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="${translate("chatpage.cchange7")}" rows="1"></textarea>
                     <p style="margin-bottom:0;">
-                        <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="Message..." rows="1"></textarea>
+                        <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("chatpage.cchange8")}" rows="1"></textarea>
                     </p>
 
                     <mwc-button
@@ -367,7 +372,7 @@ class Chat extends LitElement {
                         slot="primaryAction"
                         @click=${this._sendMessage}
                     >
-                    ${this.isLoading === false ? "Send" : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                    ${this.isLoading === false ? this.renderSendText() : html`<paper-spinner-lite active></paper-spinner-lite>`}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
@@ -375,34 +380,34 @@ class Chat extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                    </mwc-button>
                 </mwc-dialog>
 
                 <!-- Blocked User Dialog -->
                 <mwc-dialog id="blockedUserDialog">
                     <div style="text-align:center">
-                        <h1>Blocked Users List</h1>
+                        <h1>${translate("chatpage.cchange10")}</h1>
                         <hr>
                         <br>
                     </div>
                     <vaadin-grid theme="compact" id="blockedGrid" ?hidden="${this.isEmptyArray(this.blockedUserList)}" aria-label="Blocked List" .items="${this.blockedUserList}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="Name" path="name"></vaadin-grid-column>
-                        <vaadin-grid-column auto-width header="Owner" path="owner"></vaadin-grid-column>
-                        <vaadin-grid-column width="10rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange12")}" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderUnblockButton(data.item)}`, root);
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.blockedUserList) ? html`
-                        <span style="color: var(--black); text-align: center;">This account has not blocked any users.</span>
+                        <span style="color: var(--black); text-align: center;">${translate("chatpage.cchange14")}</span>
                     `: ''}
                     <mwc-button
                         slot="primaryAction"
                         dialogAction="cancel"
                         class="red"
                     >
-                    Close
+                    ${translate("general.close")}
                    </mwc-button>
                 </mwc-dialog>
             </div>
@@ -419,10 +424,7 @@ class Chat extends LitElement {
 	}, 1000)
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme()
-	}, 100)
+        this.changeLanguage()
 
         const getBlockedUsers = async () => {
             let blockedUsers = await parentEpml.request('apiCall', {
@@ -474,23 +476,33 @@ class Chat extends LitElement {
         let runFunctionsAfterPageLoadInterval = setInterval(runFunctionsAfterPageLoad, 100);
 
         window.addEventListener("contextmenu", (event) => {
-
-            event.preventDefault();
+            event.preventDefault()
             this._textMenu(event)
-        });
+        })
 
         window.addEventListener("click", () => {
-
             parentEpml.request('closeCopyTextMenu', null)
             parentEpml.request('closeFramePasteMenu', null)
-        });
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
-
                 parentEpml.request('closeCopyTextMenu', null)
                 parentEpml.request('closeFramePasteMenu', null)
-
             }
         }
 
@@ -530,6 +542,14 @@ class Chat extends LitElement {
         parentEpml.imReady()
     }
 
+    renderLoadingText() {
+        return html`${translate("chatpage.cchange2")}`
+    }
+
+    renderSendText() {
+        return html`${translate("chatpage.cchange9")}`
+    }
+
     getChatBlockedList() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -543,8 +563,9 @@ class Chat extends LitElement {
             return response.json()
         }).then(data => {
             return data.map(item => {
+                let err1string = get("chatpage.cchange15")
                 const noName = {
-                    name: 'No registered name',
+                    name: `${err1string}`,
                     owner: item
                 }
                 fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {
@@ -585,14 +606,16 @@ class Chat extends LitElement {
             this.blockedUsers = this.blockedUsers.filter(item => item != owner)
             this.getChatBlockedList()
             this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
+            let err2string = get("chatpage.cchange16")
             snackbar.add({
-                labelText: `Successfully unblocked this user.`,
+                labelText: `${err2string}`,
                 dismiss: true
             })
         }
         else {
+            let err3string = get("chatpage.cchange17")
             snackbar.add({
-                labelText: `Error occurred when trying to unblock this user. Please try again.`,
+                labelText: `${err3string}`,
                 dismiss: true
             })
         }
@@ -600,7 +623,7 @@ class Chat extends LitElement {
     }
 
     renderUnblockButton(websiteObj) {
-        return html`<mwc-button dense unelevated label="unblock" icon="person_remove" @click="${() => this.unblockUser(websiteObj)}"></mwc-button>`
+        return html`<mwc-button dense unelevated label="${translate("chatpage.cchange18")}" icon="person_remove" @click="${() => this.unblockUser(websiteObj)}"></mwc-button>`
     }
 
     changeTheme() {
@@ -611,6 +634,17 @@ class Chat extends LitElement {
             this.theme = 'light';
         }
         document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
     }
 
     renderChatWelcomePage() {
@@ -706,7 +740,6 @@ class Chat extends LitElement {
             } else {
                 myRes = myNameRes
             }
-
             return myRes
         }
 
@@ -737,7 +770,8 @@ class Chat extends LitElement {
 
             if (addressPublicKey.error === 102) {
                 _publicKey = false
-                parentEpml.request('showSnackBar', "Invalid Name / Address, Check the name / address and retry...")
+                let err4string = get("chatpage.cchange19")
+                parentEpml.request('showSnackBar', `${err4string}`)
                 this.isLoading = false
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1
@@ -774,18 +808,16 @@ class Chat extends LitElement {
 
             const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
             const chatBytesArray = new Uint8Array(_chatBytesArray)
-
-
             const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
-
             const hashPtr = window.parent.sbrk(32, window.parent.heap);
-            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
+            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
+
             hashAry.set(chatBytesHash);
 
-            const difficulty = this.balance === 0 ? 14 : 8;
+            const difficulty = this.balance === 0 ? 14 : 8
 
             const workBufferLength = 8 * 1024 * 1024;
-            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
+            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
 
             let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
 
@@ -802,13 +834,15 @@ class Chat extends LitElement {
 
             if (response === true) {
                 messageBox.value = ""
-                parentEpml.request('showSnackBar', "Message Sent Successfully!")
+                let err5string = get("chatpage.cchange20")
+                parentEpml.request('showSnackBar', `${err5string}`)
                 this.isLoading = false
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message)
                 this.isLoading = false
             } else {
-                parentEpml.request('showSnackBar', "Sending failed, Please retry...")
+                let err6string = get("chatpage.cchange21")
+                parentEpml.request('showSnackBar', `${err6string}`)
                 this.isLoading = false
             }
         }

@@ -388,5 +388,28 @@
     "dchange19": "Beim Versuch, diesem registrierten Namen nicht mehr zu folgen, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
     "dchange20": "Beim Versuch, diesen registrierten Namen zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
     "dchange21": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!"
+  },
+  "chatpage": {
+    "cchange1": "Neue private Nachricht",
+    "cchange2": "Lade...",
+    "cchange3": "Blockierte Benutzer",
+    "cchange4": "Neue Nachricht",
+    "cchange5": "(Klicken um nach unten zu scrollen)",
+    "cchange6": "Geben Sie den Namen oder die Adresse der Person ein, mit der Sie chatten möchten, um eine private Nachricht zu senden!",
+    "cchange7": "Name / Adresse",
+    "cchange8": "Nachricht...",
+    "cchange9": "Sende",
+    "cchange10": "Liste blockierter Benutzer",
+    "cchange11": "Name",
+    "cchange12": "Eigentümer",
+    "cchange13": "Aktion",
+    "cchange14": "Dieses Konto hat keine Benutzer blockiert!",
+    "cchange15": "Kein registrierter Name",
+    "cchange16": "Dieser Benutzer wurde erfolgreich entsperrt!",
+    "cchange17": "Beim Versuch, diesen Benutzer zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "cchange18": "entsperren",
+    "cchange19": "Ungültiger Name / Adresse, überprüfen Sie den Namen / die Adresse und versuchen Sie es erneut...",
+    "cchange20": "Nachricht erfolgreich gesendet!",
+    "cchange21": "Senden fehlgeschlagen, bitte erneut versuchen..."
   }
 }
