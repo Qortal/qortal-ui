@@ -411,5 +411,16 @@
     "cchange19": "Ungültiger Name / Adresse, überprüfen Sie den Namen / die Adresse und versuchen Sie es erneut...",
     "cchange20": "Nachricht erfolgreich gesendet!",
     "cchange21": "Senden fehlgeschlagen, bitte erneut versuchen..."
+  },
+  "welcomepage": {
+    "wcchange1": "Willkommen zu Q-Chat",
+    "wcchange2": "Neue private Nachricht",
+    "wcchange3": "Geben Sie den Namen oder die Adresse der Person ein, mit der Sie chatten möchten, um eine private Nachricht zu senden!",
+    "wcchange4": "Name / Adresse",
+    "wcchange5": "Nachricht...",
+    "wcchange6": "Senden",
+    "wcchange7": "Ungültiger Name / Adresse, überprüfen Sie den Namen / die Adresse und versuchen Sie es erneut...",
+    "wcchange8": "Nachricht erfolgreich gesendet!",
+    "wcchange9": "Senden fehlgeschlagen, bitte erneut versuchen..."
   }
 }

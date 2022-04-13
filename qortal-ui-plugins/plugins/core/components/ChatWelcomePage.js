@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -200,38 +205,39 @@ class ChatWelcomePage extends LitElement {
         return html`
             <div>
                 <div>
-                    <span class="welcome-title">Welcome to Q-Chat</span>
+                    <span class="welcome-title">${translate("welcomepage.wcchange1")}</span>
                     <hr style="color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                 </div>
                 <div class="sub-main">
                     <div class="center-box">
                         <mwc-icon class="img-icon">chat</mwc-icon><br>
                         <span style="font-size: 20px; color: var(--black);">${this.myAddress.address}</span>
-                        <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>New Private Message</div>
+                        <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>${translate("welcomepage.wcchange2")}</div>
                     </div>
                 </div>
 
                 <!-- Start Chatting Dialog -->
                 <mwc-dialog id="startSecondChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
-                        <h1>New Private Message</h1>
+                        <h1>${translate("welcomepage.wcchange2")}</h1>
                         <hr>
                     </div>
 
-                    <p>Type the name or address of who you want to chat with to send a private message!</p>
+                    <p>${translate("welcomepage.wcchange3")}</p>
                     
-                    <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="Name / Address" rows="1"></textarea>
+                    <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="${translate("welcomepage.wcchange4")}" rows="1"></textarea>
                     <p style="margin-bottom:0;">
-                        <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="Message..." rows="1"></textarea>
+                        <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
                     </p>
                     
-                    <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${this._sendMessage}>Send</mwc-button>
+                    <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${this._sendMessage}>${translate("welcomepage.wcchange6")}</mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
             </div>
@@ -241,10 +247,7 @@ class ChatWelcomePage extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        this.changeLanguage()
 
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();
@@ -262,6 +265,20 @@ class ChatWelcomePage extends LitElement {
                 this.chatId = urlData
             }
         }
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         let configLoaded = false
 
@@ -290,6 +307,17 @@ class ChatWelcomePage extends LitElement {
             this.theme = 'light';
         }
         document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
     }
 
     _sendMessage() {
@@ -361,7 +389,8 @@ class ChatWelcomePage extends LitElement {
             if (addressPublicKey.error === 102) {
                 _publicKey = false
                 // Do something here...
-                parentEpml.request('showSnackBar', "Invalid Name / Address, Check the name / address and retry...")
+                let err1string = get("welcomepage.wcchange7")
+                parentEpml.request('showSnackBar', `${err1string}`)
                 this.isLoading = false
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1
@@ -423,13 +452,15 @@ class ChatWelcomePage extends LitElement {
 
             if (response === true) {
                 messageBox.value = ""
-                parentEpml.request('showSnackBar', "Message Sent Successfully!")
+                let err2string = get("welcomepage.wcchange8")
+                parentEpml.request('showSnackBar', `${err2string}`)
                 this.isLoading = false
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message)
                 this.isLoading = false
             } else {
-                parentEpml.request('showSnackBar', "Sending failed, Please retry...")
+                let err3string = get("welcomepage.wcchange9")
+                parentEpml.request('showSnackBar', `${err3string}`)
                 this.isLoading = false
             }
 
