@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -170,27 +175,27 @@ class DataManagement extends LitElement {
         return html`
             <div id="websites-list-page">
                 <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Data Management</h2>
+                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("datapage.dchange1")}</h2>
                 </div>
         	<div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">Search in hosted data by this node</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("datapage.dchange2")}</h3>
 	            <div id="search">
-	                <vaadin-text-field theme="medium" id="searchName" placeholder="Data to search" value="${this.searchData}" @keydown="${this.searchListener}" clear-button-visible>
+	                <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("datapage.dchange3")}" value="${this.searchData}" @keydown="${this.searchListener}" clear-button-visible>
 	                    <vaadin-icon slot="prefix" icon="vaadin:database"></vaadin-icon>
 	                </vaadin-text-field>&nbsp;&nbsp;<br />
 	                <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
 	                    <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
-	                    Search
+	                    ${translate("datapage.dchange4")}
 	                </vaadin-button>
 	            </div><br />
                     <vaadin-grid theme="large" id="searchDataHostedGrid" ?hidden="${this.isEmptyArray(this.searchDatres)}" .items="${this.searchDatres}" aria-label="Search Data Hosted" all-rows-visible>
-                        <vaadin-grid-column header="Registered Name" path="name"></vaadin-grid-column>
-                        <vaadin-grid-column header="Service" path="service"></vaadin-grid-column>
-			<vaadin-grid-column header="Identifier" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column header="${translate("datapage.dchange5")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("datapage.dchange6")}" path="service"></vaadin-grid-column>
+			<vaadin-grid-column header="${translate("datapage.dchange7")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderSearchIdentifier(data.item)}`, root)
             		}}>
                         </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+			<vaadin-grid-column width="10rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderSearchDeleteButton(data.item)}`, root);
             		}}>
                         </vaadin-grid-column>
@@ -201,15 +206,15 @@ class DataManagement extends LitElement {
                     </vaadin-grid>
 	        </div><br />
                 <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Data hosted by this node</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("datapage.dchange9")}</h3>
                     <vaadin-grid theme="large" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.datres)}" aria-label="Data Hosted" page-size="20" all-rows-visible>
-                        <vaadin-grid-column header="Registered Name" path="name"></vaadin-grid-column>
-                        <vaadin-grid-column header="Service" path="service"></vaadin-grid-column>
-			<vaadin-grid-column header="Identifier" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column header="${translate("datapage.dchange5")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("datapage.dchange6")}" path="service"></vaadin-grid-column>
+			<vaadin-grid-column header="${translate("datapage.dchange7")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderIdentifier(data.item)}`, root)
             		}}>
                         </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+			<vaadin-grid-column width="10rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderDeleteButton(data.item)}`, root);
             		}}>
                         </vaadin-grid-column>
@@ -227,10 +232,8 @@ class DataManagement extends LitElement {
 
     firstUpdated() {
 
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
-
+        this.changeTheme()
+        this.changeLanguage()
         this.showManagement()
 
         window.addEventListener('contextmenu', (event) => {
@@ -240,6 +243,20 @@ class DataManagement extends LitElement {
 
         window.addEventListener('click', () => {
             parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
         })
 
         window.onkeyup = (e) => {
@@ -293,6 +310,17 @@ class DataManagement extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
     searchListener(e) {
         if (e.key === 'Enter') {
             this.doSearch(e);
@@ -306,13 +334,15 @@ class DataManagement extends LitElement {
     async searchResult() {
         let searchName = this.shadowRoot.getElementById('searchName').value
         if (searchName.length === 0) {
-            parentEpml.request('showSnackBar', 'Data Name Can Not Be Empty!')
+            let err1string = get("datapage.dchange10")
+            parentEpml.request('showSnackBar', `${err1string}`)
         } else {
             let searchDatres = await parentEpml.request('apiCall', {
                 url: `/arbitrary/hosted/resources?includestatus=true&limit=20&offset=0&query=${searchName}&apiKey=${this.getApiKey()}`
             })
             if (this.isEmptyArray(searchDatres)) {
-                parentEpml.request('showSnackBar', 'Data Not Found!')
+                let err2string = get("datapage.dchange11")
+                parentEpml.request('showSnackBar', `${err2string}`)
             } else {
                 this.searchDatres = searchDatres
             }
@@ -321,10 +351,10 @@ class DataManagement extends LitElement {
 
     renderDefaultText() {
         if (this.datres == null || !Array.isArray(this.datres)) {
-            return html`<br />Couldn't fetch hosted data list from node`
+            return html`<br />${translate("datapage.dchange12")}`
         }
         if (this.isEmptyArray(this.datres)) {
-            return html`<br />This node isn't hosting any data`;
+            return html`<br />${translate("datapage.dchange13")}`;
         }
         return '';
     }
@@ -346,11 +376,11 @@ class DataManagement extends LitElement {
         // as it will be re-fetched immediately. In these cases we should show an UNFOLLOW button.
         if (this.searchFollowedNames.indexOf(name) != -1) {
             // render unfollow button
-            return html`<mwc-button @click=${() => this.searchUnfollowName(search)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+            return html`<mwc-button @click=${() => this.searchUnfollowName(search)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("datapage.dchange14")}</mwc-button>`
         }
 
         // render delete button
-        return html`<mwc-button @click=${() => this.deleteSearchResource(search)} onclick="this.blur();"><mwc-icon>delete</mwc-icon>&nbsp;Delete</mwc-button>`
+        return html`<mwc-button @click=${() => this.deleteSearchResource(search)} onclick="this.blur();"><mwc-icon>delete</mwc-icon>&nbsp;${translate("datapage.dchange15")}</mwc-button>`
     }
 
     renderSearchBlockUnblockButton(search) {
@@ -363,11 +393,11 @@ class DataManagement extends LitElement {
 
         if (this.searchBlockedNames.indexOf(name) === -1) {
             // render block button
-            return html`<mwc-button @click=${() => this.searchBlockName(search)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+            return html`<mwc-button @click=${() => this.searchBlockName(search)}><mwc-icon>block</mwc-icon>&nbsp;${translate("datapage.dchange16")}</mwc-button>`
         }
         else {
             // render unblock button
-            return html`<mwc-button @click=${() => this.searchUnblockName(search)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+            return html`<mwc-button @click=${() => this.searchUnblockName(search)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("datapage.dchange17")}</mwc-button>`
         }
     }
 
@@ -395,9 +425,9 @@ class DataManagement extends LitElement {
             this.searchBlockedNames.push(name)
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+            let err3string = get("datapage.dchange18")
+            parentEpml.request('showSnackBar', `${err3string}`)
         }
-
         return ret
     }
 
@@ -422,9 +452,9 @@ class DataManagement extends LitElement {
             this.searchFollowedNames = this.searchFollowedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+            let err4string = get("datapage.dchange19")
+            parentEpml.request('showSnackBar', `${err4string}`)
         }
-
         return ret
     }
 
@@ -449,9 +479,9 @@ class DataManagement extends LitElement {
             this.searchBlockedNames = this.searchBlockedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+            let err5string = get("datapage.dchange20")
+            parentEpml.request('showSnackBar', `${err5string}`)
         }
-
         return ret
     }
 
@@ -468,9 +498,9 @@ class DataManagement extends LitElement {
             window.location.reload();
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to delete this resource. Please try again')
+            let err6string = get("datapage.dchange21")
+            parentEpml.request('showSnackBar', `${err6string}`)
         }
-
         return ret
     }
 
@@ -491,11 +521,11 @@ class DataManagement extends LitElement {
         // as it will be re-fetched immediately. In these cases we should show an UNFOLLOW button.
         if (this.followedNames.indexOf(name) != -1) {
             // render unfollow button
-            return html`<mwc-button @click=${() => this.unfollowName(resource)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;Unfollow</mwc-button>`
+            return html`<mwc-button @click=${() => this.unfollowName(resource)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("datapage.dchange14")}</mwc-button>`
         }
 
         // render delete button
-        return html`<mwc-button @click=${() => this.deleteResource(resource)} onclick="this.blur();"><mwc-icon>delete</mwc-icon>&nbsp;Delete</mwc-button>`
+        return html`<mwc-button @click=${() => this.deleteResource(resource)} onclick="this.blur();"><mwc-icon>delete</mwc-icon>&nbsp;${translate("datapage.dchange15")}</mwc-button>`
     }
 
     renderBlockUnblockButton(resource) {
@@ -508,11 +538,11 @@ class DataManagement extends LitElement {
 
         if (this.blockedNames.indexOf(name) === -1) {
             // render block button
-            return html`<mwc-button @click=${() => this.blockName(resource)}><mwc-icon>block</mwc-icon>&nbsp;Block</mwc-button>`
+            return html`<mwc-button @click=${() => this.blockName(resource)}><mwc-icon>block</mwc-icon>&nbsp;${translate("datapage.dchange16")}</mwc-button>`
         }
         else {
             // render unblock button
-            return html`<mwc-button @click=${() => this.unblockName(resource)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;Unblock</mwc-button>`
+            return html`<mwc-button @click=${() => this.unblockName(resource)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("datapage.dchange17")}</mwc-button>`
         }
     }
 
@@ -540,7 +570,8 @@ class DataManagement extends LitElement {
             this.blockedNames.push(name)
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+            let err7string = get("datapage.dchange18")
+            parentEpml.request('showSnackBar', `${err7string}`)
         }
 
         return ret
@@ -567,7 +598,8 @@ class DataManagement extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+            let err8string = get("datapage.dchange19")
+            parentEpml.request('showSnackBar', `${err8string}`)
         }
 
         return ret
@@ -594,7 +626,8 @@ class DataManagement extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+            let err9string = get("datapage.dchange20")
+            parentEpml.request('showSnackBar', `${err7string}`)
         }
 
         return ret
@@ -613,7 +646,8 @@ class DataManagement extends LitElement {
             window.location.reload();
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to delete this resource. Please try again')
+            let err10string = get("datapage.dchange21")
+            parentEpml.request('showSnackBar', `${err10string}`)
         }
 
         return ret

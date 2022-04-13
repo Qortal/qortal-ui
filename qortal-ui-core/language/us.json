@@ -365,5 +365,28 @@
     "bchange14": "Error occurred when trying to unblock this registered name. Please try again!",
     "bchange15": "Can't delete data from followed names. Please unfollow first.",
     "bchange16": "Error occurred when trying to delete this resource. Please try again!"
+  },
+  "datapage": {
+    "dchange1": "Data Management",
+    "dchange2": "Search in hosted data by this node",
+    "dchange3": "Data to search",
+    "dchange4": "Search",
+    "dchange5": "Registered Name",
+    "dchange6": "Service",
+    "dchange7": "Identifier",
+    "dchange8": "Actions",
+    "dchange9": "Data hosted by this node",
+    "dchange10": "Data name can not be empty!",
+    "dchange11": "Data not found!",
+    "dchange12": "Couldn't fetch hosted data list from node",
+    "dchange13": "This node isn't hosting any data",
+    "dchange14": "Unfollow",
+    "dchange15": "Delete",
+    "dchange16": "Block",
+    "dchange17": "Unblock",
+    "dchange18": "Error occurred when trying to block this registered name. Please try again!",
+    "dchange19": "Error occurred when trying to unfollow this registered name. Please try again!",
+    "dchange20": "Error occurred when trying to unblock this registered name. Please try again!",
+    "dchange21": "Error occurred when trying to delete this resource. Please try again!"
   }
 }

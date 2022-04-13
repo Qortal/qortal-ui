@@ -365,5 +365,28 @@
     "bchange14": "Beim Versuch, diesen registrierten Namen zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
     "bchange15": "Daten von verfolgten Namen können nicht gelöscht werden. Bitte zuerst entfolgen.",
     "bchange16": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!"
+  },
+  "datapage": {
+    "dchange1": "Datenmanagement",
+    "dchange2": "Suche in gehosteten Daten von diesem Knoten",
+    "dchange3": "Daten zu suchen",
+    "dchange4": "Suchen",
+    "dchange5": "Registrierter Name",
+    "dchange6": "Service",
+    "dchange7": "Kennung",
+    "dchange8": "Aktionen",
+    "dchange9": "Von diesem Knoten gehostete Daten",
+    "dchange10": "Datenname darf nicht leer sein!",
+    "dchange11": "Daten nicht gefunden!",
+    "dchange12": "Gehostete Datenliste konnte nicht vom Knoten abgerufen werden",
+    "dchange13": "Dieser Knoten hostet keine Daten",
+    "dchange14": "Enfolgen",
+    "dchange15": "Löschen",
+    "dchange16": "Sperren",
+    "dchange17": "Entsperren",
+    "dchange18": "Beim Blockieren dieses registrierten Namens ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "dchange19": "Beim Versuch, diesem registrierten Namen nicht mehr zu folgen, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "dchange20": "Beim Versuch, diesen registrierten Namen zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "dchange21": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!"
   }
 }
