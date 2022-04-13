@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -1155,16 +1155,7 @@ class MultiWallet extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
-
         this.changeLanguage()
-
-	setInterval(() => {
-	    this.changeLanguage()
-	}, 100)
 
 	setInterval(() => {
 	    this.errorMessage = '';
@@ -1193,6 +1184,20 @@ class MultiWallet extends LitElement {
             if (this.isTextMenuOpen) {
                 parentEpml.request('closeCopyTextMenu', null)
             }
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
         })
 
         window.onkeyup = (e) => {

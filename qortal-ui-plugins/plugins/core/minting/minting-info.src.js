@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -362,16 +362,7 @@ class MintingInfo extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme()
-	}, 100)
-
         this.changeLanguage()
-
-	setInterval(() => {
-	    this.changeLanguage()
-	}, 100)
 
         const getAdminInfo = () => {
             parentEpml.request("apiCall", { url: `/admin/info` }).then((res) => {
@@ -409,6 +400,20 @@ class MintingInfo extends LitElement {
             });
             setTimeout(getAddressLevel, 30000);
         };
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         let configLoaded = false;
 

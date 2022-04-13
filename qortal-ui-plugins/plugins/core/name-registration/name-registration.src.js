@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -168,33 +168,8 @@ class NameRegistration extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
-
         this.changeLanguage()
-
-	setInterval(() => {
-	    this.changeLanguage()
-	}, 100)
-
-        this.unitFee();
-
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
-            this._textMenu(event)
-        });
-
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        });
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
+        this.unitFee()
 
         const fetchNames = () => {
             parentEpml.request('apiCall', {
@@ -203,6 +178,35 @@ class NameRegistration extends LitElement {
                 setTimeout(() => { this.names = res }, 1)
             })
             setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
+        }
+
+        window.addEventListener("contextmenu", (event) => {
+            event.preventDefault()
+            this._textMenu(event)
+        })
+
+        window.addEventListener("click", () => {
+            parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+
+        window.onkeyup = (e) => {
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
         }
 
         let configLoaded = false
