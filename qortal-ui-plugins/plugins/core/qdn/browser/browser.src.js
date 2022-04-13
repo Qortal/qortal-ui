@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -178,18 +183,18 @@ class WebBrowser extends LitElement {
 			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
 				<div class="layout horizontal center">
 					<div class="address-bar">
-						<mwc-button @click=${() => this.goBack()} title="Back" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
-						<mwc-button @click=${() => this.goForward()} title="Forward" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
-						<mwc-button @click=${() => this.refresh()} title="Reload" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
-						<mwc-button @click=${() => this.goBackToList()} title="Back to list" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
+						<mwc-button @click=${() => this.goBack()} title="${translate("general.back")}" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
+						<mwc-button @click=${() => this.goForward()} title="${translate("browserpage.bchange1")}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
+						<mwc-button @click=${() => this.refresh()} title="${translate("browserpage.bchange2")}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
+						<mwc-button @click=${() => this.goBackToList()} title="${translate("browserpage.bchange3")}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
 						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="qortal://${this.service.toLowerCase()}/${this.name}"></input>
-						<mwc-button @click=${() => this.delete()} title="Delete ${this.service} ${this.name} from node" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
+						<mwc-button @click=${() => this.delete()} title="${translate("browserpage.bchange4")} ${this.service} ${this.name} ${translate("browserpage.bchange5")}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
 						${this.renderBlockUnblockButton()}
 						${this.renderFollowUnfollowButton()}
 					</div>
 					<div class="iframe-container">
 						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms allow-downloads">
-							<span style="color: var(--black);">Your browser doesn't support iframes</span>
+							<span style="color: var(--black);">${translate("browserpage.bchange6")}</span>
 						</iframe>
 					</div>
 				</div>
@@ -200,10 +205,7 @@ class WebBrowser extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        this.changeLanguage()
 
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
@@ -212,6 +214,20 @@ class WebBrowser extends LitElement {
 
         window.addEventListener('click', () => {
             parentEpml.request('closeCopyTextMenu', null)
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
         })
 
         window.onkeyup = (e) => {
@@ -231,6 +247,17 @@ class WebBrowser extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
     renderFollowUnfollowButton() {
         // Only show the follow/unfollow button if we have permission to modify the list on this node
         if (this.followedNames == null || !Array.isArray(this.followedNames)) {
@@ -239,11 +266,11 @@ class WebBrowser extends LitElement {
 
         if (this.followedNames.indexOf(this.name) === -1) {
             // render follow button
-            return html`<mwc-button @click=${() => this.follow()} title="Follow ${this.name}" class="address-bar-button float-right"><mwc-icon>add_to_queue</mwc-icon></mwc-button>`
+            return html`<mwc-button @click=${() => this.follow()} title="${translate("browserpage.bchange7")} ${this.name}" class="address-bar-button float-right"><mwc-icon>add_to_queue</mwc-icon></mwc-button>`
         }
         else {
             // render unfollow button
-            return html`<mwc-button @click=${() => this.unfollow()} title="Unfollow ${this.name}" class="address-bar-button float-right"><mwc-icon>remove_from_queue</mwc-icon></mwc-button>`
+            return html`<mwc-button @click=${() => this.unfollow()} title="${translate("browserpage.bchange8")} ${this.name}" class="address-bar-button float-right"><mwc-icon>remove_from_queue</mwc-icon></mwc-button>`
         }
     }
 
@@ -255,11 +282,11 @@ class WebBrowser extends LitElement {
 
         if (this.blockedNames.indexOf(this.name) === -1) {
             // render block button
-            return html`<mwc-button @click=${() => this.block()} title="Block ${this.name}" class="address-bar-button float-right"><mwc-icon>block</mwc-icon></mwc-button>`
+            return html`<mwc-button @click=${() => this.block()} title="${translate("browserpage.bchange9")} ${this.name}" class="address-bar-button float-right"><mwc-icon>block</mwc-icon></mwc-button>`
         }
         else {
             // render unblock button
-            return html`<mwc-button @click=${() => this.unblock()} title="Unblock ${this.name}" class="address-bar-button float-right"><mwc-icon>radio_button_unchecked</mwc-icon></mwc-button>`
+            return html`<mwc-button @click=${() => this.unblock()} title="${translate("browserpage.bchange10")} ${this.name}" class="address-bar-button float-right"><mwc-icon>radio_button_unchecked</mwc-icon></mwc-button>`
         }
     }
 
@@ -326,7 +353,8 @@ class WebBrowser extends LitElement {
             this.followedNames.push(name)
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to follow this registered name. Please try again')
+            let err1string = get("browserpage.bchange11")
+            parentEpml.request('showSnackBar', `${err1string}`)
         }
 
         return ret
@@ -352,7 +380,8 @@ class WebBrowser extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unfollow this registered name. Please try again')
+            let err2string = get("browserpage.bchange12")
+            parentEpml.request('showSnackBar', `${err2string}`)
         }
 
         return ret
@@ -381,7 +410,8 @@ class WebBrowser extends LitElement {
             this.blockedNames.push(name)
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to block this registered name. Please try again')
+            let err3string = get("browserpage.bchange13")
+            parentEpml.request('showSnackBar', `${err3string}`)
         }
 
         return ret
@@ -407,7 +437,8 @@ class WebBrowser extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name);
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to unblock this registered name. Please try again')
+            let err4string = get("browserpage.bchange14")
+            parentEpml.request('showSnackBar', `${err4string}`)
         }
 
         return ret
@@ -416,7 +447,8 @@ class WebBrowser extends LitElement {
     async deleteCurrentResource() {
         if (this.followedNames.indexOf(this.name) != -1) {
             // Following name - so deleting won't work
-            parentEpml.request('showSnackBar', "Can't delete data from followed names. Please unfollow first.");
+            let err5string = get("browserpage.bchange15")
+            parentEpml.request('showSnackBar', `${err5string}`)
             return;
         }
 
@@ -431,7 +463,8 @@ class WebBrowser extends LitElement {
             this.goBackToList();
         }
         else {
-            parentEpml.request('showSnackBar', 'Error occurred when trying to delete this resource. Please try again')
+            let err6string = get("browserpage.bchange16")
+            parentEpml.request('showSnackBar', `${err6string}`)
         }
 
         return ret

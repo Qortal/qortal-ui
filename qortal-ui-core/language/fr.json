@@ -347,5 +347,23 @@
     "pchange23": "Transaction successful!",
     "pchange24": "Unable to sign and process transaction",
     "pchange25": "Choose File"
+  },
+  "browserpage": {
+    "bchange1": "Forward",
+    "bchange2": "Reload",
+    "bchange3": "Back to list",
+    "bchange4": "Delete",
+    "bchange5": "from node",
+    "bchange6": "Your browser doesn't support iframes",
+    "bchange7": "Follow",
+    "bchange8": "Unfollow",
+    "bchange9": "Block",
+    "bchange10": "Unblock",
+    "bchange11": "Error occurred when trying to follow this registered name. Please try again!",
+    "bchange12": "Error occurred when trying to unfollow this registered name. Please try again!",
+    "bchange13": "Error occurred when trying to block this registered name. Please try again!",
+    "bchange14": "Error occurred when trying to unblock this registered name. Please try again!",
+    "bchange15": "Can't delete data from followed names. Please unfollow first.",
+    "bchange16": "Error occurred when trying to delete this resource. Please try again!"
   }
 }

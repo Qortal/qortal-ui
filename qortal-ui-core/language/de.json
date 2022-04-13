@@ -347,5 +347,23 @@
     "pchange23": "Transaktion Erfolgreich!",
     "pchange24": "Transaktion kann nicht signiert und verarbeitet werden",
     "pchange25": "Datei wählen"
+  },
+  "browserpage": {
+    "bchange1": "Vorwärts",
+    "bchange2": "Neu laden",
+    "bchange3": "Zurück zur Liste",
+    "bchange4": "Lösche",
+    "bchange5": "von dieser Node",
+    "bchange6": "Ihr Browser unterstützt keine Iframes",
+    "bchange7": "Folgen",
+    "bchange8": "Entfolgen",
+    "bchange9": "Sperren",
+    "bchange10": "Entsperren",
+    "bchange11": "Beim Versuch, diesem registrierten Namen zu folgen, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "bchange12": "Beim Versuch, diesem registrierten Namen nicht mehr zu folgen, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "bchange13": "Beim Blockieren dieses registrierten Namens ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "bchange14": "Beim Versuch, diesen registrierten Namen zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+    "bchange15": "Daten von verfolgten Namen können nicht gelöscht werden. Bitte zuerst entfolgen.",
+    "bchange16": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!"
   }
 }
