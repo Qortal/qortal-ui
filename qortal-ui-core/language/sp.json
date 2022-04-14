@@ -537,5 +537,10 @@
     "nchange28": "Failed to Add Minting Node!",
     "nchange29": "Successfully Removed Minting Account!",
     "nchange30": "Failed to Remove Minting Account!"
+  },
+  "transpage": {
+    "tchange1": "Transaction request",
+    "tchange2": "Decline",
+    "tchange3": "Confirm"
   }
 }

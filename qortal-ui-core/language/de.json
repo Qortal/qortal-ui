@@ -537,5 +537,10 @@
     "nchange28": "Prägeknoten konnte nicht hinzugefügt werden!",
     "nchange29": "Prägekonto erfolgreich entfernt!",
     "nchange30": "Fehler beim Entfernen des Prägekontos!"
+  },
+  "transpage": {
+    "tchange1": "Transaktionsanfrage",
+    "tchange2": "Ablehnen",
+    "tchange3": "Bestätigen"
   }
 }

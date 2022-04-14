@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import { listenForRequest } from '../transactionRequest.js'
 
@@ -60,13 +61,13 @@ class ConfirmTransactionDialog extends connect(store)(LitElement) {
     render() {
         return html`
             <paper-dialog style="background: var(--white);" id="confirmDialog" modal>
-                <h2 style="color: var(--black);">Transaction request</h2>
+                <h2 style="color: var(--black);">${translate("transpage.tchange1")}</h2>
                 <div id="txInfo">
                     ${this.txInfo}
                 </div>
                 <div class="buttons">
-                    <mwc-button class='decline' @click=${e => this.decline(e)} dialog-dismiss>Decline</mwc-button>
-                    <mwc-button class='confirm' @click=${e => this.confirm(e)} dialog-confirm autofocus>Confirm</mwc-button>
+                    <mwc-button class='decline' @click=${e => this.decline(e)} dialog-dismiss>${translate("transpage.tchange2")}</mwc-button>
+                    <mwc-button class='confirm' @click=${e => this.confirm(e)} dialog-confirm autofocus>${translate("transpage.tchange3")}</mwc-button>
                 </div>
             </paper-dialog>
         `
