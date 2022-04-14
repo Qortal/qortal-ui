@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
@@ -143,168 +148,165 @@ class NodeManagement extends LitElement {
     }
 
     render() {
-        return html`
-      <div id="node-management-page">
-        <div class="node-card">
-          <h2>Node management for: ${this.nodeDomain}</h2>
-          <span class="sblack"><br />Node has been online for: ${this.upTime}</span>
-          
-          <br /><br />
-          <div id="minting">
-            <div style="min-height:48px; display: flex; padding-bottom: 6px;">
-              <h3
-                style="margin: 0; flex: 1; padding-top: 8px; display: inline;"
-              >
-                Node's minting accounts
-              </h3>
-              <mwc-button
-                style="float:right;"
-                @click=${() =>
-                this.shadowRoot
-                    .querySelector("#addMintingAccountDialog")
-                    .show()}
-                ><mwc-icon>add</mwc-icon>Add minting account</mwc-button
-              >
-            </div>
+	return html`
+		<div id="node-management-page">
+			<div class="node-card">
+				<h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
+				<span class="sblack"><br />${translate("nodepage.nchange2")} ${this.upTime}</span>
+				<br /><br />
+				<div id="minting">
+					<div style="min-height:48px; display: flex; padding-bottom: 6px;">
+						<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">${translate("nodepage.nchange3")}</h3>
+						<mwc-button
+							style="float:right;"
+							@click=${() => this.shadowRoot.querySelector("#addMintingAccountDialog").show()}
+						>
+						<mwc-icon>add</mwc-icon>
+						${translate("nodepage.nchange4")}
+						</mwc-button>
+					</div>
 
-            <!-- Add Minting Account Dialog -->
-            <mwc-dialog
-              id="addMintingAccountDialog"
-              scrimClickAction="${this.addMintingAccountLoading ? "" : "close"}"
-            >
-              <div>
-                If you would like to mint with your own account you will need to
-                create a rewardshare transaction to yourself (with rewardshare
-                percent set to 0), and then mint with the rewardshare key it
-                gives you.
-              </div>
-              <br />
-              <mwc-textfield
-                ?disabled="${this.addMintingAccountLoading}"
-                label="Rewardshare key"
-                id="addMintingAccountKey"
-              ></mwc-textfield>
-              <div
-                style="text-align:right; height:36px;"
-                ?hidden=${this.addMintingAccountMessage === ""}
-              >
-                <span ?hidden="${this.addMintingAccountLoading}">
-                  ${this.addMintingAccountMessage} &nbsp;
-                </span>
-                <span ?hidden="${!this.addMintingAccountLoading}">
-                  <!-- loading message -->
-                  Doing something delicious &nbsp;
-                  <paper-spinner-lite
-                    style="margin-top:12px;"
-                    ?active="${this.addMintingAccountLoading}"
-                    alt="Adding minting account"
-                  ></paper-spinner-lite>
-                </span>
-              </div>
-              <mwc-button
-                ?disabled="${this.addMintingAccountLoading}"
-                slot="primaryAction"
-                @click=${this.addMintingAccount}
-              >
-                Add
-              </mwc-button>
-              <mwc-button
-                ?disabled="${this.addMintingAccountLoading}"
-                slot="secondaryAction"
-                dialogAction="cancel"
-                class="red"
-              >
-                Close
-              </mwc-button>
-            </mwc-dialog>
+					<!-- Add Minting Account Dialog -->
+					<mwc-dialog id="addMintingAccountDialog" scrimClickAction="${this.addMintingAccountLoading ? "" : "close"}">
+						<div>${translate("nodepage.nchange5")}</div>
+						<br />
+						<mwc-textfield
+							?disabled="${this.addMintingAccountLoading}"
+							label="${translate("nodepage.nchange6")}"
+							id="addMintingAccountKey"
+						>
+						</mwc-textfield>
+						<div style="text-align:right; height:36px;" ?hidden=${this.addMintingAccountMessage === ""}>
+							<span ?hidden="${this.addMintingAccountLoading}">
+								${this.addMintingAccountMessage} &nbsp;
+							</span>
+							<span ?hidden="${!this.addMintingAccountLoading}">
+								<!-- loading message -->
+								${translate("nodepage.nchange7")} &nbsp;
+								<paper-spinner-lite
+									style="margin-top:12px;"
+									?active="${this.addMintingAccountLoading}"
+									alt="Adding minting account"
+								>
+								</paper-spinner-lite>
+							</span>
+						</div>
+						<mwc-button
+							?disabled="${this.addMintingAccountLoading}"
+							slot="primaryAction"
+							@click=${this.addMintingAccount}
+						>
+						${translate("nodepage.nchange8")}
+						</mwc-button>
+						<mwc-button
+							?disabled="${this.addMintingAccountLoading}"
+							slot="secondaryAction"
+							dialogAction="cancel"
+							class="red"
+						>
+						${translate("general.close")}
+						</mwc-button>
+					</mwc-dialog>
 
-            <vaadin-grid theme="large" id="mintingAccountsGrid" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" .items="${this.mintingAccounts}" aria-label="Minting Accounts" all-rows-visible>
-              	<vaadin-grid-column auto-width header="Minting Account" path="mintingAccount"></vaadin-grid-column>
-              	<vaadin-grid-column auto-width header="Recipient Account" path="recipientAccount"></vaadin-grid-column>
-                <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
-                    render(html`<mwc-button class="red" ?disabled=${this.removeMintingAccountLoading} @click=${() => this.removeMintingAccount(data.item.publicKey)}><mwc-icon>create</mwc-icon>Remove</mwc-button>`, root)
-                }}></vaadin-grid-column>
-            </vaadin-grid>
-            ${this.isEmptyArray(this.mintingAccounts) ? html`<span style="color: var(--black);">No minting accounts found for this node</span>` : ""}
-          </div>
+					<vaadin-grid theme="large" id="mintingAccountsGrid" ?hidden="${this.isEmptyArray(this.mintingAccounts)}" .items="${this.mintingAccounts}" aria-label="Minting Accounts" all-rows-visible>
+						<vaadin-grid-column auto-width header="${translate("nodepage.nchange9")}" path="mintingAccount"></vaadin-grid-column>
+						<vaadin-grid-column auto-width header="${translate("nodepage.nchange10")}" path="recipientAccount"></vaadin-grid-column>
+						<vaadin-grid-column  width="12em" header="${translate("nodepage.nchange11")}" .renderer=${(root, column, data) => {
+							render(html`<mwc-button class="red" ?disabled=${this.removeMintingAccountLoading} @click=${() => this.removeMintingAccount(data.item.publicKey)}><mwc-icon>create</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
+						}}></vaadin-grid-column>
+					</vaadin-grid>
+					${this.isEmptyArray(this.mintingAccounts) ? html`<span style="color: var(--black);">${translate("nodepage.nchange13")}</span>` : ""}
+				</div>
+				<br />
+				<div id="peers">
+					<div style="min-height: 48px; display: flex; padding-bottom: 6px;">
+						<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">
+							<span>${translate("nodepage.nchange14")}</span>
+							<span>(${this.peers.length})</span>
+						</h3>
+						<mwc-button @click=${() => this.shadowRoot.querySelector("#addPeerDialog").show()}><mwc-icon>add</mwc-icon>&nbsp;${translate("nodepage.nchange15")}</mwc-button>
+					</div>
 
-          <br />
-          <div id="peers">
-            <div style="min-height: 48px; display: flex; padding-bottom: 6px;">
-              <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">
-                <span>Peers connected to node</span>
-                <span>(${this.peers.length})</span>
-              </h3>
-              <mwc-button @click=${() => this.shadowRoot.querySelector("#addPeerDialog").show()}><mwc-icon>add</mwc-icon>Add peer</mwc-button>
-            </div>
+					<mwc-dialog id="addPeerDialog" scrimClickAction="${this.addPeerLoading ? "" : "close"}">
+						<div>${translate("nodepage.nchange16")}</div>
+						<br />
+						<mwc-textfield ?disabled="${this.addPeerLoading}" label="${translate("nodepage.nchange17")}" id="addPeerAddress" ></mwc-textfield>
+						<div style="text-align:right; height:36px;" ?hidden=${this.addPeerMessage === ""}>
+							<span ?hidden="${this.addPeerLoading}"> ${this.addPeerMessage} &nbsp;</span>
+							<span ?hidden="${!this.addPeerLoading}">
+								<paper-spinner-lite
+									style="margin-top:12px;"
+									?active="${this.addPeerLoading}"
+									alt="Adding minting account"
+								>
+								</paper-spinner-lite>
+							</span>
+						</div>
+						<mwc-button
+							?disabled="${this.addPeerLoading}"
+							@click="${this.addPeer}"
+							slot="primaryAction"
+						>
+						${translate("nodepage.nchange8")}
+						</mwc-button>
+						<mwc-button
+							slot="secondaryAction"
+							dialogAction="cancel"
+							?disabled="${this.addPeerLoading}"
+							class="red"
+						>
+						${translate("general.close")}
+						</mwc-button>
+					</mwc-dialog>
 
-            <mwc-dialog id="addPeerDialog" scrimClickAction="${this.addPeerLoading ? "" : "close"}">
-              <div>Type the peer you wish to add's address below</div>
-              <br />
-              <mwc-textfield ?disabled="${this.addPeerLoading}" label="Peer Address" id="addPeerAddress" ></mwc-textfield>
-              <div style="text-align:right; height:36px;" ?hidden=${this.addPeerMessage === ""}>
-                <span ?hidden="${this.addPeerLoading}"> ${this.addPeerMessage} &nbsp;</span>
-                <span ?hidden="${!this.addPeerLoading}">
-                  <paper-spinner-lite
-                    style="margin-top:12px;"
-                    ?active="${this.addPeerLoading}"
-                    alt="Adding minting account"
-                  ></paper-spinner-lite>
-                </span>
-              </div>
-              <mwc-button
-                ?disabled="${this.addPeerLoading}"
-                @click="${this.addPeer}"
-                slot="primaryAction"
-              >
-                Add
-              </mwc-button>
-              <mwc-button
-                slot="secondaryAction"
-                dialogAction="cancel"
-                ?disabled="${this.addPeerLoading}"
-                class="red"
-              >
-                Close
-              </mwc-button>
-            </mwc-dialog>
-
-            <vaadin-grid theme="large" id="peersGrid" ?hidden="${this.isEmptyArray(this.peers)}" .items="${this.peers}" aria-label="Peers" all-rows-visible>
-                <vaadin-grid-column path="address"></vaadin-grid-column>
-                <vaadin-grid-column path="lastHeight"></vaadin-grid-column>
-                <vaadin-grid-column path="version" header="Build Version"></vaadin-grid-column>
-                <vaadin-grid-column path="age" header="Connected for"></vaadin-grid-column>
-	            <vaadin-grid-column  width="12em" header="Action" .renderer=${(root, column, data) => {
-                    render(html`<mwc-button class="red" @click=${() => this.removePeer(data.item.address, data.index)}><mwc-icon>delete</mwc-icon>Remove</mwc-button><mwc-button class="green" @click=${() => this.forceSyncPeer(data.item.address, data.index)}>Force Sync</mwc-button>`, root)
-                }}></vaadin-grid-column>
-            </vaadin-grid>
-
-            ${this.isEmptyArray(this.peers) ? html`<span style="color: var(--black);">Node has no connected peers</span>` : ""}
-          </div>
-          <br />
-        </div>
-      </div>
-    `;
+					<vaadin-grid theme="large" id="peersGrid" ?hidden="${this.isEmptyArray(this.peers)}" .items="${this.peers}" aria-label="Peers" all-rows-visible>
+						<vaadin-grid-column header="${translate("nodepage.nchange18")}" path="address"></vaadin-grid-column>
+						<vaadin-grid-column header="${translate("nodepage.nchange19")}" path="lastHeight"></vaadin-grid-column>
+						<vaadin-grid-column header="${translate("nodepage.nchange20")}" path="version"></vaadin-grid-column>
+						<vaadin-grid-column header="${translate("nodepage.nchange21")}" path="age"></vaadin-grid-column>
+						<vaadin-grid-column  width="12em" header="${translate("nodepage.nchange22")}" .renderer=${(root, column, data) => {
+							render(html`<mwc-button class="red" @click=${() => this.removePeer(data.item.address, data.index)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button><mwc-button class="green" @click=${() => this.forceSyncPeer(data.item.address, data.index)}>&nbsp;${translate("nodepage.nchange23")}</mwc-button>`, root)
+						}}></vaadin-grid-column>
+					</vaadin-grid>
+					${this.isEmptyArray(this.peers) ? html`<span style="color: var(--black);">${translate("nodepage.nchange24")}</span>` : ""}
+				</div>
+				<br />
+			</div>
+		</div>
+	`;
     }
 
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        this.changeLanguage()
 
         // Call updateMintingAccounts
-        this.updateMintingAccounts();
+        this.updateMintingAccounts()
 
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
-        });
+        })
+
         window.addEventListener("click", () => {
             parentEpml.request('closeCopyTextMenu', null)
-        });
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+
         window.onkeyup = (e) => {
             if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
         }
@@ -396,6 +398,25 @@ class NodeManagement extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderErr1Text() {
+        return html`${translate("nodepage.nchange27")}`
+    }
+
+    renderErr2Text() {
+        return html`${translate("nodepage.nchange28")}`
+    }
+
     forceSyncPeer(peerAddress, rowIndex) {
         parentEpml
             .request("apiCall", {
@@ -404,7 +425,8 @@ class NodeManagement extends LitElement {
                 body: peerAddress,
             })
             .then((res) => {
-                parentEpml.request('showSnackBar', "Starting Sync with Peer: " + peerAddress);
+                let err3string = get("nodepage.nchange25")
+                parentEpml.request('showSnackBar', `${err3string}` + peerAddress);
             });
     }
 
@@ -416,7 +438,8 @@ class NodeManagement extends LitElement {
                 body: peerAddress,
             })
             .then((res) => {
-                parentEpml.request('showSnackBar', "Successfully removed Peer: " + peerAddress);
+                let err4string = get("nodepage.nchange26")
+                parentEpml.request('showSnackBar', `${err4string}` + peerAddress);
                 this.peers.splice(rowIndex, 1);
             });
     }
@@ -460,11 +483,11 @@ class NodeManagement extends LitElement {
                 if (res === true) {
                     this.updateMintingAccounts();
                     this.addMintingAccountKey = "";
-                    this.addMintingAccountMessage = "Minting Node Added Successfully!";
+                    this.addMintingAccountMessage = this.renderErr1Text();
                     this.addMintingAccountLoading = false;
                 } else {
                     this.addMintingAccountKey = "";
-                    this.addMintingAccountMessage = "Failed to Add Minting Node!"; // Corrected an error here thanks to crow (-_-)
+                    this.addMintingAccountMessage = this.renderErr2Text(); // Corrected an error here thanks to crow (-_-)
                     this.addMintingAccountLoading = false;
                 }
             });
@@ -516,10 +539,12 @@ class NodeManagement extends LitElement {
             if (res === true) {
                 this.updateMintingAccounts();
                 this.removeMintingAccountLoading = false;
-                parentEpml.request('showSnackBar', "Successfully Removed Minting Account!");
+                let err5string = get("nodepage.nchange29")
+                parentEpml.request('showSnackBar', `${err5string}`);
             } else {
                 this.removeMintingAccountLoading = false;
-                parentEpml.request('showSnackBar', "Failed to Remove Minting Account!");
+                let err6string = get("nodepage.nchange30")
+                parentEpml.request('showSnackBar', `${err6string}`);
             }
         });
     }
