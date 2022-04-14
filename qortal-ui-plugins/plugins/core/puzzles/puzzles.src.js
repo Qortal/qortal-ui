@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 // Not sure if these are imported in the proper way:
 import nacl from '../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
@@ -103,49 +108,50 @@ class Puzzles extends LitElement {
         return html`
 			<div id="puzzle-page">
 				<div style="min-height:48px; display: flex; padding-bottom: 6px;">
-					<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">Puzzles</h3>
+					<h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">${translate("puzzlepage.pchange1")}</h3>
 				</div>
                                 <div class="divCard">
 				    <vaadin-grid theme="compact, wrap-cell-content" id="puzzlesGrid" ?hidden="${this.isEmptyArray(this.puzzles)}" .items="${this.puzzles}" aria-label="Puzzles" all-rows-visible>
-				        <vaadin-grid-column width="20em" header="Reward" .renderer=${(root, column, data) => {
+				        <vaadin-grid-column width="20em" header="${translate("puzzlepage.pchange2")}" .renderer=${(root, column, data) => {
                             			if (data.item.isSolved) {
-                                			render(html`<span style="font-size: smaller;">SOLVED by<br>${data.item.winner}</span>`, root)
+                                			render(html`<span style="font-size: smaller;">${translate("puzzlepage.pchange3")}<br>${data.item.winner}</span>`, root)
                             			} else {
                                 			render(html`<span>${data.item.reward} QORT</span>`, root)
                             			}
                         		}}>
                                         </vaadin-grid-column>
-					<vaadin-grid-column width="16em" path="name"></vaadin-grid-column>
-					<vaadin-grid-column width="40%" path="description"></vaadin-grid-column>
-					<vaadin-grid-column width="24em" header="Clue / Answer" .renderer=${(root, column, data) => {
+					<vaadin-grid-column width="16em" header="${translate("puzzlepage.pchange4")}" path="name"></vaadin-grid-column>
+					<vaadin-grid-column width="40%" header="${translate("puzzlepage.pchange5")}" path="description"></vaadin-grid-column>
+					<vaadin-grid-column width="24em" header="${translate("puzzlepage.pchange6")}" .renderer=${(root, column, data) => {
 							render(html`<span class="clue">${data.item.clue}</span>`, root)
 						}}></vaadin-grid-column>
-					<vaadin-grid-column width="10em" header="Action" .renderer=${(root, column, data) => {
+					<vaadin-grid-column width="10em" header="${translate("puzzlepage.pchange7")}" .renderer=${(root, column, data) => {
                         			if (data.item.isSolved) {
                             				render(html``, root)
                         			} else {
-                            				render(html`<mwc-button @click=${() => this.guessPuzzle(data.item)}><mwc-icon>queue</mwc-icon>Guess</mwc-button>`, root)
+                            				render(html`<mwc-button @click=${() => this.guessPuzzle(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("puzzlepage.pchange8")}</mwc-button>`, root)
                         			}
                     			}}></vaadin-grid-column>
 				    </vaadin-grid>
 
 				    <mwc-dialog id="puzzleGuessDialog" scrimClickAction="${this.loading ? '' : 'close'}">
-					<div>Enter your guess to solve this puzzle and win ${this.selectedPuzzle.reward} QORT:</div>
+					<div>${translate("puzzlepage.pchange9")} ${this.selectedPuzzle.reward} QORT:</div>
 					<br>
-					<div id="puzzleGuessName">Name: ${this.selectedPuzzle.name}</div>
-					<div id="puzzleGuessDescription">Description: ${this.selectedPuzzle.description}</div>
+					<div id="puzzleGuessName">${translate("puzzlepage.pchange4")}: ${this.selectedPuzzle.name}</div>
+					<div id="puzzleGuessDescription">${translate("puzzlepage.pchange5")}: ${this.selectedPuzzle.description}</div>
 					<div id="puzzleGuessClue" ?hidden=${!this.selectedPuzzle.clue}>Clue: <span class="clue">${this.selectedPuzzle.clue}</span></div>
 					<br>
-					<div id="puzzleGuessInputHint" style="font-size: smaller;">Your guess needs to be 43 or 44 characters and <b>not</b> include 0 (zero), I (upper i), O (upper o) or l (lower L).</div>
-					<mwc-textfield style="width:100%" ?disabled="${this.loading}" label="Your Guess" id="puzzleGuess" pattern="[1-9A-HJ-NP-Za-km-z]{43,44}" style="font-family: monospace;" maxLength="44" charCounter="true" autoValidate="true"></mwc-textfield>
+					<div id="puzzleGuessInputHint" style="font-size: smaller;">${translate("puzzlepage.pchange10")} <b>${translate("puzzlepage.pchange11")}</b> ${translate("puzzlepage.pchange12")}</div>
+					<mwc-textfield style="width:100%" ?disabled="${this.loading}" label="${translate("puzzlepage.pchange13")}" id="puzzleGuess" pattern="[1-9A-HJ-NP-Za-km-z]{43,44}" style="font-family: monospace;" maxLength="44" charCounter="true" autoValidate="true"></mwc-textfield>
 					<div style="text-align:right; height:36px;">
 						<span ?hidden="${!this.loading}">
 							<!-- loading message -->
-							Checking your guess... &nbsp;
+							${translate("puzzlepage.pchange14")} &nbsp;
 							<paper-spinner-lite
 								style="margin-top:12px;"
 								?active="${this.loading}"
-								alt="Checking puzzle guess">
+								alt="Checking puzzle guess"
+							>
 							</paper-spinner-lite>
 						</span>
 						<span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
@@ -156,15 +162,17 @@ class Puzzles extends LitElement {
 					<mwc-button
 						?disabled="${this.loading || this.invalid}"
 						slot="primaryAction"
-						@click=${this.submitPuzzleGuess}>
-						Submit
+						@click=${this.submitPuzzleGuess}
+					>
+					${translate("puzzlepage.pchange15")}
 					</mwc-button>
 					<mwc-button
 						?disabled="${this.loading}"
 						slot="secondaryAction"
 						dialogAction="cancel"
-						class="red">
-						Close
+						class="red"
+					>
+					${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
 			</div>
@@ -174,19 +182,30 @@ class Puzzles extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        this.changeLanguage()
 
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
-        });
+        })
 
         window.addEventListener("click", () => {
             parentEpml.request('closeCopyTextMenu', null)
-        });
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
@@ -377,6 +396,25 @@ class Puzzles extends LitElement {
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderErr1Text() {
+        return html`${translate("puzzlepage.pchange16")}`
+    }
+
+    renderErr2Text() {
+        return html`${translate("puzzlepage.pchange17")}`
+    }
+
     async guessPuzzle(puzzle) {
         this.selectedPuzzle = puzzle
         this.shadowRoot.getElementById("puzzleGuess").value = ''
@@ -402,7 +440,7 @@ class Puzzles extends LitElement {
         console.log("Guess '" + _guessAddress + "' vs puzzle's address '" + this.selectedPuzzle.address + "'")
         if (_guessAddress !== this.selectedPuzzle.address) {
             this.error = true
-            this.message = 'Guess incorrect!'
+            this.message = this.renderErr1Text()
             this.loading = false
             return
         }
@@ -436,7 +474,7 @@ class Puzzles extends LitElement {
         })
 
         if (txnResponse.success) {
-            this.message = 'Reward claim submitted - check wallet for reward!'
+            this.message = this.renderErr2Text()
         } else {
             this.error = true
             if (txnResponse.data) {

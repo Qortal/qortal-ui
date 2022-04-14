@@ -486,5 +486,24 @@
     "gchange51": "Join",
     "gchange52": "Admin",
     "gchange53": "Member"
+  },
+  "puzzlepage": {
+    "pchange1": "Puzzles",
+    "pchange2": "Reward",
+    "pchange3": "SOLVED by",
+    "pchange4": "Name",
+    "pchange5": "Description",
+    "pchange6": "Clue / Answer",
+    "pchange7": "Action",
+    "pchange8": "Guess",
+    "pchange9": "Enter your guess to solve this puzzle and win",
+    "pchange10": "Your guess needs to be 43 or 44 characters and",
+    "pchange11": "not",
+    "pchange12": "include 0 (zero), I (upper i), O (upper o) or l (lower L).",
+    "pchange13": "Your Guess",
+    "pchange14": "Checking your guess...",
+    "pchange15": "Submit",
+    "pchange16": "Guess incorrect!",
+    "pchange17": "Reward claim submitted - check wallet for reward!"
   }
 }

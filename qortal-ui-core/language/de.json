@@ -486,5 +486,24 @@
     "gchange51": "Beitreten",
     "gchange52": "Administrator",
     "gchange53": "Mitglied"
+  },
+  "puzzlepage": {
+    "pchange1": "Rätsel",
+    "pchange2": "Belohnung",
+    "pchange3": "GELÖST bei",
+    "pchange4": "Name",
+    "pchange5": "Beschreibung",
+    "pchange6": "Hinweis / Antwort",
+    "pchange7": "Aktion",
+    "pchange8": "Erraten",
+    "pchange9": "Geben Sie Ihre Vermutung ein, um dieses Rätsel zu lösen und zu gewinnen",
+    "pchange10": "Ihre Vermutung muss 43 oder 44 Zeichen lang sein und",
+    "pchange11": "keine",
+    "pchange12": "0 (Null), I (oberes i), O (oberes o) oder l (unteres L) enthalten.",
+    "pchange13": "Deine Vermutung",
+    "pchange14": "Prüfe deine Vermutung...",
+    "pchange15": "Einreichen",
+    "pchange16": "Vermutung falsch!",
+    "pchange17": "Prämienanspruch eingereicht - Geldbörse auf Prämie prüfen!"
   }
 }
