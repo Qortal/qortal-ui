@@ -541,6 +541,8 @@
   "transpage": {
     "tchange1": "Transaktionsanfrage",
     "tchange2": "Ablehnen",
-    "tchange3": "Bestätigen"
+    "tchange3": "Bestätigen",
+    "tchange4": "Zu",
+    "tchange5": "Menge"
   }
 }

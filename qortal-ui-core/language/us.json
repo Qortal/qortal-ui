@@ -541,6 +541,8 @@
   "transpage": {
     "tchange1": "Transaction request",
     "tchange2": "Decline",
-    "tchange3": "Confirm"
+    "tchange3": "Confirm",
+    "tchange4": "To",
+    "tchange5": "Amount"
   }
 }
