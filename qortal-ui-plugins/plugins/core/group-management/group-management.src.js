@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -149,67 +154,67 @@ class GroupManagement extends LitElement {
         return html`
             <div id="group-management-page">
                 <div style="min-height: 48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">Qortal Groups</h2>
-                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createGroupDialog').show()}><mwc-icon>add</mwc-icon>Create Group</mwc-button>
+                    <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("grouppage.gchange1")}</h2>
+                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createGroupDialog').show()}><mwc-icon>add</mwc-icon>${translate("grouppage.gchange2")}</mwc-button>
                 </div>
 
                 <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Your Joined Groups</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
-                        <vaadin-grid-column header="Group Name" path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="Description" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Role" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderRole(data.item)}`, root)
                         }}></vaadin-grid-column>
-                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderManageButton(data.item)}`, root)
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.joinedGroups) ? html`
-                        <span style="color: var(--black);">Not a member of any groups!</span>
+                        <span style="color: var(--black);">${translate("grouppage.gchange8")}</span>
                     `: ''}
                 </div>
 
                 <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">Public Groups</h3>
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange9")}</h3>
                     <vaadin-grid theme="large" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
-                        <vaadin-grid-filter-column header="Group Name" path="groupName"></vaadin-grid-filter-column>
-                        <vaadin-grid-filter-column header="Description" path="description"></vaadin-grid-filter-column>
-                        <vaadin-grid-filter-column header="Owner" path="owner"></vaadin-grid-filter-column>
-                        <vaadin-grid-column width="9.8rem" flex-grow="0" header="Action" .renderer=${(root, column, data) => {
-                            render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>Join</mwc-button>`, root)
+                        <vaadin-grid-filter-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-filter-column>
+                        <vaadin-grid-filter-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-filter-column>
+                        <vaadin-grid-filter-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-filter-column>
+                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("grouppage.gchange51")}</mwc-button>`, root)
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.publicGroups) ? html`
-                        <span style="color: var(--black);">No Open Public Groups available!</span>
+                        <span style="color: var(--black);">${translate("grouppage.gchange11")}</span>
                     `: ''}
                 </div>
 
                 <!-- Create Group Dialog -->
                 <mwc-dialog id="createGroupDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
-                        <h1>Create a New Group</h1>
+                        <h1>${translate("grouppage.gchange12")}</h1>
                         <hr>
                     </div>
                     
-                    <mwc-textfield style="width: 100%;" ?disabled="${this.isLoading}" label="Group Name" id="groupNameInput"></mwc-textfield>
+                    <mwc-textfield style="width: 100%;" ?disabled="${this.isLoading}" label="${translate("grouppage.gchange4")}" id="groupNameInput"></mwc-textfield>
                     <p style="margin-bottom:0;">
-                        <mwc-textfield style="width:100%;" ?disabled="${this.isLoading}" label="Description" id="groupDescInput"></mwc-textfield>
+                        <mwc-textfield style="width:100%;" ?disabled="${this.isLoading}" label="${translate("grouppage.gchange5")}" id="groupDescInput"></mwc-textfield>
                     </p>
                     <p>
-                        Group Type:
-                        <select required validationMessage="This Field is Required" id="groupTypeInput" label="Group Type">
-                            <option value="reject" selected>Select an option</option>
-                            <option value="1">Public</option>
-                            <option value="0">Private</option>
+                        ${translate("grouppage.gchange13")}:
+                        <select required validationMessage="${translate("grouppage.gchange14")}" id="groupTypeInput" label="Group Type">
+                            <option value="reject" selected>${translate("grouppage.gchange15")}</option>
+                            <option value="1">${translate("grouppage.gchange16")}</option>
+                            <option value="0">${translate("grouppage.gchange17")}</option>
                         </select>
                     </p>
                     <p>
-                        Group Approval Threshold (number / percentage of Admins that must approve a transaction):
-                        <select required validationMessage="This Field is Required" id="groupApprovalInput" label="Group Type">
-                            <option value="reject" selected>Select an option</option>
-                            <option value="0">NONE</option>
-                            <option value="1">ONE</option>
+                        ${translate("grouppage.gchange18")}
+                        <select required validationMessage="${translate("grouppage.gchange14")}" id="groupApprovalInput" label="Group Type">
+                            <option value="reject" selected>${translate("grouppage.gchange15")}</option>
+                            <option value="0">${translate("grouppage.gchange19")}</option>
+                            <option value="1">${translate("grouppage.gchange20")}</option>
                             <option value="20">20%</option>
                             <option value="40">40%</option>
                             <option value="60">60%</option>
@@ -218,48 +223,50 @@ class GroupManagement extends LitElement {
                         </select>
                     </p>
                     <p>
-                        Minimum Block delay for Group Transaction Approvals:
-                        <select required validationMessage="This Field is Required" id="groupMinDelayInput" label="Group Type">
-                            <option value="reject" selected>Select an option</option>
-                            <option value="5">5 minutes</option>
-                            <option value="10">10 minutes</option>
-                            <option value="30">30 minutes</option>
-                            <option value="60">1 hour</option>
-                            <option value="180">3 hours</option>
-                            <option value="300">5 hours</option>
-                            <option value="420">7 hours</option>
-                            <option value="720">12 hours</option>
-                            <option value="1440">1 day</option>
-                            <option value="4320">3 days</option>
-                            <option value="7200">5 days</option>
-                            <option value="10080">7 days</option>
+                        ${translate("grouppage.gchange21")}
+                        <select required validationMessage="${translate("grouppage.gchange14")}" id="groupMinDelayInput" label="Group Type">
+                            <option value="reject" selected>${translate("grouppage.gchange15")}</option>
+                            <option value="5">5 ${translate("grouppage.gchange22")}</option>
+                            <option value="10">10 ${translate("grouppage.gchange22")}</option>
+                            <option value="30">30 ${translate("grouppage.gchange22")}</option>
+                            <option value="60">1 ${translate("grouppage.gchange23")}</option>
+                            <option value="180">3 ${translate("grouppage.gchange24")}</option>
+                            <option value="300">5 ${translate("grouppage.gchange24")}</option>
+                            <option value="420">7 ${translate("grouppage.gchange24")}</option>
+                            <option value="720">12 ${translate("grouppage.gchange24")}</option>
+                            <option value="1440">1 ${translate("grouppage.gchange25")}</option>
+                            <option value="4320">3 ${translate("grouppage.gchange26")}</option>
+                            <option value="7200">5 ${translate("grouppage.gchange26")}</option>
+                            <option value="10080">7 ${translate("grouppage.gchange26")}</option>
                         </select>
                     </p>
                     <p>
-                        Maximum Block delay for Group Transaction Approvals:
-                        <select required validationMessage="This Field is Required" id="groupMaxDelayInput" label="Group Type">
-                            <option value="reject" selected>Select an option</option>
-                            <option value="60">1 hour</option>
-                            <option value="180">3 hours</option>
-                            <option value="300">5 hours</option>
-                            <option value="420">7 hours</option>
-                            <option value="720">12 hours</option>
-                            <option value="1440">1 day</option>
-                            <option value="4320">3 days</option>
-                            <option value="7200">5 days</option>
-                            <option value="10080">7 days</option>
-                            <option value="14400">10 days</option>
-                            <option value="21600">15 days</option>
+                        ${translate("grouppage.gchange27")}
+                        <select required validationMessage="${translate("grouppage.gchange14")}" id="groupMaxDelayInput" label="Group Type">
+                            <option value="reject" selected>${translate("grouppage.gchange15")}</option>
+                            <option value="60">1 ${translate("grouppage.gchange23")}</option>
+                            <option value="180">3 ${translate("grouppage.gchange24")}</option>
+                            <option value="300">5 ${translate("grouppage.gchange24")}</option>
+                            <option value="420">7 ${translate("grouppage.gchange24")}</option>
+                            <option value="720">12 ${translate("grouppage.gchange24")}</option>
+                            <option value="1440">1 ${translate("grouppage.gchange25")}</option>
+                            <option value="4320">3 ${translate("grouppage.gchange26")}</option>
+                            <option value="7200">5 ${translate("grouppage.gchange26")}</option>
+                            <option value="10080">7 ${translate("grouppage.gchange26")}</option>
+                            <option value="14400">10 ${translate("grouppage.gchange26")}</option>
+                            <option value="21600">15 ${translate("grouppage.gchange26")}</option>
                         </select>
                     </p>
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.isLoading}">
                             <!-- loading message -->
-                            Creating Group &nbsp;
+                            ${translate("grouppage.gchange28")} &nbsp;
                             <paper-spinner-lite
                                 style="margin-top:12px;"
                                 ?active="${this.isLoading}"
-                                alt="Creating Group"></paper-spinner-lite>
+                                alt="Creating Group"
+                            >
+                            </paper-spinner-lite>
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
@@ -270,43 +277,44 @@ class GroupManagement extends LitElement {
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
                         @click=${this.createGroup}
-                        >
-                        Create
+                    >
+                    ${translate("grouppage.gchange29")}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <!-- Join Group Dialog -->
                 <mwc-dialog id="joinDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
-                        <h1>Join Group Request</h1>
+                        <h1>${translate("grouppage.gchange30")}</h1>
                         <hr>
                     </div>
                     
                     <div class="itemList">
-                        <span class="title">Group Name</span>
+                        <span class="title">${translate("grouppage.gchange4")}</span>
                         <br>
                         <div><span>${this.joinGroupObj.groupName}</span></div>
 
-                        <span class="title">Description</span>
+                        <span class="title">${translate("grouppage.gchange5")}</span>
                         <br>
                         <div><span>${this.joinGroupObj.description}</span></div>
 
-                        <span class="title">Owner</span>
+                        <span class="title">${translate("grouppage.gchange10")}</span>
                         <br>
                         <div><span>${this.joinGroupObj.owner}</span></div>
 
-                        <span class="title">Date Created</span>
+                        <span class="title">${translate("grouppage.gchange31")}</span>
                         <br>
                         <div><span><time-ago datetime=${this.timeIsoString(this.joinGroupObj.created)}></time-ago></span></div>
 
-                        ${!this.joinGroupObj.updated ? "" : html`<span class="title">Date Updated</span>
+                        ${!this.joinGroupObj.updated ? "" : html`<span class="title">${translate("grouppage.gchange32")}</span>
                         <br>
                         <div><span><time-ago datetime=${this.timeIsoString(this.joinGroupObj.updated)}></time-ago></span></div>`}
                     </div>
@@ -314,11 +322,13 @@ class GroupManagement extends LitElement {
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.isLoading}">
                             <!-- loading message -->
-                            Joining &nbsp;
+                            ${translate("grouppage.gchange33")} &nbsp;
                             <paper-spinner-lite
                                 style="margin-top:12px;"
                                 ?active="${this.isLoading}"
-                                alt="Joining"></paper-spinner-lite>
+                                alt="Joining"
+                            >
+                            </paper-spinner-lite>
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
@@ -329,43 +339,44 @@ class GroupManagement extends LitElement {
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
                         @click=${() => this._joinGroup(this.joinGroupObj.groupId, this.joinGroupObj.groupName)}
-                        >
-                        Join
+                    >
+                    ${translate("grouppage.gchange34")}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <!-- Leave Group Dialog -->
                 <mwc-dialog id="leaveDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
-                        <h1>Leave Group Request</h1>
+                        <h1>${translate("grouppage.gchange35")}</h1>
                         <hr>
                     </div>
                     
                     <div class="itemList">
-                        <span class="title">Group Name</span>
+                        <span class="title">${translate("grouppage.gchange4")}</span>
                         <br>
                         <div><span>${this.leaveGroupObj.groupName}</span></div>
 
-                        <span class="title">Description</span>
+                        <span class="title">${translate("grouppage.gchange5")}</span>
                         <br>
                         <div><span>${this.leaveGroupObj.description}</span></div>
 
-                        <span class="title">Owner</span>
+                        <span class="title">${translate("grouppage.gchange10")}</span>
                         <br>
                         <div><span>${this.leaveGroupObj.owner}</span></div>
 
-                        <span class="title">Date Created</span>
+                        <span class="title">${translate("grouppage.gchange31")}</span>
                         <br>
                         <div><span><time-ago datetime=${this.timeIsoString(this.leaveGroupObj.created)}></time-ago></span></div>
 
-                        ${!this.leaveGroupObj.updated ? "" : html`<span class="title">Date Updated</span>
+                        ${!this.leaveGroupObj.updated ? "" : html`<span class="title">${translate("grouppage.gchange32")}</span>
                         <br>
                         <div><span><time-ago datetime=${this.timeIsoString(this.leaveGroupObj.updated)}></time-ago></span></div>`}
                     </div>
@@ -373,11 +384,13 @@ class GroupManagement extends LitElement {
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.isLoading}">
                             <!-- loading message -->
-                            Leaving &nbsp;
+                            ${translate("grouppage.gchange36")} &nbsp;
                             <paper-spinner-lite
                                 style="margin-top:12px;"
                                 ?active="${this.isLoading}"
-                                alt="Leaving"></paper-spinner-lite>
+                                alt="Leaving"
+                            >
+                            </paper-spinner-lite>
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
@@ -388,41 +401,42 @@ class GroupManagement extends LitElement {
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
                         @click=${() => this._leaveGroup(this.leaveGroupObj.groupId, this.leaveGroupObj.groupName)}
-                        >
-                        Leave Group
+                    >
+                    ${translate("grouppage.gchange37")}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <!-- Manage Group Owner Dialog -->
                 <mwc-dialog id="manageGroupOwnerDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
-                    <div>Manage Group Owner: ${this.manageGroupObj.groupName}</div>
-                    
+                    <div>${translate("grouppage.gchange38")} ${this.manageGroupObj.groupName}</div>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
                 <!-- Manage Group Admin Dialog -->
                 <mwc-dialog id="manageGroupAdminDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
-                    <div>Manage Group Admin: ${this.manageGroupObj.groupName}</div>
-                    
+                    <div>${translate("grouppage.gchange39")} ${this.manageGroupObj.groupName}</div>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
                         dialogAction="cancel"
-                        class="red">
-                        Close
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
             </div>
@@ -432,11 +446,7 @@ class GroupManagement extends LitElement {
     firstUpdated() {
 
         this.changeTheme()
-
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
-
+        this.changeLanguage()
         this.unitCreateFee()
         this.unitJoinFee()
         this.unitLeaveFee()
@@ -471,11 +481,25 @@ class GroupManagement extends LitElement {
         window.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             this._textMenu(event)
-        });
+        })
 
         window.addEventListener("click", () => {
             parentEpml.request('closeCopyTextMenu', null)
-        });
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         window.onkeyup = (e) => {
             if (e.keyCode === 27) {
@@ -516,6 +540,46 @@ class GroupManagement extends LitElement {
             this.theme = 'light';
         }
         document.querySelector('html').setAttribute('theme', this.theme);
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
+    renderErr1Text() {
+        return html`${translate("grouppage.gchange41")}`
+    }
+
+    renderErr2Text() {
+        return html`${translate("grouppage.gchange42")}`
+    }
+    renderErr3Text() {
+        return html`${translate("grouppage.gchange43")}`
+    }
+    renderErr4Text() {
+        return html`${translate("grouppage.gchange44")}`
+    }
+    renderErr5Text() {
+        return html`${translate("grouppage.gchange45")}`
+    }
+    renderErr6Text() {
+        return html`${translate("grouppage.gchange46")}`
+    }
+    renderErr7Text() {
+        return html`${translate("grouppage.gchange47")}`
+    }
+    renderErr8Text() {
+        return html`${translate("grouppage.gchange48")}`
+    }
+    renderErr9Text() {
+        return html`${translate("grouppage.gchange49")}`
     }
 
     async unitCreateFee() {
@@ -613,24 +677,27 @@ class GroupManagement extends LitElement {
 
     renderRole(groupObj) {
         if (groupObj.owner === this.selectedAddress.address) {
-            return "Owner"
+            let ownerstring = get("grouppage.gchange10")
+            return ownerstring
         } else if (groupObj.isAdmin === true) {
-            return "Admin"
+            let adminstring = get("grouppage.gchange52")
+            return adminstring
         } else {
-            return "Member"
+            let memberstring = get("grouppage.gchange53")
+            return memberstring
         }
     }
 
     renderManageButton(groupObj) {
         if (groupObj.owner === this.selectedAddress.address) {
             // render owner actions btn to modal
-            return html`<mwc-button @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>Manage</mwc-button>`
+            return html`<mwc-button @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else if (groupObj.isAdmin === true) {
             // render admin actions modal
-            return html`<mwc-button @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>Manage</mwc-button>`
+            return html`<mwc-button @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else {
             // render member leave group modal
-            return html`<mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>Leave</mwc-button>`
+            return html`<mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
         }
     }
 
@@ -717,7 +784,7 @@ class GroupManagement extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = 'Group Creation Successful!'
+                this.message = this.renderErr1Text()
                 this.error = false
             } else {
                 this.error = true
@@ -728,27 +795,27 @@ class GroupManagement extends LitElement {
 
         if (groupNameInput.length < 3) {
             this.error = true
-            this.message = "Invalid Group Name"
+            this.message = this.renderErr2Text()
             this.isLoading = false
         } else if (groupDescInput.length < 3) {
             this.error = true
-            this.message = "Invalid Group Description"
+            this.message = this.renderErr3Text()
             this.isLoading = false
         } else if (groupTypeInput === 'reject') {
             this.error = true
-            this.message = "Select a Group Type"
+            this.message = this.renderErr4Text()
             this.isLoading = false
         } else if (groupApprovalInput === 'reject') {
             this.error = true
-            this.message = "Select a Group Approval Threshold"
+            this.message = this.renderErr5Text()
             this.isLoading = false
         } else if (groupMinDelayInput === 'reject') {
             this.error = true
-            this.message = "Select a Minimum Block delay for Group Transaction Approvals"
+            this.message = this.renderErr6Text()
             this.isLoading = false
         } else if (groupMaxDelayInput === 'reject') {
             this.error = true
-            this.message = "Select a Maximum Block delay for Group Transaction Approvals"
+            this.message = this.renderErr7Text()
             this.isLoading = false
         } else {
             this.error = false
@@ -803,7 +870,7 @@ class GroupManagement extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = 'Join Group Request Sent Successfully!'
+                this.message = this.renderErr8Text()
                 this.error = false
             } else {
                 this.error = true
@@ -862,7 +929,7 @@ class GroupManagement extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = 'Leave Group Request Sent Successfully!'
+                this.message = this.renderErr9Text()
                 this.error = false
             } else {
                 this.error = true
