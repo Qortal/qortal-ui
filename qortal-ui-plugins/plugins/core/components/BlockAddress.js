@@ -2,6 +2,11 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import snackbar from './snackbar.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -37,19 +42,38 @@ class BlockAddress extends LitElement {
 
     render() {
         return html`
-            <mwc-button dense unelevated label="block" icon="voice_over_off" @click="${() => this.chatBlockAddress()}"></mwc-button>
+            <mwc-button dense unelevated label="${translate("blockpage.bcchange1")}" icon="voice_over_off" @click="${() => this.chatBlockAddress()}"></mwc-button>
         `
     }
 
     firstUpdated() {
+
+        this.changeLanguage()
         this.getChatBlockedAdresses()
 
 	setInterval(() => {
 	    this.getChatBlockedAdresses();
 	}, 60000)
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            use(checkLanguage)
+        })
+
     }
 
     updated(changedProps) {
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
     }
 
     async getChatBlockedAdresses() {
@@ -81,13 +105,15 @@ class BlockAddress extends LitElement {
             this.chatBlockedAdresses = this.chatBlockedAdresses.filter(item => item != address)
             this.chatBlockedAdresses.push(address)
             this.getChatBlockedList()
+            let err1string = get("blockpage.bcchange2")
             snackbar.add({
-                labelText: `Successfully blocked this user.`,
+                labelText: `${err1string}`,
                 dismiss: true
             })
         } else {
+            let err2string = get("blockpage.bcchange2")
             snackbar.add({
-                labelText: `Error occurred when trying to block this user. Please try again.`,
+                labelText: `${err2string}`,
                 dismiss: true
             })
         }
@@ -98,7 +124,7 @@ class BlockAddress extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        const emptyName = 'No registered name'
+        const err3string = 'No regitered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 
@@ -109,7 +135,7 @@ class BlockAddress extends LitElement {
         }).then(data => {
             return data.map(item => {
                 const noName = {
-                    name: emptyName,
+                    name: err3string,
                     owner: item
                 }
                 fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {

@@ -323,7 +323,7 @@ class Chat extends LitElement {
         this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.blockedUsers = []
-        this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
+        this.blockedUserList = []
     }
 
     render() {
@@ -417,14 +417,13 @@ class Chat extends LitElement {
 
     firstUpdated() {
 
+        this.changeLanguage()
+        this.changeTheme()
         this.getChatBlockedList()
 
-	setInterval(() => {
-	    this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
-	}, 1000)
-
-        this.changeTheme()
-        this.changeLanguage()
+        setInterval(() => {
+            this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
+        }, 1000)
 
         const getBlockedUsers = async () => {
             let blockedUsers = await parentEpml.request('apiCall', {
@@ -554,6 +553,7 @@ class Chat extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+        const err1string = 'No regitered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 
@@ -563,9 +563,8 @@ class Chat extends LitElement {
             return response.json()
         }).then(data => {
             return data.map(item => {
-                let err1string = get("chatpage.cchange15")
                 const noName = {
-                    name: `${err1string}`,
+                    name: err1string,
                     owner: item
                 }
                 fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {

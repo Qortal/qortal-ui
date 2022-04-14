@@ -410,7 +410,10 @@
     "cchange18": "unblock",
     "cchange19": "Invalid Name / Address, Check the name / address and retry...",
     "cchange20": "Message Sent Successfully!",
-    "cchange21": "Sending failed, Please retry..."
+    "cchange21": "Sending failed, Please retry...",
+    "cchange22": "Loading Messages...",
+    "cchange23": "Cannot Decrypt Message!",
+    "cchange24": "Maximum Characters per message is 255"
   },
   "welcomepage": {
     "wcchange1": "Welcome to Q-Chat",
@@ -422,5 +425,11 @@
     "wcchange7": "Invalid Name / Address, Check the name / address and retry...",
     "wcchange8": "Message Sent Successfully!",
     "wcchange9": "Sending failed, Please retry..."
+  },
+  "blockpage": {
+    "bcchange1": "block",
+    "bcchange2": "Successfully blocked this user!",
+    "bcchange3": "Error occurred when trying to block this user. Please try again!",
+    "bcchange4": "No registered name"
   }
 }

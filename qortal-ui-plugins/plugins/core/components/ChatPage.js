@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
@@ -127,7 +132,7 @@ class ChatPage extends LitElement {
 
     render() {
         return html`
-            ${this.isLoadingMessages ? html`<h1>Loading Messages...</h1>` : this.renderChatScroller(this._initialMessages)}
+            ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
             <div class="chat-text-area">
                 <div class="typing-area">
                     <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
@@ -142,7 +147,7 @@ class ChatPage extends LitElement {
 
     firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
+        this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
@@ -180,6 +185,11 @@ class ChatPage extends LitElement {
         // Attach Event Handler
         this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
 
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            use(checkLanguage)
+        })
+
         const getAddressPublicKey = () => {
 
             parentEpml.request('apiCall', {
@@ -210,7 +220,8 @@ class ChatPage extends LitElement {
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
             this._chatId = this.chatId.split('/')[1];
 
-            const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : 'Message...';
+            let mstring = get("chatpage.cchange8")
+            const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
             this.chatEditorPlaceholder = placeholder;
 
             this.isReceipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
@@ -245,6 +256,17 @@ class ChatPage extends LitElement {
     }
 
     updated(changedProps) {
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
     }
 
     renderChatScroller(initialMessages) {
@@ -572,7 +594,8 @@ class ChatPage extends LitElement {
         } else if (trimmedMessage.length >= 256) {
             this.isLoading = false;
             this.chatEditor.enable();
-            parentEpml.request('showSnackBar', "Maximum Characters per message is 255");
+            let err1string = get("chatpage.cchange24");
+            parentEpml.request('showSnackBar', `${err1string}`);
         } else {
             this.sendMessage(trimmedMessage);
         }
@@ -650,7 +673,8 @@ class ChatPage extends LitElement {
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
-                parentEpml.request('showSnackBar', "Sending failed, Please retry...");
+                let err2string = get("chatpage.cchange21");
+                parentEpml.request('showSnackBar', `${err2string}`);
             }
 
             this.isLoading = false;
