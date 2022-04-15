@@ -152,7 +152,7 @@ class NodeManagement extends LitElement {
 		<div id="node-management-page">
 			<div class="node-card">
 				<h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
-				<mwc-button style="float:right;" class="red" ?disabled="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
+				<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
 				<span class="sblack"><br />${translate("nodepage.nchange2")} ${this.upTime}</span>
 				<br /><br />
 				<div id="minting">
@@ -452,8 +452,8 @@ class NodeManagement extends LitElement {
                 method: "GET"
             })
             .then((res) => {
-				let err5string = get("nodepage.nchange32")
-                parentEpml.request('showSnackBar', `${err5string}`);
+				let err7string = get("nodepage.nchange32")
+                parentEpml.request('showSnackBar', `${err7string}`);
             });
     }
 
