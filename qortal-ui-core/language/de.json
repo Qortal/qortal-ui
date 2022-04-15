@@ -3,7 +3,8 @@
     "selectlanguage": "Sprache auswählen",
     "languageflag": "de",
     "english": "Englisch",
-    "chinese": "Chinesisch",
+    "chinese1": "Chinesisch (vereinfacht)",
+    "chinese2": "Chinesisch (traditionell)",
     "german": "Deutsch",
     "french": "Französisch",
     "polish": "Polnisch",
@@ -537,8 +538,8 @@
     "nchange28": "Prägeknoten konnte nicht hinzugefügt werden!",
     "nchange29": "Prägekonto erfolgreich entfernt!",
     "nchange30": "Fehler beim Entfernen des Prägekontos!",
-    "nchange31": "Stop Node",
-    "nchange32": "Successfully Sent Stop Request!"
+    "nchange31": "Knoten stoppen",
+    "nchange32": "Stoppanforderung erfolgreich gesendet!"
   },
   "transpage": {
     "tchange1": "Transaktionsanfrage",
