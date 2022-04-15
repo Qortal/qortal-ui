@@ -538,8 +538,8 @@
     "nchange28": "添加铸币节点失败!",
     "nchange29": "成功从此节点中移除铸币账号!",
     "nchange30": "未能从此节点中移除铸币账号!",
-    "nchange31": "Stop Node",
-    "nchange32": "Successfully Sent Stop Request!"
+    "nchange31": "关闭节点",
+    "nchange32": "成功发送关闭节点请求!"
   },
   "transpage": {
     "tchange1": "请求交易",
