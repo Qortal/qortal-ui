@@ -537,7 +537,9 @@
     "nchange27": "鑄幣節點添加成功!",
     "nchange28": "添加鑄幣節點失敗!",
     "nchange29": "成功從此節點中移除鑄幣賬號!",
-    "nchange30": "未能從此節點中移除鑄幣賬號!"
+    "nchange30": "未能從此節點中移除鑄幣賬號!",
+    "nchange31": "Stop Node",
+    "nchange32": "Successfully Sent Stop Request!"
   },
   "transpage": {
     "tchange1": "請求交易",
