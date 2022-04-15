@@ -250,6 +250,14 @@ class TradePortal extends LitElement {
 			margin-bottom: 10px;
 		}
 
+		.tab-text {
+			color: var(--tradehave);
+			font-size: 12px;
+			text-align: left;
+			margin-top: 2px;
+			margin-bottom: -12px;
+		}
+
 		.historic-trades {
 			text-align: center;
 		}
@@ -490,7 +498,7 @@ class TradePortal extends LitElement {
 			<div class="box">
 				<header><span>${translate("tradepage.tchange3")}</span></header>
 				<div class="border-wrapper">
-					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingHistoricTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingHistoricTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="historicTradesGrid" aria-label="Historic Trades" .items="${this.listedCoins.get(this.selectedCoin).historicTrades}">
 						<vaadin-grid-column auto-width resizable header="${translate("tradepage.tchange8")} (QORT)" path="qortAmount"></vaadin-grid-column>
 						<vaadin-grid-column
@@ -525,10 +533,11 @@ class TradePortal extends LitElement {
 			<div class="box">
 				<header><span>${translate("tradepage.tchange5")}</span></header>
 				<div class="border-wrapper">
-					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
 					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="openOrdersGrid" aria-label="Open Orders" .items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}">
 						<vaadin-grid-column
 							auto-width
+							resizable
 							header="${translate("tradepage.tchange8")} (QORT)"
 							id="qortAmountColumn"
 							path="qortAmount"
@@ -587,11 +596,13 @@ class TradePortal extends LitElement {
 							<div style="margin-left: auto">
 								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 							</div>
+                                                        <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="buyAmountInput"
-									required readOnly label="${translate("tradepage.tchange8")} (QORT)"
+									required readOnly
+                                                                        label=""
 									placeholder="0.0000"
 									type="text" 
 									auto-validate="false"
@@ -599,12 +610,13 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
+                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="buyPriceInput"
 									required readOnly
-									label="${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label=""
 									placeholder="0.0000"
 									type="text"
 									auto-validate="false"
@@ -612,12 +624,13 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<p style="margin-bottom: 10px;">
+                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="buyTotalInput"
 									required readOnly
-									label="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label=""
 									placeholder="0.0000"
 									type="text"
 									auto-validate="false"
@@ -649,12 +662,14 @@ class TradePortal extends LitElement {
 						<div class="card">
 							<div style="margin-left: auto">
 								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
-							</div>										
+							</div>
+							<span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="sellAmountInput"
-									required label="${translate("tradepage.tchange8")} (QORT)"
+									required
+                                                                        label=""
 									placeholder="0.0000"
 									@input="${(e) => { this._checkSellAmount(e) }}"
 									type="number"
@@ -663,11 +678,13 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
+                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="sellPriceInput"
-									required label="${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									required
+                                                                        label=""
 									placeholder="0.0000"
 									@input="${(e) => { this._checkSellAmount(e) }}"
 									type="number"
@@ -676,12 +693,13 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<p style="margin-bottom: 10px;">
+                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="sellTotalInput"
 									required readOnly
-									label="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
+									label=""
 									placeholder="0.0000"
 									type="number"
 									auto-validate="false"
@@ -711,7 +729,7 @@ class TradePortal extends LitElement {
 			<div class="box">
 				<header><span>${translate("tradepage.tchange6")}</span><mwc-icon-button title="${translate("tradepage.tchange7")}" icon="more_vert" @click=${() => this.showStuckOrdersDialog()}></mwc-icon-button></header>
 				<div class="border-wrapper">
-					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">Loading...</span></div>
+					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
 					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="myOrdersGrid" aria-label="My Orders" .items="${this.listedCoins.get(this.selectedCoin).myOrders}">
 						<vaadin-grid-column
 							auto-width
@@ -1027,7 +1045,8 @@ class TradePortal extends LitElement {
         this.isLoadingOpenTrades = true
         this.createConnection()
         this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
-            root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">Price (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
+            const priceString2 = get("tradepage.tchange9")
+            root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">' + priceString2 + ' (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
         }
         this.clearSellForm()
         this.clearBuyForm()
