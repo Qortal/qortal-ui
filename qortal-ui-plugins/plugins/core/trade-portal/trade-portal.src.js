@@ -40,9 +40,7 @@ class TradePortal extends LitElement {
             isLoadingHistoricTrades: { type: Boolean },
             isLoadingOpenTrades: { type: Boolean },
             isLoadingMyOpenOrders: { type: Boolean },
-            theme: { type: String, reflect: true },
-            amountString: { type: String },
-            priceString: { type: String }
+            theme: { type: String, reflect: true }
         }
     }
 
@@ -454,9 +452,6 @@ class TradePortal extends LitElement {
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
 
-        this.amountString = this.renderAmountText()
-        this.priceString = this.renderPriceText()
-
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
@@ -688,7 +683,7 @@ class TradePortal extends LitElement {
 									required readOnly
 									label="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 									placeholder="0.0000"
-									type="text"
+									type="number"
 									auto-validate="false"
 									outlined value="${this.initialAmount}"
 								>
@@ -893,11 +888,13 @@ class TradePortal extends LitElement {
         this._openOrdersGrid = this.shadowRoot.getElementById('openOrdersGrid')
 
         this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
-            root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">Price (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
+            const priceString = get("tradepage.tchange9")
+            root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">' + priceString + ' (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
         }
 
         this._openOrdersGrid.querySelector('#qortAmountColumn').headerRenderer = function (root) {
-            root.innerHTML = '<vaadin-grid-sorter path="qortAmount">Amount (QORT)</vaadin-grid-sorter>'
+            const amountString = get("tradepage.tchange8")
+            root.innerHTML = '<vaadin-grid-sorter path="qortAmount">' + amountString + ' (QORT)</vaadin-grid-sorter>'
         }
 
         this._myOrdersGrid = this.shadowRoot.getElementById('myOrdersGrid')
@@ -991,14 +988,6 @@ class TradePortal extends LitElement {
         }
     }
 
-    renderAmountText() {
-        return html`${translate("tradepage.tchange8")}`
-    }
-
-    renderPriceText() {
-        return html`${translate("tradepage.tchange9")}`
-    }
-
     updateWalletBalance() {
         let _url = ``
         let _body = null
@@ -1023,7 +1012,8 @@ class TradePortal extends LitElement {
         })
             .then((res) => {
                 if (isNaN(Number(res))) {
-                    parentEpml.request('showSnackBar', `${translate("tradepage.tchange30")}`)
+                    let snack1string = get("tradepage.tchange30")
+                    parentEpml.request('showSnackBar', `${snack1tring}`)
                 } else {
                     this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
                 }
@@ -1711,18 +1701,21 @@ class TradePortal extends LitElement {
             } else if (response === false) {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange20")}`)
+                let snack2string = get("tradepage.tchange20")
+                parentEpml.request('showSnackBar', `${snack2tring}`)
             } else {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange21")}: ${response.message}`)
+                let snack3string = get("tradepage.tchange21")
+                parentEpml.request('showSnackBar', `${snack3tring}: ${response.message}`)
             }
         }
 
         if (this.round(parseFloat(fundingQortAmount) + parseFloat(0.002)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
             this.isSellLoading = false
             this.sellBtnDisable = false
-            parentEpml.request('showSnackBar', `${translate("tradepage.tchange22")}`)
+            let snack4string = get("tradepage.tchange22")
+            parentEpml.request('showSnackBar', `${snack4tring}`)
             return false
         } else {
             const res = await makeRequest()
@@ -1764,15 +1757,18 @@ class TradePortal extends LitElement {
                 this.shadowRoot.getElementById('buyPriceInput').value = this.initialAmount
                 this.shadowRoot.getElementById('buyTotalInput').value = this.initialAmount
                 this.shadowRoot.getElementById('qortalAtAddress').value = ''
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange23")}`)
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5tring}`)
             } else if (response === false) {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange24")}`)
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6tring}`)
             } else {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange25")}: ${response.message}`)
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7tring}: ${response.message}`)
             }
         }
 
@@ -1798,15 +1794,18 @@ class TradePortal extends LitElement {
             if (response === true) {
                 button.remove()
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange26")}`)
+                let snack8string = get("tradepage.tchange26")
+                parentEpml.request('showSnackBar', `${snack8tring}`)
             } else if (response === false) {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange27")}`)
+                let snack9string = get("tradepage.tchange27")
+                parentEpml.request('showSnackBar', `${snack9tring}`)
             } else {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange28")}: ${response.message}`)
+                let snack10string = get("tradepage.tchange28")
+                parentEpml.request('showSnackBar', `${snack10string}: ${response.message}`)
             }
         }
 
@@ -1852,13 +1851,16 @@ class TradePortal extends LitElement {
         const manageResponse = (response) => {
             if (response === true) {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange26")}`)
+                let snack11string = get("tradepage.tchange26")
+                parentEpml.request('showSnackBar', `${snack11string}`)
             } else if (response === false) {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange27")}`)
+                let snack12string = get("tradepage.tchange27")
+                parentEpml.request('showSnackBar', `${snack12string}`)
             } else {
                 this.cancelStuckOfferBtnDisable = false
-                parentEpml.request('showSnackBar', `${translate("tradepage.tchange28")}: ${response.message}`)
+                let snack13string = get("tradepage.tchange28")
+                parentEpml.request('showSnackBar', `${snack13string}: ${response.message}`)
             }
         }
 
