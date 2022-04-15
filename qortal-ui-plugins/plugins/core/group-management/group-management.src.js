@@ -691,10 +691,10 @@ class GroupManagement extends LitElement {
     renderManageButton(groupObj) {
         if (groupObj.owner === this.selectedAddress.address) {
             // render owner actions btn to modal
-            return html`<mwc-button @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>nbsp;${translate("grouppage.gchange40")}</mwc-button>`
+            return html`<mwc-button @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else if (groupObj.isAdmin === true) {
             // render admin actions modal
-            return html`<mwc-button @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>nbsp;${translate("grouppage.gchange40")}</mwc-button>`
+            return html`<mwc-button @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else {
             // render member leave group modal
             return html`<mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
