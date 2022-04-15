@@ -536,7 +536,9 @@
     "nchange27": "Prägeknoten erfolgreich hinzugefügt!",
     "nchange28": "Prägeknoten konnte nicht hinzugefügt werden!",
     "nchange29": "Prägekonto erfolgreich entfernt!",
-    "nchange30": "Fehler beim Entfernen des Prägekontos!"
+    "nchange30": "Fehler beim Entfernen des Prägekontos!",
+    "nchange31": "Stop Node",
+    "nchange32": "Successfully Sent Stop Request!"
   },
   "transpage": {
     "tchange1": "Transaktionsanfrage",
