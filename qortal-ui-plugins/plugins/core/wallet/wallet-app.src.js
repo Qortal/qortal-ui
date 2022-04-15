@@ -1395,16 +1395,8 @@ class MultiWallet extends LitElement {
         return html`${translate("walletpage.wchange1")}`
     }
 
-    renderFundsText() {
-        return html`${translate("walletpage.wchange26")}`
-    }
-
     renderInvalidText() {
         return html`${translate("walletpage.wchange27")}`
-    }
-
-    renderEmptyText() {
-        return html`${translate("walletpage.wchange28")}`
     }
 
     renderReceiverText() {
@@ -1512,21 +1504,24 @@ class MultiWallet extends LitElement {
         if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.balance)) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', this.renderFundsText())
+            let snack1string = get("walletpage.wchange26")
+            parentEpml.request('showSnackBar', `${snack1string}`)
             return false
         }
 
         if (parseFloat(amount) <= 0) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', this.renderInvalidText())
+            let snack2string = get("walletpage.wchange27")
+            parentEpml.request('showSnackBar', `${snack2string}`)
             return false
         }
 
         if (recipient.length === 0) {
             this.sendMoneyLoading = false
             this.btnDisable = false
-            parentEpml.request('showSnackBar', this.renderEmptyText())
+            let snack3string = get("walletpage.wchange28")
+            parentEpml.request('showSnackBar', `${snack3string}`)
             return false
         }
 
@@ -1797,7 +1792,8 @@ class MultiWallet extends LitElement {
                 })
                 .then((res) => {
                     if (isNaN(Number(res))) {
-                        parentEpml.request('showSnackBar', `${translate("walletpage.wchange32")}`)
+                        let snack4string = get("walletpage.wchange32")
+                        parentEpml.request('showSnackBar', `${snack4string}`)
                     } else {
                         if (this._selectedWallet == coin) {
                             this.wallets.get(coin).balance = Number(res).toFixed(8)
@@ -1824,7 +1820,9 @@ class MultiWallet extends LitElement {
                 })
                 .then((res) => {
                     if (isNaN(Number(res))) {
-                        parentEpml.request('showSnackBar', `${translate("walletpage.wchange33")} ${coin.toLocaleUpperCase()} ${translate("walletpage.wchange34")}!`)
+                        let snack5string = get("walletpage.wchange33")
+                        let snack6string = get("walletpage.wchange34")
+                        parentEpml.request('showSnackBar', `${snack5string} ${coin.toLocaleUpperCase()} ${snack6string}!`)
                     } else {
                         if (this._selectedWallet == coin) {
                             this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)

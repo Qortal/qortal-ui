@@ -544,5 +544,14 @@
     "tchange3": "Bestätigen",
     "tchange4": "Zu",
     "tchange5": "Menge"
+  },
+  "apipage": {
+    "achange1": "Füge API-Schlüssel hinzu",
+    "achange2": "API-Schlüssel",
+    "achange3": "Bitte geben Sie den API-Schlüssel für diesen Knoten ein. Es kann in einer Datei namens “apikey.txt“ in dem Verzeichnis gefunden werden, in dem der Kern installiert ist. Klicken Sie alternativ auf Abbrechen, um den Kern mit eingeschränkter Funktionalität zu verwenden.",
+    "achange4": "Abbrechen",
+    "achange5": "Hinzufügen",
+    "achange6": "API-Schlüssel erfolgreich hinzugefügt",
+    "achange7": "API-Schlüssel falsch, kein API-Schlüssel hinzugefügt"
   }
 }

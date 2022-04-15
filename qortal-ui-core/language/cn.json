@@ -544,5 +544,14 @@
     "tchange3": "Confirm",
     "tchange4": "To",
     "tchange5": "Amount"
+  },
+  "apipage": {
+    "achange1": "Add API key",
+    "achange2": "API key",
+    "achange3": "Please enter the API key for this node. It can be found in a file called “apikey.txt“ in the directory where the core is installed. Alternatively, click Cancel to use the core with reduced functionality.",
+    "achange4": "Cancel",
+    "achange5": "Add",
+    "achange6": "Successfully added API Key",
+    "achange7": "API key wrong, no API key added"
   }
 }
