@@ -17,7 +17,7 @@
     "rewardshare": "獎勵分享",
     "nameregistration": "註冊名稱",
     "websites": "網站",
-    "datamanagement": "數據管理",
+    "datamanagement": "資料管理",
     "qchat": "Q-CHAT",
     "groupmanagement": "群組管理",
     "puzzles": "益智遊戲",
@@ -487,7 +487,7 @@
     "gchange51": "加入",
     "gchange52": "管理員",
     "gchange53": "成員",
-    "gchange54": "Members"
+    "gchange54": "成員"
   },
   "puzzlepage": {
     "pchange1": "益智游戲",
