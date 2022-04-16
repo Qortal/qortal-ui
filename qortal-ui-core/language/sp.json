@@ -557,5 +557,10 @@
     "achange5": "Add",
     "achange6": "Successfully added API Key",
     "achange7": "API key wrong, no API key added"
+  },
+  "transactions": {
+    "amount": "Amount",
+    "to": "To",
+    "declined": "User declined transaction!"
   }
 }

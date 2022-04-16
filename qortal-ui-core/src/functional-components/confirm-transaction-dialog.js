@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import { get, translate, translateUnsafeHTML } from 'lit-translate'
 
 import { listenForRequest } from '../transactionRequest.js'
 
@@ -95,7 +95,8 @@ class ConfirmTransactionDialog extends connect(store)(LitElement) {
     }
 
     decline(e) {
-        this._reject(new Error('User declined transaction'))
+        const rejecterror = get("transactions.declined")
+        this._reject(new Error(rejecterror))
     }
 }
 

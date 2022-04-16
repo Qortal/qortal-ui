@@ -1159,11 +1159,11 @@ class MultiWallet extends LitElement {
 
 	setInterval(() => {
 	    this.errorMessage = '';
-	}, 5000)
+	}, 10000)
 
 	setInterval(() => {
 	    this.successMessage = '';
-	}, 5000)
+	}, 10000)
 
         this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
@@ -1584,6 +1584,8 @@ class MultiWallet extends LitElement {
         const makeTransactionRequest = async (receiver, lastRef) => {
             let myReceiver = receiver
             let mylastRef = lastRef
+            let dialogamount = get("transactions.amount")
+            let dialogto = get("transactions.to")
 
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 2,
@@ -1593,6 +1595,8 @@ class MultiWallet extends LitElement {
                     amount: amount,
                     lastReference: mylastRef,
                     fee: 0.001,
+                    dialogamount: dialogamount,
+                    dialogto: dialogto,
                 },
             })
             return myTxnrequest

@@ -557,5 +557,10 @@
     "achange5": "添加",
     "achange6": "成功添加此节点的API密钥。",
     "achange7": "添加API密钥失败。"
+  },
+  "transactions": {
+    "amount": "Amount",
+    "to": "To",
+    "declined": "User declined transaction!"
   }
 }

@@ -557,5 +557,10 @@
     "achange5": "Hinzufügen",
     "achange6": "API-Schlüssel erfolgreich hinzugefügt",
     "achange7": "API-Schlüssel falsch, kein API-Schlüssel hinzugefügt"
+  },
+  "transactions": {
+    "amount": "Menge",
+    "to": "Zu",
+    "declined": "Der Benutzer hat die Transaktion abgelehnt!"
   }
 }
