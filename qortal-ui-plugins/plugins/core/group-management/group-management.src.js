@@ -161,8 +161,9 @@ class GroupManagement extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
-                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
+                        <vaadin-grid-filter-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-filter-column>
+                        <vaadin-grid-filter-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-filter-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderRole(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -178,6 +179,7 @@ class GroupManagement extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange9")}</h3>
                     <vaadin-grid theme="large" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
+                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
                         <vaadin-grid-filter-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-filter-column>
                         <vaadin-grid-filter-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-filter-column>
                         <vaadin-grid-filter-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-filter-column>

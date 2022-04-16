@@ -486,7 +486,8 @@
     "gchange50": "Leave",
     "gchange51": "Join",
     "gchange52": "Admin",
-    "gchange53": "Member"
+    "gchange53": "Member",
+    "gchange54": "Members"
   },
   "puzzlepage": {
     "pchange1": "Puzzles",
