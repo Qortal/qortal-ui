@@ -105,13 +105,13 @@ linux:
     - "AppImage"
 
 deb:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
   synopsis: "Qortal UI for Linux"
   afterInstall: "./scripts/add-debian-apt-repo.sh"
   afterRemove: "./scripts/uninstall-debian-conf.sh"
 
 appImage:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
 
 snap:
   artifactName: "Qortal-Setup-amd64.${ext}"

@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui-crypto",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "QORTAL-UI Crypto",
   "keywords": [
     "QORT",
@@ -21,7 +21,8 @@
     "buffer": "6.0.3",
     "jssha": "3.2.0",
     "lodash": "4.17.21",
-    "lit-translate": "2.0.0-rc.1"
+    "lit": "2.2.2",
+    "lit-translate": "2.0.0"
   },
   "engines": {
     "node": ">=14.17.0"
