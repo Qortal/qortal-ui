@@ -1,14 +1,15 @@
 {
   "selectmenu": {
     "selectlanguage": "भाषा चुनें",
-    "languageflag": "यु एस",
+    "languageflag": "in",
     "english": "अंग्रेज़ी",
     "chinese": "चीनी",
     "german": "जर्मन",
     "french": "फ्रेंच",
     "polish": "पोलिश",
     "spanish": "स्पेनिश",
-    "hindi": "हिन्दी" 
+    "hindi": "हिन्दी" ,
+    "croation": "क्रोएशियाई"
   },
 
   "sidemenu": {
@@ -493,7 +494,7 @@
     "gchange51": "शामिल हों",
     "gchange52": "व्यवस्थापक",
     "gchange53": "सदस्य",
-    "gchange54": "Members"
+    "gchange54": "सदस्यों"
   },
   "puzzlepage": {
     "pchange1": "पहेलि",
