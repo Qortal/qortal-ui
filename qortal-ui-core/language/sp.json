@@ -156,9 +156,9 @@
     "mchange31": "Presionar para ayuda",
     "mchange32": "Conviértase en un acuñador",
     "mchange33": "Introducción",
-    "mchange34": "En Qortal, para convertirte en acuñador y empezar a ganar recompensas de QORT con tu aumento de nivel de acuñador, primero debes ser "patrocinado". Un patrocinador en Qortal es cualquier otro acuñador de nivel 5 o superior, o un Fundador de Qortal. Obtendrás una llave de patrocinio del patrocinante, y usarás esa llave para llegar al nivel 1. Una vez que hayas alcanzado el nivel 1, podrás crear tu propia llave de acuñación y empezar a ganar recompensas por ayudar a asegurar la Blockchain de Qortal.",
+    "mchange34": "En Qortal, para convertirte en acuñador y empezar a ganar recompensas de QORT con tu aumento de nivel de acuñador, primero debes ser ‘patrocinado’. Un patrocinador en Qortal es cualquier otro acuñador de nivel 5 o superior, o un Fundador de Qortal. Obtendrás una llave de patrocinio del patrocinante, y usarás esa llave para llegar al nivel 1. Una vez que hayas alcanzado el nivel 1, podrás crear tu propia llave de acuñación y empezar a ganar recompensas por ayudar a asegurar la Blockchain de Qortal.",
     "mchange35": "Patrocinio",
-    "mchange36": "Tu patrocinador te entregará una "Llave de patrocinio" que utilizarás para añadir a tu nodo, y empezar a acuñar (sin recompensas hasta alcanzar el nivel 1.) Una vez que alcances el nivel 1, crearás/asignarás tu propia "Llave de acuñación" y empezarás a ganar recompensas. Te quedan XXXX bloques en tu periodo de patrocinio.",
+    "mchange36": "Tu patrocinador te entregará una ‘Llave de ‘patrocinio’ que utilizarás para añadir a tu nodo, y empezar a acuñar (sin recompensas hasta alcanzar el nivel 1.) Una vez que alcances el nivel 1, crearás/asignarás tu propia ‘Llave de acuñación’ y empezarás a ganar recompensas. Te quedan XXXX bloques en tu periodo de patrocinio.",
     "mchange37": "Simplemente acércate a un acuñador en Qortal que tenga el nivel suficiente para emitir una clave de patrocinio, obtén esa clave, luego vuelve aquí e introduce la clave para comenzar tu viaje de acuñación!",
     "mchange38": "en"
   },
@@ -551,7 +551,7 @@
   "apipage": {
     "achange1": "Añadir clave API",
     "achange2": "Clave API",
-    "achange3": "Por favor, introduzca la clave API para este nodo. Puede encontrarla en un archivo llamado "apikey.txt" en el directorio donde está instalado el Core. Alternativamente, haga clic en Cancelar para utilizar el Core con funcionalidad reducida.",
+    "achange3": "Por favor, introduzca la clave API para este nodo. Puede encontrarla en un archivo llamado “apikey.txt“ en el directorio donde está instalado el Core. Alternativamente, haga clic en Cancelar para utilizar el Core con funcionalidad reducida.",
     "achange4": "Cancelar",
     "achange5": "Añadir",
     "achange6": "Se ha añadido con éxito la clave API",
