@@ -220,7 +220,7 @@ class ChatPage extends LitElement {
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
             this._chatId = this.chatId.split('/')[1];
 
-            let mstring = get("chatpage.cchange8")
+            const mstring = get("chatpage.cchange8")
             const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
             this.chatEditorPlaceholder = placeholder;
 
