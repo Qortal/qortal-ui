@@ -41,7 +41,8 @@ class ChatPage extends LitElement {
             isUserDown: { type: Boolean },
             isPasteMenuOpen: { type: Boolean },
             showNewMesssageBar: { attribute: false },
-            hideNewMesssageBar: { attribute: false }
+            hideNewMesssageBar: { attribute: false },
+            chatEditorPlaceholder: { type: String }
         }
     }
 
@@ -128,6 +129,7 @@ class ChatPage extends LitElement {
         this.isLoading = false
         this.isUserDown = false
         this.isPasteMenuOpen = false
+        this.chatEditorPlaceholder = this.renderPlaceholder()
     }
 
     render() {
@@ -147,6 +149,7 @@ class ChatPage extends LitElement {
 
     firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
+
         this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
@@ -269,8 +272,13 @@ class ChatPage extends LitElement {
         }
     }
 
-    renderChatScroller(initialMessages) {
+    renderPlaceholder() {
+        const mstring = get("chatpage.cchange8")
+        const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
+        this.chatEditorPlaceholder = placeholder;
+    }
 
+    renderChatScroller(initialMessages) {
         return html`<chat-scroller .initialMessages=${initialMessages} .emojiPicker=${this.emojiPicker} .escapeHTML=${escape} .getOldMessage=${this.getOldMessage} > </chat-scroller>`
     }
 
@@ -747,7 +755,6 @@ class ChatPage extends LitElement {
 
             const ChatEditor = function () {
                 const editor = this;
-
                 editor.init();
             };
 
@@ -772,10 +779,8 @@ class ChatPage extends LitElement {
 
             ChatEditor.prototype.resetValue = function () {
                 const editor = this;
-
                 editor.content.body.innerHTML = '';
                 editor.updateMirror();
-
                 editor.focus();
             };
 
@@ -963,7 +968,6 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'blur') {
-
                             editor.clearSelection();
                         }
 
@@ -1005,10 +1009,8 @@ class ChatPage extends LitElement {
 
 
             function doInit() {
-
                 return new ChatEditor();
             };
-
             return doInit();
         };
 
@@ -1021,7 +1023,6 @@ class ChatPage extends LitElement {
             unescape: unescape,
             placeholder: this.chatEditorPlaceholder
         };
-
         this.chatEditor = new ChatEditor(editorConfig);
     }
 }
