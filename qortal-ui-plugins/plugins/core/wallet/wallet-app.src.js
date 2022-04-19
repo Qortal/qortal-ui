@@ -1930,7 +1930,7 @@ class MultiWallet extends LitElement {
                 'click',
                 (e) => {
                     let btcItem = this.transactionsGrid.getEventContext(e).item
-                    this.showBtcTransactionDetails(btcItem, this.wallets.get(this._selectedWallet).transactions)
+                    this.showAltTransactionDetails(btcItem, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
@@ -1939,7 +1939,7 @@ class MultiWallet extends LitElement {
                 'click',
                 (e) => {
                     let ltcItem = this.transactionsGrid.getEventContext(e).item
-                    this.showLtcTransactionDetails(ltcItem, this.wallets.get(this._selectedWallet).transactions)
+                    this.showAltTransactionDetails(ltcItem, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
@@ -1948,7 +1948,7 @@ class MultiWallet extends LitElement {
                 'click',
                 (e) => {
                     let dogeItem = this.transactionsGrid.getEventContext(e).item
-                    this.showDogeTransactionDetails(dogeItem, this.wallets.get(this._selectedWallet).transactions)
+                    this.showAltTransactionDetails(dogeItem, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
@@ -1961,12 +1961,8 @@ class MultiWallet extends LitElement {
     async renderTransactions() {
         if (this._selectedWallet === 'qort') {
             render(this.renderQortTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-        } else if (this._selectedWallet === 'btc') {
-            render(this.renderBtcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-        } else if (this._selectedWallet === 'ltc') {
-            render(this.renderLtcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-        } else if (this._selectedWallet === 'doge') {
-            render(this.renderDogeTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+        } else {
+            render(this.renderAltTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         }
     }
 
@@ -2027,137 +2023,7 @@ class MultiWallet extends LitElement {
 	`
     }
 
-    renderBtcTransactions(transactions, coin) {
-        return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
-            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
-                <vaadin-grid-column
-                    auto-width
-                    header="${translate("walletpage.wchange41")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange35")}"
-                    .renderer=${(root, column, data) => {
-                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange9")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`${data.item.inputs[0].address}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange10")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`${data.item.outputs[0].address}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange37")}"
-                    .renderer=${(root, column, data) => {
-                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
-                        render(html`${amount}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange14")}"
-                    .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
-                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-                    }}
-                >
-                </vaadin-grid-column>
-            </vaadin-grid>
-            <div id="pages"></div>
-	`
-    }
-
-    renderLtcTransactions(transactions, coin) {
-        return html`
-            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
-            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
-                <vaadin-grid-column
-                    auto-width
-                    header="${translate("walletpage.wchange41")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange35")}"
-                    .renderer=${(root, column, data) => {
-                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange9")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`${data.item.inputs[0].address}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange10")}"
-                    .renderer=${(root, column, data) => {
-                        render(html`${data.item.outputs[0].address}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange37")}"
-                    .renderer=${(root, column, data) => {
-                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
-                        render(html`${amount}`, root)
-                    }}
-                >
-                </vaadin-grid-column>
-                <vaadin-grid-column
-                    auto-width
-                    resizable
-                    header="${translate("walletpage.wchange14")}"
-                    .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
-                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
-                    }}
-                >
-                </vaadin-grid-column>
-            </vaadin-grid>
-            <div id="pages"></div>
-	`
-    }
-
-    renderDogeTransactions(transactions, coin) {
+    renderAltTransactions(transactions, coin) {
         return html`
             <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
             <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
@@ -2352,43 +2218,21 @@ class MultiWallet extends LitElement {
         })
     }
 
-    showBtcTransactionDetails(myTransaction, allTransactions) {
+	showAltTransactionDetails(myTransaction, allTransactions) {
         allTransactions.forEach((transaction) => {
             if (myTransaction.txHash === transaction.txHash) {
-                let btcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
-                let btcSender = myTransaction.inputs[0].address
-                let btcReceiver = myTransaction.outputs[0].address
-                this.selectedTransaction = { ...transaction, btcTxnFlow, btcSender, btcReceiver }
+                let altTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let altSender = myTransaction.inputs[0].address
+                let altReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, altTxnFlow, altSender, altReceiver }
                 if (this.selectedTransaction.txHash.length != 0) {
-                    this.shadowRoot.querySelector('#showBtcTransactionDetailsDialog').show()
-                }
-            }
-        })
-    }
-
-    showLtcTransactionDetails(myTransaction, allTransactions) {
-        allTransactions.forEach((transaction) => {
-            if (myTransaction.txHash === transaction.txHash) {
-                let ltcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
-                let ltcSender = myTransaction.inputs[0].address
-                let ltcReceiver = myTransaction.outputs[0].address
-                this.selectedTransaction = { ...transaction, ltcTxnFlow, ltcSender, ltcReceiver }
-                if (this.selectedTransaction.txHash.length != 0) {
-                    this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').show()
-                }
-            }
-        })
-    }
-
-    showDogeTransactionDetails(myTransaction, allTransactions) {
-        allTransactions.forEach((transaction) => {
-            if (myTransaction.txHash === transaction.txHash) {
-                let dogeTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
-                let dogeSender = myTransaction.inputs[0].address
-                let dogeReceiver = myTransaction.outputs[0].address
-                this.selectedTransaction = { ...transaction, dogeTxnFlow, dogeSender, dogeReceiver }
-                if (this.selectedTransaction.txHash.length != 0) {
-                    this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').show()
+					if ( this._selectedWallet === "btc" ) {
+						this.shadowRoot.querySelector('#showBtcTransactionDetailsDialog').show()
+					} else if ( this._selectedWallet === "ltc" ) {
+						this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').show()
+					} else if ( this._selectedWallet === "doge" ) {
+						this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').show()
+					}
                 }
             }
         })
