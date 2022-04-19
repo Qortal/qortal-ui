@@ -11,9 +11,9 @@
     "spanish": "西班牙文",
     "hindi": "印度文",
     "croatian": "克羅地亞文",
-    "portuguese": "Portuguese",
-    "hungarian": "Hungarian",
-    "serbian": "Serbian"
+    "portuguese": "葡萄牙文",
+    "hungarian": "匈牙利文",
+    "serbian": "塞爾維亞文"
   },
   "sidemenu": {
     "mintingdetails": "鑄幣信息",
@@ -564,8 +564,8 @@
     "achange7": "添加API密鑰失敗。"
   },
   "transactions": {
-    "amount": "Amount",
-    "to": "To",
-    "declined": "User declined transaction!"
+    "amount": "數量",
+    "to": "收款人",
+    "declined": "交易被用戶拒絕!"
   }
 }
