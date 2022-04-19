@@ -1925,30 +1925,11 @@ class MultiWallet extends LitElement {
                 },
                 { passive: true }
             )
-        } else if (coin === 'btc') {
+        } else {
             this.transactionsGrid.addEventListener(
                 'click',
                 (e) => {
-                    let btcItem = this.transactionsGrid.getEventContext(e).item
-                    this.showAltTransactionDetails(btcItem, this.wallets.get(this._selectedWallet).transactions)
-                },
-                { passive: true }
-            )
-        } else if (coin === 'ltc') {
-            this.transactionsGrid.addEventListener(
-                'click',
-                (e) => {
-                    let ltcItem = this.transactionsGrid.getEventContext(e).item
-                    this.showAltTransactionDetails(ltcItem, this.wallets.get(this._selectedWallet).transactions)
-                },
-                { passive: true }
-            )
-        } else if (coin === 'doge') {
-            this.transactionsGrid.addEventListener(
-                'click',
-                (e) => {
-                    let dogeItem = this.transactionsGrid.getEventContext(e).item
-                    this.showAltTransactionDetails(dogeItem, this.wallets.get(this._selectedWallet).transactions)
+                    this.showAltTransactionDetails(this.transactionsGrid.getEventContext(e).item, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
