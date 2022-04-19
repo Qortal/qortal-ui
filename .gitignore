@@ -15,4 +15,7 @@ node_modules/
 watch.pid
 
 # Built WWW
-qortal-ui/builtWWW
+builtWWW/
+
+# Dist
+dist/
