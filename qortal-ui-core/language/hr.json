@@ -566,6 +566,8 @@
   "transactions": {
     "amount": "Iznos",
     "to": "Prema",
-    "declined": "Korisnik je odbio transakciju!"
+    "declined": "Korisnik je odbio transakciju!",
+    "namedialog1": "Registrirate ime ispod:",
+    "namedialog2": "Pritiskom na potvrdi ime će biti registrirano!"
   }
 }

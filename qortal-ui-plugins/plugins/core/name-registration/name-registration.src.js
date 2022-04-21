@@ -359,6 +359,8 @@ class NameRegistration extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
+            let dialogyou = get("transactions.namedialog1")
+            let dialogonpress = get("transactions.namedialog2")
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 3,
                 nonce: this.selectedAddress.nonce,
@@ -367,6 +369,8 @@ class NameRegistration extends LitElement {
                     name: nameInput,
                     value: descInput,
                     lastReference: lastRef,
+                    dialogyou: dialogyou,
+                    dialogonpress: dialogonpress,
                 }
             })
             return myTxnrequest

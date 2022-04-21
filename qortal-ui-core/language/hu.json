@@ -566,6 +566,8 @@
   "transactions": {
     "amount": "Mennyiség",
     "to": "Hoz",
-    "declined": "Felhasználó elutasította a tranzakciót!"
+    "declined": "Felhasználó elutasította a tranzakciót!",
+    "namedialog1": "Ön az alábbi nevet regisztrálja:",
+    "namedialog2": "A megerősítés megnyomására a név regisztrálásra kerül!"
   }
 }

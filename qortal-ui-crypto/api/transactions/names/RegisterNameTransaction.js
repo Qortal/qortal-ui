@@ -10,12 +10,20 @@ export default class RegisterNameTransaction extends TransactionBase {
 
     render(html) {
         return html`
-            You are registering the name below:
+            ${this._dialogyou}
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this.nameText}</span>
             </div>
-            On pressing confirm, the name will be registered!
+            ${this._dialogonpress}
         `
+    }
+
+    set dialogyou(dialogyou) {
+        this._dialogyou = dialogyou
+    }
+
+    set dialogonpress(dialogonpress) {
+        this._dialogonpress = dialogonpress
     }
 
     set fee(fee) {

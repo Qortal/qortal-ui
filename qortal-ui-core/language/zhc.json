@@ -566,6 +566,8 @@
   "transactions": {
     "amount": "数量",
     "to": "收款人",
-    "declined": "交易已被用戶拒绝!"
+    "declined": "交易已被用戶拒绝!",
+    "namedialog1": "You are registering the name below:",
+    "namedialog2": "On pressing confirm, the name will be registered!"
   }
 }

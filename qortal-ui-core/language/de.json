@@ -566,6 +566,8 @@
   "transactions": {
     "amount": "Menge",
     "to": "Zu",
-    "declined": "Der Benutzer hat die Transaktion abgelehnt!"
+    "declined": "Der Benutzer hat die Transaktion abgelehnt!",
+    "namedialog1": "Sie registrieren den folgenden Namen:",
+    "namedialog2": "Wenn Sie auf Bestätigen drücken, wird der Name registriert!"
   }
 }

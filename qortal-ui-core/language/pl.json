@@ -566,6 +566,8 @@
   "transactions": {
     "amount": "Amount",
     "to": "To",
-    "declined": "User declined transaction!"
+    "declined": "User declined transaction!",
+    "namedialog1": "You are registering the name below:",
+    "namedialog2": "On pressing confirm, the name will be registered!"
   }
 }
