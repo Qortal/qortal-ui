@@ -50,11 +50,11 @@ class TradePortal extends LitElement {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
 			--mdc-theme-error: rgb(255, 89, 89);
-                        --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                  --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-text-field-label-ink-color: var(--black);
 			--mdc-text-field-ink-color: var(--black);
-                        --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+                  --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-select-label-ink-color: var(--black);
 			--mdc-select-ink-color: var(--black);
@@ -87,7 +87,7 @@ class TradePortal extends LitElement {
 		}
 
 		#tabs-1 {
-			--mdc-tab-height: 50px;
+			--mdc-tab-height: 42px;
 			border-left: 1px solid var(--tradeborder);
 			border-top: 1px solid var(--tradeborder);
 			border-right: 1px solid var(--tradeborder);
@@ -113,7 +113,7 @@ class TradePortal extends LitElement {
 		}
 
 		#tabs-1-content .btn-clear {
-			--mdc-icon-button-size: 40px;
+			--mdc-icon-button-size: 32px;
 			color: var(--black);
 		}
 
@@ -149,7 +149,7 @@ class TradePortal extends LitElement {
 			flex: 0 1 auto;
 			align-items: center;
 			justify-content: center;
-			padding: 0px 15px;
+			padding: 0px 10px;
 			font-size: 16px;
 			color: var(--white);
 			background-color: var(--tradehead);
@@ -160,7 +160,7 @@ class TradePortal extends LitElement {
 		}
 
 		p {
-			margin-bottom: 15px;
+			margin-bottom: 12px;
 		}
 
 		#trade-portal {
@@ -218,9 +218,6 @@ class TradePortal extends LitElement {
 
 		.open-market-container {
 			text-align: center;
-		}
-
-		.buy-sell {
 		}
 
 		.card {
@@ -402,14 +399,6 @@ class TradePortal extends LitElement {
 				justify-items: stretch;
 				align-items: stretch;
 				margin-bottom: 10px;
-			}
-
-			.buy-sell {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				grid-auto-rows: max(450px);
-				column-gap: 0.5em;
-				row-gap: 0.4em;
 			}
 
 		}
