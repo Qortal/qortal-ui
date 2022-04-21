@@ -567,7 +567,7 @@
     "amount": "数量",
     "to": "收款人",
     "declined": "交易已被用戶拒绝!",
-    "namedialog1": "You are registering the name below:",
-    "namedialog2": "On pressing confirm, the name will be registered!"
+	"namedialog1": "你正在注册以下名称:",
+    "namedialog2": "点击确认后, 名称将被注册!
   }
 }
