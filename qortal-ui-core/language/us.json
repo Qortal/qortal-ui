@@ -568,6 +568,12 @@
     "to": "To",
     "declined": "User declined transaction!",
     "namedialog1": "You are registering the name below:",
-    "namedialog2": "On pressing confirm, the name will be registered!"
+    "namedialog2": "On pressing confirm, the name will be registered!",
+    "groupdialog1": "You are requesting to join the group below:",
+    "groupdialog2": "On pressing confirm, the group join request will be sent!",
+    "groupdialog3": "You are requesting to leave the group below:",
+    "groupdialog4": "On pressing confirm, the leave group request will be sent!",
+    "groupdialog5": "You are requesting to creating the group below:",
+    "groupdialog6": "On pressing confirm, the group creating request will be sent!"
   }
 }

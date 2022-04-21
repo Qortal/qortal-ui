@@ -568,6 +568,12 @@
     "to": "Za",
     "declined": "Korisnik je odbio transakciju!",
     "namedialog1": "Vi registrujete ime ispod:",
-    "namedialog2": "Pritiskom na potvrdi ime će biti registrovano!"
+    "namedialog2": "Pritiskom na potvrdi ime će biti registrovano!",
+    "groupdialog1": "Zahtevate da se pridružite grupi ispod:",
+    "groupdialog2": "Pritiskom na potvrdi, biće poslat zahtev za pridruživanje grupi!",
+    "groupdialog3": "Zahtevate da napustite grupu u nastavku:",
+    "groupdialog4": "Pritiskom na potvrdu, biće poslat zahtev za napuštanje grupe!",
+    "groupdialog5": "Zahtevate da napravite grupu ispod:",
+    "groupdialog6": "Pritiskom na potvrdi, biće poslat zahtev za kreiranje grupe!"
   }
 }

@@ -18,12 +18,20 @@ export default class LeaveGroupTransaction extends TransactionBase {
 
     render(html) {
         return html`
-            You are requesting to leave the group below:
+            ${this._groupdialog3}
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this._rGroupName}</span>
             </div>
-            On pressing confirm, the group request will be sent!
+            ${this._groupdialog4}
         `
+    }
+
+    set groupdialog3(groupdialog3) {
+        this._groupdialog3 = groupdialog3
+    }
+
+    set groupdialog4(groupdialog4) {
+        this._groupdialog4 = groupdialog4
     }
 
     set fee(fee) {

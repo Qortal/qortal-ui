@@ -568,6 +568,12 @@
     "to": "A",
     "declined": "Transaction refusée par l’utilisateur!",
     "namedialog1": "Vous enregistrez le nom ci-dessous :",
-    "namedialog2": "En appuyant sur confirmer, le nom sera enregistré !"
+    "namedialog2": "En appuyant sur confirmer, le nom sera enregistré !",
+    "groupdialog1": "Vous demandez à rejoindre le groupe ci-dessous :",
+    "groupdialog2": "En appuyant sur confirmer, la demande d'adhésion au groupe sera envoyée !",
+    "groupdialog3": "Vous demandez à quitter le groupe ci-dessous :",
+    "groupdialog4": "En appuyant sur confirmer, la demande de départ du groupe sera envoyée !",
+    "groupdialog5": "Vous demandez à créer le groupe ci-dessous :",
+    "groupdialog6": "En appuyant sur confirmer, la demande de création de groupe sera envoyée !"
   }
 }

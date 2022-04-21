@@ -568,6 +568,12 @@
     "to": "Hoz",
     "declined": "Felhasználó elutasította a tranzakciót!",
     "namedialog1": "Ön az alábbi nevet regisztrálja:",
-    "namedialog2": "A megerősítés megnyomására a név regisztrálásra kerül!"
+    "namedialog2": "A megerősítés megnyomására a név regisztrálásra kerül!",
+    "groupdialog1": "Az alábbi csoporthoz szeretnél csatlakozni:",
+    "groupdialog2": "A megerősítés megnyomására a rendszer elküldi a csoporthoz való csatlakozási kérelmet!",
+    "groupdialog3": "Az alábbi csoportból való kilépést kéred:",
+    "groupdialog4": "A megerősítés megnyomására a rendszer elküldi a távozási csoport kérését!",
+    "groupdialog5": "Az alábbi csoport létrehozását kéred:",
+    "groupdialog6": "A megerősítés megnyomására a rendszer elküldi a csoport létrehozási kérelmét!"
   }
 }

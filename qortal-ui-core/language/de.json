@@ -568,6 +568,12 @@
     "to": "Zu",
     "declined": "Der Benutzer hat die Transaktion abgelehnt!",
     "namedialog1": "Sie registrieren den folgenden Namen:",
-    "namedialog2": "Wenn Sie auf Bestätigen drücken, wird der Name registriert!"
+    "namedialog2": "Wenn Sie auf Bestätigen drücken, wird der Name registriert!",
+    "groupdialog1": "Sie fordern an, der folgenden Gruppe beizutreten:",
+    "groupdialog2": "Wenn Sie auf Bestätigen drücken, wird die Gruppenbeitrittsanfrage gesendet!",
+    "groupdialog3": "Sie beantragen, die folgende Gruppe zu verlassen:",
+    "groupdialog4": "Wenn Sie auf Bestätigen drücken, wird die Anfrage zum Verlassen der Gruppe gesendet!",
+    "groupdialog5": "Sie beantragen die Erstellung der folgenden Gruppe:",
+    "groupdialog6": "Wenn Sie auf Bestätigen drücken, wird die Gruppenerstellungsanfrage gesendet!"
   }
 }

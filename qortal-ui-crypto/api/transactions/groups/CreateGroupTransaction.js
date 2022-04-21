@@ -10,16 +10,36 @@ export default class CreateGroupTransaction extends TransactionBase {
 
     render(html) {
         return html`
-            You are requesting to creating the group below:
+            ${this._groupdialog5}
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-                <div>Group Name: <span style="color: #000;">${this._rGroupName}</span></div>
+                <div>${this._groupdialog7}: <span style="color: #000;">${this._rGroupName}</span></div>
                 <br>
-                <div>Group Description: <span style="color: #000;">${this._rGroupDesc}</span></div>
+                <div>${this._groupdialog8}: <span style="color: #000;">${this._rGroupDesc}</span></div>
                 <br>
-                <div>Group Type: <span style="color: #000;">${this.myGroupType === 1 ? "Public" : "Private"}</span></div>
+                <div>${this._groupdialog9}: <span style="color: #000;">${this.myGroupType === 1 ? "Public" : "Private"}</span></div>
             </div>
-            On pressing confirm, the group request will be sent!
+            ${this._groupdialog6}
         `
+    }
+
+    set groupdialog5(groupdialog5) {
+        this._groupdialog5 = groupdialog5
+    }
+
+    set groupdialog6(groupdialog6) {
+        this._groupdialog6 = groupdialog6
+    }
+
+    set groupdialog7(groupdialog7) {
+        this._groupdialog7 = groupdialog7
+    }
+
+    set groupdialog8(groupdialog8) {
+        this._groupdialog8 = groupdialog8
+    }
+
+    set groupdialog9(groupdialog9) {
+        this._groupdialog9 = groupdialog9
     }
 
     set fee(fee) {

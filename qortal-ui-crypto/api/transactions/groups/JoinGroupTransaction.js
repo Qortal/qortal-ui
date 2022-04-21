@@ -18,12 +18,20 @@ export default class JoinGroupTransaction extends TransactionBase {
 
     render(html) {
         return html`
-            You are requesting to join the group below:
+            ${this._groupdialog1}
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this._rGroupName}</span>
             </div>
-            On pressing confirm, the group request will be sent!
+            ${this._groupdialog2}
         `
+    }
+
+    set groupdialog1(groupdialog1) {
+        this._groupdialog1 = groupdialog1
+    }
+
+    set groupdialog2(groupdialog2) {
+        this._groupdialog2 = groupdialog2
     }
 
     set fee(fee) {

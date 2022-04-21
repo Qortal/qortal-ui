@@ -568,6 +568,12 @@
     "to": "Prema",
     "declined": "Korisnik je odbio transakciju!",
     "namedialog1": "Registrirate ime ispod:",
-    "namedialog2": "Pritiskom na potvrdi ime će biti registrirano!"
+    "namedialog2": "Pritiskom na potvrdi ime će biti registrirano!",
+    "groupdialog1": "Zahtijevate da se pridružite grupi u nastavku:",
+    "groupdialog2": "Pritiskom na potvrdi, bit će poslan zahtjev za pridruživanje grupi!",
+    "groupdialog3": "Zahtijevate da napustite grupu u nastavku:",
+    "groupdialog4": "On pressing confirm, the leave group request will be sent!",
+    "groupdialog5": "Zahtijevate stvaranje grupe u nastavku:",
+    "groupdialog6": "Pritiskom na potvrdi, bit će poslan zahtjev za stvaranje grupe!"
   }
 }

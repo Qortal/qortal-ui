@@ -762,6 +762,11 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (_groupTypeInput, _groupApprovalInput, _groupMinDelayInput, _groupMaxDelayInput, lastRef) => {
+            let groupdialog5 = get("transactions.groupdialog5")
+            let groupdialog6 = get("transactions.groupdialog6")
+            let groupdialog7 = get("grouppage.gchange4")
+            let groupdialog8 = get("grouppage.gchange5")
+            let groupdialog9 = get("grouppage.gchange13")
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 22,
                 nonce: this.selectedAddress.nonce,
@@ -775,6 +780,11 @@ class GroupManagement extends LitElement {
                     rGroupMinimumBlockDelay: _groupMinDelayInput,
                     rGroupMaximumBlockDelay: _groupMaxDelayInput,
                     lastReference: lastRef,
+                    groupdialog5: groupdialog5,
+                    groupdialog6: groupdialog6,
+                    groupdialog7: groupdialog7,
+                    groupdialog8: groupdialog8,
+                    groupdialog9: groupdialog9,
                 }
             })
             return myTxnrequest
@@ -852,6 +862,8 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
+            let groupdialog1 = get("transactions.groupdialog1")
+            let groupdialog2 = get("transactions.groupdialog2")
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 31,
                 nonce: this.selectedAddress.nonce,
@@ -861,6 +873,8 @@ class GroupManagement extends LitElement {
                     rGroupName: groupName,
                     rGroupId: groupId,
                     lastReference: lastRef,
+                    groupdialog1: groupdialog1,
+                    groupdialog2: groupdialog2,
                 }
             })
             return myTxnrequest
@@ -910,6 +924,8 @@ class GroupManagement extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
+            let groupdialog3 = get("transactions.groupdialog3")
+            let groupdialog4 = get("transactions.groupdialog4")
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 32,
                 nonce: this.selectedAddress.nonce,
@@ -919,6 +935,8 @@ class GroupManagement extends LitElement {
                     rGroupName: groupName,
                     rGroupId: groupId,
                     lastReference: lastRef,
+                    groupdialog3: groupdialog3,
+                    groupdialog4: groupdialog4,
                 }
             })
             return myTxnrequest

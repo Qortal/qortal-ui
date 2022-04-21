@@ -568,6 +568,12 @@
     "to": "Para",
     "declined": "Usuário recusou transação!",
     "namedialog1": "Você está registrando o nome abaixo:",
-    "namedialog2": "Ao pressionar confirmar, o nome será registrado!"
+    "namedialog2": "Ao pressionar confirmar, o nome será registrado!",
+    "groupdialog1": "Você está solicitando para participar do grupo abaixo:",
+    "groupdialog2": "Ao pressionar confirmar, a solicitação de ingresso no grupo será enviada!",
+    "groupdialog3": "Você está pedindo para sair do grupo abaixo:",
+    "groupdialog4": "Ao pressionar confirmar, a solicitação de saída do grupo será enviada!",
+    "groupdialog5": "Você está solicitando a criação do grupo abaixo:",
+    "groupdialog6": "Ao pressionar confirmar, a solicitação de criação de grupo será enviada!"
   }
 }
