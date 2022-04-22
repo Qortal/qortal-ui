@@ -14,7 +14,7 @@
     "portuguese": "葡萄牙文",
     "hungarian": "匈牙利文",
     "serbian": "塞尔维亚文",
-    "italian": "Italian"
+    "italian": "意大利文"
   },
   "sidemenu": {
     "mintingdetails": "铸币信息",
@@ -570,15 +570,15 @@
     "declined": "交易已被用戶拒绝!",
     "namedialog1": "你正在註冊以下名稱:",
     "namedialog2": "點擊確認後, 名稱將被註冊!",
-    "groupdialog1": "You are requesting to join the group below:",
-    "groupdialog2": "On pressing confirm, the group join request will be sent!",
-    "groupdialog3": "You are requesting to leave the group below:",
-    "groupdialog4": "On pressing confirm, the leave group request will be sent!",
-    "groupdialog5": "You are requesting to creating the group below:",
-    "groupdialog6": "On pressing confirm, the group creating request will be sent!",
-    "rewarddialog1": "Would you like to create a reward share transaction, sharing",
-    "rewarddialog2": "of your minting rewards with",
-    "rewarddialog3": "If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.",
-    "rewarddialog4": "On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account."
+    "groupdialog1": "你正在请求加入下列群组:",
+    "groupdialog2": "点击确认后，加入请求将会被送出!",
+    "groupdialog3": "你正在请求离开下列群组:",
+    "groupdialog4": "点击确认后，离开请求将会被送出!",
+    "groupdialog5": "你正在请求创建下列群组:",
+    "groupdialog6": "点击确认后，创建请求将会被送出!",
+    "rewarddialog1": "你是否希望创建一个奖励分享密钥并分享你铸币奖励中的",
+    "rewarddialog2": "给",
+    "rewarddialog3": "如果是的话，请保存下面的铸币密钥并添加到任何节点上，以允许它代表您铸币.",
+    "rewarddialog4": "点击确认后，奖励分享密钥将会创建，但你必须将该密钥添加到节点中才能成功铸币并获得相对应的奖励."
   }
 }
