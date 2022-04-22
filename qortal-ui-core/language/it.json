@@ -575,6 +575,10 @@
     "groupdialog3": "Stai chiedendo di lasciare il gruppo qui sotto:",
     "groupdialog4": "Premendo conferma, verrà inviata la richiesta di congedo di gruppo!",
     "groupdialog5": "Stai chiedendo di creare il gruppo qui sotto:",
-    "groupdialog6": "Premendo conferma verrà inviata la richiesta di creazione del gruppo!"
+    "groupdialog6": "Premendo conferma verrà inviata la richiesta di creazione del gruppo!",
+    "rewarddialog1": "Vorresti creare una transazione di azioni di ricompensa, condividendo il",
+    "rewarddialog2": "dei tuoi premi di conio con",
+    "rewarddialog3": "Se sì, dovrai salvare la chiave qui sotto per coniare. Può essere fornito a qualsiasi nodo per consentirne il conio per tuo conto.",
+    "rewarddialog4": "Premendo conferma, verrà creata la condivisione del premio, ma dovrai comunque fornire la chiave sopra a un nodo per coniare con l'account."
   }
 }

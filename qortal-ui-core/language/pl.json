@@ -575,6 +575,10 @@
     "groupdialog3": "Prosisz o opuszczenie poniższej grupy:",
     "groupdialog4": "Po naciśnięciu potwierdzenia zostanie wysłana prośba o opuszczenie grupy!",
     "groupdialog5": "Prosisz o utworzenie poniższej grupy:",
-    "groupdialog6": "Po naciśnięciu potwierdzenia zostanie wysłana prośba o utworzenie grupy!"
+    "groupdialog6": "Po naciśnięciu potwierdzenia zostanie wysłana prośba o utworzenie grupy!",
+    "rewarddialog1": "Czy chcesz utworzyć transakcję podziału nagrody, dzieląc się",
+    "rewarddialog2": "swoich nagród z bicia z",
+    "rewarddialog3": "Jeśli tak, musisz zapisać poniższy klucz, aby wybić. Może być dostarczony do dowolnego węzła, aby umożliwić mu bicie w Twoim imieniu.",
+    "rewarddialog4": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie utworzony, ale nadal będziesz musiał dostarczyć powyższy klucz do węzła, aby wybić z konta."
   }
 }

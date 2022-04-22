@@ -575,6 +575,10 @@
     "groupdialog3": "Az alábbi csoportból való kilépést kéred:",
     "groupdialog4": "A megerősítés megnyomására a rendszer elküldi a távozási csoport kérését!",
     "groupdialog5": "Az alábbi csoport létrehozását kéred:",
-    "groupdialog6": "A megerősítés megnyomására a rendszer elküldi a csoport létrehozási kérelmét!"
+    "groupdialog6": "A megerősítés megnyomására a rendszer elküldi a csoport létrehozási kérelmét!",
+    "rewarddialog1": "Szeretnél létrehozni egy jutalomrészvény-tranzakciót, megosztva a pénzverési jutalmad",
+    "rewarddialog2": "-át",
+    "rewarddialog3": "Ha igen, mentenie kell az alábbi kulcsot a mentéshez. Bármely csomóponthoz eljuttatható, hogy lehetővé tegye az Ön nevében.",
+    "rewarddialog4": "A megerősítés megnyomására a jutalommegosztás létrejön, de a fenti kulcsot továbbra is meg kell adnia egy csomópontnak, hogy hozzáférjen a fiókhoz."
   }
 }

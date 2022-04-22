@@ -575,6 +575,10 @@
     "groupdialog3": "Você está pedindo para sair do grupo abaixo:",
     "groupdialog4": "Ao pressionar confirmar, a solicitação de saída do grupo será enviada!",
     "groupdialog5": "Você está solicitando a criação do grupo abaixo:",
-    "groupdialog6": "Ao pressionar confirmar, a solicitação de criação de grupo será enviada!"
+    "groupdialog6": "Ao pressionar confirmar, a solicitação de criação de grupo será enviada!",
+    "rewarddialog1": "Você gostaria de criar uma transação de compartilhamento de recompensa, compartilhando",
+    "rewarddialog2": "de suas recompensas de cunhagem com",
+    "rewarddialog3": "Se sim, você precisará salvar a chave abaixo para cunhar. Ele pode ser fornecido a qualquer nó para permitir que seja cunhado em seu nome.",
+    "rewarddialog4": "Ao pressionar confirmar, a recompensa será criada, mas você ainda precisará fornecer a chave acima para um nó para cunhar com a conta."
   }
 }

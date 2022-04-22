@@ -575,6 +575,10 @@
     "groupdialog3": "Está solicitando abandonar el grupo a continuación:",
     "groupdialog4": "Al presionar confirmar, se enviará la solicitud de salida del grupo!",
     "groupdialog5": "Estás solicitando crear el grupo a continuación:",
-    "groupdialog6": "Al presionar confirmar, se enviará la solicitud de creación de grupo!"
+    "groupdialog6": "Al presionar confirmar, se enviará la solicitud de creación de grupo!",
+    "rewarddialog1": "Le gustaría crear una transacción de recompensa compartida, compartiendo el",
+    "rewarddialog2": "de sus recompensas de acuñación con",
+    "rewarddialog3": "En caso afirmativo, deberá guardar la clave a continuación para poder acuñar. Se puede suministrar a cualquier nodo para que pueda acuñar en su nombre.",
+    "rewarddialog4": "Al presionar confirmar, se creará la recompensa compartida, pero aún deberá proporcionar la clave anterior a un nodo para poder acuñar con la cuenta."
   }
 }

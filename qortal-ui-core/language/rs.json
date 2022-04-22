@@ -575,6 +575,10 @@
     "groupdialog3": "Zahtevate da napustite grupu u nastavku:",
     "groupdialog4": "Pritiskom na potvrdu, biće poslat zahtev za napuštanje grupe!",
     "groupdialog5": "Zahtevate da napravite grupu ispod:",
-    "groupdialog6": "Pritiskom na potvrdi, biće poslat zahtev za kreiranje grupe!"
+    "groupdialog6": "Pritiskom na potvrdi, biće poslat zahtev za kreiranje grupe!",
+    "rewarddialog1": "Da li biste želeli da napravite transakciju udela u nagradi, delite",
+    "rewarddialog2": "svojih nagrada sa",
+    "rewarddialog3": "Ako jeste, moraćete da sačuvate ključ ispod da biste ga iskovali. Može se isporučiti bilo kom čvoru kako bi mu se omogućilo da se kuje u vaše ime.",
+    "rewarddialog4": "Kada pritisnete dugme za potvrdu, biće kreirana podela nagrade, ali ćete i dalje morati da dostavite gornji ključ čvoru da biste mogli da koristite nalog."
   }
 }

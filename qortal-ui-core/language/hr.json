@@ -575,6 +575,10 @@
     "groupdialog3": "Zahtijevate da napustite grupu u nastavku:",
     "groupdialog4": "On pressing confirm, the leave group request will be sent!",
     "groupdialog5": "Zahtijevate stvaranje grupe u nastavku:",
-    "groupdialog6": "Pritiskom na potvrdi, bit će poslan zahtjev za stvaranje grupe!"
+    "groupdialog6": "Pritiskom na potvrdi, bit će poslan zahtjev za stvaranje grupe!",
+    "rewarddialog1": "Želite li kreirati transakciju dijeljenja nagrade, dijeleći",
+    "rewarddialog2": "svojih nagrada za kovanje s",
+    "rewarddialog3": "Ako je odgovor da, morat ćete spremiti donji ključ kako biste ga mogli iskovati. Može se dostaviti bilo kojem čvoru kako bi mu se omogućilo kovanje u vaše ime.",
+    "rewarddialog4": "Pritiskom na Potvrdi, bit će stvorena dijeljenje nagrade, ali ćete i dalje morati dostaviti gornji ključ čvoru kako biste mogli kovati s računom."
   }
 }
