@@ -1020,7 +1020,7 @@ class TradePortal extends LitElement {
             .then((res) => {
                 if (isNaN(Number(res))) {
                     let snack1string = get("tradepage.tchange30")
-                    parentEpml.request('showSnackBar', `${snack1tring}`)
+                    parentEpml.request('showSnackBar', `${snack1string}`)
                 } else {
                     this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
                 }
@@ -1710,12 +1710,12 @@ class TradePortal extends LitElement {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
                 let snack2string = get("tradepage.tchange20")
-                parentEpml.request('showSnackBar', `${snack2tring}`)
+                parentEpml.request('showSnackBar', `${snack2string}`)
             } else {
                 this.isSellLoading = false
                 this.sellBtnDisable = false
                 let snack3string = get("tradepage.tchange21")
-                parentEpml.request('showSnackBar', `${snack3tring}: ${response.message}`)
+                parentEpml.request('showSnackBar', `${snack3string}: ${response.message}`)
             }
         }
 
@@ -1723,7 +1723,7 @@ class TradePortal extends LitElement {
             this.isSellLoading = false
             this.sellBtnDisable = false
             let snack4string = get("tradepage.tchange22")
-            parentEpml.request('showSnackBar', `${snack4tring}`)
+            parentEpml.request('showSnackBar', `${snack4string}`)
             return false
         } else {
             const res = await makeRequest()
@@ -1766,17 +1766,17 @@ class TradePortal extends LitElement {
                 this.shadowRoot.getElementById('buyTotalInput').value = this.initialAmount
                 this.shadowRoot.getElementById('qortalAtAddress').value = ''
                 let snack5string = get("tradepage.tchange23")
-                parentEpml.request('showSnackBar', `${snack5tring}`)
+                parentEpml.request('showSnackBar', `${snack5string}`)
             } else if (response === false) {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
                 let snack6string = get("tradepage.tchange24")
-                parentEpml.request('showSnackBar', `${snack6tring}`)
+                parentEpml.request('showSnackBar', `${snack6string}`)
             } else {
                 this.isBuyLoading = false
                 this.buyBtnDisable = false
                 let snack7string = get("tradepage.tchange25")
-                parentEpml.request('showSnackBar', `${snack7tring}: ${response.message}`)
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
             }
         }
 
@@ -1803,12 +1803,12 @@ class TradePortal extends LitElement {
                 button.remove()
                 this.cancelBtnDisable = false
                 let snack8string = get("tradepage.tchange26")
-                parentEpml.request('showSnackBar', `${snack8tring}`)
+                parentEpml.request('showSnackBar', `${snack8string}`)
             } else if (response === false) {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
                 let snack9string = get("tradepage.tchange27")
-                parentEpml.request('showSnackBar', `${snack9tring}`)
+                parentEpml.request('showSnackBar', `${snack9string}`)
             } else {
                 button.innerHTML = 'CANCEL'
                 this.cancelBtnDisable = false
