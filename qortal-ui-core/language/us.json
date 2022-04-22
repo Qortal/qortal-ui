@@ -575,6 +575,12 @@
     "groupdialog3": "You are requesting to leave the group below:",
     "groupdialog4": "On pressing confirm, the leave group request will be sent!",
     "groupdialog5": "You are requesting to creating the group below:",
-    "groupdialog6": "On pressing confirm, the group creating request will be sent!"
+    "groupdialog6": "On pressing confirm, the group creating request will be sent!",
+    "rewarddialog1": "Would you like to create a reward share transaction, sharing",
+    "rewarddialog2": "of your minting rewards with",
+    "rewarddialog3": "If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.",
+    "rewarddialog4": "On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.",
+    "rewarddialog5": "You are removing a reward share transaction associated with account:",
+    "rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
   }
 }

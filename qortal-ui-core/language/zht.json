@@ -579,6 +579,8 @@
     "rewarddialog1": "你是否希望創建一個獎勵分享密鑰並分享你鑄幣獎勵中的",
     "rewarddialog2": "給",
     "rewarddialog3": "如果是的話，請保存下面的鑄幣密鑰並添加到任何節點上，以允許它代表您鑄幣.",
-    "rewarddialog4": "點擊確認後，獎勵分享密鑰將會創建，但你必須將該密鑰添加到節點中才能成功鑄幣並獲得相對應的獎勵."
+    "rewarddialog4": "點擊確認後，獎勵分享密鑰將會創建，但你必須將該密鑰添加到節點中才能成功鑄幣並獲得相對應的獎勵.",
+    "rewarddialog5": "You are removing a reward share transaction associated with account:",
+    "rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
   }
 }
