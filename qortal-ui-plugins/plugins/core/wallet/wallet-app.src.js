@@ -1614,7 +1614,7 @@ class MultiWallet extends LitElement {
                 this.errorMessage = ''
                 this.recipient = ''
                 this.amount = 0
-                this.successMessage = this.renderReceiverText()
+                this.successMessage = this.renderSuccessText()
                 this.sendMoneyLoading = false
                 this.btnDisable = false
             } else {
