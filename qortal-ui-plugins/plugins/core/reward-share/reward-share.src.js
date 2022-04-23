@@ -300,14 +300,6 @@ class RewardShare extends LitElement {
         }
     }
 
-    renderSuccessText() {
-        return html`${translate("rewardsharepage.rchange21")}`
-    }
-
-    renderRemovedText() {
-        return html`${translate("rewardsharepage.rchange22")}`
-    }
-
     renderRemoveRewardShareButton(rewardShareObject) {
         if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
             return html`${translate("rewardsharepage.rchange16")}`
@@ -464,8 +456,8 @@ class RewardShare extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                let err1string
-                this.message = this.renderSuccessText()
+                let err6string = get("rewardsharepage.rchange21")
+                this.message = err6string
                 this.error = false
             } else {
                 this.error = true
@@ -505,9 +497,9 @@ class RewardShare extends LitElement {
 
         // Make Transaction Request
         const makeTransactionRequest = async (lastRef) => {
-
             let mylastRef = lastRef
-
+            let rewarddialog5 = get("transactions.rewarddialog5")
+            let rewarddialog6 = get("transactions.rewarddialog6")
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 381,
                 nonce: this.selectedAddress.nonce,
@@ -516,6 +508,8 @@ class RewardShare extends LitElement {
                     recipient: rewardShareObject.recipient,
                     percentageShare: myPercentageShare,
                     lastReference: mylastRef,
+                    rewarddialog5: rewarddialog5,
+                    rewarddialog6: rewarddialog6,
                 }
             })
             return myTxnrequest
@@ -527,8 +521,9 @@ class RewardShare extends LitElement {
                 parentEpml.request('showSnackBar', txnResponse.message)
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
+                let err7tring = get("rewardsharepage.rchange22")
                 this.removeRewardShareLoading = false
-                parentEpml.request('showSnackBar', this.renderRemovedText())
+                parentEpml.request('showSnackBar', `${err7tring}`)
             } else {
                 this.removeRewardShareLoading = false
                 parentEpml.request('showSnackBar', txnResponse.data.message)

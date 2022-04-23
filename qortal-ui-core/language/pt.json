@@ -579,6 +579,8 @@
     "rewarddialog1": "Você gostaria de criar uma transação de compartilhamento de recompensa, compartilhando",
     "rewarddialog2": "de suas recompensas de cunhagem com",
     "rewarddialog3": "Se sim, você precisará salvar a chave abaixo para cunhar. Ele pode ser fornecido a qualquer nó para permitir que seja cunhado em seu nome.",
-    "rewarddialog4": "Ao pressionar confirmar, a recompensa será criada, mas você ainda precisará fornecer a chave acima para um nó para cunhar com a conta."
+    "rewarddialog4": "Ao pressionar confirmar, a recompensa será criada, mas você ainda precisará fornecer a chave acima para um nó para cunhar com a conta.",
+    "rewarddialog5": "Você está removendo uma transação de compartilhamento de recompensa associada à conta:",
+    "rewarddialog6": "Ao pressionar confirmar, o rewardshare será removido e a chave de cunhagem se tornará inválida."
   }
 }

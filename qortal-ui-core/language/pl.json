@@ -14,7 +14,7 @@
     "portuguese": "Portugalski",
     "hungarian": "Węgierski",
     "serbian": "Serbski",
-    "italian": "Italski"
+    "italian": "Włoski"
   },
   "sidemenu": {
     "mintingdetails": "SZCZEGÓŁY MINTOWANIA",
@@ -579,6 +579,8 @@
     "rewarddialog1": "Czy chcesz utworzyć transakcję podziału nagrody, dzieląc się",
     "rewarddialog2": "swoich nagród z bicia z",
     "rewarddialog3": "Jeśli tak, musisz zapisać poniższy klucz, aby wybić. Może być dostarczony do dowolnego węzła, aby umożliwić mu bicie w Twoim imieniu.",
-    "rewarddialog4": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie utworzony, ale nadal będziesz musiał dostarczyć powyższy klucz do węzła, aby wybić z konta."
+    "rewarddialog4": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie utworzony, ale nadal będziesz musiał dostarczyć powyższy klucz do węzła, aby wybić z konta.",
+    "rewarddialog5": "Usuwasz transakcję dotyczącą udziału w nagrodach powiązaną z kontem:",
+    "rewarddialog6": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie usunięty, a klucz bicia stanie się nieważny."
   }
 }

@@ -579,6 +579,8 @@
     "rewarddialog1": "Le gustaría crear una transacción de recompensa compartida, compartiendo el",
     "rewarddialog2": "de sus recompensas de acuñación con",
     "rewarddialog3": "En caso afirmativo, deberá guardar la clave a continuación para poder acuñar. Se puede suministrar a cualquier nodo para que pueda acuñar en su nombre.",
-    "rewarddialog4": "Al presionar confirmar, se creará la recompensa compartida, pero aún deberá proporcionar la clave anterior a un nodo para poder acuñar con la cuenta."
+    "rewarddialog4": "Al presionar confirmar, se creará la recompensa compartida, pero aún deberá proporcionar la clave anterior a un nodo para poder acuñar con la cuenta.",
+    "rewarddialog5": "Está eliminando una transacción de recompensa compartida asociada con la cuenta:",
+    "rewarddialog6": "Al presionar confirmar, se eliminará la recompensa compartida y la clave de acuñación dejará de ser válida."
   }
 }

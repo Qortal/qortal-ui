@@ -579,6 +579,8 @@
     "rewarddialog1": "Möchten Sie eine Reward-Share-Transaktion erstellen und",
     "rewarddialog2": "Ihrer Prägeprämien teilen mit",
     "rewarddialog3": "Wenn ja, müssen Sie den Schlüssel unten speichern, um zu prägen. Es kann an jeden Knoten geliefert werden, damit es in Ihrem Namen prägen kann.",
-    "rewarddialog4": "Wenn Sie auf „Bestätigen“ drücken, wird der Belohnungsanteil erstellt, aber Sie müssen den oben genannten Schlüssel trotzdem an einen Knoten übermitteln, um mit dem Konto zu prägen."
+    "rewarddialog4": "Wenn Sie auf „Bestätigen“ drücken, wird der Belohnungsanteil erstellt, aber Sie müssen den oben genannten Schlüssel trotzdem an einen Knoten übermitteln, um mit dem Konto zu prägen.",
+    "rewarddialog5": "Sie entfernen eine Prämienaktientransaktion, die mit dem Konto verknüpft ist:",
+    "rewarddialog6": "Wenn Sie auf „Bestätigen“ klicken, wird die Prämie entfernt und der Prägeschlüssel wird ungültig."
   }
 }

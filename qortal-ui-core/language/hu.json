@@ -579,6 +579,8 @@
     "rewarddialog1": "Szeretnél létrehozni egy jutalomrészvény-tranzakciót, megosztva a pénzverési jutalmad",
     "rewarddialog2": "-át",
     "rewarddialog3": "Ha igen, mentenie kell az alábbi kulcsot a mentéshez. Bármely csomóponthoz eljuttatható, hogy lehetővé tegye az Ön nevében.",
-    "rewarddialog4": "A megerősítés megnyomására a jutalommegosztás létrejön, de a fenti kulcsot továbbra is meg kell adnia egy csomópontnak, hogy hozzáférjen a fiókhoz."
+    "rewarddialog4": "A megerősítés megnyomására a jutalommegosztás létrejön, de a fenti kulcsot továbbra is meg kell adnia egy csomópontnak, hogy hozzáférjen a fiókhoz.",
+    "rewarddialog5": "Ön a következő fiókhoz társított jutalommegosztási tranzakciót távolít el:",
+    "rewarddialog6": "A megerősítés megnyomására a jutalommegosztás törlődik, és a pénzverési kulcs érvénytelenné válik."
   }
 }

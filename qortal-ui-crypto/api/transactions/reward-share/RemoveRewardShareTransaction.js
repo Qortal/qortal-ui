@@ -11,12 +11,20 @@ export default class RemoveRewardShareTransaction extends TransactionBase {
 
     render(html) {
         return html`
-            You are removing a reward share transaction associated with account:
+            ${this._rewarddialog5}
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this.constructor.Base58.encode(this._recipient)}</span>
             </div>
-            On pressing confirm, the rewardshare will be removed and the minting key will become invalid.
+            ${this._rewarddialog6}
         `
+    }
+
+    set rewarddialog5(rewarddialog5) {
+        this._rewarddialog5 = rewarddialog5;
+    }
+
+    set rewarddialog6(rewarddialog6) {
+        this._rewarddialog6 = rewarddialog6;
     }
 
     set rewardShareKeyPairPublicKey(rewardShareKeyPairPublicKey) {

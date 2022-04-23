@@ -579,6 +579,8 @@
     "rewarddialog1": "Souhaitez-vous créer une transaction de partage de récompenses, partageant",
     "rewarddialog2": "de vos récompenses de frappe avec",
     "rewarddialog3": "Si oui, vous devrez enregistrer la clé ci-dessous afin de frapper. Il peut être fourni à n'importe quel nœud afin de lui permettre de frapper en votre nom.",
-    "rewarddialog4": "En appuyant sur confirmer, le partage de récompense sera créé, mais vous devrez toujours fournir la clé ci-dessus à un nœud afin de frapper avec le compte."
+    "rewarddialog4": "En appuyant sur confirmer, le partage de récompense sera créé, mais vous devrez toujours fournir la clé ci-dessus à un nœud afin de frapper avec le compte.",
+    "rewarddialog5": "Vous supprimez une transaction de partage de récompenses associée au compte :",
+    "rewarddialog6": "En appuyant sur confirmer, le partage de récompense sera supprimé et la clé de frappe deviendra invalide."
   }
 }

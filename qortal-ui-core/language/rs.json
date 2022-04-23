@@ -579,6 +579,8 @@
     "rewarddialog1": "Da li biste želeli da napravite transakciju udela u nagradi, delite",
     "rewarddialog2": "svojih nagrada sa",
     "rewarddialog3": "Ako jeste, moraćete da sačuvate ključ ispod da biste ga iskovali. Može se isporučiti bilo kom čvoru kako bi mu se omogućilo da se kuje u vaše ime.",
-    "rewarddialog4": "Kada pritisnete dugme za potvrdu, biće kreirana podela nagrade, ali ćete i dalje morati da dostavite gornji ključ čvoru da biste mogli da koristite nalog."
+    "rewarddialog4": "Kada pritisnete dugme za potvrdu, biće kreirana podela nagrade, ali ćete i dalje morati da dostavite gornji ključ čvoru da biste mogli da koristite nalog.",
+    "rewarddialog5": "Uklanjate transakciju deljenja nagrade povezanu sa nalogom:",
+    "rewarddialog6": "Pritiskom na potvrdu, udeo nagrade će biti uklonjen i ključ za kovanje će postati nevažeći."
   }
 }

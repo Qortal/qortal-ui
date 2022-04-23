@@ -579,6 +579,8 @@
     "rewarddialog1": "Vorresti creare una transazione di azioni di ricompensa, condividendo il",
     "rewarddialog2": "dei tuoi premi di conio con",
     "rewarddialog3": "Se sì, dovrai salvare la chiave qui sotto per coniare. Può essere fornito a qualsiasi nodo per consentirne il conio per tuo conto.",
-    "rewarddialog4": "Premendo conferma, verrà creata la condivisione del premio, ma dovrai comunque fornire la chiave sopra a un nodo per coniare con l'account."
+    "rewarddialog4": "Premendo conferma, verrà creata la condivisione del premio, ma dovrai comunque fornire la chiave sopra a un nodo per coniare con l'account.",
+    "rewarddialog5": "Stai rimuovendo una transazione di quota premio associata all'account:",
+    "rewarddialog6": "Premendo conferma, la condivisione del premio verrà rimossa e la chiave di conio non sarà più valida."
   }
 }
