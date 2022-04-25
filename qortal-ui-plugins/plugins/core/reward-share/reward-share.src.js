@@ -301,7 +301,7 @@ class RewardShare extends LitElement {
     }
 
     renderRemoveRewardShareButton(rewardShareObject) {
-        if (rewardShareObject.mintingAccount === this.selectedAddress.address) {
+        if (rewardShareObject.recipient === this.selectedAddress.address) {
             return html`${translate("rewardsharepage.rchange16")}`
         } else {
             return html`<mwc-button class="red" ?disabled=${this.removeRewardShareLoading} @click=${() => this.removeRewardShare(rewardShareObject)}><mwc-icon>create</mwc-icon>${translate("rewardsharepage.rchange17")}</mwc-button>`
