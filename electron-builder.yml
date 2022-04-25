@@ -103,6 +103,8 @@ linux:
   target:
     - "deb"
     - "AppImage"
+	- "snap"
+	- "rpm"
 
 deb:
   artifactName: "Qortal-Setup-amd64.${ext}"
