@@ -11,6 +11,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import './welcome-page.js'
 import './create-account-section.js'
 import './login-section.js'
+import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
 
@@ -253,6 +254,7 @@ class LoginView extends connect(store)(LitElement) {
 
             <div class="login-page" ?hidden=${this.loggedIn}>
                 <mwc-fab icon="settings" style="position:fixed; right:24px; bottom:24px;" @click=${() => settings.show()}></mwc-fab>
+                <span style="position:fixed; left:24px; bottom:24px;"><qort-theme-toggle></qort-theme-toggle></span>
                 <div class="login-card-container">
                     <div class="login-card-center-container">
                         <div class="login-card" id="login-card">
