@@ -1640,19 +1640,19 @@ class TradePortal extends LitElement {
         }
 
         const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 3000)
+            setTimeout(() => initPresenceWebSocket(true), 5000)
         }
 
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 3000)
+            setTimeout(() => initTradePresenceWebSocket(true), 5000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 3000)
+            setTimeout(() => initTradeOffersWebSocket(true), 5000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 3000)
+            setTimeout(() => initTradeBotWebSocket(true), 5000)
         }
 
         // Start TradeOffersWebSocket
