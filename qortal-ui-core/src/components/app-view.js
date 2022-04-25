@@ -131,11 +131,11 @@ class AppView extends connect(store)(LitElement) {
                             <qort-theme-toggle></qort-theme-toggle>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <div style="display: inline;">
-                                <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="Settings"></paper-icon-button>
+                                <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="${translate("settings.settings")}"></paper-icon-button>
                             </div>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
-                                <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="Logout"></paper-icon-button>
+                                <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="${translate("logout.logout")}"></paper-icon-button>
                             </div>
                             <div>&nbsp;&nbsp;</div>
                         </app-toolbar>
