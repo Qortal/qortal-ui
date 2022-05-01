@@ -1488,30 +1488,7 @@ class TradePortal extends LitElement {
             })
         }
 
-        switch (this.selectedCoin) {
-            case 'BITCOIN':
-                BitcoinACCTv1(tradeStates)
-                break
-            case 'LITECOIN':
-                LitecoinACCTv1(tradeStates)
-                break
-            case 'DOGECOIN':
-                DogecoinACCTv1(tradeStates)
-                break
-            case 'DIGIBYTE':
-                DigibyteACCTv1(tradeStates)
-                break
-            default:
-                break
-        }
-
-        // Fill Historic Trades and Filter Stuck Trades
-        if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter === 1) {
-            setTimeout(() => this.filterStuckTrades(tradeStates), 50)
-        }
-    }
-
-	/**
+        /**
         * RavencoinACCTv1 TRADEBOT STATES
         *  - BOB_WAITING_FOR_AT_CONFIRM
         *  - BOB_WAITING_FOR_MESSAGE
@@ -1563,6 +1540,9 @@ class TradePortal extends LitElement {
                 break
             case 'DOGECOIN':
                 DogecoinACCTv1(tradeStates)
+                break
+            case 'DIGIBYTE':
+                DigibyteACCTv1(tradeStates)
                 break
             case 'RAVENCOIN':
                 RavencoinACCTv1(tradeStates)
