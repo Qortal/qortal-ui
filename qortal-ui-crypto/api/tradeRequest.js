@@ -115,3 +115,18 @@ export const sendDgb = (requestObject) => {
         body: JSON.stringify(requestObject)
     })
 }
+
+// Send RVN 
+export const sendRvn = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+
+    return request(`/crosschain/rvn/send?apiKey=${myNode.apiKey}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestObject)
+    })
+}
+
