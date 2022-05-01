@@ -20,6 +20,7 @@ const cancelAllOffers = api.cancelAllOffers
 const sendBtc = api.sendBtc
 const sendLtc = api.sendLtc
 const sendDoge = api.sendDoge
+const sendDgb = api.sendDgb
 
 export const routes = {
 	hello: async (req) => {
@@ -325,6 +326,19 @@ export const routes = {
 		let response
 		try {
 			const res = await sendDoge(req.data)
+			response = res
+		} catch (e) {
+			console.error(e)
+			console.error(e.message)
+			response = e.message
+		}
+		return response
+	},
+
+	sendDgb: async (req) => {
+		let response
+		try {
+			const res = await sendDgb(req.data)
 			response = res
 		} catch (e) {
 			console.error(e)
