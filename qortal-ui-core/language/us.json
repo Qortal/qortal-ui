@@ -434,10 +434,15 @@
     "wcchange9": "Sending failed, Please retry..."
   },
   "blockpage": {
-    "bcchange1": "block",
+    "bcchange1": "Block User",
     "bcchange2": "Successfully blocked this user!",
     "bcchange3": "Error occurred when trying to block this user. Please try again!",
-    "bcchange4": "No registered name"
+    "bcchange4": "No registered name",
+    "bcchange5": "Block User Request",
+    "bcchange6": "Are you sure to block this user ?",
+    "bcchange7": "MENU",
+    "bcchange8": "Copy Address",
+    "bcchange9": "Private Message"
   },
   "grouppage": {
     "gchange1": "Qortal Groups",

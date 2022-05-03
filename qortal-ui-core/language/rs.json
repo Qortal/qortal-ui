@@ -434,10 +434,15 @@
     "wcchange9": "Slanje neuspešno, Molim pokušajte ponov..."
   },
   "blockpage": {
-    "bcchange1": "blokirajte",
+    "bcchange1": "Blokirajte Korisnika",
     "bcchange2": "Korisnik uspešno blokiran!",
     "bcchange3": "Desila se greška pri pokušaju blokiranja ovog korisnika. Molim pokušajte ponovo!",
-    "bcchange4": "Bez registrovanih imena"
+    "bcchange4": "Bez registrovanih imena",
+    "bcchange5": "Blokiraj korisnički zahtev",
+    "bcchange6": "Da li ste sigurni da blokirate ovog korisnika?",
+    "bcchange7": "MENI",
+    "bcchange8": "Kopiraj Adresu",
+    "bcchange9": "Privatna Poruka"
   },
   "grouppage": {
     "gchange1": "Qortal Grupe",

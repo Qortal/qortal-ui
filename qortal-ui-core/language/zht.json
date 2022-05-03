@@ -434,10 +434,15 @@
     "wcchange9": "發送失敗, 請再此嘗試..."
   },
   "blockpage": {
-    "bcchange1": "封鎖",
+    "bcchange1": "阻止用戶",
     "bcchange2": "成功封鎖此用戶!",
     "bcchange3": "嘗試封鎖此用戶時出錯。 請再試一次！",
-    "bcchange4": "沒有註冊名稱"
+    "bcchange4": "沒有註冊名稱",
+    "bcchange5": "阻止用戶請求",
+    "bcchange6": "你確定要屏蔽這個用戶嗎？",
+    "bcchange7": "菜單",
+    "bcchange8": "複製地址",
+    "bcchange9": "私人讯息"
   },
   "grouppage": {
     "gchange1": "Qortal 群組",

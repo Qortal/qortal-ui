@@ -434,10 +434,15 @@
     "wcchange9": "Envio falhou, por favor tente novamente..."
   },
   "blockpage": {
-    "bcchange1": "Bloquear",
+    "bcchange1": "Bloquear Usuário",
     "bcchange2": "Bloqueou com sucesso este usuário!",
     "bcchange3": "Ocorreu um erro ao tentar bloquear esse usuário. Por favor, tente de novo!",
-    "bcchange4": "Nenhum nome registrado"
+    "bcchange4": "Nenhum nome registrado",
+    "bcchange5": "Bloquear solicitação de usuário",
+    "bcchange6": "Tem certeza de bloquear este usuário?",
+    "bcchange7": "MENU",
+    "bcchange8": "Copiar Endereço",
+    "bcchange9": "Mensagem Privada"
   },
   "grouppage": {
     "gchange1": "Grupos Qortal",

@@ -904,7 +904,6 @@ class Chat extends LitElement {
     }
 
     scrollToBottom() {
-
         const viewElement = this.shadowRoot.querySelector('chat-page').shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
         viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
     }

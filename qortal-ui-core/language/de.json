@@ -434,10 +434,15 @@
     "wcchange9": "Senden fehlgeschlagen, bitte erneut versuchen..."
   },
   "blockpage": {
-    "bcchange1": "blockieren",
+    "bcchange1": "Benutzer Blockieren",
     "bcchange2": "Dieser Benutzer wurde erfolgreich blockiert!",
     "bcchange3": "Beim Blockieren dieses Benutzers ist ein Fehler aufgetreten. Bitte versuche es erneut!",
-    "bcchange4": "Kein Name registriert"
+    "bcchange4": "Kein Name registriert",
+    "bcchange5": "Diesen Benutzer Blockieren",
+    "bcchange6": "Möchten Sie diesen Benutzer wirklich blockieren?",
+    "bcchange7": "MENÜ",
+    "bcchange8": "Adresse Kopieren",
+    "bcchange9": "Private Nachricht"
   },
   "grouppage": {
     "gchange1": "Qortal-Gruppen",
