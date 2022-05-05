@@ -211,7 +211,9 @@
     "wchange39": "Unable to copy address.",
     "wchange40": "PAYMENT",
     "wchange41": "Status",
-    "wchange42": "Confirmations"
+    "wchange42": "Confirmations",
+    "wchange43": "Your transaction will not show until confirmed, be patient...",
+    "wchange44": "Please try again..."
   },
   "tradepage": {
     "tchange1": "Trade Portal",

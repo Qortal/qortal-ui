@@ -211,7 +211,9 @@
     "wchange39": "No se puede copiar la dirección.",
     "wchange40": "PAGO",
     "wchange41": "Estado",
-    "wchange42": "Confirmaciones"
+    "wchange42": "Confirmaciones",
+    "wchange43": "Su transacción no se mostrará hasta que se confirme, sea paciente...",
+    "wchange44": "Inténtalo de nuevo..."
   },
   "tradepage": {
     "tchange1": "Portal de Comercio",

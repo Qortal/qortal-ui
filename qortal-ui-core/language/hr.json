@@ -211,7 +211,9 @@
     "wchange39": "Nije moguće kopirati adresu.",
     "wchange40": "PLAĆANJE",
     "wchange41": "Status",
-    "wchange42": "Potvrde"
+    "wchange42": "Potvrde",
+    "wchange43": "Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
+    "wchange44": "Molim te pokušaj ponovno..."
   },
   "tradepage": {
     "tchange1": "Portal razmjene",
