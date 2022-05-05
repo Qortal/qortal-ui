@@ -162,6 +162,48 @@ class NameRegistration extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
             </div>
+			
+			
+			
+			<mwc-dialog id="sellNameDialog" scrimClickAction="${this.sellNameLoading ? '' : 'close'}">
+            <div>${translate("registernamepage.nchange22")}</div>
+            <br>
+            <mwc-textfield style="width:100%;" ?disabled="${this.sellNameLoading}" label="${translate("registernamepage.nchange5")}" id="nameInput"></mwc-textfield>
+            <p style="margin-bottom:0;">
+                <mwc-textfield style="width:100%;" ?disabled="${this.sellNameLoading}" label="${translate("registernamepage.nchange23")}" id="descInput"></mwc-textfield>
+            </p>
+            <div style="text-align:right; height:36px;">
+                <span ?hidden="${!this.sellNameLoading}">
+                    <!-- loading message -->
+                    ${translate("registernamepage.nchange11")} &nbsp;
+                    <paper-spinner-lite
+                        style="margin-top:12px;"
+                        ?active="${this.sellNameLoading}"
+                        alt="${translate("registernamepage.nchange12")}"></paper-spinner-lite>
+                </span>
+                <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
+                    ${this.message}
+                </span><br>
+            </div>
+            
+            <mwc-button
+                ?disabled="${this.sellNameLoading}"
+                slot="primaryAction"
+                @click=${this.sellName}
+            >
+            ${translate("registernamepage.nchange24")}
+            </mwc-button>
+            <mwc-button
+                ?disabled="${this.sellNameLoading}"
+                slot="secondaryAction"
+                dialogAction="cancel"
+                class="red"
+            >
+            ${translate("general.close")}
+            </mwc-button>
+        </mwc-dialog>
+    </div>
+			
         `
     }
 
@@ -277,6 +319,12 @@ class NameRegistration extends LitElement {
 
     renderAvatarButton(nameObj) {
         return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;${translate("registernamepage.nchange15")}</mwc-button>`
+    }
+	
+	renderSellNameButton() {
+        return html`
+            <mwc-button @click=${() => this.shadowRoot.querySelector('#sellNameDialog').show()}><mwc-icon>sell</mwc-icon>&nbsp;${translate("registernamepage.nchange21")}</mwc-button>
+        `
     }
 
     async uploadAvatar(nameObj) {
