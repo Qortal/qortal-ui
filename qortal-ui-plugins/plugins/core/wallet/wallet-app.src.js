@@ -1145,7 +1145,7 @@ class MultiWallet extends LitElement {
                         </p>
                         <div style="margin-bottom: 0;">
                             <p style="margin-bottom: 0;">
-                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dogeFeePerByte / 1e8).toFixed(8)} DOGE</span><br>L${translate("walletpage.wchange25")}
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dogeFeePerByte / 1e8).toFixed(8)} DOGE</span><br>${translate("walletpage.wchange25")}
                             </p>
                             <paper-slider
                                 class="blue"
