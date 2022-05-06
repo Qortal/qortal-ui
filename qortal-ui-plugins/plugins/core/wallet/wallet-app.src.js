@@ -53,6 +53,7 @@ class MultiWallet extends LitElement {
             arrrRecipient: { type: String },
             arrrAmount: { type: Number },
             errorMessage: { type: String },
+            arrrWalletAddress: { type: String },
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
             btnDisable: { type: Boolean },
@@ -577,6 +578,7 @@ class MultiWallet extends LitElement {
         this.dgbRecipient = ''
 		this.rvnRecipient = ''
         this.arrrRecipient = ''
+        this.arrrWalletAddress = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.sendMoneyLoading = false
@@ -2484,6 +2486,7 @@ class MultiWallet extends LitElement {
             }
         }
         const coin = this._selectedWallet
+        await this.fetchWalletAddress(this._selectedWallet)
         await this.fetchWalletDetails(this._selectedWallet)
         if (this._selectedWallet == coin) {
             await this.renderTransactions()
@@ -2603,6 +2606,27 @@ class MultiWallet extends LitElement {
         }
     }
 
+    async fetchWalletAddress(coin) {
+        switch (coin) {
+            case 'arrr':
+                const arrrWalletName = `${coin}Wallet`
+                let res = await parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/walletaddress?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
+                })
+                if (res != null) {
+                    this.arrrWalletAddress = res
+                    console.log("this.arrrWalletAddress set to " + this.arrrWalletAddress)
+                }
+                break
+
+            default:
+                // Not used for other coins yet
+                break
+        }
+    }
+
     renderSendButton() {
         if ( this._selectedWallet === "qort" ) {
             return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
@@ -2673,9 +2697,15 @@ class MultiWallet extends LitElement {
     }
 
     getSelectedWalletAddress() {
-        return this._selectedWallet === 'qort'
-            ? this.wallets.get(this._selectedWallet).wallet.address
-            : this.wallets.get(this._selectedWallet).wallet.address
+        switch (this._selectedWallet) {
+            case "arrr":
+                // Use address returned by core API
+                return this.arrrWalletAddress
+
+            default:
+                // Use locally derived address
+                return this.wallets.get(this._selectedWallet).wallet.address
+        }
     }
 
     async getTransactionGrid(coin) {
