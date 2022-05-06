@@ -1424,7 +1424,7 @@ class MultiWallet extends LitElement {
                     <span style="color: green; float: left; padding-top: 4px; padding-left: 7px;">${this.successMessage}</span>
                     <span style="padding-top: 4px: padding-right: 7px; float: right;"><mwc-icon-button class="btn-clear-success" title="${translate("general.close")}" icon="close" @click="${() => this.successMessage = ''}"></mwc-icon-button></span>
                 </div>
-                <div style="margin-bottom: 0;">
+                <div style="margin-bottom: 15px;">
                     <p style="margin-bottom: 0;">${translate("walletpage.wchange43")}</p>
                 </div>
             `
