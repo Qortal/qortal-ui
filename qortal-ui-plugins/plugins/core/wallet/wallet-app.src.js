@@ -2430,14 +2430,14 @@ class MultiWallet extends LitElement {
     async sendArrr() {
         const arrrAmount = this.shadowRoot.getElementById('arrrAmountInput').value
         let arrrRecipient = this.shadowRoot.getElementById('arrrRecipient').value
-        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+        const seed58 = this.wallets.get(this._selectedWallet).wallet.seed58
 
         this.sendMoneyLoading = true
         this.btnDisable = true
 
         const makeRequest = async () => {
             const opts = {
-                xprv58: xprv58,
+                xprv58: seed58,
                 receivingAddress: arrrRecipient,
                 ravencoinAmount: arrrAmount,
                 feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8),
@@ -2525,7 +2525,6 @@ class MultiWallet extends LitElement {
             case 'doge':
             case 'dgb':
 			case 'rvn':
-            case 'arrr':
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2560,6 +2559,43 @@ class MultiWallet extends LitElement {
                 console.log(sortedTransactions)
                 if (this._selectedWallet == coin) {
                     this.wallets.get(this._selectedWallet).transactions = sortedTransactions
+                }
+                break
+            case 'arrr':
+                const arrrWalletName = `${coin}Wallet`
+                parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
+                })
+                .then((res) => {
+                    if (isNaN(Number(res))) {
+                        let snack5string = get("walletpage.wchange33")
+                        let snack6string = get("walletpage.wchange34")
+                        parentEpml.request('showSnackBar', `${snack5string} ${coin.toLocaleUpperCase()} ${snack6string}!`)
+                    } else {
+                        if (this._selectedWallet == coin) {
+                            this.wallets.get(this._selectedWallet).balance = (Number(res) / 1e8).toFixed(8)
+                            this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            this.balance = this.wallets.get(this._selectedWallet).balance
+                        }
+                    }
+                })
+
+                const arrrTxs = await parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/wallettransactions?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
+                })
+
+                const arrrCompareFn = (a, b) => {
+                    return b.timestamp - a.timestamp
+                }
+
+                const arrrSortedTransactions = arrrTxs.sort(arrrCompareFn)
+                console.log(arrrSortedTransactions)
+                if (this._selectedWallet == coin) {
+                    this.wallets.get(this._selectedWallet).transactions = arrrSortedTransactions
                 }
                 break
             default:

@@ -276,6 +276,8 @@ export default class AltcoinHDWallet {
 
         const privateKeyHash = seedHash.slice(0, 32);
 
+        this.seed58 = Base58.encode(privateKeyHash);
+
         const _privateKeyHash = [...privateKeyHash]
         let privateKeyBigInt = BigInteger.fromByteArrayUnsigned(_privateKeyHash);
 
@@ -865,6 +867,7 @@ export default class AltcoinHDWallet {
             derivedMasterPublicKey: this.masterPublicKey,
             _tDerivedMasterPrivateKey: this._tMasterPrivateKey,
             _tDerivedmasterPublicKey: this._tmasterPublicKey,
+            seed58: this.seed58,
             // derivedPrivateChildKey: this.xPrivateChildKey,
             // derivedPublicChildKey: this.xPublicChildKey,
             // derivedPrivateGrandChildKey: this.xPrivateGrandChildKey,
