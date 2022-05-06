@@ -13,6 +13,7 @@ import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
 import '@material/mwc-icon'
+import '@material/mwc-icon-button'
 import '@material/mwc-textfield'
 import '@polymer/paper-progress/paper-progress.js'
 import '@polymer/paper-slider/paper-slider.js'
@@ -446,6 +447,16 @@ class MultiWallet extends LitElement {
                 position: relative;
             }
 
+            .btn-clear-success {
+			--mdc-icon-button-size: 32px;
+			color: red;
+		}
+
+            .btn-clear-error {
+			--mdc-icon-button-size: 32px;
+			color: green;
+		}
+
             @keyframes fade-in {
                 0% {
                     opacity: 0;
@@ -453,6 +464,26 @@ class MultiWallet extends LitElement {
                 100% {
                     opacity: 1;
                 }
+            }
+
+            .successBox {
+                height: 34px;
+                min-width: 300px;
+                width: 100%;
+                border: 1px solid green;
+                border-radius: 5px;
+                background-color: transparent;
+                margin-top: 15px;
+            }
+
+            .errorBox {
+                height: 34px;
+                min-width: 300px;
+                width: 100%;
+                border: 1px solid red;
+                border-radius: 5px;
+                background-color: transparent;
+                margin-top: 15px;
             }
 
             @media (max-width: 863px) {
@@ -558,7 +589,7 @@ class MultiWallet extends LitElement {
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
-	this.balance = 0
+	  this.balance = 0
         this.amount = 0
         this.btcAmount = 0
         this.ltcAmount = 0
@@ -901,11 +932,11 @@ class MultiWallet extends LitElement {
                             >
                             </mwc-textfield>
                         </p>
-                        <div style="margin-bottom: 0;">
+                        <div style="margin-bottom: 10px;">
                             <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">0.001 QORT<span></p>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -918,7 +949,7 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeQortDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
@@ -978,8 +1009,8 @@ class MultiWallet extends LitElement {
                             >
                             </paper-slider>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -992,7 +1023,7 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeBtcDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
@@ -1052,8 +1083,8 @@ class MultiWallet extends LitElement {
                             >
                             </paper-slider>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -1066,7 +1097,7 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeLtcDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
@@ -1128,8 +1159,8 @@ class MultiWallet extends LitElement {
                             >
                             </paper-slider>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -1142,7 +1173,7 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeDogeDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
@@ -1156,14 +1187,6 @@ class MultiWallet extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
-
-	setInterval(() => {
-	    this.errorMessage = '';
-	}, 10000)
-
-	setInterval(() => {
-	    this.successMessage = '';
-	}, 10000)
 
         this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
@@ -1389,6 +1412,64 @@ class MultiWallet extends LitElement {
             }
             checkSelectedTextAndShowMenu()
         })
+    }
+
+    renderClearSuccess() {
+        let strSuccessValue = this.successMessage
+        if (strSuccessValue === "") {
+            return html``
+        } else {
+            return html`
+                <div class="successBox">
+                    <span style="color: green; float: left; padding-top: 4px; padding-left: 7px;">${this.successMessage}</span>
+                    <span style="padding-top: 4px: padding-right: 7px; float: right;"><mwc-icon-button class="btn-clear-success" title="${translate("general.close")}" icon="close" @click="${() => this.successMessage = ''}"></mwc-icon-button></span>
+                </div>
+                <div style="margin-bottom: 0;">
+                    <p style="margin-bottom: 0;">${translate("walletpage.wchange43")}</p>
+                </div>
+            `
+        }
+    }
+
+    renderClearError() {
+        let strErrorValue = this.errorMessage
+        if (strErrorValue === "") {
+            return html``
+        } else {
+            return html`
+                <div class="errorBox">
+                    <span style="color: red; float: left; padding-top: 4px; padding-left: 7px;">${this.errorMessage}</span>
+                    <span style="padding-top: 4px: padding-right: 7px; float: right;"><mwc-icon-button class="btn-clear-error" title="${translate("general.close")}" icon="close" @click="${() => this.errorMessage = ''}"></mwc-icon-button></span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <p style="margin-bottom: 0;">${translate("walletpage.wchange44")}</p>
+                </div>
+            `
+        }
+    }
+
+    closeQortDialog() {
+        this.shadowRoot.querySelector('#sendQortDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeBtcDialog() {
+        this.shadowRoot.querySelector('#sendBtcDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeLtcDialog() {
+        this.shadowRoot.querySelector('#sendLtcDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeDogeDialog() {
+        this.shadowRoot.querySelector('#sendDogeDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
     }
 
     renderFetchText() {
