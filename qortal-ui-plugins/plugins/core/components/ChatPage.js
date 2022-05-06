@@ -364,7 +364,7 @@ class ChatPage extends LitElement {
         }
 
         if (messageObj.sender === this.myAddress) {
-            nameMenu = ``
+            nameMenu = `${messageObj.senderName ? messageObj.senderName : messageObj.sender}`
         } else {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
