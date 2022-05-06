@@ -687,8 +687,14 @@ export default class AltcoinHDWallet {
              * Derive Litecoin Legacy Address
              */
 
-                // Append Address Prefix
-            const k = [this.versionBytes.mainnet.prefix].concat(...this.grandChildPublicKeyHash)
+            // Append Address Prefix
+            let prefix = [this.versionBytes.mainnet.prefix]
+            if (2 == this.versionBytes.mainnet.prefix.length) {
+                prefix = [this.versionBytes.mainnet.prefix[0]]
+                prefix.push([this.versionBytes.mainnet.prefix[1]])
+            }
+
+            const k = prefix.concat(...this.grandChildPublicKeyHash)
 
             // Derive Checksum
             const _addressCheckSum = new Sha256().process(new Sha256().process(new Uint8Array(k)).finish().result).finish().result
