@@ -2597,7 +2597,6 @@ class MultiWallet extends LitElement {
                 })
                 if (res != null) {
                     this.arrrWalletAddress = res
-                    console.log("this.arrrWalletAddress set to " + this.arrrWalletAddress)
                 }
                 break
 
