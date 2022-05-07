@@ -1357,7 +1357,7 @@ class MultiWallet extends LitElement {
                         </p>
                         <div style="margin-bottom: 0;">
                             <p style="margin-bottom: 0;">
-                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dgbFeePerByte / 1e8).toFixed(8)} DGB</span><br>L${translate("walletpage.wchange25")}
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dgbFeePerByte / 1e8).toFixed(8)} DGB</span><br>${translate("walletpage.wchange25")}
                             </p>
                             <paper-slider
                                 class="blue"
@@ -1371,8 +1371,8 @@ class MultiWallet extends LitElement {
                             >
                             </paper-slider>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -1385,14 +1385,14 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeDgbDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
-				<mwc-dialog id="sendRvnDialog">
+                <mwc-dialog id="sendRvnDialog">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/rvn.png" width="32" height="32">
@@ -1433,7 +1433,7 @@ class MultiWallet extends LitElement {
                         </p>
                         <div style="margin-bottom: 0;">
                             <p style="margin-bottom: 0;">
-                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.rvnFeePerByte / 1e8).toFixed(8)} RVN</span><br>L${translate("walletpage.wchange25")}
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.rvnFeePerByte / 1e8).toFixed(8)} RVN</span><br>${translate("walletpage.wchange25")}
                             </p>
                             <paper-slider
                                 class="blue"
@@ -1447,8 +1447,8 @@ class MultiWallet extends LitElement {
                             >
                             </paper-slider>
                         </div>
-                        <p style="color: red;">${this.errorMessage}</p>
-                        <p style="color: green;">${this.successMessage}</p>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
                         <div class="buttons">
                             <div>
@@ -1461,7 +1461,7 @@ class MultiWallet extends LitElement {
                     </div>
                     <mwc-button
                         slot="primaryAction"
-                        dialogAction="cancel"
+                        @click="${() => this.closeRvnDialog()}"
                         class="red"
                     >
                     ${translate("general.close")}
