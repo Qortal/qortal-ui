@@ -26,7 +26,7 @@ import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-const coinsNames = ['qort', 'btc', 'ltc', 'doge', 'dgb', 'rvn']
+const coinsNames = ['qort', 'btc', 'ltc', 'doge', 'dgb', 'rvn', 'nmc', 'dash', 'firo']
 
 class MultiWallet extends LitElement {
     static get properties() {
@@ -51,6 +51,12 @@ class MultiWallet extends LitElement {
             dgbAmount: { type: Number },
 			rvnRecipient: { type: String },
             rvnAmount: { type: Number },
+            nmcRecipient: { type: String },
+            nmcAmount: { type: Number },
+            dashRecipient: { type: String },
+            dashAmount: { type: Number },
+            firoRecipient: { type: String },
+            firoAmount: { type: Number },
             errorMessage: { type: String },
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
@@ -62,6 +68,9 @@ class MultiWallet extends LitElement {
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
 			rvnFeePerByte: { type: Number },
+            nmcFeePerByte: { type: Number },
+            dashFeePerByte: { type: Number },
+            firoFeePerByte: { type: Number },
             balanceString: { type: String }
         }
     }
@@ -436,6 +445,18 @@ class MultiWallet extends LitElement {
                 background-image: url('/img/rvn.png');
             }
 
+			.nmc .currency-image {
+                background-image: url('/img/nmc.png');
+            }
+
+			.dash .currency-image {
+                background-image: url('/img/dash.png');
+            }
+
+			.firo .currency-image {
+                background-image: url('/img/firo.png');
+            }
+
             .card-list {
                 margin-top: 20px;
             }
@@ -600,6 +621,9 @@ class MultiWallet extends LitElement {
         this.dogeRecipient = ''
         this.dgbRecipient = ''
 		this.rvnRecipient = ''
+		this.nmcRecipient = ''
+		this.dashRecipient = ''
+		this.firoRecipient = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.sendMoneyLoading = false
@@ -612,6 +636,9 @@ class MultiWallet extends LitElement {
         this.dogeAmount = 0
         this.dgbAmount = 0
 		this.rvnAmount = 0
+		this.nmcAmount = 0
+		this.dashAmount = 0
+		this.firoAmount = 0
         this.btcFeePerByte = 100
         this.btcSatMinFee = 20
         this.btcSatMaxFee = 150
@@ -627,6 +654,15 @@ class MultiWallet extends LitElement {
 		this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
+        this.nmcFeePerByte = 100
+        this.nmcSatMinFee = 100
+        this.nmcSatMaxFee = 150
+        this.dashFeePerByte = 1
+        this.dashSatMinFee = 1
+        this.dashSatMaxFee = 10
+        this.firoFeePerByte = 1
+        this.firoSatMinFee = 1
+        this.firoSatMaxFee = 10
 
         this.wallets = new Map()
 
@@ -648,6 +684,9 @@ class MultiWallet extends LitElement {
         this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
         this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
 		this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+		this.wallets.get('nmc').wallet = window.parent.reduxStore.getState().app.selectedAddress.nmcWallet
+		this.wallets.get('dash').wallet = window.parent.reduxStore.getState().app.selectedAddress.dashWallet
+		this.wallets.get('firo').wallet = window.parent.reduxStore.getState().app.selectedAddress.firoWallet
 
         this._selectedWallet = 'qort'
 
@@ -662,6 +701,9 @@ class MultiWallet extends LitElement {
                 this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
                 this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
                 this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+                this.wallets.get('nmc').wallet = window.parent.reduxStore.getState().app.selectedAddress.nmcWallet
+                this.wallets.get('dash').wallet = window.parent.reduxStore.getState().app.selectedAddress.dashWallet
+                this.wallets.get('firo').wallet = window.parent.reduxStore.getState().app.selectedAddress.firoWallet
             })
 
             parentEpml.subscribe('copy_menu_switch', async (value) => {
@@ -702,6 +744,18 @@ class MultiWallet extends LitElement {
 						<div coin="rvn" class="currency-box rvn">
                             <div class="currency-image"></div>
                             <div class="currency-text">Ravencoin</div>
+                        </div>
+                        <div coin="nmc" class="currency-box nmc">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Namecoin</div>
+                        </div>
+                        <div coin="dash" class="currency-box dash">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Dash</div>
+                        </div>
+                        <div coin="firo" class="currency-box firo">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Firo</div>
                         </div>
                     </div>
                 </div>
@@ -1010,6 +1064,156 @@ class MultiWallet extends LitElement {
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} RVN</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+				<mwc-dialog id="showNmcTransactionDetailsDialog" scrimClickAction="${this.showNmcTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>${translate("walletpage.wchange5")}</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
+                        <br />
+                        <div>
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.nmcTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.nmcSender}</span>
+                        </div>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.nmcReceiver}</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} NMC</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} NMC</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+				<mwc-dialog id="showDashTransactionDetailsDialog" scrimClickAction="${this.showDashTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>${translate("walletpage.wchange5")}</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
+                        <br />
+                        <div>
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.dashTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.dashSender}</span>
+                        </div>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.dashReceiver}</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} DASH</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} DASH</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+				<mwc-dialog id="showFiroTransactionDetailsDialog" scrimClickAction="${this.showFiroTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>${translate("walletpage.wchange5")}</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
+                        <br />
+                        <div>
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.firoTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.firoSender}</span>
+                        </div>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.firoReceiver}</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} FIRO</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} FIRO</span>
                         </div>
                         <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
@@ -1467,6 +1671,234 @@ class MultiWallet extends LitElement {
                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
+
+                <mwc-dialog id="sendNmcDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/nmc.png" width="32" height="32">
+                            <h2>${translate("walletpage.wchange17")} NMC</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>${translate("walletpage.wchange18")}:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>${translate("walletpage.wchange19")}:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="nmcAmountInput"
+                                label="${translate("walletpage.wchange11")} (NMC)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.nmcAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="nmcRecipient"
+                                label="${translate("walletpage.wchange23")}"
+                                type="text"
+                                value="${this.nmcRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.nmcFeePerByte / 1e8).toFixed(8)} NMC</span><br>${translate("walletpage.wchange25")}
+                            </p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.nmcFeePerByte = e.target.value)}"
+                                id="nmcFeeSlider"
+                                min="${this.nmcSatMinFee}"
+                                max="${this.nmcSatMaxFee}"
+                                value="${this.nmcFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendNmc()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    ${translate("walletpage.wchange17")} NMC
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeNmcDialog()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="sendDashDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/dash.png" width="32" height="32">
+                            <h2>${translate("walletpage.wchange17")} DASH</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>${translate("walletpage.wchange18")}:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>${translate("walletpage.wchange19")}:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="dashAmountInput"
+                                label="${translate("walletpage.wchange11")} (DASH)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.dashAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="dashRecipient"
+                                label="${translate("walletpage.wchange23")}"
+                                type="text"
+                                value="${this.dashRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.dashFeePerByte / 1e8).toFixed(8)} DASH</span><br>${translate("walletpage.wchange25")}
+                            </p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.dashFeePerByte = e.target.value)}"
+                                id="dashFeeSlider"
+                                min="${this.dashSatMinFee}"
+                                max="${this.dashSatMaxFee}"
+                                value="${this.dashFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendDash()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    ${translate("walletpage.wchange17")} DASH
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeDashDialog()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="sendFiroDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/firo.png" width="32" height="32">
+                            <h2>${translate("walletpage.wchange17")} FIRO</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>${translate("walletpage.wchange18")}:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>${translate("walletpage.wchange19")}:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="firoAmountInput"
+                                label="${translate("walletpage.wchange11")} (FIRO)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.firoAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="firoRecipient"
+                                label="${translate("walletpage.wchange23")}"
+                                type="text"
+                                value="${this.firoRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.firoFeePerByte / 1e8).toFixed(8)} FIRO</span><br>${translate("walletpage.wchange25")}
+                            </p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.firoFeePerByte = e.target.value)}"
+                                id="firoFeeSlider"
+                                min="${this.firoSatMinFee}"
+                                max="${this.firoSatMaxFee}"
+                                value="${this.firoFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendFiro()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    ${translate("walletpage.wchange17")} FIRO
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeFiroDialog()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
         `
     }
@@ -1792,6 +2224,144 @@ class MultiWallet extends LitElement {
             }
             checkSelectedTextAndShowMenu()
         })
+
+		this.shadowRoot.getElementById('nmcAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'nmcAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('nmcRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'nmcRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+		this.shadowRoot.getElementById('dashAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'dashAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('dashRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'dashRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+		this.shadowRoot.getElementById('firoAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'firoAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('firoRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'firoRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
     }
 
     renderClearSuccess() {
@@ -1860,6 +2430,24 @@ class MultiWallet extends LitElement {
 
     closeRvnDialog() {
         this.shadowRoot.querySelector('#sendRvnDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeNmcDialog() {
+        this.shadowRoot.querySelector('#sendNmcDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeDashDialog() {
+        this.shadowRoot.querySelector('#sendDashDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeFiroDialog() {
+        this.shadowRoot.querySelector('#sendFiroDialog').close()
         this.successMessage = ''
         this.errorMessage = ''
     }
@@ -2331,6 +2919,144 @@ class MultiWallet extends LitElement {
         this.showWallet()
     }
 
+	async sendNmc() {
+        const nmcAmount = this.shadowRoot.getElementById('nmcAmountInput').value
+        let nmcRecipient = this.shadowRoot.getElementById('nmcRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: nmcRecipient,
+                namecoinAmount: nmcAmount,
+                feePerByte: (this.nmcFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendNmc', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('nmcAmountInput').value = 0
+                this.shadowRoot.getElementById('nmcRecipient').value = ''
+                this.errorMessage = ''
+                this.nmcRecipient = ''
+                this.nmcAmount = 0
+                this.successMessage = this.renderSuccessText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = this.renderFailText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
+	async sendDash() {
+        const dashAmount = this.shadowRoot.getElementById('dashAmountInput').value
+        let dashRecipient = this.shadowRoot.getElementById('dashRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: dashRecipient,
+                dashAmount: dashAmount,
+                feePerByte: (this.dashFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendDash', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('dashAmountInput').value = 0
+                this.shadowRoot.getElementById('dashRecipient').value = ''
+                this.errorMessage = ''
+                this.dashRecipient = ''
+                this.dashAmount = 0
+                this.successMessage = this.renderSuccessText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = this.renderFailText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
+	async sendFiro() {
+        const firoAmount = this.shadowRoot.getElementById('firoAmountInput').value
+        let firoRecipient = this.shadowRoot.getElementById('firoRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: firoRecipient,
+                firoAmount: firoAmount,
+                feePerByte: (this.firoFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendFiro', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('firoAmountInput').value = 0
+                this.shadowRoot.getElementById('firoRecipient').value = ''
+                this.errorMessage = ''
+                this.firoRecipient = ''
+                this.firoAmount = 0
+                this.successMessage = this.renderSuccessText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = this.renderFailText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
     async showWallet() {
         this.transactionsDOM.hidden = true
         this.loading = true
@@ -2383,6 +3109,9 @@ class MultiWallet extends LitElement {
             case 'doge':
             case 'dgb':
 			case 'rvn':
+			case 'nmc':
+			case 'dash':
+			case 'firo':
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2437,6 +3166,12 @@ class MultiWallet extends LitElement {
             return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDgb()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DGB</vaadin-button>`
         } else if ( this._selectedWallet === "rvn" ) {
             return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendRvn()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} RVN</vaadin-button>`
+        } else if ( this._selectedWallet === "nmc" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendNmc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} NMC</vaadin-button>`
+        } else if ( this._selectedWallet === "dash" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDash()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DASH</vaadin-button>`
+        } else if ( this._selectedWallet === "firo" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendFiro()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} FIRO</vaadin-button>`
         } else {
             return html``
         }
@@ -2464,6 +3199,18 @@ class MultiWallet extends LitElement {
 
 	openSendRvn() {
         this.shadowRoot.querySelector("#sendRvnDialog").show();
+    }
+
+	openSendNmc() {
+        this.shadowRoot.querySelector("#sendNmcDialog").show();
+    }
+
+	openSendDash() {
+        this.shadowRoot.querySelector("#sendDashDialog").show();
+    }
+
+	openSendFiro() {
+        this.shadowRoot.querySelector("#sendFiroDialog").show();
     }
 
     changeTheme() {
@@ -2549,6 +3296,33 @@ class MultiWallet extends LitElement {
                 },
                 { passive: true }
             )
+        } else if (coin === 'nmc') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let nmcItem = this.transactionsGrid.getEventContext(e).item
+                    this.showNmcTransactionDetails(nmcItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
+        } else if (coin === 'dash') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let dashItem = this.transactionsGrid.getEventContext(e).item
+                    this.showDashTransactionDetails(dashItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
+        } else if (coin === 'firo') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let firoItem = this.transactionsGrid.getEventContext(e).item
+                    this.showFiroTransactionDetails(firoItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
         }
 
         this.pagesControl = this.shadowRoot.querySelector('#pages')
@@ -2568,6 +3342,12 @@ class MultiWallet extends LitElement {
             render(this.renderDgbTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
 		} else if (this._selectedWallet === 'rvn') {
             render(this.renderRvnTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+		} else if (this._selectedWallet === 'nmc') {
+            render(this.renderNmcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+		} else if (this._selectedWallet === 'dash') {
+            render(this.renderDashTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+		} else if (this._selectedWallet === 'firo') {
+            render(this.renderFiroTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         }
     }
 
@@ -2953,6 +3733,201 @@ class MultiWallet extends LitElement {
 	`
     }
 
+	renderNmcTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="${translate("walletpage.wchange41")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange35")}"
+                    .renderer=${(root, column, data) => {
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange9")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange37")}"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange14")}"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
+	renderDashTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="${translate("walletpage.wchange41")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange35")}"
+                    .renderer=${(root, column, data) => {
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange9")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange37")}"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange14")}"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
+	renderFiroTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="${translate("walletpage.wchange41")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange35")}"
+                    .renderer=${(root, column, data) => {
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange9")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange37")}"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange14")}"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
     async updateItemsFromPage(page, changeWallet = false) {
         if (page === undefined) {
             return
@@ -3148,6 +4123,48 @@ class MultiWallet extends LitElement {
                 this.selectedTransaction = { ...transaction, rvnTxnFlow, rvnSender, rvnReceiver }
                 if (this.selectedTransaction.txHash.length != 0) {
                     this.shadowRoot.querySelector('#showRvnTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+	showNmcTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let nmcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let nmcSender = myTransaction.inputs[0].address
+                let nmcReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, nmcTxnFlow, nmcSender, nmcReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showNmcTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+	showDashTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let dashTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let dashSender = myTransaction.inputs[0].address
+                let dashReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, dashTxnFlow, dashSender, dashReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showDashTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+	showFiroTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let firoTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let firoSender = myTransaction.inputs[0].address
+                let firoReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, firoTxnFlow, firoSender, firoReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showFiroTransactionDetailsDialog').show()
                 }
             }
         })
