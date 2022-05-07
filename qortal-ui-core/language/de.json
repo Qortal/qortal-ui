@@ -211,7 +211,9 @@
     "wchange39": "Adresse kann nicht kopiert werden.",
     "wchange40": "ZAHLUNG",
     "wchange41": "Status",
-    "wchange42": "Bestätigungen"
+    "wchange42": "Bestätigungen",
+    "wchange43": "Ihre Transaktion wird erst angezeigt, wenn sie bestätigt wurde. Seien Sie geduldig...",
+    "wchange44": "Bitte versuche es erneut..."
   },
   "tradepage": {
     "tchange1": "Handelsportal",
@@ -434,10 +436,15 @@
     "wcchange9": "Senden fehlgeschlagen, bitte erneut versuchen..."
   },
   "blockpage": {
-    "bcchange1": "blockieren",
+    "bcchange1": "Benutzer Blockieren",
     "bcchange2": "Dieser Benutzer wurde erfolgreich blockiert!",
     "bcchange3": "Beim Blockieren dieses Benutzers ist ein Fehler aufgetreten. Bitte versuche es erneut!",
-    "bcchange4": "Kein Name registriert"
+    "bcchange4": "Kein Name registriert",
+    "bcchange5": "Diesen Benutzer Blockieren",
+    "bcchange6": "Möchten Sie diesen Benutzer wirklich blockieren?",
+    "bcchange7": "MENÜ",
+    "bcchange8": "Adresse Kopieren",
+    "bcchange9": "Private Nachricht"
   },
   "grouppage": {
     "gchange1": "Qortal-Gruppen",

@@ -211,7 +211,9 @@
     "wchange39": "Nie można skopiować adresu.",
     "wchange40": "PŁATNOŚĆ",
     "wchange41": "Status",
-    "wchange42": "Potwierdzenia"
+    "wchange42": "Potwierdzenia",
+    "wchange43": "Twoja transakcja nie pojawi się, dopóki nie zostanie potwierdzona, bądź cierpliwy...",
+    "wchange44": "Proszę spróbuj ponownie..."
   },
   "tradepage": {
     "tchange1": "Portal Handlowy",
@@ -434,10 +436,15 @@
      "wcchange9": "Wysyłanie nie powiodło się, spróbuj ponownie..."
   },
   "blockpage": {
-    "bcchange1": "zablokuj",
-     "bcchange2": "Pomyślnie zablokowano tego użytkownika!",
-     "bcchange3": "Wystąpił błąd podczas próby zablokowania tego użytkownika. Spróbuj ponownie!",
-     "bcchange4": "Brak zarejestrowanej nazwy"
+    "bcchange1": "Zablokuj Użytkownika",
+    "bcchange2": "Pomyślnie zablokowano tego użytkownika!",
+    "bcchange3": "Wystąpił błąd podczas próby zablokowania tego użytkownika. Spróbuj ponownie!",
+    "bcchange4": "Brak zarejestrowanej nazwy",
+    "bcchange5": "Zablokuj żądanie użytkownika",
+    "bcchange6": "Czy na pewno chcesz zablokować tego użytkownika?",
+    "bcchange7": "MENU",
+    "bcchange8": "Kopiuj Adres",
+    "bcchange9": "Prywatna Wiadomość"
   },
   "grouppage": {
     "gchange1": "Grupy Qortal",
