@@ -661,6 +661,7 @@ class MultiWallet extends LitElement {
                 this.wallets.get('ltc').wallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet
                 this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
                 this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
+                this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
             })
 
             parentEpml.subscribe('copy_menu_switch', async (value) => {
@@ -1723,6 +1724,29 @@ class MultiWallet extends LitElement {
             checkSelectedTextAndShowMenu()
         })
 
+        this.shadowRoot.getElementById('dgbRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'dgbRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
 		this.shadowRoot.getElementById('rvnAmountInput').addEventListener('contextmenu', (event) => {
             const getSelectedText = () => {
                 var text = ''
@@ -1761,29 +1785,6 @@ class MultiWallet extends LitElement {
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
                     this.pasteMenu(event, 'rvnRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('dgbRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.pasteMenu(event, 'dgbRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -1847,6 +1848,18 @@ class MultiWallet extends LitElement {
 
     closeDogeDialog() {
         this.shadowRoot.querySelector('#sendDogeDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeDgbDialog() {
+        this.shadowRoot.querySelector('#sendDgbDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeRvnDialog() {
+        this.shadowRoot.querySelector('#sendRvnDialog').close()
         this.successMessage = ''
         this.errorMessage = ''
     }
@@ -2527,12 +2540,12 @@ class MultiWallet extends LitElement {
                 },
                 { passive: true }
             )
-        } else if (coin === 'dgb') {
+        } else if (coin === 'rvn') {
             this.transactionsGrid.addEventListener(
                 'click',
                 (e) => {
-                    let dgbItem = this.transactionsGrid.getEventContext(e).item
-                    this.showDgbTransactionDetails(dgbItem, this.wallets.get(this._selectedWallet).transactions)
+                    let rvnItem = this.transactionsGrid.getEventContext(e).item
+                    this.showRvnTransactionDetails(rvnItem, this.wallets.get(this._selectedWallet).transactions)
                 },
                 { passive: true }
             )
