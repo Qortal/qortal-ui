@@ -64,7 +64,6 @@ class MultiWallet extends LitElement {
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
 			rvnFeePerByte: { type: Number },
-            arrrFeePerByte: { type: Number },
             balanceString: { type: String }
         }
     }
@@ -607,9 +606,6 @@ class MultiWallet extends LitElement {
 		this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
-        this.arrrFeePerByte = 8
-        this.arrrSatMinFee = 1
-        this.arrrSatMaxFee = 50
 
         this.wallets = new Map()
 
@@ -1545,22 +1541,6 @@ class MultiWallet extends LitElement {
                             >
                             </mwc-textfield>
                         </p>
-                        <div style="margin-bottom: 0;">
-                            <p style="margin-bottom: 0;">
-                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.arrrFeePerByte / 1e8).toFixed(8)} ARRR</span><br>L${translate("walletpage.wchange25")}
-                            </p>
-                            <paper-slider
-                                class="blue"
-                                style="width: 100%;"
-                                pin
-                                @change="${(e) => (this.arrrFeePerByte = e.target.value)}"
-                                id="arrrFeeSlider"
-                                min="${this.arrrSatMinFee}"
-                                max="${this.arrrSatMaxFee}"
-                                value="${this.arrrFeePerByte}"
-                            >
-                            </paper-slider>
-                        </div>
                         <p style="color: red;">${this.errorMessage}</p>
                         <p style="color: green;">${this.successMessage}</p>
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
@@ -2442,7 +2422,7 @@ class MultiWallet extends LitElement {
                 xprv58: seed58,
                 receivingAddress: arrrRecipient,
                 ravencoinAmount: arrrAmount,
-                feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8),
+                //feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8), // Not supported in ARRR
             }
             const response = await parentEpml.request('sendArrr', opts)
             return response
