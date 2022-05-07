@@ -2419,9 +2419,9 @@ class MultiWallet extends LitElement {
 
         const makeRequest = async () => {
             const opts = {
-                xprv58: seed58,
+                entropy58: seed58,
                 receivingAddress: arrrRecipient,
-                ravencoinAmount: arrrAmount,
+                arrrAmount: arrrAmount,
                 //feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8), // Not supported in ARRR
             }
             const response = await parentEpml.request('sendArrr', opts)
