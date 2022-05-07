@@ -338,6 +338,10 @@ class TradePortal extends LitElement {
 			top: 10px;
 		}
 
+		.btc.coinName:before  {
+			background-image: url('/img/qortbtc.png');
+		}
+
 		.ltc.coinName:before  {
 			background-image: url('/img/qortltc.png');
 		}
@@ -352,6 +356,18 @@ class TradePortal extends LitElement {
 
 		.rvn.coinName:before  {
 			background-image: url('/img/qortrvn.png');
+		}
+
+		.nmc.coinName:before  {
+			background-image: url('/img/qortnmc.png');
+		}
+
+		.dash.coinName:before  {
+			background-image: url('/img/qortdash.png');
+		}
+
+		.firo.coinName:before  {
+			background-image: url('/img/qortfiro.png');
 		}
 
 		.coinName {
@@ -423,6 +439,22 @@ class TradePortal extends LitElement {
             tradeFee: "0.002"
         }
 
+        let bitcoin = {
+            name: "BITCOIN",
+            balance: "0",
+            coinCode: "BTC",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.0005"
+        }
+
         let litecoin = {
             name: "LITECOIN",
             balance: "0",
@@ -484,17 +516,74 @@ class TradePortal extends LitElement {
             openTradeOrders: null,
             tradeOffersSocketCounter: 1,
             coinAmount: this.amountString,
-            tradeFee: "~0.006"
+            tradeFee: "~0.015"
+        }
+
+		let namecoin = {
+            name: "NAMECOIN",
+            balance: "0",
+            coinCode: "NMC",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.005"
+        }
+
+		let dash = {
+            name: "DASH",
+            balance: "0",
+            coinCode: "DASH",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.000015"
+        }
+
+		let firo = {
+            name: "FIRO",
+            balance: "0",
+            coinCode: "FIRO",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.000015"
         }
 
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
+        this.listedCoins.set("BITCOIN", bitcoin)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
 		this.listedCoins.set("RAVENCOIN", ravencoin)
+		this.listedCoins.set("NAMECOIN", namecoin)
+		this.listedCoins.set("DASH", dash)
+		this.listedCoins.set("FIRO", firo)
 
         workers.set("QORTAL", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+        workers.set("BITCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -515,6 +604,21 @@ class TradePortal extends LitElement {
         })
 
 		workers.set("RAVENCOIN", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+		workers.set("NAMECOIN", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+		workers.set("DASH", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+		workers.set("FIRO", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -902,9 +1006,13 @@ class TradePortal extends LitElement {
 				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal ${translate("tradepage.tchange1")} - &nbsp;</h2>
 				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
 					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">QORT / LTC</span></mwc-list-item>
+					<mwc-list-item value="BITCOIN"><span class="coinName btc" style="color: var(--black);">QORT / BTC</span></mwc-list-item>
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
+					<mwc-list-item value="NAMECOIN"><span class="coinName nmc" style="color: var(--black);">QORT / NMC</span></mwc-list-item>
+					<mwc-list-item value="DASH"><span class="coinName dash" style="color: var(--black);">QORT / DASH</span></mwc-list-item>
+					<mwc-list-item value="FIRO"><span class="coinName firo" style="color: var(--black);">QORT / FIRO</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -1059,6 +1167,10 @@ class TradePortal extends LitElement {
         let _body = null
 
         switch (this.selectedCoin) {
+            case 'BITCOIN':
+                _url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+                break
             case 'LITECOIN':
                 _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
@@ -1074,6 +1186,18 @@ class TradePortal extends LitElement {
 			case 'RAVENCOIN':
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+                break
+			case 'NAMECOIN':
+                _url = `/crosschain/nmc/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.nmcWallet.derivedMasterPublicKey
+                break
+			case 'DASH':
+                _url = `/crosschain/dash/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.dashWallet.derivedMasterPublicKey
+                break
+			case 'FIRO':
+                _url = `/crosschain/firo/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.firoWallet.derivedMasterPublicKey
                 break
             default:
                 break
@@ -1312,23 +1436,19 @@ class TradePortal extends LitElement {
     processTradeBotStates(tradeStates) {
 
         /**
-    * BitcoinACCTv1 TRADEBOT STATES
-    *  - BOB_WAITING_FOR_AT_CONFIRM
-    *  - BOB_WAITING_FOR_MESSAGE
-    *  - BOB_WAITING_FOR_P2SH_B
-    *  - BOB_WAITING_FOR_AT_REDEEM
-    *  - BOB_DONE
-    *  - BOB_REFUNDED
-    *  - ALICE_WAITING_FOR_P2SH_A
-    *  - ALICE_WAITING_FOR_AT_LOCK
-    *  - ALICE_WATCH_P2SH_B
-    *  - ALICE_DONE
-    *  - ALICE_REFUNDING_B
-    *  - ALICE_REFUNDING_A
-    *  - ALICE_REFUNDED
-    *
-    * @param {[{}]} states
-    */
+        * BitcoinACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
 
         const BitcoinACCTv1 = (states) => {
             // Reverse the states
@@ -1339,24 +1459,16 @@ class TradePortal extends LitElement {
                         this.changeTradeBotState(state, 'PENDING')
                     } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
                         this.changeTradeBotState(state, 'LISTED')
-                    } else if (state.tradeState == 'BOB_WAITING_FOR_P2SH_B') {
-                        this.changeTradeBotState(state, 'TRADING')
                     } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
-                        this.changeTradeBotState(state, 'REDEEMING')
+                        this.changeTradeBotState(state, 'TRADING')
                     } else if (state.tradeState == 'BOB_DONE') {
                         this.handleCompletedState(state)
                     } else if (state.tradeState == 'BOB_REFUNDED') {
                         this.handleCompletedState(state)
-                    } else if (state.tradeState == 'ALICE_WAITING_FOR_P2SH_A') {
-                        this.changeTradeBotState(state, 'PENDING')
                     } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
-                        this.changeTradeBotState(state, 'TRADING')
-                    } else if (state.tradeState == 'ALICE_WATCH_P2SH_B') {
-                        this.changeTradeBotState(state, 'TRADING')
+                        this.changeTradeBotState(state, 'BUYING')
                     } else if (state.tradeState == 'ALICE_DONE') {
                         this.handleCompletedState(state)
-                    } else if (state.tradeState == 'ALICE_REFUNDING_B') {
-                        this.changeTradeBotState(state, 'REFUNDING')
                     } else if (state.tradeState == 'ALICE_REFUNDING_A') {
                         this.changeTradeBotState(state, 'REFUNDING')
                     } else if (state.tradeState == 'ALICE_REFUNDED') {
@@ -1538,6 +1650,135 @@ class TradePortal extends LitElement {
             })
         }
 
+        /**
+        * NamecoinACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+        const NamecoinACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
+        /**
+        * DashACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+        const DashACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
+        /**
+        * FiroACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+        const FiroACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
         switch (this.selectedCoin) {
             case 'BITCOIN':
                 BitcoinACCTv1(tradeStates)
@@ -1553,6 +1794,15 @@ class TradePortal extends LitElement {
                 break
             case 'RAVENCOIN':
                 RavencoinACCTv1(tradeStates)
+                break
+            case 'NAMECOIN':
+                NamecoinACCTv1(tradeStates)
+                break
+            case 'DASH':
+                DashACCTv1(tradeStates)
+                break
+            case 'FIRO':
+                FiroACCTv1(tradeStates)
                 break
             default:
                 break
@@ -1837,6 +2087,9 @@ class TradePortal extends LitElement {
         const makeRequest = async () => {
             let _receivingAddress = null
             switch (this.selectedCoin) {
+                case 'BITCOIN':
+                    _receivingAddress = this.selectedAddress.btcWallet.address
+                    break
                 case 'LITECOIN':
                     _receivingAddress = this.selectedAddress.ltcWallet.address
                     break
@@ -1848,6 +2101,15 @@ class TradePortal extends LitElement {
                     break
 				case 'RAVENCOIN':
                     _receivingAddress = this.selectedAddress.rvnWallet.address
+                    break
+				case 'NAMECOIN':
+                    _receivingAddress = this.selectedAddress.nmcWallet.address
+                    break
+				case 'DASH':
+                    _receivingAddress = this.selectedAddress.dashWallet.address
+                    break
+				case 'FIRO':
+                    _receivingAddress = this.selectedAddress.firoWallet.address
                     break
                 default:
                     break
@@ -1903,6 +2165,9 @@ class TradePortal extends LitElement {
         let _foreignKey = ""
 
         switch (this.selectedCoin) {
+            case 'BITCOIN':
+                _foreignKey = this.selectedAddress.btcWallet.derivedMasterPrivateKey
+                break
             case 'LITECOIN':
                 _foreignKey = this.selectedAddress.ltcWallet.derivedMasterPrivateKey
                 break
@@ -1914,6 +2179,15 @@ class TradePortal extends LitElement {
                 break
 			case 'RAVENCOIN':
                 _foreignKey = this.selectedAddress.rvnWallet.derivedMasterPrivateKey
+                break
+			case 'NAMECOIN':
+                _foreignKey = this.selectedAddress.nmcWallet.derivedMasterPrivateKey
+                break
+			case 'DASH':
+                _foreignKey = this.selectedAddress.dashWallet.derivedMasterPrivateKey
+                break
+			case 'FIRO':
+                _foreignKey = this.selectedAddress.firoWallet.derivedMasterPrivateKey
                 break
             default:
                 break
