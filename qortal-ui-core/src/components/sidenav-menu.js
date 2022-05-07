@@ -3,7 +3,6 @@ import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { translate, translateUnsafeHTML } from 'lit-translate'
 
-import '@material/mwc-icon'
 import '@polymer/paper-ripple'
 import '@vaadin/icon'
 import '@vaadin/icons'
