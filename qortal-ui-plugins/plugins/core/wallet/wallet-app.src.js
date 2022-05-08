@@ -2478,9 +2478,9 @@ class MultiWallet extends LitElement {
     }
 
     async fetchWalletDetails(coin) {
-        this.balanceString = this.renderFetchText()
         switch (coin) {
             case 'qort':
+                this.balanceString = this.renderFetchText()
                 parentEpml.request('apiCall', {
                     url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
                 })
@@ -2508,6 +2508,7 @@ class MultiWallet extends LitElement {
             case 'doge':
             case 'dgb':
 			case 'rvn':
+                this.balanceString = this.renderFetchText()
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2546,6 +2547,26 @@ class MultiWallet extends LitElement {
                 break
             case 'arrr':
                 const arrrWalletName = `${coin}Wallet`
+
+                const res = await parentEpml.request('apiCall', {
+                    url: `/crosschain/${coin}/syncstatus?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
+                })
+                if (res !== null && res !== "Synchronized") {
+                    // Not synchronized yet - display sync status instead of balance
+                    this.balanceString = res;
+
+                    // Check again shortly after
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    window.setTimeout(this.fetchWalletDetails(this._selectedWallet), 1)
+
+                    // No need to make balance or transaction list calls yet
+                    return
+                }
+
+                this.balanceString = this.renderFetchText()
+
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
                     method: 'POST',
