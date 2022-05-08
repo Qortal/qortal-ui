@@ -2559,7 +2559,7 @@ class MultiWallet extends LitElement {
 
                     // Check again shortly after
                     await new Promise(resolve => setTimeout(resolve, 2000));
-                    window.setTimeout(this.fetchWalletDetails(this._selectedWallet), 1)
+                    this.fetchWalletDetails(coin)
 
                     // No need to make balance or transaction list calls yet
                     return
