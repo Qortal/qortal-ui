@@ -467,7 +467,8 @@ class TradePortal extends LitElement {
             myOfferingOrders: [],
             openTradeOrders: null,
             tradeOffersSocketCounter: 1,
-            coinAmount: this.amountString
+            coinAmount: this.amountString,
+            tradeFee: "~0.0005"
         }
 
 		let ravencoin = {
@@ -482,7 +483,8 @@ class TradePortal extends LitElement {
             myOfferingOrders: [],
             openTradeOrders: null,
             tradeOffersSocketCounter: 1,
-            coinAmount: this.amountString
+            coinAmount: this.amountString,
+            tradeFee: "~0.006"
         }
 
         this.listedCoins = new Map()
