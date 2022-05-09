@@ -346,6 +346,14 @@ class TradePortal extends LitElement {
 			background-image: url('/img/qortdoge.png');
 		}
 
+		.dgb.coinName:before  {
+			background-image: url('/img/qortdgb.png');
+		}
+
+		.rvn.coinName:before  {
+			background-image: url('/img/qortrvn.png');
+		}
+
 		.coinName {
 			display: inline-block;
 			height: 26px;
@@ -447,10 +455,44 @@ class TradePortal extends LitElement {
             tradeFee: "~0.005"
         }
 
+        let digibyte = {
+            name: "DIGIBYTE",
+            balance: "0",
+            coinCode: "DGB",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.0005"
+        }
+
+		let ravencoin = {
+            name: "RAVENCOIN",
+            balance: "0",
+            coinCode: "RVN",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.006"
+        }
+
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
+        this.listedCoins.set("DIGIBYTE", digibyte)
+		this.listedCoins.set("RAVENCOIN", ravencoin)
 
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
@@ -463,6 +505,16 @@ class TradePortal extends LitElement {
         })
 
         workers.set("DOGECOIN", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+        workers.set("DIGIBYTE", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+		workers.set("RAVENCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -851,6 +903,8 @@ class TradePortal extends LitElement {
 				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
 					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">QORT / LTC</span></mwc-list-item>
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
+					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
+					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -1012,6 +1066,14 @@ class TradePortal extends LitElement {
             case 'DOGECOIN':
                 _url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+                break
+            case 'DIGIBYTE':
+                _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+				break
+			case 'RAVENCOIN':
+                _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
             default:
                 break
@@ -1390,6 +1452,92 @@ class TradePortal extends LitElement {
             })
         }
 
+        /**
+        * DigibyteACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+        const DigibyteACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
+        /**
+        * RavencoinACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+        const RavencoinACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
         switch (this.selectedCoin) {
             case 'BITCOIN':
                 BitcoinACCTv1(tradeStates)
@@ -1399,6 +1547,12 @@ class TradePortal extends LitElement {
                 break
             case 'DOGECOIN':
                 DogecoinACCTv1(tradeStates)
+                break
+            case 'DIGIBYTE':
+                DigibyteACCTv1(tradeStates)
+                break
+            case 'RAVENCOIN':
+                RavencoinACCTv1(tradeStates)
                 break
             default:
                 break
@@ -1689,6 +1843,12 @@ class TradePortal extends LitElement {
                 case 'DOGECOIN':
                     _receivingAddress = this.selectedAddress.dogeWallet.address
                     break
+                case 'DIGIBYTE':
+                    _receivingAddress = this.selectedAddress.dgbWallet.address
+                    break
+				case 'RAVENCOIN':
+                    _receivingAddress = this.selectedAddress.rvnWallet.address
+                    break
                 default:
                     break
             }
@@ -1748,6 +1908,12 @@ class TradePortal extends LitElement {
                 break
             case 'DOGECOIN':
                 _foreignKey = this.selectedAddress.dogeWallet.derivedMasterPrivateKey
+                break
+            case 'DIGIBYTE':
+                _foreignKey = this.selectedAddress.dgbWallet.derivedMasterPrivateKey
+                break
+			case 'RAVENCOIN':
+                _foreignKey = this.selectedAddress.rvnWallet.derivedMasterPrivateKey
                 break
             default:
                 break
