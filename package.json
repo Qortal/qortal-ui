@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "electron-updater": "5.0.1",
-    "electron-log": "4.4.6"
+    "electron-log": "4.4.7"
   },
   "devDependencies": {
     "electron": "17.4.3",

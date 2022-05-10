@@ -14,7 +14,8 @@
     "portuguese": "Portugais",
     "hungarian": "Hongrois",
     "serbian": "Serbe",
-    "italian": "Italien"
+    "italian": "Italien",
+    "russian": "Russe"
   },
   "sidemenu": {
     "mintingdetails": "DETAILS DE FRAPPE",
@@ -186,7 +187,7 @@
     "wchange14": "Date",
     "wchange15": "Signature de la transaction",
     "wchange16": "Hachage de la transaction",
-    "wchange17": "Envoyé",
+    "wchange17": "Envoyer",
     "wchange18": "Depuis l'adresse",
     "wchange19": "Solde disponible",
     "wchange20": "A (adresse ou nom)",

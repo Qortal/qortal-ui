@@ -17,7 +17,6 @@ class SidenavMenu extends connect(store)(LitElement) {
             urls: { type: Object },
             theme: { type: String, reflect: true }
         }
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     static get styles() {
@@ -50,6 +49,7 @@ class SidenavMenu extends connect(store)(LitElement) {
     constructor() {
         super()
         this.urls = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {

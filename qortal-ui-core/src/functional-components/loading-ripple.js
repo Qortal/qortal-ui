@@ -29,6 +29,8 @@ class LoadingRipple extends LitElement {
     static get styles () {
         return css`
             * {
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
                 --paper-spinner-color: var(--mdc-theme-secondary);
             }
 
@@ -53,7 +55,7 @@ class LoadingRipple extends LitElement {
                 height:200vmax;
                 width:200vmax;
                 overflow:hidden;
-                background: var(--mdc-theme-primary);
+                background: var(--black);
                 transform: scale(0);
                 overflow:hidden;
             }
@@ -62,7 +64,7 @@ class LoadingRipple extends LitElement {
                 background: var(--mdc-theme-error)
             }
             #rippleShader {
-                background: var(--mdc-theme-surface);
+                background: var(--white);
                 opacity:0;
                 height:100%;
                 width:100%;
@@ -108,9 +110,9 @@ class LoadingRipple extends LitElement {
                 <div id="rippleShader"></div>
                 <div id="rippleContentWrapper">
                     <div id="rippleContent">
-                        <h1>${this.welcomeMessage}</h1>
+                        <h1 style="color: var(--black);">${this.welcomeMessage}</h1>
                         <paper-spinner-lite active></paper-spinner-lite>
-                        <p>${this.loadingMessage}</p>
+                        <p style="color: var(--black);">${this.loadingMessage}</p>
                     </div>
                 </div>
             </div>
