@@ -14,7 +14,8 @@
     "portuguese": "Portoghese",
     "hungarian": "Ungherese",
     "serbian": "Serbo",
-    "italian": "Italiano"
+    "italian": "Italiano",
+    "russian": "Russo"
   },
   "sidemenu": {
     "mintingdetails": "DETTAGLI DI MINTING",
@@ -211,7 +212,9 @@
     "wchange39": "Impossibile copiare l'indirizzo.",
     "wchange40": "PAGAMENTO",
     "wchange41": "Stato",
-    "wchange42": "Conferme"
+    "wchange42": "Conferme",
+    "wchange43": "La tua transazione non verrà mostrata fino a quando non sarà confermata, sii paziente...",
+    "wchange44": "Per favore riprova..."
   },
   "tradepage": {
     "tchange1": "Portale commerciale",
@@ -434,10 +437,15 @@
     "wcchange9": "Invio fallito, riprovare..."
   },
   "blockpage": {
-    "bcchange1": "blocco",
+    "bcchange1": "Blocca Utente",
     "bcchange2": "Bloccato con successo questo utente!",
     "bcchange3": "Si è verificato un errore durante il tentativo di bloccare questo utente. Per favore, riprova!",
-    "bcchange4": "Nessun nome registrato"
+    "bcchange4": "Nessun nome registrato",
+    "bcchange5": "Blocca richiesta utente",
+    "bcchange6": "Sei sicuro di bloccare questo utente?",
+    "bcchange7": "MENÙ",
+    "bcchange8": "Copia Indirizzo",
+    "bcchange9": "Messaggio Privato"
   },
   "grouppage": {
     "gchange1": "Gruppi Qortal",

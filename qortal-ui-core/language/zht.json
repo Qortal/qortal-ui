@@ -14,7 +14,8 @@
     "portuguese": "葡萄牙文",
     "hungarian": "匈牙利文",
     "serbian": "塞爾維亞文",
-    "italian": "意大利文"
+    "italian": "意大利文",
+    "russian": "俄語"
   },
   "sidemenu": {
     "mintingdetails": "鑄幣信息",
@@ -211,7 +212,9 @@
     "wchange39": "無法複製錢包地址.",
     "wchange40": "交易",
     "wchange41": "狀態",
-    "wchange42": "確認數"
+    "wchange42": "確認數",
+    "wchange43": "您的交易在確認之前不會顯示，請耐心等待...",
+    "wchange44": "請再試一次..."
   },
   "tradepage": {
     "tchange1": "交易門戶",
@@ -434,10 +437,15 @@
     "wcchange9": "發送失敗, 請再此嘗試..."
   },
   "blockpage": {
-    "bcchange1": "封鎖",
+    "bcchange1": "阻止用戶",
     "bcchange2": "成功封鎖此用戶!",
     "bcchange3": "嘗試封鎖此用戶時出錯。 請再試一次！",
-    "bcchange4": "沒有註冊名稱"
+    "bcchange4": "沒有註冊名稱",
+    "bcchange5": "阻止用戶請求",
+    "bcchange6": "你確定要屏蔽這個用戶嗎？",
+    "bcchange7": "菜單",
+    "bcchange8": "複製地址",
+    "bcchange9": "私人讯息"
   },
   "grouppage": {
     "gchange1": "Qortal 群組",

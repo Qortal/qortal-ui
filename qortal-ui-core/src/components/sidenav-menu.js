@@ -3,7 +3,6 @@ import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { translate, translateUnsafeHTML } from 'lit-translate'
 
-import '@material/mwc-icon'
 import '@polymer/paper-ripple'
 import '@vaadin/icon'
 import '@vaadin/icons'
@@ -18,7 +17,6 @@ class SidenavMenu extends connect(store)(LitElement) {
             urls: { type: Object },
             theme: { type: String, reflect: true }
         }
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     static get styles() {
@@ -51,6 +49,7 @@ class SidenavMenu extends connect(store)(LitElement) {
     constructor() {
         super()
         this.urls = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {

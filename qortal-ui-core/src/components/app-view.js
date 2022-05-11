@@ -13,9 +13,6 @@ import './show-plugin.js'
 import './qort-theme-toggle.js'
 import './language-selector.js'
 
-import '@material/mwc-drawer'
-import '@material/mwc-icon'
-
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
 

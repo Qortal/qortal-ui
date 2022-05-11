@@ -14,7 +14,8 @@
     "portuguese": "Portugalski",
     "hungarian": "Mađarski",
     "serbian": "Srpski",
-    "italian": "Talijanski"
+    "italian": "Talijanski",
+    "russian": "Ruski"
   },
   "sidemenu": {
     "mintingdetails": "DETALJI O MINTANJU",
@@ -211,7 +212,9 @@
     "wchange39": "Nije moguće kopirati adresu.",
     "wchange40": "PLAĆANJE",
     "wchange41": "Status",
-    "wchange42": "Potvrde"
+    "wchange42": "Potvrde",
+    "wchange43": "Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
+    "wchange44": "Molim te pokušaj ponovno..."
   },
   "tradepage": {
     "tchange1": "Portal razmjene",
@@ -434,10 +437,15 @@
     "wcchange9": "Slanje neuspješno, molimo ponovite..."
   },
   "blockpage": {
-    "bcchange1": "blokiraj",
+    "bcchange1": "Blokirati Korisnika",
     "bcchange2": "Uspješno blokiran ovaj korisnik",
     "bcchange3": "Došlo je do pogreške prilikom pokušaja blokiranja ovog korisnika. Molimo pokušajte ponovno!",
-    "bcchange4": "Nema registrirano ime"
+    "bcchange4": "Nema registrirano ime",
+    "bcchange5": "Blokiraj korisnički zahtjev",
+    "bcchange6": "Jeste li sigurni da ćete blokirati ovog korisnika?",
+    "bcchange7": "MENI",
+    "bcchange8": "Kopiraj Adresu",
+    "bcchange9": "Privatna Poruka"
   },
   "grouppage": {
     "gchange1": "Qortal Grupe",

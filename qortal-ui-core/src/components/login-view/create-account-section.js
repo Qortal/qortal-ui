@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
 import FileSaver from 'file-saver'
@@ -121,24 +121,27 @@ class CreateAccountSection extends connect(store)(LitElement) {
                     const rePassword = this.shadowRoot.getElementById('rePassword').value
 
                     if (password === '') {
+                        let snackbar1string = get("login.pleaseenter")
                         snackbar.add({
-                            labelText: this.renderEnterPassText(),
+                            labelText: `${snackbar1string}`,
                             dismiss: true
                         })
                         return
                     }
 
                     if (password != rePassword) {
+                        let snackbar2string = get("login.notmatch")
                         snackbar.add({
-                            labelText: this.renderNotMatchText(),
+                            labelText: `${snackbar2string}`,
                             dismiss: true
                         })
                         return
                     }
 
                     if (password.length < 8 && lastPassword !== password) {
+                        let snackbar3string = get("login.lessthen8")
                         snackbar.add({
-                            labelText: this.renderLessText(),
+                            labelText: `${snackbar3string}`,
                             dismiss: true
                         })
                         lastPassword = password
@@ -146,8 +149,9 @@ class CreateAccountSection extends connect(store)(LitElement) {
                     }
 
                     if (this.saveAccount === true && nameInput === '') {
+                        let snackbar4string = get("login.entername")
                         snackbar.add({
-                            labelText: this.renderEnterNameText(),
+                            labelText: `${snackbar4string}`,
                             dismiss: true
                         })
                         return
@@ -194,8 +198,9 @@ class CreateAccountSection extends connect(store)(LitElement) {
             backup: {
                 next: e => {
                     if (!this.isDownloadedBackup) {
+                        let snackbar5string = get("login.downloaded")
                         snackbar.add({
-                            labelText: this.renderBackupText(),
+                            labelText: `${snackbar5string}`,
                             dismiss: true
                         })
                     } else {
@@ -494,28 +499,8 @@ class CreateAccountSection extends connect(store)(LitElement) {
         return html`${translate("login.prepare")}`
     }
 
-    renderBackupText() {
-        return html`${translate("login.downloaded")}`
-    }
-
     renderWelcomeText() {
         return html`${translate("login.welmessage")}`
-    }
-
-    renderEnterPassText() {
-        return html`${translate("login.pleaseenter")}`
-    }
-
-    renderNotMatchText() {
-        return html`${translate("login.notmatch")}`
-    }
-
-    renderLessText() {
-        return html`${translate("login.lessthen8")}`
-    }
-
-    renderEnterNameText() {
-        return html`${translate("login.entername")}`
     }
 
     renderLoadingText() {
