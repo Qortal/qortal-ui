@@ -101,6 +101,7 @@ class RewardShare extends LitElement {
                 <div style="min-height:48px; display: flex; padding-bottom: 6px;">
                     <h3 style="margin: 0; flex: 1; padding-top: 8px; display: inline;">${translate("rewardsharepage.rchange1")}</h3>
                     <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createRewardShareDialog').show()}><mwc-icon>add</mwc-icon>${translate("rewardsharepage.rchange2")}</mwc-button>
+					<mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#createSelfShareDialog').show()}><mwc-icon>add</mwc-icon>${translate("rewardsharepage.rchange16")}</mwc-button>
                 </div>
 
                 <div class="divCard">
@@ -151,6 +152,44 @@ class RewardShare extends LitElement {
                         ?disabled="${this.createRewardShareLoading}"
                         slot="primaryAction"
                         @click=${this.createRewardShare}
+                    >
+                    ${translate("rewardsharepage.rchange14")}
+                    </mwc-button>
+                    <mwc-button
+                        ?disabled="${this.createRewardShareLoading}"
+                        slot="secondaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                     >
+                     ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="createSelfShareDialog" scrimClickAction="${this.createRewardShareLoading ? '' : 'close'}">
+                    <div>${translate("rewardsharepage.rchange9")}</div>
+                    <br>
+                    <div>${translate("rewardsharepage.rchange10")}:<br>${this.selectedAddress.base58PublicKey}</div>
+                    <p style="margin-bottom:0;">
+                        ${translate("rewardsharepage.rchange11")}: 0
+                    </p>
+                    <div style="text-align:right; height:36px;">
+                        <span ?hidden="${!this.createRewardShareLoading}">
+                            <!-- loading message -->
+                            ${translate("rewardsharepage.rchange13")} &nbsp;
+                            <paper-spinner-lite
+                                style="margin-top:12px;"
+                                ?active="${this.createRewardShareLoading}"
+                                alt="${translate("rewardsharepage.rchange13")}"></paper-spinner-lite>
+                        </span>
+                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
+                            ${this.message}
+                        </span>
+                    </div>
+                    
+                    <mwc-button
+                        ?disabled="${this.createRewardShareLoading}"
+                        slot="primaryAction"
+                        @click=${this.createSelfShare}
                     >
                     ${translate("rewardsharepage.rchange14")}
                     </mwc-button>
@@ -313,6 +352,167 @@ class RewardShare extends LitElement {
         this.message = ''
         const recipientPublicKey = this.shadowRoot.getElementById("recipientPublicKey").value
         const percentageShare = this.shadowRoot.getElementById("rewardSharePercentageSlider").value
+
+        // Check for valid...
+        this.createRewardShareLoading = true
+
+        let recipientAddress = window.parent.base58PublicKeyToAddress(recipientPublicKey)
+
+        // Get Last Ref
+        const getLastRef = async () => {
+            let myRef = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.selectedAddress.address}`
+            })
+            return myRef
+        };
+
+        // Get Account Details
+        const getAccountDetails = async () => {
+            let myAccountDetails = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/${this.selectedAddress.address}`
+            })
+            return myAccountDetails
+        };
+
+        // Get Reward Relationship if it already exists
+        const getRewardShareRelationship = async (minterAddr) => {
+            let isRewardShareExisting = false
+            let myRewardShareArray = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/rewardshares?minters=${minterAddr}&recipients=${recipientAddress}`
+            })
+            isRewardShareExisting = myRewardShareArray.length !== 0 ? true : false
+            return isRewardShareExisting
+        }
+
+        // Validate Reward Share by Level
+        const validateReceiver = async () => {
+            let accountDetails = await getAccountDetails();
+            let lastRef = await getLastRef();
+            let isExisting = await getRewardShareRelationship(this.selectedAddress.address)
+
+            // Check for creating self share at different levels (also adding check for flags...)
+            if (accountDetails.flags === 1) {
+                this.error = false
+                this.message = ''
+                let myTransaction = await makeTransactionRequest(lastRef)
+                if (isExisting === true) {
+                    this.error = true
+                    this.message = `Cannot Create Multiple Reward Shares!`
+                } else {
+                    // Send the transaction for confirmation by the user
+                    this.error = false
+                    this.message = ''
+                    getTxnRequestResponse(myTransaction)
+                }
+            } else if (accountDetails.address === recipientAddress) {
+                if (accountDetails.level >= 1 && accountDetails.level <= 4) {
+                    this.error = false
+                    this.message = ''
+                    let myTransaction = await makeTransactionRequest(lastRef)
+                    if (isExisting === true) {
+                        let err1string = get("rewardsharepage.rchange18")
+                        this.error = true
+                        this.message = `${err1string}`
+                    } else {
+                        // Send the transaction for confirmation by the user
+                        this.error = false
+                        this.message = ''
+                        getTxnRequestResponse(myTransaction)
+                    }
+                } else if (accountDetails.level >= 5) {
+
+                    this.error = false
+                    this.message = ''
+                    let myTransaction = await makeTransactionRequest(lastRef)
+                    if (isExisting === true) {
+                        let err2string = get("rewardsharepage.rchange19")
+                        this.error = true
+                        this.message = `${err2string}`
+                    } else {
+                        // Send the transaction for confirmation by the user
+                        this.error = false
+                        this.message = ''
+                        getTxnRequestResponse(myTransaction)
+                    }
+                } else {
+                    let err3string = get("rewardsharepage.rchange20")
+                    this.error = true
+                    this.message = `${err3string} ${accountDetails.level}`
+                }
+            } else {
+                //Check for creating reward shares
+                if (accountDetails.level >= 5) {
+                    this.error = false
+                    this.message = ''
+                    let myTransaction = await makeTransactionRequest(lastRef)
+                    if (isExisting === true) {
+                        let err4string = get("rewardsharepage.rchange18")
+                        this.error = true
+                        this.message = `${err4string}`
+                    } else {
+                        // Send the transaction for confirmation by the user
+                        this.error = false
+                        this.message = ''
+                        getTxnRequestResponse(myTransaction)
+                    }
+                } else {
+                    this.error = true
+                    let err5string = get("rewardsharepage.rchange20")
+                    this.message = `${err5string} ${accountDetails.level}`
+                }
+            }
+        }
+
+        // Make Transaction Request
+        const makeTransactionRequest = async (lastRef) => {
+            let mylastRef = lastRef
+            let rewarddialog1 = get("transactions.rewarddialog1")
+            let rewarddialog2 = get("transactions.rewarddialog2")
+            let rewarddialog3 = get("transactions.rewarddialog3")
+            let rewarddialog4 = get("transactions.rewarddialog4")
+            let myTxnrequest = await parentEpml.request('transaction', {
+                type: 38,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    recipientPublicKey,
+                    percentageShare,
+                    lastReference: mylastRef,
+                    rewarddialog1: rewarddialog1,
+                    rewarddialog2: rewarddialog2,
+                    rewarddialog3: rewarddialog3,
+                    rewarddialog4: rewarddialog4,
+                }
+            })
+            return myTxnrequest
+        }
+
+        const getTxnRequestResponse = (txnResponse) => {
+            if (txnResponse.success === false && txnResponse.message) {
+                this.error = true
+                this.message = txnResponse.message
+                throw new Error(txnResponse)
+            } else if (txnResponse.success === true && !txnResponse.data.error) {
+                let err6string = get("rewardsharepage.rchange21")
+                this.message = err6string
+                this.error = false
+            } else {
+                this.error = true
+                this.message = txnResponse.data.message
+                throw new Error(txnResponse)
+            }
+        }
+        validateReceiver()
+        this.createRewardShareLoading = false
+    }
+
+    async createSelfShare(e) {
+        this.error = false
+        this.message = ''
+        const recipientPublicKey = this.selectedAddress.base58PublicKey
+        const percentageShare = 0
 
         // Check for valid...
         this.createRewardShareLoading = true
