@@ -15,7 +15,8 @@
     "hungarian": "匈牙利文",
     "serbian": "塞尔维亚文",
     "italian": "意大利文",
-    "russian": "俄语"
+    "russian": "俄语",
+    "norwegian": "挪威语"
   },
   "sidemenu": {
     "mintingdetails": "铸币信息",
@@ -437,15 +438,15 @@
     "wcchange9": "发送失败, 请再此尝试..."
   },
   "blockpage": {
-    "bcchange1": "阻止用户",
+    "bcchange1": "封锁用户",
     "bcchange2": "成功封锁此用户!",
     "bcchange3": "尝试封锁此用户时出错。 请再试一次！",
     "bcchange4": "没有注册名称",
-    "bcchange5": "阻止用户请求",
-    "bcchange6": "你确定要屏蔽这个用户吗？",
+    "bcchange5": "封锁用户请求",
+    "bcchange6": "你确定要封锁这个用户吗？",
     "bcchange7": "菜单",
     "bcchange8": "复制地址",
-    "bcchange9": "私人讯息"
+    "bcchange9": "私人信息"
   },
   "grouppage": {
     "gchange1": "Qortal 群组",
