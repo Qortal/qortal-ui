@@ -151,7 +151,7 @@ class LevelFounder extends LitElement {
     renderLevel() {
         let adresslevel = this.memberInfo.level
         return html `
-            <span id="levelTooltip">Level ${adresslevel}</span>
+            <span id="levelTooltip">${translate("mintingpage.mchange27")} ${adresslevel}</span>
         `
     }
 
