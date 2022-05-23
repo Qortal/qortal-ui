@@ -10,6 +10,7 @@ registerTranslateConfig({
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
+import './LevelFounder.js'
 import './NameMenu.js'
 import './TimeAgo.js'
 import { EmojiPicker } from 'emoji-picker-js';
@@ -356,6 +357,8 @@ class ChatPage extends LitElement {
     chatMessageTemplate(messageObj) {
         let avatarImg = '';
         let nameMenu = '';
+        let levelFounder = '';
+
         if (messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -369,10 +372,13 @@ class ChatPage extends LitElement {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
 
+        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
+
         return `
             <li class="clearfix">
                 <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "align-right" : ""}">
                     <span class="message-data-name">${nameMenu}</span>
+                    <span class="message-data-level">${levelFounder}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>

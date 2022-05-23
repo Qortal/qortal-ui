@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 
+import './LevelFounder.js'
 import './NameMenu.js'
 
 import '@material/mwc-button'
@@ -74,6 +75,13 @@ class ChatScroller extends LitElement {
         .message-data-name {
             color: var(--black);
             cursor: pointer;
+        }
+
+        .message-data-level {
+            color: #03a9f4;
+            font-size: 13px;
+            padding-left: 8px;
+            padding-bottom: 4px;
         }
 
         .message-data-time {
@@ -203,6 +211,8 @@ class ChatScroller extends LitElement {
     chatMessageTemplate(messageObj) {
         let avatarImg = '';
         let nameMenu = '';
+        let levelFounder = '';
+
         if (messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -216,12 +226,14 @@ class ChatScroller extends LitElement {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
 
+        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
+
         return `
             <li class="clearfix">
                 <div class="message-data ${messageObj.sender === this.myAddress ? "align-right" : ""}">
                     <span class="message-data-name">${nameMenu}</span>
+                    <span class="message-data-level">${levelFounder}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
-                    </div>
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>

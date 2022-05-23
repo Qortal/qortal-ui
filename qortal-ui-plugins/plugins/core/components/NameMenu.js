@@ -190,7 +190,7 @@ class NameMenu extends LitElement {
         return html`
             <div class="dropdown">
                 <a class="block" id="myNameMenu" href="#" @click="${() => this.myMenu()}">${this.nametodialog}</a>
-                <paper-tooltip class="custom" for="myNameMenu" position="right">${translate("blockpage.bcchange7")}</paper-tooltip>
+                <paper-tooltip class="custom" for="myNameMenu" position="top">${translate("blockpage.bcchange7")}</paper-tooltip>
                 <div id="myDropdown" class="dropdown-content">
                     <span>${this.nametodialog}</span>
                     <hr style="color: var(--nav-text-color); border-radius: 90%;">
