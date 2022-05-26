@@ -7,7 +7,8 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-import '../components/ButtonIconCopy'
+import '../components/ButtonIconCopy.js'
+import '../components/QortalQrcodeGenerator.js'
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
@@ -49,7 +50,7 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-			rvnRecipient: { type: String },
+		rvnRecipient: { type: String },
             rvnAmount: { type: Number },
             errorMessage: { type: String },
             successMessage: { type: String },
@@ -61,7 +62,7 @@ class MultiWallet extends LitElement {
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
-			rvnFeePerByte: { type: Number },
+		rvnFeePerByte: { type: Number },
             balanceString: { type: String }
         }
     }
@@ -500,6 +501,11 @@ class MultiWallet extends LitElement {
                 margin-top: 15px;
             }
 
+            .qrcode-pos {
+                margin-top: -180px;
+                margin-left: 425px;
+            }
+
             @media (max-width: 863px) {
                 .wallet {
                     width: 100%;
@@ -599,7 +605,7 @@ class MultiWallet extends LitElement {
         this.ltcRecipient = ''
         this.dogeRecipient = ''
         this.dgbRecipient = ''
-		this.rvnRecipient = ''
+        this.rvnRecipient = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.sendMoneyLoading = false
@@ -611,7 +617,7 @@ class MultiWallet extends LitElement {
         this.ltcAmount = 0
         this.dogeAmount = 0
         this.dgbAmount = 0
-		this.rvnAmount = 0
+        this.rvnAmount = 0
         this.btcFeePerByte = 100
         this.btcSatMinFee = 20
         this.btcSatMaxFee = 150
@@ -624,7 +630,7 @@ class MultiWallet extends LitElement {
         this.dgbFeePerByte = 10
         this.dgbSatMinFee = 1
         this.dgbSatMaxFee = 100
-		this.rvnFeePerByte = 1125
+        this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
 
@@ -647,7 +653,7 @@ class MultiWallet extends LitElement {
         this.wallets.get('ltc').wallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet
         this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
         this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
-		this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+        this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
 
         this._selectedWallet = 'qort'
 
@@ -699,7 +705,7 @@ class MultiWallet extends LitElement {
                             <div class="currency-image"></div>
                             <div class="currency-text">Digibyte</div>
                         </div>
-						<div coin="rvn" class="currency-box rvn">
+				<div coin="rvn" class="currency-box rvn">
                             <div class="currency-image"></div>
                             <div class="currency-text">Ravencoin</div>
                         </div>
@@ -721,13 +727,16 @@ class MultiWallet extends LitElement {
                                 color="var(--copybutton)"
                                 offsetLeft="4px"
                             >
-                            </button-icon-copy> 
+                            </button-icon-copy>
                         </div>
                         <span class="wallet-balance">
                             ${this.balanceString}<br><br>
                             ${this.renderSendButton()}
                         </span>
                     </h2>
+                    <div class="qrcode-pos">
+                        <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
+                    </div>
                     <div id="transactions">
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
