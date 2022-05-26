@@ -21,7 +21,7 @@ class NodeManagement extends LitElement {
         return {
             loading: { type: Boolean },
             upTime: { type: String },
-            type: { type: String},
+            nodeType: { type: String},
             mintingAccounts: { type: Array },
             peers: { type: Array },
             addMintingAccountLoading: { type: Boolean },
@@ -127,7 +127,7 @@ class NodeManagement extends LitElement {
     constructor() {
         super();
         this.upTime = "";
-        this.type = "";
+        this.nodeType = "";
         this.mintingAccounts = [];
         this.peers = [];
         this.addPeerLoading = false;
@@ -156,7 +156,7 @@ class NodeManagement extends LitElement {
 				<h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
 				<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
 				<span class="sblack"><br />${translate("nodepage.nchange2")} ${this.upTime}</span>
-                <span class="sblack"><br />${translate("nodepage.nchange33")} ${this.type}</span>
+                <span class="sblack"><br />${translate("nodepage.nchange33")} ${this.nodeType}</span>
 				<br /><br />
 				<div id="minting">
 					<div style="min-height:48px; display: flex; padding-bottom: 6px;">
@@ -346,6 +346,22 @@ class NodeManagement extends LitElement {
             setTimeout(getNodeUpTime, this.config.user.nodeSettings.pingInterval);
         };
 
+        const getNodeType = () => {
+            parentEpml
+                .request("apiCall", {
+                    url: `/admin/info`,
+                    body: `type`,
+                })
+                .then((res) => {
+                    this.nodeType = "";
+                    setTimeout(() => {
+                        this.nodeType = res;
+                    }, 1);
+                });
+
+            setTimeout(getNodeType, this.config.user.nodeSettings.pingInterval);
+        };
+
         const updatePeers = () => {
             parentEpml
                 .request("apiCall", {
@@ -378,6 +394,7 @@ class NodeManagement extends LitElement {
             parentEpml.subscribe("config", async c => {
                 if (!configLoaded) {
                     setTimeout(getNodeUpTime, 1);
+                    setTimeout(getNodeType, 1)
                     setTimeout(updatePeers, 1);
                     setTimeout(this.updateMintingAccounts, 1);
                     setTimeout(getNodeConfig, 1);
@@ -432,23 +449,6 @@ class NodeManagement extends LitElement {
                 let err3string = get("nodepage.nchange25")
                 parentEpml.request('showSnackBar', `${err3string}` + peerAddress);
             });
-    }
-
-    getNodeType(type) {
-        parentEpml
-            .request("apiCall", {
-                url: `/admin/info`,
-                method: "GET",
-                body: type,
-            })
-            .then((res) => {
-                this.type = "";
-                setTimeout(() => {
-                    this.type = res;
-                }, 1);
-            });
-        setTimeout(this.getNodeType, this.config.user.nodeSettings.pingInterval);
-        console.log(type)
     }
 
     removePeer(peerAddress, rowIndex) {
