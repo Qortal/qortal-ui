@@ -91,7 +91,7 @@ class TradePortal extends LitElement {
 			border-left: 1px solid var(--tradeborder);
 			border-top: 1px solid var(--tradeborder);
 			border-right: 1px solid var(--tradeborder);
-                        color: var(--black);
+                  color: var(--black);
 		}
 
 		#tab-buy[active] {
@@ -440,7 +440,7 @@ class TradePortal extends LitElement {
             openTradeOrders: null,
             tradeOffersSocketCounter: 1,
             coinAmount: this.amountString,
-            tradeFee: "~0.0005"
+            tradeFee: "~0.0001"
         }
 
         let litecoin = {
@@ -491,7 +491,7 @@ class TradePortal extends LitElement {
             tradeFee: "~0.0005"
         }
 
-		let ravencoin = {
+	  let ravencoin = {
             name: "RAVENCOIN",
             balance: "0",
             coinCode: "RVN",
@@ -513,7 +513,7 @@ class TradePortal extends LitElement {
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
-		this.listedCoins.set("RAVENCOIN", ravencoin)
+	  this.listedCoins.set("RAVENCOIN", ravencoin)
 
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
@@ -540,7 +540,7 @@ class TradePortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
-		workers.set("RAVENCOIN", {
+	  workers.set("RAVENCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -1101,8 +1101,8 @@ class TradePortal extends LitElement {
             case 'DIGIBYTE':
                 _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-				break
-			case 'RAVENCOIN':
+		    break
+		case 'RAVENCOIN':
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
@@ -1663,7 +1663,7 @@ class TradePortal extends LitElement {
             const startOfferPresenceMapping = async () => {
                 if (presenceTxns !== null) {
                     await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(5)
+                        await waitFor(50)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
                     })
@@ -1671,7 +1671,7 @@ class TradePortal extends LitElement {
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
-                        await waitFor(5)
+                        await waitFor(50)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
                     })
@@ -1818,19 +1818,19 @@ class TradePortal extends LitElement {
         }
 
         const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 5000)
+            setTimeout(() => initPresenceWebSocket(true), 2000)
         }
 
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 5000)
+            setTimeout(() => initTradePresenceWebSocket(true), 2000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 5000)
+            setTimeout(() => initTradeOffersWebSocket(true), 2000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 5000)
+            setTimeout(() => initTradeBotWebSocket(true), 2000)
         }
 
         // Start TradeOffersWebSocket
@@ -2364,11 +2364,11 @@ class TradePortal extends LitElement {
             self.postMessage({ type: 'STUCK_OFFERS', data: stuckOffers })
         }
 
-        // Get Historic Trades
-        getCompletedTrades()
-
         // Get Offers
-        getOffers()
+        setTimeout(() => { getOffers() }, 1000)
+
+        // Get Historic Trades
+        setTimeout(() => { getCompletedTrades() }, 1000)
     }
 
     filterStuckTrades(states) {
