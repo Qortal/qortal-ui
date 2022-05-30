@@ -242,9 +242,20 @@ class TradePortal extends LitElement {
 		.amt-text {
 			color: var(--tradehave);
 			font-size: 15px;
-			text-align: right;
-			margin-top: 2px;
-			margin-bottom: 10px;
+			margin-top: 5px;
+			margin-bottom: 12px;
+		}
+
+		.balance-text {
+                  display: inline;
+			float: right;
+			margin-bottom: 5px;
+		}
+
+		.fee-text {
+                  display: inline;
+			float: left;
+			margin-bottom: 5px;
 		}
 
 		.tab-text {
@@ -666,7 +677,7 @@ class TradePortal extends LitElement {
 							<div style="margin-left: auto">
 								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 							</div>
-                                                        <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -680,7 +691,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -694,7 +705,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -718,8 +729,10 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="amt-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
-							<span class="amt-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get(this.selectedCoin).tradeFee} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+							<span class="amt-text">
+                                              <span class="balance-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+                                              <span class="fee-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get(this.selectedCoin).tradeFee} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+                                          </span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
@@ -749,7 +762,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -764,7 +777,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -778,8 +791,10 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="amt-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get("QORTAL").balance} QORT</span>
-							<span class="amt-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get("QORTAL").tradeFee} QORT</span>
+							<span class="amt-text">
+                                              <span class="balance-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get("QORTAL").balance} QORT</span>
+							    <span class="fee-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get("QORTAL").tradeFee} QORT</span>
+                                          </span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
