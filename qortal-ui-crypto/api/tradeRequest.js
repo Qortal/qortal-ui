@@ -101,3 +101,45 @@ export const sendDoge = (requestObject) => {
         body: JSON.stringify(requestObject)
     })
 }
+
+// Send DGB 
+export const sendDgb = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+
+    return request(`/crosschain/dgb/send?apiKey=${myNode.apiKey}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestObject)
+    })
+}
+
+// Send RVN 
+export const sendRvn = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+
+    return request(`/crosschain/rvn/send?apiKey=${myNode.apiKey}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestObject)
+    })
+}
+
+// Send QRL
+export const sendQrl = (requestObject) => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+
+    return request(`/crosschain/qrl/send?apikey=${myNode.apiKey}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestObject)
+    })
+}
