@@ -5,6 +5,7 @@ import jsSHA from "jssha";
 import RIPEMD160 from '../deps/ripemd160.js'
 import utils from '../deps/utils.js'
 import { EllipticCurve, BigInteger } from './ecbn.js';
+import '../deps/sha3.js'
 
 
 export default class AltcoinHDWallet {
