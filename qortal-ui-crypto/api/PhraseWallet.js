@@ -174,12 +174,12 @@ export default class PhraseWallet {
             mainnet: {
                 private: 0000000000, //unknown
                 public: 0000000000, //unknown
-                prefix: 0000 //unknown
+                prefix: 0x3A
             },
             testnet: {
-                private: 0000000000, //unknown
-                public: 0000000000, //unknown
-                prefix: 0000 //unknown
+                private: 0, //unknown
+                public: 0, //unknown
+                prefix: 0x3A
             }
         }).createWallet(new Uint8Array(qrlSeed), false, 'QRL');
 
