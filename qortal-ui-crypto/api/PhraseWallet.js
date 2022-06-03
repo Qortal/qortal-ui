@@ -181,7 +181,7 @@ export default class PhraseWallet {
                 public: 0, //unknown
                 prefix: 0x3A
             }
-        }).createWallet(new Uint8Array(qrlSeed), false, 'QRL');
+        }).createQrlWallet(new Uint8Array(qrlSeed), false, 'QRL');
 
         this._addresses[nonce] = {
             address,
