@@ -380,6 +380,7 @@ class ChatPage extends LitElement {
                     <span class="message-data-name">${nameMenu}</span>
                     <span class="message-data-level">${levelFounder}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
+                    <span class="hide float-right"><mwc-icon class="iconsRight padright5">add_reaction</mwc-icon><mwc-icon class="iconsRight padright5">reply</mwc-icon><mwc-icon class="iconsRight">more_horiz</mwc-icon></span>
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>

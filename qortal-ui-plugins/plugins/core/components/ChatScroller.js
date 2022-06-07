@@ -69,7 +69,14 @@ class ChatScroller extends LitElement {
         }
 
         .message-data {
+            width: 90%;
+            background: transparent;
             margin-bottom: 15px;
+        }
+
+        .message-data:hover .hide {
+            color: #03a9f4;
+            display: inline;
         }
 
         .message-data-name {
@@ -147,6 +154,10 @@ class ChatScroller extends LitElement {
             left: 7%;
         }
 
+        .hide {
+            display: none;
+        }
+
         .align-left {
             text-align: left;
         }
@@ -163,6 +174,10 @@ class ChatScroller extends LitElement {
             float: right;
         }
 
+        .padright5 {
+            padding-right: 5px;
+        }
+
         .clearfix:after {
             visibility: hidden;
             display: block;
@@ -174,6 +189,11 @@ class ChatScroller extends LitElement {
 
         img {
             border-radius: 25%;
+        }
+
+        .iconsRight {
+            color: #a8aab1;
+            --mdc-icon-size: 18px;
         }
         `
     }
@@ -234,6 +254,7 @@ class ChatScroller extends LitElement {
                     <span class="message-data-name">${nameMenu}</span>
                     <span class="message-data-level">${levelFounder}</span>
                     <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
+                    <span class="hide float-right"><mwc-icon class="iconsRight padright5">add_reaction</mwc-icon><mwc-icon class="iconsRight padright5">reply</mwc-icon><mwc-icon class="iconsRight">more_horiz</mwc-icon></span>
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>

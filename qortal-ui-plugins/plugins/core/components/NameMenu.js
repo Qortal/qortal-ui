@@ -22,6 +22,7 @@ class NameMenu extends LitElement {
         return {
             toblockaddress: { type: String, attribute: true },
             nametodialog: { type: String, attribute: true },
+            messagesignatur: { type: String, attribute: true },
             chatBlockedAdresses: { type: Array },
             selectedAddress: { type: Object },
             config: { type: Object },
@@ -117,8 +118,9 @@ class NameMenu extends LitElement {
             .dropdown-content {
                 display: none;
                 position: absolute;
-                bottom: 25px;
-                left: 10px;
+                bottom: -75px;
+                right: 25px;
+                text-align: center;
                 background-color: var(--white);
                 min-width: 200px;
                 overflow: auto;
@@ -172,6 +174,15 @@ class NameMenu extends LitElement {
                 resize: none;
                 background: #eee;
             }
+
+            .iconsRight {
+                color: #a8aab1;
+                --mdc-icon-size: 18px;
+            }
+
+            .padright5 {
+                padding-right: 5px;
+            }
         `
     }
 
@@ -189,7 +200,7 @@ class NameMenu extends LitElement {
     render() {
         return html`
             <div class="dropdown">
-                <a class="block" id="myNameMenu" href="#" @click="${() => this.myMenu()}">${this.nametodialog}</a>
+                <a class="block" id="myNameMenu" href="#" @click="${() => this.myMenu()}"><mwc-icon class="iconsRight">more_horiz</mwc-icon></a>
                 <paper-tooltip class="custom" for="myNameMenu" position="top">${translate("blockpage.bcchange7")}</paper-tooltip>
                 <div id="myDropdown" class="dropdown-content">
                     <span>${this.nametodialog}</span>
@@ -250,9 +261,9 @@ class NameMenu extends LitElement {
         this.changeLanguage()
         this.getChatBlockedAdresses()
 
-	setInterval(() => {
-	    this.getChatBlockedAdresses();
-	}, 60000)
+	  setInterval(() => {
+	      this.getChatBlockedAdresses();
+	  }, 60000)
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')

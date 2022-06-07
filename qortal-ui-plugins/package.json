@@ -22,7 +22,7 @@
     "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js"
   },
   "devDependencies": {
-    "@babel/core": "7.18.0",
+    "@babel/core": "7.18.2",
     "@github/time-elements": "3.1.2",
     "@material/mwc-button": "0.26.1",
     "@material/mwc-checkbox": "0.26.1",
@@ -46,14 +46,14 @@
     "@rollup/plugin-commonjs": "22.0.0",
     "@rollup/plugin-node-resolve": "13.3.0",
     "@rollup/plugin-replace": "4.0.0",
-    "@vaadin/button": "23.0.10",
-    "@vaadin/grid": "23.0.10",
-    "@vaadin/icons": "23.0.10",
+    "@vaadin/button": "23.1.0",
+    "@vaadin/grid": "23.1.0",
+    "@vaadin/icons": "23.1.0",
     "epml": "0.3.3",
     "html-escaper": "3.0.3",
-    "lit": "2.2.4",
+    "lit": "2.2.5",
     "lit-translate": "2.0.1",
-    "rollup": "2.74.1",
+    "rollup": "2.75.5",
     "rollup-plugin-node-globals": "1.4.0",
     "rollup-plugin-progress": "1.1.2",
     "rollup-plugin-terser": "7.0.2"
