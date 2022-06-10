@@ -122,7 +122,7 @@ class ChatPage extends LitElement {
         this.messages = []
         this._messages = []
         this.newMessages = []
-        this.hideMessages = []
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
         this._publicKey = { key: '', hasPubKey: false }
         this.messageSignature = ''
         this._initialMessages = []
@@ -248,16 +248,11 @@ class ChatPage extends LitElement {
             }).then(res => {
                 this.balance = res
             })
-            parentEpml.request('apiCall', {
-                url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-            }).then(response => {
-                this.hideMessages = response
-                console.log(response)
-            })
-
             parentEpml.subscribe('frame_paste_menu_switch', async res => {
+
                 res = JSON.parse(res)
                 if (res.isOpen === false && this.isPasteMenuOpen === true) {
+
                     this.pasteToTextBox(textarea)
                     this.isPasteMenuOpen = false
                 }
@@ -327,7 +322,7 @@ class ChatPage extends LitElement {
             }
 
             // TODO: Determine number of initial messages by screen height...
-            this._messages.length <= 2 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 2);
+            this._messages.length <= 15 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 15);
 
             this.isLoadingMessages = false
             setTimeout(() => this.downElementObserver(), 500)
@@ -362,27 +357,27 @@ class ChatPage extends LitElement {
     * @property sender and other info..
     */
     chatMessageTemplate(messageObj) {
-        let avatarImg = '';
-        let nameMenu = '';
-        let levelFounder = '';
+        const hidemsg = this.hideMessages
 
-        if (messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
-        }
-
-        if (messageObj.sender === this.myAddress) {
-            nameMenu = `<mwc-icon class="iconsRight">more_horiz</mwc-icon>`
-        } else {
-            nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}" messagesignatur="${messageObj.signature}"></name-menu>`
-        }
+        let avatarImg = ''
+        let nameMenu = ''
+        let levelFounder = ''
+        let hideit = hidemsg.includes(messageObj.sender)
 
         levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
 
-        const hidmes = this.hideMessages
-        let hideit = hidmes.includes(messageObj.sender)
+        if (messageObj.senderName) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+        }
+
+        if (messageObj.sender === this.myAddress) {
+            nameMenu = `<span style="color: #03a9f4;">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>`
+        } else {
+            nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
+        }
 
         if ( hideit === true ) {
             return `
@@ -391,15 +386,13 @@ class ChatPage extends LitElement {
         } else {
             return `
                 <li class="clearfix">
-                    <div class="message-data ${messageObj.sender === this.myAddress ? "" : ""}">
-                        <span class="message-data-name" style="${messageObj.sender === this.myAddress ? "color: #03a9f4;" : "color: var(--black);"}">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
+                    <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "" : ""}">
+                        <span class="message-data-name">${nameMenu}</span>
                         <span class="message-data-level">${levelFounder}</span>
                         <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
-                        <span class="hide float-right">${nameMenu}</span>
                     </div>
-                    <div class="message-data-avatar" style="width: 42px; height: 42px; ${messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin: 3px;">${avatarImg}</div>
-                    <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
-                    <div class="message-data-react"></div>
+                    <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                    <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
                 </li>
             `
         }
@@ -439,22 +432,29 @@ class ChatPage extends LitElement {
 
         if (this.isReceipient === true) {
             // direct chat
+
             if (encodedMessageObj.isEncrypted === true && this._publicKey.hasPubKey === true) {
+
                 let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, this._publicKey.key, encodedMessageObj.reference)
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage }
             } else if (encodedMessageObj.isEncrypted === false) {
+
                 let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
                 let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage }
             } else {
+
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage: "Cannot Decrypt Message!" }
             }
+
         } else {
             // group chat
+
             let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
             let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
             decodedMessageObj = { ...encodedMessageObj, decodedMessage }
         }
+
         return decodedMessageObj
     }
 
@@ -1036,12 +1036,6 @@ class ChatPage extends LitElement {
             placeholder: this.chatEditorPlaceholder
         };
         this.chatEditor = new ChatEditor(editorConfig);
-    }
-
-    getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
     }
 }
 

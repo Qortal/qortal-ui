@@ -18,7 +18,7 @@ class ChatScroller extends LitElement {
             getOldMessage: { attribute: false },
             emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
-            initialMessages: { type: Array },
+            initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
             messages: { type: Array },
             hideMessages: { type: Array }
         }
@@ -75,20 +75,9 @@ class ChatScroller extends LitElement {
             margin-left: 50px;
         }
 
-        .message-data:hover .hide {
-            color: #03a9f4;
-            display: inline;
-        }
-
         .message-data-name {
+            color: var(--black);
             cursor: pointer;
-        }
-
-        .message-data-level {
-            color: #03a9f4;
-            font-size: 13px;
-            padding-left: 8px;
-            padding-bottom: 4px;
         }
 
         .message-data-time {
@@ -98,12 +87,11 @@ class ChatScroller extends LitElement {
             padding-bottom: 4px;
         }
 
-        .message-data-react {
-            margin-left: 50px;
-        }
-
-        .message-data-react-item {
-            padding-left: 6px;
+        .message-data-level {
+            color: #03a9f4;
+            font-size: 13px;
+            padding-left: 8px;
+            padding-bottom: 4px;
         }
 
         .message {
@@ -149,7 +137,7 @@ class ChatScroller extends LitElement {
 
         .my-message {
             background: #d1d1d1;
-            border: 2px solid #cecece;
+            border: 2px solid #eeeeee;
         }
 
         .my-message:after {
@@ -165,10 +153,6 @@ class ChatScroller extends LitElement {
         .other-message:after {
             border-bottom-color: #f1f1f1;
             left: 7%;
-        }
-
-        .hide {
-            display: none;
         }
 
         .align-left {
@@ -187,10 +171,6 @@ class ChatScroller extends LitElement {
             float: right;
         }
 
-        .padright5 {
-            padding-right: 5px;
-        }
-
         .clearfix:after {
             visibility: hidden;
             display: block;
@@ -203,21 +183,16 @@ class ChatScroller extends LitElement {
         img {
             border-radius: 25%;
         }
-
-        .iconsRight {
-            color: #a8aab1;
-            --mdc-icon-size: 18px;
-        }
         `
     }
 
     constructor() {
         super()
         this.messages = []
-        this.hideMessages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this.isLoading = false
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
     }
 
 
@@ -231,7 +206,6 @@ class ChatScroller extends LitElement {
     }
 
     firstUpdated() {
-        this.getHideMessages()
         this.viewElement = this.shadowRoot.getElementById('viewElement')
         this.upObserverElement = this.shadowRoot.getElementById('upObserver')
         this.downObserverElement = this.shadowRoot.getElementById('downObserver')
@@ -243,20 +217,15 @@ class ChatScroller extends LitElement {
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
     }
 
-    async getHideMessages() {
-        const hideMessages = await parentEpml.request('apiCall', {
-            url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        })
-        this.hideMessages = hideMessages
-    }
-
     chatMessageTemplate(messageObj) {
-        const hidmes = this.hideMessages
+        const hidemsg = this.hideMessages
 
         let avatarImg = ''
         let nameMenu = ''
         let levelFounder = ''
-        let hideit = hidmes.includes(messageObj.sender)
+        let hideit = hidemsg.includes(messageObj.sender)
+
+        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
 
         if (messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -266,12 +235,10 @@ class ChatScroller extends LitElement {
         }
 
         if (messageObj.sender === this.myAddress) {
-            nameMenu = `<mwc-icon class="iconsRight">more_horiz</mwc-icon>`
+            nameMenu = `<span style="color: #03a9f4;">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>`
         } else {
-            nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}" messagesignatur="${messageObj.signature}"></name-menu>`
+            nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
-
-        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
 
         if ( hideit === true ) {
             return `
@@ -281,14 +248,12 @@ class ChatScroller extends LitElement {
             return `
                 <li class="clearfix">
                     <div class="message-data ${messageObj.sender === this.myAddress ? "" : ""}">
-                        <span class="message-data-name" style="${messageObj.sender === this.myAddress ? "color: #03a9f4;" : "color: var(--black);"}">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>
+                        <span class="message-data-name">${nameMenu}</span>
                         <span class="message-data-level">${levelFounder}</span>
                         <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
-                        <span class="hide float-right">${nameMenu}</span>
                     </div>
-                    <div class="message-data-avatar" style="width: 42px; height: 42px; ${messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin: 3px;">${avatarImg}</div>
+                    <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                     <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
-                    <div class="message-data-react"></div>
                 </li>
             `
         }
@@ -296,27 +261,29 @@ class ChatScroller extends LitElement {
 
     renderChatMessages(messages) {
         messages.forEach(message => {
-            const li = document.createElement('li')
-            li.innerHTML = this.chatMessageTemplate(message)
+            const li = document.createElement('li');
+            li.innerHTML = this.chatMessageTemplate(message);
             li.id = message.signature;
-            this.downObserverElement.before(li)
-        })
+            this.downObserverElement.before(li);
+        });
     }
 
     renderOldMessages(listOfOldMessages) {
-        let { oldMessages, scrollElement } = listOfOldMessages
-        let _oldMessages = oldMessages.reverse()
+        let { oldMessages, scrollElement } = listOfOldMessages;
+
+        let _oldMessages = oldMessages.reverse();
         _oldMessages.forEach(oldMessage => {
-            const li = document.createElement('li')
-            li.innerHTML = this.chatMessageTemplate(oldMessage)
-            li.id = oldMessage.signature
-            this.upObserverElement.after(li)
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' })
-        })
+            const li = document.createElement('li');
+            li.innerHTML = this.chatMessageTemplate(oldMessage);
+            li.id = oldMessage.signature;
+            this.upObserverElement.after(li);
+            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+        });
     }
 
     _getOldMessage(_scrollElement) {
         let listOfOldMessages = this.getOldMessage(_scrollElement)
+
         if (listOfOldMessages) {
             this.renderOldMessages(listOfOldMessages)
         }
@@ -325,6 +292,7 @@ class ChatScroller extends LitElement {
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
             let _scrollElement = entries[0].target.nextElementSibling
+
             this._getOldMessage(_scrollElement)
         }
     }
@@ -334,15 +302,10 @@ class ChatScroller extends LitElement {
             root: this.viewElement,
             rootMargin: '0px',
             threshold: 1
-        }
+        };
+
         const observer = new IntersectionObserver(this._upObserverhandler, options)
         observer.observe(this.upObserverElement)
-    }
-
-    getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
     }
 }
 

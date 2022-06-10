@@ -22,7 +22,6 @@ class NameMenu extends LitElement {
         return {
             toblockaddress: { type: String, attribute: true },
             nametodialog: { type: String, attribute: true },
-            messagesignatur: { type: String, attribute: true },
             chatBlockedAdresses: { type: Array },
             selectedAddress: { type: Object },
             config: { type: Object },
@@ -118,9 +117,8 @@ class NameMenu extends LitElement {
             .dropdown-content {
                 display: none;
                 position: absolute;
-                bottom: -75px;
-                right: 25px;
-                text-align: center;
+                bottom: 25px;
+                left: 10px;
                 background-color: var(--white);
                 min-width: 200px;
                 overflow: auto;
@@ -174,15 +172,6 @@ class NameMenu extends LitElement {
                 resize: none;
                 background: #eee;
             }
-
-            .iconsRight {
-                color: #a8aab1;
-                --mdc-icon-size: 18px;
-            }
-
-            .padright5 {
-                padding-right: 5px;
-            }
         `
     }
 
@@ -200,8 +189,8 @@ class NameMenu extends LitElement {
     render() {
         return html`
             <div class="dropdown">
-                <a class="block" id="myNameMenu" href="#" @click="${() => this.myMenu()}"><mwc-icon class="iconsRight">more_horiz</mwc-icon></a>
-                <paper-tooltip class="custom" for="myNameMenu" position="top">${translate("blockpage.bcchange7")}</paper-tooltip>
+                <a class="block" id="myNameMenu" href="#" @click="${() => this.myMenu()}">${this.nametodialog}</a>
+                <paper-tooltip class="custom" for="myNameMenu" position="right">${translate("blockpage.bcchange7")}</paper-tooltip>
                 <div id="myDropdown" class="dropdown-content">
                     <span>${this.nametodialog}</span>
                     <hr style="color: var(--nav-text-color); border-radius: 90%;">
@@ -361,6 +350,12 @@ class NameMenu extends LitElement {
         }
     }
 
+    relMessages() {
+        setTimeout(() => {
+            window.location.href = window.location.href.split( '#' )[0]
+        }, 500)
+    }
+
     async getChatBlockedAdresses() {
         const chatBlockedAdresses = await parentEpml.request('apiCall', {
             url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
@@ -397,6 +392,7 @@ class NameMenu extends LitElement {
                 labelText: `${err1string}`,
                 dismiss: true
             })
+            this.relMessages()
         } else {
             this.closeMenu()
             this.shadowRoot.querySelector('#blockNameDialog').close()
