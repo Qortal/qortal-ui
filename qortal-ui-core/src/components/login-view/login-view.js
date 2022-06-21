@@ -254,6 +254,7 @@ class LoginView extends connect(store)(LitElement) {
 
             <div class="login-page" ?hidden=${this.loggedIn}>
                 <mwc-fab icon="settings" style="position:fixed; right:24px; bottom:24px;" @click=${() => settings.show()}></mwc-fab>
+				<label class="version" style="color: #02a9f5; font-size: 22px;">Version 1.9.3<label>
                 <span style="position:fixed; left:24px; bottom:24px;"><qort-theme-toggle></qort-theme-toggle></span>
                 <div class="login-card-container">
                     <div class="login-card-center-container">
