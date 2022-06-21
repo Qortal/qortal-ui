@@ -20,9 +20,6 @@ const cancelAllOffers = api.cancelAllOffers
 const sendBtc = api.sendBtc
 const sendLtc = api.sendLtc
 const sendDoge = api.sendDoge
-const sendDgb = api.sendDgb
-const sendRvn = api.sendRvn
-const sendQrl = api.sendQrl
 
 export const routes = {
 	hello: async (req) => {
@@ -336,43 +333,4 @@ export const routes = {
 		}
 		return response
 	},
-
-	sendDgb: async (req) => {
-		let response
-		try {
-			const res = await sendDgb(req.data)
-			response = res
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-			response = e.message
-		}
-		return response
-	},
-
-	sendRvn: async (req) => {
-		let response
-		try {
-			const res = await sendRvn(req.data)
-			response = res
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-			response = e.message
-		}
-		return response
-	},
-
-	sendQrl: async (req) => {
-		let response
-		try {
-			const res = await sendQrl(req.data)
-			response = res
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-			response = e.message
-		}
-		return response
-	}
 }
