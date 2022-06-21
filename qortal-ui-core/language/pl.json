@@ -14,7 +14,10 @@
     "portuguese": "Portugalski",
     "hungarian": "Węgierski",
     "serbian": "Serbski",
-    "italian": "Włoski"
+    "italian": "Włoski",
+    "russian": "Rosyjski",
+    "norwegian": "Norweski",
+    "romanian": "Rumuński"
   },
   "sidemenu": {
     "mintingdetails": "SZCZEGÓŁY MINTOWANIA",
@@ -211,7 +214,9 @@
     "wchange39": "Nie można skopiować adresu.",
     "wchange40": "PŁATNOŚĆ",
     "wchange41": "Status",
-    "wchange42": "Potwierdzenia"
+    "wchange42": "Potwierdzenia",
+    "wchange43": "Twoja transakcja nie pojawi się, dopóki nie zostanie potwierdzona, bądź cierpliwy...",
+    "wchange44": "Proszę spróbuj ponownie..."
   },
   "tradepage": {
     "tchange1": "Portal Handlowy",

@@ -233,26 +233,9 @@ class MintingInfo extends LitElement {
                             <span class="title">${translate("mintingpage.mchange5")}</span>
                             <hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
                             <h4>${this._dayReward()} QORT</h4>
-                        </div><br><br><br>
-                        <div>
-                            <span class="level-black">${this.renderActivateHelp()}</span>
-                            <hr style="width: 50%;color: #eee; border-radius: 80%; margin-bottom: 2rem;">
                         </div><br>
                     </div>
                 </div>
-
-                <!-- Activate Account Dialog -->
-                <mwc-dialog id="activateAccountDialog">
-                    <div style="text-align:center">
-                        <h2>${translate("mintingpage.mchange12")}</h2>
-                        <hr>
-                    </div>
-                    <div>
-                        <h3>${translate("mintingpage.mchange13")}</h3><br />
-                        ${translate("mintingpage.mchange14")}
-                    </div>
-                   <mwc-button slot="primaryAction" dialogAction="cancel" class="red-button">${translate("general.close")}</mwc-button>
-                </mwc-dialog>
             </div>
         `} else {
             return html`
@@ -474,13 +457,6 @@ class MintingInfo extends LitElement {
         }
     }
 
-    renderActivateHelp() {
-        if (this.renderMintingPage() === "false") {
-            return html`${translate("mintingpage.mchange10")} <div class="level-blue">==></div> ${translate("mintingpage.mchange11")}<br><mwc-button class="red-button" @click=${() => this.shadowRoot.querySelector("#activateAccountDialog").show()}><mwc-icon class="help-icon">help_outline</mwc-icon>&nbsp;${translate("mintingpage.mchange31")}</mwc-button>`;
-        } else {
-            return "No Details";
-        }
-    }
     _averageBlockTime() {
         let avgBlockString = (this.adminInfo.currentTimestamp - this.sampleBlock.timestamp).toString();
         let averageTimeString = ((avgBlockString / 1000) / 1440).toFixed(2);

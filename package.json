@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
   "keywords": [
     "QORT",
@@ -32,10 +32,10 @@
   },
   "dependencies": {
     "electron-updater": "5.0.1",
-    "electron-log": "4.4.6"
+    "electron-log": "4.4.7"
   },
   "devDependencies": {
-    "electron": "17.4.1",
+    "electron": "19.0.4",
     "electron-builder": "23.0.3",
     "electron-notarize": "1.2.1",
     "electron-packager": "15.5.1",

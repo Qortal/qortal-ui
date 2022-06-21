@@ -14,7 +14,10 @@
     "portuguese": "Portugál",
     "hungarian": "Magyar",
     "serbian": "Szerb",
-    "italian": "Olasz"
+    "italian": "Olasz",
+    "russian": "Orosz",
+    "norwegian": "Norvég",
+    "romanian": "Román"
   },
   "sidemenu": {
     "mintingdetails": "VERÉSI RÉSZLETEK",
@@ -211,7 +214,9 @@
     "wchange39": "Nem lehet másolni a címet.",
     "wchange40": "FIZETÉS",
     "wchange41": "Állapot",
-    "wchange42": "Visszaigazolások"
+    "wchange42": "Visszaigazolások",
+    "wchange43": "A tranzakció nem jelenik meg a megerősítésig, legyen türelemmel...",
+    "wchange44": "Kérlek próbáld újra..."
   },
   "tradepage": {
     "tchange1": "Kereskedelmi Portál",

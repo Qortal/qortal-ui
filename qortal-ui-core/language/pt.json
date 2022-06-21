@@ -14,7 +14,10 @@
     "portuguese": "Português",
     "hungarian": "Húngaro",
     "serbian": "Sérvio",
-    "italian": "Italiano"
+    "italian": "Italiano",
+    "russian": "Russo",
+    "norwegian": "Norueguês",
+    "romanian": "Romeno"
   },
   "sidemenu": {
     "mintingdetails": "DETALHES DA MINERAÇÃO",
@@ -211,7 +214,9 @@
     "wchange39": "Não é possível copiar o endereço.",
     "wchange40": "PAGAMENTO",
     "wchange41": "Status",
-    "wchange42": "Confirmações"
+    "wchange42": "Confirmações",
+    "wchange43": "Sua transação não será exibida até ser confirmada, seja paciente...",
+    "wchange44": "Por favor, tente novamente..."
   },
   "tradepage": {
     "tchange1": "Portal do Comércio",

@@ -15,9 +15,11 @@
     "portuguese": "पुर्तगाली",
     "hungarian": "हंगेरी",
     "serbian": "सर्बियाई",
-    "italian": "इतालवी"
+    "italian": "इतालवी",
+    "russian": "रूसी",
+    "norwegian": "नार्वेजियन",
+    "romanian": "रोमानियाई"
   },
-
   "sidemenu": {
     "mintingdetails": "खनन विवरण",
     "wallets": "वॉलेट",
@@ -30,7 +32,6 @@
     "groupmanagement": "समूह प्रबंधन",
     "puzzles": "पहेलि",
     "nodemanagement": "नोड प्रबंधन"
-
   },
   "login": {
     "login": "लॉग इन करें",
@@ -81,7 +82,6 @@
     "logout": "लॉग आउट",
     "confirmlogout": "क्या आप लॉग आउट करना चाहते हैं?"
   },
-
   "fragfile": {
     "selectfile": "फ़ाइल का चयन करें",
     "dragfile": "बैकअप को यहां खींचें और छोड़ें"
@@ -109,7 +109,6 @@
     "domain": "डोमेन",
     "port": "पोर्ट"
   },
-
   "appinfo": {
     "blockheight": "ब्लॉक ऊँचाई",
     "uiversion": "यूआई संस्करण",
@@ -121,7 +120,6 @@
     "minterlevel": "मिन्टर लेवल",
     "blocksminted": "ब्लॉक मिंटेड"
   },
-
   "general": {
     "yes": "हाँ",
     "no": "नहीं",
@@ -135,7 +133,6 @@
     "continue": "जारी रखें",
     "save": "सहेजें"
   },
-
   "mintingpage": {
     "mchange1": "सामान्य खनन विवरण",
     "mchange2": "ब्लॉकचेन आंकड़े",
@@ -218,7 +215,9 @@
     "wchange39": "पता कॉपी करने में असमर्थ",
     "wchange40": "भुगतान",
     "wchange41": "स्थिति",
-    "wchange42": "पुष्टियों"
+    "wchange42": "पुष्टियों",
+    "wchange43": "कन्फर्म होने तक आपका ट्रांजैक्शन नहीं दिखेगा, धैर्य रखें...",
+    "wchange44": "कृपया पुन: प्रयास करें..."
   },
   "tradepage": {
     "tchange1": "व्यापार पोर्टल",

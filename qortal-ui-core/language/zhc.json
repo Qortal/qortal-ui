@@ -14,7 +14,10 @@
     "portuguese": "葡萄牙文",
     "hungarian": "匈牙利文",
     "serbian": "塞尔维亚文",
-    "italian": "意大利文"
+    "italian": "意大利文",
+    "russian": "俄语",
+    "norwegian": "挪威语",
+    "romanian": "罗马尼亚语"
   },
   "sidemenu": {
     "mintingdetails": "铸币信息",
@@ -211,7 +214,9 @@
     "wchange39": "无法复制钱包地址.",
     "wchange40": "交易",
     "wchange41": "状态",
-    "wchange42": "确认数"
+    "wchange42": "确认数",
+    "wchange43": "您的交易在确认之前不会显示，请耐心等待...",
+    "wchange44": "请再试一次..."
   },
   "tradepage": {
     "tchange1": "交易门户",
@@ -438,7 +443,7 @@
     "bcchange2": "成功封锁此用户!",
     "bcchange3": "尝试封锁此用户时出错。 请再试一次！",
     "bcchange4": "没有注册名称",
-    "bcchange5": "请求封锁用户",
+    "bcchange5": "封锁用户请求",
     "bcchange6": "你确定要封锁这个用户吗？",
     "bcchange7": "菜单",
     "bcchange8": "复制地址",

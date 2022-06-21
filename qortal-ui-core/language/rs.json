@@ -14,7 +14,10 @@
     "portuguese": "Portugalski",
     "hungarian": "Mađarski",
     "serbian": "Srpski",
-    "italian": "Italijan"
+    "italian": "Italijan",
+    "russian": "Ruski",
+    "norwegian": "Norveški",
+    "romanian": "Rumunski"
   },
   "sidemenu": {
     "mintingdetails": "DETALJI MINTOVANJA",
@@ -211,7 +214,9 @@
     "wchange39": "Nemogućnost kopiranja adrese.",
     "wchange40": "UPLATA",
     "wchange41": "Status",
-    "wchange42": "Potvrde"
+    "wchange42": "Potvrde",
+    "wchange43": "Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
+    "wchange44": "Molim vas, pokušajte ponovo..."
   },
   "tradepage": {
     "tchange1": "Trgovinski prozor",

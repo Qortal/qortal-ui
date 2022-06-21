@@ -10,6 +10,7 @@ registerTranslateConfig({
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
+import './LevelFounder.js'
 import './NameMenu.js'
 import './TimeAgo.js'
 import { EmojiPicker } from 'emoji-picker-js';
@@ -29,6 +30,7 @@ class ChatPage extends LitElement {
             messages: { type: Array },
             _messages: { type: Array },
             newMessages: { type: Array },
+            hideMessages: { type: Array },
             chatId: { type: String },
             myAddress: { type: String },
             isReceipient: { type: Boolean },
@@ -120,6 +122,7 @@ class ChatPage extends LitElement {
         this.messages = []
         this._messages = []
         this.newMessages = []
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
         this._publicKey = { key: '', hasPubKey: false }
         this.messageSignature = ''
         this._initialMessages = []
@@ -354,31 +357,45 @@ class ChatPage extends LitElement {
     * @property sender and other info..
     */
     chatMessageTemplate(messageObj) {
-        let avatarImg = '';
-        let nameMenu = '';
+        const hidemsg = this.hideMessages
+
+        let avatarImg = ''
+        let nameMenu = ''
+        let levelFounder = ''
+        let hideit = hidemsg.includes(messageObj.sender)
+
+        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
+
         if (messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
         }
 
         if (messageObj.sender === this.myAddress) {
-            nameMenu = ``
+            nameMenu = `<span style="color: #03a9f4;">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>`
         } else {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
 
-        return `
-            <li class="clearfix">
-                <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "align-right" : ""}">
-                    <span class="message-data-name">${nameMenu}</span>
-                    <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
-                </div>
-                <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
-                <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
-            </li>
-        `
+        if ( hideit === true ) {
+            return `
+                <li class="clearfix"></li>
+            `
+        } else {
+            return `
+                <li class="clearfix">
+                    <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "" : ""}">
+                        <span class="message-data-name">${nameMenu}</span>
+                        <span class="message-data-level">${levelFounder}</span>
+                        <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
+                    </div>
+                    <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                    <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
+                </li>
+            `
+        }
     }
 
     renderNewMessage(newMessage) {

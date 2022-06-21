@@ -14,7 +14,10 @@
     "portuguese": "Portoghese",
     "hungarian": "Ungherese",
     "serbian": "Serbo",
-    "italian": "Italiano"
+    "italian": "Italiano",
+    "russian": "Russo",
+    "norwegian": "Norvegese",
+    "romanian": "Rumeno"
   },
   "sidemenu": {
     "mintingdetails": "DETTAGLI DI MINTING",
@@ -211,7 +214,9 @@
     "wchange39": "Impossibile copiare l'indirizzo.",
     "wchange40": "PAGAMENTO",
     "wchange41": "Stato",
-    "wchange42": "Conferme"
+    "wchange42": "Conferme",
+    "wchange43": "La tua transazione non verrà mostrata fino a quando non sarà confermata, sii paziente...",
+    "wchange44": "Per favore riprova..."
   },
   "tradepage": {
     "tchange1": "Portale commerciale",
