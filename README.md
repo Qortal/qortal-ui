@@ -1,6 +1,7 @@
 # Qortal Project UI
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Qortal/qortal-ui?label=latest%20version)
+[![GitHub Releases](https://img.shields.io/github/downloads/Qortal/qortal-ui/latest/total)](https://github.com/Qortal/qortal-ui/releases/latest)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](https://opensource.org/licenses/GPL-3.0)
 [![Qortal Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=chat&logo=discord&logoColor=white)](https://discord.com/invite/54UyhB7)
 
