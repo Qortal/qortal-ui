@@ -67,6 +67,7 @@ class LanguageSelector extends connect(store)(LitElement) {
                     <option value="hu">HU - ${translate("selectmenu.hungarian")}</option>
                     <option value="hindi">IN - ${translate("selectmenu.hindi")}</option>
                     <option value="it">IT - ${translate("selectmenu.italian")}</option>
+                    <option value="ko">KO - ${translate("selectmenu.korean")}</option>
                     <option value="no">NO - ${translate("selectmenu.norwegian")}</option>
                     <option value="pl">PL - ${translate("selectmenu.polish")}</option>
                     <option value="pt">PT - ${translate("selectmenu.portuguese")}</option>
