@@ -27,7 +27,7 @@ import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-const coinsNames = ['qort', 'btc', 'ltc', 'doge', 'dgb', 'rvn']
+const coinsNames = ['qort', 'btc', 'ltc', 'doge', 'dgb', 'rvn', 'ppc']
 
 class MultiWallet extends LitElement {
     static get properties() {
@@ -50,8 +50,10 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-		rvnRecipient: { type: String },
+		    rvnRecipient: { type: String },
             rvnAmount: { type: Number },
+            ppcRecipient: { type: String },
+            ppcAmount: { type: Number },
             errorMessage: { type: String },
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
@@ -62,7 +64,8 @@ class MultiWallet extends LitElement {
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
-		rvnFeePerByte: { type: Number },
+		    rvnFeePerByte: { type: Number },
+            ppcFeePerByte: { type: Number },
             balanceString: { type: String }
         }
     }
@@ -437,6 +440,10 @@ class MultiWallet extends LitElement {
                 background-image: url('/img/rvn.png');
             }
 
+            .ppc .currency-image {
+                background-image: url('/img/ppc.png');
+            }
+
             .card-list {
                 margin-top: 20px;
             }
@@ -606,6 +613,7 @@ class MultiWallet extends LitElement {
         this.dogeRecipient = ''
         this.dgbRecipient = ''
         this.rvnRecipient = ''
+        this.ppcRecipient = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.sendMoneyLoading = false
@@ -618,6 +626,7 @@ class MultiWallet extends LitElement {
         this.dogeAmount = 0
         this.dgbAmount = 0
         this.rvnAmount = 0
+        this.ppcAmount = 0
         this.btcFeePerByte = 100
         this.btcSatMinFee = 20
         this.btcSatMaxFee = 150
@@ -633,6 +642,9 @@ class MultiWallet extends LitElement {
         this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
+        this.ppcFeePerByte = 1125 // Unknown
+        this.ppcSatMinFee = 1000 // Unknown
+        this.ppcSatMaxFee = 10000 // Unknown
 
         this.wallets = new Map()
 
@@ -654,6 +666,7 @@ class MultiWallet extends LitElement {
         this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
         this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
         this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+        this.wallets.get('ppc').wallet = window.parent.reduxStore.getState().app.selectedAddress.ppcWallet
 
         this._selectedWallet = 'qort'
 
@@ -668,6 +681,7 @@ class MultiWallet extends LitElement {
                 this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
                 this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
                 this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+                this.wallets.get('ppc').wallet = window.parent.reduxStore.getState().app.selectedAddress.ppcWallet
             })
 
             parentEpml.subscribe('copy_menu_switch', async (value) => {
@@ -708,6 +722,10 @@ class MultiWallet extends LitElement {
 				<div coin="rvn" class="currency-box rvn">
                             <div class="currency-image"></div>
                             <div class="currency-text">Ravencoin</div>
+                        </div>
+                        <div coin="ppc" class="currency-box ppc">
+                            <div class="currency-image"></div>
+                            <div class="currency-text">Peercoin</div>
                         </div>
                     </div>
                 </div>
@@ -1019,6 +1037,56 @@ class MultiWallet extends LitElement {
                         <br />
                         <div>
                             <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} RVN</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange14")} </span>
+                        <br />
+                        <div><span>${new Date(this.selectedTransaction.timestamp).toString()}</span></div>
+                        <span class="title"> ${translate("walletpage.wchange16")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.txHash}</span>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="showPpcTransactionDetailsDialog" scrimClickAction="${this.showPpcTransactionDetailsLoading ? '' : 'close'}">
+                    <div style="text-align: center;">
+                        <h1>${translate("walletpage.wchange5")}</h1>
+                        <hr />
+                    </div>
+                    <div id="transactionList">
+                        <span class="title"> ${translate("walletpage.wchange6")} </span>
+                        <br />
+                        <div>
+                            <span>${translate("walletpage.wchange40")}</span>
+                            ${this.selectedTransaction.ppcTxnFlow === 'OUT' ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`}
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange9")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.ppcSender}</span>
+                        </div>
+                         <span class="title"> ${translate("walletpage.wchange10")} </span>
+                        <br />
+                        <div>
+                            <span>${this.selectedTransaction.ppcReceiver}</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange12")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.feeAmount / 1e8).toFixed(8)} PPC</span>
+                        </div>
+                        <span class="title"> ${translate("walletpage.wchange37")} </span>
+                        <br />
+                        <div>
+                            <span>${(this.selectedTransaction.totalAmount / 1e8).toFixed(8)} PPC</span>
                         </div>
                         <span class="title"> ${translate("walletpage.wchange14")} </span>
                         <br />
@@ -1476,6 +1544,82 @@ class MultiWallet extends LitElement {
                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
+
+                <mwc-dialog id="sendPpcDialog">
+                    <div class="send-coin-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/ppc.png" width="32" height="32">
+                            <h2>${translate("walletpage.wchange17")} PPC</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span>${translate("walletpage.wchange18")}:</span><br />
+                            <span style="font-weight: bold;">${this.getSelectedWalletAddress()}</span>
+                        </p>
+                        <p>
+                            <span>${translate("walletpage.wchange19")}:</span><br />
+                            <span style="font-weight: bold;">${this.balanceString}</span>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                @input="${(e) => { this._checkAmount(e) }}"
+                                id="ppcAmountInput"
+                                label="${translate("walletpage.wchange11")} (PPC)"
+                                type="number"
+                                auto-validate="false"
+                                value="${this.ppcAmount}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="ppcRecipient"
+                                label="${translate("walletpage.wchange23")}"
+                                type="text"
+                                value="${this.ppcRecipient}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 0;">
+                            <p style="margin-bottom: 0;">
+                                ${translate("walletpage.wchange24")}: <span style="font-weight: bold;">${(this.ppcFeePerByte / 1e8).toFixed(8)} PPC</span><br>${translate("walletpage.wchange25")}
+                            </p>
+                            <paper-slider
+                                class="blue"
+                                style="width: 100%;"
+                                pin
+                                @change="${(e) => (this.ppcFeePerByte = e.target.value)}"
+                                id="ppcFeeSlider"
+                                min="${this.ppcSatMinFee}"
+                                max="${this.ppcSatMaxFee}"
+                                value="${this.ppcFeePerByte}"
+                            >
+                            </paper-slider>
+                        </div>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
+                        ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.sendPpc()}>
+                                    <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
+                                    ${translate("walletpage.wchange17")} PPC
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closePpcDialog()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
         `
     }
@@ -1801,6 +1945,52 @@ class MultiWallet extends LitElement {
             }
             checkSelectedTextAndShowMenu()
         })
+
+        this.shadowRoot.getElementById('ppcAmountInput').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'ppcAmountInput')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('ppcRecipient').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'ppcRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
     }
 
     renderClearSuccess() {
@@ -1869,6 +2059,12 @@ class MultiWallet extends LitElement {
 
     closeRvnDialog() {
         this.shadowRoot.querySelector('#sendRvnDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closePpcDialog() {
+        this.shadowRoot.querySelector('#sendPpcDialog').close()
         this.successMessage = ''
         this.errorMessage = ''
     }
@@ -2340,6 +2536,52 @@ class MultiWallet extends LitElement {
         this.showWallet()
     }
 
+    async sendPpc() {
+        const ppcAmount = this.shadowRoot.getElementById('ppcAmountInput').value
+        let ppcRecipient = this.shadowRoot.getElementById('ppcRecipient').value
+        const xprv58 = this.wallets.get(this._selectedWallet).wallet.derivedMasterPrivateKey
+
+        this.sendMoneyLoading = true
+        this.btnDisable = true
+
+        const makeRequest = async () => {
+            const opts = {
+                xprv58: xprv58,
+                receivingAddress: ppcRecipient,
+                peercoinAmount: ppcAmount,
+                feePerByte: (this.ppcFeePerByte / 1e8).toFixed(8),
+            }
+            const response = await parentEpml.request('sendPpc', opts)
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response.length === 64) {
+                this.shadowRoot.getElementById('ppcAmountInput').value = 0
+                this.shadowRoot.getElementById('ppcRecipient').value = ''
+                this.errorMessage = ''
+                this.ppcRecipient = ''
+                this.ppcAmount = 0
+                this.successMessage = this.renderSuccessText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+            } else if (response === false) {
+                this.errorMessage = this.renderFailText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else {
+                this.errorMessage = response.message
+                this.sendMoneyLoading = false
+                this.btnDisable = false
+                throw new Error(response)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+        this.showWallet()
+    }
+
     async showWallet() {
         this.transactionsDOM.hidden = true
         this.loading = true
@@ -2395,6 +2637,7 @@ class MultiWallet extends LitElement {
             case 'doge':
             case 'dgb':
 			case 'rvn':
+            case 'ppc':
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2449,11 +2692,12 @@ class MultiWallet extends LitElement {
             return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendDgb()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DGB</vaadin-button>`
         } else if ( this._selectedWallet === "rvn" ) {
             return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendRvn()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} RVN</vaadin-button>`
+        } else if ( this._selectedWallet === "ppc" ) {
+            return html`<vaadin-button theme="primary large" style="width: 75%;" @click=${() => this.openSendPpc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} PPC</vaadin-button>`
         } else {
             return html``
         }
     }
-
     openSendQort() {
         this.shadowRoot.querySelector("#sendQortDialog").show();
     }
@@ -2476,6 +2720,10 @@ class MultiWallet extends LitElement {
 
 	openSendRvn() {
         this.shadowRoot.querySelector("#sendRvnDialog").show();
+    }
+
+    openSendPpc() {
+        this.shadowRoot.querySelector("#sendPpcDialog").show();
     }
 
     changeTheme() {
@@ -2561,6 +2809,15 @@ class MultiWallet extends LitElement {
                 },
                 { passive: true }
             )
+        } else if (coin === 'ppc') {
+            this.transactionsGrid.addEventListener(
+                'click',
+                (e) => {
+                    let ppcItem = this.transactionsGrid.getEventContext(e).item
+                    this.showPpcTransactionDetails(ppcItem, this.wallets.get(this._selectedWallet).transactions)
+                },
+                { passive: true }
+            )
         }
 
         this.pagesControl = this.shadowRoot.querySelector('#pages')
@@ -2580,6 +2837,8 @@ class MultiWallet extends LitElement {
             render(this.renderDgbTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
 		} else if (this._selectedWallet === 'rvn') {
             render(this.renderRvnTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
+        } else if (this._selectedWallet === 'ppc') {
+            render(this.renderPpcTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         }
     }
 
@@ -2968,6 +3227,71 @@ class MultiWallet extends LitElement {
 	`
     }
 
+    renderPpcTransactions(transactions, coin) {
+        return html`
+            <div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
+            <vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+                <vaadin-grid-column
+                    auto-width
+                    header="${translate("walletpage.wchange41")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange35")}"
+                    .renderer=${(root, column, data) => {
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange9")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.inputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.outputs[0].address}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange37")}"
+                    .renderer=${(root, column, data) => {
+                        const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
+                        render(html`${amount}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange14")}"
+                    .renderer=${(root, column, data) => {
+                        const time = new Date(data.item.timestamp * 1000)
+                        render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
+                    }}
+                >
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <div id="pages"></div>
+	`
+    }
+
     async updateItemsFromPage(page, changeWallet = false) {
         if (page === undefined) {
             return
@@ -3163,6 +3487,20 @@ class MultiWallet extends LitElement {
                 this.selectedTransaction = { ...transaction, rvnTxnFlow, rvnSender, rvnReceiver }
                 if (this.selectedTransaction.txHash.length != 0) {
                     this.shadowRoot.querySelector('#showRvnTransactionDetailsDialog').show()
+                }
+            }
+        })
+    }
+
+    showPpcTransactionDetails(myTransaction, allTransactions) {
+        allTransactions.forEach((transaction) => {
+            if (myTransaction.txHash === transaction.txHash) {
+                let ppcTxnFlow = myTransaction.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? 'OUT' : 'IN'
+                let ppcSender = myTransaction.inputs[0].address
+                let ppcReceiver = myTransaction.outputs[0].address
+                this.selectedTransaction = { ...transaction, ppcTxnFlow, ppcSender, ppcReceiver }
+                if (this.selectedTransaction.txHash.length != 0) {
+                    this.shadowRoot.querySelector('#showPpcTransactionDetailsDialog').show()
                 }
             }
         })
