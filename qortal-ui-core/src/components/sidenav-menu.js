@@ -78,12 +78,7 @@ class SidenavMenu extends connect(store)(LitElement) {
             return response.json()
         })
         .then(data => {
-            const myNodeType = data.type
-            if (myNodeType === 'light') {
-                this.nodeType = 'light'
-            } else {
-                this.nodeType = 'full'
-            }
+            this.nodeType = data.type
         })
         .catch(err => {
             console.error('Request failed', err);
@@ -91,7 +86,7 @@ class SidenavMenu extends connect(store)(LitElement) {
     }
 
     renderNodeTypeMenu() {
-        if (this.nodeType === 'light') {
+        if (this.nodeType === 'lite') {
             return html`
                 <side-menu-item label="${translate("sidemenu.wallets")}" href="/app/wallet" selected>
                     <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
