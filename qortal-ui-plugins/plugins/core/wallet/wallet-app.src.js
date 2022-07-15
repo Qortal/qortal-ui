@@ -510,7 +510,7 @@ class MultiWallet extends LitElement {
 
             .qrcode-pos {
                 margin-top: -180px;
-                margin-left: 425px;
+                margin-left: 800px;
             }
 
             @media (max-width: 863px) {
