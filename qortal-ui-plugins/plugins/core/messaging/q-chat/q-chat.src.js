@@ -420,6 +420,7 @@ class Chat extends LitElement {
         this.changeLanguage()
         this.changeTheme()
         this.getChatBlockedList()
+        this.getLocalBlockedList()
 
         setInterval(() => {
             this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
@@ -549,6 +550,31 @@ class Chat extends LitElement {
         return html`${translate("chatpage.cchange9")}`
     }
 
+    relMessages() {
+        setTimeout(() => {
+            window.location.href = window.location.href.split( '#' )[0]
+        }, 500)
+    }
+
+    getLocalBlockedList() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+
+        localStorage.removeItem("MessageBlockedAddresses")
+
+        var hidelist = []
+
+        fetch(blockedAddressesUrl).then(response => {
+            return response.json()
+        }).then(data => {
+            data.map(item => {
+                hidelist.push(item)
+            })
+            localStorage.setItem("MessageBlockedAddresses", JSON.stringify(hidelist))
+        })
+    }
+
     getChatBlockedList() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -610,6 +636,7 @@ class Chat extends LitElement {
                 labelText: `${err2string}`,
                 dismiss: true
             })
+            this.relMessages()
         }
         else {
             let err3string = get("chatpage.cchange17")

@@ -1,5 +1,7 @@
 # Qortal Project UI
 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Qortal/qortal-ui?label=latest%20version)
+[![GitHub Releases](https://img.shields.io/github/downloads/Qortal/qortal-ui/latest/total)](https://github.com/Qortal/qortal-ui/releases/latest)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](https://opensource.org/licenses/GPL-3.0)
 [![Qortal Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=chat&logo=discord&logoColor=white)](https://discord.com/invite/54UyhB7)
 
@@ -24,7 +26,7 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.profile ``` (For Debian based distro) <br/>
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
-``` nvm install v14.17.0 ```  (Latest LTS: Fermium as of writing) <br/>
+``` nvm install v16.14.2 ```  (LTS: Gallium supported by Electron) <br/>
 ``` npm -g install yarn ``` <br/> 
 
 On BSD do a ``` pkg_add node followed by npm install -g yarn ```

@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 
+import './LevelFounder.js'
 import './NameMenu.js'
 
 import '@material/mwc-button'
@@ -18,7 +19,8 @@ class ChatScroller extends LitElement {
             emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
             initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
-            messages: { type: Array }
+            messages: { type: Array },
+            hideMessages: { type: Array }
         }
     }
 
@@ -68,7 +70,9 @@ class ChatScroller extends LitElement {
         }
 
         .message-data {
+            width: 92%;
             margin-bottom: 15px;
+            margin-left: 50px;
         }
 
         .message-data-name {
@@ -80,6 +84,13 @@ class ChatScroller extends LitElement {
             color: #a8aab1;
             font-size: 13px;
             padding-left: 6px;
+            padding-bottom: 4px;
+        }
+
+        .message-data-level {
+            color: #03a9f4;
+            font-size: 13px;
+            padding-left: 8px;
             padding-bottom: 4px;
         }
 
@@ -125,8 +136,13 @@ class ChatScroller extends LitElement {
         }
 
         .my-message {
-            background: #ddd;
-            border: 2px #ccc solid;
+            background: #d1d1d1;
+            border: 2px solid #eeeeee;
+        }
+
+        .my-message:after {
+            border-bottom-color: #d1d1d1;
+            left: 7%;
         }
 
         .other-message {
@@ -176,6 +192,7 @@ class ChatScroller extends LitElement {
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this.isLoading = false
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
     }
 
 
@@ -201,32 +218,45 @@ class ChatScroller extends LitElement {
     }
 
     chatMessageTemplate(messageObj) {
-        let avatarImg = '';
-        let nameMenu = '';
+        const hidemsg = this.hideMessages
+
+        let avatarImg = ''
+        let nameMenu = ''
+        let levelFounder = ''
+        let hideit = hidemsg.includes(messageObj.sender)
+
+        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
+
         if (messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
         }
 
         if (messageObj.sender === this.myAddress) {
-            nameMenu = `${messageObj.senderName ? messageObj.senderName : messageObj.sender}`
+            nameMenu = `<span style="color: #03a9f4;">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>`
         } else {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
 
-        return `
-            <li class="clearfix">
-                <div class="message-data ${messageObj.sender === this.myAddress ? "align-right" : ""}">
-                    <span class="message-data-name">${nameMenu}</span>
-                    <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
+        if ( hideit === true ) {
+            return `
+                <li class="clearfix"></li>
+            `
+        } else {
+            return `
+                <li class="clearfix">
+                    <div class="message-data ${messageObj.sender === this.myAddress ? "" : ""}">
+                        <span class="message-data-name">${nameMenu}</span>
+                        <span class="message-data-level">${levelFounder}</span>
+                        <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
                     </div>
-                </div>
-                <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:right;" : "float:left;"} margin:3px;">${avatarImg}</div>
-                <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-right" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
-            </li>
-        `
+                    <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                    <div id="messageContent" class="message ${messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(messageObj.decodedMessage))}</div>
+                </li>
+            `
+        }
     }
 
     renderChatMessages(messages) {

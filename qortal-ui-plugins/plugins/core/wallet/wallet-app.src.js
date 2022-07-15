@@ -7,7 +7,8 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-import '../components/ButtonIconCopy'
+import '../components/ButtonIconCopy.js'
+import '../components/QortalQrcodeGenerator.js'
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
@@ -49,7 +50,7 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-			rvnRecipient: { type: String },
+		rvnRecipient: { type: String },
             rvnAmount: { type: Number },
             arrrRecipient: { type: String },
             arrrAmount: { type: Number },
@@ -64,7 +65,7 @@ class MultiWallet extends LitElement {
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
-			rvnFeePerByte: { type: Number },
+		rvnFeePerByte: { type: Number },
             balanceString: { type: String }
         }
     }
@@ -507,6 +508,11 @@ class MultiWallet extends LitElement {
                 margin-top: 15px;
             }
 
+            .qrcode-pos {
+                margin-top: -180px;
+                margin-left: 425px;
+            }
+
             @media (max-width: 863px) {
                 .wallet {
                     width: 100%;
@@ -634,7 +640,7 @@ class MultiWallet extends LitElement {
         this.dgbFeePerByte = 10
         this.dgbSatMinFee = 1
         this.dgbSatMaxFee = 100
-		this.rvnFeePerByte = 1125
+        this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
 
@@ -711,7 +717,7 @@ class MultiWallet extends LitElement {
                             <div class="currency-image"></div>
                             <div class="currency-text">Digibyte</div>
                         </div>
-						<div coin="rvn" class="currency-box rvn">
+				<div coin="rvn" class="currency-box rvn">
                             <div class="currency-image"></div>
                             <div class="currency-text">Ravencoin</div>
                         </div>
@@ -737,13 +743,16 @@ class MultiWallet extends LitElement {
                                 color="var(--copybutton)"
                                 offsetLeft="4px"
                             >
-                            </button-icon-copy> 
+                            </button-icon-copy>
                         </div>
                         <span class="wallet-balance">
                             ${this.balanceString}<br><br>
                             ${this.renderSendButton()}
                         </span>
                     </h2>
+                    <div class="qrcode-pos">
+                        <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
+                    </div>
                     <div id="transactions">
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
@@ -3013,7 +3022,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -3078,7 +3087,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -3143,7 +3152,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -3208,7 +3217,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -3273,7 +3282,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >

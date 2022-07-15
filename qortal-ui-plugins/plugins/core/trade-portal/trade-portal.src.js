@@ -92,7 +92,7 @@ class TradePortal extends LitElement {
 			border-left: 1px solid var(--tradeborder);
 			border-top: 1px solid var(--tradeborder);
 			border-right: 1px solid var(--tradeborder);
-                        color: var(--black);
+                  color: var(--black);
 		}
 
 		#tab-buy[active] {
@@ -243,9 +243,20 @@ class TradePortal extends LitElement {
 		.amt-text {
 			color: var(--tradehave);
 			font-size: 15px;
-			text-align: right;
-			margin-top: 2px;
-			margin-bottom: 10px;
+			margin-top: 5px;
+			margin-bottom: 12px;
+		}
+
+		.balance-text {
+                  display: inline;
+			float: right;
+			margin-bottom: 5px;
+		}
+
+		.fee-text {
+                  display: inline;
+			float: left;
+			margin-bottom: 5px;
 		}
 
 		.tab-text {
@@ -339,6 +350,10 @@ class TradePortal extends LitElement {
 			top: 10px;
 		}
 
+		.btc.coinName:before  {
+			background-image: url('/img/qortbtc.png');
+		}
+
 		.ltc.coinName:before  {
 			background-image: url('/img/qortltc.png');
 		}
@@ -428,6 +443,22 @@ class TradePortal extends LitElement {
             tradeFee: "0.002"
         }
 
+        let bitcoin = {
+            name: "BITCOIN",
+            balance: "0",
+            coinCode: "BTC",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.0001"
+        }
+
         let litecoin = {
             name: "LITECOIN",
             balance: "0",
@@ -476,7 +507,7 @@ class TradePortal extends LitElement {
             tradeFee: "~0.0005"
         }
 
-		let ravencoin = {
+	  let ravencoin = {
             name: "RAVENCOIN",
             balance: "0",
             coinCode: "RVN",
@@ -510,6 +541,7 @@ class TradePortal extends LitElement {
 
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
+        this.listedCoins.set("BITCOIN", bitcoin)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
@@ -517,6 +549,11 @@ class TradePortal extends LitElement {
         this.listedCoins.set("PIRATECHAIN", piratechain)
 
         workers.set("QORTAL", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
+        workers.set("BITCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -536,7 +573,7 @@ class TradePortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
-		workers.set("RAVENCOIN", {
+	  workers.set("RAVENCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -668,7 +705,7 @@ class TradePortal extends LitElement {
 							<div style="margin-left: auto">
 								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
 							</div>
-                                                        <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -682,7 +719,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -696,7 +733,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -720,8 +757,10 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="amt-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
-							<span class="amt-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get(this.selectedCoin).tradeFee} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+							<span class="amt-text">
+                                              <span class="balance-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get(this.selectedCoin).balance} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+                                              <span class="fee-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get(this.selectedCoin).tradeFee} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+                                          </span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="buy-button" ?disabled="${this.buyBtnDisable}" style="width:100%;" raised @click="${(e) => this.buyAction(e)}">
@@ -751,7 +790,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange14")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -766,7 +805,7 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-                                                        <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
+                                          <span class="tab-text">${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
@@ -780,8 +819,10 @@ class TradePortal extends LitElement {
 								>
 								</mwc-textfield>
 							</p>
-							<span class="amt-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get("QORTAL").balance} QORT</span>
-							<span class="amt-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get("QORTAL").tradeFee} QORT</span>
+							<span class="amt-text">
+                                              <span class="balance-text">${translate("tradepage.tchange16")}: ${this.listedCoins.get("QORTAL").balance} QORT</span>
+							    <span class="fee-text">${translate("walletpage.wchange12")}: ${this.listedCoins.get("QORTAL").tradeFee} QORT</span>
+                                          </span>
 							<div class="buttons">
 								<div>
 									<mwc-button class="sell-button" ?disabled="${this.sellBtnDisable}" style="width:100%;" raised @click="${(e) => this.sellAction()}">
@@ -930,6 +971,7 @@ class TradePortal extends LitElement {
 				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">Qortal ${translate("tradepage.tchange1")} - &nbsp;</h2>
 				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
 					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">QORT / LTC</span></mwc-list-item>
+					<mwc-list-item value="BITCOIN"><span class="coinName btc" style="color: var(--black);">QORT / BTC</span></mwc-list-item>
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
@@ -1089,6 +1131,10 @@ class TradePortal extends LitElement {
         let _body = null
 
         switch (this.selectedCoin) {
+            case 'BITCOIN':
+                _url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+                break
             case 'LITECOIN':
                 _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
@@ -1100,8 +1146,8 @@ class TradePortal extends LitElement {
             case 'DIGIBYTE':
                 _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-				break
-			case 'RAVENCOIN':
+		    break
+		case 'RAVENCOIN':
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
@@ -1367,23 +1413,19 @@ class TradePortal extends LitElement {
     processTradeBotStates(tradeStates) {
 
         /**
-    * BitcoinACCTv1 TRADEBOT STATES
-    *  - BOB_WAITING_FOR_AT_CONFIRM
-    *  - BOB_WAITING_FOR_MESSAGE
-    *  - BOB_WAITING_FOR_P2SH_B
-    *  - BOB_WAITING_FOR_AT_REDEEM
-    *  - BOB_DONE
-    *  - BOB_REFUNDED
-    *  - ALICE_WAITING_FOR_P2SH_A
-    *  - ALICE_WAITING_FOR_AT_LOCK
-    *  - ALICE_WATCH_P2SH_B
-    *  - ALICE_DONE
-    *  - ALICE_REFUNDING_B
-    *  - ALICE_REFUNDING_A
-    *  - ALICE_REFUNDED
-    *
-    * @param {[{}]} states
-    */
+        * BitcoinACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
 
         const BitcoinACCTv1 = (states) => {
             // Reverse the states
@@ -1394,24 +1436,16 @@ class TradePortal extends LitElement {
                         this.changeTradeBotState(state, 'PENDING')
                     } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
                         this.changeTradeBotState(state, 'LISTED')
-                    } else if (state.tradeState == 'BOB_WAITING_FOR_P2SH_B') {
-                        this.changeTradeBotState(state, 'TRADING')
                     } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
-                        this.changeTradeBotState(state, 'REDEEMING')
+                        this.changeTradeBotState(state, 'TRADING')
                     } else if (state.tradeState == 'BOB_DONE') {
                         this.handleCompletedState(state)
                     } else if (state.tradeState == 'BOB_REFUNDED') {
                         this.handleCompletedState(state)
-                    } else if (state.tradeState == 'ALICE_WAITING_FOR_P2SH_A') {
-                        this.changeTradeBotState(state, 'PENDING')
                     } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
-                        this.changeTradeBotState(state, 'TRADING')
-                    } else if (state.tradeState == 'ALICE_WATCH_P2SH_B') {
-                        this.changeTradeBotState(state, 'TRADING')
+                        this.changeTradeBotState(state, 'BUYING')
                     } else if (state.tradeState == 'ALICE_DONE') {
                         this.handleCompletedState(state)
-                    } else if (state.tradeState == 'ALICE_REFUNDING_B') {
-                        this.changeTradeBotState(state, 'REFUNDING')
                     } else if (state.tradeState == 'ALICE_REFUNDING_A') {
                         this.changeTradeBotState(state, 'REFUNDING')
                     } else if (state.tradeState == 'ALICE_REFUNDED') {
@@ -1745,7 +1779,7 @@ class TradePortal extends LitElement {
             const startOfferPresenceMapping = async () => {
                 if (presenceTxns !== null) {
                     await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(5)
+                        await waitFor(50)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
                     })
@@ -1753,7 +1787,7 @@ class TradePortal extends LitElement {
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
-                        await waitFor(5)
+                        await waitFor(50)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
                     })
@@ -1900,19 +1934,19 @@ class TradePortal extends LitElement {
         }
 
         const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 5000)
+            setTimeout(() => initPresenceWebSocket(true), 2000)
         }
 
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 5000)
+            setTimeout(() => initTradePresenceWebSocket(true), 2000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 5000)
+            setTimeout(() => initTradeOffersWebSocket(true), 2000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 5000)
+            setTimeout(() => initTradeBotWebSocket(true), 2000)
         }
 
         // Start TradeOffersWebSocket
@@ -1938,6 +1972,9 @@ class TradePortal extends LitElement {
         const makeRequest = async () => {
             let _receivingAddress = null
             switch (this.selectedCoin) {
+                case 'BITCOIN':
+                    _receivingAddress = this.selectedAddress.btcWallet.address
+                    break
                 case 'LITECOIN':
                     _receivingAddress = this.selectedAddress.ltcWallet.address
                     break
@@ -2007,6 +2044,9 @@ class TradePortal extends LitElement {
         let _foreignKey = ""
 
         switch (this.selectedCoin) {
+            case 'BITCOIN':
+                _foreignKey = this.selectedAddress.btcWallet.derivedMasterPrivateKey
+                break
             case 'LITECOIN':
                 _foreignKey = this.selectedAddress.ltcWallet.derivedMasterPrivateKey
                 break
@@ -2446,11 +2486,11 @@ class TradePortal extends LitElement {
             self.postMessage({ type: 'STUCK_OFFERS', data: stuckOffers })
         }
 
-        // Get Historic Trades
-        getCompletedTrades()
-
         // Get Offers
-        getOffers()
+        setTimeout(() => { getOffers() }, 1000)
+
+        // Get Historic Trades
+        setTimeout(() => { getCompletedTrades() }, 1000)
     }
 
     filterStuckTrades(states) {

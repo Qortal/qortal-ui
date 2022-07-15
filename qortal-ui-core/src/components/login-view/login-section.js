@@ -617,9 +617,12 @@ class LoginSection extends connect(store)(LitElement) {
 
         // First decrypt...
         this.loadingRipple.welcomeMessage = this.renderPrepareText()
+        const x = e.clientX !== undefined ? e.clientX : e.explicitOriginalTarget.getBoundingClientRect().left + window.scrollX
+        const y = e.clientY !== undefined ? e.clientY : e.explicitOriginalTarget.getBoundingClientRect().top + window.scrollY
+
         this.loadingRipple.open({
-            x: e.clientX,
-            y: e.clientY
+            x: x,
+            y: y
         })
             .then(() => {
                 const source = this.walletSources[type]()

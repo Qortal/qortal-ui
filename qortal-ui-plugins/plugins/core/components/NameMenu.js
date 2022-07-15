@@ -250,9 +250,9 @@ class NameMenu extends LitElement {
         this.changeLanguage()
         this.getChatBlockedAdresses()
 
-	setInterval(() => {
-	    this.getChatBlockedAdresses();
-	}, 60000)
+	  setInterval(() => {
+	      this.getChatBlockedAdresses();
+	  }, 60000)
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -350,6 +350,12 @@ class NameMenu extends LitElement {
         }
     }
 
+    relMessages() {
+        setTimeout(() => {
+            window.location.href = window.location.href.split( '#' )[0]
+        }, 500)
+    }
+
     async getChatBlockedAdresses() {
         const chatBlockedAdresses = await parentEpml.request('apiCall', {
             url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
@@ -386,6 +392,7 @@ class NameMenu extends LitElement {
                 labelText: `${err1string}`,
                 dismiss: true
             })
+            this.relMessages()
         } else {
             this.closeMenu()
             this.shadowRoot.querySelector('#blockNameDialog').close()
