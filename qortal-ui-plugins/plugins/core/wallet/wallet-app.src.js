@@ -2698,7 +2698,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -2763,7 +2763,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -2828,7 +2828,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -2893,7 +2893,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
@@ -2958,7 +2958,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
-                        const time = new Date(data.item.timestamp * 1000)
+                        const time = new Date(data.item.timestamp)
                         render(html` <time-ago datetime=${time.toISOString()}> </time-ago> `, root)
                     }}
                 >
