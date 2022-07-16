@@ -9,6 +9,7 @@ import '@material/mwc-button'
 import './account-view.js'
 import './security-view.js'
 import './notifications-view.js'
+import './qr-login-view.js'
 
 import { doLogout } from '../../redux/app/app-actions.js'
 
@@ -225,6 +226,7 @@ class UserSettings extends connect(store)(LitElement) {
                             <ul>
                                 <li @click=${ () => this.setSettingsView('info')} ><a class=${this.selectedView.id === 'info' ? 'active' : ''} href="javascript:void(0)">${translate("settings.account")}</a></li>
                                 <li @click=${ () => this.setSettingsView('security')} ><a class=${this.selectedView.id === 'security' ? 'active' : ''} href="javascript:void(0)">${translate("settings.security")}</a></li>
+                                <li @click=${ () => this.setSettingsView('qr-login')} ><a class=${this.selectedView.id === 'qr-login' ? 'active' : ''} href="javascript:void(0)">${translate("settings.qr_login_menu_item") }</a></li>
                                 <li @click=${ () => this.setSettingsView('notification')} ><a class=${this.selectedView.id === 'notification' ? 'active' : ''} href="javascript:void(0)">${translate("settings.notifications")}</a></li>
                             </ul>
                         </div>
@@ -250,6 +252,8 @@ class UserSettings extends connect(store)(LitElement) {
             return html`<security-view></security-view>`;
         } else if (selectedView.id === 'notification') {
             return html`<notifications-view></notifications-view>`;
+        } else if (selectedView.id === 'qr-login') {
+            return html`<qr-login-view></qr-login-view>`;
         }
     }
 
@@ -260,6 +264,8 @@ class UserSettings extends connect(store)(LitElement) {
             return html`${translate("settings.accountsecurity")}`;
         } else if (this.selectedView.id === 'notification') {
             return html`UI ${translate("settings.notifications")}`;
+        } else if (this.selectedView.id === 'qr-login') {
+            return html`${translate("settings.qr_login_menu_item")}`;
         }
     }
 
@@ -270,6 +276,8 @@ class UserSettings extends connect(store)(LitElement) {
             return this.selectedView = { id: 'security', name: 'Account Security' }
         } else if (pageId === 'notification') {
             return this.selectedView = { id: 'notification', name: 'UI Notifications' }
+        } else if (pageId === 'qr-login') {
+            return this.selectedView = { id: 'qr-login', name: 'QR Login' }
         }
     }
 
