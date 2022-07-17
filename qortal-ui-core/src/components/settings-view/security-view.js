@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
@@ -11,7 +11,8 @@ import FileSaver from 'file-saver'
 class SecurityView extends connect(store)(LitElement) {
     static get properties() {
         return {
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            backupErrorMessage: { type: String }
         }
     }
 
@@ -63,6 +64,7 @@ class SecurityView extends connect(store)(LitElement) {
     constructor() {
         super()
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.backupErrorMessage = ''
     }
 
     render() {
@@ -76,8 +78,11 @@ class SecurityView extends connect(store)(LitElement) {
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
                             <vaadin-password-field style="width: 100%; color: var(--black);" label="${translate("settings.password")}" id="downloadBackupPassword" autofocus></vaadin-password-field>
                         </div>
+                        <div style="text-align: center; color: var(--mdc-theme-error); text-transform: uppercase; font-size: 15px;">
+                            ${this.backupErrorMessage}
+                        </div>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
-                            <div @click=${() => this.downloadBackup()} class="q-button"> ${translate("settings.download")} </div>
+                            <div @click=${() => this.checkForDownload()} class="q-button"> ${translate("settings.download")} </div>
                         </div>
                     </div>
                 </div>
@@ -87,7 +92,17 @@ class SecurityView extends connect(store)(LitElement) {
     stateChanged(state) {
     }
 
+    checkForDownload() {
+        const checkPass = this.shadowRoot.getElementById('downloadBackupPassword').value
+        if (checkPass === '') {
+           this.backupErrorMessage = get("login.pleaseenter")
+        } else {
+            this.downloadBackup()
+        }
+    }
+
     async downloadBackup() {
+        this.backupErrorMessage = ''
         const state = store.getState()
         const password = this.shadowRoot.getElementById('downloadBackupPassword').value
         const data = await state.app.wallet.generateSaveWalletData(password, state.config.crypto.kdfThreads, () => { })
