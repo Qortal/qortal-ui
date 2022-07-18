@@ -76,7 +76,14 @@ class SecurityView extends connect(store)(LitElement) {
                         </p>
                         <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                             <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
-                            <vaadin-password-field style="width: 100%; color: var(--black);" label="${translate("settings.password")}" id="downloadBackupPassword" autofocus></vaadin-password-field>
+                            <vaadin-password-field
+                                style="width: 100%; color: var(--black);"
+                                label="${translate("settings.password")}"
+                                id="downloadBackupPassword"
+                                helper-text="${translate("login.passwordhint")}"
+                                autofocus
+                            >
+                            </vaadin-password-field>
                         </div>
                         <div style="text-align: center; color: var(--mdc-theme-error); text-transform: uppercase; font-size: 15px;">
                             ${this.backupErrorMessage}
@@ -96,6 +103,8 @@ class SecurityView extends connect(store)(LitElement) {
         const checkPass = this.shadowRoot.getElementById('downloadBackupPassword').value
         if (checkPass === '') {
            this.backupErrorMessage = get("login.pleaseenter")
+        } else if (checkPass.length < 8) {
+           this.backupErrorMessage = get("login.lessthen8-2")
         } else {
             this.downloadBackup()
         }

@@ -66,6 +66,7 @@
     "pleaseenter": "Te rog introdu o parola!",
     "notmatch": "Parola nu corespunde!",
     "lessthen8": "Parola ta are mai putin de 8 caractere! Acest lucru nu este recomandat. Poti continua sa ignori acest avertisment.",
+    "lessthen8-2": "Parola ta are mai putin de 8 caractere!",
     "entername": "Te rog introdu un Nume!",
     "downloaded": "Copia de siguranta a portofelului este descarcata!",
     "loading": "Se incarca. Va rugam asteptati...",
@@ -76,7 +77,8 @@
     "savewallet": "Salveaza copia de siguranta a Portofelului",
     "created1": "Contul tau este acum creat",
     "created2": "si va fi salvat in acest browser.",
-    "downloadbackup": "Descarca copia de siguranta a Portofelului"
+    "downloadbackup": "Descarca copia de siguranta a Portofelului",
+    "passwordhint": "O parola trebuie sa aiba cel putin 8 caractere."
   },
   "logout": {
     "logout": "DECONECTARE",
@@ -93,6 +95,11 @@
     "settings": "Setari",
     "account": "Cont",
     "security": "Securitate",
+    "qr_login_menu_item": "Autentificare QR",
+    "qr_login_description_1": "Scanati acest cod pentru a va debloca portofelul pe alt dispozitiv folosind aceeasi parola cu care v-ati autentificat.",
+    "qr_login_description_2": "Alegeti o parola pe care o veti folosi pentru a va debloca portofelul pe alt dispozitiv dupa scanarea codului QR.",
+    "qr_login_button_1": "Afisati codul QR de conectare",
+    "qr_login_button_2": "Generati codul QR de conectare",
     "notifications": "Notificari",
     "accountsecurity": "Securitatea contului",
     "password": "Parola",

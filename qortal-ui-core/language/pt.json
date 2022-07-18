@@ -66,6 +66,7 @@
     "pleaseenter": "Por favor coloque sua senha!",
     "notmatch": "Senhas não correspondem!",
     "lessthen8": "Sua senha é menor que 8 caracteres! Isso não é recomendado. Você pode continuar e ignorar este aviso.",
+    "lessthen8-2": "Sua senha é menor que 8 caracteres!",
     "entername": "Por favor, digite um nome!",
     "downloaded": "Seu arquivo Wallet BackUp é baixado!",
     "loading": "Carregando, por favor espere...",
@@ -76,7 +77,8 @@
     "savewallet": "Salvar Arquivo de BackUp da Carteira",
     "created1": "Sua conta foi Criada",
     "created2": "e será salva neste navegador.",
-    "downloadbackup": "Baixe o Arquivo BackUp da Carteira"
+    "downloadbackup": "Baixe o Arquivo BackUp da Carteira",
+    "passwordhint": "Uma senha deve ter pelo menos 8 caracteres."
   },
   "logout": {
     "logout": "SAIR",
@@ -93,6 +95,11 @@
     "settings": "Configurações",
     "account": "Conta",
     "security": "Segurança",
+    "qr_login_menu_item": "Login QR",
+    "qr_login_description_1": "Digitalize este código para desbloquear sua carteira em outro dispositivo usando a mesma senha com a qual você fez login.",
+    "qr_login_description_2": "Escolha uma senha que você usará para desbloquear sua carteira em outro dispositivo após digitalizar o código QR.",
+    "qr_login_button_1": "Mostrar código QR de login",
+    "qr_login_button_2": "Gerar código QR de login",
     "notifications": "Notificações",
     "accountsecurity": "Segurança da Conta",
     "password": "Senha",

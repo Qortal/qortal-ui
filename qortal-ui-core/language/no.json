@@ -66,6 +66,7 @@
     "pleaseenter": "Skriv inn et passord!",
     "notmatch": "Passord matcher ikke!",
     "lessthen8": "Passordet ditt er mindre enn 8 tegn! Dette anbefales ikke. Du kan velge å fortsette, og ignorere denne advarselen.",
+    "lessthen8-2": "Passordet ditt er mindre enn 8 tegn!",
     "entername": "Skriv inn et navn!",
     "downloaded": "Backup-filen for lommeboken din vil bli lastet ned!",
     "loading": "Laster, vennligst vent...",
@@ -76,7 +77,8 @@
     "savewallet": "Lagre backup-fil for lommebok",
     "created1": "Kontoen din er nå opprettet",
     "created2": " og vil bli lagret i denne nettleseren.",
-    "downloadbackup": "Last ned backup-fil for lommebok"
+    "downloadbackup": "Last ned backup-fil for lommebok",
+    "passwordhint": "Et passord må være på minst 8 tegn."
   },
   "logout": {
     "logout": "LOGG AV",
@@ -93,6 +95,11 @@
     "settings": "Innstillinger",
     "account": "Konto",
     "security": "Sikkerhet",
+    "qr_login_menu_item": "QR-pålogging",
+    "qr_login_description_1": "Skann denne koden for å låse opp lommeboken din på en annen enhet med samme passord som du logget på med.",
+    "qr_login_description_2": "Velg et passord som du vil bruke til å låse opp lommeboken din på en annen enhet etter å ha skannet QR-koden.",
+    "qr_login_button_1": "Vis QR-kode for pålogging",
+    "qr_login_button_2": "Generer QR-kode for pålogging",
     "notifications": "Varsler",
     "accountsecurity": "Kontosikkerhet",
     "password": "Passord",
