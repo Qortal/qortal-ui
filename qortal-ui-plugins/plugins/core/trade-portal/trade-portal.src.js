@@ -1833,19 +1833,19 @@ class TradePortal extends LitElement {
         }
 
         const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 2000)
+            setTimeout(() => initPresenceWebSocket(true), 20000)
         }
 
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 2000)
+            setTimeout(() => initTradePresenceWebSocket(true), 20000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 2000)
+            setTimeout(() => initTradeOffersWebSocket(true), 20000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 2000)
+            setTimeout(() => initTradeBotWebSocket(true), 20000)
         }
 
         // Start TradeOffersWebSocket
