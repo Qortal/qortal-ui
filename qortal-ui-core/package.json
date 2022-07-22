@@ -18,11 +18,11 @@
   "license": "GPL-3.0",
   "dependencies": {
     "@hapi/hapi": "20.2.2",
-    "@hapi/inert": "6.0.5",
+    "@hapi/inert": "7.0.0",
     "sass": "1.53.0"
   },
   "devDependencies": {
-    "@babel/core": "7.18.6",
+    "@babel/core": "7.18.9",
     "@material/mwc-button": "0.26.1",
     "@material/mwc-checkbox": "0.26.1",
     "@material/mwc-dialog": "0.26.1",
@@ -55,7 +55,7 @@
     "@polymer/paper-tooltip": "3.0.1",
     "@rollup/plugin-alias": "3.1.9",
     "@rollup/plugin-babel": "5.3.1",
-    "@rollup/plugin-commonjs": "22.0.0",
+    "@rollup/plugin-commonjs": "22.0.1",
     "@rollup/plugin-node-resolve": "13.3.0",
     "@rollup/plugin-replace": "4.0.0",
     "@vaadin/grid": "23.1.4",
