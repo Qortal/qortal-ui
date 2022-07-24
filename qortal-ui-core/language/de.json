@@ -66,6 +66,7 @@
     "pleaseenter": "Bitte Passwort eingeben!",
     "notmatch": "Passwörter stimmen nicht überein!",
     "lessthen8": "Ihr Passwort hat weniger als 8 Zeichen! Dies wird nicht empfohlen. Sie können diese Warnung weiterhin ignorieren.",
+    "lessthen8-2": "Ihr Passwort hat weniger als 8 Zeichen!",
     "entername": "Bitte geben Sie einen Namen ein!",
     "downloaded": "Ihre Wallet BackUp-Datei wird heruntergeladen!",
     "loading": "Wird geladen, bitte warten...",
@@ -76,7 +77,8 @@
     "savewallet": "Speichern Sie die Wallet-Sicherungsdatei",
     "created1": "Ihr Konto ist jetzt erstellt",
     "created2": " und wird in diesem Browser gespeichert.",
-    "downloadbackup": "Laden Sie die Wallet-Sicherungsdatei herunter"
+    "downloadbackup": "Laden Sie die Wallet-Sicherungsdatei herunter",
+    "passwordhint": "Ein Passwort muss mindestens 8 Zeichen lang sein."
   },
   "logout": {
     "logout": "AUSLOGGEN",
@@ -93,6 +95,11 @@
     "settings": "Einstellungen",
     "account": "Konto",
     "security": "Sicherheit",
+    "qr_login_menu_item": "QR-Anmeldung",
+    "qr_login_description_1": "Scannen Sie diesen Code, um Ihre Brieftasche auf einem anderen Gerät mit demselben Passwort zu entsperren, mit dem Sie sich angemeldet haben.",
+    "qr_login_description_2": "Wählen Sie ein Passwort, mit dem Sie Ihre Brieftasche auf einem anderen Gerät entsperren, nachdem Sie den QR-Code gescannt haben.",
+    "qr_login_button_1": "Login-QR-Code anzeigen",
+    "qr_login_button_2": "Login-QR-Code generieren",
     "notifications": "Benachrichtigungen",
     "accountsecurity": "Konto Sicherheit",
     "password": "Passwort",

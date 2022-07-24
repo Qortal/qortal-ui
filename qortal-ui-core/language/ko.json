@@ -66,6 +66,7 @@
     "pleaseenter": "암호를 입력하십시오!",
     "notmatch": "암호가 일치하지 않습니다!",
     "lessthen8": "암호가 8자 미만입니다! 이것은 권장되지 않습니다. 이 경고는 계속 무시할 수 있습니다.",
+    "lessthen8-2": "암호가 8자 미만입니다!",
     "entername": "이름을 입력하십시오!",
     "downloaded": "지갑 백업 파일이 다운로드됩니다!",
     "loading": "로드 중입니다. 잠시 기다려 주십시오...",
@@ -76,7 +77,8 @@
     "savewallet": "지갑 백업 파일 저장",
     "created1": "이제 계정이 생성되었습니다.",
     "created2": " 이 브라우저에 저장됩니다.",
-    "downloadbackup": "지갑 백업 파일 다운로드"
+    "downloadbackup": "지갑 백업 파일 다운로드",
+    "passwordhint": "비밀번호는 8자 이상이어야 합니다."
  },
   "logout": {
     "logout": "로그아웃",
@@ -93,6 +95,11 @@
     "settings": "설정",
     "account": "계정",
     "security": "보안",
+    "qr_login_menu_item": "QR 로그인",
+    "qr_login_description_1": "이 코드를 스캔하면 로그인한 것과 동일한 비밀번호를 사용하여 다른 기기에서 지갑을 잠금 해제할 수 있습니다.",
+    "qr_login_description_2": "QR 코드를 스캔한 후 다른 기기에서 지갑을 잠금 해제할 때 사용할 비밀번호를 선택하세요.",
+    "qr_login_button_1": "로그인 QR 코드 표시",
+    "qr_login_button_2": "로그인 QR 코드 생성",
     "notifications": "알림",
     "accountsecurity": "계정 보안",
     "password": "비밀번호",

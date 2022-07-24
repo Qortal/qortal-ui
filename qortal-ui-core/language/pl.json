@@ -66,6 +66,7 @@
     "pleaseenter": "Proszę wprowadzić Hasło!",
     "notmatch": "Hasła nie pasują!",
     "lessthen8": "Twoje hasło ma mniej niż 8 znaków! Nie jest to zalecane. Możesz zignorować to ostrzeżenie.",
+    "lessthen8-2": "Twoje hasło ma mniej niż 8 znaków!",
     "entername": "Proszę podać Nazwę!",
     "downloaded": "Twój plik kopii zapasowej Portfela zostanie pobrany!",
     "loading": "Ładowanie, proszę czekać...",
@@ -76,7 +77,8 @@
     "savewallet": "Zapisz plik kopii zapasowej portfela",
     "created1": "Twoje konto zostało utworzone",
     "created2": " i zostanie zapisane w tej przeglądarce.",
-    "downloadbackup": "Pobierz plik kopii zapasowej portfela"
+    "downloadbackup": "Pobierz plik kopii zapasowej portfela",
+    "passwordhint": "Hasło musi mieć co najmniej 8 znaków."
   },
   "logout": {
     "logout": "WYLOGUJ",
@@ -93,6 +95,11 @@
     "settings": "Ustawienia",
     "account": "Konto",
     "security": "Bezpieczeństwo",
+    "qr_login_menu_item": "Logowanie QR",
+    "qr_login_description_1": "Zeskanuj ten kod, aby odblokować portfel na innym urządzeniu, używając tego samego hasła, którym się zalogowałeś.",
+    "qr_login_description_2": "Wybierz hasło, którego użyjesz do odblokowania portfela na innym urządzeniu po zeskanowaniu kodu QR.",
+    "qr_login_button_1": "Pokaż kod QR logowania",
+    "qr_login_button_2": "Wygeneruj kod QR logowania",
     "notifications": "Powiadomienia",
     "accountsecurity": "Bezpieczeństwo konta",
     "password": "Hasło",

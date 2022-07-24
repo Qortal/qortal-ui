@@ -66,6 +66,7 @@
     "pleaseenter": "Veuillez entrer un mot de passe!",
     "notmatch": "Les mots de passe ne correspondent pas!",
     "lessthen8": "Votre mot de passe est inférieur à 8 caractères! Ceci n’est pas recommandé. Vous pouvez continuer en ignorant cet avertissement.",
+    "lessthen8-2": "Votre mot de passe est inférieur à 8 caractères!",
     "entername": "Veuillez saisir un nom!",
     "downloaded": "Le fichier de sauvegarde de votre portefeuille va être téléchargé!",
     "loading": "Chargement en cours, veuillez patienter...",
@@ -76,7 +77,8 @@
     "savewallet": "Sauvegarder le fichier de sauvegarde du portefeuille",
     "created1": "Votre compte est maintenant créé",
     "created2": " et sera enregistré dans ce navigateur.",
-    "downloadbackup": "Télécharger le fichier de sauvegarde du portefeuille"
+    "downloadbackup": "Télécharger le fichier de sauvegarde du portefeuille",
+    "passwordhint": "Un mot de passe doit comporter au moins 8 caractères."
   },
   "logout": {
     "logout": "DECONNEXION",
@@ -93,6 +95,11 @@
     "settings": "Paramètres",
     "account": "Compte",
     "security": "Sécurité",
+    "qr_login_menu_item": "QR Connexion",
+    "qr_login_description_1": "Scannez ce code pour déverrouiller votre portefeuille sur un autre appareil en utilisant le même mot de passe avec lequel vous vous êtes connecté.",
+    "qr_login_description_2": "Choisissez un mot de passe que vous utiliserez pour déverrouiller votre portefeuille sur un autre appareil après avoir scanné le code QR.",
+    "qr_login_button_1": "Afficher le code QR de connexion",
+    "qr_login_button_2": "Générer le code QR de connexion",
     "notifications": "Notifications",
     "accountsecurity": "Sécurité du compte",
     "password": "Mot de passe",

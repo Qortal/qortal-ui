@@ -66,6 +66,7 @@
     "pleaseenter": "Kérjük, adjon meg egy jelszót!",
     "notmatch": "A jelszavak nem egyeznek!",
     "lessthen8": "A jelszó kevesebb, mint 8 karakter! Ez nem ajánlott. Továbbra is figyelmen kívül hagyhatja ezt a figyelmeztetést.",
+    "lessthen8-2": "A jelszó kevesebb, mint 8 karakter!",
     "entername": "Adjon meg egy nevet!",
     "downloaded": "Letöltődött a Wallet BackUp fájl!",
     "loading": "Betöltés, kérjük, várjon...",
@@ -76,7 +77,8 @@
     "savewallet": "Pénztárca biztonsági mentési fájl mentése",
     "created1": "A fiók most jön létre",
     "created2": " és mentésre kerül ebben a böngészőben.",
-    "downloadbackup": "Pénztárca biztonsági mentési fájl letöltése"
+    "downloadbackup": "Pénztárca biztonsági mentési fájl letöltése",
+    "passwordhint": "A jelszónak legalább 8 karakterből kell állnia."
   },
   "logout": {
     "logout": "KIJELENTKEZIK",
@@ -93,6 +95,11 @@
     "settings": "Beállítások",
     "account": "Fiók",
     "security": "Biztonság",
+    "qr_login_menu_item": "QR bejelentkezés",
+    "qr_login_description_1": "Olvassa be ezt a kódot, hogy feloldja pénztárcáját egy másik eszközön ugyanazzal a jelszóval, amellyel bejelentkezett.",
+    "qr_login_description_2": "Válasszon egy jelszót, amellyel feloldhatja pénztárcáját egy másik eszközön a QR-kód beolvasása után.",
+    "qr_login_button_1": "Bejelentkezési QR kód megjelenítése",
+    "qr_login_button_2": "Bejelentkezési QR kód generálása",
     "notifications": "Értesítések",
     "accountsecurity": "Fiók biztonsága",
     "password": "Jelszó",
