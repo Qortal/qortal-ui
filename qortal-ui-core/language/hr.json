@@ -66,6 +66,7 @@
     "pleaseenter": "Unesite lozinku!",
     "notmatch": "Lozinke se ne podudaraju!",
     "lessthen8": "Vaša lozinka je manja od 8 znakova! Ovo se ne preporučuje. Možete nastaviti ignorirati ovo upozorenje..",
+    "lessthen8-2": "Vaša lozinka je manja od 8 znakova!",
     "entername": "Unesite ime!",
     "downloaded": "Vaša datoteka sigurnosne kopije novčanika - preuzmite!",
     "loading": "Učitava se, molimo pričekajte...",
@@ -76,7 +77,8 @@
     "savewallet": "Spremi datoteku sigurnosne kopije novčanika",
     "created1": "Vaš je račun sada stvoren",
     "created2": "i bit će spremljen u ovom pregledniku.",
-    "downloadbackup": "Preuzmite datoteku sigurnosne kopije novčanika"
+    "downloadbackup": "Preuzmite datoteku sigurnosne kopije novčanika",
+    "passwordhint": "Lozinka mora imati najmanje 8 znakova."
   },
   "logout": {
     "logout": "ODJAVITE SE",
@@ -93,6 +95,11 @@
     "settings": "Postavke",
     "account": "Račun",
     "security": "Sigurnost",
+    "qr_login_menu_item": "QR Prijava",
+    "qr_login_description_1": "Skenirajte ovaj kod kako biste otključali svoj novčanik na drugom uređaju koristeći istu lozinku s kojom ste se prijavili.",
+    "qr_login_description_2": "Odaberite lozinku kojom ćete otključati novčanik na drugom uređaju nakon skeniranja QR koda.",
+    "qr_login_button_1": "Prikaži QR kod za prijavu",
+    "qr_login_button_2": "Generirajte QR kod za prijavu",
     "notifications": "Obavijesti",
     "accountsecurity": "Sigurnost računa",
     "password": "Lozinka",

@@ -66,6 +66,7 @@
     "pleaseenter": "请输入密码!",
     "notmatch": "密码不一致!",
     "lessthen8": "你的密码长度少于8位! 我们不建议使用，但你仍可继续使用此密码。",
+    "lessthen8-2": "你的密码长度少于8位!",
     "entername": "请输入一个代称",
     "downloaded": "你的钱包备份文件已顺利下载!",
     "loading": "加载中，请耐心等候...",
@@ -76,7 +77,8 @@
     "savewallet": "下载并保存钱包备份文件",
     "created1": "你的账号已创建成功",
     "created2": " 并会保存在UI上.",
-    "downloadbackup": "下载钱包备份文件"
+    "downloadbackup": "下载钱包备份文件",
+    "passwordhint": "密码必须至少为 8 个字符。"
   },
   "logout": {
     "logout": "登出",
@@ -93,6 +95,11 @@
     "settings": "一般设定",
     "account": "钱包",
     "security": "安全性",
+    "qr_login_menu_item": "二维码登录",
+    "qr_login_description_1": "扫描此代码以使用您登录时使用的相同密码在其他设备上解锁您的钱包。",
+    "qr_login_description_2": "选择一个密码，您将在扫描二维码后用于在其他设备上解锁您的钱包。",
+    "qr_login_button_1": "显示登录二维码",
+    "qr_login_button_2": "生成登录二维码",
     "notifications": "通知",
     "accountsecurity": "钱包安全性",
     "password": "密码",

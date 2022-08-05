@@ -66,6 +66,7 @@
     "pleaseenter": "Inserisci una password!",
     "notmatch": "La password non corrisponde!",
     "lessthen8": "La tua password contiene meno di 8 caratteri! Questo non è raccomandato. Puoi continuare e ignorare questo avviso.",
+    "lessthen8-2": "La tua password contiene meno di 8 caratteri!",
     "entername": "Inserisci un nome!",
     "downloaded": "Il file di BackUp del Tuo Wallet file sta per essere scaricato!",
     "loading": "Caricamento in corso, attendere...",
@@ -76,7 +77,8 @@
     "savewallet": "Salva il file di backup del portafoglio",
     "created1": "Il tuo account è ora creato",
     "created2": " e verrà salvato in questo browser.",
-    "downloadbackup": "Scarica il file di backup del portafoglio"
+    "downloadbackup": "Scarica il file di backup del portafoglio",
+    "passwordhint": "Una password deve contenere almeno 8 caratteri."
   },
   "logout": {
     "logout": "LOGOUT",
@@ -93,6 +95,11 @@
     "settings": "Impostazioni",
     "account": "Account",
     "security": "Sicurezza",
+    "qr_login_menu_item": "Accesso QR",
+    "qr_login_description_1": "Scansiona questo codice per sbloccare il tuo portafoglio su un altro dispositivo utilizzando la stessa password con cui hai effettuato l'accesso.",
+    "qr_login_description_2": "Scegli una password che utilizzerai per sbloccare il tuo portafoglio su un altro dispositivo dopo aver scansionato il codice QR.",
+    "qr_login_button_1": "Mostra il codice QR di accesso",
+    "qr_login_button_2": "Genera codice QR di accesso",
     "notifications": "Notifiche",
     "accountsecurity": "Sicurezza dell'account",
     "password": "Password",

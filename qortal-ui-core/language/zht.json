@@ -66,6 +66,7 @@
     "pleaseenter": "請輸入密碼!",
     "notmatch": "密碼不一致!",
     "lessthen8": "你的密碼長度少於8位! 我們不建議使用，但你仍可繼續使用此密碼。",
+    "lessthen8-2": "你的密碼長度少於8位!",
     "entername": "請輸入一個代稱",
     "downloaded": "你的錢包備份文件已順利下載!",
     "loading": "加載中，請耐心等候...",
@@ -76,7 +77,8 @@
     "savewallet": "下載並保存錢包備份文件",
     "created1": "你的賬號已創建成功",
     "created2": " 並會儲存在UI上.",
-    "downloadbackup": "下載錢包備份文件"
+    "downloadbackup": "下載錢包備份文件",
+    "passwordhint": "密碼必須至少為 8 個字符。"
   },
   "logout": {
     "logout": "登出",
@@ -93,6 +95,11 @@
     "settings": "一般設定",
     "account": "錢包",
     "security": "安全性",
+    "qr_login_menu_item": "二維碼登錄",
+    "qr_login_description_1": "掃描此代碼以使用您登錄時使用的相同密碼在其他設備上解鎖您的錢包。",
+    "qr_login_description_2": "選擇一個密碼，您將在掃描二維碼後用於在其他設備上解鎖您的錢包。",
+    "qr_login_button_1": "顯示登錄二維碼",
+    "qr_login_button_2": "生成登錄二維碼",
     "notifications": "通知",
     "accountsecurity": "錢包安全性",
     "password": "密碼",

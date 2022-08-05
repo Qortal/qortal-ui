@@ -66,6 +66,7 @@
     "pleaseenter": "Por favor, introduzca una Contraseña!",
     "notmatch": "Las contraseñas no coinciden!",
     "lessthen8": "Su contraseña tiene menos de 8 caracteres! Esto no es recomendable. Puede continuar para ignorar esta advertencia.",
+    "lessthen8-2": "Su contraseña tiene menos de 8 caracteres!",
     "entername": "Por favor, introduzca un Nombre!",
     "downloaded": "La copia de seguridad de su monedero ha sido descargada!",
     "loading": "Cargando, Por favor espere...",
@@ -76,7 +77,8 @@
     "savewallet": "Guardar archivo de copia de seguridad del monedero",
     "created1": "Su cuenta ha sido creada",
     "created2": " y será guardada en el navegador.",
-    "downloadbackup": "Descargar archivo de copia de seguridad del monedero"
+    "downloadbackup": "Descargar archivo de copia de seguridad del monedero",
+    "passwordhint": "Una contraseña debe tener al menos 8 caracteres."
   },
   "logout": {
     "logout": "CERRAR SESIÓN",
@@ -93,6 +95,11 @@
     "settings": "Ajustes",
     "account": "Cuenta",
     "security": "Seguridad",
+    "qr_login_menu_item": "Inicio de sesión QR",
+    "qr_login_description_1": "Escanee este código para desbloquear su billetera en otro dispositivo usando la misma contraseña con la que inició sesión.",
+    "qr_login_description_2": "Elija una contraseña que usará para desbloquear su billetera en otro dispositivo después de escanear el código QR.",
+    "qr_login_button_1": "Mostrar código QR de inicio de sesión",
+    "qr_login_button_2": "Generar código QR de inicio de sesión",
     "notifications": "Notificaciones",
     "accountsecurity": "Seguridad de la Cuenta",
     "password": "Contraseña",

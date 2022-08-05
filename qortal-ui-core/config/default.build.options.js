@@ -109,6 +109,10 @@ const elementComponents = {
                         file: 'components/settings-view/security-view.js',
                         className: 'SecurityView'
                     },
+                    'qr-login-view': {
+                        file: 'components/settings-view/qr-login-view.js',
+                        className: 'QRLoginView'
+                    },
                     'notifications-view': {
                         file: 'components/settings-view/notifications-view.js',
                         className: 'NotificationsView'
