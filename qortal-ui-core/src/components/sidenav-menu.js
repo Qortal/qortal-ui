@@ -61,7 +61,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log({ myStore: store.getState() });
 		return html`
 			<div class="s-menu">
 				<side-menu>
@@ -97,7 +96,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 
 	renderNodeTypeMenu() {
 		const addressInfo = this.addressInfo;
-		const isMinting = addressInfo?.error !== 124 && +addressInfo?.level > 0;
+		const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0;
 
 		if (this.nodeType === 'lite') {
 			return html`
@@ -135,7 +134,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 			`;
 		} else {
 			return html`
-				${isMinting
+				${isMinter
 					? html`<side-menu-item
 							label="${translate('sidemenu.mintingdetails')}"
 							href="/app/minting"
@@ -237,7 +236,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 			store.getState().app.nodeConfig.knownNodes[
 				store.getState().app.nodeConfig.node
 			];
-		console.log({ store1: store.getState().app });
 		if ((checkNodeManagement.enableManagement = true)) {
 			return html`
 				<side-menu-item
