@@ -79,38 +79,47 @@ class BecomeMinter extends LitElement {
 		super.disconnectedCallback();
 	}
 
-	getNodeInfo() {
-		parentEpml
-			.request('apiCall', { url: `/admin/status` })
-			.then((res) => {
-				this.nodeInfo = res;
-				this.isPageLoading = false;
-			})
-			.catch(() => {
-				this.isPageLoading = false;
-			});
+	async getNodeInfo() {
+		const nodeInfo = await parentEpml.request('apiCall', {
+			url: `/admin/status`,
+		});
+
+		return nodeInfo;
 	}
 
 	async firstUpdated() {
-		console.log({ change: 11 });
-
 		this.changeLanguage();
-		this.getNodeInfo();
+
 		this.addressInfo =
 			window.parent.reduxStore.getState().app.accountInfo.addressInfo;
+		this.isPageLoading = true;
+		try {
+			const [nodeInfo, myRewardShareArray] = await Promise.all([
+				this.getNodeInfo(),
+				await this.getRewardShareRelationship(
+					window.parent.reduxStore.getState().app?.selectedAddress
+						?.address
+				),
+			]);
 
-		await this.getRewardShareRelationship(
-			window.parent.reduxStore.getState().app?.selectedAddress?.address
-		);
+			this.nodeInfo = nodeInfo;
+			this.rewardSharePublicKey =
+				myRewardShareArray[0]?.rewardSharePublicKey;
+			this.isPageLoading = false;
+		} catch (error) {
+			console.error(error);
+
+			this.isPageLoading = false;
+		}
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
-		let myRewardShareArray = await parentEpml.request('apiCall', {
+		const myRewardShareArray = await parentEpml.request('apiCall', {
 			type: 'api',
 			url: `/addresses/rewardshares?minters=${recipientAddress}&recipients=${recipientAddress}`,
 		});
 
-		this.rewardSharePublicKey = myRewardShareArray[0]?.rewardSharePublicKey;
+		return myRewardShareArray;
 	}
 
 	_levelUpBlocks() {
@@ -129,6 +138,15 @@ class BecomeMinter extends LitElement {
 			this.rewardSharePublicKey;
 
 		return html`
+			${this.isPageLoading
+				? html`
+						<div class="loadingContainer">
+							<div class="loading"></div>
+						</div>
+						<div class="backdrop"></div>
+				  `
+				: ''}
+
 			<div class="page-container">
 				<h1 class="header-title">
 					${translate('becomeMinterPage.bchange1')}
@@ -137,7 +155,6 @@ class BecomeMinter extends LitElement {
 					<hr class="divider" />
 				</div>
 
-				${this.isPageLoading ? html` <p>Loading....</p> ` : ''}
 				${isAlreadySponsored
 					? ''
 					: html` <not-sponsored></not-sponsored> `}
