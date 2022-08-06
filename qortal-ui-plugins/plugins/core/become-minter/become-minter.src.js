@@ -13,8 +13,8 @@ import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';
 import { pageStyles } from './become-minter-css.js';
-import './components/not-sponsored';
-import './components/yes-sponsored';
+import './components/not-sponsored.src';
+import './components/yes-sponsored.src';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class BecomeMinter extends LitElement {
