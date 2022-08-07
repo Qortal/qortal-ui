@@ -11,7 +11,7 @@ import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';
-import { pageStyles } from '../become-minter-css.js';
+import { pageStyles } from '../become-minter-css.src.js';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 // hello
 class NotSponsored extends LitElement {

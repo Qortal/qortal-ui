@@ -12,7 +12,7 @@ import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';
 import { blocksNeed } from '../utils/blocks-needed.js';
-import { pageStyles } from '../become-minter-css.js';
+import { pageStyles } from '../become-minter-css.src.js';
 
 class YesSponsored extends LitElement {
 	static get properties() {
