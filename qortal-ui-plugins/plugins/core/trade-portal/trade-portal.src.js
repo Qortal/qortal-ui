@@ -1199,106 +1199,142 @@ class TradePortal extends LitElement {
     }
 
     processOfferingTrade(offer) {
-        const offerItem = {
-            ...offer,
-            qortAmount: parseFloat(offer.qortAmount),
-            price: parseFloat(offer.foreignAmount) / parseFloat(offer.qortAmount),
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+                const offerItem = {
+                    ...offer,
+                    qortAmount: parseFloat(offer.qortAmount),
+                    price: parseFloat(offer.foreignAmount) / parseFloat(offer.qortAmount),
+                }
+                const addOffer = () => {
+                    this.listedCoins.get(offer.foreignBlockchain).openOrders.unshift(offerItem)
+                }
+                const initOffer = () => {
+                    this.listedCoins.get(offer.foreignBlockchain).openOrders.push(offerItem)
+                }
+                this.listedCoins.get(offer.foreignBlockchain).openOrders.length === 0 ? initOffer() : addOffer()
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+            }
+        }catch(e){
+            console.log("Error adding offer from "+offer.foreignBlockchain)
         }
-        const addOffer = () => {
-            this.listedCoins.get(this.selectedCoin).openOrders.unshift(offerItem)
-        }
-        const initOffer = () => {
-            this.listedCoins.get(this.selectedCoin).openOrders.push(offerItem)
-        }
-        this.listedCoins.get(this.selectedCoin).openOrders.length === 0 ? initOffer() : addOffer()
-        this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
     }
 
     processRedeemedTrade(offer) {
-        // If trade is mine, add it to my historic trades and also add it to historic trades
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+                    
+                // If trade is mine, add it to my historic trades and also add it to historic trades
+                if (offer.qortalCreator === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    const offerItem = {
+                        ...offer,
+                        mode: 'SOLD',
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offerItem)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                } else if (offer.partnerQortalReceivingAddress === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    const offerItem = {
+                        ...offer,
+                        mode: 'BOUGHT',
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offerItem)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                }
+                // Add to historic trades
+                const addNewHistoricTrade = () => {
+                    this._historicTradesGrid.items.unshift(offer)
+                    this._historicTradesGrid.clearCache()
+                }
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
+                        
             }
-            const offerItem = {
-                ...offer,
-                mode: 'SOLD',
-            }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offerItem)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
-        } else if (offer.partnerQortalReceivingAddress === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
-            }
-            const offerItem = {
-                ...offer,
-                mode: 'BOUGHT',
-            }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offerItem)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+        }catch(e){
+            console.log("Error processing redeemed trade offer from "+offer.foreignBlockchain)
         }
-        // Add to historic trades
-        const addNewHistoricTrade = () => {
-            this._historicTradesGrid.items.unshift(offer)
-            this._historicTradesGrid.clearCache()
-        }
-        this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
     }
 
     processTradingTrade(offer) {
-        // Remove from open market orders
-        if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-            // Check and Update Wallet Balance
-            this.updateWalletBalance()
-        }
-        this._openOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._openOrdersGrid.items.splice(index, 1)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+                // Remove from open market orders
+                if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                    // Check and Update Wallet Balance
+                    this.updateWalletBalance()
+                }
+                this._openOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._openOrdersGrid.items.splice(index, 1)
+                        this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+                    }
+                })
+                this.listedCoins.get(offer.foreignBlockchain).openOrders = this.listedCoins.get(offer.foreignBlockchain).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
             }
-        })
-        this.listedCoins.get(this.selectedCoin).openOrders = this.listedCoins.get(this.selectedCoin).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
+        }catch(e){
+            console.log("Error processing trading trade offer from "+offer.foreignBlockchain)
+        }
     }
 
     processRefundedTrade(offer) {
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+            if (offer.qortalCreator === this.selectedAddress.address) {
+                // Check and Update Wallet Balance
+                if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                    this.updateWalletBalance()
+                }
+                // Add to my historic trades
+                this._myHistoricTradesGrid.items.unshift(offer)
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
             }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offer)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+
+            }
+        }catch(e){
+            console.log("Error processing refunded trade offer from "+offer.foreignBlockchain)
         }
     }
 
     processCancelledTrade(offer) {
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+                if (offer.qortalCreator === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offer)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                }
+                this._openOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._openOrdersGrid.items.splice(index, 1)
+                        this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+                    }
+                })
+                this.listedCoins.get(offer.foreignBlockchain).openOrders = this.listedCoins.get(offer.foreignBlockchain).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
+                this._stuckOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._stuckOrdersGrid.items.splice(index, 1)
+                        this._stuckOrdersGrid.clearCache()
+                    }
+                })
             }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offer)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+        }catch(e){
+            console.log("Error processing cancelled trade offer from "+offer.foreignBlockchain)
         }
-        this._openOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._openOrdersGrid.items.splice(index, 1)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
-            }
-        })
-        this.listedCoins.get(this.selectedCoin).openOrders = this.listedCoins.get(this.selectedCoin).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
-        this._stuckOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._stuckOrdersGrid.items.splice(index, 1)
-                this._stuckOrdersGrid.clearCache()
-            }
-        })
     }
 
     /**
@@ -1314,7 +1350,6 @@ class TradePortal extends LitElement {
         offers.forEach((offer) => {
             if (offer.mode === 'OFFERING') {
                 this.processOfferingTrade(offer)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
             } else if (offer.mode === 'REDEEMED') {
                 this.processRedeemedTrade(offer)
             } else if (offer.mode === 'TRADING') {
