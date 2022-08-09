@@ -96,7 +96,7 @@ class BecomeMinter extends LitElement {
 		return mintingAccountData;
 	}
 
-	async firstUpdated() {
+	async atMount() {
 		this.changeLanguage();
 
 		this.addressInfo =
@@ -123,6 +123,10 @@ class BecomeMinter extends LitElement {
 
 			this.isPageLoading = false;
 		}
+	}
+
+	async firstUpdated() {
+		await this.atMount();
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
@@ -174,7 +178,11 @@ class BecomeMinter extends LitElement {
 
 				${isAlreadySponsored
 					? ''
-					: html` <not-sponsored></not-sponsored> `}
+					: html`
+							<not-sponsored
+								.atMount="${() => this.atMount()}"
+							></not-sponsored>
+					  `}
 				${!isAlreadySponsored
 					? ''
 					: html`

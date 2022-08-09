@@ -15,13 +15,12 @@ import { pageStyles } from '../become-minter-css.src.js';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 // hello
 class NotSponsored extends LitElement {
-	static get properties() {
-		return {
-			isLoadingSponsorshipKeySubmit: { type: Boolean },
-			sponsorshipKeyValue: { type: String },
-			addMintingAccountMessage: { type: String },
-		};
-	}
+	static properties = {
+		atMount: { type: Function },
+		isLoadingSponsorshipKeySubmit: { type: Boolean },
+		sponsorshipKeyValue: { type: String },
+		addMintingAccountMessage: { type: String },
+	};
 
 	static styles = [pageStyles];
 
@@ -30,6 +29,7 @@ class NotSponsored extends LitElement {
 		this.isLoadingSponsorshipKeySubmit = false;
 		this.sponsorshipKeyValue = '';
 		this.addMintingAccountMessage = '';
+		this.atMount = () => {};
 	}
 
 	renderErr1Text() {
@@ -61,7 +61,8 @@ class NotSponsored extends LitElement {
 			})
 			.then((res) => {
 				if (res === true) {
-					this.updateMintingAccounts();
+					// refetch data
+					this.atMount();
 					this.sponsorshipKeyValue = '';
 					this.addMintingAccountMessage = this.renderErr1Text();
 					this.isLoadingSponsorshipKeySubmit = false;
