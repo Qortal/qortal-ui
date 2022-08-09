@@ -27,6 +27,7 @@ class BecomeMinter extends LitElement {
 			isPageLoading: { type: Boolean },
 			addressInfo: { type: Object },
 			rewardSharePublicKey: { type: String },
+			mintingAccountData: { type: Array },
 		};
 	}
 
@@ -42,6 +43,7 @@ class BecomeMinter extends LitElement {
 		this.nodeInfo = {};
 		this.addressInfo = {};
 		this.rewardSharePublicKey = '';
+		this.mintingAccountData = null;
 	}
 
 	changeLanguage() {
@@ -87,6 +89,13 @@ class BecomeMinter extends LitElement {
 		return nodeInfo;
 	}
 
+	async getMintingAcccounts() {
+		const mintingAccountData = await parentEpml.request('apiCall', {
+			url: `/admin/mintingaccounts`,
+		});
+		return mintingAccountData;
+	}
+
 	async firstUpdated() {
 		this.changeLanguage();
 
@@ -94,18 +103,21 @@ class BecomeMinter extends LitElement {
 			window.parent.reduxStore.getState().app.accountInfo.addressInfo;
 		this.isPageLoading = true;
 		try {
-			const [nodeInfo, myRewardShareArray] = await Promise.all([
-				this.getNodeInfo(),
-				await this.getRewardShareRelationship(
-					window.parent.reduxStore.getState().app?.selectedAddress
-						?.address
-				),
-			]);
+			const [nodeInfo, myRewardShareArray, mintingaccounts] =
+				await Promise.all([
+					this.getNodeInfo(),
+					this.getRewardShareRelationship(
+						window.parent.reduxStore.getState().app?.selectedAddress
+							?.address
+					),
+					this.getMintingAcccounts(),
+				]);
 
 			this.nodeInfo = nodeInfo;
 			this.rewardSharePublicKey =
 				myRewardShareArray[0]?.rewardSharePublicKey;
 			this.isPageLoading = false;
+			this.mintingAccountData = mintingaccounts;
 		} catch (error) {
 			console.error(error);
 
@@ -116,7 +128,7 @@ class BecomeMinter extends LitElement {
 	async getRewardShareRelationship(recipientAddress) {
 		const myRewardShareArray = await parentEpml.request('apiCall', {
 			type: 'api',
-			url: `/addresses/rewardshares?minters=${recipientAddress}&recipients=${recipientAddress}`,
+			url: `/addresses/rewardshares?recipients=${recipientAddress}`,
 		});
 
 		return myRewardShareArray;
@@ -132,10 +144,15 @@ class BecomeMinter extends LitElement {
 	}
 
 	render() {
+		console.log({ mintingAccountData: this.mintingAccountData });
+		const findMintingAccount = this.mintingAccountData?.find(
+			(ma) => !!ma.publicKey
+		);
+
 		const isAlreadySponsored =
 			this.addressInfo?.error !== 124 &&
 			this.addressInfo?.level === 0 &&
-			this.rewardSharePublicKey;
+			findMintingAccount;
 
 		return html`
 			${this.isPageLoading
