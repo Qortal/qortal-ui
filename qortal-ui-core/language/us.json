@@ -193,7 +193,9 @@
 		"bchange14": "blocks",
 		"bchange15": "Sponsorship Relationship",
 		"bchange16": "Sponsor Account",
-		"bchange17": "Copy Sponsorship Key"
+		"bchange17": "Copy Sponsorship Key",
+		"bchange18": "Start Minting",
+		"bchange19": "Success! You are currently minting."
 	},
 	"walletpage": {
 		"wchange1": "Fetching balance ...",
