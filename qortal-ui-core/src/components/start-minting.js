@@ -124,6 +124,7 @@ class StartMinting extends connect(store)(LitElement) {
 						rewarddialog4: rewarddialog4,
 					},
 				},
+				disableModal: true,
 			});
 			return myTxnrequest;
 		};
