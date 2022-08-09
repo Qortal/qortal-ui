@@ -9,7 +9,8 @@ import '@vaadin/icons';
 
 import '../functional-components/side-menu.js';
 import '../functional-components/side-menu-item.js';
-
+import '../functional-components/my-button.js';
+import './start-minting';
 class SidenavMenu extends connect(store)(LitElement) {
 	static get properties() {
 		return {
@@ -46,6 +47,13 @@ class SidenavMenu extends connect(store)(LitElement) {
 					border-top: 1px solid var(--border);
 					outline: none;
 				}
+
+				.start-minting-wrapper {
+					position: absolute;
+					bottom: 130px;
+					left: 50%;
+					transform: translateX(calc(-50% - 10px));
+				}
 			`,
 		];
 	}
@@ -67,6 +75,8 @@ class SidenavMenu extends connect(store)(LitElement) {
 					${this.renderNodeTypeMenu()} ${this.renderNodeManagement()}
 				</side-menu>
 			</div>
+
+			<start-minting></start-minting>
 		`;
 	}
 
