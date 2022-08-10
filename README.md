@@ -41,19 +41,7 @@ Clone the main UI repo
 
 Installation and linking
 ------------------------
-In `qortal-ui-core/`, `qortal-ui-plugins/`, `qortal-ui-crypto/`  directories, run: 
-```
-yarn install
-yarn link
-```
-
-Finally, in the `qortal-ui` directory, run:
-```
-yarn link qortal-ui-core
-yarn link qortal-ui-plugins
-yarn link qortal-ui-crypto
-```
-
+ In `qortal-ui/` install_link:all
 
 
 Build UI server and files
