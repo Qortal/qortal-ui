@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { Epml } from '../../../epml.js';
 import '../components/ButtonIconCopy.js';
 import { use, translate, registerTranslateConfig } from 'lit-translate';
-import { blocksNeed } from './utils/blocks-needed.js';
+import { blocksNeed } from '../../utils/blocks-needed.js';
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -22,7 +22,6 @@ class BecomeMinter extends LitElement {
 		return {
 			theme: { type: String, reflect: true },
 			sponsorshipKeyValue: { type: String },
-
 			nodeInfo: { type: Object },
 			isPageLoading: { type: Boolean },
 			addressInfo: { type: Object },
