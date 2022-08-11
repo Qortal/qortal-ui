@@ -6,14 +6,15 @@ import { use, translate, registerTranslateConfig } from 'lit-translate';
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
-import '@polymer/paper-spinner/paper-spinner-lite.js';
 
+import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';
 import { pageStyles } from '../become-minter-css.src.js';
+
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
-// hello
+
 class NotSponsored extends LitElement {
 	static properties = {
 		atMount: { type: Function },
@@ -83,19 +84,19 @@ class NotSponsored extends LitElement {
 			<div class="inner-container">
 				<div class="sub-main">
 					<h2 class="level-black">
-						${translate('becomeMinterPage.bchange2')}
+						${translate('mintingpage.mchange33')}
 					</h2>
 					<p class="description">
-						${translate('becomeMinterPage.bchange3')}
+						${translate('mintingpage.mchange34')}
 					</p>
 					<h2 class="level-black">
-						${translate('becomeMinterPage.bchange4')}
+						${translate('mintingpage.mchange35')}
 					</h2>
 					<p class="description">
-						${translate('becomeMinterPage.bchange5')}
+						${translate('mintingpage.mchange36')}
 					</p>
 					<p class="description">
-						${translate('becomeMinterPage.bchange6')}
+						${translate('mintingpage.mchange37')}
 					</p>
 
 					<p class="message">${this.addMintingAccountMessage}</p>
@@ -123,7 +124,7 @@ class NotSponsored extends LitElement {
 							>
 								${this.isLoadingSponsorshipKeySubmit === false
 									? html`${translate(
-											'becomeMinterPage.bchange9'
+											'puzzlepage.pchange15'
 									  )}`
 									: html`<paper-spinner-lite
 											active

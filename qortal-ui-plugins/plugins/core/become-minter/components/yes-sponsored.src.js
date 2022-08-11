@@ -57,7 +57,7 @@ class YesSponsored extends LitElement {
 						<div class="content-box">
 							<span class="title"
 								>${translate(
-									'becomeMinterPage.bchange11'
+									'walletpage.wchange41'
 								)}</span
 							>
 							<hr
@@ -76,7 +76,7 @@ class YesSponsored extends LitElement {
 							/>
 							<h4>
 								${this._levelUpBlocks()}
-								${translate('becomeMinterPage.bchange14')}
+								${translate('mintingpage.mchange26')}
 							</h4>
 						</div>
 						<div class="content-box">

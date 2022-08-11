@@ -7,8 +7,8 @@ import { blocksNeed } from '../../utils/blocks-needed.js';
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
-import '@polymer/paper-spinner/paper-spinner-lite.js';
 
+import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';
@@ -169,7 +169,7 @@ class BecomeMinter extends LitElement {
 
 			<div class="page-container">
 				<h1 class="header-title">
-					${translate('becomeMinterPage.bchange1')}
+					${translate('mintingpage.mchange32')}
 				</h1>
 				<div class="fullWidth">
 					<hr class="divider" />
