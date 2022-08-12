@@ -21,6 +21,7 @@
       "korean":"Koreai"
    },
    "sidemenu":{
+      "minting":"BÉRTÉS",
       "mintingdetails":"VERÉSI RÉSZLETEK",
       "becomeAMinter":"LEGYEN PÉNZVERÓ",
       "wallets":"PÉNZTÁRCA",
@@ -28,6 +29,7 @@
       "rewardshare":"JUTALOM RÉSZVÉNY",
       "nameregistration":"NÉV REGISZTRÁCIÓ",
       "websites":"WEBHELY",
+      "management":"MENEDZSMENT",
       "datamanagement":"ADATKEZELÉS",
       "qchat":"Q-CHAT",
       "groupmanagement":"CSOPORTKEZELÉS",

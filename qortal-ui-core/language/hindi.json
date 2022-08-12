@@ -22,6 +22,7 @@
       "korean":"कोरियाई"
    },
    "sidemenu":{
+      "minting":"मिंटिंग",
       "mintingdetails":"खनन विवरण",
       "becomeAMinter":"एक मिन्टर बनें",
       "wallets":"वॉलेट",
@@ -29,6 +30,7 @@
       "rewardshare":"रिवॉर्ड शेयर",
       "nameregistration":"नाम पंजीकरण",
       "websites":"वेबसाइटों",
+      "management":"प्रबंधन",
       "datamanagement":"डेटा प्रबंधन",
       "qchat":"क्यू-चैट",
       "groupmanagement":"समूह प्रबंधन",

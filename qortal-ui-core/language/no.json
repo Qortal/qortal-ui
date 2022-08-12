@@ -21,6 +21,7 @@
       "korean":"Koreansk"
    },
    "sidemenu":{
+      "minting":"UTBYTTE",
       "mintingdetails":"MINTEDETALJER",
       "becomeAMinter":"BLI EN MINTER",
       "wallets":"LOMMEBØKER",
@@ -28,6 +29,7 @@
       "rewardshare":"BELØNNINGSDEL",
       "nameregistration":"REGISTRERING AV NAVN",
       "websites":"NETTSIDER",
+      "management":"LEDELSE",
       "datamanagement":"DATA-ADMINISTRASJON",
       "qchat":"Q-CHAT",
       "groupmanagement":"GRUPPEADMINISTRASJON",

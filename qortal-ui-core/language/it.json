@@ -21,6 +21,7 @@
       "korean":"Coreano"
    },
    "sidemenu":{
+      "minting":"CONIAZIONE",
       "mintingdetails":"DETTAGLI DI MINTING",
       "becomeAMinter":"DIVENTA UN MINATORE",
       "wallets":"PORTAFOGLI",
@@ -28,6 +29,7 @@
       "rewardshare":"QUOTA DI RICOMPENSA",
       "nameregistration":"REGISTRAZIONE DI NOME",
       "websites":"SITI",
+      "management":"GESTIONE",
       "datamanagement":"GESTIONE DATI",
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIONE DEI GRUPPI",

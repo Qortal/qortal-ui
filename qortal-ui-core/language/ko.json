@@ -21,6 +21,7 @@
       "korean":"한국어"
    },
    "sidemenu":{
+      "minting":"주조",
       "mintingdetails":"민팅 세부정보",
       "becomeAMinter":"민터 되기",
       "wallets":"지갑",
@@ -28,6 +29,7 @@
       "rewardshare":"보상 공유",
       "nameregistration":"이름 등록",
       "websites":"웹사이트",
+      "management":"관리",
       "datamanagement":"데이터 관리",
       "qchat":"Q-CHAT",
       "groupmanagement":"그룹 관리",

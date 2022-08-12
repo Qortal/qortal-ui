@@ -21,6 +21,7 @@
       "korean":"Koreański"
    },
    "sidemenu":{
+      "minting":"BICIE",
       "mintingdetails":"SZCZEGÓŁY MINTOWANIA",
       "becomeAMinter":"ZOSTAN MINTEREM",
       "wallets":"PORTFELE",
@@ -28,6 +29,7 @@
       "rewardshare":"UDZIAŁ W NAGRODZIE",
       "nameregistration":"REJESTRACJA IMIENIA",
       "websites":"STRONY INTERNETOWE",
+      "management":"KIEROWNICTWO",
       "datamanagement":"ZARZĄDZANIE DANYMI",
       "qchat":"Q-CHAT",
       "groupmanagement":"ZARZĄDZANIE GRUPAMI",

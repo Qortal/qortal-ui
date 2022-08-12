@@ -20,7 +20,6 @@ class StartMinting extends connect(store)(LitElement) {
 			css`
 				.start-minting-wrapper {
 					position: absolute;
-					bottom: 130px;
 					left: 50%;
 					transform: translateX(calc(-50% - 10px));
 				}
@@ -30,7 +29,6 @@ class StartMinting extends connect(store)(LitElement) {
 
 	constructor() {
 		super();
-
 		this.addressInfo = {};
 		this.mintingAccountData = [];
 		this.errorMsg = '';

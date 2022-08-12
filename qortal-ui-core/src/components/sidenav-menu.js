@@ -9,8 +9,7 @@ import '@vaadin/icons';
 
 import '../functional-components/side-menu.js';
 import '../functional-components/side-menu-item.js';
-import '../functional-components/my-button.js';
-import './start-minting';
+
 class SidenavMenu extends connect(store)(LitElement) {
 	static get properties() {
 		return {
@@ -33,9 +32,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 					--item-text-color: var(--nav-text-color);
 					--item-icon-color: var(--nav-icon-color);
 					--item-border-color: var(--nav-border-color);
-					--item-border-selected-color: var(
-						--nav-border-selected-color
-					);
+					--item-border-selected-color: var(--nav-border-selected-color);
 				}
 
 				.s-menu {
@@ -72,11 +69,9 @@ class SidenavMenu extends connect(store)(LitElement) {
 		return html`
 			<div class="s-menu">
 				<side-menu>
-					${this.renderNodeTypeMenu()} ${this.renderNodeManagement()}
+					${this.renderNodeTypeMenu()}
 				</side-menu>
-			</div>
-
-			<start-minting></start-minting>
+			</div>	
 		`;
 	}
 
@@ -121,19 +116,13 @@ class SidenavMenu extends connect(store)(LitElement) {
 					label="${translate('sidemenu.nameregistration')}"
 					href="/app/name-registration"
 				>
-					<vaadin-icon
-						icon="vaadin:user-check"
-						slot="icon"
-					></vaadin-icon>
+					<vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.datamanagement')}"
 					href="/app/data-management"
 				>
-					<vaadin-icon
-						icon="vaadin:database"
-						slot="icon"
-					></vaadin-icon>
+					<vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.qchat')}"
@@ -141,29 +130,35 @@ class SidenavMenu extends connect(store)(LitElement) {
 				>
 					<vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
 				</side-menu-item>
+				${this.renderNodeManagement()}
 			`;
 		} else {
 			return html`
-				${isMinter
-					? html`<side-menu-item
-							label="${translate('sidemenu.mintingdetails')}"
-							href="/app/minting"
-					  >
-							<vaadin-icon
-								icon="vaadin:info-circle"
-								slot="icon"
-							></vaadin-icon>
-					  </side-menu-item>`
-					: html`<side-menu-item
-							label="${translate('sidemenu.becomeAMinter')}"
-							href="/app/become-minter"
-					  >
-							<vaadin-icon
-								icon="vaadin:info-circle"
-								slot="icon"
-							></vaadin-icon>
-					  </side-menu-item>`}
-
+				<side-menu-item
+					label="${translate('sidemenu.minting')}"
+					expanded
+				>
+					<vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
+					${isMinter
+						? html`<side-menu-item
+								label="${translate('sidemenu.mintingdetails')}"
+								href="/app/minting"
+						  >
+								<vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
+						</side-menu-item>`
+						: html`<side-menu-item
+								label="${translate('sidemenu.becomeAMinter')}"
+								href="/app/become-minter"
+						  >
+								<vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
+						</side-menu-item>`}
+					<side-menu-item
+						label="${translate('sidemenu.rewardshare')}"
+						href="/app/reward-share"
+					>
+						<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
+					</side-menu-item>
+				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"
 					href="/app/wallet"
@@ -175,46 +170,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 					label="${translate('sidemenu.tradeportal')}"
 					href="/app/trade-portal"
 				>
-					<vaadin-icon
-						icon="vaadin:bullets"
-						slot="icon"
-					></vaadin-icon>
-				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.rewardshare')}"
-					href="/app/reward-share"
-				>
-					<vaadin-icon
-						icon="vaadin:share-square"
-						slot="icon"
-					></vaadin-icon>
-				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.nameregistration')}"
-					href="/app/name-registration"
-				>
-					<vaadin-icon
-						icon="vaadin:user-check"
-						slot="icon"
-					></vaadin-icon>
-				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.websites')}"
-					href="/app/websites"
-				>
-					<vaadin-icon
-						icon="vaadin:desktop"
-						slot="icon"
-					></vaadin-icon>
-				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.datamanagement')}"
-					href="/app/data-management"
-				>
-					<vaadin-icon
-						icon="vaadin:database"
-						slot="icon"
-					></vaadin-icon>
+					<vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.qchat')}"
@@ -223,19 +179,41 @@ class SidenavMenu extends connect(store)(LitElement) {
 					<vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
-					label="${translate('sidemenu.groupmanagement')}"
-					href="/app/group-management"
+					label="${translate('sidemenu.nameregistration')}"
+					href="/app/name-registration"
 				>
-					<vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
+					<vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
+				</side-menu-item>
+				<side-menu-item
+					label="${translate('sidemenu.websites')}"
+					href="/app/websites"
+				>
+					<vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
+				</side-menu-item>
+				<side-menu-item
+					label="${translate('sidemenu.management')}"
+					expanded
+				>
+					<vaadin-icon icon="vaadin:cogs" slot="icon"></vaadin-icon>
+					<side-menu-item
+						label="${translate('sidemenu.datamanagement')}"
+						href="/app/data-management"
+					>
+						<vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
+					</side-menu-item>
+					<side-menu-item
+						label="${translate('sidemenu.groupmanagement')}"
+						href="/app/group-management"
+					>
+						<vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
+					</side-menu-item>
+					${this.renderNodeManagement()}
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.puzzles')}"
 					href="/app/puzzles"
 				>
-					<vaadin-icon
-						icon="vaadin:puzzle-piece"
-						slot="icon"
-					></vaadin-icon>
+					<vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
 				</side-menu-item>
 			`;
 		}

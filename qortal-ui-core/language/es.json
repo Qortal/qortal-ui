@@ -21,6 +21,7 @@
       "korean":"Coreano"
    },
    "sidemenu":{
+      "minting":"ACUÑACIÓN",
       "mintingdetails":"DETALLES DE ACUÑACIÓN",
       "becomeAMinter":"CONVIERTASE EN UN ACUÑADOR",
       "wallets":"MONEDEROS",
@@ -28,6 +29,7 @@
       "rewardshare":"RECOMPENSA COMPARTIDA",
       "nameregistration":"REGISTRO DE NOMBRE",
       "websites":"SITIOS WEB",
+      "management":"GESTIÓN",
       "datamanagement":"GESTIÓN DE DATOS",
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIÓN DE GRUPO",

@@ -21,6 +21,7 @@
       "korean":"Корейский"
    },
    "sidemenu":{
+      "minting":"ЧЕКАНКA",
       "mintingdetails":"ДЕТАЛИ ЧЕКАНКИ",
       "becomeAMinter":"СТАТЬ МИНТЕРОМ",
       "wallets":"КОШЕЛЬКИ",
@@ -28,6 +29,7 @@
       "rewardshare":"ДОЛЕВОЕ УЧАСТИЕ",
       "nameregistration":"РЕГИСТРАЦИЯ ИМЕНИ",
       "websites":"ВЕБ-САЙТЫ",
+      "management":"УПРАВЛЕНИЕ",
       "datamanagement":"УПРАВЛЕНИЕ ДАННЫМИ",
       "qchat":"Q-ЧАТ",
       "groupmanagement":"УПРАВЛЕНИЕ ГРУППАМИ",

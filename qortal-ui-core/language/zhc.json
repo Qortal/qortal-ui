@@ -21,6 +21,7 @@
       "korean":"韩语"
    },
    "sidemenu":{
+      "minting":"铸币",
       "mintingdetails":"铸币信息",
       "becomeAMinter":"成为一个铸币者",
       "wallets":"钱包",
@@ -28,6 +29,7 @@
       "rewardshare":"铸币密钥",
       "nameregistration":"注册名称",
       "websites":"网站",
+      "management":"管理",
       "datamanagement":"资料管理",
       "qchat":"Q-CHAT",
       "groupmanagement":"群组管理",

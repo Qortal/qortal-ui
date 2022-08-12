@@ -21,6 +21,7 @@
       "korean":"Coreeana"
    },
    "sidemenu":{
+      "minting":"MONTAREA",
       "mintingdetails":"DETALII RECOMPENSARE MINTING)",
       "becomeAMinter":"DEVINO PRODUCATOR DE MONEDA",
       "wallets":"PORTOFELE",
@@ -28,6 +29,7 @@
       "rewardshare":"COTA RECOMPENSA",
       "nameregistration":"INREGISTRARE NUME",
       "websites":"WEBSITE-URI",
+      "management":"MANAGEMENT",
       "datamanagement":"GESTIONARE DATE",
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIONARE GRUP",

@@ -14,7 +14,6 @@ export class MyButton extends LitElement {
 			height: 100%;
 			margin: 0;
 			cursor: pointer;
-
 			min-width: 80px;
 			background-color: #03a9f4;
 			color: white;

@@ -21,6 +21,7 @@
       "korean":"Korean"
    },
    "sidemenu":{
+      "minting":"MINTING",
       "mintingdetails":"MINTING DETAILS",
       "becomeAMinter":"BECOME A MINTER",
       "wallets":"WALLETS",
@@ -28,6 +29,7 @@
       "rewardshare":"REWARD SHARE",
       "nameregistration":"NAME REGISTRATION",
       "websites":"WEBSITES",
+      "management":"MANAGEMENT",
       "datamanagement":"DATA MANAGEMENT",
       "qchat":"Q-CHAT",
       "groupmanagement":"GROUP MANAGEMENT",

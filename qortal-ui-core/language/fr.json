@@ -21,6 +21,7 @@
       "korean":"Coréen"
    },
    "sidemenu":{
+      "minting":"MONNAIE",
       "mintingdetails":"DETAILS DE FRAPPE",
       "becomeAMinter":"DEVENIR UN FRAPPEUR",
       "wallets":"PORTEFEUILLES",
@@ -28,6 +29,7 @@
       "rewardshare":"PARTAGE DE RECOMPENCES",
       "nameregistration":"ENREGISTREMENT DE NOM",
       "websites":"SITES WEB",
+      "management":"GESTIÓN",
       "datamanagement":"GESTION DE DONNEES",
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTION DE GROUPES",

@@ -21,6 +21,7 @@
       "korean":"Koreanisch"
    },
    "sidemenu":{
+      "minting":"PRÄGUNG",
       "mintingdetails":"PRÄGUNGSDETAILS",
       "becomeAMinter":"WERDE EIN MINTER",
       "wallets":"GELDBÖRSEN",
@@ -28,6 +29,7 @@
       "rewardshare":"BELOHNUNGSANTEIL",
       "nameregistration":"NAMENSREGISTRIERUNG",
       "websites":"WEBSEITEN",
+      "management":"MANAGEMENT",
       "datamanagement":"DATENMANAGEMENT",
       "qchat":"Q-CHAT",
       "groupmanagement":"GRUPPENMANAGEMENT",

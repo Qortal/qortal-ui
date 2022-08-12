@@ -6,6 +6,8 @@ import { translate, translateUnsafeHTML } from 'lit-translate'
 import '@polymer/paper-toast'
 import '@material/mwc-icon-button'
 
+import './start-minting.js'
+
 class WalletProfile extends connect(store)(LitElement) {
     static get properties() {
         return {
@@ -88,6 +90,7 @@ class WalletProfile extends connect(store)(LitElement) {
                     <p id="blocksMinted">${translate("walletprofile.blocksminted")} - ${this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment}</p>
                     <p id="address">${this.wallet.addresses[0].address}</p>
                 </div>
+                <start-minting></start-minting>
             </div>
             <paper-toast id="toast" horizontal-align="right" vertical-align="top" vertical-offset="64"></paper-toast>
         `

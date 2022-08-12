@@ -21,6 +21,7 @@
       "korean":"Korejski"
    },
    "sidemenu":{
+      "minting":"KOVANJE",
       "mintingdetails":"DETALJI MINTOVANJA",
       "becomeAMinter":"POSTANITE MINTER",
       "wallets":"NOVČANICI",
@@ -28,6 +29,7 @@
       "rewardshare":"UDEO U NAGRADI",
       "nameregistration":"REGISTRACIJA IMENA",
       "websites":"WEBSITEOVI",
+      "management":"MENADŽMENT",
       "datamanagement":"MENADŽMENT PODATAKA",
       "qchat":"Q-ĆASKANJE",
       "groupmanagement":"MENADŽMENT GRUPA",

@@ -5,6 +5,8 @@ import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
+import '@polymer/app-layout/app-layout.js'
+import '@polymer/paper-ripple'
 
 import './wallet-profile.js'
 import './app-info.js'
@@ -12,10 +14,6 @@ import './sidenav-menu.js'
 import './show-plugin.js'
 import './qort-theme-toggle.js'
 import './language-selector.js'
-
-import '@polymer/app-layout/app-layout.js'
-import '@polymer/paper-ripple'
-
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 
