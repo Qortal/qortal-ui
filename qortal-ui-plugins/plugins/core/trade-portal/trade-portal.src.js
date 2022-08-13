@@ -1183,7 +1183,7 @@ class TradePortal extends LitElement {
                     method: 'POST',
                     body: `${window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58}`,
                 })
-                if (res != null) {
+                if (res != null && res.error != 1201) {
                     this.arrrWalletAddress = res
                 }
                 break
