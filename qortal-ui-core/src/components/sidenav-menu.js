@@ -158,6 +158,12 @@ class SidenavMenu extends connect(store)(LitElement) {
 					>
 						<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
 					</side-menu-item>
+					<side-menu-item
+						label="${translate('mintingpage.mchange35')}"
+						href="/app/sponsorship-list"
+					>
+						<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
+					</side-menu-item>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"
