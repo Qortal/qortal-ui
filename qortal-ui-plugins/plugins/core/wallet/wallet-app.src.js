@@ -433,7 +433,7 @@ class MultiWallet extends LitElement {
                 background-image: url('/img/dgb.png');
             }
 
-			.rvn .currency-image {
+		.rvn .currency-image {
                 background-image: url('/img/rvn.png');
             }
 
@@ -988,7 +988,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-				<mwc-dialog id="showRvnTransactionDetailsDialog" scrimClickAction="${this.showRvnTransactionDetailsLoading ? '' : 'close'}">
+		    <mwc-dialog id="showRvnTransactionDetailsDialog" scrimClickAction="${this.showRvnTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
                         <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
@@ -1051,7 +1051,10 @@ class MultiWallet extends LitElement {
                         </p>
                         <p>
                             <span>${translate("walletpage.wchange19")}:</span><br />
-                            <span style="font-weight: bold;">${this.balanceString}</span>
+                            <span style="float: left; font-weight: bold; display: inline;">${this.balanceString}</span><br />
+                            <span style="float: left; font-weight: bold; display: inline;">
+                                <vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.calculateQortAll()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange45")} QORT</vaadin-button>
+                            </span><br /><span>&nbsp;</span>
                         </p>
                         <p>
                             <mwc-textfield
@@ -1188,7 +1191,10 @@ class MultiWallet extends LitElement {
                         </p>
                         <p>
                             <span>${translate("walletpage.wchange19")}:</span><br />
-                            <span style="font-weight: bold;">${this.balanceString}</span>
+                            <span style="float: left; font-weight: bold; display: inline;">${this.balanceString}</span><br />
+                            <span style="float: left; font-weight: bold; display: inline;">
+                                <vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.calculateLtcAll()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange45")} LTC</vaadin-button>
+                            </span><br /><span>&nbsp;</span>
                         </p>
                         <p>
                             <mwc-textfield
@@ -1873,6 +1879,25 @@ class MultiWallet extends LitElement {
         this.errorMessage = ''
     }
 
+    calculateQortAll() {
+        if (this.balance < 0.00100000) {
+            let not_enough_string = get("walletpage.wchange26")
+            parentEpml.request('showSnackBar', `${not_enough_string}`)
+        } else {
+            this.amount = (this.balance - 0.00100000).toFixed(8)
+        }
+    }
+
+    calculateLtcAll() {
+        if (this.balance < 0.00025000) {
+            let not_enough_string = get("walletpage.wchange26")
+            parentEpml.request('showSnackBar', `${not_enough_string}`)
+        } else {
+            this.ltcAmount = (this.balance - 0.00025000).toFixed(8)
+            this.ltcFeePerByte = 15
+        }
+    }
+
     renderFetchText() {
         return html`${translate("walletpage.wchange1")}`
     }
@@ -2173,6 +2198,7 @@ class MultiWallet extends LitElement {
             }
             const response = await parentEpml.request('sendLtc', opts)
             return response
+            console.log(response)
         }
 
         const manageResponse = (response) => {
@@ -2190,6 +2216,7 @@ class MultiWallet extends LitElement {
                 this.sendMoneyLoading = false
                 this.btnDisable = false
                 throw new Error(txnResponse)
+                console.log(txnResponse)
             } else {
                 this.errorMessage = response.message
                 this.sendMoneyLoading = false
@@ -2198,6 +2225,7 @@ class MultiWallet extends LitElement {
             }
         }
         const res = await makeRequest()
+        console.log(res)
         manageResponse(res)
         this.showWallet()
     }

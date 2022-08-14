@@ -201,7 +201,7 @@
       "wchange3":"Copier l’adresse du portefeuille dans le presse-papiers",
       "wchange4":"Adresse copiée dans le presse-papiers",
       "wchange5":"Détails de la transaction",
-      "wchange6":" Type de transaction",
+      "wchange6":"Type de transaction",
       "wchange7":"SORTANT",
       "wchange8":"ENTRANT",
       "wchange9":"Envoyeur",
@@ -239,7 +239,8 @@
       "wchange41":"Status",
       "wchange42":"Confirmations",
       "wchange43":"Votre transaction ne s'affichera pas tant qu'elle n'aura pas été confirmée, soyez patient...",
-      "wchange44":"Veuillez réessayer..."
+      "wchange44":"Veuillez réessayer...",
+      "wchange45":"Envoyer tout"
    },
    "tradepage":{
       "tchange1":"Portail de commerce",

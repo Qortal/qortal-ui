@@ -234,7 +234,8 @@
       "wchange41":"Status",
       "wchange42":"Confirmations",
       "wchange43":"Your transaction will not show until confirmed, be patient...",
-      "wchange44":"Please try again..."
+      "wchange44":"Please try again...",
+      "wchange45":"Send all"
    },
    "tradepage":{
       "tchange1":"Trade Portal",

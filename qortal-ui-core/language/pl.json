@@ -239,7 +239,8 @@
       "wchange41":"Status",
       "wchange42":"Potwierdzenia",
       "wchange43":"Twoja transakcja nie pojawi się, dopóki nie zostanie potwierdzona, bądź cierpliwy...",
-      "wchange44":"Proszę spróbuj ponownie..."
+      "wchange44":"Proszę spróbuj ponownie...",
+      "wchange45":"Wyślij wszystko"
    },
    "tradepage":{
       "tchange1":"Portal Handlowy",

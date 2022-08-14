@@ -237,7 +237,10 @@
       "wchange39":"Kan ikke kopiere adressen.",
       "wchange40":"BETALING",
       "wchange41":"Status",
-      "wchange42":"Bekreftelser"
+      "wchange42":"Bekreftelser",
+      "wchange43":"Transaksjonen din vises ikke før den er bekreftet, vær tålmodig...",
+      "wchange44":"Vær så snill, prøv på nytt...",
+      "wchange45":"Send alle"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

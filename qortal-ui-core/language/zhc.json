@@ -239,7 +239,8 @@
       "wchange41":"状态",
       "wchange42":"确认数",
       "wchange43":"您的交易在确认之前不会显示，请耐心等待...",
-      "wchange44":"请再试一次..."
+      "wchange44":"请再试一次...",
+      "wchange45":"全部发送"
    },
    "tradepage":{
       "tchange1":"交易门户",

@@ -239,7 +239,8 @@
       "wchange41":"Status",
       "wchange42":"Potvrde",
       "wchange43":"Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
-      "wchange44":"Molim te pokušaj ponovno..."
+      "wchange44":"Molim te pokušaj ponovno...",
+      "wchange45":"Pošalji sve"
    },
    "tradepage":{
       "tchange1":"Portal razmjene",

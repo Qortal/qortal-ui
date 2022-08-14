@@ -309,6 +309,10 @@ class ChatPage extends LitElement {
                     this.messageSignature = eachMessage.signature
                     let _eachMessage = this.decodeMessage(eachMessage)
                     return _eachMessage
+                } else {
+                    this.messageSignature = eachMessage.signature
+                    let _eachMessage = this.decodeMessage(eachMessage)
+                    return _eachMessage
                 }
             })
 
@@ -329,18 +333,22 @@ class ChatPage extends LitElement {
         } else {
 
             let _newMessages = messages.map((eachMessage) => {
-
                 if (eachMessage.isText === true) {
                     let _eachMessage = this.decodeMessage(eachMessage)
 
                     if (this.messageSignature !== eachMessage.signature) {
-
                         this.messageSignature = eachMessage.signature
-
                         // What are we waiting for, send in the message immediately...
                         this.renderNewMessage(_eachMessage)
                     }
+                    return _eachMessage
+                } else {
+                    let _eachMessage = this.decodeMessage(eachMessage)
 
+                    if (this.messageSignature !== eachMessage.signature) {
+                        this.messageSignature = eachMessage.signature
+                        this.renderNewMessage(_eachMessage)
+                    }
                     return _eachMessage
                 }
             })

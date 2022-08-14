@@ -239,7 +239,8 @@
       "wchange41":"Stare",
       "wchange42":"Confirmari",
       "wchange43":"Tranzactia nu va aparea pana ce nu este confirmata, ai rabdare...",
-      "wchange44":"Te rog incearca din nou..."
+      "wchange44":"Te rog incearca din nou...",
+      "wchange45":"Trimite toate"
    },
    "tradepage":{
       "tchange1":"Portal de Tranzactionare",
