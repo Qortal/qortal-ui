@@ -545,7 +545,7 @@ class Websites extends LitElement {
         const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`
 
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
         })
 
         this.resources = resources
@@ -553,7 +553,7 @@ class Websites extends LitElement {
 	const followedResponse = await fetch(followedNamesUrl)
 	const followednames = await followedResponse.json()
 	let followedres = resources.filter((elm) => followednames.includes(elm.name))
-        this.followedResources = followedres
+    this.followedResources = followedres
 
 	const blockedResponse = await fetch(blockedNamesUrl)
 	const blockednames = await blockedResponse.json()
