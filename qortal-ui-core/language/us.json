@@ -619,6 +619,7 @@
       "schange5" : "Sponsor New Minter",
       "schange6" : "Finished Sponsorships",
       "schange7" : "Completed",
-      "schange8" : "Addresses"
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }
