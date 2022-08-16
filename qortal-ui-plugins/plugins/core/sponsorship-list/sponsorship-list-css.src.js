@@ -4,6 +4,7 @@ export const pageStyles = css`
 	* {
 		--mdc-theme-surface: var(--white);
 		--mdc-dialog-content-ink-color: var(--black);
+		box-sizing: border-box;
 	}
 
 	.header-title {
@@ -34,36 +35,28 @@ export const pageStyles = css`
 		max-width: 1100px;
 	}
 
-	.description {
-		color: var(--black);
-	}
+
 
 	.message {
 		color: var(--gray);
 	}
 
-	.sub-main {
-		width: 95%;
-		display: flex;
 
-		flex-direction: column;
-		max-width: 1100px;
-	}
-
-	.level-black {
-		font-size: 32px;
-		color: var(--black);
-		font-weight: 400;
-		text-align: center;
-		margin-top: 2rem;
-	}
-
+	
 	.form-wrapper {
 		display: flex;
 		align-items: center;
 		width: 100%;
 		max-width: 700px;
 		height: 50px;
+		flex-wrap: wrap;
+	}
+
+	.sponsor-minter-text {
+		color: var(--black);
+    font-weight: bold;
+    margin-right: 15px;
+    font-size: 18px;
 	}
 
 	.row {
@@ -102,38 +95,16 @@ export const pageStyles = css`
 	.form-item--input {
 		flex-grow: 1;
 		margin-right: 25px;
+		min-width: 275px;
 	}
 
-	.center-box {
-		position: absolute;
-		width: 100%;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, 0%);
-		text-align: center;
-	}
+	
 
-	.content-box {
-		border: 1px solid var(--border);
-		border-radius: 10px;
-		padding: 10px 25px;
-		text-align: center;
-		display: inline-block;
-
-		margin-bottom: 5px;
-		flex-basis: 250px;
-	}
+	
 	.gap {
 		gap: 10px;
 	}
-	.level-black {
-		font-size: 32px;
-		color: var(--black);
-		font-weight: 400;
-		text-align: center;
-		margin-top: 2rem;
-		text-align: center;
-	}
+
 	.title {
 		font-weight: 600;
 		font-size: 20px;
@@ -230,7 +201,7 @@ export const pageStyles = css`
 
 	.tableGrid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(
+		grid-template-columns: minmax(0, 1fr)  minmax(0, 1fr) minmax(
 				0,
 				1fr
 			) minmax(0, 1fr);
@@ -251,6 +222,29 @@ export const pageStyles = css`
 		overflow: hidden;
 	}
 
+	.text {
+		color: var(--black)
+	}
+	.text--bold {
+		font-weight: bold;
+	}
+
+	.summary-box {
+	
+		display: flex;
+		margin-top: 25px;
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	.summary-box p:first-child {
+		margin-right: 30px;
+	}
+
+	.text--normal {
+		font-weight: normal;
+	}
+
 	.grid-item p {
 		text-decoration: underline;
 	}
@@ -262,10 +256,69 @@ export const pageStyles = css`
 	}
 	.red {
 		--mdc-theme-primary: #f44336;
+		border-radius: 2px;
+		
+	}
+	 .btn--sponsorshipfinished  {
+		background-color: var(--menuactive);
+		transition: all .2s;
+		animation: onOff 2s infinite;
+		--mdc-theme-primary: var(--black);
 	}
 
+	
+
+	.dialog-container {
+		width: 300px;
+		min-height: 300px;
+		max-height: 75vh;
+		padding: 5px;
+		display: flex;
+		align-items: flex-start;
+		flex-direction: column;
+	
+		
+	}
+
+	.dialog-paragraph {
+		word-break: break-all;
+		color: var(--black)
+	}
+
+
+
+	.dialog-header h1 {
+		font-size: 18px;
+	}
+
+	@keyframes onOff {
+  from {opacity: 1}
+  to {opacity: .5}
+}
 	.grid-item-text {
 		display: none;
+	}
+
+	.sub-title {
+		margin-bottom: 10px;
+	}
+
+	.sub-title p {
+		font-size: 18px;
+		color: var(--black);
+	}
+
+	@media (max-width: 610px) {
+		.sponsor-minter-wrapper {
+			width: 100%;
+			margin-bottom: 10px;
+		}
+
+		.form-item--input {
+		flex-grow: 1;
+		margin-right: 25px;
+		min-width: unset;
+	}
 	}
 
 	@media (max-width: 710px) {

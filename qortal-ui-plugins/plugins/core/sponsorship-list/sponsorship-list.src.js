@@ -15,6 +15,7 @@ import "@material/mwc-textfield"
 import "@vaadin/button"
 import "@material/mwc-button"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
+import '@material/mwc-dialog'
 
 import { pageStyles } from "./sponsorship-list-css.src.js"
 
@@ -24,7 +25,6 @@ class SponsorshipList extends LitElement {
 	static get properties() {
 		return {
 			theme: { type: String, reflect: true },
-			sponsorshipKeyValue: { type: String },
 			nodeInfo: { type: Object },
 			isPageLoading: { type: Boolean },
 			addressInfo: { type: Object },
@@ -36,6 +36,7 @@ class SponsorshipList extends LitElement {
 			isLoadingCreateSponsorship: { type: Array },
 			publicKeyValue: { type: String },
 			error: { type: Boolean },
+			isOpenModal: {type: Boolean}
 		}
 	}
 
@@ -46,7 +47,6 @@ class SponsorshipList extends LitElement {
 		this.theme = localStorage.getItem("qortalTheme")
 			? localStorage.getItem("qortalTheme")
 			: "light"
-		this.sponsorshipKeyValue = ""
 		this.isPageLoading = true
 		this.nodeInfo = {}
 		this.addressInfo = {}
@@ -58,6 +58,7 @@ class SponsorshipList extends LitElement {
 		this.createSponsorshipMessage = ""
 		this.isLoadingCreateSponsorship = false
 		this.publicKeyValue = ""
+		this.isOpenModal = false
 	}
 
 	inputHandler(e) {
@@ -114,11 +115,12 @@ class SponsorshipList extends LitElement {
 			window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		this.isPageLoading = true
 		try {
+		
 			const address =
 				window.parent.reduxStore.getState().app?.selectedAddress
 					?.address
 			let rewardShares = await this.getRewardShareRelationship(
-				"QPsjHoKhugEADrtSQP5xjFgsaQPn9WmE3Y"
+				address
 			)
 
 			rewardShares = rewardShares.filter((rs) => rs.recipient !== address)
@@ -128,16 +130,13 @@ class SponsorshipList extends LitElement {
 					type: "api",
 					url: `/addresses/${rs.recipient}`,
 				})
-				const recentBlocksInfo = await parentEpml.request("apiCall", {
-					type: "api",
-					url: `/blocks/signer/${rs.recipient}?limit=5&reverse=true`,
-				})
+				
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
 				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
 				return {
 					...addressInfo,
 					...rs,
-					lastActiveBlock: recentBlocksInfo[0]?.height,
+					
 					blocksRemaining: blocksRemaining,
 				}
 			})
@@ -148,8 +147,13 @@ class SponsorshipList extends LitElement {
 				.filter((sponsorship) => sponsorship.blocksRemaining !== 0)
 				.sort((a, b) => a.blocksRemaining - b.blocksRemaining)[0]
 			this.isPageLoading = false
+
+			const openModal = accountInfoValues.find(s=> s.blocksRemaining <= 0)
+			if(openModal){
+				this.shadowRoot.querySelector('#showDialog').show()
+			}
 		} catch (error) {
-			console.error(error)
+			
 
 			this.isPageLoading = false
 		}
@@ -177,6 +181,7 @@ class SponsorshipList extends LitElement {
 	}
 
 	async removeRewardShare(rewardShareObject) {
+		
 		const selectedAddress =
 			window.parent.reduxStore.getState().app?.selectedAddress
 
@@ -235,7 +240,7 @@ class SponsorshipList extends LitElement {
 				let err7tring = get("rewardsharepage.rchange22")
 				this.removeRewardShareLoading = false
 				parentEpml.request("showSnackBar", `${err7tring}`)
-				this.atMount()
+				this.sponsorships = this.sponsorships.filter((s)=> s.address !== rewardShareObject.address)
 			} else {
 				this.removeRewardShareLoading = false
 				parentEpml.request("showSnackBar", txnResponse.data.message)
@@ -413,8 +418,8 @@ class SponsorshipList extends LitElement {
 		this.isLoadingCreateSponsorship = false
 	}
 
+
 	render() {
-		console.log({ sponsorships: this.sponsorships })
 
 		return html`
 			${
@@ -436,21 +441,22 @@ class SponsorshipList extends LitElement {
 					<hr class="divider" />
 				</div>
 				<div class="inner-container">
+					<div class="sub-title">
+						<p>${translate("sponsorshipspage.schange1")}</p>
+					</div>
 					<div class="tableGrid table-header">
 						<div class="grid-item">
-							<p>Account Address</p>
+							<p>${translate("sponsorshipspage.schange2")}</p>
 						</div>
 						<div class="grid-item">
-							<p>Blocks Minted</p>
+							<p>${translate("walletprofile.blocksminted")}</p>
+						</div>
+						
+						<div class="grid-item">
+							<p>${translate("becomeMinterPage.bchange17")}</p>
 						</div>
 						<div class="grid-item">
-							<p>Last Active Block</p>
-						</div>
-						<div class="grid-item">
-							<p>Sponsorship Key</p>
-						</div>
-						<div class="grid-item">
-							<!-- <p>Remove</p> -->
+						
 						</div>
 					</div>
 
@@ -459,31 +465,20 @@ class SponsorshipList extends LitElement {
 							(sponsorship) => html`
 								<ul class="tableGrid">
 									<li class="grid-item">
-										<p class="grid-item-text">
-											Account Address
-										</p>
+										
 										${sponsorship.address}
 									</li>
 									<li class="grid-item">
-										<p class="grid-item-text">
-											Blocks Minted
-										</p>
+										
 										${+sponsorship.blocksMinted +
 										+sponsorship.blocksMintedAdjustment}
 									</li>
+									
 									<li class="grid-item">
-										<p class="grid-item-text">
-											Last Active Block
-										</p>
-										${sponsorship.lastActiveBlock}
-									</li>
-									<li class="grid-item">
-										<p class="grid-item-text">
-											Copy Sponsorship Key
-										</p>
+										
 										<button-icon-copy
 											title="${translate(
-												"walletpage.wchange3"
+												"becomeMinterPage.bchange17"
 											)}"
 											onSuccessMessage="${translate(
 												"walletpage.wchange4"
@@ -500,7 +495,7 @@ class SponsorshipList extends LitElement {
 									</li>
 									<li class="grid-item grid-item-button">
 										<mwc-button
-											class="red"
+											class=${`red ${sponsorship.blocksRemaining <= 0 && 'btn--sponsorshipfinished'}`}
 											?disabled=${this
 												.removeRewardShareLoading}
 											@click=${() =>
@@ -510,32 +505,40 @@ class SponsorshipList extends LitElement {
 											><mwc-icon>create</mwc-icon
 											>${translate(
 												"rewardsharepage.rchange17"
-											)}</mwc-button
-										>
+											)}</mwc-button>
+										
 									</li>
 								</ul>
 							`
 						)}
-					</ul>
-					${
-						this.sponsorships.length > 0 &&
+					
+					${this.sponsorships.length > 0 ?
 						html`
-							<div>
-								<p>
-									Total Sponsorships active
+							<div class="summary-box">
+								<p class="text text--bold">
+								${translate("sponsorshipspage.schange3")} =
+									<span class="text text--normal">
 									${this.sponsorships.length}
+									</span>
+									
 								</p>
-								<p>
-									Next sponsorship ending in
+								<p class="text text--bold">
+								${translate("sponsorshipspage.schange4")} = 
+									<span class="text text--normal">
 									${this.nextSponsorshipEnding
 										?.blocksRemaining}
-									blocks
+									${translate("mintingpage.mchange26")}
+									</span>
+									
 								</p>
 							</div>
 						`
-					}
+					: ''}
 					<p class="message">${this.createSponsorshipMessage}</p>
 					<div class="form-wrapper">
+						<div class="sponsor-minter-wrapper">
+							<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
+						</div>
 						<div class="form-item form-item--input">
 							<mwc-textfield
 								?disabled="${this.isLoadingCreateSponsorship}"
@@ -565,6 +568,31 @@ class SponsorshipList extends LitElement {
 						</div>
 					</div>
 				</div>
+				<mwc-dialog  id="showDialog">
+					
+                    <div class="dialog-header" >
+                        <h1>${translate("sponsorshipspage.schange6")}</h1>
+                        <hr />
+                    </div>
+					<div class="dialog-container">
+
+					<p class="dialog-paragraph" style="text-align:center; width:100%">${this.sponsorships.filter(s=> s.blocksRemaining <= 0).length} ${translate("sponsorshipspage.schange7")}!</p>
+
+					<p class="dialog-paragraph" style="margin:0px; padding:0px;text-decoration:underline"> ${translate("sponsorshipspage.schange8")}</p>
+						${this.sponsorships.filter(s=> s.blocksRemaining <= 0).map((ms)=> html`
+						<p class="dialog-paragraph">${ms.address}</p>
+						`)}
+					</div>
+                 
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+				
+                </mwc-dialog>
 			</div>
 		`
 	}
