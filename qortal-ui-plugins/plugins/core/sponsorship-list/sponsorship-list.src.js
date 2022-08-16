@@ -441,6 +441,13 @@ class SponsorshipList extends LitElement {
 					<hr class="divider" />
 				</div>
 				<div class="inner-container">
+					${this.sponsorships.length === 0 ? html`
+					<div class="sub-title">
+						<p>${translate("sponsorshipspage.schange9")}</p>
+					</div>
+					` : ''}
+				${this.sponsorships.length > 0 ?
+						html`
 					<div class="sub-title">
 						<p>${translate("sponsorshipspage.schange1")}</p>
 					</div>
@@ -460,7 +467,7 @@ class SponsorshipList extends LitElement {
 						</div>
 					</div>
 
-					
+				
 						${this.sponsorships.map(
 							(sponsorship) => html`
 								<ul class="tableGrid">
@@ -512,8 +519,7 @@ class SponsorshipList extends LitElement {
 							`
 						)}
 					
-					${this.sponsorships.length > 0 ?
-						html`
+					
 							<div class="summary-box">
 								<p class="text text--bold">
 								${translate("sponsorshipspage.schange3")} =
