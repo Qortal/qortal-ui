@@ -1603,11 +1603,11 @@ class MultiWallet extends LitElement {
                         <p>
                             <mwc-textfield
                                 style="width: 100%;"
-                                required
                                 id="arrrMemo"
                                 label="${translate("walletpage.wchange46")}"
                                 type="text"
                                 value="${this.arrrMemo}"
+                                maxLength="256"
                             >
                             </mwc-textfield>
                         </p>
