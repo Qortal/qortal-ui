@@ -52,10 +52,11 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-		rvnRecipient: { type: String },
+		    rvnRecipient: { type: String },
             rvnAmount: { type: Number },
             arrrRecipient: { type: String },
             arrrAmount: { type: Number },
+            arrrMemo: { type: String },
             errorMessage: { type: String },
             arrrWalletAddress: { type: String },
             successMessage: { type: String },
@@ -616,6 +617,7 @@ class MultiWallet extends LitElement {
         this.dgbRecipient = ''
 		this.rvnRecipient = ''
         this.arrrRecipient = ''
+        this.arrrMemo = ''
         this.arrrWalletAddress = ''
         this.errorMessage = ''
         this.successMessage = ''
@@ -1598,6 +1600,17 @@ class MultiWallet extends LitElement {
                             >
                             </mwc-textfield>
                         </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%;"
+                                required
+                                id="arrrMemo"
+                                label="${translate("walletpage.wchange46")}"
+                                type="text"
+                                value="${this.arrrMemo}"
+                            >
+                            </mwc-textfield>
+                        </p>
                         <p style="color: red;">${this.errorMessage}</p>
                         <p style="color: green;">${this.successMessage}</p>
                         ${this.sendMoneyLoading ? html` <paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress> ` : ''}
@@ -1982,6 +1995,29 @@ class MultiWallet extends LitElement {
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
                     this.pasteMenu(event, 'arrrRecipient')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
+
+        this.shadowRoot.getElementById('arrrMemo').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.pasteMenu(event, 'arrrMemo')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2571,6 +2607,7 @@ class MultiWallet extends LitElement {
     async sendArrr() {
         const arrrAmount = this.shadowRoot.getElementById('arrrAmountInput').value
         let arrrRecipient = this.shadowRoot.getElementById('arrrRecipient').value
+        let arrrMemo = this.shadowRoot.getElementById('arrrMemo').value
         const seed58 = this.wallets.get(this._selectedWallet).wallet.seed58
 
         this.sendMoneyLoading = true
@@ -2581,6 +2618,7 @@ class MultiWallet extends LitElement {
                 entropy58: seed58,
                 receivingAddress: arrrRecipient,
                 arrrAmount: arrrAmount,
+                arrrMemo: arrrMemo
                 //feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8), // Not supported in ARRR
             }
             const response = await parentEpml.request('sendArrr', opts)
@@ -2591,8 +2629,10 @@ class MultiWallet extends LitElement {
             if (response.length === 64) {
                 this.shadowRoot.getElementById('arrrAmountInput').value = 0
                 this.shadowRoot.getElementById('arrrRecipient').value = ''
+                this.shadowRoot.getElementById('arrrMemo').value = ''
                 this.errorMessage = ''
                 this.arrrRecipient = ''
+                this.arrrMemo=''
                 this.arrrAmount = 0
                 this.successMessage = this.renderSuccessText()
                 this.sendMoneyLoading = false
