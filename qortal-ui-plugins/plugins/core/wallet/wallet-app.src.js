@@ -752,7 +752,7 @@ class MultiWallet extends LitElement {
                             ${this.renderSendButton()}
                         </span>
                     </h2>
-                    <div class="qrcode-pos">
+                    <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
                     <div id="transactions">
