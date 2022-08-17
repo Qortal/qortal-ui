@@ -3447,6 +3447,15 @@ class MultiWallet extends LitElement {
                     }}
                 >
                 </vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("walletpage.wchange46")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.memo}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
             </vaadin-grid>
             <div id="pages"></div>
 	`
