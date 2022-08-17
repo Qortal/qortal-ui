@@ -240,7 +240,8 @@
       "wchange42":"Visszaigazolások",
       "wchange43":"A tranzakció nem jelenik meg a megerősítésig, legyen türelemmel...",
       "wchange44":"Kérlek próbáld újra...",
-      "wchange45":"Az összes elküldése"
+      "wchange45":"Az összes elküldése",
+      "wchange46":"Memo"
    },
    "tradepage":{
       "tchange1":"Kereskedelmi Portál",
