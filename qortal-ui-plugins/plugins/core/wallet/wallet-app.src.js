@@ -2780,7 +2780,7 @@ class MultiWallet extends LitElement {
                     method: 'POST',
                     body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
                 })
-                if (res != null && res.error != 1201) {
+                if (res != null && res.error != 1201 && res.length === 78) {
                     this.arrrWalletAddress = res
                 }
                 break
