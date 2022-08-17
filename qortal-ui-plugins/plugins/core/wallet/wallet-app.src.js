@@ -3404,7 +3404,7 @@ class MultiWallet extends LitElement {
                     resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
-                        render(html` ${translate("walletpage.wchange40")} ${data.item.totalAmount > 0 ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                        render(html` ${translate("walletpage.wchange40")} ${data.item.totalAmount < 0 ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
