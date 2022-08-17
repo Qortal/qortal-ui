@@ -2618,7 +2618,7 @@ class MultiWallet extends LitElement {
                 entropy58: seed58,
                 receivingAddress: arrrRecipient,
                 arrrAmount: arrrAmount,
-                arrrMemo: arrrMemo
+                memo: arrrMemo
                 //feePerByte: (this.arrrFeePerByte / 1e8).toFixed(8), // Not supported in ARRR
             }
             const response = await parentEpml.request('sendArrr', opts)
