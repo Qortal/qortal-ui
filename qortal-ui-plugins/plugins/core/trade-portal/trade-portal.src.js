@@ -331,6 +331,7 @@ class TradePortal extends LitElement {
 
 		mwc-select#coinSelectionMenu {
 			font-size: 24px;
+            width:220px;
 		}
 
 		mwc-select#coinSelectionMenu mwc-list-item {
@@ -1064,10 +1065,10 @@ class TradePortal extends LitElement {
             let coinSelectionMenu = this.shadowRoot.getElementById("coinSelectionMenu")
 
             coinSelectionMenu.addEventListener('change', function () {
-                _this.setForeignCoin(coinSelectionMenu.value)
+                _this.setForeignCoin(coinSelectionMenu.value,false)
             })
 
-            _this.setForeignCoin(coinSelectionMenu.value)
+            _this.setForeignCoin(coinSelectionMenu.value,true)
         })
         parentEpml.imReady()
 
@@ -1140,9 +1141,27 @@ class TradePortal extends LitElement {
             })
     }
 
-    setForeignCoin(coin) {
+    setForeignCoin(coin,beingInitialized) {
         let _this = this
         this.selectedCoin = coin
+
+        let coinSelectionMenu=this.shadowRoot.getElementById("coinSelectionMenu")
+
+        if(beingInitialized){
+           //apply padding to the container
+            coinSelectionMenu.shadowRoot.querySelector('.mdc-select--outlined .mdc-select__anchor').setAttribute('style', 'padding-left: 60px;')
+            //create the coin pair container
+            let pairIconContainer = document.createElement("span")
+            pairIconContainer.setAttribute("class","pairIconContainer")
+            pairIconContainer.setAttribute('style', 'left: 10px;top: 50%;transform: translate(0, -50%);height: 26px;width: 45px;position: absolute;background-repeat: no-repeat;background-size: cover;background-image: url(/img/qort'+_this.listedCoins.get(_this.selectedCoin).coinCode+'.png);')
+            
+            //appending the coin pair container to the menu
+            coinSelectionMenu.shadowRoot.querySelector('.mdc-select--outlined .mdc-select__anchor').appendChild(pairIconContainer)
+        }else{//we need just to update the existing pair icon container
+            let pairIconContainer = coinSelectionMenu.shadowRoot.querySelector(".mdc-select--outlined .mdc-select__anchor span.pairIconContainer")
+            pairIconContainer.style.backgroundImage='url(/img/qort'+_this.listedCoins.get(_this.selectedCoin).coinCode+'.png)'
+        }
+
         this.isLoadingHistoricTrades = true
         this.isLoadingOpenTrades = true
         this.createConnection()
