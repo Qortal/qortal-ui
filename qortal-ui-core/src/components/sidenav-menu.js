@@ -153,6 +153,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 						  >
 								<vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
 						</side-menu-item>`}
+
 					<side-menu-item
 						label="${translate('sidemenu.rewardshare')}"
 						href="/app/reward-share"
@@ -167,7 +168,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 						<vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
 					</side-menu-item>
 					` : ''}
-					
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"
@@ -181,6 +181,12 @@ class SidenavMenu extends connect(store)(LitElement) {
 					href="/app/trade-portal"
 				>
 					<vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
+				</side-menu-item>
+				<side-menu-item
+					label="${translate('sidemenu.rewardshare')}"
+					href="/app/reward-share"
+				>
+					<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.qchat')}"

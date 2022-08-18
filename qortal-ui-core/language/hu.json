@@ -239,7 +239,12 @@
       "wchange41":"Állapot",
       "wchange42":"Visszaigazolások",
       "wchange43":"A tranzakció nem jelenik meg a megerősítésig, legyen türelemmel...",
-      "wchange44":"Kérlek próbáld újra..."
+      "wchange44":"Kérlek próbáld újra...",
+      "wchange45":"Az összes elküldése",
+      "wchange46":"Küldje el erre a címre",
+      "wchange47":"Címjegyzék",
+      "wchange48":"Ez a címjegyzék üres !",
+      "wchange49":"Hozzáadás a címjegyzékhez"
    },
    "tradepage":{
       "tchange1":"Kereskedelmi Portál",

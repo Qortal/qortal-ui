@@ -239,7 +239,12 @@
       "wchange41":"Stato",
       "wchange42":"Conferme",
       "wchange43":"La tua transazione non verrà mostrata fino a quando non sarà confermata, sii paziente...",
-      "wchange44":"Per favore riprova..."
+      "wchange44":"Per favore riprova...",
+      "wchange45":"Invia tutto",
+      "wchange46":"Invia a questo indirizzo",
+      "wchange47":"Rubrica",
+      "wchange48":"Questa rubrica è vuota !",
+      "wchange49":"Aggiungi alla rubrica"
    },
    "tradepage":{
       "tchange1":"Portale commerciale",

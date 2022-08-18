@@ -239,7 +239,12 @@
       "wchange41":"Status",
       "wchange42":"Potvrde",
       "wchange43":"Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
-      "wchange44":"Molim vas, pokušajte ponovo..."
+      "wchange44":"Molim vas, pokušajte ponovo...",
+      "wchange45":"Poslati sve",
+      "wchange46":"Pošaljite na ovu adresu",
+      "wchange47":"Adresar",
+      "wchange48":"Ovaj adresar je prazan !",
+      "wchange49":"Dodaj u Adresar"
    },
    "tradepage":{
       "tchange1":"Trgovinski prozor",
