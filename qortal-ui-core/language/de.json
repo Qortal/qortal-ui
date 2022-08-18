@@ -241,7 +241,10 @@
       "wchange43":"Ihre Transaktion wird erst angezeigt, wenn sie bestätigt wurde. Seien Sie geduldig...",
       "wchange44":"Bitte versuche es erneut...",
       "wchange45":"Sende alle",
-      "wchange46":"An diese Adresse verschicken"
+      "wchange46":"An diese Adresse verschicken",
+      "wchange47":"Adressbuch",
+      "wchange48":"Dieses Adressbuch ist leer !",
+      "wchange49":"Zum Adressbuch hinzufügen"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

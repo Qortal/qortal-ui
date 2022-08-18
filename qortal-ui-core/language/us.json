@@ -236,7 +236,10 @@
       "wchange43":"Your transaction will not show until confirmed, be patient...",
       "wchange44":"Please try again...",
       "wchange45":"Send all",
-      "wchange46":"Send to this address"
+      "wchange46":"Send to this address",
+      "wchange47":"Addressbook",
+      "wchange48":"This Addressbook is empty !",
+      "wchange49":"Add to Addressbook"
    },
    "tradepage":{
       "tchange1":"Trade Portal",

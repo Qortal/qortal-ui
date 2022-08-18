@@ -241,7 +241,10 @@
       "wchange43":"Su transacción no se mostrará hasta que se confirme, sea paciente...",
       "wchange44":"Inténtalo de nuevo...",
       "wchange45":"Envia todo",
-      "wchange46":"Enviar a esta dirección"
+      "wchange46":"Enviar a esta dirección",
+      "wchange47":"Directorio",
+      "wchange48":"Esta libreta de direcciones está vacía !",
+      "wchange49":"Agregar a la libreta de direcciones"
    },
    "tradepage":{
       "tchange1":"Portal de Comercio",
