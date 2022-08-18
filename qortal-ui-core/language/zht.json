@@ -240,7 +240,8 @@
       "wchange42":"確認數",
       "wchange43":"您的交易在確認之前不會顯示，請耐心等待...",
       "wchange44":"請再試一次...",
-      "wchange45":"全部發送"
+      "wchange45":"全部發送",
+      "wchange46":"發送到這個地址"
    },
    "tradepage":{
       "tchange1":"交易門戶",

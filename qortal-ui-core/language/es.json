@@ -240,7 +240,8 @@
       "wchange42":"Confirmaciones",
       "wchange43":"Su transacción no se mostrará hasta que se confirme, sea paciente...",
       "wchange44":"Inténtalo de nuevo...",
-      "wchange45":"Envia todo"
+      "wchange45":"Envia todo",
+      "wchange46":"Enviar a esta dirección"
    },
    "tradepage":{
       "tchange1":"Portal de Comercio",

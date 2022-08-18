@@ -240,7 +240,8 @@
       "wchange42":"Potvrde",
       "wchange43":"Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
       "wchange44":"Molim te pokušaj ponovno...",
-      "wchange45":"Pošalji sve"
+      "wchange45":"Pošalji sve",
+      "wchange46":"Šaljite na ovu adresu"
    },
    "tradepage":{
       "tchange1":"Portal razmjene",
