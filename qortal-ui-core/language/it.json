@@ -241,7 +241,11 @@
       "wchange43":"La tua transazione non verrà mostrata fino a quando non sarà confermata, sii paziente...",
       "wchange44":"Per favore riprova...",
       "wchange45":"Invia tutto",
-      "wchange46":"Memo"
+      "wchange46":"Invia a questo indirizzo",
+      "wchange47":"Rubrica",
+      "wchange48":"Questa rubrica è vuota !",
+      "wchange49":"Aggiungi alla rubrica",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portale commerciale",

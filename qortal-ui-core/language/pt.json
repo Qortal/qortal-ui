@@ -241,7 +241,11 @@
       "wchange43":"Sua transação não será exibida até ser confirmada, seja paciente...",
       "wchange44":"Por favor, tente novamente...",
       "wchange45":"Envie todos",
-      "wchange46":"Memo"
+      "wchange46":"Enviar para este endereço",
+      "wchange47":"Livro de endereços",
+      "wchange48":"Este catálogo de endereços está vazio !",
+      "wchange49":"Adicionar ao catálogo de endereços",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portal do Comércio",

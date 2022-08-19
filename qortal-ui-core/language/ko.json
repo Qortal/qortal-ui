@@ -241,7 +241,11 @@
       "wchange43":"확인될 때까지 거래가 표시되지 않습니다. 기다려 주십시오.",
       "wchange44":"다시 시도하십시오...",
       "wchange45":"모두 보내기",
-      "wchange46":"Memo"
+      "wchange46":"이 주소로 보내기",
+      "wchange47":"주소록",
+      "wchange48":"이 주소록이 비어 있습니다 !",
+      "wchange49":"주소록에 추가하다",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"무역 포털",

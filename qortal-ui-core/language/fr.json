@@ -241,7 +241,11 @@
       "wchange43":"Votre transaction ne s'affichera pas tant qu'elle n'aura pas été confirmée, soyez patient...",
       "wchange44":"Veuillez réessayer...",
       "wchange45":"Envoyer tout",
-      "wchange46":"Memo"
+      "wchange46":"Envoyer à cette adresse",
+      "wchange47":"Carnet d'adresses",
+      "wchange48":"Ce carnet d'adresses est vide !",
+      "wchange49":"Ajouter au carnet d'adresses",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portail de commerce",

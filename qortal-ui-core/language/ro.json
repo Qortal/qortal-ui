@@ -241,7 +241,11 @@
       "wchange43":"Tranzactia nu va aparea pana ce nu este confirmata, ai rabdare...",
       "wchange44":"Te rog incearca din nou...",
       "wchange45":"Trimite toate",
-      "wchange46":"Memo"
+      "wchange46":"Trimiteti la aceasta adresa",
+      "wchange47":"Carte de adrese",
+      "wchange48":"Aceasta agenda de adrese este goala !",
+      "wchange49":"Adauga la agenda cu adrese",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portal de Tranzactionare",

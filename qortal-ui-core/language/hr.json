@@ -241,7 +241,11 @@
       "wchange43":"Vaša transakcija se neće prikazati dok se ne potvrdi, budite strpljivi...",
       "wchange44":"Molim te pokušaj ponovno...",
       "wchange45":"Pošalji sve",
-      "wchange46":"Memo"
+      "wchange46":"Šaljite na ovu adresu",
+      "wchange47":"Adresar",
+      "wchange48":"Ovaj adresar je prazan !",
+      "wchange49":"Dodaj u adresar",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portal razmjene",

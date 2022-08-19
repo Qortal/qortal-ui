@@ -241,7 +241,11 @@
       "wchange43":"Twoja transakcja nie pojawi się, dopóki nie zostanie potwierdzona, bądź cierpliwy...",
       "wchange44":"Proszę spróbuj ponownie...",
       "wchange45":"Wyślij wszystko",
-      "wchange46":"Memo"
+      "wchange46":"Wyślij na ten adres",
+      "wchange47":"Książka adresowa",
+      "wchange48":"Ta książka adresowa jest pusta !",
+      "wchange49":"Dodaj do książki adresowej",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"Portal Handlowy",

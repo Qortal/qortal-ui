@@ -241,7 +241,11 @@
       "wchange43":"您的交易在確認之前不會顯示，請耐心等待...",
       "wchange44":"請再試一次...",
       "wchange45":"全部發送",
-      "wchange46":"Memo"
+      "wchange46":"發送到這個地址",
+      "wchange47":"地址簿",
+      "wchange48":"此通訊錄為空 !",
+      "wchange49":"加至地址簿",
+      "wchange50":"Memo"
    },
    "tradepage":{
       "tchange1":"交易門戶",
