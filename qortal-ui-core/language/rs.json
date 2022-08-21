@@ -244,7 +244,14 @@
       "wchange46":"Pošaljite na ovu adresu",
       "wchange47":"Adresar",
       "wchange48":"Ovaj adresar je prazan !",
-      "wchange49":"Dodaj u Adresar"
+      "wchange49":"Dodaj u Adresar",
+      "wchange50":"Ime ne može biti prazno!",
+      "wchange51":"Adresa ne može biti prazna!",
+      "wchange52":"Uspešno dodato!",
+      "wchange53":"Uvezite adresar",
+      "wchange54":"Izvezi adresar",
+      "wchange55":"Vaš postojeći adresar će biti obrisan, a iz rezervne kopije biće kreiran novi.",
+      "wchange56":"UPOZORENJE!"
    },
    "tradepage":{
       "tchange1":"Trgovinski prozor",

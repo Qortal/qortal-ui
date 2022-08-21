@@ -191,6 +191,12 @@ class SidenavMenu extends connect(store)(LitElement) {
 					<vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
 				</side-menu-item>
 				<side-menu-item
+					label="${translate('sidemenu.puzzles')}"
+					href="/app/puzzles"
+				>
+					<vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
+				</side-menu-item>
+				<side-menu-item
 					label="${translate('sidemenu.management')}"
 					expanded
 				>
@@ -208,12 +214,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 						<vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
 					</side-menu-item>
 					${this.renderNodeManagement()}
-				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.puzzles')}"
-					href="/app/puzzles"
-				>
-					<vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
 				</side-menu-item>
 			`;
 		}

@@ -237,9 +237,16 @@
       "wchange44":"Please try again...",
       "wchange45":"Send all",
       "wchange46":"Send to this address",
-      "wchange47":"Addressbook",
-      "wchange48":"This Addressbook is empty !",
-      "wchange49":"Add to Addressbook"
+      "wchange47":"Address Book",
+      "wchange48":"This Address Book is empty !",
+      "wchange49":"Add to Address Book",
+      "wchange50":"Name cannot be empty!",
+      "wchange51":"Address cannot be empty!",
+      "wchange52":"Successfully added!",
+      "wchange53":"Import Address Book",
+      "wchange54":"Export Address Book",
+      "wchange55":"Your existing address book will be deleted and from backup new created.",
+      "wchange56":"WARNING!"
    },
    "tradepage":{
       "tchange1":"Trade Portal",

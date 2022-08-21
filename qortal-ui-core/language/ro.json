@@ -244,7 +244,14 @@
       "wchange46":"Trimiteti la aceasta adresa",
       "wchange47":"Carte de adrese",
       "wchange48":"Aceasta agenda de adrese este goala !",
-      "wchange49":"Adauga la agenda cu adrese"
+      "wchange49":"Adauga la agenda cu adrese",
+      "wchange50":"Numele nu poate fi gol!",
+      "wchange51":"Adresa nu poate fi goala!",
+      "wchange52":"Adaugat cu succes!",
+      "wchange53":"Import agenda de adrese",
+      "wchange54":"Exportati agenda de adrese",
+      "wchange55":"Agenda dvs. existenta va fi stearsa si din backup va fi creata o noua.",
+      "wchange56":"AVERTIZARE!"
    },
    "tradepage":{
       "tchange1":"Portal de Tranzactionare",

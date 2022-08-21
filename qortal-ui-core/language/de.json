@@ -244,7 +244,14 @@
       "wchange46":"An diese Adresse verschicken",
       "wchange47":"Adressbuch",
       "wchange48":"Dieses Adressbuch ist leer !",
-      "wchange49":"Zum Adressbuch hinzufügen"
+      "wchange49":"Zum Adressbuch hinzufügen",
+      "wchange50":"Der Name darf nicht leer sein!",
+      "wchange51":"Adresse darf nicht leer sein!",
+      "wchange52":"Erfolgreich hinzugefügt!",
+      "wchange53":"Adressbuch importieren",
+      "wchange54":"Adressbuch exportieren",
+      "wchange55":"Ihr bestehendes Adressbuch wird gelöscht und aus einem Backup neu erstellt.",
+      "wchange56":"WARNUNG!"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

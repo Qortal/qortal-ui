@@ -244,7 +244,14 @@
       "wchange46":"发送到这个地址",
       "wchange47":"地址簿",
       "wchange48":"此通讯录为空 !",
-      "wchange49":"加至地址簿"
+      "wchange49":"加至地址簿",
+      "wchange50":"名称不能为空!",
+      "wchange51":"地址不能为空!",
+      "wchange52":"添加成功!",
+      "wchange53":"导入通讯录",
+      "wchange54":"导出通讯录",
+      "wchange55":"您现有的通讯簿将被删除并从新创建的备份中。",
+      "wchange56":"警告！"
    },
    "tradepage":{
       "tchange1":"交易门户",

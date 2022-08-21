@@ -244,7 +244,14 @@
       "wchange46":"Invia a questo indirizzo",
       "wchange47":"Rubrica",
       "wchange48":"Questa rubrica è vuota !",
-      "wchange49":"Aggiungi alla rubrica"
+      "wchange49":"Aggiungi alla rubrica",
+      "wchange50":"Il nome non può essere vuoto!",
+      "wchange51":"L'indirizzo non può essere vuoto!",
+      "wchange52":"Aggiunto con successo!",
+      "wchange53":"Importa rubrica",
+      "wchange54":"Esporta rubrica",
+      "wchange55":"La tua rubrica esistente verrà eliminata e dal backup verrà creata una nuova.",
+      "wchange56":"AVVERTIMENTO!"
    },
    "tradepage":{
       "tchange1":"Portale commerciale",

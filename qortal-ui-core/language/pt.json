@@ -244,7 +244,14 @@
       "wchange46":"Enviar para este endereço",
       "wchange47":"Livro de endereços",
       "wchange48":"Este catálogo de endereços está vazio !",
-      "wchange49":"Adicionar ao catálogo de endereços"
+      "wchange49":"Adicionar ao catálogo de endereços",
+      "wchange50":"O nome não pode ficar vazio!",
+      "wchange51":"O endereço não pode estar vazio!",
+      "wchange52":"Adicionado com sucesso!",
+      "wchange53":"Importar catálogo de endereços",
+      "wchange54":"Exportar catálogo de endereços",
+      "wchange55":"Seu catálogo de endereços existente será excluído e o backup será criado novamente.",
+      "wchange56":"AVISO!"
    },
    "tradepage":{
       "tchange1":"Portal do Comércio",

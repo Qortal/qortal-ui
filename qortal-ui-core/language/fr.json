@@ -244,7 +244,14 @@
       "wchange46":"Envoyer à cette adresse",
       "wchange47":"Carnet d'adresses",
       "wchange48":"Ce carnet d'adresses est vide !",
-      "wchange49":"Ajouter au carnet d'adresses"
+      "wchange49":"Ajouter au carnet d'adresses",
+      "wchange50":"Le nom ne peut pas être vide!",
+      "wchange51":"L'adresse ne peut pas être vide!",
+      "wchange52":"Ajouté avec succès!",
+      "wchange53":"Importer le carnet d'adresses",
+      "wchange54":"Exporter le carnet d'adresses",
+      "wchange55":"Votre carnet d'adresses existant sera supprimé et une nouvelle sauvegarde sera créée.",
+      "wchange56":"ATTENTION!"
    },
    "tradepage":{
       "tchange1":"Portail de commerce",
