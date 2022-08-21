@@ -102,6 +102,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 	renderNodeTypeMenu() {
 		const addressInfo = this.addressInfo;
 		const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0;
+		const isSponsor = +addressInfo?.level >= 5
 
 		if (this.nodeType === 'lite') {
 			return html`
@@ -152,6 +153,21 @@ class SidenavMenu extends connect(store)(LitElement) {
 						  >
 								<vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
 						</side-menu-item>`}
+
+					<side-menu-item
+						label="${translate('sidemenu.rewardshare')}"
+						href="/app/reward-share"
+					>
+						<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
+					</side-menu-item>
+					${isSponsor ? html`
+					<side-menu-item
+						label="${translate('mintingpage.mchange35')}"
+						href="/app/sponsorship-list"
+					>
+						<vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
+					</side-menu-item>
+					` : ''}
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"

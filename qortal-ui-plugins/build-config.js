@@ -126,6 +126,10 @@ const generateForPlugins = () => {
 			out: 'plugins/core/become-minter/become-minter.js',
 		},
 		{
+			in: 'plugins/core/sponsorship-list/sponsorship-list.src.js',
+			out: 'plugins/core/sponsorship-list/sponsorship-list.js',
+		},
+		{
 			in: 'plugins/core/puzzles/puzzles.src.js',
 			out: 'plugins/core/puzzles/puzzles.js',
 		},
