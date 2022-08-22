@@ -2660,25 +2660,25 @@ class MultiWallet extends LitElement {
     }
 
     openAddLtcAddressDialog() {
-        this.qortBookAddress = this.selectedTransaction.ltcReceiver
+        this.ltcBookAddress = this.selectedTransaction.ltcReceiver
         this.openAddToLtcAddressbook()
         this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').close()
     }
 
     openAddDogeAddressDialog() {
-        this.qortBookAddress = this.selectedTransaction.dogeReceiver
+        this.dogeBookAddress = this.selectedTransaction.dogeReceiver
         this.openAddToDogeAddressbook()
         this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').close()
     }
 
     openAddDgbAddressDialog() {
-        this.qortBookAddress = this.selectedTransaction.dgbReceiver
+        this.dgbBookAddress = this.selectedTransaction.dgbReceiver
         this.openAddToDgbAddressbook()
         this.shadowRoot.querySelector('#showDgbTransactionDetailsDialog').close()
     }
 
     openAddRvnAddressDialog() {
-        this.qortBookAddress = this.selectedTransaction.rvnReceiver
+        this.rvnBookAddress = this.selectedTransaction.rvnReceiver
         this.openAddToRvnAddressbook()
         this.shadowRoot.querySelector('#showRvnTransactionDetailsDialog').close()
     }
