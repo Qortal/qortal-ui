@@ -251,7 +251,8 @@
       "wchange53":"Importer adressebok",
       "wchange54":"Eksporter adressebok",
       "wchange55":"Din eksisterende adressebok vil bli slettet og ny opprettet fra sikkerhetskopi.",
-      "wchange56":"ADVARSEL!"
+      "wchange56":"ADVARSEL!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

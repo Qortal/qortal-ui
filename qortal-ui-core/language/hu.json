@@ -251,7 +251,8 @@
       "wchange53":"Címjegyzék importálása",
       "wchange54":"Címjegyzék exportálása",
       "wchange55":"Meglévő címjegyzéke törlésre kerül, és a biztonsági másolatból új jön létre.",
-      "wchange56":"FIGYELEM!"
+      "wchange56":"FIGYELEM!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Kereskedelmi Portál",

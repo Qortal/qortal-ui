@@ -246,7 +246,8 @@
       "wchange53":"Import Address Book",
       "wchange54":"Export Address Book",
       "wchange55":"Your existing address book will be deleted and from backup new created.",
-      "wchange56":"WARNING!"
+      "wchange56":"WARNING!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Trade Portal",

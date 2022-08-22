@@ -251,7 +251,8 @@
       "wchange53":"Adressbuch importieren",
       "wchange54":"Adressbuch exportieren",
       "wchange55":"Ihr bestehendes Adressbuch wird gelöscht und aus einem Backup neu erstellt.",
-      "wchange56":"WARNUNG!"
+      "wchange56":"WARNUNG!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

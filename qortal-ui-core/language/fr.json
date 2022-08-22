@@ -251,7 +251,8 @@
       "wchange53":"Importer le carnet d'adresses",
       "wchange54":"Exporter le carnet d'adresses",
       "wchange55":"Votre carnet d'adresses existant sera supprimé et une nouvelle sauvegarde sera créée.",
-      "wchange56":"ATTENTION!"
+      "wchange56":"ATTENTION!",
+      "wchange57":"Mémo"
    },
    "tradepage":{
       "tchange1":"Portail de commerce",
