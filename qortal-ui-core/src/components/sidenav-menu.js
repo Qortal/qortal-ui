@@ -17,7 +17,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 			urls: { type: Object },
 			nodeType: { type: String, reflect: true },
 			theme: { type: String, reflect: true },
-			addressInfo: { type: Object },
+			addressInfo: { type: Object }
 		};
 	}
 
@@ -152,14 +152,8 @@ class SidenavMenu extends connect(store)(LitElement) {
 								href="/app/become-minter"
 						  >
 								<vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
-						</side-menu-item>`}
-
-					<side-menu-item
-						label="${translate('sidemenu.rewardshare')}"
-						href="/app/reward-share"
-					>
-						<vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
-					</side-menu-item>
+						</side-menu-item>`
+                              }
 					${isSponsor ? html`
 					<side-menu-item
 						label="${translate('mintingpage.mchange35')}"

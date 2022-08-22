@@ -2994,35 +2994,35 @@ class MultiWallet extends LitElement {
 
     sendFromBtcAddressbook(websiteObj) {
         let address = websiteObj.address
-        this.recipient = address
+        this.btcRecipient = address
         this.openSendBtc()
         this.shadowRoot.querySelector('#btcBookDialog').close()
     }
 
     sendFromLtcAddressbook(websiteObj) {
         let address = websiteObj.address
-        this.recipient = address
+        this.ltcRecipient = address
         this.openSendLtc()
         this.shadowRoot.querySelector('#ltcBookDialog').close()
     }
 
     sendFromDogeAddressbook(websiteObj) {
         let address = websiteObj.address
-        this.recipient = address
+        this.dogeRecipient = address
         this.openSendDoge()
         this.shadowRoot.querySelector('#dogeBookDialog').close()
     }
 
     sendFromDgbAddressbook(websiteObj) {
         let address = websiteObj.address
-        this.recipient = address
+        this.dgbRecipient = address
         this.openSendDgb()
         this.shadowRoot.querySelector('#dgbBookDialog').close()
     }
 
     sendFromRvnAddressbook(websiteObj) {
         let address = websiteObj.address
-        this.recipient = address
+        this.rvnRecipient = address
         this.openSendRvn()
         this.shadowRoot.querySelector('#rvnBookDialog').close()
     }
