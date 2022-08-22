@@ -177,9 +177,9 @@
       "mchange31":"Apasa pentru Ajutor",
       "mchange32":"Devino Producator de Moneda",
       "mchange33":"Introducere",
-      "mchange34":"In Qortal, pentru a deveni un productor de moneda si a incepe sa castigi recompense QORT odata cu cresterea nivelului de productor de moneda, trebuie mai intai sa devii ï¿½sponsorizatï¿½. Un sponsor in Qortal este orice alt productor de moneda de nivel 5 sau mai mare, sau un Fondator Qortal. Veti obtine o cheie de sponsorizare de la sponsor si veti folosi acea cheie pentru a ajunge la nivelul 1. Odata ce ati ajuns la nivelul 1, veti putea sa va creati propria cheie de producere a monedei si sa incepeti sa castigati recompense pentru a ajuta la securizarea Qortal Blockchain.",
+      "mchange34":"In Qortal, pentru a deveni un productor de moneda si a incepe sa castigi recompense QORT odata cu cresterea nivelului de productor de moneda, trebuie mai intai sa devii ‘sponsorizat’. Un sponsor in Qortal este orice alt productor de moneda de nivel 5 sau mai mare, sau un Fondator Qortal. Veti obtine o cheie de sponsorizare de la sponsor si veti folosi acea cheie pentru a ajunge la nivelul 1. Odata ce ati ajuns la nivelul 1, veti putea sa va creati propria cheie de producere a monedei si sa incepeti sa castigati recompense pentru a ajuta la securizarea Qortal Blockchain.",
       "mchange35":"Sponsorizare",
-      "mchange36":"Sponsorul dvs. va va emite o ï¿½Cheie de sponsorizareï¿½ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria ï¿½Cheie de producere a monedeiï¿½ si incepeti sa castigati recompense. Aveti XXXX blocuri ramase in perioada de sponsorizare..",
+      "mchange36":"Sponsorul dvs. va va emite o ‘Cheie de sponsorizare’ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria ‘Cheie de producere a monedei’ si incepeti sa castigati recompense. Aveti XXXX blocuri ramase in perioada de sponsorizare..",
       "mchange37":"Pur si simplu contactati un productor de moneda din Qortal care are un nivel suficient de ridicat pentru a emite o cheie de sponsorizare, obtineti acea cheie, apoi reveniti aici si introduceti cheia pentru a va incepe calatoria de productor de moneda !",
       "mchange38":"in"
    },
@@ -188,7 +188,7 @@
       "bchange8":"Cheia de introducere de la sponsorul dvs. aici",
       "bchange10":"Starea actuala a sponsorizarii",
       "bchange12":"Minting cu cheia sponsorului",
-      "bchange13":"Blocuri ramase ï¿½n perioada de sponsorizare",
+      "bchange13":"Blocuri ramase în perioada de sponsorizare",
       "bchange15":"Relatia de sponsorizare",
       "bchange16":"Cont de sponsor",
       "bchange17":"Copiati cheia de sponsorizare",
@@ -245,7 +245,14 @@
       "wchange47":"Carte de adrese",
       "wchange48":"Aceasta agenda de adrese este goala !",
       "wchange49":"Adauga la agenda cu adrese",
-      "wchange50":"Memo"
+      "wchange50":"Numele nu poate fi gol!",
+      "wchange51":"Adresa nu poate fi goala!",
+      "wchange52":"Adaugat cu succes!",
+      "wchange53":"Import agenda de adrese",
+      "wchange54":"Exportati agenda de adrese",
+      "wchange55":"Agenda dvs. existenta va fi stearsa si din backup va fi creata o noua.",
+      "wchange56":"AVERTIZARE!",
+      "wchange57":"Nota"
    },
    "tradepage":{
       "tchange1":"Portal de Tranzactionare",
@@ -597,7 +604,7 @@
    "apipage":{
       "achange1":"Adauga cheia API",
       "achange2":"API key",
-      "achange3":"Va rugam sa introduceti cheia API pentru acest nod. Aceasta poate fi gasita intr-un fisier numit ï¿½apikey.txtï¿½ in directorul in care este instalat nucleul. Alternativ, faceti clic pe Anulare (Anulare) pentru a utiliza nucleul cu functionalitate redusa.",
+      "achange3":"Va rugam sa introduceti cheia API pentru acest nod. Aceasta poate fi gasita intr-un fisier numit “apikey.txt“ in directorul in care este instalat nucleul. Alternativ, faceti clic pe Anulare (Anulare) pentru a utiliza nucleul cu functionalitate redusa.",
       "achange4":"Anulare",
       "achange5":"Adauga",
       "achange6":"S-a adaugat cu succes cheia API",

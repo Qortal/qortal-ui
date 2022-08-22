@@ -245,7 +245,14 @@
       "wchange47":"Címjegyzék",
       "wchange48":"Ez a címjegyzék üres !",
       "wchange49":"Hozzáadás a címjegyzékhez",
-      "wchange50":"Memo"
+      "wchange50":"A név nem lehet üres!",
+      "wchange51":"A cím nem lehet üres!",
+      "wchange52":"Sikeresen hozzáadva!",
+      "wchange53":"Címjegyzék importálása",
+      "wchange54":"Címjegyzék exportálása",
+      "wchange55":"Meglévő címjegyzéke törlésre kerül, és a biztonsági másolatból új jön létre.",
+      "wchange56":"FIGYELEM!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Kereskedelmi Portál",

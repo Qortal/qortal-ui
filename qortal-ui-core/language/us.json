@@ -237,10 +237,17 @@
       "wchange44":"Please try again...",
       "wchange45":"Send all",
       "wchange46":"Send to this address",
-      "wchange47":"Addressbook",
-      "wchange48":"This Addressbook is empty !",
-      "wchange49":"Add to Addressbook",
-      "wchange50":"Memo"
+      "wchange47":"Address Book",
+      "wchange48":"This Address Book is empty !",
+      "wchange49":"Add to Address Book",
+      "wchange50":"Name cannot be empty!",
+      "wchange51":"Address cannot be empty!",
+      "wchange52":"Successfully added!",
+      "wchange53":"Import Address Book",
+      "wchange54":"Export Address Book",
+      "wchange55":"Your existing address book will be deleted and from backup new created.",
+      "wchange56":"WARNING!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Trade Portal",
@@ -616,5 +623,16 @@
       "rewarddialog4":"On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.",
       "rewarddialog5":"You are removing a reward share transaction associated with account:",
       "rewarddialog6":"On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }

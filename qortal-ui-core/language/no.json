@@ -181,7 +181,7 @@
       "mchange35":"Sponsing",
       "mchange36":"Sponsoren din vil utstede deg en sponsenøkkel (Sponsorship Key) som du vil bruke for å legge til noden din, så du kan begynne å minte (der er ingen belønninger før du når nivå 1.) Når du har nådd nivå 1, oppretter/tildeler du din egen ‘mintenøkkel’ og begynner å tjene belønninger. Du har XXXX blokker igjen i sponsingsperioden.",
       "mchange37":"Simpelthen ta kontakt med en minter i Qortal som har et høyt nok nivå til å utstede en sponsenøkkel, skaff den nøkkelen, og kom så tilbake hit og fyll inn nøkkelen for å begynne mintereisen!",
-      "mchange38":"i"
+      "mchange38":"om"
    },
    "becomeMinterPage":{
       "bchange7":"Skriv inn sponsornøkkel",
@@ -245,7 +245,14 @@
       "wchange47":"Adressebok",
       "wchange48":"Denne adresseboken er tom !",
       "wchange49":"Legg til i Adresseboken",
-      "wchange50":"Memo"
+      "wchange50":"Navnet kan ikke stå tomt!",
+      "wchange51":"Adressen kan ikke være tom!",
+      "wchange52":"Lagt til!",
+      "wchange53":"Importer adressebok",
+      "wchange54":"Eksporter adressebok",
+      "wchange55":"Din eksisterende adressebok vil bli slettet og ny opprettet fra sikkerhetskopi.",
+      "wchange56":"ADVARSEL!",
+      "wchange57":"Memo"
    },
    "tradepage":{
       "tchange1":"Handelsportal",

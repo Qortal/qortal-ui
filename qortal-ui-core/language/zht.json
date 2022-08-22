@@ -245,7 +245,14 @@
       "wchange47":"地址簿",
       "wchange48":"此通訊錄為空 !",
       "wchange49":"加至地址簿",
-      "wchange50":"Memo"
+      "wchange50":"名稱不能為空！",
+      "wchange51":"地址不能為空！",
+      "wchange52":"添加成功！",
+      "wchange53":"導入通訊錄",
+      "wchange54":"導出通訊錄",
+      "wchange55":"您現有的通訊簿將被刪除並從新創建的備份中。",
+      "wchange56":"警告！",
+      "wchange57":"備忘錄"
    },
    "tradepage":{
       "tchange1":"交易門戶",

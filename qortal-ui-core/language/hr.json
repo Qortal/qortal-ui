@@ -245,7 +245,14 @@
       "wchange47":"Adresar",
       "wchange48":"Ovaj adresar je prazan !",
       "wchange49":"Dodaj u adresar",
-      "wchange50":"Memo"
+      "wchange50":"Ime ne može biti prazno!",
+      "wchange51":"Adresa ne može biti prazna!",
+      "wchange52":"Uspješno dodano!",
+      "wchange53":"Uvezi adresar",
+      "wchange54":"Izvezi adresar",
+      "wchange55":"Vaš postojeći adresar bit će izbrisan i novi će se stvoriti iz sigurnosne kopije.",
+      "wchange56":"UPOZORENJE!",
+      "wchange57":"Dopis"
    },
    "tradepage":{
       "tchange1":"Portal razmjene",
