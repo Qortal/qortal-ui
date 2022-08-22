@@ -26,6 +26,15 @@ parentEpml.ready().then(() => {
 			parent: false,
 		},
 		{
+			url: 'sponsorship-list',
+			domain: 'core',
+			page: 'sponsorship-list/index.html',
+			title: 'Become a Minter',
+			icon: 'vaadin:info-circle',
+			menus: [],
+			parent: false,
+		},
+		{
 			url: 'wallet',
 			domain: 'core',
 			page: 'wallet/index.html',

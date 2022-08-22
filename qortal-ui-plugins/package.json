@@ -50,6 +50,7 @@
     "@vaadin/grid": "23.1.5",
     "@vaadin/icons": "23.1.5",
     "epml": "0.3.3",
+    "file-saver": "2.0.5",
     "html-escaper": "3.0.3",
     "lit": "2.3.0",
     "lit-translate": "2.0.1",
