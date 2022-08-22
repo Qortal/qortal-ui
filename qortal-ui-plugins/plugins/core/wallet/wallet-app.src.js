@@ -54,7 +54,7 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-		rvnRecipient: { type: String },
+		    rvnRecipient: { type: String },
             rvnAmount: { type: Number },
             arrrRecipient: { type: String },
             arrrAmount: { type: Number },
@@ -69,7 +69,7 @@ class MultiWallet extends LitElement {
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
-		rvnFeePerByte: { type: Number },
+		    rvnFeePerByte: { type: Number },
             balanceString: { type: String },
             arrrWalletAddress: { type: String },
             exportErrorMessage: { type: String },
@@ -693,7 +693,7 @@ class MultiWallet extends LitElement {
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
-	  this.balance = 0
+	    this.balance = 0
         this.amount = 0
         this.btcAmount = 0
         this.ltcAmount = 0
@@ -1708,7 +1708,7 @@ class MultiWallet extends LitElement {
                             <mwc-textfield
                                 style="width: 100%;"
                                 id="arrrMemo"
-                                label="${translate("walletpage.wchange50")}"
+                                label="${translate("walletpage.wchange57")}"
                                 type="text"
                                 value="${this.arrrMemo}"
                                 maxLength="256"
