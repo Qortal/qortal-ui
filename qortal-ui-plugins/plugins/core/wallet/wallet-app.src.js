@@ -3084,30 +3084,58 @@ class MultiWallet extends LitElement {
 
     closeQortAddressDialog() {
         this.shadowRoot.querySelector('#addQortAddressDialog').close()
+        this.shadowRoot.getElementById('qortNameInput').value = ''
+        this.shadowRoot.getElementById('qortAddressInput').value = ''
+        this.qortBookName = ''
+        this.qortBookAddress = ''
     }
 
     closeBtcAddressDialog() {
         this.shadowRoot.querySelector('#addBtcAddressDialog').close()
+        this.shadowRoot.getElementById('btcNameInput').value = ''
+        this.shadowRoot.getElementById('btcAddressInput').value = ''
+        this.btcBookName = ''
+        this.btcBookAddress = ''
     }
 
     closeLtcAddressDialog() {
         this.shadowRoot.querySelector('#addLtcAddressDialog').close()
+        this.shadowRoot.getElementById('ltcNameInput').value = ''
+        this.shadowRoot.getElementById('ltcAddressInput').value = ''
+        this.ltcBookName = ''
+        this.ltcBookAddress = ''
     }
 
     closeDogeAddressDialog() {
         this.shadowRoot.querySelector('#addDogeAddressDialog').close()
+        this.shadowRoot.getElementById('dogeNameInput').value = ''
+        this.shadowRoot.getElementById('dogeAddressInput').value = ''
+        this.dogeBookName = ''
+        this.dogeBookAddress = ''
     }
 
     closeDgbAddressDialog() {
         this.shadowRoot.querySelector('#addDgbAddressDialog').close()
+        this.shadowRoot.getElementById('dgbNameInput').value = ''
+        this.shadowRoot.getElementById('dgbAddressInput').value = ''
+        this.dgbBookName = ''
+        this.dgbBookAddress = ''
     }
 
     closeRvnAddressDialog() {
         this.shadowRoot.querySelector('#addRvnAddressDialog').close()
+        this.shadowRoot.getElementById('rvnNameInput').value = ''
+        this.shadowRoot.getElementById('rvnAddressInput').value = ''
+        this.rvnBookName = ''
+        this.rvnBookAddress = ''
     }
 
     closeArrrAddressDialog() {
         this.shadowRoot.querySelector('#addArrrAddressDialog').close()
+        this.shadowRoot.getElementById('arrrNameInput').value = ''
+        this.shadowRoot.getElementById('arrrAddressInput').value = ''
+        this.arrrBookName = ''
+        this.arrrBookAddress = ''
     }
 
     closeImportQortAddressbookDialog() {
