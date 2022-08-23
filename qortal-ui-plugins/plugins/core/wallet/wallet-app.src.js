@@ -547,7 +547,7 @@ class MultiWallet extends LitElement {
 
             .qrcode-pos {
                 margin-top: -175px;
-                margin-left: 450px;
+                float: right;
             }
 
             .send-pos {
@@ -804,7 +804,7 @@ class MultiWallet extends LitElement {
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
                         ${translate("walletpage.wchange2")}
-                        <div class="wallet-address">
+                        <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy 
                                 title="${translate("walletpage.wchange3")}"
@@ -823,13 +823,13 @@ class MultiWallet extends LitElement {
                         </span>
                         <br>
                     </h2>
-                    <div class="send-pos">
+                    <div class="send-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         ${this.renderSendButton()}
                     </div>
-                    <div class="book-pos">
+                    <div class="book-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         ${this.renderAddressbookButton()}
                     </div>
-                    <div class="qrcode-pos">
+                    <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
                     <div id="transactions">
@@ -1708,7 +1708,7 @@ class MultiWallet extends LitElement {
                             <mwc-textfield
                                 style="width: 100%;"
                                 id="arrrMemo"
-                                label="${translate("walletpage.wchange50")}"
+                                label="${translate("walletpage.wchange57")}"
                                 type="text"
                                 value="${this.arrrMemo}"
                                 maxLength="256"
@@ -1940,10 +1940,9 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-
                 <mwc-dialog id="arrrBookDialog">
                     <div style="text-align:center">
-                        <img src="/img/arr.png" width="32" height="32">
+                        <img src="/img/arrr.png" width="32" height="32">
                         <h1>Pirate Chain ${translate("walletpage.wchange47")}</h1>
                     </div>
                     <div class="floatleft">${this.renderExportAddressbookButton()}</div><div class="floatright">${this.renderImportAddressbookButton()}</div><br><br>
@@ -4251,6 +4250,7 @@ class MultiWallet extends LitElement {
             }
         }
         const coin = this._selectedWallet
+        await this.fetchWalletAddress(this._selectedWallet)
         await this.fetchWalletDetails(this._selectedWallet)
         if (this._selectedWallet == coin) {
             await this.renderTransactions()
@@ -4262,9 +4262,9 @@ class MultiWallet extends LitElement {
     }
 
     async fetchWalletDetails(coin) {
-        this.balanceString = this.renderFetchText()
         switch (coin) {
             case 'qort':
+                this.balanceString = this.renderFetchText()
                 parentEpml.request('apiCall', {
                     url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`,
                 })
@@ -4294,7 +4294,8 @@ class MultiWallet extends LitElement {
             case 'ltc':
             case 'doge':
             case 'dgb':
-			case 'rvn':
+		case 'rvn':
+                this.balanceString = this.renderFetchText()
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
                     url: `/crosschain/${coin}/walletbalance?apiKey=${this.getApiKey()}`,
