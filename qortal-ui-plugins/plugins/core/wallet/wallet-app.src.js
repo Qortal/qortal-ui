@@ -832,7 +832,7 @@ class MultiWallet extends LitElement {
                     <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
-                    <div class="transactions">
+                    <div id="transactions">
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
                     </div>
