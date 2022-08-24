@@ -201,9 +201,9 @@ export const pageStyles = css`
 
 	.tableGrid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr)  minmax(0, 1fr) minmax(
+		grid-template-columns: minmax(0, 3fr)  minmax(0, 1fr) minmax(
 				0,
-				1fr
+				2fr
 			) minmax(0, 1fr);
 		align-items: center;
 		gap: 5px;
@@ -212,6 +212,16 @@ export const pageStyles = css`
 	
 		padding: 5px;
 		
+	}
+
+	.header {
+		align-self: flex-start;
+		
+		
+	}
+
+	.header p {
+		word-break: break-word ;
 	}
 
 
@@ -331,6 +341,7 @@ export const pageStyles = css`
 			text-decoration: none;
 			margin: 0px;
 			margin-right: 10px;
+			word-break: break-word;
 		}
 
 		.grid-item {

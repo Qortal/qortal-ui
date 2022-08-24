@@ -119,6 +119,7 @@ class SponsorshipList extends LitElement {
 			const address =
 				window.parent.reduxStore.getState().app?.selectedAddress
 					?.address
+
 			let rewardShares = await this.getRewardShareRelationship(
 				address
 			)
@@ -420,7 +421,7 @@ class SponsorshipList extends LitElement {
 
 
 	render() {
-
+		console.log({sponsors: this.sponsorships})
 		return html`
 			${
 				this.isPageLoading
@@ -452,17 +453,17 @@ class SponsorshipList extends LitElement {
 						<p>${translate("sponsorshipspage.schange1")}</p>
 					</div>
 					<div class="tableGrid table-header">
-						<div class="grid-item">
+						<div class="grid-item header">
 							<p>${translate("sponsorshipspage.schange2")}</p>
 						</div>
-						<div class="grid-item">
+						<div class="grid-item header">
 							<p>${translate("walletprofile.blocksminted")}</p>
 						</div>
 						
-						<div class="grid-item">
+						<div class="grid-item header">
 							<p>${translate("becomeMinterPage.bchange17")}</p>
 						</div>
-						<div class="grid-item">
+						<div class="grid-item header">
 						
 						</div>
 					</div>
@@ -472,17 +473,23 @@ class SponsorshipList extends LitElement {
 							(sponsorship) => html`
 								<ul class="tableGrid">
 									<li class="grid-item">
-										
+									<p class="grid-item-text">
+											Account Address
+										</p>
 										${sponsorship.address}
 									</li>
 									<li class="grid-item">
-										
+									<p class="grid-item-text">
+											Blocks Minted
+										</p>
 										${+sponsorship.blocksMinted +
 										+sponsorship.blocksMintedAdjustment}
 									</li>
 									
 									<li class="grid-item">
-										
+									<p class="grid-item-text">
+											Copy Sponsorship Key
+										</p>
 										<button-icon-copy
 											title="${translate(
 												"becomeMinterPage.bchange17"
