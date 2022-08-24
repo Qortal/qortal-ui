@@ -832,7 +832,7 @@ class MultiWallet extends LitElement {
                     <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
-                    <div id="transactions">
+                    <div class="transactions">
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
                     </div>
@@ -1205,7 +1205,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendQortDialog">
+                <mwc-dialog id="sendQortDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/qort.png" width="32" height="32">
@@ -1271,7 +1271,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendBtcDialog">
+                <mwc-dialog id="sendBtcDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/btc.png" width="32" height="32">
@@ -1348,7 +1348,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendLtcDialog">
+                <mwc-dialog id="sendLtcDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/ltc.png" width="32" height="32">
@@ -1425,7 +1425,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendDogeDialog">
+                <mwc-dialog id="sendDogeDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/doge.png" width="32" height="32">
@@ -1504,7 +1504,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendDgbDialog">
+                <mwc-dialog id="sendDgbDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/dgb.png" width="32" height="32">
@@ -1583,7 +1583,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-		    <mwc-dialog id="sendRvnDialog">
+		    <mwc-dialog id="sendRvnDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/rvn.png" width="32" height="32">
@@ -1662,7 +1662,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="sendArrrDialog">
+                <mwc-dialog id="sendArrrDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/arrr.png" width="32" height="32">
@@ -1974,7 +1974,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addQortAddressDialog">
+                <mwc-dialog id="addQortAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/qort.png" width="32" height="32">
                         <h1>Qortal ${translate("walletpage.wchange47")}</h1><br />
@@ -2023,7 +2023,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addBtcAddressDialog">
+                <mwc-dialog id="addBtcAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/btc.png" width="32" height="32">
                         <h1>Bitcoin ${translate("walletpage.wchange47")}</h1><br />
@@ -2072,7 +2072,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addLtcAddressDialog">
+                <mwc-dialog id="addLtcAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/ltc.png" width="32" height="32">
                         <h1>Litecoin ${translate("walletpage.wchange47")}</h1><br />
@@ -2121,7 +2121,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addDogeAddressDialog">
+                <mwc-dialog id="addDogeAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/doge.png" width="32" height="32">
                         <h1>Dogecoin ${translate("walletpage.wchange47")}</h1><br />
@@ -2170,7 +2170,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addDgbAddressDialog">
+                <mwc-dialog id="addDgbAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/dgb.png" width="32" height="32">
                         <h1>Digibyte ${translate("walletpage.wchange47")}</h1><br />
@@ -2219,7 +2219,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addRvnAddressDialog">
+                <mwc-dialog id="addRvnAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/rvn.png" width="32" height="32">
                         <h1>Ravencoin ${translate("walletpage.wchange47")}</h1><br />
@@ -2268,7 +2268,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-                <mwc-dialog id="addArrrAddressDialog">
+                <mwc-dialog id="addArrrAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/arrr.png" width="32" height="32">
                         <h1>Pirate Chain ${translate("walletpage.wchange47")}</h1><br />
@@ -3084,30 +3084,58 @@ class MultiWallet extends LitElement {
 
     closeQortAddressDialog() {
         this.shadowRoot.querySelector('#addQortAddressDialog').close()
+        this.shadowRoot.getElementById('qortNameInput').value = ''
+        this.shadowRoot.getElementById('qortAddressInput').value = ''
+        this.qortBookName = ''
+        this.qortBookAddress = ''
     }
 
     closeBtcAddressDialog() {
         this.shadowRoot.querySelector('#addBtcAddressDialog').close()
+        this.shadowRoot.getElementById('btcNameInput').value = ''
+        this.shadowRoot.getElementById('btcAddressInput').value = ''
+        this.btcBookName = ''
+        this.btcBookAddress = ''
     }
 
     closeLtcAddressDialog() {
         this.shadowRoot.querySelector('#addLtcAddressDialog').close()
+        this.shadowRoot.getElementById('ltcNameInput').value = ''
+        this.shadowRoot.getElementById('ltcAddressInput').value = ''
+        this.ltcBookName = ''
+        this.ltcBookAddress = ''
     }
 
     closeDogeAddressDialog() {
         this.shadowRoot.querySelector('#addDogeAddressDialog').close()
+        this.shadowRoot.getElementById('dogeNameInput').value = ''
+        this.shadowRoot.getElementById('dogeAddressInput').value = ''
+        this.dogeBookName = ''
+        this.dogeBookAddress = ''
     }
 
     closeDgbAddressDialog() {
         this.shadowRoot.querySelector('#addDgbAddressDialog').close()
+        this.shadowRoot.getElementById('dgbNameInput').value = ''
+        this.shadowRoot.getElementById('dgbAddressInput').value = ''
+        this.dgbBookName = ''
+        this.dgbBookAddress = ''
     }
 
     closeRvnAddressDialog() {
         this.shadowRoot.querySelector('#addRvnAddressDialog').close()
+        this.shadowRoot.getElementById('rvnNameInput').value = ''
+        this.shadowRoot.getElementById('rvnAddressInput').value = ''
+        this.rvnBookName = ''
+        this.rvnBookAddress = ''
     }
 
     closeArrrAddressDialog() {
         this.shadowRoot.querySelector('#addArrrAddressDialog').close()
+        this.shadowRoot.getElementById('arrrNameInput').value = ''
+        this.shadowRoot.getElementById('arrrAddressInput').value = ''
+        this.arrrBookName = ''
+        this.arrrBookAddress = ''
     }
 
     closeImportQortAddressbookDialog() {
@@ -3560,42 +3588,71 @@ class MultiWallet extends LitElement {
 
     closeQortDialog() {
         this.shadowRoot.querySelector('#sendQortDialog').close()
+        this.shadowRoot.getElementById('amountInput').value = ''
+        this.shadowRoot.getElementById('recipient').value = ''
+        this.recipient = ''
+        this.amount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeBtcDialog() {
         this.shadowRoot.querySelector('#sendBtcDialog').close()
+        this.shadowRoot.getElementById('btcAmountInput').value = 0
+        this.shadowRoot.getElementById('btcRecipient').value = ''
+        this.btcRecipient = ''
+        this.btcAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeLtcDialog() {
         this.shadowRoot.querySelector('#sendLtcDialog').close()
+        this.shadowRoot.getElementById('ltcAmountInput').value = 0
+        this.shadowRoot.getElementById('ltcRecipient').value = ''
+        this.ltcRecipient = ''
+        this.ltcAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeDogeDialog() {
         this.shadowRoot.querySelector('#sendDogeDialog').close()
+        this.shadowRoot.getElementById('dogeAmountInput').value = 0
+        this.shadowRoot.getElementById('dogeRecipient').value = ''
+        this.dogeRecipient = ''
+        this.dogeAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeDgbDialog() {
         this.shadowRoot.querySelector('#sendDgbDialog').close()
+        this.shadowRoot.getElementById('dgbAmountInput').value = 0
+        this.shadowRoot.getElementById('dgbRecipient').value = ''
+        this.dgbRecipient = ''
+        this.dgbAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeRvnDialog() {
         this.shadowRoot.querySelector('#sendRvnDialog').close()
+        this.shadowRoot.getElementById('rvnAmountInput').value = 0
+        this.shadowRoot.getElementById('rvRecipient').value = ''
+        this.rvnRecipient = ''
+        this.rvnAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
 
     closeArrrDialog() {
         this.shadowRoot.querySelector('#sendArrrDialog').close()
+        this.shadowRoot.getElementById('arrrRecipient').value = ''
+        this.shadowRoot.getElementById('arrrMemo').value = ''
+        this.arrrRecipient = ''
+        this.arrrMemo=''
+        this.arrrAmount = 0
         this.successMessage = ''
         this.errorMessage = ''
     }
@@ -4667,7 +4724,7 @@ class MultiWallet extends LitElement {
                             return render(html``, root)
                         }
                         const confirmed = data.item.confirmations >= requiredConfirmations
-						const unconfirmed = data.item.confirmations == 0
+				const unconfirmed = data.item.confirmations == 0
                         if (confirmed) {
                             render(html`<mwc-icon title="${data.item.confirmations} ${translate("walletpage.wchange42")}" style="color: #00C851">check</mwc-icon>`, root)
 						} else if (unconfirmed) {
@@ -4680,20 +4737,22 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${data.item.type} ${data.item.creatorAddress === this.wallets.get('qort').wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
                     }}
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange9")}" path="creatorAddress"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange10")}" path="recipient"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange36")}" path="fee"></vaadin-grid-column>
-                <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
+                    header="${translate("walletpage.wchange9")}"
+                    path="creatorAddress"
+                >
+                </vaadin-grid-column>
+                <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}" path="recipient"></vaadin-grid-column>
+                <vaadin-grid-column auto-width header="${translate("walletpage.wchange36")}" path="fee"></vaadin-grid-column>
+                <vaadin-grid-column auto-width header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
+                <vaadin-grid-column auto-width
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -4720,7 +4779,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -4729,7 +4787,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -4738,7 +4795,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -4748,7 +4804,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -4758,7 +4813,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -4785,7 +4839,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -4794,7 +4847,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -4803,7 +4855,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -4813,7 +4864,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -4823,7 +4873,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -4850,7 +4899,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -4859,7 +4907,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -4868,7 +4915,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -4878,7 +4924,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -4888,7 +4933,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -4915,7 +4959,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -4924,7 +4967,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -4933,7 +4975,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -4943,7 +4984,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -4953,7 +4993,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -4980,7 +5019,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.inputs[0].address === this.wallets.get(this._selectedWallet).wallet.address ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -4989,7 +5027,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -4998,7 +5035,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -5008,7 +5044,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -5018,7 +5053,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -5045,7 +5079,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange35")}"
                     .renderer=${(root, column, data) => {
                         render(html` ${translate("walletpage.wchange40")} ${data.item.totalAmount < 0 ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
@@ -5054,7 +5087,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <!--<vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange9")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.inputs[0].address}`, root)
@@ -5063,7 +5095,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange10")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.outputs[0].address}`, root)
@@ -5073,7 +5104,6 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column auto-width resizable header="${translate("walletpage.wchange16")}" path="txHash"></vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange37")}"
                     .renderer=${(root, column, data) => {
                         const amount = (Number(data.item.totalAmount) / 1e8).toFixed(8)
@@ -5083,7 +5113,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange14")}"
                     .renderer=${(root, column, data) => {
                         const time = new Date(data.item.timestamp)
@@ -5093,7 +5122,6 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    resizable
                     header="${translate("walletpage.wchange50")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.memo}`, root)
