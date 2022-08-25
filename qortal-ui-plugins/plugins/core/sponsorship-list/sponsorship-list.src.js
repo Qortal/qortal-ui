@@ -684,6 +684,8 @@ class SponsorshipList extends LitElement {
 						@click=${()=>{
 							this.openDialogRewardShare = false
 							this.errorMessage = ''
+							this.isLoadingCreateSponsorship = false
+							this.privateRewardShareKey = ""
 						}}
                         class="red"
                     >
