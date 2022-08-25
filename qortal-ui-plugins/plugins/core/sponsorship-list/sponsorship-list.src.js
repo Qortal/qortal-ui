@@ -650,7 +650,7 @@ class SponsorshipList extends LitElement {
 						
 						
 						</li>
-						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+						<li class=${`row between ${this.status < 4 && 'inactiveText' }`}>
 							<p>
 							4. Complete
 							</p>
@@ -658,7 +658,7 @@ class SponsorshipList extends LitElement {
 						
 						</li>
 						${this.privateRewardShareKey && this.status === 4  ? html`
-						<li class=${`column word-break  ${this.status < 3 && 'inactiveText' }`}>
+						<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>
 					
            <p>Copy the key below and share it with your sponsored person.</p>
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
