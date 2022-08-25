@@ -37,8 +37,8 @@ export const pageStyles = css`
 
 
 
-	.message {
-		color: var(--gray);
+	.message-error {
+		color: var(--error);
 	}
 
 
@@ -62,6 +62,15 @@ export const pageStyles = css`
 	.row {
 		display: flex;
 		width: 100%;
+		align-items: center;
+	}
+
+	.hide {
+		visibility: hidden
+	}
+
+	.inactiveText {
+		opacity: .60
 	}
 	.column {
 		display: flex;
@@ -155,6 +164,30 @@ export const pageStyles = css`
 		background-color: var(--border);
 		z-index: 9;
 		position: fixed;
+	}
+	.marginLoader {
+		margin-left: 10px;
+	}
+	.marginRight {
+		margin-right: 10px;
+	}
+	.smallLoading,
+	.smallLoading:after {
+		border-radius: 50%;
+		width: 2px;
+		height: 2px;
+	}
+
+	.smallLoading {
+		border-width: 0.6em;
+		border-style: solid;
+		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+		font-size: 10px;
+		position: relative;
+		text-indent: -9999em;
+		transform: translateZ(0px);
+		animation: 1.1s linear 0s infinite normal none running loadingAnimation;
 	}
 
 	.loading,
@@ -277,7 +310,9 @@ export const pageStyles = css`
 	}
 
 	
-
+	.word-break {
+		word-break:break-all;
+	}
 	.dialog-container {
 		width: 300px;
 		min-height: 300px;
@@ -367,4 +402,37 @@ export const pageStyles = css`
 			grid-column: 1 / -1;
 		}
 	}
+
+	.between {
+		justify-content: space-between;
+	}
+	.no-width {
+		width: auto
+	}
+
+	.between p {
+		margin: 0;
+		padding: 0;
+	}
+
+	#showDialogRewardShareCreationStatus .dialog-container {
+	width: 300px;
+		min-height: 250px;
+		max-height: 75vh;
+		padding: 5px;
+		display: flex;
+		align-items: flex-start;
+		flex-direction: column;
+}
+
+.warning{
+	display: flex;
+	flex-grow: 1
+}
+
+#showDialogRewardShareCreationStatus li {
+	margin-bottom: 15px;
+}
 `
+
+

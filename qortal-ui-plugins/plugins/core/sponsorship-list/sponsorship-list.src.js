@@ -16,10 +16,24 @@ import "@vaadin/button"
 import "@material/mwc-button"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
 import '@material/mwc-dialog'
+import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import { pageStyles } from "./sponsorship-list-css.src.js"
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
+
+async function* countDown(count, callback) {
+	
+	
+	while (count > 0) {
+	  yield count--;
+	  await new Promise((r) => setTimeout(r, 1000));
+	  if(count === 0){
+		console.log('hello call')
+		callback()
+	}
+	}
+  }
 
 class SponsorshipList extends LitElement {
 	static get properties() {
@@ -32,11 +46,14 @@ class SponsorshipList extends LitElement {
 			mintingAccountData: { type: Array },
 			sponsorships: { type: Array },
 			removeRewardShareLoading: { type: Array },
-			createSponsorshipMessage: { type: String },
+			errorMessage: { type: String },
 			isLoadingCreateSponsorship: { type: Array },
 			publicKeyValue: { type: String },
-			error: { type: Boolean },
-			isOpenModal: {type: Boolean}
+			isOpenModal: {type: Boolean},
+			status: {type: Number},
+			privateRewardShareKey: {type: String},
+			timer: {type: Number},
+			openDialogRewardShare: {type: Boolean}
 		}
 	}
 
@@ -54,11 +71,14 @@ class SponsorshipList extends LitElement {
 		this.mintingAccountData = null
 		this.sponsorships = []
 		this.removeRewardShareLoading = false
-		this.error = false
-		this.createSponsorshipMessage = ""
+		
+		this.errorMessage = ""
 		this.isLoadingCreateSponsorship = false
 		this.publicKeyValue = ""
 		this.isOpenModal = false
+		this.status = 0
+		this.privateRewardShareKey = ""
+		this.openDialogRewardShare = false
 	}
 
 	inputHandler(e) {
@@ -108,17 +128,38 @@ class SponsorshipList extends LitElement {
 		return nodeInfo
 	}
 
+	async saveToClipboard(text) {
+		try {
+			await navigator.clipboard.writeText(text)
+			parentEpml.request('showSnackBar', this.onSuccessMessage)
+		} catch (err) {
+			parentEpml.request('showSnackBar', this.onErrorMessage)
+			console.error('Copy to clipboard error:', err)
+		}
+	}
+
+	changeStatus(value){
+		this.status = value
+		saveToClipboard(translate(
+			"walletpage.wchange4"
+		))
+		
+	}
+
 	async atMount() {
 		this.changeLanguage()
-
+		
 		this.addressInfo =
 			window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		this.isPageLoading = true
 		try {
 		
-			const address =
-				window.parent.reduxStore.getState().app?.selectedAddress
-					?.address
+			// const address =
+			// 	window.parent.reduxStore.getState().app?.selectedAddress
+			// 		?.address
+
+			const address = 'QPsjHoKhugEADrtSQP5xjFgsaQPn9WmE3Y'
+
 
 			let rewardShares = await this.getRewardShareRelationship(
 				address
@@ -153,6 +194,7 @@ class SponsorshipList extends LitElement {
 			if(openModal){
 				this.shadowRoot.querySelector('#showDialog').show()
 			}
+
 		} catch (error) {
 			
 
@@ -251,18 +293,20 @@ class SponsorshipList extends LitElement {
 		removeReceiver()
 	}
 
-	async createRewardShare(e) {
-		this.error = false
-		this.createSponsorshipMessage = ""
-		const recipientPublicKey = this.publicKeyValue
+	async createRewardShare(publicKeyValue) {
+		this.openDialogRewardShare = true
+		
+		this.privateRewardShareKey = ""
+	
+		this.errorMessage = ""
+		const recipientPublicKey = publicKeyValue
 		const percentageShare = 0
 		const selectedAddress =
 			window.parent.reduxStore.getState().app?.selectedAddress
 		// Check for valid...
 		this.isLoadingCreateSponsorship = true
+		
 
-		let recipientAddress =
-			window.parent.base58PublicKeyToAddress(recipientPublicKey)
 
 		// Get Last Ref
 		const getLastRef = async () => {
@@ -282,96 +326,39 @@ class SponsorshipList extends LitElement {
 			return myAccountDetails
 		}
 
-		// Get Reward Relationship if it already exists
-		const getRewardShareRelationship = async (minterAddr) => {
-			let isRewardShareExisting = false
-			let myRewardShareArray = await parentEpml.request("apiCall", {
-				type: "api",
-				url: `/addresses/rewardshares?minters=${minterAddr}&recipients=${recipientAddress}`,
-			})
-			isRewardShareExisting =
-				myRewardShareArray.length !== 0 ? true : false
-			return isRewardShareExisting
-		}
+	
 
 		// Validate Reward Share by Level
 		const validateReceiver = async () => {
-			let accountDetails = await getAccountDetails()
-			let lastRef = await getLastRef()
-			let isExisting = await getRewardShareRelationship(
-				selectedAddress.address
-			)
-
-			// Check for creating self share at different levels (also adding check for flags...)
-			if (accountDetails.flags === 1) {
-				this.error = false
-				this.createSponsorshipMessage = ""
-				let myTransaction = await makeTransactionRequest(lastRef)
-				if (isExisting === true) {
-					this.error = true
-					this.createSponsorshipMessage = `Cannot Create Multiple Reward Shares!`
-				} else {
-					// Send the transaction for confirmation by the user
-					this.error = false
-					this.createSponsorshipMessage = ""
-					getTxnRequestResponse(myTransaction)
-				}
-			} else if (accountDetails.address === recipientAddress) {
-				if (accountDetails.level >= 1 && accountDetails.level <= 4) {
-					this.error = false
-					this.createSponsorshipMessage = ""
-					let myTransaction = await makeTransactionRequest(lastRef)
-					if (isExisting === true) {
-						let err1string = get("rewardsharepage.rchange18")
-						this.error = true
-						this.createSponsorshipMessage = `${err1string}`
-					} else {
-						// Send the transaction for confirmation by the user
-						this.error = false
-						this.createSponsorshipMessage = ""
-						getTxnRequestResponse(myTransaction)
-					}
-				} else if (accountDetails.level >= 5) {
-					this.error = false
-					this.createSponsorshipMessage = ""
-					let myTransaction = await makeTransactionRequest(lastRef)
-					if (isExisting === true) {
-						let err2string = get("rewardsharepage.rchange19")
-						this.error = true
-						this.createSponsorshipMessage = `${err2string}`
-					} else {
-						// Send the transaction for confirmation by the user
-						this.error = false
-						this.createSponsorshipMessage = ""
-						getTxnRequestResponse(myTransaction)
-					}
-				} else {
-					let err3string = get("rewardsharepage.rchange20")
-					this.error = true
-					this.createSponsorshipMessage = `${err3string} ${accountDetails.level}`
-				}
-			} else {
-				//Check for creating reward shares
-				if (accountDetails.level >= 5) {
-					this.error = false
-					this.createSponsorshipMessage = ""
-					let myTransaction = await makeTransactionRequest(lastRef)
-					if (isExisting === true) {
-						let err4string = get("rewardsharepage.rchange18")
-						this.error = true
-						this.createSponsorshipMessage = `${err4string}`
-					} else {
-						// Send the transaction for confirmation by the user
-						this.error = false
-						this.createSponsorshipMessage = ""
-						getTxnRequestResponse(myTransaction)
-					}
-				} else {
-					this.error = true
-					let err5string = get("rewardsharepage.rchange20")
-					this.createSponsorshipMessage = `${err5string} ${accountDetails.level}`
-				}
+			let accountDetails 
+			try {
+				accountDetails = await getAccountDetails()
+			} catch (error) {
+				this.errorMessage = "Couldn't fetch account details"
 			}
+			
+			let lastRef = await getLastRef()
+				if (accountDetails.level >= 5) {
+					this.status = 1
+			
+					this.errorMessage = ""
+
+					try {
+						const myTransaction = await makeTransactionRequest(lastRef)
+				
+				
+						getTxnRequestResponse(myTransaction)
+					} catch (error) {
+						this.errorMessage = error?.message || 'Error creating relationship'
+					}
+					
+				
+				} else {
+				
+					let err5string = get("rewardsharepage.rchange20")
+					this.errorMessage = `${err5string} ${accountDetails.level}`
+				}
+		
 		}
 
 		// Make Transaction Request
@@ -399,25 +386,68 @@ class SponsorshipList extends LitElement {
 
 		const getTxnRequestResponse = (txnResponse) => {
 			if (txnResponse.success === false && txnResponse.message) {
-				this.error = true
-				this.createSponsorshipMessage = txnResponse.message
-				throw new Error(txnResponse)
+			
+				this.errorMessage = txnResponse.message
+				this.isLoadingCreateSponsorship = false
+				throw(txnResponse)
 			} else if (
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
-				let err6string = get("rewardsharepage.rchange21")
-				this.createSponsorshipMessage = err6string
-				this.error = false
+			
+				this.isLoadingCreateSponsorship = false
+			
+				this.privateRewardShareKey = txnResponse.data
+				this.confirmRelationship()
 			} else {
-				this.error = true
-				this.createSponsorshipMessage = txnResponse.data.message
-				throw new Error(txnResponse)
+			
+				this.errorMessage = txnResponse.data.message
+				this.isLoadingCreateSponsorship = false
+				throw(txnResponse)
 			}
 		}
 		validateReceiver()
-		this.isLoadingCreateSponsorship = false
+	
 	}
+
+
+
+	async confirmRelationship(){
+		let interval = null
+		let stop = false
+		
+		const getAnswer = async () => {
+			if (!stop) {
+				stop= true;
+	
+				try {
+				
+					const recipientAddress =
+					window.parent.base58PublicKeyToAddress(recipientPublicKey)
+					const minterAddress = window.parent.reduxStore.getState().app?.selectedAddress.address
+				const myRewardShareArray = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/addresses/rewardshares?minters=${minterAddress}&recipients=${recipientAddress}`,
+				})
+					if(myRewardShareArray.length > 0){
+						clearInterval(interval)
+						this.status = 3
+
+					
+						this.timer = countDown(180, ()=> this.changeStatus(4));
+					}
+					
+				} catch (error) {
+				
+				}
+	
+				stop = false
+			}
+		};
+		interval = setInterval(getAnswer, 2000);
+	}
+
+	
 
 
 	render() {
@@ -490,22 +520,8 @@ class SponsorshipList extends LitElement {
 									<p class="grid-item-text">
 											Copy Sponsorship Key
 										</p>
-										<button-icon-copy
-											title="${translate(
-												"becomeMinterPage.bchange17"
-											)}"
-											onSuccessMessage="${translate(
-												"walletpage.wchange4"
-											)}"
-											onErrorMessage="${translate(
-												"walletpage.wchange39"
-											)}"
-											textToCopy=${sponsorship.rewardSharePublicKey}
-											buttonSize="28px"
-											iconSize="16px"
-											color="var(--copybutton)"
-											offsetLeft="4px"
-										></button-icon-copy>
+										
+										<mwc-button @click=${()=> this.createRewardShare(sponsorship.publicKey)}>copy</mwc-button>
 									</li>
 									<li class="grid-item grid-item-button">
 										<mwc-button
@@ -547,7 +563,7 @@ class SponsorshipList extends LitElement {
 							</div>
 						`
 					: ''}
-					<p class="message">${this.createSponsorshipMessage}</p>
+					<p class="message-error">${this.errorMessage}</p>
 					<div class="form-wrapper">
 						<div class="sponsor-minter-wrapper">
 							<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
@@ -566,17 +582,11 @@ class SponsorshipList extends LitElement {
 						<div class="form-item form-item--button">
 							<vaadin-button
 								?disabled="${this.isLoadingCreateSponsorship || !this.publicKeyValue}"
-								@click="${this.createRewardShare}"
+								@click="${()=> this.createRewardShare(this.publicKeyValue)}"
 							>
-								${
-									this.isLoadingCreateSponsorship === false
-										? html`${translate(
+								${translate(
 												"puzzlepage.pchange15"
-										  )}`
-										: html`<paper-spinner-lite
-												active
-										  ></paper-spinner-lite>`
-								}
+										  )}
 							</vaadin-button>
 						</div>
 					</div>
@@ -604,6 +614,82 @@ class SponsorshipList extends LitElement {
                     >
                     ${translate("general.close")}
                     </mwc-button>
+				
+                </mwc-dialog>
+				<mwc-dialog escapeKeyAction="" scrimClickAction=""  id="showDialogRewardShareCreationStatus" ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>
+					
+                    <div class="dialog-header" >
+						<div class="row">
+						<h1>In progress  </h1> <div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
+						</div>
+                       
+                        <hr />
+                    </div>
+					<div class="dialog-container">
+					<ul>
+					
+					
+					
+						<li class="row between">1. Creating relationship <div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div></li>
+						<li class=${`row between ${this.status < 2 && 'inactiveText' }`}>
+							<p>
+							2. Awaiting confirmation on blockchain
+							</p>
+							 <div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
+						
+						</li>
+					
+						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+						<p>
+						3. Finishing up
+							</p>
+
+							<div class="row no-width">
+							<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+							</div>
+						
+						
+						</li>
+						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+							<p>
+							4. Complete
+							</p>
+							
+						
+						</li>
+						${this.privateRewardShareKey && this.status === 4  ? html`
+						<li class=${`column word-break  ${this.status < 3 && 'inactiveText' }`}>
+					
+           <p>Copy the key below and share it with your sponsored person.</p>
+            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <span style="color: #000;">${this.privateRewardShareKey}</span>
+            </div>
+      
+							
+							
+						
+						</li>
+						` : ''}
+					</ul>
+					<div class="warning column">
+						<p>
+						Warning: do not close the Qortal UI until completion!
+						</p>
+						<p class="message-error">${this.errorMessage}</p>
+					</div>
+					
+					</div>
+					<mwc-button
+                        slot="primaryAction"
+						@click=${()=>{
+							this.openDialogRewardShare = false
+							this.errorMessage = ''
+						}}
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                   
 				
                 </mwc-dialog>
 			</div>
