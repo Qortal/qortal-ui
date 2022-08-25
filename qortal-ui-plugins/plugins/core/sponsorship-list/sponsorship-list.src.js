@@ -13,7 +13,6 @@ import "@polymer/paper-spinner/paper-spinner-lite.js"
 import "@material/mwc-button"
 import "@material/mwc-textfield"
 import "@vaadin/button"
-import "@material/mwc-button"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
 import '@material/mwc-dialog'
 import {asyncReplace} from 'lit/directives/async-replace.js';
