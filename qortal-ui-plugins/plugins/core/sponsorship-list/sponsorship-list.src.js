@@ -154,11 +154,11 @@ class SponsorshipList extends LitElement {
 		this.isPageLoading = true
 		try {
 		
-			// const address =
-			// 	window.parent.reduxStore.getState().app?.selectedAddress
-			// 		?.address
+			const address =
+				window.parent.reduxStore.getState().app?.selectedAddress
+					?.address
 
-			const address = 'QPsjHoKhugEADrtSQP5xjFgsaQPn9WmE3Y'
+			
 
 
 			let rewardShares = await this.getRewardShareRelationship(
