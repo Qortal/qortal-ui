@@ -28,7 +28,7 @@ async function* countDown(count, callback) {
 	  yield count--;
 	  await new Promise((r) => setTimeout(r, 1000));
 	  if(count === 0){
-		console.log('hello call')
+	
 		callback()
 	}
 	}
