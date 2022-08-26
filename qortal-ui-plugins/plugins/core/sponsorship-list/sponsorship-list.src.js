@@ -139,7 +139,7 @@ class SponsorshipList extends LitElement {
 
 	changeStatus(value){
 		this.status = value
-		saveToClipboard(translate(
+		this.saveToClipboard(translate(
 			"walletpage.wchange4"
 		))
 		
@@ -384,6 +384,13 @@ class SponsorshipList extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
+
+			if(txnResponse.message.includes('multiple')){
+				this.isLoadingCreateSponsorship = false
+			
+				this.privateRewardShareKey = txnResponse.data
+				this.confirmRelationship(recipientPublicKey)
+			}
 			if (txnResponse.success === false && txnResponse.message) {
 			
 				this.errorMessage = txnResponse.message
@@ -411,7 +418,7 @@ class SponsorshipList extends LitElement {
 
 
 
-	async confirmRelationship(){
+	async confirmRelationship(recipientPublicKey){
 		let interval = null
 		let stop = false
 		
@@ -437,6 +444,7 @@ class SponsorshipList extends LitElement {
 					}
 					
 				} catch (error) {
+					console.error(error)
 				
 				}
 	
