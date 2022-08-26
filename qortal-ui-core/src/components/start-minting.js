@@ -354,7 +354,7 @@ class StartMinting extends connect(store)(LitElement) {
 		);
 		const isMinterButKeyMintingKeyNotAssigned =
 			addressInfo?.error !== 124 &&
-			addressInfo?.level === 1 &&
+			addressInfo?.level >= 1 &&
 			!findMintingAccount;
 
 		
