@@ -276,6 +276,8 @@ export default class AltcoinHDWallet {
 
         const privateKeyHash = seedHash.slice(0, 32);
 
+        this.seed58 = Base58.encode(privateKeyHash);
+
         const _privateKeyHash = [...privateKeyHash]
         let privateKeyBigInt = BigInteger.fromByteArrayUnsigned(_privateKeyHash);
 
@@ -687,8 +689,14 @@ export default class AltcoinHDWallet {
              * Derive Litecoin Legacy Address
              */
 
-                // Append Address Prefix
-            const k = [this.versionBytes.mainnet.prefix].concat(...this.grandChildPublicKeyHash)
+            // Append Address Prefix
+            let prefix = [this.versionBytes.mainnet.prefix]
+            if (2 == this.versionBytes.mainnet.prefix.length) {
+                prefix = [this.versionBytes.mainnet.prefix[0]]
+                prefix.push([this.versionBytes.mainnet.prefix[1]])
+            }
+
+            const k = prefix.concat(...this.grandChildPublicKeyHash)
 
             // Derive Checksum
             const _addressCheckSum = new Sha256().process(new Sha256().process(new Uint8Array(k)).finish().result).finish().result
@@ -859,6 +867,7 @@ export default class AltcoinHDWallet {
             derivedMasterPublicKey: this.masterPublicKey,
             _tDerivedMasterPrivateKey: this._tMasterPrivateKey,
             _tDerivedmasterPublicKey: this._tmasterPublicKey,
+            seed58: this.seed58,
             // derivedPrivateChildKey: this.xPrivateChildKey,
             // derivedPublicChildKey: this.xPublicChildKey,
             // derivedPrivateGrandChildKey: this.xPrivateGrandChildKey,
