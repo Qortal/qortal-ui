@@ -18,6 +18,7 @@ import '@material/mwc-dialog'
 import '@material/mwc-formfield'
 import '@material/mwc-icon'
 import '@material/mwc-icon-button'
+import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
 import '@polymer/paper-progress/paper-progress.js'
 import '@polymer/paper-slider/paper-slider.js'
@@ -60,19 +61,18 @@ class MultiWallet extends LitElement {
             arrrAmount: { type: Number },
             arrrMemo: { type: String },
             errorMessage: { type: String },
+            arrrWalletAddress: { type: String },
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
             btnDisable: { type: Boolean },
             isValidAmount: { type: Boolean },
             balance: { type: Number },
+            balanceString: { type: String },
             btcFeePerByte: { type: Number },
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
 		rvnFeePerByte: { type: Number },
-            balanceString: { type: String },
-            arrrWalletAddress: { type: String },
-            exportErrorMessage: { type: String },
             qortBook: { type: Array },
             btcBook: { type: Array },
             ltcBook: { type: Array },
@@ -159,6 +159,21 @@ class MultiWallet extends LitElement {
                 cursor: default;
             }
 
+            #tabs-height {
+                --mdc-tab-height: 50px;
+            }
+
+            #tabs-1-content {
+                height: 100%;
+                padding-bottom: 10px;
+            }
+
+            mwc-tab-bar {
+                --mdc-text-transform: none;
+                --mdc-tab-color-default: var(--black);
+                --mdc-tab-text-label-color-default: var(--black);
+            }
+
             paper-slider.blue {
                 --paper-slider-knob-color: var(--paper-light-blue-500);
                 --paper-slider-active-color: var(--paper-light-blue-500);
@@ -194,6 +209,10 @@ class MultiWallet extends LitElement {
 
             .mono {
                 font-family: 'Roboto Mono', monospace;
+            }
+
+            .sans {
+                font-family: 'Open Sans', sans-serif;
             }
 
             .weight-100 {
@@ -273,25 +292,37 @@ class MultiWallet extends LitElement {
                 -moz-osx-font-smoothing: grayscale;
             }
 
-
             h2 {
                 margin: 0;
+                color: var(--black);
                 font-weight: 400;
                 font: 24px/24px 'Open Sans', sans-serif;
             }
 
             h3 {
                 margin: 0 0 5px;
+                color: var(--black);
                 font-weight: 600;
                 font-size: 18px;
                 line-height: 18px;
             }
 
-            @media (min-width: 765px) {
-                .wrapper {
-                    display: grid;
-                    grid-template-columns: 0.5fr 3.5fr;
-                }
+            .hrstyle {
+                color: var(--border);
+                border-radius: 80%;
+                margin-bottom: 1rem;
+            }
+
+            .header-title {
+                font-size: 32px;
+                color: var(--black);
+                font-weight: 600;
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+            .fullWidth {
+                width: 100%;
             }
 
             .wrapper {
@@ -405,19 +436,6 @@ class MultiWallet extends LitElement {
                 display: inline-block;
             }
 
-            .currency-box {
-                display: flex;
-                background-color: var(--white);
-                text-align: center;
-                padding: 12px;
-                cursor: pointer;
-                transition: 0.1s ease-in-out;
-            }
-
-            .currency-box:not(:last-child) {
-                border-bottom: var(--border);
-            }
-
             .active {
                 background: var(--menuactive);
             }
@@ -430,27 +448,6 @@ class MultiWallet extends LitElement {
                 background-size: cover;
                 border-radius: 3px;
                 filter: grayscale(100%);
-            }
-
-            .currency-box.active .currency-image,
-            .currency-box:hover .currency-image {
-                filter: none;
-            }
-
-            .currency-box:hover {
-                background: var(--menuhover);
-            }
-
-            .currency-box.active,
-            .currency-box:hover .currency-text {
-                font-weight: 500;
-            }				
-				
-            .currency-text {
-                margin: auto 0;
-                margin-left: 8px;
-                font-size: 20px;
-                color: var(--black);
             }
 
             .qort .currency-image {
@@ -572,9 +569,6 @@ class MultiWallet extends LitElement {
                 .cards {
                     margin-top: 25px;
                 }
-                .currency-box:nth-of-type(2) {
-                    margin-right: 0;
-                }
             }
 
             .checkboxLabel:hover{
@@ -591,16 +585,6 @@ class MultiWallet extends LitElement {
                 .cards {
                     margin-top: 25px;
                 }
-                .currency-box {
-                    width: calc(50% - 25px);
-                    max-width: 260px;
-                    display: inline-block;
-                    margin-right: 25px;
-                    margin-bottom: 25px;
-                }
-                .currency-box:nth-of-type(2) {
-                    margin-right: 0;
-                }
             }
 
             @media (max-width: 530px) {
@@ -609,16 +593,6 @@ class MultiWallet extends LitElement {
                 }
                 .cards {
                     text-align: center;
-                }
-                .currency-box {
-                    width: calc(100% - 25px);
-                    max-width: 260px;
-                }
-                .currency-box:nth-of-type(2) {
-                    margin-right: 25px;
-                }
-                .currency-box:last-of-type {
-                    margin-bottom: 0;
                 }
                 .wallet-balance {
                     font-size: 22px;
@@ -652,11 +626,8 @@ class MultiWallet extends LitElement {
         this.isTextMenuOpen = false
         this.loading = true
 
-        this.selectWallet = this.selectWallet.bind(this)
-
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 
-        this.exportErrorMessage = ''
         this.qortBook = []
         this.btcBook = []
         this.ltcBook = []
@@ -767,39 +738,37 @@ class MultiWallet extends LitElement {
     render() {
         return html`
             <div class="wrapper">
-                <div class="wallet">
-                    <div style="font-size: 20px; color: var(--black); padding: 16px; border-bottom: 1px solid var(--border);">${translate("walletpage.wchange22")}</div>
-                    <div class="cards">
-                        <div coin="qort" class="currency-box qort active">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Qort</div>
-                        </div>
-                        <div coin="btc" class="currency-box btc">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Bitcoin</div>
-                        </div>
-                        <div coin="ltc" class="currency-box ltc">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Litecoin</div>
-                        </div>
-                        <div coin="doge" class="currency-box doge">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Dogecoin</div>
-                        </div>
-                        <div coin="dgb" class="currency-box dgb">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Digibyte</div>
-                        </div>
-				<div coin="rvn" class="currency-box rvn">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Ravencoin</div>
-                        </div>
-                        <div coin="arrr" class="currency-box arrr">
-                            <div class="currency-image"></div>
-                            <div class="currency-text">Pirate Chain</div>
-                        </div>
-                    </div>
+                <div class="header-title sans">
+                    ${translate("walletpage.wchange22")}
                 </div>
+
+                <div class="fullWidth">
+                    <hr class="hrstyle">
+                </div>
+
+                <mwc-tab-bar id="tabs-1" activeIndex="0">
+                    <mwc-tab label="Qortal" hasImageIcon minWidth @click="${(e) => this.tabWalletQort()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/qort.png">
+                    </mwc-tab>
+                    <mwc-tab label="Bitcoin" hasImageIcon minWidth @click="${(e) => this.tabWalletBtc()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/btc.png">
+                    </mwc-tab>
+                    <mwc-tab label="Litecoin" hasImageIcon minWidth @click="${(e) => this.tabWalletLtc()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/ltc.png">
+                    </mwc-tab>
+                    <mwc-tab label="Dogecoin" hasImageIcon minWidth @click="${(e) => this.tabWalletDoge()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/doge.png">
+                    </mwc-tab>
+                    <mwc-tab label="Digibyte" hasImageIcon minWidth @click="${(e) => this.tabWalletDgb()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/dgb.png">
+                    </mwc-tab>
+                    <mwc-tab label="Ravencoin" hasImageIcon minWidth @click="${(e) => this.tabWalletRvn()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/rvn.png">
+                    </mwc-tab>
+                    <mwc-tab label="Pirate Chain" hasImageIcon minWidth @click="${(e) => this.tabWalletArrr()}">
+                        <img slot="icon" width="24px" height="24px" src="/img/arrr.png">
+                    </mwc-tab>
+                </mwc-tab-bar>
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
@@ -2479,12 +2448,7 @@ class MultiWallet extends LitElement {
         this.rvnAddressbook()
         this.arrrAddressbook()
 
-        this.currencyBoxes = this.shadowRoot.querySelectorAll('.currency-box')
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
-
-        this.currencyBoxes.forEach((currencyBox) => {
-            currencyBox.addEventListener('click', this.selectWallet)
-        })
 
         this.showWallet()
 
@@ -2898,6 +2862,41 @@ class MultiWallet extends LitElement {
                 </div>
             `
         }
+    }
+
+    tabWalletQort() {
+        this._selectedWallet = 'qort'
+        this.showWallet()
+    }
+
+    tabWalletBtc() {
+        this._selectedWallet = 'btc'
+        this.showWallet()
+    }
+
+    tabWalletLtc() {
+        this._selectedWallet = 'ltc'
+        this.showWallet()
+    }
+
+    tabWalletDoge() {
+        this._selectedWallet = 'doge'
+        this.showWallet()
+    }
+
+    tabWalletDgb() {
+        this._selectedWallet = 'dgb'
+        this.showWallet()
+    }
+
+    tabWalletRvn() {
+        this._selectedWallet = 'rvn'
+        this.showWallet()
+    }
+
+    tabWalletArrr() {
+        this._selectedWallet = 'arrr'
+        this.showWallet()
     }
 
     qortAddressbook() {
@@ -3806,21 +3805,6 @@ class MultiWallet extends LitElement {
 
     renderInText() {
         return html`${translate("walletpage.wchange8")}`
-    }
-
-    selectWallet(event) {
-        event.preventDefault()
-
-        const target = event.currentTarget
-
-        this.currencyBoxes.forEach((currencyBox) => {
-            if (currencyBox.classList.contains('active')) {
-                currencyBox.classList.remove('active')
-            }
-        })
-        target.classList.add('active')
-        this._selectedWallet = target.attributes.coin.value
-        this.showWallet()
     }
 
     _checkAmount(e) {
@@ -5122,7 +5106,7 @@ class MultiWallet extends LitElement {
                 </vaadin-grid-column>
                 <vaadin-grid-column
                     auto-width
-                    header="${translate("walletpage.wchange50")}"
+                    header="${translate("walletpage.wchange57")}"
                     .renderer=${(root, column, data) => {
                         render(html`${data.item.memo}`, root)
                     }}
@@ -5346,7 +5330,6 @@ class MultiWallet extends LitElement {
             }
         })
     }
-
 
     isEmptyArray(arr) {
         if (!arr) {
