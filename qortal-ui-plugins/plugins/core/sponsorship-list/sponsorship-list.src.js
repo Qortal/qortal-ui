@@ -156,7 +156,6 @@ class SponsorshipList extends LitElement {
 			const address =
 				window.parent.reduxStore.getState().app?.selectedAddress
 					?.address
-			
 	
 
 			let rewardShares = await this.getRewardShareRelationship(
@@ -387,10 +386,10 @@ class SponsorshipList extends LitElement {
 
 		const getTxnRequestResponse = (txnResponse) => {
 		
-			if(txnResponse?.extraData?.rewardSharePrivateKey && txnResponse.success === true){
+			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message.includes('multiple') || txnResponse?.data?.message.includes('SELF_SHARE_EXISTS')) ){
 			
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
-				this.confirmRelationship()
+				this.confirmRelationship(publicKeyValue)
 			} else if (txnResponse.success === false && txnResponse?.message) {
 			
 				this.errorMessage = txnResponse?.message
@@ -403,7 +402,7 @@ class SponsorshipList extends LitElement {
 			
 			
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
-				this.confirmRelationship()
+				this.confirmRelationship(publicKeyValue)
 			} else {
 			
 				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
@@ -431,6 +430,7 @@ class SponsorshipList extends LitElement {
 				
 					const recipientAddress =
 					window.parent.base58PublicKeyToAddress(recipientPublicKey)
+				
 					const minterAddress = window.parent.reduxStore.getState().app?.selectedAddress.address
 				const myRewardShareArray = await parentEpml.request("apiCall", {
 					type: "api",
@@ -452,7 +452,7 @@ class SponsorshipList extends LitElement {
 				stop = false
 			}
 		};
-		interval = setInterval(getAnswer, 2000);
+		interval = setInterval(getAnswer, 5000);
 	}
 
 	

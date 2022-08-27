@@ -342,7 +342,7 @@ class StartMinting extends connect(store)(LitElement) {
 				stop = false
 			}
 		};
-		interval = setInterval(getAnswer, 2000);
+		interval = setInterval(getAnswer, 5000);
 	}
 
 	renderStartMintingButton() {
@@ -402,7 +402,7 @@ class StartMinting extends connect(store)(LitElement) {
 
 		const getTxnRequestResponse = (txnResponse) => {
 			let err6string = get('rewardsharepage.rchange21');
-			if(txnResponse?.extraData?.rewardSharePrivateKey && txnResponse.success === true){
+			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message.includes('multiple') || txnResponse?.data?.message.includes('SELF_SHARE_EXISTS'))){
 				return err6string
 			}
 			if (txnResponse.success === false && txnResponse.message) {
@@ -447,7 +447,7 @@ class StartMinting extends connect(store)(LitElement) {
 			try {
 				
 				this.privateRewardShareKey = await createSponsorshipKey();
-				this.confirmRelationship()
+				this.confirmRelationship(publicAddress)
 			} catch (error) {
 				console.log({error})
 				this.errorMsg = error?.data?.message || 'Cannot create sponsorship key';
