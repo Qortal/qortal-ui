@@ -639,5 +639,16 @@
       "rewarddialog4":"Al presionar confirmar, se creará la recompensa compartida, pero aún deberá proporcionar la clave anterior a un nodo para poder acuñar con la cuenta.",
       "rewarddialog5":"Está eliminando una transacción de recompensa compartida asociada con la cuenta:",
       "rewarddialog6":"Al presionar confirmar, se eliminará la recompensa compartida y la clave de acuñación dejará de ser válida."
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }

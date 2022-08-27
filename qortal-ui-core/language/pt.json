@@ -639,5 +639,16 @@
       "rewarddialog4":"Ao pressionar confirmar, a recompensa será criada, mas você ainda precisará fornecer a chave acima para um nó para cunhar com a conta.",
       "rewarddialog5":"Você está removendo uma transação de compartilhamento de recompensa associada à conta:",
       "rewarddialog6":"Ao pressionar confirmar, o rewardshare será removido e a chave de cunhagem se tornará inválida."
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }

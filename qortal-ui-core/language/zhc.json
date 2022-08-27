@@ -639,5 +639,16 @@
       "rewarddialog4":"点击确认后，铸币密钥将会创建，但你必须将该密钥添加到节点中才能成功铸币并获得相对应的奖励.",
       "rewarddialog5":"您正在删除与此账号关联的铸币密钥：",
       "rewarddialog6":"点击确认后，铸币密钥将被移除並失效。"
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }

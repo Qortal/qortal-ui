@@ -640,5 +640,16 @@
       "rewarddialog4":"कन्फर्म को दबाने पर, रिवॉर्डशेयर बनाया जाएगा, लेकिन खाते के साथ मिंट करने के लिए आपको अभी भी एक नोड को उपरोक्त कुंजी की आपूर्ति करने की आवश्यकता होगी।",
       "rewarddialog5":"आप खाते से जुड़े एक इनाम शेयर लेनदेन को हटा रहे हैं:",
       "rewarddialog6":"कन्फर्म दबाने पर, रिवॉर्डशेयर हटा दिया जाएगा और मिंटिंग की अमान्य हो जाएगी।"
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }

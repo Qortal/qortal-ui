@@ -639,5 +639,16 @@
       "rewarddialog4":"La apasarea butonului de confirmare, cota de recompensare va fi creata, dar va trebui in continuare sa furnizati cheia de mai sus unui nod, pentru a putea sa obtina recompense cu acest cont.",
       "rewarddialog5":"Suntei pe cale sa stergeti o tranzactie de cota de recompensare asociata cu contul:",
       "rewarddialog6":"La apasarea butonului de confirmare, recompensa va fi eliminata, iar cheia de obtinere de recompensa (minting) va deveni invalida."
+   },
+   "sponsorshipspage": {
+      "schange1": "Active Sponsorships",
+      "schange2" : "Account Address",
+      "schange3" : "Total Sponsorships active",
+      "schange4" : "Next sponsorship ending in",
+      "schange5" : "Sponsor New Minter",
+      "schange6" : "Finished Sponsorships",
+      "schange7" : "Completed",
+      "schange8" : "Addresses",
+      "schange9" : "You currently have no active sponsorships"
    }
 }
