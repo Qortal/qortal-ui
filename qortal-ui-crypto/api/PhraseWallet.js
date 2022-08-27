@@ -168,6 +168,21 @@ export default class PhraseWallet {
             }
         }).createWallet(new Uint8Array(rvnSeed), false, 'RVN');
 
+        // Create Pirate Chain HD Wallet 
+        const arrrSeed = [...addrSeed];
+        const arrrWallet = new AltcoinHDWallet({
+            mainnet: {
+                private: 0x0488ADE4,
+                public: 0x0488B21E,
+                prefix: [0x16, 0x9A]
+            },
+            testnet: {
+                private: 0x04358394,
+                public: 0x043587CF,
+                prefix: [0x14, 0x51]
+            }
+        }).createWallet(new Uint8Array(arrrSeed), false, 'ARRR');
+
         this._addresses[nonce] = {
             address,
             btcWallet,
@@ -175,6 +190,7 @@ export default class PhraseWallet {
             dogeWallet,
             dgbWallet,
             rvnWallet,
+            arrrWallet,
             qoraAddress,
             keyPair: {
                 publicKey: addrKeyPair.publicKey,

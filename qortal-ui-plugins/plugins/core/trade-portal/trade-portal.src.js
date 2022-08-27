@@ -40,7 +40,8 @@ class TradePortal extends LitElement {
             isLoadingHistoricTrades: { type: Boolean },
             isLoadingOpenTrades: { type: Boolean },
             isLoadingMyOpenOrders: { type: Boolean },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            arrrWalletAddress: { type: String },
         }
     }
 
@@ -370,6 +371,10 @@ class TradePortal extends LitElement {
 			background-image: url('/img/qortrvn.png');
 		}
 
+        .arrr.coinName:before  {
+			background-image: url('/img/qortarrr.png');
+		}
+
 		.coinName {
 			display: inline-block;
 			height: 26px;
@@ -519,13 +524,30 @@ class TradePortal extends LitElement {
             tradeFee: "~0.006"
         }
 
+        let piratechain = {
+            name: "PIRATECHAIN",
+            balance: "0",
+            coinCode: "ARRR",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.0002"
+        }
+
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
         this.listedCoins.set("BITCOIN", bitcoin)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
-	  this.listedCoins.set("RAVENCOIN", ravencoin)
+		this.listedCoins.set("RAVENCOIN", ravencoin)
+        this.listedCoins.set("PIRATECHAIN", piratechain)
 
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
@@ -557,6 +579,11 @@ class TradePortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
+        workers.set("PIRATECHAIN", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
         this.selectedCoin = "LITECOIN"
         this.selectedAddress = {}
         this.config = {}
@@ -571,6 +598,7 @@ class TradePortal extends LitElement {
         this.isLoadingOpenTrades = true
         this.isLoadingMyOpenOrders = false
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.arrrWalletAddress = ''
     }
 
     // TODO: Move each template to a separate components! Maybe
@@ -948,6 +976,7 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
+                    <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -988,6 +1017,7 @@ class TradePortal extends LitElement {
         this.changeTheme()
         this.changeLanguage()
         this.updateWalletBalance()
+        this.fetchWalletAddress(this.selectedCoin)
 
         setTimeout(() => {
             this.displayTabContent('buy')
@@ -1122,6 +1152,10 @@ class TradePortal extends LitElement {
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
+            case 'PIRATECHAIN':
+                _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+                break
             default:
                 break
         }
@@ -1139,6 +1173,26 @@ class TradePortal extends LitElement {
                     this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
                 }
             })
+    }
+
+    async fetchWalletAddress(coin) {
+        console.log("fetchWalletAddress: " + coin)
+        switch (coin) {
+            case 'PIRATECHAIN':
+                let res = await parentEpml.request('apiCall', {
+                    url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58}`,
+                })
+                if (res != null && res.error != 1201) {
+                    this.arrrWalletAddress = res
+                }
+                break
+
+            default:
+                // Not used for other coins yet
+                break
+        }
     }
 
     setForeignCoin(coin,beingInitialized) {
@@ -1174,6 +1228,7 @@ class TradePortal extends LitElement {
         this.clearSellForm()
         this.clearBuyForm()
         this.updateWalletBalance()
+        this.fetchWalletAddress(coin)
     }
 
     displayTabContent(tab) {
@@ -1628,6 +1683,49 @@ class TradePortal extends LitElement {
             })
         }
 
+        /**
+        * PirateChainACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+         const PirateChainACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
         switch (this.selectedCoin) {
             case 'BITCOIN':
                 BitcoinACCTv1(tradeStates)
@@ -1643,6 +1741,9 @@ class TradePortal extends LitElement {
                 break
             case 'RAVENCOIN':
                 RavencoinACCTv1(tradeStates)
+                break
+            case 'PIRATECHAIN':
+                PirateChainACCTv1(tradeStates)
                 break
             default:
                 break
@@ -1942,6 +2043,9 @@ class TradePortal extends LitElement {
 				case 'RAVENCOIN':
                     _receivingAddress = this.selectedAddress.rvnWallet.address
                     break
+                case 'PIRATECHAIN':
+                    _receivingAddress = this.arrrWalletAddress
+                    break
                 default:
                     break
             }
@@ -2010,6 +2114,9 @@ class TradePortal extends LitElement {
                 break
 			case 'RAVENCOIN':
                 _foreignKey = this.selectedAddress.rvnWallet.derivedMasterPrivateKey
+                break
+            case 'PIRATECHAIN':
+                _foreignKey = this.selectedAddress.arrrWallet.seed58
                 break
             default:
                 break
