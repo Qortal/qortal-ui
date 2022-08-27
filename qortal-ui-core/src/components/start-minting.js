@@ -234,15 +234,23 @@ class StartMinting extends connect(store)(LitElement) {
 	}
 
 	async changeStatus(value){
+		const myNode =
+			store.getState().app.nodeConfig.knownNodes[
+				store.getState().app.nodeConfig.node
+			];
+
+			const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 		this.status = value
 		const publicAddress =
 			window.parent.reduxStore.getState().app?.selectedAddress
 				?.base58PublicKey;
 		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
-		const findMintingAccountFromOtherUser = mintingAccountData.find(
+		const findMintingAccountFromOtherUser = this.mintingAccountData.find(
 			(ma) => !ma.publicKey.includes(publicAddress)
 		);
 		const removeMintingAccount = async (publicKey) => {
+			
 			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
 
 			return await fetch(url, {
@@ -275,7 +283,7 @@ class StartMinting extends connect(store)(LitElement) {
 		}
 
 		try {
-			await addMintingAccount(sponsorshipKeyValue);
+			await addMintingAccount(this.privateRewardShareKey);
 			routes.showSnackBar({
 				data: translate('becomeMinterPage.bchange19'),
 			});
@@ -291,6 +299,13 @@ class StartMinting extends connect(store)(LitElement) {
 
 
 	async confirmRelationship(){
+		const myNode =
+			store.getState().app.nodeConfig.knownNodes[
+				store.getState().app.nodeConfig.node
+			];
+		const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+			
 		let interval = null
 		let stop = false
 		this.status = 2
@@ -386,8 +401,8 @@ class StartMinting extends connect(store)(LitElement) {
 		};
 
 		const getTxnRequestResponse = (txnResponse) => {
-
-			if(txnResponse?.message?.includes('multiple')){
+			let err6string = get('rewardsharepage.rchange21');
+			if(txnResponse?.extraData?.rewardSharePrivateKey && txnResponse.success === true){
 				return err6string
 			}
 			if (txnResponse.success === false && txnResponse.message) {
@@ -396,7 +411,7 @@ class StartMinting extends connect(store)(LitElement) {
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
-				let err6string = get('rewardsharepage.rchange21');
+			
 				return err6string;
 			} else {
 				throw(txnResponse);
@@ -410,7 +425,7 @@ class StartMinting extends connect(store)(LitElement) {
 			let myTransaction = await makeTransactionRequest(lastRef);
 
 			getTxnRequestResponse(myTransaction);
-			return myTransaction.data;
+			return myTransaction?.extraData?.rewardSharePrivateKey
 		};
 		
 

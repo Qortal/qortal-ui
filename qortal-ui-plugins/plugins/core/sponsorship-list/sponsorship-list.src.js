@@ -156,9 +156,8 @@ class SponsorshipList extends LitElement {
 			const address =
 				window.parent.reduxStore.getState().app?.selectedAddress
 					?.address
-
 			
-
+	
 
 			let rewardShares = await this.getRewardShareRelationship(
 				address
@@ -171,7 +170,6 @@ class SponsorshipList extends LitElement {
 					type: "api",
 					url: `/addresses/${rs.recipient}`,
 				})
-				
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
 				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
 				return {
@@ -294,7 +292,10 @@ class SponsorshipList extends LitElement {
 
 	async createRewardShare(publicKeyValue) {
 		this.openDialogRewardShare = true
-		
+		if(!publicKeyValue){
+			this.errorMessage = "unable to pull public key from the chain, account has no outgoing transactions"
+			return
+		}
 		this.privateRewardShareKey = ""
 	
 		this.errorMessage = ""
@@ -348,7 +349,7 @@ class SponsorshipList extends LitElement {
 				
 						getTxnRequestResponse(myTransaction)
 					} catch (error) {
-						this.errorMessage = error?.message || 'Error creating relationship'
+						this.errorMessage = error
 					}
 					
 				
@@ -379,37 +380,35 @@ class SponsorshipList extends LitElement {
 					rewarddialog3: rewarddialog3,
 					rewarddialog4: rewarddialog4,
 				},
+				disableModal: true
 			})
 			return myTxnrequest
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-
-			if(txnResponse.message.includes('multiple')){
-				this.isLoadingCreateSponsorship = false
+		
+			if(txnResponse?.extraData?.rewardSharePrivateKey && txnResponse.success === true){
 			
-				this.privateRewardShareKey = txnResponse.data
-				this.confirmRelationship(recipientPublicKey)
-			}
-			if (txnResponse.success === false && txnResponse.message) {
+				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
+				this.confirmRelationship()
+			} else if (txnResponse.success === false && txnResponse?.message) {
 			
-				this.errorMessage = txnResponse.message
+				this.errorMessage = txnResponse?.message
 				this.isLoadingCreateSponsorship = false
-				throw(txnResponse)
+				throw(txnResponse?.message)
 			} else if (
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
 			
-				this.isLoadingCreateSponsorship = false
 			
-				this.privateRewardShareKey = txnResponse.data
+				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
 				this.confirmRelationship()
 			} else {
 			
-				this.errorMessage = txnResponse.data.message
+				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
 				this.isLoadingCreateSponsorship = false
-				throw(txnResponse)
+				throw(txnResponse?.data?.message || txnResponse?.message)
 			}
 		}
 		validateReceiver()
@@ -419,10 +418,12 @@ class SponsorshipList extends LitElement {
 
 
 	async confirmRelationship(recipientPublicKey){
+		this.status = 2
 		let interval = null
 		let stop = false
 		
 		const getAnswer = async () => {
+		
 			if (!stop) {
 				stop= true;
 	
@@ -458,7 +459,6 @@ class SponsorshipList extends LitElement {
 
 
 	render() {
-		console.log({sponsors: this.sponsorships})
 		return html`
 			${
 				this.isPageLoading
@@ -528,7 +528,11 @@ class SponsorshipList extends LitElement {
 											Copy Sponsorship Key
 										</p>
 										
-										<mwc-button @click=${()=> this.createRewardShare(sponsorship.publicKey)}>copy</mwc-button>
+										<mwc-button @click=${()=> {
+
+										
+											this.createRewardShare(sponsorship?.publicKey)
+										} }>copy</mwc-button>
 									</li>
 									<li class="grid-item grid-item-button">
 										<mwc-button
@@ -693,6 +697,7 @@ class SponsorshipList extends LitElement {
 							this.errorMessage = ''
 							this.isLoadingCreateSponsorship = false
 							this.privateRewardShareKey = ""
+							this.atMount()
 						}}
                         class="red"
                     >
