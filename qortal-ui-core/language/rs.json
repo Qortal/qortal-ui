@@ -143,6 +143,17 @@
       "continue":"Nastavite",
       "save":"Sačuvajte"
    },
+   "startminting":{
+      "smchange1":"Nije moguće preuzeti naloge za kovanje",
+      "smchange2":"Uklanjanje ključa nije uspelo",
+      "smchange3":"Dodavanje ključa za kovanje nije uspelo",
+      "smchange4":"Nije moguće kreirati sponzorski ključ",
+      "smchange5":"Stvaranje odnosa",
+      "smchange6":"Čeka se potvrda na blokčejnu",
+      "smchange7":"Završavanje veze",
+      "smchange8":"Dodavanje ključa za kovanje čvoru",
+      "smchange9":"Kompletan"
+   },
    "mintingpage":{
       "mchange1":"Opšti Detalji Mintovanja",
       "mchange2":"Statistika Blockchaina",
@@ -179,7 +190,7 @@
       "mchange33":"Uvod",
       "mchange34":"U Qortal-u, da bi postali minter i poceli zarađivati QORT nagrade sa porastom minterskog nivoa, prvo morate dobiti ‘sponzorstvo’. Sponzor u Qortal-u je bilo koji drugi minter koji je na nivou 5 ili više, ili jedan od Qortal osnivača. Dobićete sponzorski ključ od sponzora, i iskoristiti taj ključ da dodjete do nivoa 1. Kada dođete do nivoa 1, možete napraviti sopstveni minting ključ i početi zarađivati nagrade kojim ćete pomagati jačanju Qortal Blockchaina.",
       "mchange35":"Sponzorstvo",
-      "mchange36":"Sponzor će vam izdati ‘Sponzorski Ključ’ koji ćete dodati svom čvoru, čime ćete započeti mintovanje (bez nagrada dok ne dodjete do nivoa 1.) Kada dostignete nivo 1, možete napraviti/dodeliti sopstveni ‘Ključ za mintovanje’ i početi zarađivati nagrade. Imate XXXX preostalih blokova in u vašem sponzorskom periodu.",
+      "mchange36":"Sponzor će vam izdati ‘Sponzorski Ključ’ koji ćete dodati svom čvoru, čime ćete započeti mintovanje (bez nagrada dok ne dodjete do nivoa 1.) Kada dostignete nivo 1, možete napraviti/dodeliti sopstveni ‘Ključ za mintovanje’ i početi zarađivati nagrade.",
       "mchange37":"Jednostavno se javite bilo kom minteru u Qortal-u koji ima dovoljno visok nivo da dodeli sponzorski ključ, nabavite taj ključ, a zatim se vratite ovde i unesite taj ključ da bi započeli svoj minting putovanje!",
       "mchange38":"U"
    },

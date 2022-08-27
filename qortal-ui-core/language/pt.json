@@ -143,6 +143,17 @@
       "continue":"Continuar",
       "save":"Salvar"
    },
+   "startminting":{
+      "smchange1":"Não é possível buscar contas de cunhagem",
+      "smchange2":"Falha ao remover a chave",
+      "smchange3":"Falha ao adicionar chave de cunhagem",
+      "smchange4":"Não é possível criar a chave de patrocínio",
+      "smchange5":"Criando relacionamento",
+      "smchange6":"Aguardando confirmação no blockchain",
+      "smchange7":"Terminando o relacionamento",
+      "smchange8":"Adicionando a chave de cunhagem ao nó",
+      "smchange9":"Completo"
+   },
    "mintingpage":{
       "mchange1":"Detalhes gerais da mineração",
       "mchange2":"Estatísticas do Blockchain",
@@ -179,7 +190,7 @@
       "mchange33":"Introdução",
       "mchange34":"No Qortal, para se tornar um minerador e começar a ganhar recompensas em QORT com o seu aumento no Nível de Minerador, você tem que primeiro ser ‘patrocinado’. Um patrocinador no Qortal é qualquer outro minerador de nível 5 ou superior, ou um Fundador do Qortal. Você vai obter uma chave de patrocínio do patrocinador, e usar essa chave para chegar ao nível 1. Uma vez que você tenha alcançado o nível 1, você será capaz de criar sua própria chave de mineração e começar a ganhar recompensas por ajudar a proteger o Blockchain Qortal.",
       "mchange35":"Patrocínio",
-      "mchange36":"Seu patrocinador emitirá uma ‘Chave de Patrocínio’ que você usará para adicionar ao seu nódulo, e começar a minerar (sem recompensas até atingir o nível 1.) Uma vez que você atinge o nível 1, você cria/atribui sua própria ‘Chave de Mineração’ e começa a ganhar recompensas. Você tem XXXX blocos restantes no seu período de patrocínio.",
+      "mchange36":"Seu patrocinador emitirá uma ‘Chave de Patrocínio’ que você usará para adicionar ao seu nódulo, e começar a minerar (sem recompensas até atingir o nível 1.) Uma vez que você atinge o nível 1, você cria/atribui sua própria ‘Chave de Mineração’ e começa a ganhar recompensas.",
       "mchange37":"Mande menssagem a um minter no Qortal que seja nível 5 ou acima para emitir uma chave de patrocínio, obtenha essa chave, e em seguida, volte aqui para inserir-la e começar sua jornada de mineração !",
       "mchange38":"Dentro"
    },

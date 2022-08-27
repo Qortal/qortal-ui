@@ -143,6 +143,17 @@
       "continue":"Folytatódik/folytatáshoz",
       "save":"Mentéshez"
    },
+   "startminting":{
+      "smchange1":"Nem lehet lekérni a pénzverési számlákat",
+      "smchange2":"Nem sikerült eltávolítani a kulcsot",
+      "smchange3":"Nem sikerült hozzáadni a pénzverési kulcsot",
+      "smchange4":"Nem hozható létre szponzori kulcs",
+      "smchange5":"Kapcsolatteremtés",
+      "smchange6":"Megerősítésre vár a blokkláncon",
+      "smchange7":"A kapcsolat befejezése",
+      "smchange8":"Mentőkulcs hozzáadása a csomóponthoz",
+      "smchange9":"Teljes"
+   },
    "mintingpage":{
       "mchange1":"Általános Pénzverés Részletei",
       "mchange2":"Blokklánc Statisztika",
@@ -179,7 +190,7 @@
       "mchange33":"Bevezetés",
       "mchange34":"A Qortalban ahhoz, hogy pénzverővé váljon, és elkezdjen QORT jutalmakat keresni a Minter szint növelésével, először 'szponzorálttá' kell válnia. A Qortal szponzora bármely más 5. vagy annál magasabb szintű pénzverő, vagy qortal alapító.Szponzori kulcsot kap a szponzortól, és ezt a kulcsot használja az 1. szintre való eljutáshoz. Miután elérte az 1. szintet, létrehozhatja saját verési kulcsát, és elkezdhet jutalmakat keresni a Qortal Blockchain biztosításáért.",
       "mchange35":"Szponzorálás",
-      "mchange36":"A szponzorod kiad neked egy 'szponzorációs kulcsot', amelyet a csomópontodhoz való hozzáadáshoz fogsz használni, és elkezd verni (jutalom nélkül, amíg el nem éri a szintet 1.) Amint eléri az 1. szintet, létrehozza / hozzárendeli saját 'pénzverő kulcsát', és elkezdi keresni a jutalmakat XXXX blokkok maradnak a szponzorációs időszakban",
+      "mchange36":"A szponzorod kiad neked egy 'szponzorációs kulcsot', amelyet a csomópontodhoz való hozzáadáshoz fogsz használni, és elkezd verni (jutalom nélkül, amíg el nem éri a szintet 1.) Amint eléri az 1. szintet, létrehozza / hozzárendeli saját 'pénzverő kulcsát'.",
       "mchange37":"Egyszerűen lépjen kapcsolatba egy Qortal-i pénzverdével, aki elég magas ahhoz, hogy kiadjon egy szponzorációs kulcsot, megszerezze azt a kulcsot, majd jöjjön vissza ide, és adja meg a kulcsot a verési út megkezdéséhez!",
       "mchange38":"Ben"
    },

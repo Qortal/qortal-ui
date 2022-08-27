@@ -143,6 +143,17 @@
       "continue":"Continua",
       "save":"Salveza"
    },
+   "startminting":{
+      "smchange1":"Nu se pot prelua conturile de batere",
+      "smchange2":"Cheia nu a fost eliminata",
+      "smchange3":"Nu s-a putut adauga cheia de batere",
+      "smchange4":"Nu se poate crea cheia de sponsorizare",
+      "smchange5":"Crearea unei relatii",
+      "smchange6":"Se asteapta confirmarea pe blockchain",
+      "smchange7":"Terminarea relatiei",
+      "smchange8":"Adaugarea cheii de batere la nod",
+      "smchange9":"Complet"
+   },
    "mintingpage":{
       "mchange1":"Detalii generale de producere a monedei",
       "mchange2":"Statisticile Blockchain-ului",
@@ -179,7 +190,7 @@
       "mchange33":"Introducere",
       "mchange34":"In Qortal, pentru a deveni un productor de moneda si a incepe sa castigi recompense QORT odata cu cresterea nivelului de productor de moneda, trebuie mai intai sa devii ‘sponsorizat’. Un sponsor in Qortal este orice alt productor de moneda de nivel 5 sau mai mare, sau un Fondator Qortal. Veti obtine o cheie de sponsorizare de la sponsor si veti folosi acea cheie pentru a ajunge la nivelul 1. Odata ce ati ajuns la nivelul 1, veti putea sa va creati propria cheie de producere a monedei si sa incepeti sa castigati recompense pentru a ajuta la securizarea Qortal Blockchain.",
       "mchange35":"Sponsorizare",
-      "mchange36":"Sponsorul dvs. va va emite o ‘Cheie de sponsorizare’ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria ‘Cheie de producere a monedei’ si incepeti sa castigati recompense. Aveti XXXX blocuri ramase in perioada de sponsorizare..",
+      "mchange36":"Sponsorul dvs. va va emite o ‘Cheie de sponsorizare’ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria ‘Cheie de producere a monedei’ si incepeti sa castigati recompense.",
       "mchange37":"Pur si simplu contactati un productor de moneda din Qortal care are un nivel suficient de ridicat pentru a emite o cheie de sponsorizare, obtineti acea cheie, apoi reveniti aici si introduceti cheia pentru a va incepe calatoria de productor de moneda !",
       "mchange38":"in"
    },

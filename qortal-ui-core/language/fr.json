@@ -143,6 +143,17 @@
       "continue":"Continuer",
       "save":"Sauvegarder"
    },
+   "startminting":{
+      "smchange1":"Impossible de récupérer les comptes de frappe",
+      "smchange2":"Échec de la suppression de la clé",
+      "smchange3":"Échec de l'ajout de la clé de frappe",
+      "smchange4":"Impossible de créer la clé de parrainage",
+      "smchange5":"Créer une relation",
+      "smchange6":"En attente de confirmation sur blockchain",
+      "smchange7":"Finir la relation",
+      "smchange8":"Ajout de la clé de frappe au nœud",
+      "smchange9":"Complet"
+   },
    "mintingpage":{
       "mchange1":"Détails généraux sur la frappe",
       "mchange2":"Statistiques sur la blockchain",
@@ -179,7 +190,7 @@
       "mchange33":"Introduction",
       "mchange34":"Dans Qortal, pour devenir un frappeur et commencer à gagner des récompenses QORT avec votre augmentation de niveau de frappeur, vous devez d’abord être‘parrainé’. Un sponsor dans Qortal est tout autre frappeur de niveau 5 ou supérieur ou un fondateur de Qortal. Vous obtiendrez une clé de parrainage et utiliserez cette clé pour atteindre le niveau 1. Une fois que vous avez atteint le niveau 1, vous serez en mesure de créer votre propre clé de frappe et commencer à gagner des récompenses pour aider à sécuriser la Blockchain Qortal.",
       "mchange35":"Parrainage",
-      "mchange36":"Votre parrain vous délivrera un ‘clé de parrainage’ que vous utiliserez pour ajouter à votre nœud et commencer à frapper (sans récompenses jusqu’à ce que vous atteigniez le niveau 1). Une fois que vous atteignez le niveau 1, vous créez/attribuez votre propre « clé de frappe » et commencez à gagner des récompenses. Il vous reste XXXX blocs dans votre période de parrainage.",
+      "mchange36":"Votre parrain vous délivrera un ‘clé de parrainage’ que vous utiliserez pour ajouter à votre nœud et commencer à frapper (sans récompenses jusqu’à ce que vous atteigniez le niveau 1). Une fois que vous atteignez le niveau 1, vous créez/attribuez votre propre « clé de frappe » et commencez à gagner des récompenses.",
       "mchange37":"Il vous suffit de communiquer avec un frappeur de Qortal qui est assez haut placé pour émettre une clé de parrainage, d’obtenir cette clé, puis de revenir ici et d’entrer la clé pour commencer à frapper. !",
       "mchange38":"dans"
    },

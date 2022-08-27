@@ -143,6 +143,17 @@
       "continue":"Continua",
       "save":"Salva"
    },
+   "startminting":{
+      "smchange1":"Impossibile recuperare i conti di conio",
+      "smchange2":"Impossibile rimuovere la chiave",
+      "smchange3":"Impossibile aggiungere la chiave di conio",
+      "smchange4":"Impossibile creare la chiave di sponsorizzazione",
+      "smchange5":"Creare relazione",
+      "smchange6":"In attesa di conferma su blockchain",
+      "smchange7":"Finire la relazione",
+      "smchange8":"Aggiunta della chiave di conio al nodo",
+      "smchange9":"Completare"
+   },
    "mintingpage":{
       "mchange1":"Dettagli generali di Minazione",
       "mchange2":"Statistiche Blockchain",
@@ -179,7 +190,7 @@
       "mchange33":"Introduzione",
       "mchange34":"In Qortal, per diventare un minatore e iniziare a guadagnare i premi QORT con l'aumento del livello di Minatore, devi prima essere ‘sponsorizzato’. Uno sponsor in Qortal è qualsiasi altro minatore di livello 5 o superiore, o uno Fondatore di Qortal. Otterrai una chiave di sponsorizzazione dallo sponsor che ti servirà per accedere al livello 1. Una volta raggiunto questo livello, potrai creare la tua chiave per minare e iniziare a guadagnare ricompense aiutando a rendere sicura la Blockchain di Qortal.",
       "mchange35":"Sponsorizzazione",
-      "mchange36":"Il tuo sponsor ti rilascerà una ‘Chiave di sponsorizzazione’ che userai per aggiungere al tuo nodo e iniziare a minare (non ci sono ricompense prima di aver raggiunto il livello 1). Quando avrai raggiunto il livello 1 potrai creare/assegnare la tua ‘Chiave per Minare’ e iniziare a guadagnare ricompense. Hai rimasto XXXX blocchi nel tuo periodo di sponsorizzazione.",
+      "mchange36":"Il tuo sponsor ti rilascerà una ‘Chiave di sponsorizzazione’ che userai per aggiungere al tuo nodo e iniziare a minare (non ci sono ricompense prima di aver raggiunto il livello 1). Quando avrai raggiunto il livello 1 potrai creare/assegnare la tua ‘Chiave per Minare’ e iniziare a guadagnare ricompense.",
       "mchange37":"Semplicemente trova uno/a minatore di un livello sufficientemente alto per poter fornire una chiave di sponsorizzazione, ottieni la chiave, poi torna qui e inserisci la chiave per iniziare il tuo viaggio nella minazione!",
       "mchange38":"in"
    },

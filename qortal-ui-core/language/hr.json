@@ -143,6 +143,17 @@
       "continue":"Nastavi",
       "save":"Spremi"
    },
+   "startminting":{
+      "smchange1":"Nije moguće dohvatiti račune za kovanje",
+      "smchange2":"Uklanjanje ključa nije uspjelo",
+      "smchange3":"Dodavanje ključa za kovanje nije uspjelo",
+      "smchange4":"Nije moguće izraditi sponzorski ključ",
+      "smchange5":"Stvaranje odnosa",
+      "smchange6":"Čeka se potvrda na blockchainu",
+      "smchange7":"Završetak veze",
+      "smchange8":"Dodavanje ključa kovanja u čvor",
+      "smchange9":"Kompletan"
+   },
    "mintingpage":{
       "mchange1":"Opći detalji o mintanju",
       "mchange2":"Blockchain statistika",
@@ -179,7 +190,7 @@
       "mchange33":"Uvod",
       "mchange34":"U Qortalu, kako bi postali MINTER i počeli zarađivati QORT i što veće nagrade s povećanjem MINTER levela, prvo morate postati ‘sponzorirani’. Sponzor u Qortalu je bilo koji drugi MINTER levela 5 ili više ili osnivač Qortala. Dobit ćete sponzorski ključ od sponzora i koristiti taj ključ da biste došli do levela 1. Nakon što dosegnete level 1, moći ćete stvoriti vlastiti ključ za mintanje i početi zarađivati nagrade za pomoć pri osigurnju Qortal blockchain-a.",
       "mchange35":"Sponzorstvo",
-      "mchange36":"Vaš sponzor će vam izdati ‘Sponzorski ključ’ koji ćete koristiti za dodavanje vašem čvoru i početi mintati (bez nagrada do levela 1.) Kada dođete do levela 1, stvarate / dodijelite svoj vlastiti ‘ključ za mintanje’ i počnete zarađivati nagrade. Imate XXXX preostali blokova u vašem periodu sponzorstva.",
+      "mchange36":"Vaš sponzor će vam izdati ‘Sponzorski ključ’ koji ćete koristiti za dodavanje vašem čvoru i početi mintati (bez nagrada do levela 1.) Kada dođete do levela 1, stvarate / dodijelite svoj vlastiti ‘ključ za mintanje’ i počnete zarađivati nagrade.",
       "mchange37":"Jednostavno kontaktirajte Mintera u Qortalu koji je dovoljno visok level za izdavanje sponzorskog ključa, nabavite taj ključ, a zatim se vratite ovdje i unesite ključ za početak vašeg minterskog putovanja!",
       "mchange38":"za"
    },

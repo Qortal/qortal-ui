@@ -138,6 +138,17 @@
       "continue":"Continue",
       "save":"Save"
    },
+   "startminting":{
+      "smchange1":"Cannot fetch minting accounts",
+      "smchange2":"Failed to remove key",
+      "smchange3":"Failed to add minting key",
+      "smchange4":"Cannot create sponsorship key",
+      "smchange5":"Creating relationship",
+      "smchange6":"Awaiting confirmation on blockchain",
+      "smchange7":"Finishing up relationship",
+      "smchange8":"Adding minting key to node",
+      "smchange9":"Complete"
+   },
    "mintingpage":{
       "mchange1":"General Minting Details",
       "mchange2":"Blockchain Statistics",

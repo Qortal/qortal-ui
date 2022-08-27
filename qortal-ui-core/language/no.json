@@ -143,6 +143,17 @@
       "continue":"Fortsett",
       "save":"Lagre"
    },
+   "startminting":{
+      "smchange1":"Kan ikke hente myntingkontoer",
+      "smchange1":"Kunne ikke fjerne nøkkelen",
+      "smchange1":"Kunne ikke legge til myntnøkkel",
+      "smchange1":"Kan ikke opprette sponsornøkkel",
+      "smchange1":"Skaper forhold",
+      "smchange1":"Venter på bekreftelse på blockchain",
+      "smchange1":"Fullføre forholdet",
+      "smchange1":"Legger til myntnøkkel til node",
+      "smchange1":"Fullstendig"",
+   },
    "mintingpage":{
       "mchange1":"Generelle mintedetaljer",
       "mchange2":"Blokkjede-statistikk",
@@ -179,7 +190,7 @@
       "mchange33":"Introduksjon",
       "mchange34":"I Qortal, for å bli en minter og begynne å tjene QORT-belønninger ved økning i minternivå, må du først bli ‘sponset’. En sponsor i Qortal er en hvilken som helst annen minter med nivå 5 eller høyere, eller en Qortal-grunnlegger. Du vil få en sponsingsnøkkel fra sponsoren, og bruke den for å komme til nivå 1. Når du har nådd nivå 1, vil du kunne lage din egen mintenøkkel og begynne å tjene belønninger for å hjelpe sikre Qortal-blokkjeden.",
       "mchange35":"Sponsing",
-      "mchange36":"Sponsoren din vil utstede deg en sponsenøkkel (Sponsorship Key) som du vil bruke for å legge til noden din, så du kan begynne å minte (der er ingen belønninger før du når nivå 1.) Når du har nådd nivå 1, oppretter/tildeler du din egen ‘mintenøkkel’ og begynner å tjene belønninger. Du har XXXX blokker igjen i sponsingsperioden.",
+      "mchange36":"Sponsoren din vil utstede deg en sponsenøkkel (Sponsorship Key) som du vil bruke for å legge til noden din, så du kan begynne å minte (der er ingen belønninger før du når nivå 1.) Når du har nådd nivå 1, oppretter/tildeler du din egen ‘mintenøkkel’ og begynner å tjene belønninger.",
       "mchange37":"Simpelthen ta kontakt med en minter i Qortal som har et høyt nok nivå til å utstede en sponsenøkkel, skaff den nøkkelen, og kom så tilbake hit og fyll inn nøkkelen for å begynne mintereisen!",
       "mchange38":"om"
    },

@@ -143,6 +143,17 @@
       "continue":"Fortsetzen",
       "save":"Speichern"
    },
+   "startminting":{
+      "smchange1":"Prägekonten können nicht abgerufen werden",
+      "smchange2":"Schlüssel konnte nicht entfernt werden",
+      "smchange3":"Prägeschlüssel konnte nicht hinzugefügt werden",
+      "smchange4":"Sponsorship-Schlüssel kann nicht erstellt werden",
+      "smchange5":"Beziehung schaffen",
+      "smchange6":"Warten auf Bestätigung in der Blockchain",
+      "smchange7":"Beziehung beenden",
+      "smchange8":"Prägeschlüssel zum Knoten hinzufügen",
+      "smchange9":"Vollständig"
+   },
    "mintingpage":{
       "mchange1":"Allgemeine Prägedetails",
       "mchange2":"Blockchain-Statistik",
@@ -179,7 +190,7 @@
       "mchange33":"Einführung",
       "mchange34":"Um in Qortal ein Minter zu werden und QORT-Belohnungen mit Ihrer Erhöhung des Minter-Levels zu verdienen, müssen Sie zuerst „gesponsert“ werden. Ein Sponsor in Qortal ist jeder andere Minter der Stufe 5 oder höher oder ein Qortal-Gründer. Sie erhalten einen Sponsoring-Schlüssel vom Sponsor und verwenden diesen Schlüssel, um auf Level 1 zu gelangen. Sobald Sie Level 1 erreicht haben, können Sie Ihren eigenen Prägeschlüssel erstellen und beginnen, Belohnungen für die Unterstützung bei der Sicherung der Qortal-Blockkette zu verdienen.",
       "mchange35":"Sponsoring",
-      "mchange36":"Ihr Sponsor stellt Ihnen einen „Sponsorship Key“ aus, den Sie zum Hinzufügen zu Ihrem Knoten verwenden und mit dem Prägen beginnen (keine Belohnungen bis zum Erreichen von Level 1). Sobald Sie Level 1 erreicht haben, erstellen/weisen Sie Ihren eigenen „Minting Key“ und Beginnen Sie mit dem Verdienen von Belohnungen. Sie haben noch XXXX-Blöcke in Ihrem Sponsoring-Zeitraum.",
+      "mchange36":"Ihr Sponsor stellt Ihnen einen „Sponsorship Key“ aus, den Sie zum Hinzufügen zu Ihrem Knoten verwenden und mit dem Prägen beginnen (keine Belohnungen bis zum Erreichen von Level 1). Sobald Sie Level 1 erreicht haben, erstellen/weisen Sie Ihren eigenen „Minting Key“ und Beginnen Sie mit dem Verdienen von Belohnungen.",
       "mchange37":"Wenden Sie sich einfach an einen Minter in Qortal, der hoch genug ist, um einen Sponsoring-Schlüssel auszustellen, erhalten Sie diesen Schlüssel, kommen Sie dann hierher zurück und geben Sie den Schlüssel ein, um Ihre Minting-Reise zu beginnen!",
       "mchange38":"in"
    },
