@@ -127,25 +127,15 @@ class SponsorshipList extends LitElement {
 		return nodeInfo
 	}
 
-	async saveToClipboard(text) {
-		try {
-			await navigator.clipboard.writeText(text)
-			parentEpml.request('showSnackBar', this.onSuccessMessage)
-		} catch (err) {
-			parentEpml.request('showSnackBar', this.onErrorMessage)
-			console.error('Copy to clipboard error:', err)
-		}
-	}
-
+	
 	changeStatus(value){
 		this.status = value
-		this.saveToClipboard(translate(
-			"walletpage.wchange4"
-		))
+		
 		
 	}
 
 	async atMount() {
+		
 		this.changeLanguage()
 		
 		this.addressInfo =
@@ -337,7 +327,7 @@ class SponsorshipList extends LitElement {
 			}
 			
 			let lastRef = await getLastRef()
-				if (accountDetails.level >= 5) {
+				if (accountDetails.level >= 5 || accountDetails.flags === 1) {
 					this.status = 1
 			
 					this.errorMessage = ""
@@ -386,12 +376,12 @@ class SponsorshipList extends LitElement {
 
 		const getTxnRequestResponse = (txnResponse) => {
 		
-			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message.includes('multiple') || txnResponse?.data?.message.includes('SELF_SHARE_EXISTS')) ){
+			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS')) ){
 			
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue)
 			} else if (txnResponse.success === false && txnResponse?.message) {
-			
+	
 				this.errorMessage = txnResponse?.message
 				this.isLoadingCreateSponsorship = false
 				throw(txnResponse?.message)
@@ -400,11 +390,11 @@ class SponsorshipList extends LitElement {
 				!txnResponse.data.error
 			) {
 			
-			
+	
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue)
 			} else {
-			
+		
 				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
 				this.isLoadingCreateSponsorship = false
 				throw(txnResponse?.data?.message || txnResponse?.message)
@@ -671,7 +661,7 @@ class SponsorshipList extends LitElement {
 						${this.privateRewardShareKey && this.status === 4  ? html`
 						<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>
 					
-           <p>Copy the key below and share it with your sponsored person.</p>
+           <p style="work-break: break-word">Copy the key below and share it with your sponsored person.</p>
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this.privateRewardShareKey}</span>
             </div>
@@ -684,7 +674,7 @@ class SponsorshipList extends LitElement {
 					</ul>
 					<div class="warning column">
 						<p>
-						Warning: do not close the Qortal UI until completion!
+						Warning: do not leave this plugin or close the Qortal UI until completion!
 						</p>
 						<p class="message-error">${this.errorMessage}</p>
 					</div>

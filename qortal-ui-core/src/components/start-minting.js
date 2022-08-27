@@ -188,23 +188,24 @@ class StartMinting extends connect(store)(LitElement) {
 	}
 
 	firstUpdated() {
+
 		this.getMintingAcccounts();
 		this.shadowRoot.querySelector('mdc-dialog--open').setAttribute('style', 'width: 100vw')
 	}
 
-	this.renderErrorMsg1() {
+	renderErrorMsg1() {
 	return html`${translate("startminting.smchange1")}`
 }
 
-this.renderErrorMsg2() {
+renderErrorMsg2() {
 	return html`${translate("startminting.smchange2")}`
 }
 
-this.renderErrorMsg3() {
+renderErrorMsg3() {
 	return html`${translate("startminting.smchange3")}`
 }
 
-this.renderErrorMsg4() {
+renderErrorMsg4() {
 	return html`${translate("startminting.smchange4")}`
 }
 
@@ -347,7 +348,7 @@ renderStartMintingButton() {
 
 	const mintingAccountData = this.mintingAccountData;
 
-	const addressInfo = this.addressInfo;
+	const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
 
 	const address =
 		window.parent.reduxStore.getState().app?.selectedAddress?.address;
@@ -358,16 +359,16 @@ renderStartMintingButton() {
 	const publicAddress =
 		window.parent.reduxStore.getState().app?.selectedAddress
 			?.base58PublicKey;
-
+			
+	
 	const findMintingAccount = mintingAccountData.find((ma) =>
-		ma.publicKey.includes(publicAddress)
+		ma.mintingAccount === address
 	);
 
 	const isMinterButKeyMintingKeyNotAssigned =
 		addressInfo?.error !== 124 &&
 		addressInfo?.level >= 1 &&
 		!findMintingAccount;
-
 	const makeTransactionRequest = async (lastRef) => {
 		let mylastRef = lastRef;
 		let rewarddialog1 = get('transactions.rewarddialog1');
@@ -396,7 +397,7 @@ renderStartMintingButton() {
 
 	const getTxnRequestResponse = (txnResponse) => {
 		let err6string = get('rewardsharepage.rchange21');
-		if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message.includes('multiple') || txnResponse?.data?.message.includes('SELF_SHARE_EXISTS'))) {
+		if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
 			return err6string
 		}
 		if (txnResponse.success === false && txnResponse.message) {
@@ -531,7 +532,8 @@ renderStartMintingButton() {
 					</div>	
 				</div>
 					<div class="modalFooter">
-					<mwc-button
+						${this.errorMsg || this.status === 5 ? html`
+						<mwc-button
                         slot="primaryAction"
 						@click=${() => {
 						this.openDialogRewardShare = false
@@ -542,6 +544,8 @@ renderStartMintingButton() {
                     >
                     ${translate("general.close")}
                     </mwc-button>
+						` : '' }
+					
 					</div>
 					</div>
 					
