@@ -174,7 +174,7 @@
       "mchange33":"Introduction",
       "mchange34":"In Qortal, in order to become a minter and begin earning QORT rewards with your increase in Minter Level, you must first become ‘sponsored’. A sponsor in Qortal is any other minter of level 5 or higher, or a Qortal Founder. You will obtain a sponsorship key from the sponsor, and use that key to get to level 1. Once you have reached level 1, you will be able to create your own minting key and start earning rewards for helping secure the Qortal Blockchain.",
       "mchange35":"Sponsorship",
-      "mchange36":"Your sponsor will issue you a ‘Sponsorship Key’ which you will use to add to your node, and begin minting (for no rewards until reaching level 1.) Once you reach level 1, you create/assign your own ‘Minting Key’ and begin earning rewards. You have XXXX blocks remaining in your sponsorship period.",
+      "mchange36":"Your sponsor will issue you a ‘Sponsorship Key’ which you will use to add to your node, and begin minting (for no rewards until reaching level 1.) Once you reach level 1, you create/assign your own ‘Minting Key’ and begin earning rewards.",
       "mchange37":"Simply reach out to a minter in Qortal who is high enough level to issue a sponsorship key, obtain that key, then come back here and input the key to begin your minting journey !",
       "mchange38":"in"
    },

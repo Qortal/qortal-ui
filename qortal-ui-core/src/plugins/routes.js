@@ -141,15 +141,21 @@ export const routes = {
 				req.data.params
 			);
 
-			if (!req.disableModal) {
+			if (!req.disableModal && !req.data.disableModal) {
 				await requestTransactionDialog.requestTransaction(tx);
 			}
-
+		
 			const res = await processTransaction(tx.signedBytes);
-
+			let extraData = {}
+			if(req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey){
+				extraData.rewardSharePrivateKey = Base58.encode(tx._rewardShareKeyPair.secretKey)
+			}
+		
+		
 			response = {
 				success: true,
 				data: res,
+				extraData
 			};
 		} catch (e) {
 			console.error(e);

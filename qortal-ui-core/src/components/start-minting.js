@@ -2,27 +2,193 @@ import { LitElement, html, css } from 'lit';
 import { connect } from 'pwa-helpers';
 import { store } from '../store.js';
 import { translate, get } from 'lit-translate';
+import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import '../functional-components/my-button.js';
 import { routes } from '../plugins/routes.js';
+import "@material/mwc-button"
 
+import '@material/mwc-dialog'
+
+
+async function* countDown(count, callback) {
+	
+	
+	while (count > 0) {
+	  yield count--;
+	  await new Promise((r) => setTimeout(r, 1000));
+	  if(count === 0){
+	
+		callback()
+	}
+	}
+  }
 class StartMinting extends connect(store)(LitElement) {
 	static get properties() {
 		return {
 			addressInfo: { type: Object },
 			mintingAccountData: { type: Array },
 			errorMsg: { type: String },
+			openDialogRewardShare : {type: Boolean},
+			status: {type: Number},
+			timer: {type: Number},
+			privateRewardShareKey: {type: String}
 		};
 	}
 
 	static get styles() {
 		return [
 			css`
+
+			.dialogCustom {
+				position: fixed;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    top: 0px;
+    bottom: 0px;
+   
+    left: 0px;
+    width: 100vw;
+			}
+			.dialogCustomInner {
+				
+				width: 300px;
+				min-height: 400px;
+				background-color: var(--white);
+				box-shadow: var(--mdc-dialog-box-shadow, 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12));
+				padding: 20px 24px;
+				border-radius: 4px;
+			}
+			.dialogCustomInner ul {
+				padding-left: 0px
+			}
+			.dialogCustomInner li {
+				margin-bottom: 10px;
+			}
 				.start-minting-wrapper {
 					position: absolute;
 					left: 50%;
 					transform: translateX(calc(-50% - 10px));
+					z-index: 10;
 				}
+
+				.dialog-header h1 {
+		font-size: 18px;
+				}
+
+				.row {
+		display: flex;
+		width: 100%;
+		align-items: center;
+	}
+	
+	.modalFooter {
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+  
+	
+
+	.hide {
+		visibility: hidden
+	}
+
+	.inactiveText {
+		opacity: .60
+	}
+	.column {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.smallLoading,
+	.smallLoading:after {
+		border-radius: 50%;
+		width: 2px;
+		height: 2px;
+	}
+
+	.smallLoading {
+		border-width: 0.6em;
+		border-style: solid;
+		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+		font-size: 10px;
+		position: relative;
+		text-indent: -9999em;
+		transform: translateZ(0px);
+		animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+	}
+	@-webkit-keyframes loadingAnimation {
+		0% {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+		100% {
+			-webkit-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes loadingAnimation {
+		0% {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+		100% {
+			-webkit-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+	}
+
+	.word-break {
+		word-break:break-all;
+	}
+	.dialog-container {
+		width: 300px;
+		min-height: 300px;
+		max-height: 75vh;
+		padding: 5px;
+		display: flex;
+		align-items: flex-start;
+		flex-direction: column;
+	
+		
+	}
+
+	
+	.between {
+		justify-content: space-between;
+	}
+	.no-width {
+		width: auto
+	}
+
+	.between p {
+		margin: 0;
+		padding: 0;
+	}
+	.marginLoader {
+		margin-left: 10px;
+	}
+	.marginRight {
+		margin-right: 10px;
+	}
+	.warning{
+	display: flex;
+	flex-grow: 1
+}
+
+.message-error {
+		color: var(--error);
+	}
+
 			`,
 		];
 	}
@@ -32,6 +198,9 @@ class StartMinting extends connect(store)(LitElement) {
 		this.addressInfo = {};
 		this.mintingAccountData = [];
 		this.errorMsg = '';
+		this.openDialogRewardShare = false;
+		this.status = 0;
+		this.privateRewardShareKey = "";
 	}
 
 	render() {
@@ -40,6 +209,10 @@ class StartMinting extends connect(store)(LitElement) {
 
 	firstUpdated() {
 		this.getMintingAcccounts();
+
+
+
+		this.shadowRoot.querySelector('mdc-dialog--open').setAttribute('style', 'width: 100vw')
 	}
 
 	async getMintingAcccounts() {
@@ -60,6 +233,118 @@ class StartMinting extends connect(store)(LitElement) {
 		}
 	}
 
+	async changeStatus(value){
+		const myNode =
+			store.getState().app.nodeConfig.knownNodes[
+				store.getState().app.nodeConfig.node
+			];
+
+			const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		this.status = value
+		const publicAddress =
+			window.parent.reduxStore.getState().app?.selectedAddress
+				?.base58PublicKey;
+		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
+		const findMintingAccountFromOtherUser = this.mintingAccountData.find(
+			(ma) => !ma.publicKey.includes(publicAddress)
+		);
+		const removeMintingAccount = async (publicKey) => {
+			
+			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
+
+			return await fetch(url, {
+				method: 'DELETE',
+				body: publicKey,
+			});
+		};
+
+		const addMintingAccount = async (sponsorshipKeyValue) => {
+			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
+
+			return await fetch(url, {
+				method: 'POST',
+				body: sponsorshipKeyValue,
+			});
+		};
+
+		try {
+			if (
+				findMintingAccountFromOtherUser &&
+				findMintingAccountFromOtherUser?.publicKey[0]
+			) {
+				await removeMintingAccount(
+					findMintingAccountFromOtherUser?.publicKey[0]
+				);
+			}
+		} catch (error) {
+			this.errorMsg = 'Failed to remove key';
+			return;
+		}
+
+		try {
+			await addMintingAccount(this.privateRewardShareKey);
+			routes.showSnackBar({
+				data: translate('becomeMinterPage.bchange19'),
+			});
+			this.status = 5;
+			this.getMintingAcccounts();
+		} catch (error) {
+			this.errorMsg = 'Failed to add minting key';
+			return;
+		}
+		
+	}
+	
+
+
+	async confirmRelationship(){
+		const myNode =
+			store.getState().app.nodeConfig.knownNodes[
+				store.getState().app.nodeConfig.node
+			];
+		const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+			
+		let interval = null
+		let stop = false
+		this.status = 2
+		const getAnswer = async () => {
+
+			const rewardShares = async (minterAddr) => {
+				const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`;
+				const res = await fetch(url);
+				const data = await res.json();
+				return data;
+			};
+
+			if (!stop) {
+				stop= true;
+	
+				try {
+				
+					const address =
+			window.parent.reduxStore.getState().app?.selectedAddress?.address;
+
+				const myRewardShareArray = await rewardShares(address);
+					if(myRewardShareArray.length > 0){
+						clearInterval(interval)
+						this.status = 3
+
+					
+						this.timer = countDown(180, ()=> this.changeStatus(4));
+					}
+					
+				} catch (error) {
+				
+				}
+	
+				stop = false
+			}
+		};
+		interval = setInterval(getAnswer, 5000);
+	}
+
 	renderStartMintingButton() {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
@@ -70,12 +355,7 @@ class StartMinting extends connect(store)(LitElement) {
 		const mintingAccountData = this.mintingAccountData;
 
 		const addressInfo = this.addressInfo;
-		const rewardShares = async (minterAddr) => {
-			const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`;
-			const res = await fetch(url);
-			const data = await res.json();
-			return data;
-		};
+		
 		const address =
 			window.parent.reduxStore.getState().app?.selectedAddress?.address;
 		const nonce =
@@ -89,17 +369,10 @@ class StartMinting extends connect(store)(LitElement) {
 		);
 		const isMinterButKeyMintingKeyNotAssigned =
 			addressInfo?.error !== 124 &&
-			addressInfo?.level === 1 &&
+			addressInfo?.level >= 1 &&
 			!findMintingAccount;
 
-		const removeMintingAccount = async (publicKey) => {
-			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
-
-			return await fetch(url, {
-				method: 'DELETE',
-				body: publicKey,
-			});
-		};
+		
 
 		const makeTransactionRequest = async (lastRef) => {
 			let mylastRef = lastRef;
@@ -128,35 +401,33 @@ class StartMinting extends connect(store)(LitElement) {
 		};
 
 		const getTxnRequestResponse = (txnResponse) => {
+			let err6string = get('rewardsharepage.rchange21');
+			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message.includes('multiple') || txnResponse?.data?.message.includes('SELF_SHARE_EXISTS'))){
+				return err6string
+			}
 			if (txnResponse.success === false && txnResponse.message) {
-				throw new Error(txnResponse);
+				throw(txnResponse);
 			} else if (
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
-				let err6string = get('rewardsharepage.rchange21');
+			
 				return err6string;
 			} else {
-				throw new Error(txnResponse);
+				throw(txnResponse);
 			}
 		};
 
 		const createSponsorshipKey = async () => {
+			this.status= 1
 			let lastRef = await getLastRef();
 
 			let myTransaction = await makeTransactionRequest(lastRef);
 
 			getTxnRequestResponse(myTransaction);
-			return myTransaction.data;
+			return myTransaction?.extraData?.rewardSharePrivateKey
 		};
-		const addMintingAccount = async (sponsorshipKeyValue) => {
-			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
-
-			return await fetch(url, {
-				method: 'POST',
-				body: sponsorshipKeyValue,
-			});
-		};
+		
 
 		const getLastRef = async () => {
 			const url = `${nodeUrl}/addresses/lastreference/${address}`;
@@ -167,64 +438,23 @@ class StartMinting extends connect(store)(LitElement) {
 
 			return data;
 		};
+
 		const startMinting = async () => {
+			this.openDialogRewardShare = true
+
 			this.errorMsg = '';
-			let rewardSharesList;
+		
 			try {
-				rewardSharesList = await rewardShares(address);
+				
+				this.privateRewardShareKey = await createSponsorshipKey();
+				this.confirmRelationship(publicAddress)
 			} catch (error) {
-				this.errorMsg = 'Cannot fetch reward shares';
-				return;
-			}
-			// check to see if self-share exists
-
-			const findRewardShareData = rewardSharesList.find(
-				(rs) =>
-					rs?.mintingAccount === address && rs?.recipient === address
-			);
-			let sponsorshipKeyValue = null;
-			try {
-				if (!findRewardShareData) {
-					// if no self-share exits, create one.
-					sponsorshipKeyValue = await createSponsorshipKey();
-				} else {
-					sponsorshipKeyValue =
-						findRewardShareData.rewardSharePublicKey;
-				}
-			} catch (error) {
-				this.errorMsg = 'Cannot create sponsorship key';
+				console.log({error})
+				this.errorMsg = error?.data?.message || 'Cannot create sponsorship key';
 				return;
 			}
 
-			// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
-			const findMintingAccountFromOtherUser = mintingAccountData.find(
-				(ma) => !ma.publicKey.includes(publicAddress)
-			);
-
-			try {
-				if (
-					findMintingAccountFromOtherUser &&
-					findMintingAccountFromOtherUser?.publicKey[0]
-				) {
-					await removeMintingAccount(
-						findMintingAccountFromOtherUser?.publicKey[0]
-					);
-				}
-			} catch (error) {
-				this.errorMsg = 'Failed to remove key';
-				return;
-			}
-
-			try {
-				await addMintingAccount(sponsorshipKeyValue);
-				routes.showSnackBar({
-					data: translate('becomeMinterPage.bchange19'),
-				});
-				this.getMintingAcccounts();
-			} catch (error) {
-				this.errorMsg = 'Failed to add minting key';
-				return;
-			}
+			
 		};
 
 		return html`
@@ -246,6 +476,93 @@ class StartMinting extends connect(store)(LitElement) {
 								}}
 							></my-button>
 						</div>
+
+
+						<!-- Dialog for tracking the progress of starting minting -->
+			
+
+					${this.openDialogRewardShare ? html`
+					<div class="dialogCustom">
+						<div class="dialogCustomInner">
+                    <div class="dialog-header" >
+						<div class="row">
+						<h1>In progress  </h1> <div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
+						</div>
+                       
+                        <hr />
+                    </div>
+					<div class="dialog-container">
+					<ul>
+					
+					
+					
+						<li class="row between">1. Creating relationship <div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div></li>
+						<li class=${`row between ${this.status < 2 && 'inactiveText' }`}>
+							<p>
+							2. Awaiting confirmation on blockchain
+							</p>
+							 <div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
+						
+						</li>
+					
+						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+						<p>
+						3. Finishing up relationship
+							</p>
+
+							<div class="row no-width">
+							<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+							</div>
+						
+						
+						</li>
+						<li class=${`row between ${this.status < 4 && 'inactiveText' }`}>
+							<p>
+							4. Adding minting key to node
+							</p>
+							<div class=${`smallLoading marginLoader ${this.status !== 4 && 'hide'}`}></div>
+						
+						</li>
+						<li class=${`row between ${this.status < 5 && 'inactiveText' }`}>
+							<p>
+							5. Complete
+							</p>
+							
+						
+						</li>
+					
+					</ul>
+					<div class="warning column">
+						<p>
+						Warning: do not close the Qortal UI until completion!
+						</p>
+						<p class="message-error">${this.errorMsg}</p>
+					</div>
+					
+					</div>
+					<div class="modalFooter">
+					<mwc-button
+                        slot="primaryAction"
+						@click=${()=>{
+							this.openDialogRewardShare = false
+							this.errorMsg = ''
+					
+						}}
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+					</div>
+					
+                   
+					</div>
+					
+				
+                <!-- </mwc-dialog> -->
+				</div>
+					
+					` : ""}
+					
 				  `
 				: ''}
 		`;
