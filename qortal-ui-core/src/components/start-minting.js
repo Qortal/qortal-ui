@@ -39,22 +39,19 @@ class StartMinting extends connect(store)(LitElement) {
 	static get styles() {
 		return [
 			css`
-
 			.dialogCustom {
 				position: fixed;
-    z-index: 10000;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    top: 0px;
-    bottom: 0px;
-   
-    left: 0px;
-    width: 100vw;
+    				z-index: 10000;
+    				display: flex;
+    				justify-content: center;
+    				flex-direction: column;
+    				align-items: center;
+    				top: 0px;
+    				bottom: 0px;
+    				left: 0px;
+    				width: 100vw;
 			}
 			.dialogCustomInner {
-				
 				width: 300px;
 				min-height: 400px;
 				background-color: var(--white);
@@ -68,127 +65,110 @@ class StartMinting extends connect(store)(LitElement) {
 			.dialogCustomInner li {
 				margin-bottom: 10px;
 			}
-				.start-minting-wrapper {
-					position: absolute;
-					left: 50%;
-					transform: translateX(calc(-50% - 10px));
-					z-index: 10;
+			.start-minting-wrapper {
+				position: absolute;
+				left: 50%;
+				transform: translateX(calc(-50% - 10px));
+				z-index: 10;
+			}
+
+			.dialog-header h1 {
+				font-size: 18px;
+			}
+
+			.row {
+				display: flex;
+				width: 100%;
+				align-items: center;
+			}
+			.modalFooter {
+				width: 100%;
+				display: flex;
+				justify-content: flex-end;
+			}
+			.hide {
+				visibility: hidden
+			}
+			.inactiveText {
+				opacity: .60
+			}
+			.column {
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+			}
+			.smallLoading,
+			.smallLoading:after {
+				border-radius: 50%;
+				width: 2px;
+				height: 2px;
+			}
+			.smallLoading {
+				border-width: 0.6em;
+				border-style: solid;
+				border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+				rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+				font-size: 10px;
+				position: relative;
+				text-indent: -9999em;
+				transform: translateZ(0px);
+				animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+			}
+			@-webkit-keyframes loadingAnimation {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
 				}
-
-				.dialog-header h1 {
-		font-size: 18px;
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
 				}
-
-				.row {
-		display: flex;
-		width: 100%;
-		align-items: center;
-	}
-	
-	.modalFooter {
-		width: 100%;
-		display: flex;
-		justify-content: flex-end;
-	}
-
-  
-	
-
-	.hide {
-		visibility: hidden
-	}
-
-	.inactiveText {
-		opacity: .60
-	}
-	.column {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-	}
-
-	.smallLoading,
-	.smallLoading:after {
-		border-radius: 50%;
-		width: 2px;
-		height: 2px;
-	}
-
-	.smallLoading {
-		border-width: 0.6em;
-		border-style: solid;
-		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
-		font-size: 10px;
-		position: relative;
-		text-indent: -9999em;
-		transform: translateZ(0px);
-		animation: 1.1s linear 0s infinite normal none running loadingAnimation;
-	}
-	@-webkit-keyframes loadingAnimation {
-		0% {
-			-webkit-transform: rotate(0deg);
-			transform: rotate(0deg);
-		}
-		100% {
-			-webkit-transform: rotate(360deg);
-			transform: rotate(360deg);
-		}
-	}
-
-	@keyframes loadingAnimation {
-		0% {
-			-webkit-transform: rotate(0deg);
-			transform: rotate(0deg);
-		}
-		100% {
-			-webkit-transform: rotate(360deg);
-			transform: rotate(360deg);
-		}
-	}
-
-	.word-break {
-		word-break:break-all;
-	}
-	.dialog-container {
-		width: 300px;
-		min-height: 300px;
-		max-height: 75vh;
-		padding: 5px;
-		display: flex;
-		align-items: flex-start;
-		flex-direction: column;
-	
-		
-	}
-
-	
-	.between {
-		justify-content: space-between;
-	}
-	.no-width {
-		width: auto
-	}
-
-	.between p {
-		margin: 0;
-		padding: 0;
-	}
-	.marginLoader {
-		margin-left: 10px;
-	}
-	.marginRight {
-		margin-right: 10px;
-	}
-	.warning{
-	display: flex;
-	flex-grow: 1
-}
-
-.message-error {
-		color: var(--error);
-	}
-
+			}
+			@keyframes loadingAnimation {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+			.word-break {
+				word-break:break-all;
+			}
+			.dialog-container {
+				width: 300px;
+				min-height: 300px;
+				max-height: 75vh;
+				padding: 5px;
+				display: flex;
+				align-items: flex-start;
+				flex-direction: column;
+			}
+			.between {
+				justify-content: space-between;
+			}
+			.no-width {
+				width: auto
+			}
+			.between p {
+				margin: 0;
+				padding: 0;
+			}
+			.marginLoader {
+				margin-left: 10px;
+			}
+			.marginRight {
+				margin-right: 10px;
+			}
+			.warning{
+				display: flex;
+				flex-grow: 1
+			}
+			.message-error {
+				color: var(--error);
+			}
 			`,
 		];
 	}
@@ -209,10 +189,23 @@ class StartMinting extends connect(store)(LitElement) {
 
 	firstUpdated() {
 		this.getMintingAcccounts();
-
-
-
 		this.shadowRoot.querySelector('mdc-dialog--open').setAttribute('style', 'width: 100vw')
+	}
+
+	this.renderErrorMsg1() {
+		return html`${translate("startminting.smchange1")}`
+	}
+
+	this.renderErrorMsg2() {
+		return html`${translate("startminting.smchange2")}`
+	}
+
+	this.renderErrorMsg3() {
+		return html`${translate("startminting.smchange3")}`
+	}
+
+	this.renderErrorMsg4() {
+		return html`${translate("startminting.smchange4")}`
 	}
 
 	async getMintingAcccounts() {
@@ -229,7 +222,7 @@ class StartMinting extends connect(store)(LitElement) {
 
 			this.mintingAccountData = mintingAccountData;
 		} catch (error) {
-			this.errorMsg = 'Cannot fetch minting accounts';
+			this.errorMsg = this.renderErrorMsg1();
 		}
 	}
 
@@ -278,7 +271,7 @@ class StartMinting extends connect(store)(LitElement) {
 				);
 			}
 		} catch (error) {
-			this.errorMsg = 'Failed to remove key';
+			this.errorMsg = this.renderErrorMsg2();
 			return;
 		}
 
@@ -290,13 +283,11 @@ class StartMinting extends connect(store)(LitElement) {
 			this.status = 5;
 			this.getMintingAcccounts();
 		} catch (error) {
-			this.errorMsg = 'Failed to add minting key';
+			this.errorMsg = this.renderErrorMsg3();
 			return;
 		}
 		
 	}
-	
-
 
 	async confirmRelationship(){
 		const myNode =
@@ -350,16 +341,20 @@ class StartMinting extends connect(store)(LitElement) {
 			store.getState().app.nodeConfig.knownNodes[
 				store.getState().app.nodeConfig.node
 			];
+
 		const nodeUrl =
 			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+
 		const mintingAccountData = this.mintingAccountData;
 
 		const addressInfo = this.addressInfo;
 		
 		const address =
 			window.parent.reduxStore.getState().app?.selectedAddress?.address;
+
 		const nonce =
 			window.parent.reduxStore.getState().app?.selectedAddress?.nonce;
+
 		const publicAddress =
 			window.parent.reduxStore.getState().app?.selectedAddress
 				?.base58PublicKey;
@@ -367,12 +362,11 @@ class StartMinting extends connect(store)(LitElement) {
 		const findMintingAccount = mintingAccountData.find((ma) =>
 			ma.publicKey.includes(publicAddress)
 		);
+
 		const isMinterButKeyMintingKeyNotAssigned =
 			addressInfo?.error !== 124 &&
 			addressInfo?.level >= 1 &&
 			!findMintingAccount;
-
-		
 
 		const makeTransactionRequest = async (lastRef) => {
 			let mylastRef = lastRef;
@@ -450,7 +444,7 @@ class StartMinting extends connect(store)(LitElement) {
 				this.confirmRelationship(publicAddress)
 			} catch (error) {
 				console.log({error})
-				this.errorMsg = error?.data?.message || 'Cannot create sponsorship key';
+				this.errorMsg = error?.data?.message || this.renderErrorMsg4();
 				return;
 			}
 
@@ -491,55 +485,51 @@ class StartMinting extends connect(store)(LitElement) {
                        
                         <hr />
                     </div>
-					<div class="dialog-container">
+				<div class="dialog-container">
 					<ul>
-					
-					
-					
-						<li class="row between">1. Creating relationship <div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div></li>
+						<li class="row between">
+							<p>
+								1. ${translate("startminting.smchange5")}
+							</p>
+							<div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div>
+						</li>
+
 						<li class=${`row between ${this.status < 2 && 'inactiveText' }`}>
 							<p>
-							2. Awaiting confirmation on blockchain
+								2. ${translate("startminting.smchange6")}
 							</p>
-							 <div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
-						
+							<div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
 						</li>
-					
-						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
-						<p>
-						3. Finishing up relationship
-							</p>
 
+						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+							<p>
+								3. ${translate("startminting.smchange7")}
+							</p>
 							<div class="row no-width">
-							<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+								<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
 							</div>
-						
-						
 						</li>
+
 						<li class=${`row between ${this.status < 4 && 'inactiveText' }`}>
 							<p>
-							4. Adding minting key to node
+								4. ${translate("startminting.smchange8")}
 							</p>
 							<div class=${`smallLoading marginLoader ${this.status !== 4 && 'hide'}`}></div>
-						
 						</li>
+
 						<li class=${`row between ${this.status < 5 && 'inactiveText' }`}>
 							<p>
-							5. Complete
+								5. ${translate("startminting.smchange9")}
 							</p>
-							
-						
 						</li>
-					
 					</ul>
 					<div class="warning column">
 						<p>
-						Warning: do not close the Qortal UI until completion!
+							Warning: do not close the Qortal UI until completion!
 						</p>
 						<p class="message-error">${this.errorMsg}</p>
-					</div>
-					
-					</div>
+					</div>	
+				</div>
 					<div class="modalFooter">
 					<mwc-button
                         slot="primaryAction"
@@ -553,8 +543,6 @@ class StartMinting extends connect(store)(LitElement) {
                     ${translate("general.close")}
                     </mwc-button>
 					</div>
-					
-                   
 					</div>
 					
 				
