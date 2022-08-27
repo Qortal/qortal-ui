@@ -3758,11 +3758,11 @@ class MultiWallet extends LitElement {
     }
 
     calculateArrrAll() {
-        if (this.balance < 0.00000002) {
+        if (this.balance < 0.00010000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
-            this.arrrAmount = (this.balance - 0.00000001).toFixed(8)
+            this.arrrAmount = (this.balance - 0.00010000).toFixed(8)
         }
     }
 
