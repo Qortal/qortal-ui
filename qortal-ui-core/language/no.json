@@ -145,14 +145,14 @@
    },
    "startminting":{
       "smchange1":"Kan ikke hente myntingkontoer",
-      "smchange1":"Kunne ikke fjerne nøkkelen",
-      "smchange1":"Kunne ikke legge til myntnøkkel",
-      "smchange1":"Kan ikke opprette sponsornøkkel",
-      "smchange1":"Skaper forhold",
-      "smchange1":"Venter på bekreftelse på blockchain",
-      "smchange1":"Fullføre forholdet",
-      "smchange1":"Legger til myntnøkkel til node",
-      "smchange1":"Fullstendig"",
+      "smchange2":"Kunne ikke fjerne nøkkelen",
+      "smchange3":"Kunne ikke legge til myntnøkkel",
+      "smchange4":"Kan ikke opprette sponsornøkkel",
+      "smchange5":"Skaper forhold",
+      "smchange6":"Venter på bekreftelse på blockchain",
+      "smchange7":"Fullføre forholdet",
+      "smchange8":"Legger til myntnøkkel til node",
+      "smchange9":"Fullstendig"
    },
    "mintingpage":{
       "mchange1":"Generelle mintedetaljer",
@@ -635,15 +635,15 @@
       "rewarddialog5":"Du fjerner en transaksjon for belønningsdel knyttet til konto:",
       "rewarddialog6":"Ved å trykke på Bekreft, vil belønningsdelen bli fjernet og mintnøkkelen blir ugyldig."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Aktive sponsorer",
+      "schange2":"Kontoadresse",
+      "schange3":"Totalt aktive sponsorater",
+      "schange4":"Neste sponsing slutter i",
+      "schange5":"Sponsor New Minter",
+      "schange6":"Ferdige sponsorater",
+      "schange7":"Fullført",
+      "schange8":"Adresser",
+      "schange9":"Du har for øyeblikket ingen aktive sponsorater"
    }
 }

@@ -640,15 +640,15 @@
       "rewarddialog5":"Está eliminando una transacción de recompensa compartida asociada con la cuenta:",
       "rewarddialog6":"Al presionar confirmar, se eliminará la recompensa compartida y la clave de acuñación dejará de ser válida."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Patrocinios Activos",
+      "schange2":"dirección de cuenta",
+      "schange3":"Patrocinios totales activos",
+      "schange4":"Próximo patrocinio que termina en",
+      "schange5":"Patrocinar Nuevo Minter",
+      "schange6":"Patrocinios Finalizados",
+      "schange7":"Terminado",
+      "schange8":"direcciones",
+      "schange9":"Actualmente no tienes patrocinios activos"
    }
 }

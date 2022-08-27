@@ -640,15 +640,15 @@
       "rewarddialog5":"您正在删除与此账号关联的铸币密钥：",
       "rewarddialog6":"点击确认后，铸币密钥将被移除並失效。"
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"积极赞助",
+      "schange2":"帐户地址",
+      "schange3":"总赞助活动",
+      "schange4":"下一次赞助以",
+      "schange5":"赞助新铸币厂",
+      "schange6":"完成赞助",
+      "schange7":"完全的",
+      "schange8":"地址",
+      "schange9":"您目前没有有效的赞助"
    }
 }

@@ -640,15 +640,15 @@
       "rewarddialog5":"Vous supprimez une transaction de partage de récompenses associée au compte :",
       "rewarddialog6":"En appuyant sur confirmer, le partage de récompense sera supprimé et la clé de frappe deviendra invalide."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Parrainages actifs",
+      "schange2":"Adresse du compte",
+      "schange3":"Total des parrainages actifs",
+      "schange4":"Prochain parrainage se terminant par",
+      "schange5":"Parrainez le nouveau Minter",
+      "schange6":"Parrainages terminés",
+      "schange7":"Complété",
+      "schange8":"adresses",
+      "schange9":"Vous n'avez actuellement aucun parrainage actif"
    }
 }

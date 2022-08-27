@@ -640,15 +640,15 @@
       "rewarddialog5":"您正在刪除與此賬號關聯的鑄幣密鑰：",
       "rewarddialog6":"點擊確認後，鑄幣密鑰將被移除並失效。"
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"積極贊助",
+      "schange2":"帳戶地址",
+      "schange3":"總贊助活動",
+      "schange4":"下一次贊助以",
+      "schange5":"贊助新鑄幣廠",
+      "schange6":"完成贊助",
+      "schange7":"完全的",
+      "schange8":"地址",
+      "schange9":"您目前沒有有效的讚助"
    }
 }

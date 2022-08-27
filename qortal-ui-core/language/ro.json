@@ -188,9 +188,9 @@
       "mchange31":"Apasa pentru Ajutor",
       "mchange32":"Devino Producator de Moneda",
       "mchange33":"Introducere",
-      "mchange34":"In Qortal, pentru a deveni un productor de moneda si a incepe sa castigi recompense QORT odata cu cresterea nivelului de productor de moneda, trebuie mai intai sa devii ‘sponsorizat’. Un sponsor in Qortal este orice alt productor de moneda de nivel 5 sau mai mare, sau un Fondator Qortal. Veti obtine o cheie de sponsorizare de la sponsor si veti folosi acea cheie pentru a ajunge la nivelul 1. Odata ce ati ajuns la nivelul 1, veti putea sa va creati propria cheie de producere a monedei si sa incepeti sa castigati recompense pentru a ajuta la securizarea Qortal Blockchain.",
+      "mchange34":"In Qortal, pentru a deveni un productor de moneda si a incepe sa castigi recompense QORT odata cu cresterea nivelului de productor de moneda, trebuie mai intai sa devii â€˜sponsorizatâ€™. Un sponsor in Qortal este orice alt productor de moneda de nivel 5 sau mai mare, sau un Fondator Qortal. Veti obtine o cheie de sponsorizare de la sponsor si veti folosi acea cheie pentru a ajunge la nivelul 1. Odata ce ati ajuns la nivelul 1, veti putea sa va creati propria cheie de producere a monedei si sa incepeti sa castigati recompense pentru a ajuta la securizarea Qortal Blockchain.",
       "mchange35":"Sponsorizare",
-      "mchange36":"Sponsorul dvs. va va emite o ‘Cheie de sponsorizare’ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria ‘Cheie de producere a monedei’ si incepeti sa castigati recompense.",
+      "mchange36":"Sponsorul dvs. va va emite o â€˜Cheie de sponsorizareâ€™ pe care o veti folosi pentru a o adauga la nodul dvs. si pentru a incepe sa produceti moneda (fara recompense pana la atingerea nivelului 1.) Odata ce ati atins nivelul 1, va creati/atribuiti propria â€˜Cheie de producere a monedeiâ€™ si incepeti sa castigati recompense.",
       "mchange37":"Pur si simplu contactati un productor de moneda din Qortal care are un nivel suficient de ridicat pentru a emite o cheie de sponsorizare, obtineti acea cheie, apoi reveniti aici si introduceti cheia pentru a va incepe calatoria de productor de moneda !",
       "mchange38":"in"
    },
@@ -199,7 +199,7 @@
       "bchange8":"Cheia de introducere de la sponsorul dvs. aici",
       "bchange10":"Starea actuala a sponsorizarii",
       "bchange12":"Minting cu cheia sponsorului",
-      "bchange13":"Blocuri ramase în perioada de sponsorizare",
+      "bchange13":"Blocuri ramase Ã®n perioada de sponsorizare",
       "bchange15":"Relatia de sponsorizare",
       "bchange16":"Cont de sponsor",
       "bchange17":"Copiati cheia de sponsorizare",
@@ -615,7 +615,7 @@
    "apipage":{
       "achange1":"Adauga cheia API",
       "achange2":"API key",
-      "achange3":"Va rugam sa introduceti cheia API pentru acest nod. Aceasta poate fi gasita intr-un fisier numit “apikey.txt“ in directorul in care este instalat nucleul. Alternativ, faceti clic pe Anulare (Anulare) pentru a utiliza nucleul cu functionalitate redusa.",
+      "achange3":"Va rugam sa introduceti cheia API pentru acest nod. Aceasta poate fi gasita intr-un fisier numit â€œapikey.txtâ€œ in directorul in care este instalat nucleul. Alternativ, faceti clic pe Anulare (Anulare) pentru a utiliza nucleul cu functionalitate redusa.",
       "achange4":"Anulare",
       "achange5":"Adauga",
       "achange6":"S-a adaugat cu succes cheia API",
@@ -640,15 +640,15 @@
       "rewarddialog5":"Suntei pe cale sa stergeti o tranzactie de cota de recompensare asociata cu contul:",
       "rewarddialog6":"La apasarea butonului de confirmare, recompensa va fi eliminata, iar cheia de obtinere de recompensa (minting) va deveni invalida."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Sponsorizari active",
+      "schange2":"Adresa contului",
+      "schange3":"Total de sponsorizari active",
+      "schange4":"Urmatoarea sponsorizare se incheie in",
+      "schange5":"Sponsorizeaza New Minter",
+      "schange6":"Sponsorizari terminate",
+      "schange7":"Efectuat",
+      "schange8":"Adrese",
+      "schange9":"In prezent, nu aveti sponsorizari active"
    }
 }

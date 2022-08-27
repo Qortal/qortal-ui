@@ -640,15 +640,15 @@
       "rewarddialog5":"You are removing a reward share transaction associated with account:",
       "rewarddialog6":"On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Active Sponsorships",
+      "schange2":"Account Address",
+      "schange3":"Total Sponsorships active",
+      "schange4":"Next sponsorship ending in",
+      "schange5":"Sponsor New Minter",
+      "schange6":"Finished Sponsorships",
+      "schange7":"Completed",
+      "schange8":"Addresses",
+      "schange9":"You currently have no active sponsorships"
    }
 }

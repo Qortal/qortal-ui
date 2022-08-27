@@ -640,15 +640,15 @@
       "rewarddialog5":"Stai rimuovendo una transazione di quota premio associata all'account:",
       "rewarddialog6":"Premendo conferma, la condivisione del premio verrà rimossa e la chiave di conio non sarà più valida."
    },
-   "sponsorshipspage": {
-      "schange1": "Active Sponsorships",
-      "schange2" : "Account Address",
-      "schange3" : "Total Sponsorships active",
-      "schange4" : "Next sponsorship ending in",
-      "schange5" : "Sponsor New Minter",
-      "schange6" : "Finished Sponsorships",
-      "schange7" : "Completed",
-      "schange8" : "Addresses",
-      "schange9" : "You currently have no active sponsorships"
+   "sponsorshipspage":{
+      "schange1":"Sponsorizzazioni attive",
+      "schange2":"Indirizzo conto",
+      "schange3":"Sponsorizzazioni totali attive",
+      "schange4":"Prossima sponsorizzazione che termina tra",
+      "schange5":"Sponsorizzare New Minter",
+      "schange6":"Sponsorizzazioni terminate",
+      "schange7":"Completato",
+      "schange8":"Indirizzi",
+      "schange9":"Al momento non hai sponsorizzazioni attive"
    }
 }
