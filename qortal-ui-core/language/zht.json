@@ -641,14 +641,14 @@
       "rewarddialog6":"點擊確認後，鑄幣密鑰將被移除並失效。"
    },
    "sponsorshipspage":{
-      "schange1":"積極贊助",
-      "schange2":"帳戶地址",
-      "schange3":"總贊助活動",
-      "schange4":"下一次贊助以",
-      "schange5":"贊助新鑄幣廠",
-      "schange6":"完成贊助",
-      "schange7":"完全的",
-      "schange8":"地址",
-      "schange9":"您目前沒有有效的讚助"
+      "schange1":"目前有效的贊助記錄",
+      "schange2":"被贊助賬號",
+      "schange3":"總贊助數目",
+      "schange4":"距離下一輪可贊助新人還剩下區塊數：",
+      "schange5":"贊助新人",
+      "schange6":"已完成贊助",
+      "schange7":"已完成",
+      "schange8":"錢包地址",
+      "schange9":"您目前沒有有效的贊助記錄"
    }
 }
