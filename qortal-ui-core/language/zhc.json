@@ -641,14 +641,14 @@
       "rewarddialog6":"点击确认后，铸币密钥将被移除並失效。"
    },
    "sponsorshipspage":{
-      "schange1":"积极赞助",
-      "schange2":"帐户地址",
-      "schange3":"总赞助活动",
-      "schange4":"下一次赞助以",
-      "schange5":"赞助新铸币厂",
-      "schange6":"完成赞助",
-      "schange7":"完全的",
-      "schange8":"地址",
-      "schange9":"您目前没有有效的赞助"
+	  "schange1":"目前有效的赞助记录",
+      "schange2":"被赞助账号",
+      "schange3":"总赞助数目",
+      "schange4":"距离下一轮可赞助新人还剩下区块数：",
+      "schange5":"赞助新人",
+      "schange6":"已完成赞助",
+      "schange7":"已完成",
+      "schange8":"钱包地址",
+      "schange9":"您目前没有有效的赞助记录"
    }
 }
