@@ -127,12 +127,22 @@ class SponsorshipList extends LitElement {
 		return nodeInfo
 	}
 
-	
+	async saveToClipboard(text) {
+		try {
+			await navigator.clipboard.writeText(this.privateRewardShareKey)
+			parentEpml.request('showSnackBar', text)
+		} catch (err) {
+			
+			console.error('Copy to clipboard error:', err)
+		}
+	}
 	changeStatus(value){
 		this.status = value
 		
-		
+		this.saveToClipboard('Copied to clipboard')
 	}
+
+	
 
 	async atMount() {
 		
@@ -279,7 +289,7 @@ class SponsorshipList extends LitElement {
 		removeReceiver()
 	}
 
-	async createRewardShare(publicKeyValue) {
+	async createRewardShare(publicKeyValue, isCopy) {
 		this.openDialogRewardShare = true
 		if(!publicKeyValue){
 			this.errorMessage = "unable to pull public key from the chain, account has no outgoing transactions"
@@ -379,7 +389,7 @@ class SponsorshipList extends LitElement {
 			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS')) ){
 			
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
-				this.confirmRelationship(publicKeyValue)
+				this.confirmRelationship(publicKeyValue, isCopy)
 			} else if (txnResponse.success === false && txnResponse?.message) {
 	
 				this.errorMessage = txnResponse?.message
@@ -392,7 +402,7 @@ class SponsorshipList extends LitElement {
 			
 	
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
-				this.confirmRelationship(publicKeyValue)
+				this.confirmRelationship(publicKeyValue, isCopy)
 			} else {
 		
 				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
@@ -406,7 +416,7 @@ class SponsorshipList extends LitElement {
 
 
 
-	async confirmRelationship(recipientPublicKey){
+	async confirmRelationship(recipientPublicKey, isCopy){
 		this.status = 2
 		let interval = null
 		let stop = false
@@ -431,7 +441,7 @@ class SponsorshipList extends LitElement {
 						this.status = 3
 
 					
-						this.timer = countDown(180, ()=> this.changeStatus(4));
+						this.timer = countDown(isCopy ? 5 : 180, ()=> this.changeStatus(4));
 					}
 					
 				} catch (error) {
@@ -521,7 +531,7 @@ class SponsorshipList extends LitElement {
 										<mwc-button @click=${()=> {
 
 										
-											this.createRewardShare(sponsorship?.publicKey)
+											this.createRewardShare(sponsorship?.publicKey, true)
 										} }>copy</mwc-button>
 									</li>
 									<li class="grid-item grid-item-button">
@@ -665,19 +675,22 @@ class SponsorshipList extends LitElement {
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
                 <span style="color: #000;">${this.privateRewardShareKey}</span>
             </div>
-      
-							
-							
-						
+			<mwc-button @click=${()=> {
+				this.saveToClipboard('Copied to clipboard')
+				} }>copy
+			</mwc-button>
 						</li>
 						` : ''}
 					</ul>
+					${this.status === 4 ? '' : html`
 					<div class="warning column">
 						<p>
 						Warning: do not leave this plugin or close the Qortal UI until completion!
 						</p>
 						<p class="message-error">${this.errorMessage}</p>
 					</div>
+					`}
+					
 					
 					</div>
 					<mwc-button

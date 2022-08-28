@@ -423,6 +423,7 @@ export const pageStyles = css`
 		display: flex;
 		align-items: flex-start;
 		flex-direction: column;
+		overflow-x: hidden;
 }
 
 .warning{
