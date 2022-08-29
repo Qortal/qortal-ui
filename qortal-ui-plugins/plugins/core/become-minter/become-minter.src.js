@@ -148,10 +148,10 @@ class BecomeMinter extends LitElement {
 
 	render() {
 		const findMintingAccount = this.mintingAccountData?.find(
-			(ma) =>  ma.publicKey === window.parent.reduxStore.getState().app?.selectedAddress
-            ?.base58PublicKey
+			(ma) =>  ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress
+			?.address
 		);
-
+	
 		const isAlreadySponsored =
 			this.addressInfo?.error !== 124 &&
 			this.addressInfo?.level === 0 &&
