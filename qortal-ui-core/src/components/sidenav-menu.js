@@ -9,6 +9,7 @@ import '@vaadin/icons';
 
 import '../functional-components/side-menu.js';
 import '../functional-components/side-menu-item.js';
+import './start-minting.js'
 
 class SidenavMenu extends connect(store)(LitElement) {
 	static get properties() {
@@ -44,13 +45,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 					border-top: 1px solid var(--border);
 					outline: none;
 				}
-
-				.start-minting-wrapper {
-					position: absolute;
-					bottom: 130px;
-					left: 50%;
-					transform: translateX(calc(-50% - 10px));
-				}
 			`,
 		];
 	}
@@ -59,9 +53,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 		super();
 		this.urls = [];
 		this.nodeType = '';
-		this.theme = localStorage.getItem('qortalTheme')
-			? localStorage.getItem('qortalTheme')
-			: 'light';
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 		this.addressInfo = {};
 	}
 
@@ -225,15 +217,15 @@ class SidenavMenu extends connect(store)(LitElement) {
 					</side-menu-item>
 					${this.renderNodeManagement()}
 				</side-menu-item>
+				<div style="margin-top: 20px;">
+					<start-minting></start-minting>
+				</div>
 			`;
 		}
 	}
 
 	renderNodeManagement() {
-		const checkNodeManagement =
-			store.getState().app.nodeConfig.knownNodes[
-				store.getState().app.nodeConfig.node
-			];
+		const checkNodeManagement = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
 		if ((checkNodeManagement.enableManagement = true)) {
 			return html`
 				<side-menu-item

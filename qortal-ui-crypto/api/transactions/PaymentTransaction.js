@@ -36,7 +36,7 @@ export default class PaymentTransaction extends TransactionBase {
     }
 
     set amount(amount) {
-        this._amount = amount * store.getState().config.coin.decimals
+        this._amount = Math.round(amount * store.getState().config.coin.decimals)
         this._amountBytes = this.constructor.utils.int64ToBytes(this._amount)
     }
 

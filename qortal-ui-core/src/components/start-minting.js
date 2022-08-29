@@ -7,22 +7,19 @@ import { asyncReplace } from 'lit/directives/async-replace.js';
 import '../functional-components/my-button.js';
 import { routes } from '../plugins/routes.js';
 import "@material/mwc-button"
-
 import '@material/mwc-dialog'
 
 
 async function* countDown(count, callback) {
-
-
 	while (count > 0) {
 		yield count--;
 		await new Promise((r) => setTimeout(r, 1000));
 		if (count === 0) {
-
 			callback()
 		}
 	}
 }
+
 class StartMinting extends connect(store)(LitElement) {
 	static get properties() {
 		return {
@@ -194,101 +191,86 @@ class StartMinting extends connect(store)(LitElement) {
 	}
 
 	renderErrorMsg1() {
-	return html`${translate("startminting.smchange1")}`
-}
-
-renderErrorMsg2() {
-	return html`${translate("startminting.smchange2")}`
-}
-
-renderErrorMsg3() {
-	return html`${translate("startminting.smchange3")}`
-}
-
-renderErrorMsg4() {
-	return html`${translate("startminting.smchange4")}`
-}
-
-async getMintingAcccounts() {
-	const myNode =
-		store.getState().app.nodeConfig.knownNodes[
-		store.getState().app.nodeConfig.node
-		];
-	const nodeUrl =
-		myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-	const url = `${nodeUrl}/admin/mintingaccounts`;
-	try {
-		const res = await fetch(url);
-		const mintingAccountData = await res.json();
-
-		this.mintingAccountData = mintingAccountData;
-	} catch (error) {
-		this.errorMsg = this.renderErrorMsg1();
+		return html`${translate("startminting.smchange1")}`
 	}
-}
 
-async changeStatus(value){
-	const myNode =
-		store.getState().app.nodeConfig.knownNodes[
-		store.getState().app.nodeConfig.node
-		];
+	renderErrorMsg2() {
+		return html`${translate("startminting.smchange2")}`
+	}
 
-	const nodeUrl =
-		myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-	this.status = value
-	const publicAddress =
-		window.parent.reduxStore.getState().app?.selectedAddress
-			?.base58PublicKey;
-	// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
-	const findMintingAccountFromOtherUser = this.mintingAccountData.find(
-		(ma) => !ma.publicKey.includes(publicAddress)
-	);
-	const removeMintingAccount = async (publicKey) => {
+	renderErrorMsg3() {
+		return html`${translate("startminting.smchange3")}`
+	}
 
-		const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
+	renderErrorMsg4() {
+		return html`${translate("startminting.smchange4")}`
+	}
 
-		return await fetch(url, {
-			method: 'DELETE',
-			body: publicKey,
-		});
-	};
+	async getMintingAcccounts() {
+		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		const url = `${nodeUrl}/admin/mintingaccounts`;
+		try {
+			const res = await fetch(url);
+			const mintingAccountData = await res.json();
 
-	const addMintingAccount = async (sponsorshipKeyValue) => {
-		const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
-
-		return await fetch(url, {
-			method: 'POST',
-			body: sponsorshipKeyValue,
-		});
-	};
-
-	try {
-		if (
-			findMintingAccountFromOtherUser &&
-			findMintingAccountFromOtherUser?.publicKey[0]
-		) {
-			await removeMintingAccount(
-				findMintingAccountFromOtherUser?.publicKey[0]
-			);
+			this.mintingAccountData = mintingAccountData;
+		} catch (error) {
+			this.errorMsg = this.renderErrorMsg1();
 		}
-	} catch (error) {
-		this.errorMsg = this.renderErrorMsg2();
-		return;
 	}
 
-	try {
-		await addMintingAccount(this.privateRewardShareKey);
-		routes.showSnackBar({
-			data: translate('becomeMinterPage.bchange19'),
-		});
-		this.status = 5;
-		this.getMintingAcccounts();
-	} catch (error) {
-		this.errorMsg = this.renderErrorMsg3();
-		return;
-	}
+	async changeStatus(value){
+		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		this.status = value
+		const publicAddress = window.parent.reduxStore.getState().app?.selectedAddress ?.base58PublicKey;
 
-}
+		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
+		const findMintingAccountFromOtherUser = this.mintingAccountData.find((ma) => !ma.publicKey.includes(publicAddress));
+
+		const removeMintingAccount = async (publicKey) => {
+			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
+			return await fetch(url, {
+				method: 'DELETE',
+				body: publicKey,
+			});
+		};
+
+		const addMintingAccount = async (sponsorshipKeyValue) => {
+			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
+			return await fetch(url, {
+				method: 'POST',
+				body: sponsorshipKeyValue,
+			});
+		};
+
+		try {
+			if (
+				findMintingAccountFromOtherUser &&
+				findMintingAccountFromOtherUser?.publicKey[0]
+			) {
+				await removeMintingAccount(
+					findMintingAccountFromOtherUser?.publicKey[0]
+				);
+			}
+		} catch (error) {
+			this.errorMsg = this.renderErrorMsg2();
+			return;
+		}
+
+		try {
+			await addMintingAccount(this.privateRewardShareKey);
+			routes.showSnackBar({
+				data: translate('becomeMinterPage.bchange19'),
+			});
+			this.status = 5;
+			this.getMintingAcccounts();
+		} catch (error) {
+			this.errorMsg = this.renderErrorMsg3();
+			return;
+		}
+	}
 
 async confirmRelationship(){
 	const myNode =
@@ -337,232 +319,193 @@ async confirmRelationship(){
 	interval = setInterval(getAnswer, 5000);
 }
 
-renderStartMintingButton() {
-	const myNode =
-		store.getState().app.nodeConfig.knownNodes[
-		store.getState().app.nodeConfig.node
-		];
+	renderStartMintingButton() {
+		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		const mintingAccountData = this.mintingAccountData;
+		const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
+		const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+		const nonce = window.parent.reduxStore.getState().app?.selectedAddress?.nonce;
+		const publicAddress = window.parent.reduxStore.getState().app?.selectedAddress ?.base58PublicKey;
+		const findMintingAccount = mintingAccountData.find((ma) => ma.mintingAccount === address);
+		const isMinterButKeyMintingKeyNotAssigned = addressInfo?.error !== 124 && addressInfo?.level >= 1 && !findMintingAccount;
 
-	const nodeUrl =
-		myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		const makeTransactionRequest = async (lastRef) => {
+			let mylastRef = lastRef;
+			let rewarddialog1 = get('transactions.rewarddialog1');
+			let rewarddialog2 = get('transactions.rewarddialog2');
+			let rewarddialog3 = get('transactions.rewarddialog3');
+			let rewarddialog4 = get('transactions.rewarddialog4');
 
-	const mintingAccountData = this.mintingAccountData;
-
-	const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
-
-	const address =
-		window.parent.reduxStore.getState().app?.selectedAddress?.address;
-
-	const nonce =
-		window.parent.reduxStore.getState().app?.selectedAddress?.nonce;
-
-	const publicAddress =
-		window.parent.reduxStore.getState().app?.selectedAddress
-			?.base58PublicKey;
-			
-	
-	const findMintingAccount = mintingAccountData.find((ma) =>
-		ma.mintingAccount === address
-	);
-
-	const isMinterButKeyMintingKeyNotAssigned =
-		addressInfo?.error !== 124 &&
-		addressInfo?.level >= 1 &&
-		!findMintingAccount;
-	const makeTransactionRequest = async (lastRef) => {
-		let mylastRef = lastRef;
-		let rewarddialog1 = get('transactions.rewarddialog1');
-		let rewarddialog2 = get('transactions.rewarddialog2');
-		let rewarddialog3 = get('transactions.rewarddialog3');
-		let rewarddialog4 = get('transactions.rewarddialog4');
-
-		let myTxnrequest = await routes.transaction({
-			data: {
-				type: 38,
-				nonce: nonce,
-				params: {
-					recipientPublicKey: publicAddress,
-					percentageShare: 0,
-					lastReference: mylastRef,
-					rewarddialog1: rewarddialog1,
-					rewarddialog2: rewarddialog2,
-					rewarddialog3: rewarddialog3,
-					rewarddialog4: rewarddialog4,
+			let myTxnrequest = await routes.transaction({
+				data: {
+					type: 38,
+					nonce: nonce,
+					params: {
+						recipientPublicKey: publicAddress,
+						percentageShare: 0,
+						lastReference: mylastRef,
+						rewarddialog1: rewarddialog1,
+						rewarddialog2: rewarddialog2,
+						rewarddialog3: rewarddialog3,
+						rewarddialog4: rewarddialog4,
+					},
 				},
-			},
-			disableModal: true,
-		});
-		return myTxnrequest;
-	};
+				disableModal: true,
+			});
+			return myTxnrequest;
+		};
 
-	const getTxnRequestResponse = (txnResponse) => {
-		let err6string = get('rewardsharepage.rchange21');
-		if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
-			return err6string
-		}
-		if (txnResponse.success === false && txnResponse.message) {
-			throw (txnResponse);
-		} else if (
-			txnResponse.success === true &&
-			!txnResponse.data.error
-		) {
+		const getTxnRequestResponse = (txnResponse) => {
+			let err6string = get('rewardsharepage.rchange21');
+			if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
+				return err6string
+			}
+			if (txnResponse.success === false && txnResponse.message) {
+				throw (txnResponse);
+			} else if (
+				txnResponse.success === true &&
+				!txnResponse.data.error
+			) {
 
-			return err6string;
-		} else {
-			throw (txnResponse);
-		}
-	};
+				return err6string;
+			} else {
+				throw (txnResponse);
+			}
+		};
 
-	const createSponsorshipKey = async () => {
-		this.status = 1
-		let lastRef = await getLastRef();
+		const createSponsorshipKey = async () => {
+			this.status = 1
+			let lastRef = await getLastRef();
 
-		let myTransaction = await makeTransactionRequest(lastRef);
+			let myTransaction = await makeTransactionRequest(lastRef);
 
-		getTxnRequestResponse(myTransaction);
-		return myTransaction?.extraData?.rewardSharePrivateKey
-	};
+			getTxnRequestResponse(myTransaction);
+			return myTransaction?.extraData?.rewardSharePrivateKey
+		};
 
+		const getLastRef = async () => {
+			const url = `${nodeUrl}/addresses/lastreference/${address}`;
+			const res = await fetch(url);
+			const data = await res.text();
+			return data;
+		};
 
-	const getLastRef = async () => {
-		const url = `${nodeUrl}/addresses/lastreference/${address}`;
+		const startMinting = async () => {
+			this.openDialogRewardShare = true
+			this.errorMsg = '';
 
-		const res = await fetch(url);
+			try {
+				this.privateRewardShareKey = await createSponsorshipKey();
+				this.confirmRelationship(publicAddress)
+			} catch (error) {
+				console.log({ error })
+				this.errorMsg = error?.data?.message || this.renderErrorMsg4();
+				return;
+			}
+		};
 
-		const data = await res.text();
+		return html`
+			${isMinterButKeyMintingKeyNotAssigned ? html`
+				<div class="start-minting-wrapper">
+					<my-button label="${translate('becomeMinterPage.bchange18')}"
+						?isLoading=${false}
+						.onClick=${async () => {
+							await startMinting();
+							if (this.errorMsg) {
+								routes.showSnackBar({
+									data: this.errorMsg,
+								});
+							}
+						}}
+					>
+					</my-button>
+				</div>
 
-		return data;
-	};
-
-	const startMinting = async () => {
-		this.openDialogRewardShare = true
-
-		this.errorMsg = '';
-
-		try {
-
-			this.privateRewardShareKey = await createSponsorshipKey();
-			this.confirmRelationship(publicAddress)
-		} catch (error) {
-			console.log({ error })
-			this.errorMsg = error?.data?.message || this.renderErrorMsg4();
-			return;
-		}
-
-
-	};
-
-	return html`
-			${isMinterButKeyMintingKeyNotAssigned
-			? html`
-						<div class="start-minting-wrapper">
-							<my-button
-								label="${translate(
-				'becomeMinterPage.bchange18'
-			)}"
-								?isLoading=${false}
-								.onClick=${async () => {
-					await startMinting();
-					if (this.errorMsg) {
-						routes.showSnackBar({
-							data: this.errorMsg,
-						});
-					}
-				}}
-							></my-button>
-						</div>
-
-
-						<!-- Dialog for tracking the progress of starting minting -->
+				<!-- Dialog for tracking the progress of starting minting -->
 			
-
-					${this.openDialogRewardShare ? html`
+				${this.openDialogRewardShare ? html`
 					<div class="dialogCustom">
 						<div class="dialogCustomInner">
-                    <div class="dialog-header" >
-						<div class="row">
-						<h1>In progress  </h1> <div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
-						</div>
-                       
-                        <hr />
-                    </div>
-				<div class="dialog-container">
-					<ul>
-						<li class="row between">
-							<p>
-								1. ${translate("startminting.smchange5")}
-							</p>
-							<div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div>
-						</li>
-
-						<li class=${`row between ${this.status < 2 && 'inactiveText'}`}>
-							<p>
-								2. ${translate("startminting.smchange6")}
-							</p>
-							<div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
-						</li>
-
-						<li class=${`row between ${this.status < 3 && 'inactiveText'}`}>
-							<p>
-								3. ${translate("startminting.smchange7")}
-							</p>
-							<div class="row no-width">
-								<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+                    				<div class="dialog-header" >
+								<div class="row">
+								<h1>In progress</h1>
+								<div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
 							</div>
-						</li>
+							<hr />
+						</div>
+						<div class="dialog-container">
+							<ul>
+								<li class="row between">
+									<p>
+										1. ${translate("startminting.smchange5")}
+									</p>
+									<div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div>
+								</li>
 
-						<li class=${`row between ${this.status < 4 && 'inactiveText'}`}>
-							<p>
-								4. ${translate("startminting.smchange8")}
-							</p>
-							<div class=${`smallLoading marginLoader ${this.status !== 4 && 'hide'}`}></div>
-						</li>
+								<li class=${`row between ${this.status < 2 && 'inactiveText'}`}>
+									<p>
+										2. ${translate("startminting.smchange6")}
+									</p>
+									<div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
+								</li>
 
-						<li class=${`row between ${this.status < 5 && 'inactiveText'}`}>
-							<p>
-								5. ${translate("startminting.smchange9")}
-							</p>
-						</li>
-					</ul>
-					<div class="warning column">
-						<p>
-							Warning: do not close the Qortal UI until completion!
-						</p>
-						<p class="message-error">${this.errorMsg}</p>
-					</div>	
-				</div>
-					<div class="modalFooter">
-						${this.errorMsg || this.status === 5 ? html`
-						<mwc-button
-                        slot="primaryAction"
-						@click=${() => {
-						this.openDialogRewardShare = false
-						this.errorMsg = ''
+								<li class=${`row between ${this.status < 3 && 'inactiveText'}`}>
+									<p>
+										3. ${translate("startminting.smchange7")}
+									</p>
+									<div class="row no-width">
+										<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+									</div>
+								</li>
 
-					}}
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
+								<li class=${`row between ${this.status < 4 && 'inactiveText'}`}>
+									<p>
+										4. ${translate("startminting.smchange8")}
+									</p>
+									<div class=${`smallLoading marginLoader ${this.status !== 4 && 'hide'}`}></div>
+								</li>
+
+								<li class=${`row between ${this.status < 5 && 'inactiveText'}`}>
+									<p>
+										5. ${translate("startminting.smchange9")}
+									</p>
+								</li>
+							</ul>
+							<div class="warning column">
+								<p>
+									Warning: do not close the Qortal UI until completion!
+								</p>
+								<p class="message-error">${this.errorMsg}</p>
+							</div>	
+						</div>
+						<div class="modalFooter">
+							${this.errorMsg || this.status === 5 ? html`
+							<mwc-button
+                        				slot="primaryAction"
+								@click=${() => {
+									this.openDialogRewardShare = false
+									this.errorMsg = ''
+								}}
+                        				class="red"
+                    				>
+                    				${translate("general.close")}
+                    				</mwc-button>
 						` : '' }
-					
 					</div>
-					</div>
-					
-				
-                <!-- </mwc-dialog> -->
 				</div>
 					
-					` : ""}
+			 <!-- </mwc-dialog> -->
+			</div>
 					
-				  `
-			: ''}
+			` : ""}			
+			` : ''}
 		`;
-}
+	}
 
-stateChanged(state) {
-	this.addressInfo = state.app.accountInfo.addressInfo;
-}
+	stateChanged(state) {
+		this.addressInfo = state.app.accountInfo.addressInfo;
+	}
 }
 
 window.customElements.define('start-minting', StartMinting);
