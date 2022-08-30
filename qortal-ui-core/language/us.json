@@ -649,6 +649,10 @@
       "schange6":"Finished Sponsorships",
       "schange7":"Completed",
       "schange8":"Addresses",
-      "schange9":"You currently have no active sponsorships"
+      "schange9":"You currently have no active sponsorships",
+      "schange10" : "Public Key Lookup",
+      "schange11" : "Copy",
+      "schange12": "Address to Public Key Converter",
+      "schange13" : "Enter address"
    }
 }

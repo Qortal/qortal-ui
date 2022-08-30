@@ -143,6 +143,13 @@ export const pageStyles = css`
 		outline: 1px var(--black) solid;
 		min-width: 80px;
 	}
+	mwc-icon-button {
+		height: 100%;
+		margin: 0;
+		cursor: pointer;
+		outline: 1px var(--black) solid;
+		min-width: 80px;
+	}
 	.loader,
 	.loader:after {
 		border-radius: 50%;
@@ -278,6 +285,12 @@ export const pageStyles = css`
 		margin-top: 25px;
 		width: 100%;
 		flex-wrap: wrap;
+	}
+
+	.publicKeyLookupBtn {
+		position: fixed;
+		bottom: 15px;
+		right: 15px;
 	}
 
 	.summary-box p:first-child {
