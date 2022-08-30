@@ -13,6 +13,13 @@ export const pageStyles = css`
 		font-weight: 400;
 		text-align: center;
 	}
+	.avatar-img {
+		border-radius: 50%;
+	
+    height: 20px;
+    width: 20px;
+	margin-right: 10px;
+	}
 	.divider {
 		color: #eee;
 		border-radius: 80%;
@@ -263,6 +270,17 @@ export const pageStyles = css`
 		color: var(--black);
 		word-break: break-all;
 		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.name-container {
+		text-align: center;
+		color: var(--black);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.text {
@@ -384,6 +402,9 @@ export const pageStyles = css`
 			align-items: center;
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
+		.name-container {
+			justify-content: flex-start
 		}
 
 		.grid-item p {
