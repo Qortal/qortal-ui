@@ -4,6 +4,7 @@ import "../components/ButtonIconCopy.js"
 import { use, get, translate, registerTranslateConfig } from "lit-translate"
 import { blocksNeed } from "../../utils/blocks-needed.js"
 import "../components/ButtonIconCopy.js"
+import '@material/mwc-icon-button'
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -52,7 +53,11 @@ class SponsorshipList extends LitElement {
 			status: {type: Number},
 			privateRewardShareKey: {type: String},
 			timer: {type: Number},
-			openDialogRewardShare: {type: Boolean}
+			openDialogRewardShare: {type: Boolean},
+			isOpenDialogPublicKeyLookup: {type: Boolean},
+			lookupAddressValue: {type: String},
+			lookupPublicAddressValue: {type: String},
+			errorLookup: {type: String}
 		}
 	}
 
@@ -78,11 +83,21 @@ class SponsorshipList extends LitElement {
 		this.status = 0
 		this.privateRewardShareKey = ""
 		this.openDialogRewardShare = false
+		this.isOpenDialogPublicKeyLookup = false
+		this.lookupAddressValue = ""
+		this.lookupPublicAddressValue = ""
+		this.errorLookup = ""
 	}
 
 	inputHandler(e) {
 		this.publicKeyValue = e.target.value
 	}
+	lookupPublicAddressInputHandler(e) {
+		this.lookupAddressValue = e.target.value
+	}
+
+	
+
 
 	changeLanguage() {
 		const checkLanguage = localStorage.getItem("qortalLanguage")
@@ -127,9 +142,9 @@ class SponsorshipList extends LitElement {
 		return nodeInfo
 	}
 
-	async saveToClipboard(text) {
+	async saveToClipboard(toBeCopied, text) {
 		try {
-			await navigator.clipboard.writeText(this.privateRewardShareKey)
+			await navigator.clipboard.writeText(toBeCopied)
 			parentEpml.request('showSnackBar', text)
 		} catch (err) {
 			
@@ -139,7 +154,7 @@ class SponsorshipList extends LitElement {
 	changeStatus(value){
 		this.status = value
 		
-		this.saveToClipboard('Copied to clipboard')
+		this.saveToClipboard(this.privateRewardShareKey, 'Copied to clipboard')
 	}
 
 	
@@ -455,7 +470,22 @@ class SponsorshipList extends LitElement {
 		interval = setInterval(getAnswer, 5000);
 	}
 
-	
+	async lookUpPublicAddressFunc(){
+		this.errorLookup = ''
+		try {
+			const response = await parentEpml.request("apiCall", {
+				type: "api",
+				url: `/addresses/publickey/${this.lookupAddressValue}`,
+			})
+			if(response.error){
+				throw(response.message)
+			}
+			this.lookupPublicAddressValue = response
+		} catch (error) {
+			this.errorLookup = error
+			console.error(error)
+		}
+	}
 
 
 	render() {
@@ -600,6 +630,18 @@ class SponsorshipList extends LitElement {
 										  )}
 							</vaadin-button>
 						</div>
+						<div class="publicKeyLookupBtn">
+					
+							<vaadin-button
+								
+								@click="${()=> {
+									this.isOpenDialogPublicKeyLookup = true
+								} }"
+							>
+							${translate("sponsorshipspage.schange10")}
+							
+							</vaadin-button>
+						</div>
 					</div>
 				</div>
 				<mwc-dialog  id="showDialog">
@@ -676,7 +718,7 @@ class SponsorshipList extends LitElement {
                 <span style="color: #000;">${this.privateRewardShareKey}</span>
             </div>
 			<mwc-button @click=${()=> {
-				this.saveToClipboard('Copied to clipboard')
+				this.saveToClipboard(this.privateRewardShareKey, 'Copied to clipboard')
 				} }>copy
 			</mwc-button>
 						</li>
@@ -707,6 +749,80 @@ class SponsorshipList extends LitElement {
                     ${translate("general.close")}
                     </mwc-button>
                    
+				
+                </mwc-dialog>
+
+				<mwc-dialog id="showDialogPublicKey" escapeKeyAction="" scrimClickAction=""  ?open=${this.isOpenDialogPublicKeyLookup}>
+					
+                    <div class="dialog-header" >
+                        <h1>${translate("sponsorshipspage.schange10")}</h1>
+                        <hr />
+                    </div>
+					<div class="dialog-container">
+
+					<p class="dialog-paragraph" style="text-align:center; width:100%">
+					${translate("sponsorshipspage.schange12")}
+				
+				</p>
+
+				<div class="form-wrapper">
+						
+				
+							<mwc-textfield
+							
+								label=${translate("sponsorshipspage.schange13")}
+								@input="${this.lookupPublicAddressInputHandler}"
+								.value="${this.lookupAddressValue || ""}"
+								fullWidth
+							>
+							</mwc-textfield>
+						</div>
+						<p class="message-error">${this.errorLookup}</p>
+						<div class="row" style="margin-top: 20px; justify-content: center">
+							<vaadin-button
+							?disabled="${!this.lookupAddressValue}"
+								@click="${()=> {
+									this.lookupPublicAddressValue = ""
+									this.lookUpPublicAddressFunc()
+								} }"
+							>
+							${translate("sponsorshipspage.schange10")}
+							</vaadin-button>
+							</div>
+				
+					${this.lookupPublicAddressValue ? html`
+					<div class="word-break" style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                <span style="color: #000;">${this.lookupPublicAddressValue}</span>
+            </div>
+			<div class="row" style="margin-top: 20px; justify-content: center">
+			<mwc-button @click=${()=> {
+				
+				this.saveToClipboard(this.lookupPublicAddressValue, 'Copied to clipboard')
+				} }>${translate("sponsorshipspage.schange11")}
+			</mwc-button>
+			</div>
+					
+					` : ''}
+				
+			
+
+
+					</div>
+                 
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+						@click=${()=>{
+							this.lookupAddressValue = ""
+							this.lookupPublicAddressValue = ""
+							this.isOpenDialogPublicKeyLookup = false
+							this.errorLookup = ""
+							
+						}}
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
 				
                 </mwc-dialog>
 			</div>
