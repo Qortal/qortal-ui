@@ -19,6 +19,7 @@ class YesSponsored extends LitElement {
 		return {
 			addressInfo: { type: Object },
 			rewardSharePublicKey: { type: String },
+			isMinting: {type: Boolean}
 		};
 	}
 
@@ -27,6 +28,7 @@ class YesSponsored extends LitElement {
 
 		this.addressInfo = {};
 		this.rewardSharePublicKey = '';
+		this.isMinting = false
 	}
 
 	static styles = [pageStyles];
@@ -63,7 +65,12 @@ class YesSponsored extends LitElement {
 							<hr
 								style="color: #eee; border-radius: 90%; margin-bottom: 1rem;"
 							/>
+							${this.isMinting ? html`
 							<h4>${translate('becomeMinterPage.bchange12')}</h4>
+							` : html`
+							<h4>${translate('mintingpage.mchange9')}</h4>
+							`}
+							
 						</div>
 						<div class="content-box">
 							<span class="title"

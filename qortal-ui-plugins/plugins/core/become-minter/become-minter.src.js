@@ -98,8 +98,7 @@ class BecomeMinter extends LitElement {
 	async atMount() {
 		this.changeLanguage();
 
-		this.addressInfo =
-			window.parent.reduxStore.getState().app.accountInfo.addressInfo;
+
 		this.isPageLoading = true;
 		try {
 			const [nodeInfo, myRewardShareArray, mintingaccounts] =
@@ -117,6 +116,8 @@ class BecomeMinter extends LitElement {
 				myRewardShareArray[0]?.rewardSharePublicKey;
 			this.isPageLoading = false;
 			this.mintingAccountData = mintingaccounts;
+			this.addressInfo =
+				window.parent.reduxStore.getState().app.accountInfo.addressInfo;
 		} catch (error) {
 			console.error(error);
 
@@ -147,15 +148,18 @@ class BecomeMinter extends LitElement {
 	}
 
 	render() {
+
 		const findMintingAccount = this.mintingAccountData?.find(
-			(ma) =>  ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress
-			?.address
+			(ma) => ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress
+				?.address
 		);
-	
+
+
+
 		const isAlreadySponsored =
 			this.addressInfo?.error !== 124 &&
 			this.addressInfo?.level === 0 &&
-			findMintingAccount;
+			this.addressInfo?.blocksMinted > 0 && this.addressInfo?.blocksMinted < 7200
 
 		return html`
 			${this.isPageLoading
@@ -176,19 +180,20 @@ class BecomeMinter extends LitElement {
 				</div>
 
 				${isAlreadySponsored
-					? ''
-					: html`
+				? ''
+				: html`
 							<not-sponsored
 								.atMount="${() => this.atMount()}"
 							></not-sponsored>
 					  `}
 				${!isAlreadySponsored
-					? ''
-					: html`
+				? ''
+				: html`
 							<yes-sponsored
 								.rewardSharePublicKey=${this
-									.rewardSharePublicKey}
+						.rewardSharePublicKey}
 								.addressInfo=${this.addressInfo}
+								.isMinting=${!!findMintingAccount}
 							></yes-sponsored>
 					  `}
 			</div>
