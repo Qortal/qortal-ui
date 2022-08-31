@@ -405,7 +405,7 @@ async confirmRelationship(){
 
 			const findMintingAccountsFromUser = this.mintingAccountData.filter((ma) => ma.recipientAccount === address && ma.mintingAccount === address);
 
-			if(findMintingAccountsFromUser > 2){
+			if(findMintingAccountsFromUser.length > 2){
 				this.errorMsg = translate("startminting.smchange10")
 				return;
 			}
