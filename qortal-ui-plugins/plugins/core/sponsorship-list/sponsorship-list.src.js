@@ -157,7 +157,11 @@ class SponsorshipList extends LitElement {
 		this.saveToClipboard(this.privateRewardShareKey, 'Copied to clipboard')
 	}
 
-	
+	getApiKey() {
+        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = apiNode.apiKey;
+        return apiKey;
+    }
 
 	async atMount() {
 		
@@ -178,18 +182,34 @@ class SponsorshipList extends LitElement {
 			)
 
 			rewardShares = rewardShares.filter((rs) => rs.recipient !== address)
-
+			
 			const getAccountInfo = rewardShares.map(async (rs) => {
 				const addressInfo = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/addresses/${rs.recipient}`,
 				})
+
+				const getNames = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/names/address/${rs.recipient}`,
+				})
+				let url = ""
+				if(getNames?.length > 0 ){
+					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+				const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+				const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+				url = urlPic
+				}
+				
+
+			
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
 				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
 				return {
 					...addressInfo,
 					...rs,
-					
+					name: getNames?.length > 0 ? getNames[0].name : '',
+					url,
 					blocksRemaining: blocksRemaining,
 				}
 			})
@@ -207,7 +227,7 @@ class SponsorshipList extends LitElement {
 			}
 
 		} catch (error) {
-			
+			console.log({error})
 
 			this.isPageLoading = false
 		}
@@ -521,7 +541,7 @@ class SponsorshipList extends LitElement {
 					</div>
 					<div class="tableGrid table-header">
 						<div class="grid-item header">
-							<p>${translate("sponsorshipspage.schange2")}</p>
+							<p>${translate("settings.account")}</p>
 						</div>
 						<div class="grid-item header">
 							<p>${translate("walletprofile.blocksminted")}</p>
@@ -541,9 +561,19 @@ class SponsorshipList extends LitElement {
 								<ul class="tableGrid">
 									<li class="grid-item">
 									<p class="grid-item-text">
-											Account Address
+											Account
 										</p>
-										${sponsorship.address}
+										<div class="name-container">
+											${sponsorship?.name ? html`
+											<img  src=${sponsorship.url}
+										class="avatar-img"
+										onerror="this.src='/img/incognito.png'"
+										/>
+											` : ''}
+										
+										${sponsorship?.name || sponsorship.address}
+										</div>
+									
 									</li>
 									<li class="grid-item">
 									<p class="grid-item-text">
