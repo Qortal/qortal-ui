@@ -34,7 +34,7 @@ export default class PaymentTransaction extends TransactionBase {
     set dialogamount(dialogamount) {
         this._dialogamount = dialogamount
     }
-
+    
     set amount(amount) {
         this._amount = Math.round(amount * store.getState().config.coin.decimals)
         this._amountBytes = this.constructor.utils.int64ToBytes(this._amount)
@@ -55,9 +55,21 @@ export default class PaymentTransaction extends TransactionBase {
         return html`
             <table>
                 <tr>
-                    <th>${this._dialogto}</th>
-                    <td>${Base58.encode(this._recipient)}</td>
+                    <th>${this._dialogto}:</th>
+                    
                 </tr>
+                <tr>
+                <td>${this.dialogAddress} ${' '}-</td> 
+                    <td>${Base58.encode(this._recipient)}</td> 
+                   
+                </tr>
+                ${this.recipientName ? html`
+                <tr>
+                    <td>${this.dialogName} ${' '}-</td> 
+                    <td>${this.recipientName}</td>
+                </tr>
+                ` : ''}
+                
                 <tr>
                     <th>${this._dialogamount}</th>
                     <td>${this._amount / conf.coin.decimals} ${conf.coin.symbol}</td>

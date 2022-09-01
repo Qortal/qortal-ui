@@ -3954,22 +3954,44 @@ class MultiWallet extends LitElement {
             }
         }
 
+        const getName = async (recipient)=> {
+            try {
+                
+                const getNames = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/names/address/${recipient}`,
+				})
+                if(getNames?.length > 0 ){
+                    return getNames[0].name
+                } else {
+                    return ''
+                }
+            } catch (error) {
+                return ""
+            }
+        }
+
         const makeTransactionRequest = async (receiver, lastRef) => {
             let myReceiver = receiver
             let mylastRef = lastRef
             let dialogamount = get("transactions.amount")
+            let dialogAddress = get("login.address")
+            let dialogName = get("login.name")
             let dialogto = get("transactions.to")
-
+            let recipientName = await getName(myReceiver)
             let myTxnrequest = await parentEpml.request('transaction', {
                 type: 2,
                 nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
                 params: {
                     recipient: myReceiver,
+                    recipientName: recipientName,
                     amount: amount,
                     lastReference: mylastRef,
                     fee: 0.001,
                     dialogamount: dialogamount,
                     dialogto: dialogto,
+                    dialogAddress,
+                    dialogName
                 },
             })
             return myTxnrequest
