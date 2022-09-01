@@ -42,6 +42,18 @@ class TradePortal extends LitElement {
             isLoadingMyOpenOrders: { type: Boolean },
             theme: { type: String, reflect: true },
             arrrWalletAddress: { type: String },
+            qortbtc: { type: Number },
+            qortltc: { type: Number },
+            qortdoge: { type: Number },
+            qortdgb: { type: Number },
+            qortrvn: { type: Number },
+            qortarrr: { type: Number },
+            btcqort: { type: Number },
+            ltcqort: { type: Number },
+            dogeqort: { type: Number },
+            dgbqort: { type: Number },
+            rvnqort: { type: Number },
+            arrrqort: { type: Number }
         }
     }
 
@@ -245,6 +257,26 @@ class TradePortal extends LitElement {
 			font-size: 15px;
 			margin-top: 5px;
 			margin-bottom: 12px;
+		}
+
+		.exchange {
+			color: var(--black);
+			font-size: 18px;
+                  font-weight: bold;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		.clear-button {
+                  display: inline;
+			float: right;
+			margin-bottom: 5px;
+		}
+
+		.exhcnage-text {
+                  display: inline;
+			float: left;
+			margin-bottom: 5px;
 		}
 
 		.balance-text {
@@ -599,6 +631,18 @@ class TradePortal extends LitElement {
         this.isLoadingMyOpenOrders = false
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.arrrWalletAddress = ''
+        this.qortbtc = 0
+        this.qortltc = 0
+        this.qortdoge = 0
+        this.qortdgb = 0
+        this.qortrvn = 0
+        this.qortarr = 0
+        this.btcqort = 0
+        this.ltcqort = 0
+        this.dogeqort = 0
+        this.dgbqort = 0
+        this.rvnqort = 0
+        this.arrqort = 0
     }
 
     // TODO: Move each template to a separate components! Maybe
@@ -703,16 +747,17 @@ class TradePortal extends LitElement {
 				<z id="tabs-1-content">
 					<div id="tab-buy-content">
 						<div class="card">
-							<div style="margin-left: auto">
-								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
-							</div>
+							<span class="exchange">
+								<span class="clear-button"><mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button></span>
+                                                <span class="exhcnage-text">1 ${this.listedCoins.get(this.selectedCoin).coinCode} = ${this.exchangeRateForeign()} QORT</span>
+							</span>
                                           <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
 									style="width: 100%; color: var(--black);"
 									id="buyAmountInput"
 									required readOnly
-                                                                        label=""
+                                                      label=""
 									placeholder="0.0000"
 									type="text" 
 									auto-validate="false"
@@ -773,9 +818,10 @@ class TradePortal extends LitElement {
 					</div>
 					<div id="tab-sell-content">
 						<div class="card">
-							<div style="margin-left: auto">
-								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
-							</div>
+							<span class="exchange">
+								<span class="clear-button"><mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button></span>
+                                                <span class="exhcnage-text">1 QORT = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
+							</span>
 							<span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
@@ -1124,6 +1170,98 @@ class TradePortal extends LitElement {
             use('us')
         } else {
             use(checkLanguage)
+        }
+    }
+
+    exchangeRateQort() {
+        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/BITCOIN?inverse=true`
+            }).then((res) => {
+                this.qortbtc = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortbtc}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/LITECOIN?inverse=true`
+            }).then((res) => {
+                this.qortltc = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortltc}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DOGECOIN?inverse=true`
+            }).then((res) => {
+                this.qortdoge = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortdoge}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DIGIBYTE?inverse=true`
+            }).then((res) => {
+                this.qortdgb = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortdgb}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/RAVENCOIN?inverse=true`
+            }).then((res) => {
+                this.qortrvn = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortrvn}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/PIRATECHAIN?inverse=true`
+            }).then((res) => {
+                this.qortarrr = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.qortarrr}`
+        }
+    }
+
+    exchangeRateForeign() {
+        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/BITCOIN?inverse=false`
+            }).then((res) => {
+                this.btcqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.btcqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/LITECOIN?inverse=false`
+            }).then((res) => {
+                this.ltcqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.ltcqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DOGECOIN?inverse=false`
+            }).then((res) => {
+                this.dogeqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.dogeqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DIGIBYTE?inverse=false`
+            }).then((res) => {
+                this.dgbqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.dgbqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/RAVENCOIN?inverse=false`
+            }).then((res) => {
+                this.rvnqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.rvnqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/PIRATECHAIN?inverse=false`
+            }).then((res) => {
+                this.arrrqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.arrrqort}`
         }
     }
 
