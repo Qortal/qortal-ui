@@ -152,7 +152,8 @@
       "smchange6":"Awaiting confirmation on blockchain",
       "smchange7":"Finishing up relationship",
       "smchange8":"Adding minting key to node",
-      "smchange9":"Complete"
+      "smchange9":"Complete",
+      "smchange10": "Only 2 minting keys are allowed per node, you are attempting to assign 3 keys, please go to management - node management, and remove the key you do not want to assign to this node, thank you!"
    },
    "mintingpage":{
       "mchange1":"General Minting Details",

@@ -36,6 +36,9 @@ class StartMinting extends connect(store)(LitElement) {
 	static get styles() {
 		return [
 			css`
+			p, h1 {
+				color: var(--black)
+			}
 			.dialogCustom {
 				position: fixed;
     				z-index: 10000;
@@ -152,6 +155,7 @@ class StartMinting extends connect(store)(LitElement) {
 			.between p {
 				margin: 0;
 				padding: 0;
+				color: var(--black);
 			}
 			.marginLoader {
 				margin-left: 10px;
@@ -224,11 +228,14 @@ class StartMinting extends connect(store)(LitElement) {
 		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 		this.status = value
-		const publicAddress = window.parent.reduxStore.getState().app?.selectedAddress ?.base58PublicKey;
+		const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
 
 		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
-		const findMintingAccountFromOtherUser = this.mintingAccountData.find((ma) => !ma.publicKey.includes(publicAddress));
+		const findMintingAccountFromOtherUser = this.mintingAccountData.find((ma) => ma.recipientAccount === address && ma.mintingAccount !== address);
 
+		
+
+		
 		const removeMintingAccount = async (publicKey) => {
 			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
 			return await fetch(url, {
@@ -394,6 +401,14 @@ async confirmRelationship(){
 		const startMinting = async () => {
 			this.openDialogRewardShare = true
 			this.errorMsg = '';
+			const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+
+			const findMintingAccountsFromUser = this.mintingAccountData.filter((ma) => ma.recipientAccount === address && ma.mintingAccount === address);
+
+			if(findMintingAccountsFromUser.length > 2){
+				this.errorMsg = translate("startminting.smchange10")
+				return;
+			}
 
 			try {
 				this.privateRewardShareKey = await createSponsorshipKey();
