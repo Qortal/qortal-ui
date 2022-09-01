@@ -74,7 +74,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 	async getNodeType() {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
-				store.getState().app.nodeConfig.node
+			store.getState().app.nodeConfig.node
 			];
 		const nodeUrl =
 			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -132,28 +132,29 @@ class SidenavMenu extends connect(store)(LitElement) {
 					expanded
 				>
 					<vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
-					${isMinter
-						? html`<side-menu-item
+					<side-menu-item
 								label="${translate('sidemenu.mintingdetails')}"
 								href="/app/minting"
+								?hide=${!isMinter}
 						  >
 								<vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
-						</side-menu-item>`
-						: html`<side-menu-item
+						</side-menu-item>
+					<side-menu-item
 								label="${translate('sidemenu.becomeAMinter')}"
 								href="/app/become-minter"
+								?hide=${isMinter}
 						  >
 								<vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
-						</side-menu-item>`
-                              }
-					${isSponsor ? html`
+						</side-menu-item>
+				
 					<side-menu-item
 						label="${translate('mintingpage.mchange35')}"
 						href="/app/sponsorship-list"
+						?hide=${!isSponsor}
 					>
 						<vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
 					</side-menu-item>
-					` : ''}
+			
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"

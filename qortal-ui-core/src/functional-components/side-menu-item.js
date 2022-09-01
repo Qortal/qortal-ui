@@ -13,7 +13,8 @@ export class SideMenuItem extends LitElement {
             expanded: { type: Boolean, reflect: true },
             compact: { type: Boolean, reflect: true },
             href: { type: String, reflect: true },
-            target: { type: String, reflect: true }
+            target: { type: String, reflect: true },
+            hide: { type: Boolean }
         }
     }
 
@@ -27,6 +28,7 @@ export class SideMenuItem extends LitElement {
         super()
         this.selected = false
         this.expanded = false
+        this.hide = false
     }
 
     render() {
@@ -53,6 +55,7 @@ export class SideMenuItem extends LitElement {
                 href=${this.href || '#!'}
                 @click="${(e) => this._onClick(e)}"
                 target=${ifDefined(this.target)}
+                class=${this.hide ? 'hideItem' : ''}
             >
                 <slot class="icon" name="icon"></slot>
                 <div id ="content">
