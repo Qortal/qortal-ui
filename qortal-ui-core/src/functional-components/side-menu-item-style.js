@@ -47,6 +47,9 @@ export const sideMenuItemStyle = css`
     border-bottom: 1px solid var(--item-border-color);
     text-transform: uppercase;
   }
+  .hideItem {
+    display: none !important;
+  }
 
   #itemLink:hover {
     background-color: var(--item-color-hover);
