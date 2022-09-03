@@ -152,7 +152,8 @@
       "smchange6":"In attesa di conferma su blockchain",
       "smchange7":"Finire la relazione",
       "smchange8":"Aggiunta della chiave di conio al nodo",
-      "smchange9":"Completare"
+      "smchange9":"Completare",
+      "smchange10":"Sono consentite solo 2 chiavi di conio per nodo, stai tentando di assegnare 3 chiavi, vai su gestione - gestione del nodo e rimuovi la chiave che non vuoi assegnare a questo nodo, grazie!"
    },
    "mintingpage":{
       "mchange1":"Dettagli generali di Minazione",

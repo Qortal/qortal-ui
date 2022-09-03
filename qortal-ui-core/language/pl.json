@@ -152,7 +152,8 @@
       "smchange6":"Oczekiwanie na potwierdzenie na blockchain",
       "smchange7":"Kończąc związek",
       "smchange8":"Dodawanie klucza bicia do węzła",
-      "smchange9":"Kompletny"
+      "smchange9":"Kompletny",
+      "smchange10":"Tylko 2 klucze są dozwolone na węzeł, próbujesz przypisać 3 klucze, przejdź do zarządzania - zarządzanie węzłami i usuń klucz, którego nie chcesz przypisać do tego węzła, dziękuję!"
    },
    "mintingpage":{
       "mchange1":"Ogólne szczegóły mintowania",

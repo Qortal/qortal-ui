@@ -152,7 +152,8 @@
       "smchange6":"En attente de confirmation sur blockchain",
       "smchange7":"Finir la relation",
       "smchange8":"Ajout de la clé de frappe au nœud",
-      "smchange9":"Complet"
+      "smchange9":"Complet",
+      "smchange10":"Seules 2 clés de frappe sont autorisées par nœud, vous tentez d'attribuer 3 clés, veuillez vous rendre dans gestion - gestion des nœuds, et retirer la clé que vous ne souhaitez pas attribuer à ce nœud, merci !"
    },
    "mintingpage":{
       "mchange1":"Détails généraux sur la frappe",

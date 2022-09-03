@@ -152,7 +152,8 @@
       "smchange6":"En espera de confirmación en blockchain",
       "smchange7":"Terminando la relación",
       "smchange8":"Agregar clave de acuñación al nodo",
-      "smchange9":"Completo"
+      "smchange9":"Completo",
+      "smchange10":"Solo se permiten 2 claves de acuñación por nodo, está intentando asignar 3 claves, vaya a administración - administración de nodos y elimine la clave que no desea asignar a este nodo, gracias!"
    },
    "mintingpage":{
       "mchange1":"Detalles Generales de Acuñación",

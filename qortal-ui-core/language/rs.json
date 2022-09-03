@@ -152,7 +152,8 @@
       "smchange6":"Čeka se potvrda na blokčejnu",
       "smchange7":"Završavanje veze",
       "smchange8":"Dodavanje ključa za kovanje čvoru",
-      "smchange9":"Kompletan"
+      "smchange9":"Kompletan",
+      "smchange10":"Dozvoljena su samo 2 ključa za kovanje po čvoru, pokušavate da dodelite 3 ključa, idite na upravljanje - upravljanje čvorovima i uklonite ključ koji ne želite da dodelite ovom čvoru, hvala!"
    },
    "mintingpage":{
       "mchange1":"Opšti Detalji Mintovanja",

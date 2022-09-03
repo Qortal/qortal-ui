@@ -152,7 +152,8 @@
       "smchange6":"Warten auf Bestätigung in der Blockchain",
       "smchange7":"Beziehung beenden",
       "smchange8":"Prägeschlüssel zum Knoten hinzufügen",
-      "smchange9":"Vollständig"
+      "smchange9":"Vollständig",
+      "smchange10":"Pro Node sind nur 2 Minting Keys erlaubt, Sie versuchen 3 Keys zuzuweisen, gehen Sie bitte zu Management - Node Management und entfernen Sie den Key, den Sie diesem Node nicht zuweisen möchten, danke!"
    },
    "mintingpage":{
       "mchange1":"Allgemeine Prägedetails",

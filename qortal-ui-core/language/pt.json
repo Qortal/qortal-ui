@@ -152,7 +152,8 @@
       "smchange6":"Aguardando confirmação no blockchain",
       "smchange7":"Terminando o relacionamento",
       "smchange8":"Adicionando a chave de cunhagem ao nó",
-      "smchange9":"Completo"
+      "smchange9":"Completo",
+      "smchange10":"Apenas 2 chaves de cunhagem são permitidas por nó, você está tentando atribuir 3 chaves, vá para gerenciamento - gerenciamento de nó e remova a chave que você não deseja atribuir a este nó, obrigado!"
    },
    "mintingpage":{
       "mchange1":"Detalhes gerais da mineração",

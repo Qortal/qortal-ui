@@ -152,7 +152,8 @@
       "smchange6":"Venter på bekreftelse på blockchain",
       "smchange7":"Fullføre forholdet",
       "smchange8":"Legger til myntnøkkel til node",
-      "smchange9":"Fullstendig"
+      "smchange9":"Fullstendig",
+      "smchange10":"Bare 2 pregenøkler er tillatt per node, du prøver å tildele 3 nøkler, vennligst gå til ledelse - nodeadministrasjon, og fjern nøkkelen du ikke vil tilordne denne noden, takk!"
    },
    "mintingpage":{
       "mchange1":"Generelle mintedetaljer",

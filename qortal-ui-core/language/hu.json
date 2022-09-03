@@ -152,7 +152,8 @@
       "smchange6":"Megerősítésre vár a blokkláncon",
       "smchange7":"A kapcsolat befejezése",
       "smchange8":"Mentőkulcs hozzáadása a csomóponthoz",
-      "smchange9":"Teljes"
+      "smchange9":"Teljes",
+      "smchange10":"Csomópontonként csak 2 kulcsverés engedélyezett, Ön 3 kulcsot próbál hozzárendelni. Kérjük, lépjen a menedzsment - csomópontkezelés oldalra, és távolítsa el azt a kulcsot, amelyet nem szeretne ehhez a csomóponthoz rendelni, köszönöm!"
    },
    "mintingpage":{
       "mchange1":"Általános Pénzverés Részletei",

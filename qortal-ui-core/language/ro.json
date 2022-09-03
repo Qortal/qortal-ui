@@ -152,7 +152,8 @@
       "smchange6":"Se asteapta confirmarea pe blockchain",
       "smchange7":"Terminarea relatiei",
       "smchange8":"Adaugarea cheii de batere la nod",
-      "smchange9":"Complet"
+      "smchange9":"Complet",
+      "smchange10":"Sunt permise doar 2 chei de batere per nod, incercati sa atribuiti 3 chei, va rugam sa mergeti la management - management nod si eliminati cheia pe care nu doriti să o atribuiti acestui nod, va multumesc!"
    },
    "mintingpage":{
       "mchange1":"Detalii generale de producere a monedei",
