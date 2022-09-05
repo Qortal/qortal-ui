@@ -6,7 +6,8 @@ import { Epml } from '../../../epml.js'
 
 import './LevelFounder.js'
 import './NameMenu.js'
-
+import '@vaadin/icons';
+import '@vaadin/icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -342,6 +343,10 @@ class MessageTemplate extends LitElement {
             padding-bottom: 4px;
         }
 
+        .message-container {
+            position: relative;
+        }
+
         .message {
             color: black;
             padding: 12px 10px;
@@ -373,6 +378,22 @@ class MessageTemplate extends LitElement {
             border-bottom-color: #ddd;
             border-width: 10px;
             margin-left: -10px;
+        }
+
+        .message-container:hover .message{
+            filter:brightness(0.90);
+        }
+
+        .message-container:hover .chat-hover {
+            opacity: 1;
+        }
+
+        .chat-hover {
+            display: block;
+            position: absolute;
+            top: -32px;
+            right: 25px;
+            opacity: 0;
         }
 
         .emoji {
@@ -434,9 +455,6 @@ class MessageTemplate extends LitElement {
         `
     }
 
-
-
-
     render() {
 
         const hidemsg = this.hideMessages
@@ -463,16 +481,119 @@ class MessageTemplate extends LitElement {
 
         return hideit ? html`<li class="clearfix"></li>` : html`
 			<li class="clearfix">
-                    <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
-                        <span class="message-data-name">${nameMenu}</span>
-                        <span class="message-data-level">${levelFounder}</span>
-                        <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
-                    </div>
-                    <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
+                    <span class="message-data-name">${nameMenu}</span>
+                    <span class="message-data-level">${levelFounder}</span>
+                    <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
+                </div>
+                <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
+                <div class="message-container">
                     <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
-                </li>
+                    <chat-menu class="chat-hover"></chat-menu>
+                </div>
+            </li>
 		`;
     }
 }
 
 window.customElements.define('message-template', MessageTemplate);
+
+class ChatMenu extends LitElement {
+    static get properties() {
+        return {
+            menuItems: { type: Array },
+        };
+    }
+
+    constructor() {
+        super();
+    }
+
+    static get styles() {
+        return css`
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+            background-color: white;
+            border: 1px solid #dad9d9;
+            border-radius: 5px;
+            height:100%;
+        }
+
+        .menu-icon {
+            width: 100%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .menu-icon:hover {
+            background-color: #dad9d9;
+            transition: all 0.1s ease-in-out;
+            cursor: pointer;
+        }
+
+        .tooltip {
+            position: relative; 
+         }
+
+         .tooltip:before {
+            content: attr(data-text); 
+            position: absolute;
+            top: -47px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            padding: 10px;
+            border-radius: 10px;
+            background:#fff;
+            color: #000;
+            text-align: center;
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+            font-size: 12px;
+            display: none; 
+            }
+
+            .tooltip:hover:before {
+            display: block;
+            }
+
+            .tooltip:after {
+            content: "";
+            position: absolute;
+            margin-top: -7px;
+            top: -7px;
+            border: 10px solid #fff;
+            border-color: white transparent transparent transparent;
+            display: none;
+            }
+
+            .tooltip:hover:before, .tooltip:hover:after {
+            display: block;
+            }
+        `
+    }
+
+    render() {
+
+        return html`
+            <div class="container">
+                <div class="menu-icon tooltip" data-text="Private Message">
+                <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
+                </div>
+                <div class="menu-icon tooltip" data-text="Copy Address">
+                <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
+                </div>
+                <div class="menu-icon tooltip" data-text="More">
+                <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
+                </div>
+            </div>
+        `
+    }
+}
+
+window.customElements.define('chat-menu', ChatMenu);
+
