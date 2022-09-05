@@ -642,7 +642,7 @@
       "rewarddialog6":"点击确认后，铸币密钥将被移除並失效。"
    },
    "sponsorshipspage":{
-	"schange1":"目前有效的赞助记录",
+	  "schange1":"目前有效的赞助记录",
       "schange2":"被赞助账号",
       "schange3":"总赞助数目",
       "schange4":"距离下一轮可赞助新人还剩下区块数：",
@@ -651,16 +651,16 @@
       "schange7":"已完成",
       "schange8":"钱包地址",
       "schange9":"您目前没有有效的赞助记录",
-      "schange10":"公钥查找",
+      "schange10":"搜寻公共密钥",
       "schange11":"复制",
-      "schange12":"地址到公钥转换器",
-      "schange13":"输入地址",
-      "schange14":"进行中",
-      "schange15":"整理起来",
-      "schange16":"复制下面的密钥并与您的赞助人分享。",
+      "schange12":"钱包地址公共密钥转换器",
+      "schange13":"输入钱包地址",
+      "schange14":"处理中",
+      "schange15":"即将完成",
+      "schange16":"复制下面的铸币密钥并分享给被赞助的人。",
       "schange17":"已复制到剪贴板",
-      "schange18":"警告：在完成之前不要离开这个插件或关闭 Qortal UI！",
+      "schange18":"警告：在完成之前不要离开这个页面或关闭 Qortal UI！",
       "schange19":"复制赞助密钥",
-      "schange20":"建立关系"
+      "schange20":"建立赞助"
    }
 }
