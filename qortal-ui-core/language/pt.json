@@ -650,6 +650,17 @@
       "schange6":"Patrocínios Concluídos",
       "schange7":"Concluído",
       "schange8":"Endereços",
-      "schange9":"No momento, você não tem patrocínios ativos"
+      "schange9":"No momento, você não tem patrocínios ativos",
+      "schange10":"Pesquisa de chave pública",
+      "schange11":"cópia de",
+      "schange12":"Conversor de endereço para chave pública",
+      "schange13":"Insira o endereço",
+      "schange14":"Em andamento",
+      "schange15":"Terminando",
+      "schange16":"Copie a chave abaixo e compartilhe com seu patrocinador.",
+      "schange17":"Copiado para a área de transferência",
+      "schange18":"Aviso: não saia deste plugin ou feche a interface do usuário do Qortal até a conclusão!",
+      "schange19":"Copiar chave de patrocínio",
+      "schange20":"Criando relacionamento"
    }
 }

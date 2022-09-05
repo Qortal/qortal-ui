@@ -650,6 +650,17 @@
       "schange6":"Zakończone sponsoringi",
       "schange7":"Zakończony",
       "schange8":"Adresy",
-      "schange9":"Obecnie nie masz aktywnych sponsorów"
+      "schange9":"Obecnie nie masz aktywnych sponsorów",
+      "schange10":"Wyszukiwanie klucza publicznego",
+      "schange11":"Kopiuj",
+      "schange12":"Adres do konwertera kluczy publicznych",
+      "schange13":"Podaj adres",
+      "schange14":"W trakcie",
+      "schange15":"Kończąc",
+      "schange16":"Skopiuj poniższy klucz i udostępnij go swojej sponsorowanej osobie.",
+      "schange17":"Skopiowane do schowka",
+      "schange18":"Ostrzeżenie: nie opuszczaj tej wtyczki ani nie zamykaj interfejsu użytkownika Qortal do czasu zakończenia!",
+      "schange19":"Kopiuj klucz sponsorski",
+      "schange20":"Tworzenie relacji"
    }
 }

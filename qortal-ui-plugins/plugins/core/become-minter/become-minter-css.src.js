@@ -2,8 +2,19 @@ import { css } from 'lit';
 
 export const pageStyles = css`
 	* {
-		--mdc-theme-surface: var(--white);
-		--mdc-dialog-content-ink-color: var(--black);
+		box-sizing: border-box;
+            --mdc-theme-primary: rgb(3, 169, 244);
+            --mdc-theme-secondary: var(--mdc-theme-primary);
+            --mdc-theme-surface: var(--white);
+            --mdc-dialog-content-ink-color: var(--black);
+            --lumo-primary-text-color: rgb(0, 167, 245);
+            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+            --lumo-primary-color: hsl(199, 100%, 48%);
+            --lumo-base-color: var(--white);
+            --lumo-body-text-color: var(--black);
+            --_lumo-grid-border-color: var(--border);
+            --_lumo-grid-secondary-border-color: var(--border2);
 	}
 
 	.header-title {
@@ -12,14 +23,17 @@ export const pageStyles = css`
 		font-weight: 400;
 		text-align: center;
 	}
+
 	.divider {
 		color: #eee;
 		border-radius: 80%;
 		margin-bottom: 2rem;
 	}
+
 	.fullWidth {
 		width: 100%;
 	}
+
 	.page-container {
 		display: flex;
 		align-items: center;
@@ -27,6 +41,7 @@ export const pageStyles = css`
 		margin-bottom: 75px;
 		width: 100%;
 	}
+
 	.inner-container {
 		display: flex;
 		align-items: center;
@@ -78,9 +93,11 @@ export const pageStyles = css`
 	.column-center {
 		align-items: center;
 	}
+
 	.no-margin {
 		margin: 0;
 	}
+
 	.no-wrap {
 		flex-wrap: nowrap !important;
 	}
@@ -89,6 +106,7 @@ export const pageStyles = css`
 		justify-content: center;
 		flex-wrap: wrap;
 	}
+
 	.form-item {
 		display: flex;
 		height: 100%;
@@ -122,9 +140,11 @@ export const pageStyles = css`
 		margin-bottom: 5px;
 		flex-basis: 250px;
 	}
+
 	.gap {
 		gap: 10px;
 	}
+
 	.level-black {
 		font-size: 32px;
 		color: var(--black);
@@ -133,6 +153,7 @@ export const pageStyles = css`
 		margin-top: 2rem;
 		text-align: center;
 	}
+
 	.title {
 		font-weight: 600;
 		font-size: 20px;
@@ -152,9 +173,11 @@ export const pageStyles = css`
 		line-height: 28px;
 		color: var(--black);
 	}
+
 	mwc-textfield {
 		width: 100%;
 	}
+
 	vaadin-button {
 		height: 100%;
 		margin: 0;
@@ -162,12 +185,14 @@ export const pageStyles = css`
 		outline: 1px var(--black) solid;
 		min-width: 80px;
 	}
+
 	.loader,
 	.loader:after {
 		border-radius: 50%;
 		width: 10em;
 		height: 10em;
 	}
+
 	.loadingContainer {
 		position: fixed;
 		top: 50%;
@@ -197,7 +222,7 @@ export const pageStyles = css`
 		border-width: 0.6em;
 		border-style: solid;
 		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+		rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
 		font-size: 10px;
 		position: relative;
 		text-indent: -9999em;

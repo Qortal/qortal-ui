@@ -645,6 +645,17 @@
       "schange6":"Ferdige sponsorater",
       "schange7":"Fullført",
       "schange8":"Adresser",
-      "schange9":"Du har for øyeblikket ingen aktive sponsorater"
+      "schange9":"Du har for øyeblikket ingen aktive sponsorater",
+      "schange10":"Offentlig nøkkeloppslag",
+      "schange11":"Kopiere",
+      "schange12":"Adresse til Public Key Converter",
+      "schange13":"Skriv inn adresse",
+      "schange14":"I prosess",
+      "schange15":"Etterbehandling",
+      "schange16":"Kopier nøkkelen nedenfor og del den med din sponsede person.",
+      "schange17":"Kopiert til utklippstavlen",
+      "schange18":"Advarsel: ikke forlat denne plugin-en eller lukk Qortal-grensesnittet før det er fullført!",
+      "schange19":"Kopier sponsornøkkel",
+      "schange20":"Skaper forhold"
    }
 }

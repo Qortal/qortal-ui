@@ -4,7 +4,6 @@ import "../components/ButtonIconCopy.js"
 import { use, get, translate, registerTranslateConfig } from "lit-translate"
 import { blocksNeed } from "../../utils/blocks-needed.js"
 import "../components/ButtonIconCopy.js"
-import '@material/mwc-icon-button'
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -12,6 +11,8 @@ registerTranslateConfig({
 
 import "@polymer/paper-spinner/paper-spinner-lite.js"
 import "@material/mwc-button"
+import '@material/mwc-icon'
+import '@material/mwc-icon-button'
 import "@material/mwc-textfield"
 import "@vaadin/button"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
@@ -23,17 +24,14 @@ import { pageStyles } from "./sponsorship-list-css.src.js"
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
 
 async function* countDown(count, callback) {
-	
-	
 	while (count > 0) {
-	  yield count--;
-	  await new Promise((r) => setTimeout(r, 1000));
-	  if(count === 0){
-	
-		callback()
+		yield count--;
+		await new Promise((r) => setTimeout(r, 1000));
+		if(count === 0) {
+			callback()
+		}
 	}
-	}
-  }
+}
 
 class SponsorshipList extends LitElement {
 	static get properties() {
@@ -65,9 +63,7 @@ class SponsorshipList extends LitElement {
 
 	constructor() {
 		super()
-		this.theme = localStorage.getItem("qortalTheme")
-			? localStorage.getItem("qortalTheme")
-			: "light"
+		this.theme = localStorage.getItem("qortalTheme") ? localStorage.getItem("qortalTheme") : "light"
 		this.isPageLoading = true
 		this.nodeInfo = {}
 		this.addressInfo = {}
@@ -75,7 +71,6 @@ class SponsorshipList extends LitElement {
 		this.mintingAccountData = null
 		this.sponsorships = []
 		this.removeRewardShareLoading = false
-		
 		this.errorMessage = ""
 		this.isLoadingCreateSponsorship = false
 		this.publicKeyValue = ""
@@ -89,15 +84,18 @@ class SponsorshipList extends LitElement {
 		this.errorLookup = ""
 	}
 
+	renderCopyMsg() {
+		let copystring = get("sponsorshipspage.schange17")
+		return `${copystring}`
+	}
+
 	inputHandler(e) {
 		this.publicKeyValue = e.target.value
 	}
+
 	lookupPublicAddressInputHandler(e) {
 		this.lookupAddressValue = e.target.value
 	}
-
-	
-
 
 	changeLanguage() {
 		const checkLanguage = localStorage.getItem("qortalLanguage")
@@ -147,21 +145,20 @@ class SponsorshipList extends LitElement {
 			await navigator.clipboard.writeText(toBeCopied)
 			parentEpml.request('showSnackBar', text)
 		} catch (err) {
-			
 			console.error('Copy to clipboard error:', err)
 		}
 	}
 	changeStatus(value){
 		this.status = value
-		
-		this.saveToClipboard(this.privateRewardShareKey, 'Copied to clipboard')
+		let copystring1 = get("sponsorshipspage.schange17")
+		this.saveToClipboard(this.privateRewardShareKey, `${copystring1}`)
 	}
 
 	getApiKey() {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = apiNode.apiKey;
         return apiKey;
-    }
+	}
 
 	async atMount() {
 		
@@ -449,8 +446,6 @@ class SponsorshipList extends LitElement {
 	
 	}
 
-
-
 	async confirmRelationship(recipientPublicKey, isCopy){
 		this.status = 2
 		let interval = null
@@ -507,18 +502,17 @@ class SponsorshipList extends LitElement {
 		}
 	}
 
-
 	render() {
 		return html`
 			${
 				this.isPageLoading
 					? html`
-							<div class="loadingContainer">
-								<div class="loading"></div>
-							</div>
-							<div class="backdrop"></div>
-					  `
-					: ""
+						<div class="loadingContainer">
+							<div class="loading"></div>
+						</div>
+						<div class="backdrop"></div>
+					`
+				: ""
 			}
 
 			<div class="page-container">
@@ -554,219 +548,193 @@ class SponsorshipList extends LitElement {
 						
 						</div>
 					</div>
-
-				
-						${this.sponsorships.map(
-							(sponsorship) => html`
-								<ul class="tableGrid">
-									<li class="grid-item">
+					${this.sponsorships.map(
+						(sponsorship) => html`
+							<ul class="tableGrid">
+								<li class="grid-item">
 									<p class="grid-item-text">
-											Account
-										</p>
-										<div class="name-container">
-											${sponsorship?.name ? html`
+										${translate("settings.account")}
+									</p>
+									<div class="name-container">
+										${sponsorship?.name ? html`
 											<img  src=${sponsorship.url}
-										class="avatar-img"
-										onerror="this.src='/img/incognito.png'"
-										/>
-											` : ''}
-										
+												class="avatar-img"
+												onerror="this.src='/img/incognito.png'"
+											/>
+										` : ''}		
 										${sponsorship?.name || sponsorship.address}
-										</div>
-									
-									</li>
-									<li class="grid-item">
+									</div>
+								</li>
+								<li class="grid-item">
 									<p class="grid-item-text">
-											Blocks Minted
-										</p>
-										${+sponsorship.blocksMinted +
-										+sponsorship.blocksMintedAdjustment}
-									</li>
-									
-									<li class="grid-item">
+											${translate("walletprofile.blocksminted")}
+									</p>
+									${+sponsorship.blocksMinted +
+									+sponsorship.blocksMintedAdjustment}
+								</li>
+								<li class="grid-item">
 									<p class="grid-item-text">
-											Copy Sponsorship Key
-										</p>
-										
-										<mwc-button @click=${()=> {
-
-										
-											this.createRewardShare(sponsorship?.publicKey, true)
-										} }>copy</mwc-button>
-									</li>
-									<li class="grid-item grid-item-button">
-										<mwc-button
-											class=${`red ${sponsorship.blocksRemaining <= 0 && 'btn--sponsorshipfinished'}`}
-											?disabled=${this
-												.removeRewardShareLoading}
-											@click=${() =>
-												this.removeRewardShare(
-													sponsorship
-												)}
-											><mwc-icon>create</mwc-icon
-											>${translate(
-												"rewardsharepage.rchange17"
-											)}</mwc-button>
-										
-									</li>
-								</ul>
-							`
-						)}
-					
-					
-							<div class="summary-box">
-								<p class="text text--bold">
-								${translate("sponsorshipspage.schange3")} =
-									<span class="text text--normal">
-									${this.sponsorships.length}
-									</span>
-									
-								</p>
-								<p class="text text--bold">
-								${translate("sponsorshipspage.schange4")} = 
-									<span class="text text--normal">
-									${this.nextSponsorshipEnding
-										?.blocksRemaining}
-									${translate("mintingpage.mchange26")}
-									</span>
-									
-								</p>
-							</div>
+										${translate("sponsorshipspage.schange19")}
+									</p>
+									<mwc-button
+										@click=${()=> {this.createRewardShare(sponsorship?.publicKey, true)}}
+									>
+									<mwc-icon>content_copy</mwc-icon>&nbsp;${translate("sponsorshipspage.schange11")}
+									</mwc-button>
+								</li>
+								<li class="grid-item grid-item-button">
+									<mwc-button
+										class=${`red ${sponsorship.blocksRemaining <= 0 && 'btn--sponsorshipfinished'}`}
+										?disabled=${this.removeRewardShareLoading}
+										@click=${() => this.removeRewardShare(sponsorship)}
+									>
+									<mwc-icon>delete_forever</mwc-icon>&nbsp;${translate("rewardsharepage.rchange17")}
+									</mwc-button>	
+								</li>
+							</ul>
 						`
-					: ''}
-					<p class="message-error">${this.errorMessage}</p>
-					<div class="form-wrapper">
-						<div class="sponsor-minter-wrapper">
-							<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
-						</div>
-						<div class="form-item form-item--input">
-							<mwc-textfield
-								?disabled="${this.isLoadingCreateSponsorship}"
-								label="${translate("rewardsharepage.rchange10")}"
-								id="addPublicKey"
-								@input="${this.inputHandler}"
-								.value="${this.publicKeyValue || ""}"
-								fullWidth
-							>
-							</mwc-textfield>
-						</div>
+					)}
+
+					<div class="summary-box">
+						<p class="text text--bold">
+							${translate("sponsorshipspage.schange3")} =
+							<span class="text text--normal">
+								${this.sponsorships.length}
+							</span>		
+						</p>
+						<p class="text text--bold">
+							${translate("sponsorshipspage.schange4")} = 
+							<span class="text text--normal">
+								${this.nextSponsorshipEnding
+								?.blocksRemaining}
+								${translate("mintingpage.mchange26")}
+							</span>
+						</p>
+					</div>
+				`
+			: ''}
+			<p class="message-error">${this.errorMessage}</p>
+			<div class="form-wrapper">
+				<div class="sponsor-minter-wrapper">
+					<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
+				</div>
+
+				<div class="form-item form-item--input">
+					<mwc-textfield
+						?disabled="${this.isLoadingCreateSponsorship}"
+						label="${translate("rewardsharepage.rchange10")}"
+						id="addPublicKey"
+						@input="${this.inputHandler}"
+						.value="${this.publicKeyValue || ""}"
+						fullWidth
+					>
+					</mwc-textfield>
+					</div>
 						<div class="form-item form-item--button">
 							<vaadin-button
+								theme="primary"
 								?disabled="${this.isLoadingCreateSponsorship || !this.publicKeyValue}"
 								@click="${()=> this.createRewardShare(this.publicKeyValue)}"
 							>
-								${translate(
-												"puzzlepage.pchange15"
-										  )}
+							${translate("puzzlepage.pchange15")}
 							</vaadin-button>
 						</div>
 						<div class="publicKeyLookupBtn">
-					
 							<vaadin-button
-								
-								@click="${()=> {
-									this.isOpenDialogPublicKeyLookup = true
-								} }"
+								theme="primary"
+								@click="${()=> {this.isOpenDialogPublicKeyLookup = true}}"
 							>
 							${translate("sponsorshipspage.schange10")}
-							
 							</vaadin-button>
 						</div>
 					</div>
 				</div>
-				<mwc-dialog  id="showDialog">
-					
-                    <div class="dialog-header" >
-                        <h1>${translate("sponsorshipspage.schange6")}</h1>
-                        <hr />
-                    </div>
+
+				<mwc-dialog id="showDialog">
+                    		<div class="dialog-header" >
+                        		<h1>${translate("sponsorshipspage.schange6")}</h1>
+                        		<hr />
+                    		</div>
 					<div class="dialog-container">
-
-					<p class="dialog-paragraph" style="text-align:center; width:100%">${this.sponsorships.filter(s=> s.blocksRemaining <= 0).length} ${translate("sponsorshipspage.schange7")}!</p>
-
-					<p class="dialog-paragraph" style="margin:0px; padding:0px;text-decoration:underline"> ${translate("sponsorshipspage.schange8")}</p>
+						<p class="dialog-paragraph" style="text-align:center; width:100%">${this.sponsorships.filter(s=> s.blocksRemaining <= 0).length} ${translate("sponsorshipspage.schange7")}!</p>
+						<p class="dialog-paragraph" style="margin:0px; padding:0px;text-decoration:underline"> ${translate("sponsorshipspage.schange8")}</p>
 						${this.sponsorships.filter(s=> s.blocksRemaining <= 0).map((ms)=> html`
 						<p class="dialog-paragraph">${ms.address}</p>
 						`)}
 					</div>
-                 
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-				
-                </mwc-dialog>
-				<mwc-dialog escapeKeyAction="" scrimClickAction=""  id="showDialogRewardShareCreationStatus" ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>
-					
-                    <div class="dialog-header" >
-						<div class="row">
-						<h1>In progress  </h1> <div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
-						</div>
-                       
-                        <hr />
-                    </div>
-					<div class="dialog-container">
-					<ul>
-					
-					
-					
-						<li class="row between">1. Creating relationship <div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div></li>
-						<li class=${`row between ${this.status < 2 && 'inactiveText' }`}>
-							<p>
-							2. Awaiting confirmation on blockchain
-							</p>
-							 <div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
-						
-						</li>
-					
-						<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
-						<p>
-						3. Finishing up
-							</p>
+					<mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
+					>
+					${translate("general.close")}
+					</mwc-button>
+				</mwc-dialog>
 
-							<div class="row no-width">
-							<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
-							</div>
-						
-						
-						</li>
-						<li class=${`row between ${this.status < 4 && 'inactiveText' }`}>
-							<p>
-							4. Complete
-							</p>
-							
-						
-						</li>
-						${this.privateRewardShareKey && this.status === 4  ? html`
-						<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>
-					
-           <p style="work-break: break-word">Copy the key below and share it with your sponsored person.</p>
-            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-                <span style="color: #000;">${this.privateRewardShareKey}</span>
-            </div>
-			<mwc-button @click=${()=> {
-				this.saveToClipboard(this.privateRewardShareKey, 'Copied to clipboard')
-				} }>copy
-			</mwc-button>
-						</li>
-						` : ''}
-					</ul>
-					${this.status === 4 ? '' : html`
-					<div class="warning column">
-						<p>
-						Warning: do not leave this plugin or close the Qortal UI until completion!
-						</p>
-						<p class="message-error">${this.errorMessage}</p>
+				<mwc-dialog escapeKeyAction="" scrimClickAction=""  id="showDialogRewardShareCreationStatus" ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>		
+					<div class="dialog-header" >
+						<div class="row">
+							<h1>${translate("sponsorshipspage.schange14")}</h1>
+							<div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
+						</div>
+						<hr />
 					</div>
-					`}
-					
-					
+					<div class="dialog-container">
+						<ul>
+							<li class="row between">
+								<p>
+									1. ${translate("sponsorshipspage.schange20")}
+								</p>
+								<div class=${`smallLoading marginLoader ${this.status !== 1 && 'hide'}`}></div>
+							</li>
+							<li class=${`row between ${this.status < 2 && 'inactiveText' }`}>
+								<p>
+									2. ${translate("startminting.smchange6")}
+								</p>
+							 	<div class=${`smallLoading marginLoader ${this.status !== 2 && 'hide'}`}></div>
+							</li>
+							<li class=${`row between ${this.status < 3 && 'inactiveText' }`}>
+								<p>
+									3. ${translate("sponsorshipspage.schange15")}
+								</p>
+								<div class="row no-width">
+									<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+								</div>
+							</li>
+							<li class=${`row between ${this.status < 4 && 'inactiveText' }`}>
+								<p>
+									4. ${translate("startminting.smchange9")}
+								</p>
+							</li>
+							${this.privateRewardShareKey && this.status === 4  ? html`
+								<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>	
+									<p style="work-break: break-word">
+										${translate("sponsorshipspage.schange16")}
+									</p>
+									<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+										<span style="color: #000;">${this.privateRewardShareKey}</span>
+									</div>
+									<mwc-button
+										raised
+										icon="content_copy"
+										@click=${()=> {this.saveToClipboard(this.privateRewardShareKey, this.renderCopyMsg())}}
+									>
+									${translate("sponsorshipspage.schange11")}
+									</mwc-button>
+								</li>
+							` : ''}
+						</ul>
+						${this.status === 4 ? '' : html`
+							<div class="warning column">
+									<p>
+										${translate("sponsorshipspage.schange18")}
+									</p>
+									<p class="message-error">${this.errorMessage}</p>
+							</div>
+						`}
 					</div>
 					<mwc-button
-                        slot="primaryAction"
+                        		slot="primaryAction"
 						@click=${()=>{
 							this.openDialogRewardShare = false
 							this.errorMessage = ''
@@ -774,32 +742,23 @@ class SponsorshipList extends LitElement {
 							this.privateRewardShareKey = ""
 							this.atMount()
 						}}
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                   
-				
-                </mwc-dialog>
+                        		class="red"
+                    		>
+					${translate("general.close")}
+					</mwc-button>
+               		</mwc-dialog>
 
 				<mwc-dialog id="showDialogPublicKey" escapeKeyAction="" scrimClickAction=""  ?open=${this.isOpenDialogPublicKeyLookup}>
-					
-                    <div class="dialog-header" >
-                        <h1>${translate("sponsorshipspage.schange10")}</h1>
-                        <hr />
-                    </div>
+					<div class="dialog-header" >
+						<h1>${translate("sponsorshipspage.schange10")}</h1>
+						<hr />
+					</div>
 					<div class="dialog-container">
-
-					<p class="dialog-paragraph" style="text-align:center; width:100%">
-					${translate("sponsorshipspage.schange12")}
-				
-				</p>
-
-				<div class="form-wrapper">
-						
-				
+						<p class="dialog-paragraph" style="text-align:center; width:100%">
+							${translate("sponsorshipspage.schange12")}
+						</p>
+						<div class="form-wrapper">
 							<mwc-textfield
-							
 								label=${translate("sponsorshipspage.schange13")}
 								@input="${this.lookupPublicAddressInputHandler}"
 								.value="${this.lookupAddressValue || ""}"
@@ -810,39 +769,35 @@ class SponsorshipList extends LitElement {
 						<p class="message-error">${this.errorLookup}</p>
 						<div class="row" style="margin-top: 20px; justify-content: center">
 							<vaadin-button
-							?disabled="${!this.lookupAddressValue}"
+								theme="primary"
+								?disabled="${!this.lookupAddressValue}"
 								@click="${()=> {
 									this.lookupPublicAddressValue = ""
 									this.lookUpPublicAddressFunc()
-								} }"
+								}}"
 							>
 							${translate("sponsorshipspage.schange10")}
 							</vaadin-button>
+						</div>
+						${this.lookupPublicAddressValue ? html`
+							<div class="word-break" style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+                						<span style="color: #000;">${this.lookupPublicAddressValue}</span>
+            					</div>
+							<div class="row" style="margin-top: 20px; justify-content: center">
+								<mwc-button
+									raised
+									icon="content_copy"
+									@click=${()=> {this.saveToClipboard(this.lookupPublicAddressValue, this.renderCopyMsg())}}
+								>
+								${translate("sponsorshipspage.schange11")}
+								</mwc-button>
 							</div>
-				
-					${this.lookupPublicAddressValue ? html`
-					<div class="word-break" style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-                <span style="color: #000;">${this.lookupPublicAddressValue}</span>
-            </div>
-			<div class="row" style="margin-top: 20px; justify-content: center">
-			<mwc-button @click=${()=> {
-				
-				this.saveToClipboard(this.lookupPublicAddressValue, 'Copied to clipboard')
-				} }>${translate("sponsorshipspage.schange11")}
-			</mwc-button>
-			</div>
-					
-					` : ''}
-				
-			
-
-
+						` : ''}
 					</div>
-                 
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
+					<mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
 						@click=${()=>{
 							this.lookupAddressValue = ""
 							this.lookupPublicAddressValue = ""
@@ -850,11 +805,10 @@ class SponsorshipList extends LitElement {
 							this.errorLookup = ""
 							
 						}}
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-				
-                </mwc-dialog>
+					>
+					${translate("general.close")}
+					</mwc-button>
+				</mwc-dialog>
 			</div>
 		`
 	}

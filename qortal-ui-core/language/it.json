@@ -650,6 +650,17 @@
       "schange6":"Sponsorizzazioni terminate",
       "schange7":"Completato",
       "schange8":"Indirizzi",
-      "schange9":"Al momento non hai sponsorizzazioni attive"
+      "schange9":"Al momento non hai sponsorizzazioni attive",
+      "schange10":"Ricerca chiave pubblica",
+      "schange11":"copia",
+      "schange12":"Convertitore da indirizzo a chiave pubblica",
+      "schange13":"Inserisci indirizzo",
+      "schange14":"In corso",
+      "schange15":"Finendo",
+      "schange16":"Copia la chiave qui sotto e condividila con la persona sponsorizzata.",
+      "schange17":"Copiato negli appunti",
+      "schange18":"Attenzione: non abbandonare questo plugin o chiudere l'interfaccia utente di Qortal fino al completamento!",
+      "schange19":"Copia la chiave di sponsorizzazione",
+      "schange20":"Creare relazione"
    }
 }

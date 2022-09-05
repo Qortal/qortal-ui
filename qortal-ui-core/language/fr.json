@@ -650,6 +650,17 @@
       "schange6":"Parrainages terminés",
       "schange7":"Complété",
       "schange8":"adresses",
-      "schange9":"Vous n'avez actuellement aucun parrainage actif"
+      "schange9":"Vous n'avez actuellement aucun parrainage actif",
+      "schange10":"Recherche de clé publique",
+      "schange11":"Copie",
+      "schange12":"Convertisseur d'adresse en clé publique",
+      "schange13":"Entrer l'adresse",
+      "schange14":"En cours",
+      "schange15":"Finir",
+      "schange16":"Copiez la clé ci-dessous et partagez-la avec votre filleul.",
+      "schange17":"Copié dans le presse-papier",
+      "schange18":"Attention : ne quittez pas ce plugin ou ne fermez pas l'interface utilisateur de Qortal jusqu'à ce qu'il soit terminé !",
+      "schange19":"Copier la clé de parrainage",
+      "schange20":"Créer une relation"
    }
 }

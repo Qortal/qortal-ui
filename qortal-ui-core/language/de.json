@@ -646,10 +646,21 @@
       "schange2":"Kontoadresse",
       "schange3":"Aktive Patenschaften insgesamt",
       "schange4":"Nächste Patenschaft endet in",
-      "schange5":"Sponsor New Minter",
+      "schange5":"Sponsor einen neuen Minter",
       "schange6":"Abgeschlossene Patenschaften",
       "schange7":"Abgeschlossen",
       "schange8":"Adressen",
-      "schange9":"Sie haben derzeit keine aktiven Patenschaften"
+      "schange9":"Sie haben derzeit keine aktiven Patenschaften",
+      "schange10":"Suche nach öffentlichen Schlüsseln",
+      "schange11":"Kopieren",
+      "schange12":"Konverter von Adresse zu öffentlichem Schlüssel",
+      "schange13":"Adresse eingeben",
+      "schange14":"Im Gange",
+      "schange15":"Beenden",
+      "schange16":"Kopieren Sie den unten stehenden Schlüssel und teilen Sie ihn mit Ihrer gesponserten Person.",
+      "schange17":"In die Zwischenablage kopiert",
+      "schange18":"Warnung: Verlassen Sie dieses Plugin nicht und schließen Sie die Qortal-Benutzeroberfläche nicht, bis es fertig ist!",
+      "schange19":"Sponsoring-Schlüssel kopieren",
+      "schange20":"Beziehung schaffen"
    }
 }

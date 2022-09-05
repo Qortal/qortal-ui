@@ -650,6 +650,17 @@
       "schange6":"Befejezett szponzorálás",
       "schange7":"kész",
       "schange8":"Címek",
-      "schange9":"Jelenleg nincs aktív szponzorálásod"
+      "schange9":"Jelenleg nincs aktív szponzorálásod",
+      "schange10":"Nyilvános kulcs keresése",
+      "schange11":"Másolat",
+      "schange12":"Cím a nyilvános kulcs konverterhez",
+      "schange13":"Adja meg a címet",
+      "schange14":"Folyamatban",
+      "schange15":"Befejezés",
+      "schange16":"Másolja ki az alábbi kulcsot, és ossza meg szponzorált személlyel.",
+      "schange17":"Vágólapra másolva",
+      "schange18":"Figyelmeztetés: ne hagyja el ezt a beépülő modult, és ne zárja be a Qortal felhasználói felületet a befejezésig!",
+      "schange19":"Szponzori kulcs másolása",
+      "schange20":"Kapcsolatteremtés"
    }
 }

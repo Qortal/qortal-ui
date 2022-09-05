@@ -154,8 +154,6 @@ class BecomeMinter extends LitElement {
 				?.address
 		);
 
-
-
 		const isAlreadySponsored =
 			this.addressInfo?.error !== 124 &&
 			this.addressInfo?.level === 0 &&
@@ -164,17 +162,18 @@ class BecomeMinter extends LitElement {
 		return html`
 			${this.isPageLoading
 				? html`
-						<div class="loadingContainer">
-							<div class="loading"></div>
-						</div>
-						<div class="backdrop"></div>
-				  `
-				: ''}
+					<div class="loadingContainer">
+						<div class="loading"></div>
+					</div>
+					<div class="backdrop"></div>
+				`
+			: ''}
 
 			<div class="page-container">
 				<h1 class="header-title">
 					${translate('mintingpage.mchange32')}
 				</h1>
+
 				<div class="fullWidth">
 					<hr class="divider" />
 				</div>
@@ -182,20 +181,22 @@ class BecomeMinter extends LitElement {
 				${isAlreadySponsored
 				? ''
 				: html`
-							<not-sponsored
-								.atMount="${() => this.atMount()}"
-							></not-sponsored>
-					  `}
+					<not-sponsored
+						.atMount="${() => this.atMount()}"
+					>
+					</not-sponsored>
+				`}
 				${!isAlreadySponsored
 				? ''
 				: html`
-							<yes-sponsored
-								.rewardSharePublicKey=${this
+					<yes-sponsored
+						.rewardSharePublicKey=${this
 						.rewardSharePublicKey}
-								.addressInfo=${this.addressInfo}
-								.isMinting=${!!findMintingAccount}
-							></yes-sponsored>
-					  `}
+							.addressInfo=${this.addressInfo}
+							.isMinting=${!!findMintingAccount}
+					>
+					</yes-sponsored>
+				`}
 			</div>
 		`;
 	}

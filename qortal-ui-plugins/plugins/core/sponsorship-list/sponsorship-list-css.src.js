@@ -2,9 +2,19 @@ import { css } from "lit"
 
 export const pageStyles = css`
 	* {
-		--mdc-theme-surface: var(--white);
-		--mdc-dialog-content-ink-color: var(--black);
 		box-sizing: border-box;
+            --mdc-theme-primary: rgb(3, 169, 244);
+            --mdc-theme-secondary: var(--mdc-theme-primary);
+            --mdc-theme-surface: var(--white);
+            --mdc-dialog-content-ink-color: var(--black);
+            --lumo-primary-text-color: rgb(0, 167, 245);
+            --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+            --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+            --lumo-primary-color: hsl(199, 100%, 48%);
+            --lumo-base-color: var(--white);
+            --lumo-body-text-color: var(--black);
+            --_lumo-grid-border-color: var(--border);
+            --_lumo-grid-secondary-border-color: var(--border2);
 	}
 
 	.header-title {
@@ -13,27 +23,31 @@ export const pageStyles = css`
 		font-weight: 400;
 		text-align: center;
 	}
+
 	.avatar-img {
 		border-radius: 50%;
-	
-    height: 20px;
-    width: 20px;
-	margin-right: 10px;
+		height: 20px;
+		width: 20px;
+		margin-right: 10px;
 	}
+
 	.divider {
 		color: #eee;
 		border-radius: 80%;
 		margin-bottom: 2rem;
 	}
+
 	.fullWidth {
 		width: 100%;
 	}
+
 	.page-container {
 		display: flex;
 		align-items: center;
 		flex-direction: column;
 		margin-bottom: 75px;
 	}
+
 	.inner-container {
 		display: flex;
 		align-items: center;
@@ -42,14 +56,10 @@ export const pageStyles = css`
 		max-width: 1100px;
 	}
 
-
-
 	.message-error {
 		color: var(--error);
 	}
 
-
-	
 	.form-wrapper {
 		display: flex;
 		align-items: center;
@@ -61,9 +71,9 @@ export const pageStyles = css`
 
 	.sponsor-minter-text {
 		color: var(--black);
-    font-weight: bold;
-    margin-right: 15px;
-    font-size: 18px;
+		font-weight: bold;
+		margin-right: 15px;
+		font-size: 18px;
 	}
 
 	.row {
@@ -79,6 +89,7 @@ export const pageStyles = css`
 	.inactiveText {
 		opacity: .60
 	}
+
 	.column {
 		display: flex;
 		flex-direction: column;
@@ -88,9 +99,11 @@ export const pageStyles = css`
 	.column-center {
 		align-items: center;
 	}
+
 	.no-margin {
 		margin: 0;
 	}
+
 	.no-wrap {
 		flex-wrap: nowrap !important;
 	}
@@ -99,6 +112,7 @@ export const pageStyles = css`
 		justify-content: center;
 		flex-wrap: wrap;
 	}
+
 	.form-item {
 		display: flex;
 		height: 100%;
@@ -114,9 +128,6 @@ export const pageStyles = css`
 		min-width: 275px;
 	}
 
-	
-
-	
 	.gap {
 		gap: 10px;
 	}
@@ -140,29 +151,32 @@ export const pageStyles = css`
 		line-height: 28px;
 		color: var(--black);
 	}
+
 	mwc-textfield {
 		width: 100%;
 	}
+
 	vaadin-button {
 		height: 100%;
 		margin: 0;
 		cursor: pointer;
-		outline: 1px var(--black) solid;
 		min-width: 80px;
 	}
+
 	mwc-icon-button {
 		height: 100%;
 		margin: 0;
 		cursor: pointer;
-		outline: 1px var(--black) solid;
 		min-width: 80px;
 	}
+
 	.loader,
 	.loader:after {
 		border-radius: 50%;
 		width: 10em;
 		height: 10em;
 	}
+
 	.loadingContainer {
 		position: fixed;
 		top: 50%;
@@ -179,12 +193,15 @@ export const pageStyles = css`
 		z-index: 9;
 		position: fixed;
 	}
+
 	.marginLoader {
 		margin-left: 10px;
 	}
+
 	.marginRight {
 		margin-right: 10px;
 	}
+
 	.smallLoading,
 	.smallLoading:after {
 		border-radius: 50%;
@@ -271,7 +288,6 @@ export const pageStyles = css`
 		word-break: break-word ;
 	}
 
-
 	.grid-item {
 		text-align: center;
 		color: var(--black);
@@ -293,12 +309,12 @@ export const pageStyles = css`
 	.text {
 		color: var(--black)
 	}
+
 	.text--bold {
 		font-weight: bold;
 	}
 
 	.summary-box {
-	
 		display: flex;
 		margin-top: 25px;
 		width: 100%;
@@ -328,32 +344,32 @@ export const pageStyles = css`
 		margin: 0;
 		padding: 0;
 	}
+
 	.red {
 		--mdc-theme-primary: #f44336;
 		border-radius: 2px;
 		
 	}
-	 .btn--sponsorshipfinished  {
+
+	.btn--sponsorshipfinished  {
 		background-color: var(--menuactive);
 		transition: all .2s;
 		animation: onOff 2s infinite;
 		--mdc-theme-primary: var(--black);
 	}
 
-	
 	.word-break {
 		word-break:break-all;
 	}
+
 	.dialog-container {
-		width: 300px;
+		width: 400px;
 		min-height: 300px;
 		max-height: 75vh;
 		padding: 5px;
 		display: flex;
 		align-items: flex-start;
-		flex-direction: column;
-	
-		
+		flex-direction: column;	
 	}
 
 	.dialog-paragraph {
@@ -361,16 +377,16 @@ export const pageStyles = css`
 		color: var(--black)
 	}
 
-
-
 	.dialog-header h1 {
 		font-size: 18px;
+		text-align: center;
 	}
 
 	@keyframes onOff {
-  from {opacity: 1}
-  to {opacity: .5}
-}
+		from {opacity: 1}
+		to {opacity: .5}
+	}
+
 	.grid-item-text {
 		display: none;
 	}
@@ -391,16 +407,17 @@ export const pageStyles = css`
 		}
 
 		.form-item--input {
-		flex-grow: 1;
-		margin-right: 25px;
-		min-width: unset;
-	}
+			flex-grow: 1;
+			margin-right: 25px;
+			min-width: unset;
+		}
 	}
 
 	@media (max-width: 710px) {
 		.table-header {
 			display: none;
 		}
+
 		.grid-item-text {
 			display: inline;
 			color: var(--black);
@@ -416,6 +433,7 @@ export const pageStyles = css`
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		}
+
 		.name-container {
 			justify-content: flex-start
 		}
@@ -440,6 +458,7 @@ export const pageStyles = css`
 	.between {
 		justify-content: space-between;
 	}
+
 	.no-width {
 		width: auto
 	}
@@ -458,16 +477,16 @@ export const pageStyles = css`
 		align-items: flex-start;
 		flex-direction: column;
 		overflow-x: hidden;
-}
+	}
 
-.warning{
-	display: flex;
-	flex-grow: 1
-}
+	.warning{
+		display: flex;
+		flex-grow: 1
+	}
 
-#showDialogRewardShareCreationStatus li {
-	margin-bottom: 15px;
-}
+	#showDialogRewardShareCreationStatus li {
+		margin-bottom: 15px;
+	}
 `
 
 

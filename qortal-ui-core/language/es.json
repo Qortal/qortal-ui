@@ -650,6 +650,17 @@
       "schange6":"Patrocinios Finalizados",
       "schange7":"Terminado",
       "schange8":"direcciones",
-      "schange9":"Actualmente no tienes patrocinios activos"
+      "schange9":"Actualmente no tienes patrocinios activos",
+      "schange10":"Búsqueda de clave pública",
+      "schange11":"Copiar",
+      "schange12":"Convertidor de dirección a clave pública",
+      "schange13":"Ingresa la direccion",
+      "schange14":"En progreso",
+      "schange15":"Terminando",
+      "schange16":"Copie la clave a continuación y compártala con su persona patrocinada.",
+      "schange17":"Copiado al portapapeles",
+      "schange18":"Advertencia: ¡no deje este complemento ni cierre la interfaz de usuario de Qortal hasta que finalice!",
+      "schange19":"Copiar clave de patrocinio",
+      "schange20":"Creando relación"
    }
 }

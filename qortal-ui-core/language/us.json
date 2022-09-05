@@ -651,9 +651,16 @@
       "schange7":"Completed",
       "schange8":"Addresses",
       "schange9":"You currently have no active sponsorships",
-      "schange10" : "Public Key Lookup",
-      "schange11" : "Copy",
-      "schange12": "Address to Public Key Converter",
-      "schange13" : "Enter address"
+      "schange10":"Public Key Lookup",
+      "schange11":"Copy",
+      "schange12":"Address to Public Key Converter",
+      "schange13":"Enter address",
+      "schange14":"In progress",
+      "schange15":"Finishing up",
+      "schange16":"Copy the key below and share it with your sponsored person.",
+      "schange17":"Copied to clipboard",
+      "schange18":"Warning: do not leave this plugin or close the Qortal UI until completion!",
+      "schange19":"Copy Sponsorship Key",
+      "schange20":"Creating relationship"
    }
 }
