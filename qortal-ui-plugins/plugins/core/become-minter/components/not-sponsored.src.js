@@ -104,10 +104,8 @@ class NotSponsored extends LitElement {
 						<div class="form-item form-item--input">
 							<mwc-textfield
 								?disabled="${this
-									.isLoadingSponsorshipKeySubmit}"
-								label="${translate(
-									'becomeMinterPage.bchange8'
-								)}"
+								.isLoadingSponsorshipKeySubmit}"
+								label="${translate('becomeMinterPage.bchange8')}"
 								id="addSponsorshipKey"
 								@input="${this.inputHandler}"
 								.value="${this.sponsorshipKeyValue || ''}"
@@ -118,17 +116,15 @@ class NotSponsored extends LitElement {
 
 						<div class="form-item form-item--button">
 							<vaadin-button
-								?disabled="${this
-									.isLoadingSponsorshipKeySubmit}"
+                                                theme="primary"
+								?disabled="${this.isLoadingSponsorshipKeySubmit}"
 								@click="${this.addMintingAccount}"
 							>
-								${this.isLoadingSponsorshipKeySubmit === false
-									? html`${translate(
-											'puzzlepage.pchange15'
-									  )}`
-									: html`<paper-spinner-lite
-											active
-									  ></paper-spinner-lite>`}
+							${this.isLoadingSponsorshipKeySubmit === false
+								? html`${translate('puzzlepage.pchange15')}`
+								: html`
+									<paper-spinner-lite active></paper-spinner-lite>
+								`}
 							</vaadin-button>
 						</div>
 					</div>

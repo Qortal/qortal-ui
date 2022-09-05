@@ -84,6 +84,7 @@ export const pageStyles = css`
 		display: flex;
 		width: 100%;
 	}
+
 	.column {
 		display: flex;
 		flex-direction: column;
@@ -136,9 +137,8 @@ export const pageStyles = css`
 		padding: 10px 25px;
 		text-align: center;
 		display: inline-block;
-
-		margin-bottom: 5px;
-		flex-basis: 250px;
+		margin-bottom: 15px;
+		flex-basis: 600px;
 	}
 
 	.gap {
@@ -182,7 +182,6 @@ export const pageStyles = css`
 		height: 100%;
 		margin: 0;
 		cursor: pointer;
-		outline: 1px var(--black) solid;
 		min-width: 80px;
 	}
 

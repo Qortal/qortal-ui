@@ -47,54 +47,43 @@ class YesSponsored extends LitElement {
 			<div class="inner-container">
 				<div class="column column-center">
 					<div class="column column-center">
-						<span class="level-black"
-							>${translate('becomeMinterPage.bchange10')}</span
-						>
-						<hr
-							style="width: 50%; color: #eee; border-radius: 80%; margin-bottom: 2rem;"
-						/>
+						<span class="level-black">
+							${translate('becomeMinterPage.bchange10')}
+						</span>
+						<hr style="width: 75%; color: #eee; border-radius: 80%; margin-bottom: 2rem;">
 					</div>
 					<br />
 					<div class="row row-center gap">
 						<div class="content-box">
-							<span class="title"
-								>${translate(
-									'walletpage.wchange41'
-								)}</span
-							>
-							<hr
-								style="color: #eee; border-radius: 90%; margin-bottom: 1rem;"
-							/>
+							<span class="title">
+								${translate('walletpage.wchange41')}
+							</span>
+							<hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
 							${this.isMinting ? html`
-							<h4>${translate('becomeMinterPage.bchange12')}</h4>
+								<h4>${translate('becomeMinterPage.bchange12')}</h4>
 							` : html`
-							<h4>${translate('mintingpage.mchange9')}</h4>
+								<h4>${translate('mintingpage.mchange9')}</h4>
 							`}
-							
 						</div>
+					</div>
+					<div class="row row-center gap">
 						<div class="content-box">
-							<span class="title"
-								>${translate(
-									'becomeMinterPage.bchange13'
-								)}</span
-							>
-							<hr
-								style="color: #eee; border-radius: 90%; margin-bottom: 1rem;"
-							/>
+							<span class="title">
+								${translate('becomeMinterPage.bchange13')}
+							</span>
+							<hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
 							<h4>
 								${this._levelUpBlocks()}
 								${translate('mintingpage.mchange26')}
 							</h4>
 						</div>
+					</div>
+					<div class="row row-center gap">
 						<div class="content-box">
-							<span class="title"
-								>${translate(
-									'becomeMinterPage.bchange15'
-								)}</span
-							>
-							<hr
-								style="color: #eee; border-radius: 90%; margin-bottom: 1rem;"
-							/>
+							<span class="title">
+								${translate('becomeMinterPage.bchange15')}
+							</span>
+							<hr style="color: #eee; border-radius: 90%; margin-bottom: 1rem;">
 							<h4 class="no-margin">
 								${translate('becomeMinterPage.bchange16')}
 							</h4>
@@ -104,12 +93,8 @@ class YesSponsored extends LitElement {
 								</p>
 								<button-icon-copy
 									title="${translate('walletpage.wchange3')}"
-									onSuccessMessage="${translate(
-										'walletpage.wchange4'
-									)}"
-									onErrorMessage="${translate(
-										'walletpage.wchange39'
-									)}"
+									onSuccessMessage="${translate('walletpage.wchange4')}"
+									onErrorMessage="${translate('walletpage.wchange39')}"
 									textToCopy=${this.rewardSharePublicKey}
 									buttonSize="28px"
 									iconSize="16px"
@@ -120,7 +105,6 @@ class YesSponsored extends LitElement {
 							</div>
 						</div>
 					</div>
-					<br />
 				</div>
 			</div>
 		`;

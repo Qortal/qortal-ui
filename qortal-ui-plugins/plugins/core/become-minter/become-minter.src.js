@@ -34,9 +34,7 @@ class BecomeMinter extends LitElement {
 
 	constructor() {
 		super();
-		this.theme = localStorage.getItem('qortalTheme')
-			? localStorage.getItem('qortalTheme')
-			: 'light';
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 		this.sponsorshipKeyValue = '';
 		this.isPageLoading = true;
 		this.nodeInfo = {};
