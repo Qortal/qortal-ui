@@ -651,16 +651,16 @@
       "schange7":"已完成",
       "schange8":"錢包地址",
       "schange9":"您目前沒有有效的贊助記錄",
-      "schange10":"公鑰查找",
+      "schange10":"搜尋公共密鑰",
       "schange11":"複製",
-      "schange12":"地址到公鑰轉換器",
-      "schange13":"輸入地址",
-      "schange14":"進行中",
-      "schange15":"整理起來",
-      "schange16":"複製下面的密鑰並與您的讚助人分享。",
+      "schange12":"錢包地址公共密鑰轉換器",
+      "schange13":"輸入錢包地址",
+      "schange14":"處理中",
+      "schange15":"即將完成",
+      "schange16":"複製下面的鑄幣密鑰並分享給被贊助的人。",
       "schange17":"已復製到剪貼板",
-      "schange18":"警告：在完成之前不要離開這個插件或關閉 Qortal UI！",
+      "schange18":"警告：在完成之前不要離開這個頁面或關閉 Qortal UI！",
       "schange19":"複製贊助密鑰",
-      "schange20":"建立關係"
+      "schange20":"建立贊助"
    }
 }
