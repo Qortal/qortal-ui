@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { repeat } from 'lit/directives/repeat.js';
-
+import {  get, translate, } from 'lit-translate'
 import { Epml } from '../../../epml.js'
 
 import './LevelFounder.js'
@@ -193,7 +193,6 @@ class ChatScroller extends LitElement {
         super()
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
-        this.isLoading = false
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
     }
@@ -263,14 +262,15 @@ class MessageTemplate extends LitElement {
     static get properties() {
         return {
             messageObj: { type: Object },
-            hideMessages: { type: Array }
+            hideMessages: { type: Array },
+            openDialogPrivateMessage: {type: Boolean},
         };
     }
 
     constructor() {
         super();
         this.messageObj = {}
-
+        this.openDialogPrivateMessage = false
     }
 
     static get styles() {
@@ -455,8 +455,28 @@ class MessageTemplate extends LitElement {
         `
     }
 
-    render() {
+    updated(changedProps) {
+    if (changedProps.has("openDialogPrivateMessage")) {
+        console.log("yo16")
+      const dialog = this.shadowRoot.getElementById("sendPMDialog")
+        dialog.addEventListener('closing', (e) => {
+            if (e.detail.action === 'close') {
+                this.openDialogPrivateMessage = false
+            }
+          })
+      }
+  }
 
+    showPrivateMessageModal() {
+        this.openDialogPrivateMessage = true
+    }
+
+    hidePrivateMessageModal() {
+        this.openDialogPrivateMessage = false
+    }
+
+    render() {
+        console.log(this.openDialogPrivateMessage)
         const hidemsg = this.hideMessages
 
         let avatarImg = ''
@@ -489,9 +509,35 @@ class MessageTemplate extends LitElement {
                 <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message-container">
                     <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
-                    <chat-menu class="chat-hover"></chat-menu>
+                    <chat-menu class="chat-hover" .showPrivateMessageModal=${() => this.showPrivateMessageModal()}></chat-menu>
                 </div>
             </li>
+            <mwc-dialog  
+                id="sendPMDialog"
+                ?open=${this.openDialogPrivateMessage} 
+                scrimClickAction="${this.isLoading ? '' : 'close'}" 
+                escapeKeyAction='close'
+                defaultAction='close'
+                 >
+                <div style="text-align:center">
+                    <h1>${translate("welcomepage.wcchange2")}</h1>
+                    <hr>
+                </div>
+                <p>${translate("welcomepage.wcchange3")}</p>
+                <textarea class="input" ?disabled=${this.isLoading} id="sendTo" rows="1">${this.nametodialog}</textarea>
+                <p style="margin-bottom:0;">
+                    <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
+                </p>
+                <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${this._sendMessage}>${translate("welcomepage.wcchange6")}</mwc-button>
+                <mwc-button
+                    ?disabled="${this.isLoading}"
+                    slot="secondaryAction"
+                    @click="${() => this.hidePrivateMessageModal()}"
+                    class="close-button"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
 		`;
     }
 }
@@ -502,11 +548,18 @@ class ChatMenu extends LitElement {
     static get properties() {
         return {
             menuItems: { type: Array },
+            isLoading: { type: Boolean },
+            nametodialog: { type: String, attribute: true },
+            selectedAddress: { type: Object },
+            showPrivateMessageModal: {type: Function}
         };
     }
 
     constructor() {
         super();
+        this.isLoading = false
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.showPrivateMessageModal = () => {};
     }
 
     static get styles() {
@@ -554,6 +607,7 @@ class ChatMenu extends LitElement {
             text-align: center;
             box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
             font-size: 12px;
+            z-index: 5;
             display: none; 
             }
 
@@ -568,20 +622,256 @@ class ChatMenu extends LitElement {
             top: -7px;
             border: 10px solid #fff;
             border-color: white transparent transparent transparent;
+            z-index: 5;
             display: none;
             }
 
             .tooltip:hover:before, .tooltip:hover:after {
             display: block;
             }
+
+            .input {
+                width: 90%;
+                border: none;
+                display: inline-block;
+                font-size: 16px;
+                padding: 10px 20px;
+                border-radius: 5px;
+                resize: none;
+                background: #eee;
+            }
+
+            .textarea {
+                width: 90%;
+                border: none;
+                display: inline-block;
+                font-size: 16px;
+                padding: 10px 20px;
+                border-radius: 5px;
+                height: 120px;
+                resize: none;
+                background: #eee;
+            }
+
+            .close-button {
+                display:block;
+                --mdc-theme-primary: red;
+            }
         `
+    }
+
+    
+    firstUpdated() {
+
+    //     this.changeLanguage()
+    //     this.getChatBlockedAdresses()
+
+	//   setInterval(() => {
+	//       this.getChatBlockedAdresses();
+	//   }, 60000)
+
+        // window.addEventListener('storage', () => {
+        //     const checkLanguage = localStorage.getItem('qortalLanguage')
+        //     use(checkLanguage)
+        // })
+
+        // window.onclick = function(event) {
+        //     if (!event.target.matches('.block')) {
+        //         var dropdowns = document.getElementsByClassName('dropdown-content');
+        //         var i;
+        //         for (i = 0; i < dropdowns.length; i++) {
+        //             var openDropdown = dropdowns[i];
+        //             if (openDropdown.classList.contains('showList')) {
+        //                 openDropdown.classList.remove('showList');
+        //             }
+        //         }
+        //     }
+        // }
+
+        const stopKeyEventPropagation = (e) => {
+            e.stopPropagation();
+            return false;
+        }
+
+        this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation);
+        this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+            parentEpml.request('apiCall', {
+                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
+            }).then(res => {
+                this.balance = res
+            })
+        })
+        parentEpml.imReady()
+    }
+
+    // Send Private Message
+
+    _sendMessage() {
+        this.isLoading = true
+
+        const recipient = this.shadowRoot.getElementById('sendTo').value
+        const messageBox = this.shadowRoot.getElementById('messageBox')
+        const messageText = messageBox.value
+
+        if (recipient.length === 0) {
+            this.isLoading = false
+        } else if (messageText.length === 0) {
+            this.isLoading = false
+        } else {
+            this.sendMessage()
+        }
+    }
+
+    async sendMessage() {
+        this.isLoading = true
+
+        const _recipient = this.shadowRoot.getElementById('sendTo').value
+        const messageBox = this.shadowRoot.getElementById('messageBox')
+        const messageText = messageBox.value
+        let recipient
+
+        const validateName = async (receiverName) => {
+            let myRes
+            let myNameRes = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/names/${receiverName}`
+            })
+
+            if (myNameRes.error === 401) {
+                myRes = false
+            } else {
+                myRes = myNameRes
+            }
+
+            return myRes
+        }
+
+        const myNameRes = await validateName(_recipient)
+        if (!myNameRes) {
+
+            recipient = _recipient
+        } else {
+
+            recipient = myNameRes.owner
+        }
+
+        let _reference = new Uint8Array(64);
+        window.crypto.getRandomValues(_reference);
+
+        let sendTimestamp = Date.now()
+
+        let reference = window.parent.Base58.encode(_reference)
+
+        const getAddressPublicKey = async () => {
+            let isEncrypted
+            let _publicKey
+
+            let addressPublicKey = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/publickey/${recipient}`
+            })
+
+
+            if (addressPublicKey.error === 102) {
+                _publicKey = false
+                // Do something here...
+                let err1string = get("welcomepage.wcchange7")
+                parentEpml.request('showSnackBar', `${err1string}`)
+                this.isLoading = false
+            } else if (addressPublicKey !== false) {
+                isEncrypted = 1
+                _publicKey = addressPublicKey
+                sendMessageRequest(isEncrypted, _publicKey)
+            } else {
+                isEncrypted = 0
+                _publicKey = this.selectedAddress.address
+                sendMessageRequest(isEncrypted, _publicKey)
+            }
+        };
+
+        const sendMessageRequest = async (isEncrypted, _publicKey) => {
+
+            let chatResponse = await parentEpml.request('chat', {
+                type: 18,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    timestamp: sendTimestamp,
+                    recipient: recipient,
+                    recipientPublicKey: _publicKey,
+                    message: messageText,
+                    lastReference: reference,
+                    proofOfWorkNonce: 0,
+                    isEncrypted: isEncrypted,
+                    isText: 1
+                }
+            })
+            _computePow(chatResponse)
+        }
+
+        const _computePow = async (chatBytes) => {
+
+            const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
+            const chatBytesArray = new Uint8Array(_chatBytesArray)
+            const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
+            const hashPtr = window.parent.sbrk(32, window.parent.heap);
+            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
+            hashAry.set(chatBytesHash);
+
+            const difficulty = this.balance === 0 ? 12 : 8;
+
+            const workBufferLength = 8 * 1024 * 1024;
+            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
+
+            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
+
+            let _response = await parentEpml.request('sign_chat', {
+                nonce: this.selectedAddress.nonce,
+                chatBytesArray: chatBytesArray,
+                chatNonce: nonce
+            })
+            getSendChatResponse(_response)
+        }
+
+        const getSendChatResponse = (response) => {
+
+            if (response === true) {
+                messageBox.value = ""
+                let err2string = get("welcomepage.wcchange8")
+                parentEpml.request('showSnackBar', `${err2string}`)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            } else if (response.error) {
+                parentEpml.request('showSnackBar', response.message)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            } else {
+                let err3string = get("welcomepage.wcchange9")
+                parentEpml.request('showSnackBar', `${err3string}`)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            }
+
+        }
+        getAddressPublicKey()
+    }
+
+    _textArea(e) {
+        if (e.keyCode === 13 && !e.shiftKey) this._sendMessage()
     }
 
     render() {
 
         return html`
             <div class="container">
-                <div class="menu-icon tooltip" data-text="Private Message">
+                <div class="menu-icon tooltip" data-text="Private Message" @click="${() => this.showPrivateMessageModal()}">   
                 <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="Copy Address">
@@ -590,7 +880,7 @@ class ChatMenu extends LitElement {
                 <div class="menu-icon tooltip" data-text="More">
                 <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
                 </div>
-            </div>
+            </div>  
         `
     }
 }
