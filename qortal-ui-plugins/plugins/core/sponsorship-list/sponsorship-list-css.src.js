@@ -26,8 +26,8 @@ export const pageStyles = css`
 
 	.avatar-img {
 		border-radius: 50%;
-		height: 20px;
-		width: 20px;
+		height: 24px;
+		width: 24px;
 		margin-right: 10px;
 	}
 
@@ -53,7 +53,7 @@ export const pageStyles = css`
 		align-items: center;
 		flex-direction: column;
 		width: 95%;
-		max-width: 1100px;
+		max-width: 1024px;
 	}
 
 	.message-error {
@@ -212,8 +212,7 @@ export const pageStyles = css`
 	.smallLoading {
 		border-width: 0.6em;
 		border-style: solid;
-		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
 		font-size: 10px;
 		position: relative;
 		text-indent: -9999em;
@@ -232,8 +231,7 @@ export const pageStyles = css`
 		margin: 10px auto;
 		border-width: 0.6em;
 		border-style: solid;
-		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-			rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+		border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
 		font-size: 10px;
 		position: relative;
 		text-indent: -9999em;
@@ -265,23 +263,16 @@ export const pageStyles = css`
 
 	.tableGrid {
 		display: grid;
-		grid-template-columns: minmax(0, 3fr)  minmax(0, 1fr) minmax(
-				0,
-				2fr
-			) minmax(0, 1fr);
+		grid-template-columns: minmax(0, 3fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 2fr);
 		align-items: center;
 		gap: 5px;
 		width: 100%;
 		margin-bottom: 15px;
-	
-		padding: 5px;
-		
+		padding: 5px;	
 	}
 
 	.header {
-		align-self: flex-start;
-		
-		
+		align-self: flex-start;		
 	}
 
 	.header p {
@@ -314,21 +305,22 @@ export const pageStyles = css`
 		font-weight: bold;
 	}
 
+	.text--bold--green {
+		font-weight: bold;
+            color: var(--paper-green-500);
+	}
+
 	.summary-box {
-		display: flex;
+		display: inline;
+            text-align: center;
 		margin-top: 25px;
 		width: 100%;
-		flex-wrap: wrap;
 	}
 
 	.publicKeyLookupBtn {
 		position: fixed;
 		bottom: 15px;
 		right: 15px;
-	}
-
-	.summary-box p:first-child {
-		margin-right: 30px;
 	}
 
 	.text--normal {

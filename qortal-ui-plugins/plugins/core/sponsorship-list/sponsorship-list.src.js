@@ -164,19 +164,13 @@ class SponsorshipList extends LitElement {
 		
 		this.changeLanguage()
 		
-		this.addressInfo =
-			window.parent.reduxStore.getState().app.accountInfo.addressInfo
+		this.addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		this.isPageLoading = true
 		try {
 		
-			const address =
-				window.parent.reduxStore.getState().app?.selectedAddress
-					?.address
-	
+			const address = window.parent.reduxStore.getState().app?.selectedAddress?.address
 
-			let rewardShares = await this.getRewardShareRelationship(
-				address
-			)
+			let rewardShares = await this.getRewardShareRelationship(address)
 
 			rewardShares = rewardShares.filter((rs) => rs.recipient !== address)
 			
@@ -193,13 +187,11 @@ class SponsorshipList extends LitElement {
 				let url = ""
 				if(getNames?.length > 0 ){
 					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-				const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-				const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-				url = urlPic
+					const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+					const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+					url = urlPic
 				}
 				
-
-			
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
 				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
 				return {
@@ -210,12 +202,15 @@ class SponsorshipList extends LitElement {
 					blocksRemaining: blocksRemaining,
 				}
 			})
+
 			const accountInfoValues = await Promise.all(getAccountInfo)
 
 			this.sponsorships = accountInfoValues
+
 			this.nextSponsorshipEnding = accountInfoValues
 				.filter((sponsorship) => sponsorship.blocksRemaining !== 0)
 				.sort((a, b) => a.blocksRemaining - b.blocksRemaining)[0]
+
 			this.isPageLoading = false
 
 			const openModal = accountInfoValues.find(s=> s.blocksRemaining <= 0)
@@ -239,7 +234,6 @@ class SponsorshipList extends LitElement {
 			type: "api",
 			url: `/addresses/rewardshares?minters=${recipientAddress}`,
 		})
-
 		return myRewardShareArray
 	}
 
@@ -328,17 +322,14 @@ class SponsorshipList extends LitElement {
 			return
 		}
 		this.privateRewardShareKey = ""
-	
 		this.errorMessage = ""
 		const recipientPublicKey = publicKeyValue
 		const percentageShare = 0
-		const selectedAddress =
-			window.parent.reduxStore.getState().app?.selectedAddress
+		const selectedAddress = window.parent.reduxStore.getState().app?.selectedAddress
+
 		// Check for valid...
 		this.isLoadingCreateSponsorship = true
 		
-
-
 		// Get Last Ref
 		const getLastRef = async () => {
 			let myRef = await parentEpml.request("apiCall", {
@@ -356,8 +347,6 @@ class SponsorshipList extends LitElement {
 			})
 			return myAccountDetails
 		}
-
-	
 
 		// Validate Reward Share by Level
 		const validateReceiver = async () => {
@@ -417,13 +406,10 @@ class SponsorshipList extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-		
 			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS')) ){
-			
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue, isCopy)
 			} else if (txnResponse.success === false && txnResponse?.message) {
-	
 				this.errorMessage = txnResponse?.message
 				this.isLoadingCreateSponsorship = false
 				throw(txnResponse?.message)
@@ -431,19 +417,15 @@ class SponsorshipList extends LitElement {
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
-			
-	
 				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue, isCopy)
 			} else {
-		
 				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
 				this.isLoadingCreateSponsorship = false
 				throw(txnResponse?.data?.message || txnResponse?.message)
 			}
 		}
 		validateReceiver()
-	
 	}
 
 	async confirmRelationship(recipientPublicKey, isCopy){
@@ -520,41 +502,35 @@ class SponsorshipList extends LitElement {
 					${translate("mintingpage.mchange35")}
 				</h1>
 				<div class="fullWidth">
-					<hr class="divider" />
+					<hr class="divider">
 				</div>
 				<div class="inner-container">
 					${this.sponsorships.length === 0 ? html`
-					<div class="sub-title">
-						<p>${translate("sponsorshipspage.schange9")}</p>
-					</div>
+						<div class="sub-title">
+							<p>${translate("sponsorshipspage.schange9")}</p>
+						</div>
 					` : ''}
-				${this.sponsorships.length > 0 ?
-						html`
-					<div class="sub-title">
-						<p>${translate("sponsorshipspage.schange1")}</p>
-					</div>
-					<div class="tableGrid table-header">
-						<div class="grid-item header">
-							<p>${translate("settings.account")}</p>
+					${this.sponsorships.length > 0 ? html`
+						<div class="sub-title">
+							<p>${translate("sponsorshipspage.schange1")}</p>
 						</div>
-						<div class="grid-item header">
-							<p>${translate("walletprofile.blocksminted")}</p>
+						<div class="tableGrid table-header">
+							<div class="grid-item header">
+								<p>${translate("settings.account")}</p>
+							</div>
+							<div class="grid-item header">
+								<p>${translate("walletprofile.blocksminted")}</p>
+							</div>
+							<div class="grid-item header">
+								<p>${translate("sponsorshipspage.schange19")}</p>
+							</div>
+							<div class="grid-item header">
+								<p>${translate("sponsorshipspage.schange21")}</p>
+							</div>
 						</div>
-						
-						<div class="grid-item header">
-							<p>${translate("becomeMinterPage.bchange17")}</p>
-						</div>
-						<div class="grid-item header">
-						
-						</div>
-					</div>
-					${this.sponsorships.map(
-						(sponsorship) => html`
+						${this.sponsorships.map((sponsorship) => html`
 							<ul class="tableGrid">
 								<li class="grid-item">
-									<p class="grid-item-text">
-										${translate("settings.account")}
-									</p>
 									<div class="name-container">
 										${sponsorship?.name ? html`
 											<img  src=${sponsorship.url}
@@ -566,16 +542,10 @@ class SponsorshipList extends LitElement {
 									</div>
 								</li>
 								<li class="grid-item">
-									<p class="grid-item-text">
-											${translate("walletprofile.blocksminted")}
-									</p>
 									${+sponsorship.blocksMinted +
 									+sponsorship.blocksMintedAdjustment}
 								</li>
 								<li class="grid-item">
-									<p class="grid-item-text">
-										${translate("sponsorshipspage.schange19")}
-									</p>
 									<mwc-button
 										@click=${()=> {this.createRewardShare(sponsorship?.publicKey, true)}}
 									>
@@ -592,44 +562,43 @@ class SponsorshipList extends LitElement {
 									</mwc-button>	
 								</li>
 							</ul>
-						`
-					)}
+						`)}
 
-					<div class="summary-box">
-						<p class="text text--bold">
-							${translate("sponsorshipspage.schange3")} =
-							<span class="text text--normal">
-								${this.sponsorships.length}
-							</span>		
-						</p>
-						<p class="text text--bold">
-							${translate("sponsorshipspage.schange4")} = 
-							<span class="text text--normal">
-								${this.nextSponsorshipEnding
-								?.blocksRemaining}
+						<div class="summary-box">
+							<p class="text text--bold">
+								${translate("sponsorshipspage.schange3")}&nbsp;
+								<span class="text text--bold--green">
+									${this.sponsorships.length}
+								</span>		
+							</p>
+							<p class="text text--bold">
+								${translate("sponsorshipspage.schange4")}&nbsp;
+								<span class="text text--bold--green">
+									${this.nextSponsorshipEnding
+									?.blocksRemaining}&nbsp;
+								</span>
 								${translate("mintingpage.mchange26")}
-							</span>
-						</p>
-					</div>
-				`
-			: ''}
-			<p class="message-error">${this.errorMessage}</p>
-			<div class="form-wrapper">
-				<div class="sponsor-minter-wrapper">
-					<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
-				</div>
+							</p>
+						</div>
+					` : ''}
+					<p class="message-error">${this.errorMessage}</p>
+					<div class="form-wrapper">
+						<div class="sponsor-minter-wrapper">
+							<p class="sponsor-minter-text">${translate("sponsorshipspage.schange5")}</p>
+						</div>
 
-				<div class="form-item form-item--input">
-					<mwc-textfield
-						?disabled="${this.isLoadingCreateSponsorship}"
-						label="${translate("rewardsharepage.rchange10")}"
-						id="addPublicKey"
-						@input="${this.inputHandler}"
-						.value="${this.publicKeyValue || ""}"
-						fullWidth
-					>
-					</mwc-textfield>
-					</div>
+						<div class="form-item form-item--input">
+							<mwc-textfield
+								?disabled="${this.isLoadingCreateSponsorship}"
+								label="${translate("rewardsharepage.rchange10")}"
+								id="addPublicKey"
+								@input="${this.inputHandler}"
+								.value="${this.publicKeyValue || ""}"
+								fullWidth
+							>
+							</mwc-textfield>
+						</div>
+
 						<div class="form-item form-item--button">
 							<vaadin-button
 								theme="primary"
@@ -639,6 +608,7 @@ class SponsorshipList extends LitElement {
 							${translate("puzzlepage.pchange15")}
 							</vaadin-button>
 						</div>
+
 						<div class="publicKeyLookupBtn">
 							<vaadin-button
 								theme="primary"
