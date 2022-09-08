@@ -32,14 +32,16 @@
     "publish": "electron-builder -p always"
   },
   "dependencies": {
-    "electron-updater": "5.2.1",
-    "electron-log": "4.4.8"
+    "electron-log": "4.4.8",
+    "electron-updater": "5.2.1"
   },
   "devDependencies": {
     "electron": "20.1.0",
     "electron-builder": "23.3.3",
     "electron-notarize": "1.2.1",
-    "electron-packager": "16.0.0",
+    "electron-packager": "15.5.1",
+    "eslint": "^8.22.0",
+    "eslint-plugin-lit": "^1.6.1",
     "shelljs": "0.8.5"
   },
   "engines": {

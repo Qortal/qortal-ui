@@ -1,7 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { render } from 'lit/html.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { translate } from 'lit-translate';
+import { translate, get } from 'lit-translate';
+import { Epml } from "../../../epml";
 import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
@@ -11,6 +12,7 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class ChatScroller extends LitElement {
     static get properties() {
         return {
@@ -389,7 +391,7 @@ class MessageTemplate extends LitElement {
             display: block;
             position: absolute;
             top: -32px;
-            right: 25px;
+            left: 87%;
             opacity: 0;
         }
 
@@ -506,7 +508,7 @@ class MessageTemplate extends LitElement {
                 <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message-container">
                     <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
-                    <chat-menu class="chat-hover" .showPrivateMessageModal=${() => this.showPrivateMessageModal()}></chat-menu>
+                    <chat-menu class="chat-hover" toblockaddress="${this.messageObj.sender}" .showPrivateMessageModal=${() => this.showPrivateMessageModal()}></chat-menu>
                 </div>
             </li>
             <chat-modals 
@@ -525,7 +527,8 @@ class ChatMenu extends LitElement {
         return {
             menuItems: { type: Array },
             selectedAddress: { type: Object },
-            showPrivateMessageModal: {type: Function}
+            showPrivateMessageModal: {type: Function},
+            toblockaddress: { type: String, attribute: true },
         };
     }
 
@@ -606,6 +609,20 @@ class ChatMenu extends LitElement {
         `
     }
 
+    // Copy address to clipboard
+
+    async copyToClipboard(text) {
+        try {
+            let copyString1 = get("walletpage.wchange4")
+            await navigator.clipboard.writeText(text)
+            parentEpml.request('showSnackBar', `${copyString1}`)
+        } catch (err) {
+            let copyString2 = get("walletpage.wchange39")
+            parentEpml.request('showSnackBar', `${copyString2}`)
+            console.error('Copy to clipboard error:', err)
+        }
+    }
+
     render() {
 
         return html`
@@ -613,7 +630,7 @@ class ChatMenu extends LitElement {
                 <div class="menu-icon tooltip" data-text="Private Message" @click="${() => this.showPrivateMessageModal()}">   
                 <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="Copy Address">
+                <div class="menu-icon tooltip" data-text="Copy Address" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                 <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="More">
