@@ -21,7 +21,7 @@ import '@vaadin/grid/vaadin-grid-sorter'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-let workers = new Map();
+let workers = new Map()
 
 class TradePortal extends LitElement {
     static get properties() {
@@ -345,7 +345,7 @@ class TradePortal extends LitElement {
 		.rvn.coinName:before  {
 			background-image: url('/img/qortrvn.png');
 		}
-        .arrr.coinName:before  {
+            .arrr.coinName:before  {
 			background-image: url('/img/qortarrr.png');
 		}
 		.coinName {
@@ -372,8 +372,7 @@ class TradePortal extends LitElement {
 				-webkit-transform: rotate(360deg);
 				transform: rotate(360deg);
 			}
-		}
-			
+		}	
 		@media (min-width: 701px) {
 			* {
 			}
@@ -399,7 +398,7 @@ class TradePortal extends LitElement {
 				margin-bottom: 10px;
 			}
 		}
-	`
+        `
     }
 
     constructor() {
@@ -514,7 +513,7 @@ class TradePortal extends LitElement {
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
-		this.listedCoins.set("RAVENCOIN", ravencoin)
+        this.listedCoins.set("RAVENCOIN", ravencoin)
         this.listedCoins.set("PIRATECHAIN", piratechain)
 
         workers.set("QORTAL", {
@@ -572,13 +571,13 @@ class TradePortal extends LitElement {
         this.qortdoge = 0
         this.qortdgb = 0
         this.qortrvn = 0
-        this.qortarr = 0
+        this.qortarrr = 0
         this.btcqort = 0
         this.ltcqort = 0
         this.dogeqort = 0
         this.dgbqort = 0
         this.rvnqort = 0
-        this.arrqort = 0
+        this.arrrqort = 0
     }
 
     // TODO: Move each template to a separate components! Maybe
