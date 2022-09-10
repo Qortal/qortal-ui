@@ -298,7 +298,8 @@
       "tchange29":"OTKAZIVANJE",
       "tchange30":"Neuspešna provera salda. Pokušajte ponovo!",
       "tchange31":"PRODATO",
-      "tchange32":"KUPLJENO"
+      "tchange32":"KUPLJENO",
+      "tchange33":"Kurs"
    },
    "rewardsharepage":{
       "rchange1":"Udeo nagrade",

@@ -298,7 +298,8 @@
       "tchange29":"ANNULER",
       "tchange30":"Échec de la récupération du solde. Réessayez!",
       "tchange31":"VENDU",
-      "tchange32":"ACHETE"
+      "tchange32":"ACHETE",
+      "tchange33":"Taux de change"
    },
    "rewardsharepage":{
       "rchange1":"Récompenses",

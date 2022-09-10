@@ -298,7 +298,8 @@
       "tchange29":"ANULARE",
       "tchange30":"Nu s-a reusit actualizarea soldului. Mai incearca odata!",
       "tchange31":"VANDUT",
-      "tchange32":"CUMPARAT"
+      "tchange32":"CUMPARAT",
+      "tchange33":"Rata de schimb"
    },
    "rewardsharepage":{
       "rchange1":"Cote de recompensa",

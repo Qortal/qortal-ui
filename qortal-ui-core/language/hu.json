@@ -298,7 +298,8 @@
       "tchange29":"ÉRVÉNYTELENÍT",
       "tchange30":"Nem sikerült lekérni az egyenleget. Próbáld újra!",
       "tchange31":"ELADOTT",
-      "tchange32":"VÁSÁROLT"
+      "tchange32":"VÁSÁROLT",
+      "tchange33":"Árfolyam"
    },
    "rewardsharepage":{
       "rchange1":"Jutalommegosztások",

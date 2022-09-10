@@ -298,7 +298,8 @@
       "tchange29":"CANCEL",
       "tchange30":"Failed to Fetch Balance. Try again!",
       "tchange31":"SOLD",
-      "tchange32":"BOUGHT"
+      "tchange32":"BOUGHT",
+      "tchange33":"Exchange Rate"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",

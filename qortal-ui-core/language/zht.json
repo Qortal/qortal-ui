@@ -298,7 +298,8 @@
       "tchange29":"取消交易",
       "tchange30":"加載餘額失敗。請重新嘗試!",
       "tchange31":"已賣出",
-      "tchange32":"已買入"
+      "tchange32":"已買入",
+      "tchange33":"匯率"
    },
    "rewardsharepage":{
       "rchange1":"鑄幣密鑰",

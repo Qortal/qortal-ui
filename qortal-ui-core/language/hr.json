@@ -298,7 +298,8 @@
       "tchange29":"OTKAŽI",
       "tchange30":"Neuspješno dohvatiti stanje. Pokušajte ponovno!",
       "tchange31":"PRODANO",
-      "tchange32":"KUPLJENO"
+      "tchange32":"KUPLJENO",
+      "tchange33":"Tečaj"
    },
    "rewardsharepage":{
       "rchange1":"Nagradni udio (Rewardshares)",

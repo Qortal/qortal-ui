@@ -85,20 +85,17 @@ class TradePortal extends LitElement {
 			--_lumo-grid-border-color: var(--border);
 			--_lumo-grid-secondary-border-color: var(--border2);
 		}
-
 		paper-spinner-lite {
 			height: 30px;
 			width: 30px;
 			--paper-spinner-color: var(--mdc-theme-primary);
 			--paper-spinner-stroke-width: 3px;
 		}
-
 		mwc-tab-bar {
 			--mdc-text-transform: none;
 			--mdc-tab-color-default: var(--black);
 			--mdc-tab-text-label-color-default: var(--black);
 		}
-
 		#tabs-1 {
 			--mdc-tab-height: 42px;
 			border-left: 1px solid var(--tradeborder);
@@ -106,49 +103,39 @@ class TradePortal extends LitElement {
 			border-right: 1px solid var(--tradeborder);
                   color: var(--black);
 		}
-
 		#tab-buy[active] {
 			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
 		}
-
 		#tabs-1-content {
 			height: 100%;
 			padding-bottom: 10px;
 		}
-
 		#tabs-1-content > div {
 			height: 100%;
 			border: 1px solid var(--tradeborder);
 		}
-
 		#tabs-1-content .card {
 			border: none;
 		}
-
 		#tabs-1-content .btn-clear {
 			--mdc-icon-button-size: 32px;
 			color: var(--black);
 		}
-
 		#tab-sell[active] {
 			--mdc-theme-primary: rgb(255, 89, 89); 
 		}
-
 		#trade-portal-page {
 			background: var(--white);
 			padding: 12px 24px;
 		}
-
 		.divCard {
 			border: 1px solid var(--black);
 			padding: 1em;
 			box-shadow: 0 0.3px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 		}
-
 		h2 {
 			margin: 0;
 		}
-
 		h2,
 		h3,
 		h4,
@@ -156,7 +143,6 @@ class TradePortal extends LitElement {
 			color: var(--black);
 			font-weight: 400;
 		}
-
 		header {
 			display: flex;
 			flex: 0 1 auto;
@@ -171,17 +157,14 @@ class TradePortal extends LitElement {
 			border-right: 1px solid var(--tradeborder);
 			min-height: 40px;
 		}
-
 		p {
 			margin-bottom: 12px;
 		}
-
 		#trade-portal {
 			max-width: 100vw;
 			margin-left: auto;
 			margin-right: auto;
 		}
-
 		.box {
 			margin: 0;
 			padding: 0;
@@ -189,38 +172,29 @@ class TradePortal extends LitElement {
 			flex-flow: column;
 			height: 100%;
 		}
-
 		#first-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#first-trade-section > div {
 		}
-
 		#second-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#second-trade-section > div {
 		}
-
 		#third-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#third-trade-section > div {
 		}
-
 		.trade-chart {
 			background-color: var(--white);
 			border: 2px #ddd solid;
 			text-align: center;
 		}
-
 		.open-trades {
 			text-align: center;
 		}
-
 		.no-last-seen {
 			background: rgb(255, 89, 89);
 			padding: 9px 1.3px;
@@ -228,11 +202,9 @@ class TradePortal extends LitElement {
 			width: 1rem;
 			margin: 0 auto;
 		}
-
 		.open-market-container {
 			text-align: center;
 		}
-
 		.card {
 			padding: 1em;
 			border: 1px var(--tradeborder) solid;
@@ -242,23 +214,19 @@ class TradePortal extends LitElement {
 			justify-content: space-evenly;
 			min-height: inherit;
 		}
-
 		.cancel {
 			--mdc-theme-primary: rgb(255, 89, 89);
 		}
-
 		.border-wrapper {
 			border: 1px var(--tradeborder) solid;
 			overflow: hidden;
 		}
-
 		.amt-text {
 			color: var(--tradehave);
 			font-size: 15px;
 			margin-top: 5px;
 			margin-bottom: 12px;
 		}
-
 		.exchange {
 			color: var(--black);
 			font-size: 18px;
@@ -266,31 +234,26 @@ class TradePortal extends LitElement {
 			margin-top: 5px;
 			margin-bottom: 10px;
 		}
-
 		.clear-button {
                   display: inline;
 			float: right;
 			margin-bottom: 5px;
 		}
-
 		.exhcnage-text {
                   display: inline;
 			float: left;
 			margin-bottom: 5px;
 		}
-
 		.balance-text {
                   display: inline;
 			float: right;
 			margin-bottom: 5px;
 		}
-
 		.fee-text {
                   display: inline;
 			float: left;
 			margin-bottom: 5px;
 		}
-
 		.tab-text {
 			color: var(--tradehave);
 			font-size: 12px;
@@ -298,58 +261,46 @@ class TradePortal extends LitElement {
 			margin-top: 2px;
 			margin-bottom: -12px;
 		}
-
 		.historic-trades {
 			text-align: center;
 		}
-
 		.my-open-orders {
 			text-align: center;
 		}
-
 		.my-historic-trades {
 			text-align: center;
 		}
-
 		.buttons {
 			width: auto !important;
 		}
-
 		.buy-button {
 			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
 		}
-
 		.sell-button {
 			--mdc-theme-primary: rgb(255, 89, 89);
 		}
-
 		.full-width {
 			background-color: var(--white);
 			border: 2px #ddd solid;
 			height: 100px;
 			text-align: center;
 		}
-
 		vaading-grid {
 			font-size: .8em;
 		}
-
 		vaadin-grid-column {
 			flex-grow: 1;
 		}
-
 		.loadingContainer {
 			height: 100%;
 			width: 100%;
 		}
-
 		.loading,
 		.loading:after {
 			border-radius: 50%;
 			width: 5em;
 			height: 5em;
 		}
-
 		.loading {
 			margin: 10px auto;
 			border-width: .6em;
@@ -361,16 +312,13 @@ class TradePortal extends LitElement {
 			transform: translateZ(0px);
 			animation: 1.1s linear 0s infinite normal none running loadingAnimation;
 		}
-
 		mwc-select#coinSelectionMenu {
 			font-size: 24px;
             width:220px;
 		}
-
 		mwc-select#coinSelectionMenu mwc-list-item {
 			line-height: 30px;
 		}
-
 		.coinName::before  {
 			content: "";
 			display: inline-block;
@@ -382,37 +330,29 @@ class TradePortal extends LitElement {
 			left: 10px;
 			top: 10px;
 		}
-
 		.btc.coinName:before  {
 			background-image: url('/img/qortbtc.png');
 		}
-
 		.ltc.coinName:before  {
 			background-image: url('/img/qortltc.png');
 		}
-
 		.doge.coinName:before  {
 			background-image: url('/img/qortdoge.png');
 		}
-
 		.dgb.coinName:before  {
 			background-image: url('/img/qortdgb.png');
 		}
-
 		.rvn.coinName:before  {
 			background-image: url('/img/qortrvn.png');
 		}
-
         .arrr.coinName:before  {
 			background-image: url('/img/qortarrr.png');
 		}
-
 		.coinName {
 			display: inline-block;
 			height: 26px;
 			padding-left: 45px;
 		}
-
 		@-webkit-keyframes loadingAnimation {
 			0% {
 				-webkit-transform: rotate(0deg);
@@ -423,7 +363,6 @@ class TradePortal extends LitElement {
 				transform: rotate(360deg);
 			}
 		}
-
 		@keyframes loadingAnimation {
 			0% {
 				-webkit-transform: rotate(0deg);
@@ -439,7 +378,6 @@ class TradePortal extends LitElement {
 			* {
 			}
 			#trade-portal {}
-
 			#first-trade-section {
 				display: grid;
 				grid-template-columns:1fr 1fr 2fr;
@@ -450,7 +388,6 @@ class TradePortal extends LitElement {
 				align-items: stretch;
 				margin-bottom: 10px;
 			}
-
 			#second-trade-section {
 				display: grid;
 				grid-template-columns: 2fr  1fr;
@@ -461,7 +398,6 @@ class TradePortal extends LitElement {
 				align-items: stretch;
 				margin-bottom: 10px;
 			}
-
 		}
 	`
     }
@@ -733,7 +669,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     openMarketTemplate() {
@@ -747,10 +683,9 @@ class TradePortal extends LitElement {
 				<z id="tabs-1-content">
 					<div id="tab-buy-content">
 						<div class="card">
-							<span class="exchange">
-								<span class="clear-button"><mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button></span>
-                                                <span class="exhcnage-text">1 ${this.listedCoins.get(this.selectedCoin).coinCode} = ${this.exchangeRateForeign()} QORT</span>
-							</span>
+							<div style="margin-left: auto">
+								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearBuyForm()}"></mwc-icon-button>
+							</div>
                                           <span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
@@ -818,10 +753,9 @@ class TradePortal extends LitElement {
 					</div>
 					<div id="tab-sell-content">
 						<div class="card">
-							<span class="exchange">
-								<span class="clear-button"><mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button></span>
-                                                <span class="exhcnage-text">1 QORT = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</span>
-							</span>
+							<div style="margin-left: auto">
+								<mwc-icon-button class="btn-clear" title="${translate("tradepage.tchange15")}" icon="clear_all" @click="${() => this.clearSellForm()}"></mwc-icon-button>
+							</div>
 							<span class="tab-text">${translate("tradepage.tchange8")} (QORT)*</span>
 							<p>
 								<mwc-textfield
@@ -882,7 +816,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>	
 		</div>
-	`
+        `
     }
 
     myOpenOrdersTemplate() {
@@ -948,7 +882,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     myHistoricTradesTemplate() {
@@ -1008,7 +942,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     render() {
@@ -1022,7 +956,7 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
-                    <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
+                              <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -1037,11 +971,15 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
+            <div style="text-align: center;">
+                <h2 style="color: var(--black);">${translate("tradepage.tchange33")}</h2>
+                <h3 style="color: var(--black);">1 <span style="color: #03a9f4;">QORT</span> = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</h3>
+            </div>
 		<!-- Manage Stuck Orders Dialog -->
 		<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
 			<div style="text-align: center;">
 				<h1>${translate("tradepage.tchange7")}</h1>
-				<hr />
+				<hr>
 			</div>
 			<div>
 				<vaadin-grid style="width: 500px" theme="compact column-borders row-stripes wrap-cell-content" id="stuckOrdersGrid" aria-label="My Offering Orders" .items="${this.listedCoins.get(this.selectedCoin).myOfferingOrders}">
@@ -1053,7 +991,7 @@ class TradePortal extends LitElement {
 			</div>
 			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
-	`
+        `
     }
 
     firstUpdated() {
@@ -1302,15 +1240,14 @@ class TradePortal extends LitElement {
             url: _url,
             method: 'POST',
             body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
+            }
         })
-            .then((res) => {
-                if (isNaN(Number(res))) {
-                    let snack1string = get("tradepage.tchange30")
-                    parentEpml.request('showSnackBar', `${snack1string}`)
-                } else {
-                    this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
-                }
-            })
     }
 
     async fetchWalletAddress(coin) {
@@ -1889,7 +1826,7 @@ class TradePortal extends LitElement {
 
         // Fill Historic Trades and Filter Stuck Trades
         if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter === 1) {
-            setTimeout(() => this.filterStuckTrades(tradeStates), 50)
+            setTimeout(() => this.filterStuckTrades(tradeStates), 250)
         }
     }
 
@@ -1973,7 +1910,7 @@ class TradePortal extends LitElement {
             const startOfferPresenceMapping = async () => {
                 if (presenceTxns !== null) {
                     await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(50)
+                        await waitFor(250)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
                     })
@@ -1981,7 +1918,7 @@ class TradePortal extends LitElement {
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
-                        await waitFor(50)
+                        await waitFor(250)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
                     })
@@ -2001,7 +1938,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
                 tradeOffersSocketCounter += 1
             }
             // Message Event
@@ -2038,7 +1975,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
             }
             // Message Event
             socket.onmessage = (e) => {
@@ -2072,7 +2009,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
             }
             // Message Event
             socket.onmessage = (e) => {
@@ -2103,7 +2040,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
             }
             // Message Event
             socket.onmessage = (e) => {
@@ -2628,18 +2565,12 @@ class TradePortal extends LitElement {
 
         const modifiers = [
             { searchValue: 'NODEURL', replaceValue: nodeUrl },
-            { searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin, },
+            { searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin },
         ]
 
         workers.get(this.selectedCoin).tradesConnectedWorker = this.inlineWorker(this.initSocket, modifiers)
 
-        workers.get(this.selectedCoin).tradesConnectedWorker.addEventListener(
-            'message',
-            function (event) {
-                handleMessage(event.data)
-            },
-            { passive: true }
-        )
+        workers.get(this.selectedCoin).tradesConnectedWorker.addEventListener('message', function (event) { handleMessage(event.data) }, { passive: true })
 
         workers.get(this.selectedCoin).tradesConnectedWorker.postMessage({ type: "set_coin", content: this.selectedCoin })
     }

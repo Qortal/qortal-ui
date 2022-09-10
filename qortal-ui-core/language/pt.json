@@ -298,7 +298,8 @@
       "tchange29":"CANCELAR",
       "tchange30":"Falha buscando Saldo. Tente novamente!",
       "tchange31":"VENDIDO",
-      "tchange32":"COMPRADO"
+      "tchange32":"COMPRADO",
+      "tchange33":"Taxa de câmbio"
    },
    "rewardsharepage":{
       "rchange1":"Ações de recompensa",

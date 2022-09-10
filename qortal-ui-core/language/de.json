@@ -298,7 +298,8 @@
       "tchange29":"ABBRECHEN",
       "tchange30":"Guthaben konnte nicht abgerufen werden. Versuchen Sie es nochmal!",
       "tchange31":"VERKAUFT",
-      "tchange32":"GEKAUFT"
+      "tchange32":"GEKAUFT",
+      "tchange33":"Tauschrate"
    },
    "rewardsharepage":{
       "rchange1":"Belohnungsanteile",

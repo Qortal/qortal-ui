@@ -298,7 +298,8 @@
       "tchange29":"CANCELAR",
       "tchange30":"Fallo en la obtención del saldo. Inténtelo de nuevo!",
       "tchange31":"VENDIDO",
-      "tchange32":"COMPRADO"
+      "tchange32":"COMPRADO",
+      "tchange33":"Tipo de cambio"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",

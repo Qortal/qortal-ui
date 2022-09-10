@@ -298,7 +298,8 @@
       "tchange29":"ANULUJ",
       "tchange30":"Nie udało się pobrać salda. Spróbuj ponownie!",
       "tchange31":"SPRZEDANY",
-      "tchange32":"KUPIONY"
+      "tchange32":"KUPIONY",
+      "tchange33":"Kurs wymiany"
    },
    "rewardsharepage":{
       "rchange1":"Podział nagród",

@@ -298,7 +298,8 @@
       "tchange29":"取消交易",
       "tchange30":"加载余额失败。请重新尝试!",
       "tchange31":"已卖出",
-      "tchange32":"已买入"
+      "tchange32":"已买入",
+      "tchange33":"汇率"
    },
    "rewardsharepage":{
       "rchange1":"铸币密钥",

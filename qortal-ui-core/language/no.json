@@ -298,7 +298,8 @@
       "tchange29":"AVBRYT",
       "tchange30":"Kunne ikke hente saldoen. Prøv igjen!",
       "tchange31":"SOLGT",
-      "tchange32":"KJØPT"
+      "tchange32":"KJØPT",
+      "tchange33":"Vekslingskurs"
    },
    "rewardsharepage":{
       "rchange1":"Belønningsdel",

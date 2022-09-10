@@ -298,7 +298,8 @@
       "tchange29":"CANCELLA",
       "tchange30":"Impossibile recuperare il saldo. Riprova!",
       "tchange31":"VENDUTO",
-      "tchange32":"ACQUISTATO"
+      "tchange32":"ACQUISTATO",
+      "tchange33":"Tasso di cambio"
    },
    "rewardsharepage":{
       "rchange1":"Quote di ricompensa",
