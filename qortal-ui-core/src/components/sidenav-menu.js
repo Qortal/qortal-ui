@@ -154,7 +154,6 @@ class SidenavMenu extends connect(store)(LitElement) {
 					>
 						<vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
 					</side-menu-item>
-			
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.wallets')}"
@@ -218,7 +217,7 @@ class SidenavMenu extends connect(store)(LitElement) {
 					</side-menu-item>
 					${this.renderNodeManagement()}
 				</side-menu-item>
-				<div style="margin-top: 20px;">
+				<div>
 					<start-minting></start-minting>
 				</div>
 			`;

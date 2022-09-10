@@ -68,14 +68,12 @@ class StartMinting extends connect(store)(LitElement) {
 			.start-minting-wrapper {
 				position: absolute;
 				left: 50%;
-				transform: translateX(calc(-50% - 10px));
+				transform: translate(50%, 20px);
 				z-index: 10;
 			}
-
 			.dialog-header h1 {
 				font-size: 18px;
 			}
-
 			.row {
 				display: flex;
 				width: 100%;
@@ -189,7 +187,6 @@ class StartMinting extends connect(store)(LitElement) {
 	}
 
 	firstUpdated() {
-
 		this.getMintingAcccounts();
 		this.shadowRoot.querySelector('mdc-dialog--open').setAttribute('style', 'width: 100vw')
 	}
@@ -279,52 +276,42 @@ class StartMinting extends connect(store)(LitElement) {
 		}
 	}
 
-async confirmRelationship(){
-	const myNode =
-		store.getState().app.nodeConfig.knownNodes[
-		store.getState().app.nodeConfig.node
-		];
-	const nodeUrl =
-		myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+	async confirmRelationship() {
+		const myNode =
+			store.getState().app.nodeConfig.knownNodes[
+			store.getState().app.nodeConfig.node
+			];
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 
-	let interval = null
-	let stop = false
-	this.status = 2
-	const getAnswer = async () => {
+		let interval = null
+		let stop = false
+		this.status = 2
+		const getAnswer = async () => {
+			const rewardShares = async (minterAddr) => {
+				const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`;
+				const res = await fetch(url);
+				const data = await res.json();
+				return data;
+			};
 
-		const rewardShares = async (minterAddr) => {
-			const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`;
-			const res = await fetch(url);
-			const data = await res.json();
-			return data;
-		};
+			if (!stop) {
+				stop = true;
+				try {
+					const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+					const myRewardShareArray = await rewardShares(address);
+					if (myRewardShareArray.length > 0) {
+						clearInterval(interval)
+						this.status = 3
+						this.timer = countDown(180, () => this.changeStatus(4));
+					}
 
-		if (!stop) {
-			stop = true;
-
-			try {
-
-				const address =
-					window.parent.reduxStore.getState().app?.selectedAddress?.address;
-
-				const myRewardShareArray = await rewardShares(address);
-				if (myRewardShareArray.length > 0) {
-					clearInterval(interval)
-					this.status = 3
-
-
-					this.timer = countDown(180, () => this.changeStatus(4));
+				} catch (error) {
 				}
-
-			} catch (error) {
-
+				stop = false
 			}
-
-			stop = false
-		}
-	};
-	interval = setInterval(getAnswer, 5000);
-}
+		};
+		interval = setInterval(getAnswer, 5000);
+	}
 
 	renderStartMintingButton() {
 		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
@@ -470,7 +457,7 @@ async confirmRelationship(){
 										3. ${translate("startminting.smchange7")}
 									</p>
 									<div class="row no-width">
-										<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> ${asyncReplace(this.timer)}
+										<div class=${`smallLoading marginLoader marginRight ${this.status !== 3 && 'hide'}`} ></div> <p>${asyncReplace(this.timer)}</p>
 									</div>
 								</li>
 
