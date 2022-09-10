@@ -221,12 +221,9 @@ class ChatScroller extends LitElement {
         // Intialize Observers
         this.upElementObserver()
         console.log('messagess', this.messages)
+        await this.updateComplete
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
-
     }
-
-
-  
 
     _getOldMessage(_scrollElement) {
     this.getOldMessage(_scrollElement)
@@ -476,7 +473,7 @@ class MessageTemplate extends LitElement {
     }
 
     showBlockIconFunc(bool) {
-        this.shadowRoot.querySelector(".chat-hover").focus()
+        this.shadowRoot.querySelector(".chat-hover").focus({ preventScroll: true })
         if(bool) {
             this.showBlockAddressIcon = true;
         } else {
@@ -521,7 +518,7 @@ class MessageTemplate extends LitElement {
                     <chat-menu 
                     tabindex="0"
                     class="chat-hover"
-                    style=${this.showBlockAddressIcon && "display: block"}
+                    style=${this.showBlockAddressIcon && "display: block; left: 88%"}
                     toblockaddress="${this.messageObj.sender}" 
                     .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
                     .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
@@ -630,7 +627,7 @@ class ChatMenu extends LitElement {
             }
 
             .block-user {
-                display: block !important;
+                justify-content: center;
             }
 
         `
@@ -654,7 +651,7 @@ class ChatMenu extends LitElement {
     render() {
 
         return html` 
-            <div class="container" style=${this.showBlockAddressIcon && "width: 25px" }>
+            <div class="container" style=${this.showBlockAddressIcon && "width: 70px" }>
             ${!this.showBlockAddressIcon ? html`
                 <div class="menu-icon tooltip" data-text="Private Message" 
                 @click="${() => this.showPrivateMessageModal()}">   
