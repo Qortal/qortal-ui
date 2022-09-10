@@ -263,6 +263,7 @@ class MessageTemplate extends LitElement {
             messageObj: { type: Object },
             hideMessages: { type: Array },
             openDialogPrivateMessage: {type: Boolean},
+            showBlockAddressIcon: { type: Boolean },
         };
     }
 
@@ -270,6 +271,7 @@ class MessageTemplate extends LitElement {
         super();
         this.messageObj = {}
         this.openDialogPrivateMessage = false
+        this.showBlockAddressIcon = false;
     }
 
     static get styles() {
@@ -384,15 +386,14 @@ class MessageTemplate extends LitElement {
         }
 
         .message-container:hover .chat-hover {
-            opacity: 1;
+            display: block;
         }
 
         .chat-hover {
-            display: block;
+            display: none;
             position: absolute;
             top: -32px;
-            left: 87%;
-            opacity: 0;
+            left: 86%;
         }
 
         .emoji {
@@ -474,8 +475,17 @@ class MessageTemplate extends LitElement {
         this.openDialogPrivateMessage = false
     }
 
+    showBlockIconFunc(bool) {
+        this.shadowRoot.querySelector(".chat-hover").focus()
+        if(bool) {
+            this.showBlockAddressIcon = true;
+        } else {
+            this.showBlockAddressIcon = false;
+        }
+    }
+
     render() {
-        console.log(this.openDialogPrivateMessage)
+        console.log(this.showBlockAddressIcon)
         const hidemsg = this.hideMessages
 
         let avatarImg = ''
@@ -508,7 +518,17 @@ class MessageTemplate extends LitElement {
                 <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message-container">
                     <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
-                    <chat-menu class="chat-hover" toblockaddress="${this.messageObj.sender}" .showPrivateMessageModal=${() => this.showPrivateMessageModal()}></chat-menu>
+                    <chat-menu 
+                    tabindex="0"
+                    class="chat-hover"
+                    style=${this.showBlockAddressIcon && "display: block"}
+                    toblockaddress="${this.messageObj.sender}" 
+                    .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
+                    .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
+                    .showBlockAddressIcon=${this.showBlockAddressIcon}
+                    @blur=${() => this.showBlockIconFunc(false)}
+                    > 
+                    </chat-menu>
                 </div>
             </li>
             <chat-modals 
@@ -529,12 +549,14 @@ class ChatMenu extends LitElement {
             selectedAddress: { type: Object },
             showPrivateMessageModal: {type: Function},
             toblockaddress: { type: String, attribute: true },
+            showBlockIconFunc: {type: Function},
+            showBlockAddressIcon: {type: Boolean}
         };
     }
 
     constructor() {
         super();
-        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address;
         this.showPrivateMessageModal = () => {};
     }
 
@@ -549,6 +571,7 @@ class ChatMenu extends LitElement {
             border: 1px solid #dad9d9;
             border-radius: 5px;
             height:100%;
+            width: 100px;
         }
 
         .menu-icon {
@@ -575,7 +598,7 @@ class ChatMenu extends LitElement {
             top: -47px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 90px;
             padding: 10px;
             border-radius: 10px;
             background:#fff;
@@ -606,6 +629,10 @@ class ChatMenu extends LitElement {
             display: block;
             }
 
+            .block-user {
+                display: block !important;
+            }
+
         `
     }
 
@@ -622,19 +649,28 @@ class ChatMenu extends LitElement {
             console.error('Copy to clipboard error:', err)
         }
     }
+    
 
     render() {
 
-        return html`
-            <div class="container">
-                <div class="menu-icon tooltip" data-text="Private Message" @click="${() => this.showPrivateMessageModal()}">   
+        return html` 
+            <div class="container" style=${this.showBlockAddressIcon && "width: 25px" }>
+            ${!this.showBlockAddressIcon ? html`
+                <div class="menu-icon tooltip" data-text="Private Message" 
+                @click="${() => this.showPrivateMessageModal()}">   
                 <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="Copy Address" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                 <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="More">
+                <div class="menu-icon tooltip" data-text="More" @click="${() => this.showBlockIconFunc(true)}">
                 <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
+                </div>
+                ` : html`
+                    <div class="menu-icon tooltip block-user" data-text="Block User">
+                        <vaadin-icon icon="vaadin:close-circle" slot="icon"></vaadin-icon>
+                    </div>
+                `}
                 </div>
             </div>  
         `
