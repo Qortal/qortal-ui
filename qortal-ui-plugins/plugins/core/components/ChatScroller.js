@@ -67,6 +67,7 @@ class ChatScroller extends LitElement {
 
         .chat-list {
             overflow-y: auto;
+            overflow-x: hidden;
             height: 92vh;
             box-sizing: border-box;
         }
@@ -260,6 +261,7 @@ class MessageTemplate extends LitElement {
             messageObj: { type: Object },
             hideMessages: { type: Array },
             openDialogPrivateMessage: {type: Boolean},
+            openDialogBlockUser: {type: Boolean},
             showBlockAddressIcon: { type: Boolean },
         };
     }
@@ -268,6 +270,7 @@ class MessageTemplate extends LitElement {
         super();
         this.messageObj = {}
         this.openDialogPrivateMessage = false
+        this.openDialogBlockUser = false
         this.showBlockAddressIcon = false;
     }
 
@@ -312,6 +315,7 @@ class MessageTemplate extends LitElement {
 
         .chat-list {
             overflow-y: auto;
+            overflow-x: hidden;
             height: 92vh;
             box-sizing: border-box;
         }
@@ -378,12 +382,12 @@ class MessageTemplate extends LitElement {
             margin-left: -10px;
         }
 
-        .message-container:hover .message{
-            filter:brightness(0.90);
+        .message-parent:hover .chat-hover {
+            display: block;
         }
 
-        .message-container:hover .chat-hover {
-            display: block;
+        .message-parent:hover .message{
+            filter:brightness(0.90);
         }
 
         .chat-hover {
@@ -452,17 +456,7 @@ class MessageTemplate extends LitElement {
         `
     }
 
-    updated(changedProps) {
-    if (changedProps.has("openDialogPrivateMessage")) {
-        console.log("yo16")
-      const dialog = this.shadowRoot.getElementById("sendPMDialog")
-        dialog.addEventListener('closing', (e) => {
-            if (e.detail.action === 'close') {
-                this.openDialogPrivateMessage = false
-            }
-          })
-      }
-  }
+    // Open & Close Private Message Chat Modal
 
     showPrivateMessageModal() {
         this.openDialogPrivateMessage = true
@@ -470,6 +464,16 @@ class MessageTemplate extends LitElement {
 
     hidePrivateMessageModal() {
         this.openDialogPrivateMessage = false
+    }
+
+    // Open & Close Block User Chat Modal
+
+    showBlockUserModal() {
+        this.openDialogBlockUser = true
+    }
+
+    hideBlockUserModal() {
+        this.openDialogBlockUser = false
     }
 
     showBlockIconFunc(bool) {
@@ -506,7 +510,7 @@ class MessageTemplate extends LitElement {
         }
 
         return hideit ? html`<li class="clearfix"></li>` : html`
-			<li class="clearfix">
+			<li class="clearfix message-parent">
                 <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
                     <span class="message-data-name">${nameMenu}</span>
                     <span class="message-data-level">${levelFounder}</span>
@@ -518,9 +522,10 @@ class MessageTemplate extends LitElement {
                     <chat-menu 
                     tabindex="0"
                     class="chat-hover"
-                    style=${this.showBlockAddressIcon && "display: block; left: 88%"}
+                    style=${this.showBlockAddressIcon && "display: block"}
                     toblockaddress="${this.messageObj.sender}" 
                     .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
+                    .showBlockUserModal=${() => this.showBlockUserModal()}
                     .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
                     .showBlockAddressIcon=${this.showBlockAddressIcon}
                     @blur=${() => this.showBlockIconFunc(false)}
@@ -530,8 +535,12 @@ class MessageTemplate extends LitElement {
             </li>
             <chat-modals 
             .openDialogPrivateMessage=${this.openDialogPrivateMessage} 
+            .openDialogBlockUser=${this.openDialogBlockUser} 
             nametodialog="${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}" 
-            .hidePrivateMessageModal=${() => this.hidePrivateMessageModal()}>
+            .hidePrivateMessageModal=${() => this.hidePrivateMessageModal()}
+            .hideBlockUserModal=${() => this.hideBlockUserModal()}
+            toblockaddress=${this.messageObj.sender}
+            >
             </chat-modals>
 		`;
     }
@@ -545,6 +554,7 @@ class ChatMenu extends LitElement {
             menuItems: { type: Array },
             selectedAddress: { type: Object },
             showPrivateMessageModal: {type: Function},
+            showBlockUserModal: {type: Function},
             toblockaddress: { type: String, attribute: true },
             showBlockIconFunc: {type: Function},
             showBlockAddressIcon: {type: Boolean}
@@ -555,6 +565,7 @@ class ChatMenu extends LitElement {
         super();
         this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address;
         this.showPrivateMessageModal = () => {};
+        this.showBlockUserModal = () => {};
     }
 
     static get styles() {
@@ -569,6 +580,7 @@ class ChatMenu extends LitElement {
             border-radius: 5px;
             height:100%;
             width: 100px;
+            position: relative;
         }
 
         .menu-icon {
@@ -626,8 +638,21 @@ class ChatMenu extends LitElement {
             display: block;
             }
 
+            .block-user-container {
+                display: block;
+                position: absolute;
+                left: -48px;
+            }
+
             .block-user {
-                justify-content: center;
+                justify-content: space-between;
+                border: 1px solid rgb(218, 217, 217);
+                border-radius: 5px;
+                background-color: white;
+                width: 100%;
+                height: 32px;
+                padding: 3px 8px;
+                box-shadow: rgba(77, 77, 82, 0.2) 0px 7px 29px 0px;
             }
 
         `
@@ -647,12 +672,10 @@ class ChatMenu extends LitElement {
         }
     }
     
-
     render() {
 
         return html` 
             <div class="container" style=${this.showBlockAddressIcon && "width: 70px" }>
-            ${!this.showBlockAddressIcon ? html`
                 <div class="menu-icon tooltip" data-text="Private Message" 
                 @click="${() => this.showPrivateMessageModal()}">   
                 <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
@@ -663,12 +686,16 @@ class ChatMenu extends LitElement {
                 <div class="menu-icon tooltip" data-text="More" @click="${() => this.showBlockIconFunc(true)}">
                 <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
                 </div>
+                ${this.showBlockAddressIcon ? html`
+                    <div class="block-user-container">
+                        <div class="menu-icon block-user" @click="${() => this.showBlockUserModal()}">
+                            <p>${translate("blockpage.bcchange1")}</p>
+                            <vaadin-icon icon="vaadin:close-circle" slot="icon"></vaadin-icon>
+                        </div>                    
+                    </div> 
                 ` : html`
-                    <div class="menu-icon tooltip block-user" data-text="Block User">
-                        <vaadin-icon icon="vaadin:close-circle" slot="icon"></vaadin-icon>
-                    </div>
-                `}
-                </div>
+                    <div></div>
+                    `}
             </div>  
         `
     }
