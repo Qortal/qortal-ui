@@ -155,7 +155,7 @@ class ChatPage extends LitElement {
     firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
-        this.changeLanguage();
+        // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');

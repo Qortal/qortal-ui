@@ -65,6 +65,23 @@ class ChatScroller extends LitElement {
             padding: 20px;
         }
 
+        .last-message-ref {
+            position: fixed;
+            font-size: 20px;
+            right: 40px;
+            bottom: 100px;
+            width: 50;
+            height: 50;
+            z-index: 5;
+            opacity: 0;
+            transition: all 0.1s ease-in-out; 
+        }
+
+        .last-message-ref:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+         }
+
         .chat-list {
             overflow-y: auto;
             overflow-x: hidden;
@@ -80,7 +97,6 @@ class ChatScroller extends LitElement {
 
         .message-data-name {
             color: var(--black);
-            cursor: pointer;
         }
 
         .message-data-time {
@@ -193,6 +209,7 @@ class ChatScroller extends LitElement {
         super()
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
+        this._downObserverHandler = this._downObserverHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
     }
@@ -208,7 +225,15 @@ class ChatScroller extends LitElement {
             (message) => message.reference,
             (message) => html`<message-template .emojiPicker=${this.emojiPicker} .escapeHTML=${this.escapeHTML} .messageObj=${message}  .hideMessages=${this.hideMessages}></message-template>`
         )}
-                <div id="downObserver"></div>
+                <div id='downObserver'></div>
+                <div class='last-message-ref'>
+                <vaadin-icon style=${"color: black"} icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
+                console.log("yo500")
+                this.shadowRoot.getElementById('downObserver').scrollIntoView({
+                    behavior: 'smooth',
+                }) 
+                }}></vaadin-icon>
+                </div>
             </ul>
         `
     }
@@ -221,7 +246,7 @@ class ChatScroller extends LitElement {
 
         // Intialize Observers
         this.upElementObserver()
-        console.log('messagess', this.messages)
+        this.downElementObserver()
         await this.updateComplete
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
     }
@@ -240,6 +265,15 @@ class ChatScroller extends LitElement {
         }
     }
 
+    _downObserverHandler(entries) {
+
+        if (!entries[0].isIntersecting) {
+            this.shadowRoot.querySelector(".last-message-ref").style.opacity = '1'
+        } else {
+            this.shadowRoot.querySelector(".last-message-ref").style.opacity = '0'
+        }
+    }
+
     upElementObserver() {
         const options = {
             root: this.viewElement,
@@ -250,6 +284,25 @@ class ChatScroller extends LitElement {
         const observer = new IntersectionObserver(this._upObserverhandler, options)
         observer.observe(this.upObserverElement)
     }
+
+    downElementObserver() {
+    const options = {
+        root: this.viewElement,
+        rootMargin: '0px',
+        threshold: 1
+    };
+        // identify an element to observe
+    const elementToObserve = this.downObserverElement;
+
+    // passing it a callback function
+    const observer = new IntersectionObserver(this._downObserverHandler, options);
+
+    // call `observe()` on that MutationObserver instance,
+    // passing it the element to observe, and the options object
+    observer.observe(elementToObserve);
+
+    }
+
 }
 
 window.customElements.define('chat-scroller', ChatScroller)
@@ -271,7 +324,8 @@ class MessageTemplate extends LitElement {
         this.messageObj = {}
         this.openDialogPrivateMessage = false
         this.openDialogBlockUser = false
-        this.showBlockAddressIcon = false;
+        this.showBlockAddressIcon = false
+        this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
     }
 
     static get styles() {
@@ -328,7 +382,6 @@ class MessageTemplate extends LitElement {
 
         .message-data-name {
             color: var(--black);
-            cursor: pointer;
         }
 
         .message-data-time {
@@ -506,7 +559,7 @@ class MessageTemplate extends LitElement {
         if (this.messageObj.sender === this.myAddress) {
             nameMenu = html`<span style="color: #03a9f4;">${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
         } else {
-            nameMenu = html`<name-menu toblockaddress="${this.messageObj.sender}" nametodialog="${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}"></name-menu>`
+            nameMenu = html`<span>${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
         }
 
         return hideit ? html`<li class="clearfix"></li>` : html`

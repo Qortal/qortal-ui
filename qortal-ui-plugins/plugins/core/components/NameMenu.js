@@ -246,8 +246,6 @@ class NameMenu extends LitElement {
     }
 
     firstUpdated() {
-
-        this.changeLanguage()
         this.getChatBlockedAdresses()
 
 	  setInterval(() => {
