@@ -245,9 +245,7 @@ class ChatWelcomePage extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
-        this.changeLanguage()
 
         const stopKeyEventPropagation = (e) => {
             e.stopPropagation();

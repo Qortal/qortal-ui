@@ -4,7 +4,7 @@ import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 import { escape, unescape } from 'html-escaper';
@@ -44,7 +44,8 @@ class ChatPage extends LitElement {
             isPasteMenuOpen: { type: Boolean },
             showNewMesssageBar: { attribute: false },
             hideNewMesssageBar: { attribute: false },
-            chatEditorPlaceholder: { type: String }
+            chatEditorPlaceholder: { type: String },
+            messagesRendered: { type: Array },
         }
     }
 
@@ -133,6 +134,7 @@ class ChatPage extends LitElement {
         this.isUserDown = false
         this.isPasteMenuOpen = false
         this.chatEditorPlaceholder = this.renderPlaceholder()
+        this.messagesRendered = []
     }
 
     render() {
@@ -153,7 +155,7 @@ class ChatPage extends LitElement {
     firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
-        this.changeLanguage();
+        // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
@@ -169,7 +171,7 @@ class ChatPage extends LitElement {
                 } else {
                     return this.chatEditor.focus();
                 }
-            };
+            }
         });
 
         // Init EmojiPicker
@@ -279,19 +281,32 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller(initialMessages) {
-        return html`<chat-scroller .initialMessages=${initialMessages} .emojiPicker=${this.emojiPicker} .escapeHTML=${escape} .getOldMessage=${this.getOldMessage} > </chat-scroller>`
+        return html`<chat-scroller .initialMessages=${initialMessages} .messages=${this.messagesRendered} .emojiPicker=${this.emojiPicker} .escapeHTML=${escape} .getOldMessage=${this.getOldMessage} > </chat-scroller>`
     }
 
-    getOldMessage(scrollElement) {
+    async getUpdateComplete() {
+        await super.getUpdateComplete();
+        const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-scroller'));
+        await Promise.all(marginElements.map(el => el.updateComplete));
+        return true;
+    }
+
+    async getOldMessage(scrollElement) {
 
         if (this._messages.length <= 15 && this._messages.length >= 1) { // 15 is the default number of messages...
 
             let __msg = [...this._messages]
             this._messages = []
+            this.messagesRendered = [...__msg, ...this.messagesRendered]
+            await this.getUpdateComplete();
 
+            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
             return { oldMessages: __msg, scrollElement: scrollElement }
         } else if (this._messages.length > 15) {
+            this.messagesRendered = [...this._messages.splice(this._messages.length - 15), ...this.messagesRendered]
+            await this.getUpdateComplete();
 
+            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
             return { oldMessages: this._messages.splice(this._messages.length - 15), scrollElement: scrollElement }
         } else {
 
@@ -299,8 +314,8 @@ class ChatPage extends LitElement {
         }
     }
 
-    processMessages(messages, isInitial) {
-
+   async processMessages(messages, isInitial) {
+        console.log({ messages })
         if (isInitial) {
 
             this.messages = messages.map((eachMessage) => {
@@ -327,7 +342,19 @@ class ChatPage extends LitElement {
 
             // TODO: Determine number of initial messages by screen height...
             this._messages.length <= 15 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 15);
+            
 
+            this.messagesRendered = this._initialMessages
+          
+            // try {
+            //     const viewElement = this.shadowRoot.querySelector('chat-scroller')
+            //     console.log({viewElement})
+            // // viewElement.scrollTop = this.viewElement.scrollHeight + 50
+            // } catch (error) {
+            //     console.error(error)
+            // }
+            
+            
             this.isLoadingMessages = false
             setTimeout(() => this.downElementObserver(), 500)
         } else {
@@ -354,6 +381,7 @@ class ChatPage extends LitElement {
             })
 
             this.newMessages = this.newMessages.concat(_newMessages)
+      
 
         }
     }
@@ -387,7 +415,7 @@ class ChatPage extends LitElement {
             nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
         }
 
-        if ( hideit === true ) {
+        if (hideit === true) {
             return `
                 <li class="clearfix"></li>
             `
@@ -406,7 +434,7 @@ class ChatPage extends LitElement {
         }
     }
 
-    renderNewMessage(newMessage) {
+  async  renderNewMessage(newMessage) {
 
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
         const downObserver = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('downObserver');
@@ -416,16 +444,22 @@ class ChatPage extends LitElement {
 
         if (newMessage.sender === this.selectedAddress.address) {
 
-            viewElement.insertBefore(li, downObserver);
+          this.messagesRendered = [...this.messagesRendered, newMessage]
+          await this.getUpdateComplete();
+
             viewElement.scrollTop = viewElement.scrollHeight;
         } else if (this.isUserDown) {
 
             // Append the message and scroll to the bottom if user is down the page
-            viewElement.insertBefore(li, downObserver);
+          this.messagesRendered = [...this.messagesRendered, newMessage]
+          await this.getUpdateComplete();
+
             viewElement.scrollTop = viewElement.scrollHeight;
         } else {
 
-            viewElement.insertBefore(li, downObserver);
+          this.messagesRendered = [...this.messagesRendered, newMessage]
+          await this.getUpdateComplete();
+
             this.showNewMesssageBar();
         }
     }
@@ -843,7 +877,7 @@ class ChatPage extends LitElement {
                        vertical-align: bottom;
                    }
                `;
-               editor.content.head.appendChild(editor.styles);
+                editor.content.head.appendChild(editor.styles);
             };
 
             ChatEditor.prototype.enable = function () {
@@ -1030,7 +1064,7 @@ class ChatPage extends LitElement {
 
             function doInit() {
                 return new ChatEditor();
-            };
+            }
             return doInit();
         };
 

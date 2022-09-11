@@ -95,8 +95,6 @@ class LevelFounder extends LitElement {
     }
 
     firstUpdated() {
-
-        this.changeLanguage()
         this.checkAddressInfo()
 
         window.addEventListener('storage', () => {
