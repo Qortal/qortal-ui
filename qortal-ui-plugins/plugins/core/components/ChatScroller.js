@@ -74,7 +74,10 @@ class ChatScroller extends LitElement {
             height: 50;
             z-index: 5;
             opacity: 0;
-            transition: all 0.1s ease-in-out; 
+            color: black;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.1s ease-in-out;
         }
 
         .last-message-ref:hover {
@@ -227,7 +230,7 @@ class ChatScroller extends LitElement {
         )}
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
-                <vaadin-icon style=${"color: black"} icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
+                <vaadin-icon icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
                 console.log("yo500")
                 this.shadowRoot.getElementById('downObserver').scrollIntoView({
                     behavior: 'smooth',
