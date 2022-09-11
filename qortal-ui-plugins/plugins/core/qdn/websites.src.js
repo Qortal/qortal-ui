@@ -58,56 +58,56 @@ class Websites extends LitElement {
             }
 
             #tabs-1 {
-		--mdc-tab-height: 50px;
+		    --mdc-tab-height: 50px;
             }
 
             #tabs-1-content {
-		height: 100%;
-		padding-bottom: 10px;
+		    height: 100%;
+		    padding-bottom: 10px;
             }
 
-	    mwc-tab-bar {
-		--mdc-text-transform: none;
-		--mdc-tab-color-default: var(--black);
-		--mdc-tab-text-label-color-default: var(--black);
-	    }
+            mwc-tab-bar {
+                --mdc-text-transform: none;
+                --mdc-tab-color-default: var(--black);
+		    --mdc-tab-text-label-color-default: var(--black);
+	      }
 
             #pages {
-		display: flex;
-		flex-wrap: wrap;
-		padding: 10px 5px 5px 5px;
-		margin: 0px 20px 20px 20px;
-	    }
+		    display: flex;
+		    flex-wrap: wrap;
+		    padding: 10px 5px 5px 5px;
+		    margin: 0px 20px 20px 20px;
+	      }
 
-	    #pages > button {
-		user-select: none;
-		padding: 5px;
-		margin: 0 5px;
-		border-radius: 10%;
-		border: 0;
-		background: transparent;
-		font: inherit;
-		outline: none;
-		cursor: pointer;
+	      #pages > button {
+		    user-select: none;
+                padding: 5px;
+		    margin: 0 5px;
+		    border-radius: 10%;
+		    border: 0;
+		    background: transparent;
+		    font: inherit;
+		    outline: none;
+		    cursor: pointer;
                 color: var(--black);
-	    }
+	      }
 
-	    #pages > button:not([disabled]):hover,
-	    #pages > button:focus {
-		color: #ccc;
-		background-color: #eee;
-	    }
+	      #pages > button:not([disabled]):hover,
+	      #pages > button:focus {
+		    color: #ccc;
+		    background-color: #eee;
+	      }
 
-	    #pages > button[selected] {
-		font-weight: bold;
-		color: var(--white);
-		background-color: #ccc;
-	    }
+	      #pages > button[selected] {
+		    font-weight: bold;
+		    color: var(--white);
+		    background-color: #ccc;
+	      }
 
-	    #pages > button[disabled] {
-		opacity: 0.5;
-		cursor: default;
-	    }
+	      #pages > button[disabled] {
+		    opacity: 0.5;
+		    cursor: default;
+	      }
 
             #websites-list-page {
                 background: var(--white);
@@ -245,156 +245,156 @@ class Websites extends LitElement {
                 </mwc-tab-bar>
                 <z id="tabs-1-content">
                     <div id="tab-browse-content">
-	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange1")}</h2>
-                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
-	                </div>
-        	        <div class="divCard">
+	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange1")}</h2>
+                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                  </div>
+        	            <div class="divCard">
                     	    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("websitespage.schange4")}</h3>
-	                    <div id="search">
-	                        <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("websitespage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
-	                            <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
-	                        </vaadin-text-field>&nbsp;&nbsp;<br>
-	                        <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
-	                            <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
-	                            ${translate("websitespage.schange35")}
-	                        </vaadin-button>
-	                    </div><br />
-	                    <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
-	                        <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderAvatar(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderInfo(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-                                <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderPublishedBy(data.item)}`, root)
-	                        }}>
+	                      <div id="search">
+	                          <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("websitespage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
+	                              <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	                          </vaadin-text-field>&nbsp;&nbsp;<br>
+	                          <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+	                              <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                              ${translate("websitespage.schange35")}
+	                          </vaadin-button>
+	                      </div><br />
+	                      <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search Websites" all-rows-visible>
+	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderAvatar(data.item)}`, root)
+    	                          }}>
+	                          </vaadin-grid-column>
+	                          <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderInfo(data.item)}`, root)
+	                          }}>
+	                          </vaadin-grid-column>
+                                  <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderPublishedBy(data.item)}`, root)
+	                          }}>
                                 </vaadin-grid-column>
-	                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                    </vaadin-grid><br />
-	                </div>
-	                <div class="divCard">
-	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange9")}</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.pageRes)}" .items="${this.pageRes}" aria-label="Websites" all-rows-visible>
-	                        <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderAvatar(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderInfo(data.item)}`, root)
-	                        }}>
-	                        </vaadin-grid-column>
-                                <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderPublishedBy(data.item)}`, root)
-	                        }}>
+	                          <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+	                          }}>
+	                          </vaadin-grid-column>
+	                          <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+	                          }}>
+	                          </vaadin-grid-column>
+	                      </vaadin-grid><br />
+	                  </div>
+	                  <div class="divCard">
+	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange9")}</h3>
+	                      <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.pageRes)}" .items="${this.pageRes}" aria-label="Websites" all-rows-visible>
+	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderAvatar(data.item)}`, root)
+	                          }}>
+	                          </vaadin-grid-column>
+	                          <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderInfo(data.item)}`, root)
+	                          }}>
+	                          </vaadin-grid-column>
+                                  <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderPublishedBy(data.item)}`, root)
+	                          }}>
                                 </vaadin-grid-column>
-	                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                        <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                            render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-	                        }}>
-	                        </vaadin-grid-column>
-	                    </vaadin-grid>
-	                    <div id="pages"></div>
+	                          <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+	                          }}>
+	                          </vaadin-grid-column>
+	                          <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                              render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+	                          }}>
+	                          </vaadin-grid-column>
+	                      </vaadin-grid>
+	                      <div id="pages"></div>
                             ${this.pageRes == null ? html`
-	                        Loading...
-	                    `: ''}
-	                    ${this.isEmptyArray(this.pageRes) ? html`
-	                        <span style="color: var(--black);">${translate("websitespage.schange10")}</span>
-	                    `: ''}
-	                </div>
-	                ${this.renderRelayModeText()}
-	            </div>
+	                          Loading...
+	                      ` : ''}
+	                      ${this.isEmptyArray(this.pageRes) ? html`
+	                          <span style="color: var(--black);">${translate("websitespage.schange10")}</span>
+	                      ` : ''}
+	                  </div>
+	                  ${this.renderRelayModeText()}
+	              </div>
                     <div id="tab-followed-content">
-	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange11")}</h2>
-                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
-	                </div>
-	                <div class="divCard">
-	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange12")}</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="followedResourcesGrid" ?hidden="${this.isEmptyArray(this.followedResources)}" .items="${this.followedResources}" aria-label="Followed Websites" all-rows-visible>
-                            <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderAvatar(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderInfo(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderPublishedBy(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-                            }}>
-                            </vaadin-grid-column>
-	                    </vaadin-grid>
+	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+                            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange11")}</h2>
+              	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                  </div>
+	                  <div class="divCard">
+	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange12")}</h3>
+	                      <vaadin-grid theme="wrap-cell-content" id="followedResourcesGrid" ?hidden="${this.isEmptyArray(this.followedResources)}" .items="${this.followedResources}" aria-label="Followed Websites" all-rows-visible>
+                                <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderAvatar(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderInfo(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderPublishedBy(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                }}>
+                                </vaadin-grid-column>
+	                      </vaadin-grid>
                             ${this.followedResources == null ? html`
-	                        Loading...
-	                    `: ''}
-	                    ${this.isEmptyArray(this.followedResources) ? html`
-	                        <span style="color: var(--black);">${translate("websitespage.schange13")}</span>
-	                    `: ''}
-	                </div>
-	                ${this.renderRelayModeText()}
-	            </div>
+	                          Loading...
+	                      ` : ''}
+	                      ${this.isEmptyArray(this.followedResources) ? html`
+	                          <span style="color: var(--black);">${translate("websitespage.schange13")}</span>
+	                      ` : ''}
+	                  </div>
+	                  ${this.renderRelayModeText()}
+	              </div>
                     <div id="tab-blocked-content">
-	                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange14")}</h2>
-                	    <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
-	                </div>
-	                <div class="divCard">
-	                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange15")}</h3>
-	                    <vaadin-grid theme="wrap-cell-content" id="blockedResourcesGrid" ?hidden="${this.isEmptyArray(this.blockedResources)}" .items="${this.blockedResources}" aria-label="Blocked Websites" all-rows-visible>
-                            <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderAvatar(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderInfo(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderPublishedBy(data.item)}`, root)
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-                                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                            }}>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-                            }}>
-                            </vaadin-grid-column>
-	                    </vaadin-grid>
+	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
+        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange14")}</h2>
+                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+	                  </div>
+	                  <div class="divCard">
+	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("websitespage.schange15")}</h3>
+	                      <vaadin-grid theme="wrap-cell-content" id="blockedResourcesGrid" ?hidden="${this.isEmptyArray(this.blockedResources)}" .items="${this.blockedResources}" aria-label="Blocked Websites" all-rows-visible>
+                                <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("websitespage.schange5")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderAvatar(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("websitespage.schange6")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderInfo(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("websitespage.schange7")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderPublishedBy(data.item)}`, root)
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+                                }}>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                }}>
+                                </vaadin-grid-column>
+	                      </vaadin-grid>
                             ${this.blockedResources == null ? html`
-	                        Loading...
-	                    `: ''}
-	                    ${this.isEmptyArray(this.blockedResources) ? html`
-	                        <span style="color: var(--black);">${translate("websitespage.schange16")}</span>
-	                    `: ''}
-	                </div>
-	                ${this.renderRelayModeText()}
-	            </div>
-	        </div>
-	    </div>
+	                          Loading...
+	                      ` : ''}
+	                      ${this.isEmptyArray(this.blockedResources) ? html`
+	                          <span style="color: var(--black);">${translate("websitespage.schange16")}</span>
+	                      ` : ''}
+	                  </div>
+	                  ${this.renderRelayModeText()}
+	              </div>
+	          </div>
+	      </div>
         `
     }
 
@@ -414,16 +414,15 @@ class Websites extends LitElement {
             })
 
             this.followedNames = followedNames
-            setTimeout(getFollowedNames, 600000)
+            setTimeout(getFollowedNames, 60000)
         }
 
         const getBlockedNames = async () => {
             let blockedNames = await parentEpml.request('apiCall', {
                 url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
             })
-
             this.blockedNames = blockedNames
-            setTimeout(getBlockedNames, 600000)
+            setTimeout(getBlockedNames, 60000)
         }
 
         const getRelayMode = async () => {
@@ -478,6 +477,8 @@ class Websites extends LitElement {
                     setTimeout(getFollowedNames, 1)
                     setTimeout(getBlockedNames, 1)
                     setTimeout(getRelayMode, 1)
+                    setTimeout(this.getFollowedNamesResource, 1)
+                    setTimeout(this.getBlockedNamesResource, 1)
                     setInterval(this.getArbitraryResources, 600000)
                     configLoaded = true
                 }
@@ -499,7 +500,7 @@ class Websites extends LitElement {
         } else {
             this.theme = 'light';
         }
-        document.querySelector('html').setAttribute('theme', this.theme);
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     changeLanguage() {
@@ -528,7 +529,7 @@ class Websites extends LitElement {
 
     searchListener(e) {
         if (e.key === 'Enter') {
-            this.doSearch(e);
+            this.doSearch(e)
         }
     }
 
@@ -539,26 +540,38 @@ class Websites extends LitElement {
     }
 
     getArbitraryResources = async () => {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const followedNamesUrl = `${nodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`
-        const blockedNamesUrl = `${nodeUrl}/lists/blockedNames?apiKey=${this.getApiKey()}`
-
         const resources = await parentEpml.request('apiCall', {
             url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
         })
-
         this.resources = resources
+    }
 
-	const followedResponse = await fetch(followedNamesUrl)
-	const followednames = await followedResponse.json()
-	let followedres = resources.filter((elm) => followednames.includes(elm.name))
-    this.followedResources = followedres
+    getFollowedNamesResource = async () => {
+        const followedRes = await parentEpml.request('apiCall', {
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=followedNames`
+        })
+        this.followedResources = followedRes
+    }
 
-	const blockedResponse = await fetch(blockedNamesUrl)
-	const blockednames = await blockedResponse.json()
-	let blockedres = resources.filter((elm) => blockednames.includes(elm.name))
-        this.blockedResources = blockedres
+    getFollowedNamesRefresh = async () => {
+        let followedNames = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+        })
+        this.followedNames = followedNames
+    }
+
+    getBlockedNamesResource = async () => {
+        const blockedRes = await parentEpml.request('apiCall', {
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=blockedNames`
+        })
+        this.blockedResources = blockedRes
+    }
+
+    getBlockedNamesRefresh = async () => {
+        let blockedNames = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+        })
+        this.blockedNames = blockedNames
     }
 
     async getData(offset) {
@@ -582,15 +595,15 @@ class Websites extends LitElement {
                 return index + 1
             })
 
-            let offset = 0;
+            let offset = 0
 
             const prevBtn = document.createElement('button')
             prevBtn.textContent = '<'
             prevBtn.addEventListener('click', () => {
                 if (parseInt(this.pagesControl.querySelector('[selected]').textContent) > 1) {
-                    offset = (parseInt(this.pagesControl.querySelector('[selected]').textContent) - 2) * 20;
+                    offset = (parseInt(this.pagesControl.querySelector('[selected]').textContent) - 2) * 20
                 } else {
-                    offset = 0;
+                    offset = 0
                 }
                 this.getData(offset);
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
@@ -604,9 +617,9 @@ class Websites extends LitElement {
                 let offset = 0;
                 pageBtn.addEventListener('click', (e) => {
                     if (parseInt(e.target.textContent) > 1) {
-                        offset = (parseInt(e.target.textContent) - 1) * 20;
+                        offset = (parseInt(e.target.textContent) - 1) * 20
                     } else {
-                        offset = 0;
+                        offset = 0
                     }
                     this.getData(offset);
                     this.updateItemsFromPage(parseInt(e.target.textContent))
@@ -621,9 +634,9 @@ class Websites extends LitElement {
             nextBtn.textContent = '>'
             nextBtn.addEventListener('click', () => {
                 if (parseInt(this.pagesControl.querySelector('[selected]').textContent) >= 1) {
-                    offset = ((parseInt(this.pagesControl.querySelector('[selected]').textContent) + 1) * 20) - 20;
+                    offset = ((parseInt(this.pagesControl.querySelector('[selected]').textContent) + 1) * 20) - 20
                 } else {
-                    offset = 0;
+                    offset = 0
                 }
                 this.getData(offset);
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
@@ -689,18 +702,18 @@ class Websites extends LitElement {
         let name = websiteObj.name
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
         return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}"><img src="${url}" onerror="this.src='/img/incognito.png';"></a>`
     }
 
     renderRelayModeText() {
         if (this.relayMode === true) {
-            return html`<div class="relay-mode-notice">${translate("websitespage.schange18")} <strong>"relayModeEnabled": false</strong> ${translate("websitespage.schange19")} settings.json</div>`;
+            return html`<div class="relay-mode-notice">${translate("websitespage.schange18")} <strong>"relayModeEnabled": false</strong> ${translate("websitespage.schange19")} settings.json</div>`
         }
         else if (this.relayMode === false) {
-            return html`<div class="relay-mode-notice">${translate("websitespage.schange20")} <strong>"relayModeEnabled": true</strong> ${translate("websitespage.schange19")} settings.json</div>`;
+            return html`<div class="relay-mode-notice">${translate("websitespage.schange20")} <strong>"relayModeEnabled": true</strong> ${translate("websitespage.schange19")} settings.json</div>`
         }
-        return html``;
+        return html``
     }
 
     renderPublishButton() {
@@ -738,15 +751,15 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.followedNames = this.followedNames.filter(item => item != name)
             this.followedNames.push(name)
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
             this.getArbitraryResources()
-            window.location.reload()
-        }
-        else {
+            this.updateComplete.then(() => this.requestUpdate())
+        } else {
             let err3string = get("websitespage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
         }
         return ret
-        this.displayTabContent('followed')
     }
 
     async unfollowName(websiteObj) {
@@ -768,15 +781,15 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unfollowed - remove from local list
             this.followedNames = this.followedNames.filter(item => item != name)
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
             this.getArbitraryResources()
-            window.location.reload()
-        }
-        else {
+            this.updateComplete.then(() => this.requestUpdate())
+        } else {
             let err4string = get("websitespage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
         }
         return ret
-        this.displayTabContent('followed')
     }
 
     async blockName(websiteObj) {
@@ -801,15 +814,15 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
             this.getArbitraryResources()
-            window.location.reload()
-        }
-        else {
+            this.updateComplete.then(() => this.requestUpdate())
+        } else {
             let err5string = get("websitespage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
         }
         return ret
-        this.displayTabContent('blocked')
     }
 
     async unblockName(websiteObj) {
@@ -831,63 +844,65 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unblocked - remove from local list
             this.blockedNames = this.blockedNames.filter(item => item != name)
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
             this.getArbitraryResources()
-            window.location.reload()
-        }
-        else {
+            this.updateComplete.then(() => this.requestUpdate())
+        } else {
             let err6string = get("websitespage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
         }
         return ret
-        this.displayTabContent('blocked')
     }
 
     renderInfo(websiteObj) {
         let name = websiteObj.name
-        let title = name;
-        let description = "";
-        let categoryName = this.renderCatText();
+        let title = name
+        let description = ""
+        let categoryName = this.renderCatText()
         let tags = "";
-        let sizeReadable = "";
+        let sizeReadable = ""
 
         if (websiteObj.metadata != null) {
             title = websiteObj.metadata.title;
             description = websiteObj.metadata.description;
             categoryName = websiteObj.metadata.categoryName;
             if (websiteObj.metadata.tags != null && websiteObj.metadata.tags.length > 0) {
-                tags = "Tags: " + websiteObj.metadata.tags.join(", ");
+                tags = "Tags: " + websiteObj.metadata.tags.join(", ")
             }
         }
+
         if (websiteObj.size != null) {
             sizeReadable = this.bytesToSize(websiteObj.size);
         }
 
         return html`
-        <div class="resourceTitle">
-            <a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${title}</a>
-        </div>
-        <div class="resourceDescription">
-            ${description}
-        </div>
-        <div class="resourceCategoryTags">
-            ${categoryName}&nbsp;
-            ${tags.length > 0 ? " | " : ""}
-            &nbsp;${tags}&nbsp;
-            ${sizeReadable.length > 0 ? " | " : ""}
-            &nbsp;${translate("websitespage.schange27")}: ${sizeReadable}
-        </div>`;
+            <div class="resourceTitle">
+                <a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${title}</a>
+            </div>
+            <div class="resourceDescription">
+                ${description}
+            </div>
+            <div class="resourceCategoryTags">
+                ${categoryName}&nbsp;
+                ${tags.length > 0 ? " | " : ""}
+                &nbsp;${tags}&nbsp;
+                ${sizeReadable.length > 0 ? " | " : ""}
+                &nbsp;${translate("websitespage.schange27")}: ${sizeReadable}
+            </div>
+        `
     }
 
     renderPublishedBy(websiteObj) {
         return html`<div class="resourceRegisteredName">${websiteObj.name}</div>
-        <div class="resourceStatus">${translate("websitespage.schange28")}: <span title="${websiteObj.status.description}">${websiteObj.status.title}</span></div>`;
+        <div class="resourceStatus">${translate("websitespage.schange28")}: <span title="${websiteObj.status.description}">${websiteObj.status.title}</span></div>`
     }
 
     renderSize(websiteObj) {
         if (websiteObj.size === null) {
             return html``
         }
-        let sizeReadable = this.bytesToSize(websiteObj.size);
+        let sizeReadable = this.bytesToSize(websiteObj.size)
         return html`<span>${sizeReadable}</span>`
     }
 
@@ -928,10 +943,10 @@ class Websites extends LitElement {
     }
 
     bytesToSize(bytes) {
-        var sizes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes == 0) return '0 bytes';
-        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+        var sizes = ['bytes', 'KB', 'MB', 'GB', 'TB']
+        if (bytes == 0) return '0 bytes'
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i]
     }
 
     _textMenu(event) {
@@ -942,7 +957,7 @@ class Websites extends LitElement {
             } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
                 text = this.shadowRoot.selection.createRange().text;
             }
-            return text;
+            return text
         }
 
         const checkSelectedTextAndShowMenu = () => {
@@ -957,9 +972,9 @@ class Websites extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
     clearSelection() {
