@@ -67,7 +67,6 @@ class StartMinting extends connect(store)(LitElement) {
 			}
 			.start-minting-wrapper {
 				position: absolute;
-				left: 50%;
 				transform: translate(50%, 20px);
 				z-index: 10;
 			}
