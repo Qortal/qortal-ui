@@ -496,7 +496,8 @@
       "bcchange6":"Êtes-vous sûr de bloquer cet utilisateur ?",
       "bcchange7":"MENU",
       "bcchange8":"Copier l'Adresse",
-      "bcchange9":"Message Privé"
+      "bcchange9":"Message Privé",
+      "bcchange10":"Suite"
    },
    "grouppage":{
       "gchange1":"Groupes Qortal",

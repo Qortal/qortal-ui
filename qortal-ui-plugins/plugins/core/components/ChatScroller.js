@@ -278,13 +278,13 @@ class ChatMenu extends LitElement {
     render() {
         return html` 
             <div class="container" style=${this.showBlockAddressIcon && "width: 70px" }>
-                <div class="menu-icon tooltip" data-text="Private Message" @click="${() => this.showPrivateMessageModal()}">   
+                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="Copy Address" @click="${() => this.copyToClipboard(this.toblockaddress)}">
+                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                     <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="More" @click="${() => this.showBlockIconFunc(true)}">
+                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
                     <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
                 </div>
                 ${this.showBlockAddressIcon
