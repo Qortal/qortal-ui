@@ -4,9 +4,8 @@ yarn.lock
 # Derived js files
 qortal-ui-plugins/plugins/core/**/*.js
 !*.src.js
-qortal-ui-plugins/plugins/core/components/*.js
-!*.js
 qortal-ui-core/src/redux/app/version.js
+!qortal-ui-plugins/plugins/core/components/*.js
 
 # Node modules
 node_modules/
