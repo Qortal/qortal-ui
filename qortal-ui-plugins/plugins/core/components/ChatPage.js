@@ -315,7 +315,6 @@ class ChatPage extends LitElement {
     }
 
    async processMessages(messages, isInitial) {
-        console.log({ messages })
         if (isInitial) {
 
             this.messages = messages.map((eachMessage) => {

@@ -1,17 +1,18 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { repeat } from 'lit/directives/repeat.js'
-import { translate, get } from 'lit-translate'
-import { Epml } from "../../../epml"
+import { LitElement, html, css } from 'lit';
+import { render } from 'lit/html.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { translate, get } from 'lit-translate';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js'
-import './LevelFounder.js'
-import './NameMenu.js'
-import './ChatModals.js'
-import '@vaadin/icons'
-import '@vaadin/icon'
-import '@material/mwc-button'
-import '@material/mwc-dialog'
-import '@material/mwc-icon'
+import { Epml } from "../../../epml";
+import './LevelFounder.js';
+import './NameMenu.js';
+import './ChatModals.js';
+import '@vaadin/icons';
+import '@vaadin/icon';
+import '@material/mwc-button';
+import '@material/mwc-dialog';
+import '@material/mwc-icon';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class ChatScroller extends LitElement {
@@ -81,7 +82,6 @@ class ChatScroller extends LitElement {
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
             let _scrollElement = entries[0].target.nextElementSibling
-            console.log({ _scrollElement })
             this._getOldMessage(_scrollElement)
         }
     }
@@ -132,6 +132,8 @@ class MessageTemplate extends LitElement {
     static get properties() {
         return {
             messageObj: { type: Object },
+            emojiPicker: { attribute: false },
+            escapeHTML: { attribute: false },
             hideMessages: { type: Array },
             openDialogPrivateMessage: {type: Boolean},
             openDialogBlockUser: {type: Boolean},
@@ -178,7 +180,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log(this.showBlockAddressIcon)
         const hidemsg = this.hideMessages
 
         let avatarImg = ''
@@ -210,7 +211,7 @@ class MessageTemplate extends LitElement {
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message-container">
-                    <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
+                <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage)))}</div>
                     <chat-menu 
                         tabindex="0"
                         class="chat-hover"
