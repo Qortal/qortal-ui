@@ -231,7 +231,6 @@ class ChatScroller extends LitElement {
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
                 <vaadin-icon icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
-                console.log("yo500")
                 this.shadowRoot.getElementById('downObserver').scrollIntoView({
                     behavior: 'smooth',
                 }) 
@@ -263,7 +262,6 @@ class ChatScroller extends LitElement {
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
             let _scrollElement = entries[0].target.nextElementSibling
-            console.log({ _scrollElement })
             this._getOldMessage(_scrollElement)
         }
     }
@@ -315,6 +313,8 @@ class MessageTemplate extends LitElement {
     static get properties() {
         return {
             messageObj: { type: Object },
+            emojiPicker: { attribute: false },
+            escapeHTML: { attribute: false },
             hideMessages: { type: Array },
             openDialogPrivateMessage: {type: Boolean},
             openDialogBlockUser: {type: Boolean},
@@ -542,7 +542,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log(this.showBlockAddressIcon)
         const hidemsg = this.hideMessages
 
         let avatarImg = ''
@@ -574,12 +573,12 @@ class MessageTemplate extends LitElement {
                 </div>
                 <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
                 <div class="message-container">
-                    <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
+                <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage))}</div>
                     <chat-menu 
                     tabindex="0"
                     class="chat-hover"
                     style=${this.showBlockAddressIcon && "display: block"}
-                    toblockaddress="${this.messageObj.sender}" 
+                    toblockaddress=${this.messageObj.sender} 
                     .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
                     .showBlockUserModal=${() => this.showBlockUserModal()}
                     .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
