@@ -491,7 +491,13 @@
       "bcchange1":"blokker",
       "bcchange2":"Blokkering av denne brukeren vellykket!",
       "bcchange3":"Det oppstod en feil ved forsøk på å blokkere denne brukeren. Prøv på nytt!",
-      "bcchange4":"Ingen registrert navn"
+      "bcchange4":"Ingen registrert navn",
+      "bcchange5":"Blokker brukerforespørsel",
+      "bcchange6":"Er du sikker på å blokkere denne brukeren ?",
+      "bcchange7":"MENY",
+      "bcchange8":"Kopier adresse",
+      "bcchange9":"Privat melding",
+      "bcchange10":"Mer"
    },
    "grouppage":{
       "gchange1":"Qortal-grupper",

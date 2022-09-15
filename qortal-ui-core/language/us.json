@@ -496,7 +496,8 @@
       "bcchange6":"Are you sure to block this user ?",
       "bcchange7":"MENU",
       "bcchange8":"Copy Address",
-      "bcchange9":"Private Message"
+      "bcchange9":"Private Message",
+      "bcchange10":"More"
    },
    "grouppage":{
       "gchange1":"Qortal Groups",
