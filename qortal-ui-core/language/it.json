@@ -117,7 +117,11 @@
       "addandsave":"Aggiungi e salva",
       "protocol":"Protocollo",
       "domain":"Dominio",
-      "port":"Porta"
+      "port":"Porta",
+      "import":"Importa Nodi",
+      "export":"Esporta Nodi",
+      "deletecustomnode":"Rimuovi tutti i nodi personalizzati",
+      "warning":"I tuoi nodi esistenti verranno eliminati e dal backup verranno creati di nuovo."
    },
    "appinfo":{
       "blockheight":"Altezza blocco",

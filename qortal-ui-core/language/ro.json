@@ -117,7 +117,11 @@
       "addandsave":"Adauga Si Salveaza",
       "protocol":"Protocol",
       "domain":"Domeniu",
-      "port":"Port"
+      "port":"Port",
+      "import":"Import Noduri",
+      "export":"Export Noduri",
+      "deletecustomnode":"Eliminati toate nodurile personalizate",
+      "warning":"Nodurile dvs. existente vor fi sterse si din backup vor fi create noi."
    },
    "appinfo":{
       "blockheight":"Dimensiunea blocului",

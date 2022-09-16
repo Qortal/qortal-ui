@@ -117,7 +117,11 @@
       "addandsave":"Dodajte i spremite",
       "protocol":"Protokol",
       "domain":"Domena",
-      "port":"Port"
+      "port":"Port",
+      "import":"Uvoz Čvorovi",
+      "export":"Izvozni Čvorovi",
+      "deletecustomnode":"Ukloni sve prilagođene čvorove",
+      "warning":"Vaši postojeći čvorovi bit će izbrisani i novi će se stvoriti iz sigurnosne kopije."
    },
    "appinfo":{
       "blockheight":"Visina bloka",

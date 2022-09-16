@@ -117,7 +117,11 @@
       "addandsave":"Hozzáadás és mentés",
       "protocol":"Protokoll",
       "domain":"Tartomány",
-      "port":"Kikötő"
+      "port":"Kikötő",
+      "import":"Csomópontok Importálása",
+      "export":"Csomópontok Exportálása",
+      "deletecustomnode":"Távolítsa el az összes egyéni csomópontot",
+      "warning":"A meglévő csomópontok törlődnek, és a biztonsági másolatból újak jönnek létre."
    },
    "appinfo":{
       "blockheight":"Blokk Magassága",

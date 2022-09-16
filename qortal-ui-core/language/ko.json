@@ -117,7 +117,11 @@
       "addandsave":"추가 및 저장",
       "protocol":"프로토콜",
       "domain":"도메인",
-      "port":"포트"
+      "port":"포트",
+      "import":"노드 가져오기",
+      "export":"노드 내보내기",
+      "deletecustomnode":"모든 사용자 정의 노드 제거",
+      "warning":"기존 노드가 삭제되고 백업에서 새로 생성됩니다."
    },
    "appinfo":{
       "blockheight":"블록 높이",

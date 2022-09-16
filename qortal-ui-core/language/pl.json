@@ -117,7 +117,11 @@
       "addandsave":"Dodaj i zapisz",
       "protocol":"Protokół",
       "domain":"Domena",
-      "port":"Port"
+      "port":"Port",
+      "import":"Importuj Węzły",
+      "export":"Eksportuj Węzły",
+      "deletecustomnode":"Usuń wszystkie niestandardowe węzły",
+      "warning":"Twoje istniejące węzły zostaną usunięte, a z kopii zapasowej utworzone nowe."
    },
    "appinfo":{
       "blockheight":"Wysokość bloku",

@@ -117,7 +117,11 @@
       "addandsave":"Add And Save",
       "protocol":"Protocol",
       "domain":"Domain",
-      "port":"Port"
+      "port":"Port",
+      "import":"Import Nodes",
+      "export":"Export Nodes",
+      "deletecustomnode":"Remove All Custom Nodes",
+      "warning":"Your existing nodes will be deleted and from backup new created."
    },
    "appinfo":{
       "blockheight":"Block Height",

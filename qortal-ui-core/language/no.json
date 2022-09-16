@@ -117,7 +117,11 @@
       "addandsave":"Legg til og lagre",
       "protocol":"Protokoll",
       "domain":"Domene",
-      "port":"Port"
+      "port":"Port",
+      "import":"Importer Noder",
+      "export":"Eksporter Noder",
+      "deletecustomnode":"Fjern alle egendefinerte noder",
+      "warning":"Dine eksisterende noder vil bli slettet og nye opprettet fra sikkerhetskopien."
    },
    "appinfo":{
       "blockheight":"Blokkhøyde",

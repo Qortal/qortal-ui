@@ -117,7 +117,11 @@
       "addandsave":"Adicionar e Salvar",
       "protocol":"Protocolo",
       "domain":"Domínio",
-      "port":"Portar"
+      "port":"Portar",
+      "import":"Importar Nós",
+      "export":"Exportar Nós",
+      "deletecustomnode":"Remover todos os nós personalizados",
+      "warning":"Seus nós existentes serão excluídos e do backup será criado."
    },
    "appinfo":{
       "blockheight":"Altura do Bloco",

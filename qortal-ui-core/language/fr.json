@@ -117,7 +117,11 @@
       "addandsave":"Ajouter et sauvegarder",
       "protocol":"Protocole",
       "domain":"Domaine",
-      "port":"Port"
+      "port":"Port",
+      "import":"Importer des Noeuds",
+      "export":"Exporter des Noeuds",
+      "deletecustomnode":"Supprimer tous les noeuds personnalisés",
+      "warning":"Vos noeuds existants seront supprimés et créés à partir de la sauvegarde."
    },
    "appinfo":{
       "blockheight":"Hauteur de bloc",

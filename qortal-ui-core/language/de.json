@@ -117,7 +117,11 @@
       "addandsave":"Hinzufügen und speichern",
       "protocol":"Protokoll",
       "domain":"Domain",
-      "port":"Port"
+      "port":"Port",
+      "import":"Knoten Importieren",
+      "export":"Knoten Exportieren",
+      "deletecustomnode":"Alle benutzerdefinierten Knoten entfernen",
+      "warning":"Ihre bestehenden Knoten werden gelöscht und aus dem Backup neu erstellt."
    },
    "appinfo":{
       "blockheight":"Blockhöhe",

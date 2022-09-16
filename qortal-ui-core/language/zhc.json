@@ -117,7 +117,11 @@
       "addandsave":"添加并保存",
       "protocol":"协议",
       "domain":"域名",
-      "port":"端口"
+      "port":"端口",
+      "import":"导入节点",
+      "export":"导出节点",
+      "deletecustomnode":"删除所有自定义节点",
+      "warning":"您现有的节点将被删除并从备份中创建新的。"
    },
    "appinfo":{
       "blockheight":"区块高度",
