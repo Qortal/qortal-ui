@@ -121,7 +121,12 @@
       "import":"Import Nodes",
       "export":"Export Nodes",
       "deletecustomnode":"Remove All Custom Nodes",
-      "warning":"Your existing nodes will be deleted and from backup new created."
+      "warning":"Your existing nodes will be deleted and from backup new created.",
+      "snack1":"Successfully deleted and added standard nodes",
+      "snack2":"UI conected to node",
+      "snack3":"Successfully added and saved custom node",
+      "snack4":"Nodes successfully saved as",
+      "snack5":"Nodes successfully imported"
    },
    "appinfo":{
       "blockheight":"Block Height",

@@ -121,7 +121,12 @@
       "import":"Csomópontok Importálása",
       "export":"Csomópontok Exportálása",
       "deletecustomnode":"Távolítsa el az összes egyéni csomópontot",
-      "warning":"A meglévő csomópontok törlődnek, és a biztonsági másolatból újak jönnek létre."
+      "warning":"A meglévő csomópontok törlődnek, és a biztonsági másolatból újak jönnek létre.",
+      "snack1":"A szabványos csomópontok sikeresen törölve és hozzáadva",
+      "snack2":"UI csatlakozik a csomóponthoz",
+      "snack3":"Az egyéni csomópont sikeresen hozzáadva és mentve",
+      "snack4":"A csomópontok sikeresen mentve másként",
+      "snack5":"A csomópontok sikeresen importálva"
    },
    "appinfo":{
       "blockheight":"Blokk Magassága",
