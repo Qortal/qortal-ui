@@ -121,7 +121,12 @@
       "import":"Knoten Importieren",
       "export":"Knoten Exportieren",
       "deletecustomnode":"Alle benutzerdefinierten Knoten entfernen",
-      "warning":"Ihre bestehenden Knoten werden gelöscht und aus dem Backup neu erstellt."
+      "warning":"Ihre bestehenden Knoten werden gelöscht und aus dem Backup neu erstellt.",
+      "snack1":"Standardknoten erfolgreich gelöscht und hinzugefügt",
+      "snack2":"UI mit Knoten verbunden",
+      "snack3":"Benutzerdefinierter Knoten erfolgreich hinzugefügt und gespeichert",
+      "snack4":"Knoten erfolgreich gespeichert als",
+      "snack5":"Knoten erfolgreich importiert"
    },
    "appinfo":{
       "blockheight":"Blockhöhe",

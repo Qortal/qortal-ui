@@ -121,7 +121,12 @@
       "import":"Importa Nodi",
       "export":"Esporta Nodi",
       "deletecustomnode":"Rimuovi tutti i nodi personalizzati",
-      "warning":"I tuoi nodi esistenti verranno eliminati e dal backup verranno creati di nuovo."
+      "warning":"I tuoi nodi esistenti verranno eliminati e dal backup verranno creati di nuovo.",
+      "snack1":"Nodi standard eliminati e aggiunti con successo",
+      "snack2":"Interfaccia utente collegata al nodo",
+      "snack3":"Nodo personalizzato aggiunto e salvato con successo",
+      "snack4":"Nodi salvati con successo come",
+      "snack5":"Nodi importati correttamente"
    },
    "appinfo":{
       "blockheight":"Altezza blocco",

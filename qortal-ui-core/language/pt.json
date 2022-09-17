@@ -121,7 +121,12 @@
       "import":"Importar Nós",
       "export":"Exportar Nós",
       "deletecustomnode":"Remover todos os nós personalizados",
-      "warning":"Seus nós existentes serão excluídos e do backup será criado."
+      "warning":"Seus nós existentes serão excluídos e do backup será criado.",
+      "snack1":"Nós padrão excluídos e adicionados com sucesso",
+      "snack2":"UI conectada ao nó",
+      "snack3":"Nó personalizado adicionado e salvo com sucesso",
+      "snack4":"Nós salvos com sucesso como",
+      "snack5":"Nós importados com sucesso"
    },
    "appinfo":{
       "blockheight":"Altura do Bloco",

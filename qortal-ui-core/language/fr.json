@@ -121,7 +121,12 @@
       "import":"Importer des Noeuds",
       "export":"Exporter des Noeuds",
       "deletecustomnode":"Supprimer tous les noeuds personnalisés",
-      "warning":"Vos noeuds existants seront supprimés et créés à partir de la sauvegarde."
+      "warning":"Vos noeuds existants seront supprimés et créés à partir de la sauvegarde.",
+      "snack1":"Noeuds standard supprimés et ajoutés avec succès",
+      "snack2":"Interface utilisateur connectée au noeud",
+      "snack3":"Noeud personnalisé ajouté et enregistré avec succès",
+      "snack4":"Les noeuds ont été enregistrés avec succès sous",
+      "snack5":"Les noeuds ont été importés avec succès"
    },
    "appinfo":{
       "blockheight":"Hauteur de bloc",

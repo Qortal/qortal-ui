@@ -121,7 +121,12 @@
       "import":"Importuj Węzły",
       "export":"Eksportuj Węzły",
       "deletecustomnode":"Usuń wszystkie niestandardowe węzły",
-      "warning":"Twoje istniejące węzły zostaną usunięte, a z kopii zapasowej utworzone nowe."
+      "warning":"Twoje istniejące węzły zostaną usunięte, a z kopii zapasowej utworzone nowe.",
+      "snack1":"Pomyślnie usunięto i dodano standardowe węzły",
+      "snack2":"Interfejs użytkownika połączony z węzłem",
+      "snack3":"Pomyślnie dodano i zapisano niestandardowy węzeł",
+      "snack4":"Węzły pomyślnie zapisane jako",
+      "snack5":"Węzły pomyślnie zaimportowane"
    },
    "appinfo":{
       "blockheight":"Wysokość bloku",
