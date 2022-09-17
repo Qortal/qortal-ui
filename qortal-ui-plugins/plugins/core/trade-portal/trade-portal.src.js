@@ -1332,18 +1332,21 @@ class TradePortal extends LitElement {
         tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
     }
 
-    reRenderHistoricTrades() {
+    async reRenderHistoricTrades() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingHistoricTrades = false
     }
 
-    reRenderOpenFilteredOrders() {
+    async reRenderOpenFilteredOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingOpenTrades = false
     }
 
-    reRenderMyOpenOrders() {
+    async reRenderMyOpenOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingMyOpenOrders = false
     }
 
@@ -1975,7 +1978,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeOffersWebSocket()
             }
             // Error Event
@@ -2009,7 +2011,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeBotWebSocket()
             }
             // Error Event
@@ -2039,7 +2040,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradePresenceWebSocket()
             }
             // Error Event
@@ -2070,7 +2070,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartPresenceWebSocket()
             }
             // Error Event
@@ -2084,19 +2083,19 @@ class TradePortal extends LitElement {
         }
 
         const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 20000)
+            setTimeout(() => initPresenceWebSocket(true), 1000)
         }
 
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 20000)
+            setTimeout(() => initTradePresenceWebSocket(true), 1000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 20000)
+            setTimeout(() => initTradeOffersWebSocket(true), 1000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 20000)
+            setTimeout(() => initTradeBotWebSocket(true), 1000)
         }
 
         // Start TradeOffersWebSocket
