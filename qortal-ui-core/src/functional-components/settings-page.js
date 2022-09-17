@@ -1,11 +1,12 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
-import { doAddNode, doSetNode } from '../redux/app/app-actions.js'
+import { doAddNode, doSetNode, doLoadNodeConfig } from '../redux/app/app-actions.js'
+import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import FileSaver from 'file-saver'
 import snackbar from './snackbar.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
 import '../components/language-selector.js'
-
+import '../custom-elements/frag-file-input.js'
 import '@material/mwc-dialog'
 import '@material/mwc-button'
 import '@material/mwc-select'
@@ -32,6 +33,9 @@ class SettingsPage extends connect(store)(LitElement) {
                 --mdc-dialog-content-ink-color: var(--black);
                 --mdc-theme-surface: var(--white);
                 --mdc-theme-text-primary-on-background: var(--black);
+                --mdc-dialog-min-width: 300px;
+                --mdc-dialog-max-width: 650px;
+                --mdc-dialog-max-height: 700px;
             }
 
             #main {
@@ -45,8 +49,32 @@ class SettingsPage extends connect(store)(LitElement) {
                 --mdc-icon-size: 36px;
             }
 
+            span.name {
+                display: inline-block;
+                width: 150px;
+                font-weight: 600;
+                color: #03a9f4;
+                border: 1px solid transparent;
+            }
+
             .red {
                 --mdc-theme-primary: red;
+            }
+
+            .buttonred {
+                color: #f44336;
+            }
+
+            .buttongreen {
+                color: #03c851;
+            }
+
+            .floatleft {
+                float: left;
+            }
+
+            .floatright {
+                float: right;
             }
         `
     }
@@ -54,7 +82,7 @@ class SettingsPage extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nodeConfig = {}
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -65,16 +93,25 @@ class SettingsPage extends connect(store)(LitElement) {
                     <hr>
                 </div>
                 <br>
-                <div style="min-height: 250px; min-width: 300px; box-sizing: border-box; position: relative;">
+                <div style="min-height: 250px; min-width: 500px; box-sizing: border-box; position: relative;">
                     <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
-                            <mwc-list-item value="${index}">${n.protocol + '://' + n.domain + ':' + n.port}</mwc-list-item>
+                            <mwc-list-item value="${index}">
+                                <span class="name">${n.name}</span>
+                                <span>${n.protocol + '://' + n.domain + ':' + n.port}</span>
+                            </mwc-list-item>
                         `)}
                     </mwc-select>
-                    <p style="margin-top: 30px;">${translate("settings.nodehint")}</p>
+                    <p style="margin-top: 30px; text-align: center;">${translate("settings.nodehint")}</p>
                     <center>
-                        <mwc-button outlined @click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"><mwc-icon>add</mwc-icon>${translate("settings.addcustomnode")}</mwc-button>
+                        <mwc-button outlined @click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"><mwc-icon class="buttongreen">add</mwc-icon>${translate("settings.addcustomnode")}</mwc-button>
                     </center>
+                    <center>
+                        <mwc-button outlined @click="${() => this.removeList()}"><mwc-icon class="buttonred">remove</mwc-icon>${translate("settings.deletecustomnode")}</mwc-button>
+                    </center>
+                    <br>
+                    <div class="floatleft">${this.renderExportNodesListButton()}</div><div class="floatright">${this.renderImportNodesListButton()}</div>
+                    <br><br>
                 </div>
                 <div style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;">
                     <hr><br>
@@ -99,7 +136,9 @@ class SettingsPage extends connect(store)(LitElement) {
                     <hr>
                 </div>
                 <br>
-                <mwc-select id="protocolList" label="${translate("settings.protocol")}" style="width:100%;">
+                <mwc-textfield id="nameInput" style="width:100%;" label="${translate("login.name")}"></mwc-textfield>
+                <br>
+                <mwc-select id="protocolList" style="width:100%;" label="${translate("settings.protocol")}">
                     <mwc-list-item value="http">http</mwc-list-item>
                     <mwc-list-item value="https">https</mwc-list-item>
                 </mwc-select>
@@ -120,6 +159,26 @@ class SettingsPage extends connect(store)(LitElement) {
                 ${translate("settings.addandsave")}
                 </mwc-button>
             </mwc-dialog>
+
+            <mwc-dialog id="importQortalNodesListDialog">
+                <div style="text-align:center">
+                    <h2>${translate("settings.import")}</h2>
+                    <hr>
+                    <br>
+                </div>
+                <div style="min-height: 150px; min-width: 500px; box-sizing: border-box; position: relative;">
+                    <frag-file-input accept=".nodes" @file-read-success="${(e) => this.importQortalNodesList(e.detail.result)}"></frag-file-input>
+                    <h4 style="color: #F44336; text-align: center;">${translate("walletpage.wchange56")}</h4>
+                    <h5 style="text-align: center;">${translate("settings.warning")}</h5>
+                </div>
+                <mwc-button
+                    slot="primaryAction"
+                    dialogAction="cancel"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
         `
     }
 
@@ -127,13 +186,44 @@ class SettingsPage extends connect(store)(LitElement) {
         // ...
     }
 
-    stateChanged(state) {
-        this.config = state.config
-        this.nodeConfig = state.app.nodeConfig
-    }
-
     show() {
         this.shadowRoot.getElementById('settingsDialog').show()
+    }
+
+    close() {
+        this.shadowRoot.getElementById('settingsDialog').close()
+    }
+
+    removeList() {
+        localStorage.removeItem("myQortalNodes")
+
+        const obj1 = {
+            name: 'Local Node',
+            protocol: 'http',
+            domain: '127.0.0.1',
+            port: 12391,
+            enableManagement: true
+        }
+
+        const obj2 = {
+            name: 'Local Testnet',
+            protocol: 'http',
+            domain: '127.0.0.1',
+            port: 62391,
+            enableManagement: true
+        }
+
+        var renewNodes = [];
+        renewNodes.push(obj1,obj2)
+        localStorage.setItem('myQortalNodes', JSON.stringify(renewNodes))
+
+        let snack1string = get("settings.snack1")
+        snackbar.add({
+            labelText: `${snack1string}`,
+            dismiss: true
+        })
+
+        store.dispatch(doLoadNodeConfig())
     }
 
     nodeSelected(e) {
@@ -144,22 +234,26 @@ class SettingsPage extends connect(store)(LitElement) {
         const index = parseInt(selectedNodeIndex)
         if (isNaN(index)) return
 
-        // Set selected node
         store.dispatch(doSetNode(selectedNodeIndex))
+
+        let snack2string = get("settings.snack2")
         snackbar.add({
-            labelText: `UI Set To Node : ${selectedNodeUrl}`,
+            labelText: `${snack2string} : ${selectedNodeUrl}`,
             dismiss: true
         })
+
         this.shadowRoot.querySelector('#settingsDialog').close()
     }
 
     addNode() {
+        const nameInput = this.shadowRoot.getElementById('nameInput').value
         const protocolList = this.shadowRoot.getElementById('protocolList').value
         const domainInput = this.shadowRoot.getElementById('domainInput').value
         const portInput = this.shadowRoot.getElementById('portInput').value
 
         if (protocolList.length >= 4 && domainInput.length >= 3 && portInput.length >= 4) {
             const nodeObject = {
+                name: nameInput,
                 protocol: protocolList,
                 domain: domainInput,
                 port: portInput,
@@ -168,19 +262,21 @@ class SettingsPage extends connect(store)(LitElement) {
 
             store.dispatch(doAddNode(nodeObject))
 
-            const haveNodes = JSON.parse(localStorage.getItem('myQortalNodes'));
+            const haveNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
 
             if (haveNodes === null || haveNodes.length === 0) {
 
                 var savedNodes = [];
                 savedNodes.push(nodeObject);
-                localStorage.setItem('myQortalNodes', JSON.stringify(savedNodes));
+                localStorage.setItem('myQortalNodes', JSON.stringify(savedNodes))
 
+                let snack3string = get("settings.snack3")
                 snackbar.add({
-                    labelText: 'Successfully Added And Saved Custom Node',
+                    labelText: `${snack3string}`,
                     dismiss: true
                 })
 
+                this.shadowRoot.getElementById('nameInput').value = ''
                 this.shadowRoot.getElementById('protocolList').value = ''
                 this.shadowRoot.getElementById('domainInput').value = ''
                 this.shadowRoot.getElementById('portInput').value = ''
@@ -193,11 +289,13 @@ class SettingsPage extends connect(store)(LitElement) {
                 stored.push(nodeObject);
                 localStorage.setItem('myQortalNodes', JSON.stringify(stored));
 
+                let snack3string = get("settings.snack3")
                 snackbar.add({
-                    labelText: 'Successfully Added And Saved Custom Node',
+                    labelText: `${snack3string}`,
                     dismiss: true
                 })
 
+                this.shadowRoot.getElementById('nameInput').value = ''
                 this.shadowRoot.getElementById('protocolList').value = ''
                 this.shadowRoot.getElementById('domainInput').value = ''
                 this.shadowRoot.getElementById('portInput').value = ''
@@ -205,6 +303,59 @@ class SettingsPage extends connect(store)(LitElement) {
                 this.shadowRoot.querySelector('#addNodeDialog').close()
             }
         }
+    }
+
+    openImportNodesDialog() {
+        this.shadowRoot.querySelector("#importQortalNodesListDialog").show()
+    }
+
+    closeImportNodesDialog() {
+        this.shadowRoot.querySelector("#importQortalNodesListDialog").close()
+    }
+
+    renderExportNodesListButton() {
+        return html`
+            <mwc-button dense unelevated label="${translate("settings.export")}" @click="${() => this.exportQortalNodesList()}"></mwc-button>
+        `
+    }
+
+    exportQortalNodesList() {
+        const qortalNodesList = JSON.stringify(localStorage.getItem("myQortalNodes"))
+        const qortalNodesListSave = JSON.parse((qortalNodesList) || "[]")
+        const blob = new Blob([qortalNodesListSave], { type: 'text/plain;charset=utf-8' })
+        FileSaver.saveAs(blob, `qortal.nodes`)
+
+        let snack4string = get("settings.snack4")
+        snackbar.add({
+            labelText: `${snack4string} qortal.nodes`,
+            dismiss: true
+        })
+    }
+
+    renderImportNodesListButton() {
+        return html`
+            <mwc-button dense unelevated label="${translate("settings.import")}" @click="${() => this.openImportNodesDialog()}"></mwc-button>
+        `
+    }
+
+    async importQortalNodesList(file) {
+        localStorage.removeItem("myQortalNodes")
+        const newItems = JSON.parse((file) || "[]")
+        localStorage.setItem("myQortalNodes", JSON.stringify(newItems))
+        this.shadowRoot.querySelector('#importQortalNodesListDialog').close()
+
+        let snack5string = get("settings.snack5")
+        snackbar.add({
+            labelText: `${snack5string}`,
+            dismiss: true
+        })
+
+        store.dispatch(doLoadNodeConfig())
+    }
+
+    stateChanged(state) {
+        this.config = state.config
+        this.nodeConfig = state.app.nodeConfig
     }
 }
 
