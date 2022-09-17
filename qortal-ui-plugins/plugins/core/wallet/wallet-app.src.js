@@ -3699,7 +3699,7 @@ class MultiWallet extends LitElement {
     }
 
     calculateQortAll() {
-        if (this.balance < 0.00100000) {
+        if (this.balance < 0.00110000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
@@ -3708,7 +3708,7 @@ class MultiWallet extends LitElement {
     }
 
     calculateBtcAll() {
-        if (this.balance < 0.00050000) {
+        if (this.balance < 0.00051000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
@@ -3718,17 +3718,17 @@ class MultiWallet extends LitElement {
     }
 
     calculateLtcAll() {
-        if (this.balance < 0.00050000) {
+        if (this.balance < 0.00031000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
-            this.ltcAmount = (this.balance - 0.00025000).toFixed(8)
+            this.ltcAmount = (this.balance - 0.00030000).toFixed(8)
             this.ltcFeePerByte = 15
         }
     }
 
     calculateDogeAll() {
-        if (this.balance < 0.05000000) {
+        if (this.balance < 0.05100000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
@@ -3738,7 +3738,7 @@ class MultiWallet extends LitElement {
     }
 
     calculateDgbAll() {
-        if (this.balance < 0.00005000) {
+        if (this.balance < 0.00005100) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
@@ -3748,7 +3748,7 @@ class MultiWallet extends LitElement {
     }
 
     calculateRvnAll() {
-        if (this.balance < 0.00562500) {
+        if (this.balance < 0.00572500) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
@@ -3758,7 +3758,7 @@ class MultiWallet extends LitElement {
     }
 
     calculateArrrAll() {
-        if (this.balance < 0.00010000) {
+        if (this.balance < 0.00011000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {

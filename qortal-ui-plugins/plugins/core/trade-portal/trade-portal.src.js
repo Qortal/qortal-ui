@@ -1026,6 +1026,48 @@ class TradePortal extends LitElement {
 
         this.getOpenOrdersGrid()
 
+        const getQortBtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/BITCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortbtc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortBtcPrice, 300000)
+        }
+
+        const getQortLtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/LITECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortltc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortLtcPrice, 300000)
+        }
+
+        const getQortDogePrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DOGECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdoge = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDogePrice, 300000)
+        }
+
+        const getQortDgbPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DIGIBYTE?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdgb = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDgbPrice, 300000)
+        }
+
+        const getQortRvnPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/RAVENCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortrvn = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortRvnPrice, 300000)
+        }
+
+        const getQortArrrPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/PIRATECHAIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortarrr = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortArrrPrice, 300000)
+        }
+
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
             this._textMenu(event)},
@@ -1067,7 +1109,15 @@ class TradePortal extends LitElement {
             })
 
             parentEpml.subscribe('config', (c) => {
-                if (!configLoaded) configLoaded = true
+                if (!configLoaded) {
+                    setTimeout(getQortBtcPrice, 1)
+                    setTimeout(getQortLtcPrice, 1)
+                    setTimeout(getQortDogePrice, 1)
+                    setTimeout(getQortDgbPrice, 1)
+                    setTimeout(getQortRvnPrice, 1)
+                    setTimeout(getQortArrrPrice, 1)
+                    configLoaded = true
+                }
                 this.config = JSON.parse(c)
             })
 
@@ -1112,46 +1162,16 @@ class TradePortal extends LitElement {
 
     exchangeRateQort() {
         if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/BITCOIN?inverse=true`
-            }).then((res) => {
-                this.qortbtc = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortbtc}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/LITECOIN?inverse=true`
-            }).then((res) => {
-                this.qortltc = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortltc}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/DOGECOIN?inverse=true`
-            }).then((res) => {
-                this.qortdoge = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortdoge}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/DIGIBYTE?inverse=true`
-            }).then((res) => {
-                this.qortdgb = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortdgb}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/RAVENCOIN?inverse=true`
-            }).then((res) => {
-                this.qortrvn = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortrvn}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/PIRATECHAIN?inverse=true`
-            }).then((res) => {
-                this.qortarrr = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortarrr}`
         }
     }
