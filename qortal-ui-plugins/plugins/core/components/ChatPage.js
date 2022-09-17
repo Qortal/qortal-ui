@@ -314,7 +314,8 @@ class ChatPage extends LitElement {
         }
     }
 
-   async processMessages(messages, isInitial) {
+    async processMessages(messages, isInitial) {
+
         if (isInitial) {
 
             this.messages = messages.map((eachMessage) => {
@@ -330,7 +331,10 @@ class ChatPage extends LitElement {
                 }
             })
 
-            this._messages = [...this.messages]
+            this._messages = [...this.messages].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
 
             const adjustMessages = () => {
 
@@ -341,46 +345,32 @@ class ChatPage extends LitElement {
 
             // TODO: Determine number of initial messages by screen height...
             this._messages.length <= 15 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 15);
-            
+
 
             this.messagesRendered = this._initialMessages
-          
-            // try {
-            //     const viewElement = this.shadowRoot.querySelector('chat-scroller')
-            //     console.log({viewElement})
-            // // viewElement.scrollTop = this.viewElement.scrollHeight + 50
-            // } catch (error) {
-            //     console.error(error)
-            // }
-            
-            
+
+
             this.isLoadingMessages = false
             setTimeout(() => this.downElementObserver(), 500)
         } else {
 
-            let _newMessages = messages.map((eachMessage) => {
-                if (eachMessage.isText === true) {
-                    let _eachMessage = this.decodeMessage(eachMessage)
+            messages.forEach((eachMessage) => {
 
-                    if (this.messageSignature !== eachMessage.signature) {
-                        this.messageSignature = eachMessage.signature
-                        // What are we waiting for, send in the message immediately...
-                        this.renderNewMessage(_eachMessage)
-                    }
-                    return _eachMessage
-                } else {
-                    let _eachMessage = this.decodeMessage(eachMessage)
+                const _eachMessage = this.decodeMessage(eachMessage)
 
-                    if (this.messageSignature !== eachMessage.signature) {
-                        this.messageSignature = eachMessage.signature
-                        this.renderNewMessage(_eachMessage)
-                    }
-                    return _eachMessage
-                }
+
+                this.renderNewMessage(_eachMessage)
+
+
             })
 
-            this.newMessages = this.newMessages.concat(_newMessages)
-      
+
+            // this.newMessages = this.newMessages.concat(_newMessages)
+            this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+
 
         }
     }
@@ -436,10 +426,6 @@ class ChatPage extends LitElement {
   async  renderNewMessage(newMessage) {
 
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
-        const downObserver = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('downObserver');
-        const li = document.createElement('li');
-        li.innerHTML = this.chatMessageTemplate(newMessage);
-        li.id = newMessage.signature;
 
         if (newMessage.sender === this.selectedAddress.address) {
 
