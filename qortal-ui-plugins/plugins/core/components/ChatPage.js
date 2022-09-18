@@ -46,6 +46,7 @@ class ChatPage extends LitElement {
             hideNewMesssageBar: { attribute: false },
             chatEditorPlaceholder: { type: String },
             messagesRendered: { type: Array },
+            repliedToSignature: { type: String },
         }
     }
 
@@ -135,9 +136,11 @@ class ChatPage extends LitElement {
         this.isPasteMenuOpen = false
         this.chatEditorPlaceholder = this.renderPlaceholder()
         this.messagesRendered = []
+        this.repliedToSignature = ''
     }
 
     render() {
+
         return html`
             ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
             <div class="chat-text-area">
@@ -281,7 +284,17 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller(initialMessages) {
-        return html`<chat-scroller .initialMessages=${initialMessages} .messages=${this.messagesRendered} .emojiPicker=${this.emojiPicker} .escapeHTML=${escape} .getOldMessage=${this.getOldMessage} > </chat-scroller>`
+        return html`
+        <chat-scroller 
+        .initialMessages=${initialMessages} 
+        .messages=${this.messagesRendered} 
+        .emojiPicker=${this.emojiPicker} 
+        .escapeHTML=${escape} 
+        .getOldMessage=${this.getOldMessage}
+        .setRepliedToSignature=${this.setRepliedToSignature}
+        .repliedToSignature=${this.repliedToSignature}
+        >
+        </chat-scroller>`
     }
 
     async getUpdateComplete() {
@@ -383,6 +396,11 @@ class ChatPage extends LitElement {
       
 
         }
+    }
+
+    setRepliedToSignature(messageSignature) {
+        console.log(messageSignature, "Replied To Message Signature Here")
+        this.repliedToSignature = messageSignature;
     }
 
     /**
@@ -642,6 +660,13 @@ class ChatPage extends LitElement {
     }
 
     _sendMessage() {
+        // have params to determine if it's a reply or not
+        // have variable to determine if it's a response, holds signature in constructor
+        // need original message signature 
+        // need whole original message object, transform the data and put it in local storage
+        // create new var called repliedToData and use that to modify the UI
+        // find specific object property in local
+        
         this.isLoading = true;
         this.chatEditor.disable();
         const messageText = this.mirrorChatInput.value;
@@ -658,8 +683,24 @@ class ChatPage extends LitElement {
             this.chatEditor.enable();
             let err1string = get("chatpage.cchange24");
             parentEpml.request('showSnackBar', `${err1string}`);
+        } else if(this.repliedToSignature) {
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: this.repliedToSignature,
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject);
         } else {
-            this.sendMessage(trimmedMessage);
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject);
         }
     }
 
