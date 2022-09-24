@@ -2554,7 +2554,7 @@ class TradePortal extends LitElement {
         })
 
         const getCompletedTrades = async () => {
-            const url = `http://NODEURL/crosschain/trades?limit=100&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
+            const url = `http://NODEURL/crosschain/trades?limit=25&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
             const res = await fetch(url)
             const historicTrades = await res.json()
             const compareFn = (a, b) => {
