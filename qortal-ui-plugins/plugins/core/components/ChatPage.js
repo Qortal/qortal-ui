@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
+import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -19,6 +19,10 @@ import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
+
+const messagesCache = localForage.createInstance({
+    name: "messages-cache",
+});
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -152,8 +156,11 @@ class ChatPage extends LitElement {
         `
     }
 
-    firstUpdated() {
+    async firstUpdated() {
+        const keys = await messagesCache.keys()
+        console.log({ keys })
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
+
 
         // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
@@ -263,6 +270,20 @@ class ChatPage extends LitElement {
         parentEpml.imReady();
     }
 
+    async updated(changedProperties) {
+        if (changedProperties.has('messagesRendered')) {
+            let data = {}
+            console.log('chatId', this._chatId)
+            console.log(this.isReceipient)
+            const chatReference1 = this.isReceipient ? 'direct' : 'group';
+            const chatReference2 = this._chatId
+            if (chatReference1 && chatReference2) {
+                await messagesCache.setItem(`${chatReference1}-${chatReference2}`, this.messagesRendered);
+            }
+
+        }
+    }
+
     changeLanguage() {
         const checkLanguage = localStorage.getItem('qortalLanguage')
 
@@ -293,25 +314,60 @@ class ChatPage extends LitElement {
 
     async getOldMessage(scrollElement) {
 
-        if (this._messages.length <= 15 && this._messages.length >= 1) { // 15 is the default number of messages...
 
-            let __msg = [...this._messages]
-            this._messages = []
-            this.messagesRendered = [...__msg, ...this.messagesRendered]
+
+
+        if (this.isReceipient) {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}`,
+            });
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+
+                return this.decodeMessage(eachMessage)
+
+
+
+
+
+            })
+
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
             await this.getUpdateComplete();
 
             scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-            return { oldMessages: __msg, scrollElement: scrollElement }
-        } else if (this._messages.length > 15) {
-            this.messagesRendered = [...this._messages.splice(this._messages.length - 15), ...this.messagesRendered]
-            await this.getUpdateComplete();
 
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-            return { oldMessages: this._messages.splice(this._messages.length - 15), scrollElement: scrollElement }
         } else {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}`,
+            });
 
-            return false
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+
+                return this.decodeMessage(eachMessage)
+
+
+
+
+
+            })
+
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+            await this.getUpdateComplete();
+
+            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+
         }
+
     }
 
     async processMessages(messages, isInitial) {
@@ -344,7 +400,7 @@ class ChatPage extends LitElement {
             }
 
             // TODO: Determine number of initial messages by screen height...
-            this._messages.length <= 15 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 15);
+            this._initialMessages = this._messages
 
 
             this.messagesRendered = this._initialMessages
@@ -423,27 +479,27 @@ class ChatPage extends LitElement {
         }
     }
 
-  async  renderNewMessage(newMessage) {
+    async renderNewMessage(newMessage) {
 
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
 
         if (newMessage.sender === this.selectedAddress.address) {
 
-          this.messagesRendered = [...this.messagesRendered, newMessage]
-          await this.getUpdateComplete();
+            this.messagesRendered = [...this.messagesRendered, newMessage]
+            await this.getUpdateComplete();
 
             viewElement.scrollTop = viewElement.scrollHeight;
         } else if (this.isUserDown) {
 
             // Append the message and scroll to the bottom if user is down the page
-          this.messagesRendered = [...this.messagesRendered, newMessage]
-          await this.getUpdateComplete();
+            this.messagesRendered = [...this.messagesRendered, newMessage]
+            await this.getUpdateComplete();
 
             viewElement.scrollTop = viewElement.scrollHeight;
         } else {
 
-          this.messagesRendered = [...this.messagesRendered, newMessage]
-          await this.getUpdateComplete();
+            this.messagesRendered = [...this.messagesRendered, newMessage]
+            await this.getUpdateComplete();
 
             this.showNewMesssageBar();
         }
@@ -487,7 +543,7 @@ class ChatPage extends LitElement {
 
     async fetchChatMessages(chatId) {
 
-        const initDirect = (cid) => {
+        const initDirect = async (cid) => {
 
             let initial = 0
 
@@ -507,6 +563,9 @@ class ChatPage extends LitElement {
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
             }
 
+
+
+
             const directSocket = new WebSocket(directSocketLink);
 
             // Open Connection
@@ -516,13 +575,37 @@ class ChatPage extends LitElement {
             }
 
             // Message Event
-            directSocket.onmessage = (e) => {
+            directSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
+                    const isReceipient = this.chatId.includes('direct')
 
-                    this.isLoadingMessages = true
-                    this.processMessages(JSON.parse(e.data), true)
+
+                    const chatReference1 = isReceipient ? 'direct' : 'group';
+                    const chatReference2 = this.chatId.split('/')[1];
+                    const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+
+                    let getInitialMessages = []
+                    if (cachedData && cachedData.length !== 0) {
+                        const lastMessage = cachedData[cachedData.length - 1]
+                        const newMessages = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}`,
+                        });
+                        getInitialMessages = [...cachedData, ...newMessages]
+                    } else {
+                        getInitialMessages = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true`,
+                        });
+
+
+                    }
+
+                    this.processMessages(getInitialMessages, true)
+
                     initial = initial + 1
+
                 } else {
 
                     this.processMessages(JSON.parse(e.data), false)
@@ -578,12 +661,38 @@ class ChatPage extends LitElement {
             }
 
             // Message Event
-            groupSocket.onmessage = (e) => {
+            groupSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
+                    const isGroup = this.chatId.includes('group')
+                    const chatReference1 = isGroup ? 'group' : 'direct';
+                    const chatReference2 = this.chatId.split('/')[1];
 
-                    this.isLoadingMessages = true
-                    this.processMessages(JSON.parse(e.data), true)
+                    const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+
+                    let getInitialMessages = []
+                    if (cachedData && cachedData.length !== 0) {
+
+                        const lastMessage = cachedData[cachedData.length - 1]
+
+                        const newMessages = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}`,
+                        });
+
+                        getInitialMessages = [...cachedData, ...newMessages]
+                    } else {
+                        getInitialMessages = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true`,
+                        });
+
+
+                    }
+
+
+                    this.processMessages(getInitialMessages, true)
+
                     initial = initial + 1
                 } else {
 

@@ -19,7 +19,8 @@
   "dependencies": {
     "@material/mwc-list": "0.27.0",
     "@material/mwc-select": "0.27.0",
-    "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js"
+    "emoji-picker-js": "https://github.com/Qortal/emoji-picker-js",
+    "localforage": "^1.10.0"
   },
   "devDependencies": {
     "@babel/core": "7.19.1",
