@@ -1891,7 +1891,6 @@ class TradePortal extends LitElement {
 
     initSocket() {
         let _relatedCoin = ""
-        let presenceTxns = null
         let tradePresenceTxns = null
         let offeringTrades = null
 
@@ -1915,8 +1914,8 @@ class TradePortal extends LitElement {
             return timestamp > thirtyMinsAgo
         }
 
-        const filterOffersUsingEitherPresence = (offeringTrade) => {
-            return lessThanThirtyMinsAgo(offeringTrade.lastSeen) || offeringTrade.tradePresenceExpiry > Date.now();
+        const filterOffersUsingTradePresence = (offeringTrade) => {
+            return offeringTrade.tradePresenceExpiry > Date.now();
         }
 
         const processOffersWithPresence = () => {
@@ -1930,13 +1929,6 @@ class TradePortal extends LitElement {
             }
 
             const startOfferPresenceMapping = async () => {
-                if (presenceTxns !== null) {
-                    await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(250)
-                        let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
-                        offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
-                    })
-                }
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
@@ -1946,7 +1938,7 @@ class TradePortal extends LitElement {
                     })
                 }
 
-                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingEitherPresence(offeringTrade))
+                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingTradePresence(offeringTrade))
                 self.postMessage({ type: 'PRESENCE', data: { offers: offeringTrades, filteredOffers: filteredOffers, relatedCoin: _relatedCoin } })
             }
 
@@ -2052,40 +2044,6 @@ class TradePortal extends LitElement {
             }
         }
 
-        // Will be removed in future - being replaced by tradepresence above
-        const initPresenceWebSocket = (restarted = false) => {
-            let socketTimeout
-            let socketLink = `ws://NODEURL/websockets/presence?presenceType=TRADE_BOT`
-            const socket = new WebSocket(socketLink)
-            // Open Connection
-            socket.onopen = () => {
-                setTimeout(pingSocket, 250)
-            }
-            // Message Event
-            socket.onmessage = (e) => {
-                presenceTxns = JSON.parse(e.data)
-                processOffersWithPresence()
-                restarted = false
-            }
-            // Closed Event
-            socket.onclose = () => {
-                clearTimeout(socketTimeout)
-                restartPresenceWebSocket()
-            }
-            // Error Event
-            socket.onerror = (e) => {
-                clearTimeout(socketTimeout)
-            }
-            const pingSocket = () => {
-                socket.send('ping')
-                socketTimeout = setTimeout(pingSocket, 295000)
-            }
-        }
-
-        const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 1000)
-        }
-
         const restartTradePresenceWebSocket = () => {
             setTimeout(() => initTradePresenceWebSocket(true), 1000)
         }
@@ -2100,9 +2058,6 @@ class TradePortal extends LitElement {
 
         // Start TradeOffersWebSocket
         initTradeOffersWebSocket()
-
-        // Start PresenceWebSocket
-        initPresenceWebSocket()
 
         // Start TradePresenceWebSocket
         initTradePresenceWebSocket()
