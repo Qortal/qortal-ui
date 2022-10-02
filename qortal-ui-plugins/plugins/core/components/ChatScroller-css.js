@@ -17,6 +17,10 @@ export const chatStyles = css`
 		--mdc-theme-secondary: var(--mdc-theme-primary);
 	}
 
+	* :focus-visible {
+		outline: none;
+	}
+
 	*::-webkit-scrollbar-track {
 		background: var(--scrollbarBG);
 	}
@@ -110,6 +114,8 @@ export const chatStyles = css`
 
 	.original-message {
     position: relative;
+		display: flex;
+		flex-direction: column;
     color: black;
     line-height: 19px;
     overflow-wrap: break-word;
@@ -120,8 +126,6 @@ export const chatStyles = css`
     background-color: rgba(209, 209, 209, 0.79);
     padding: 8px 5px 8px 25px;
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.original-message:before {
@@ -131,7 +135,18 @@ export const chatStyles = css`
     left: 10px;
     height: 75%;
     width: 2.6px;
-    background-color: rgb(14, 190, 240);
+    background-color: var(--mdc-theme-primary);
+	}
+
+	.original-message-sender {
+		margin: 0 0 5px 0;
+		color: var(--mdc-theme-primary);
+	}
+
+	.replied-message {
+		margin: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.message {
@@ -166,7 +181,7 @@ export const chatStyles = css`
 		display: none;
 		position: absolute;
 		top: -38px;
-		right: 20px;
+		right: 25px;
 	}
 
 	.emoji {
@@ -229,6 +244,10 @@ export const chatStyles = css`
 		position: relative;
 	}
 
+	.container:focus-visible {
+		outline: none;
+	}
+
 	.menu-icon {
 		width: 100%;
 		padding: 5px;
@@ -238,6 +257,7 @@ export const chatStyles = css`
 	}
 
 	.menu-icon:hover {
+		border-radius: 5px;
 		background-color: #dad9d9;
 		transition: all 0.1s ease-in-out;
 		cursor: pointer;
@@ -249,11 +269,12 @@ export const chatStyles = css`
 
 	.tooltip:before {
 		content: attr(data-text); 
+		display: none; 
 		position: absolute;
 		top: -47px;
 		left: 50%;
 		transform: translateX(-50%);
-		width: 90px;
+		width: auto;
 		padding: 10px;
 		border-radius: 10px;
 		background:#fff;
@@ -262,7 +283,8 @@ export const chatStyles = css`
 		box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 		font-size: 12px;
 		z-index: 5;
-		display: none; 
+		white-space: nowrap;
+  	overflow: hidden;
 	}
 
 	.tooltip:hover:before {
@@ -285,7 +307,7 @@ export const chatStyles = css`
 	}
 
 	.block-user-container {
-		display: block;
+		display: none;
 		position: absolute;
 		left: -5px;
 	}

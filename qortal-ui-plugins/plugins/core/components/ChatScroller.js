@@ -25,8 +25,8 @@ class ChatScroller extends LitElement {
             initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
             messages: { type: Array },
             hideMessages: { type: Array },
-            setRepliedToSignature: {type: Function},
-            repliedToSignature: {type: String},
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: { type: Function }
         }
     }
 
@@ -55,8 +55,8 @@ class ChatScroller extends LitElement {
                     .escapeHTML=${this.escapeHTML} 
                     .messageObj=${message} 
                     .hideMessages=${this.hideMessages}
-                    .setRepliedToSignature=${this.setRepliedToSignature}
-                    .repliedToSignature=${this.repliedToSignature}
+                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .focusChatEditor=${this.focusChatEditor}
                     >
                     </message-template>`
                 )}
@@ -149,8 +149,8 @@ class MessageTemplate extends LitElement {
             openDialogPrivateMessage: {type: Boolean},
             openDialogBlockUser: {type: Boolean},
             showBlockAddressIcon: { type: Boolean },
-            setRepliedToSignature: {type: Function},
-            repliedToSignature: {type: String},
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: { type: Function },
         }
     }
 
@@ -193,7 +193,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log(this.messageObj, "here244")
         const hidemsg = this.hideMessages
         let message = ""
         let repliedToData = null
@@ -252,7 +251,8 @@ class MessageTemplate extends LitElement {
                     <div 
                         class="original-message" 
                         style=${this.messageObj.sender === this.myAddress && "background-color: rgb(179 179 179 / 79%)"}>
-                        ${repliedToData.decodedMessage}
+                        <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
+                        <p class="replied-message">${repliedToData.decodedMessage}</p>
                     </div>
                     `}
                 <div id="messageContent" class="message">
@@ -267,9 +267,9 @@ class MessageTemplate extends LitElement {
                         .showBlockUserModal=${() => this.showBlockUserModal()}
                         .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
                         .showBlockAddressIcon=${this.showBlockAddressIcon}
-                        .originalMessageSignature=${this.messageObj.signature}
-                        .setRepliedToSignature=${this.setRepliedToSignature}
-                        .repliedToSignature=${this.repliedToSignature}
+                        .originalMessage=${this.messageObj}
+                        .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                        .focusChatEditor=${this.focusChatEditor}
                         @blur=${() => this.showBlockIconFunc(false)}
                     > 
                     </chat-menu>
@@ -300,9 +300,9 @@ class ChatMenu extends LitElement {
             toblockaddress: { type: String, attribute: true },
             showBlockIconFunc: {type: Function},
             showBlockAddressIcon: {type: Boolean},
-            originalMessageSignature: {type: String},
-            setRepliedToSignature: {type: Function},
-            repliedToSignature: {type: String},
+            originalMessage: {type: Object},
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: {type: Function},
         }
     }
 
@@ -337,7 +337,13 @@ class ChatMenu extends LitElement {
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                     <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange11")}" @click="${() => this.setRepliedToSignature(this.originalMessageSignature)}">
+                <div 
+                    class="menu-icon tooltip" 
+                    data-text="${translate("blockpage.bcchange11")}" 
+                    @click="${() => {
+                        this.setRepliedToMessageObj(this.originalMessage);
+                        this.focusChatEditor();
+                        }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
