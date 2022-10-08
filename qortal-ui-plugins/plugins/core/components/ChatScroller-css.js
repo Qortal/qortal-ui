@@ -17,6 +17,10 @@ export const chatStyles = css`
 		--mdc-theme-secondary: var(--mdc-theme-primary);
 	}
 
+	* :focus-visible {
+		outline: none;
+	}
+
 	*::-webkit-scrollbar-track {
 		background: var(--scrollbarBG);
 	}
@@ -68,7 +72,7 @@ export const chatStyles = css`
 	.message-data {
 		width: 92%;
 		margin-bottom: 15px;
-		margin-left: 50px;
+		margin-left: 55px;
 	}
 
 	.message-data-name {
@@ -89,48 +93,87 @@ export const chatStyles = css`
 		padding-bottom: 4px;
 	}
 
+	.chat-bubble-container {
+		display:flex;
+		gap: 7px;
+	}
+
 	.message-container {
 		position: relative;
+    display: flex;
+    flex-grow: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: whitesmoke;
+    border-radius: 5px;
+    padding: 10px 15px;
+    gap: 10px;
+    margin-bottom: 20px;
+	}
+
+	.original-message {
+    position: relative;
+		display: flex;
+		flex-direction: column;
+    color: black;
+    line-height: 19px;
+    overflow-wrap: break-word;
+    user-select: text;
+    font-size: 16px;
+    width: 90%;
+    border-radius: 5px;
+    background-color: rgba(209, 209, 209, 0.79);
+    padding: 8px 5px 8px 25px;
+		white-space: nowrap;
+	}
+
+	.original-message:before {
+		content: "";
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    height: 75%;
+    width: 2.6px;
+    background-color: var(--mdc-theme-primary);
+	}
+
+	.original-message-sender {
+		margin: 0 0 5px 0;
+		color: var(--mdc-theme-primary);
+	}
+
+	.replied-message {
+		margin: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.message {
 		color: black;
-		padding: 12px 10px;
 		line-height: 19px;
-		white-space: pre-line;
 		word-wrap: break-word;
 		-webkit-user-select: text;
 		-moz-user-select: text;
 		-ms-user-select: text;
 		user-select: text;
 		font-size: 16px;
-		border-radius: 7px;
-		margin-bottom: 20px;
 		width: 90%;
 		position: relative;
 	}
 
-	.message:after {
-		bottom: 100%;
-		left: 93%;
-		border: solid transparent;
-		content: " ";
-		height: 0;
-		width: 0;
-		position: absolute;
-		white-space: pre-line;
-		word-wrap: break-word;
-		pointer-events: none;
-		border-bottom-color: #ddd;
-		border-width: 10px;
-		margin-left: -10px;
+	.message-data-avatar {
+		margin: 0px 8px 3px 3px;
+		width: 42px; 
+		height: 42px;
+		float: left;
 	}
 
 	.message-parent:hover .chat-hover {
 		display: block;
 	}
 
-	.message-parent:hover .message{
+	.message-parent:hover .message-container {
 		filter:brightness(0.90);
 	}
 
@@ -138,7 +181,7 @@ export const chatStyles = css`
 		display: none;
 		position: absolute;
 		top: -38px;
-		left: 88.2%;
+		right: 25px;
 	}
 
 	.emoji {
@@ -154,21 +197,11 @@ export const chatStyles = css`
 		border: 2px solid #eeeeee;
 	}
 
-	.my-message:after {
-		border-bottom-color: #d1d1d1;
-		left: 7%;
-	}
-
 	.other-message {
 		background: #f1f1f1;
 		border: 2px solid #dedede;
 	}
-
-	.other-message:after {
-		border-bottom-color: #f1f1f1;
-		left: 7%;
-	}
-
+	
 	.align-left {
 		text-align: left;
 	}
@@ -211,6 +244,10 @@ export const chatStyles = css`
 		position: relative;
 	}
 
+	.container:focus-visible {
+		outline: none;
+	}
+
 	.menu-icon {
 		width: 100%;
 		padding: 5px;
@@ -220,6 +257,7 @@ export const chatStyles = css`
 	}
 
 	.menu-icon:hover {
+		border-radius: 5px;
 		background-color: #dad9d9;
 		transition: all 0.1s ease-in-out;
 		cursor: pointer;
@@ -231,11 +269,12 @@ export const chatStyles = css`
 
 	.tooltip:before {
 		content: attr(data-text); 
+		display: none; 
 		position: absolute;
 		top: -47px;
 		left: 50%;
 		transform: translateX(-50%);
-		width: 90px;
+		width: auto;
 		padding: 10px;
 		border-radius: 10px;
 		background:#fff;
@@ -244,7 +283,8 @@ export const chatStyles = css`
 		box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 		font-size: 12px;
 		z-index: 5;
-		display: none; 
+		white-space: nowrap;
+  	overflow: hidden;
 	}
 
 	.tooltip:hover:before {
@@ -267,9 +307,9 @@ export const chatStyles = css`
 	}
 
 	.block-user-container {
-		display: block;
+		display: none;
 		position: absolute;
-		left: -48px;
+		left: -5px;
 	}
 
 	.block-user {
@@ -277,7 +317,7 @@ export const chatStyles = css`
 		border: 1px solid rgb(218, 217, 217);
 		border-radius: 5px;
 		background-color: white;
-		width: 100%;
+		width: 90px;
 		height: 32px;
 		padding: 3px 8px;
 		box-shadow: rgba(77, 77, 82, 0.2) 0px 7px 29px 0px;

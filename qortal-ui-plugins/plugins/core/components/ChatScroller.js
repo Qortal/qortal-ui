@@ -24,7 +24,9 @@ class ChatScroller extends LitElement {
             escapeHTML: { attribute: false },
             initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
             messages: { type: Array },
-            hideMessages: { type: Array }
+            hideMessages: { type: Array },
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: { type: Function }
         }
     }
 
@@ -47,7 +49,16 @@ class ChatScroller extends LitElement {
                 ${repeat(
                     this.messages,
                     (message) => message.reference,
-                    (message) => html`<message-template .emojiPicker=${this.emojiPicker} .escapeHTML=${this.escapeHTML} .messageObj=${message} .hideMessages=${this.hideMessages}></message-template>`
+                    (message) => html`
+                    <message-template 
+                    .emojiPicker=${this.emojiPicker} 
+                    .escapeHTML=${this.escapeHTML} 
+                    .messageObj=${message} 
+                    .hideMessages=${this.hideMessages}
+                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .focusChatEditor=${this.focusChatEditor}
+                    >
+                    </message-template>`
                 )}
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
@@ -137,7 +148,9 @@ class MessageTemplate extends LitElement {
             hideMessages: { type: Array },
             openDialogPrivateMessage: {type: Boolean},
             openDialogBlockUser: {type: Boolean},
-            showBlockAddressIcon: { type: Boolean }
+            showBlockAddressIcon: { type: Boolean },
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: { type: Function },
         }
     }
 
@@ -181,7 +194,28 @@ class MessageTemplate extends LitElement {
 
     render() {
         const hidemsg = this.hideMessages
-
+        let message = ""
+        let repliedToData = null
+        try {
+            const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
+            message = parsedMessageObj.messageText
+            repliedToData = {
+                    "timestamp": 1663419371885,
+                    "txGroupId": 0,
+                    "reference": "5LuncmE2RsGVdQizkZLnjgqU8QozR2hHhkiSujUgywEfqAvm6RW4xZ7c9XjuMnb76bNmX2ntRNhnBF4ErvawM1dW",
+                    "senderPublicKey": "xmZXCYzGU2t3S6Ehm2zp4pVm83q9d143NKRgmiU1dXW",
+                    "sender": "Qj9aLrdK2FLQY6YssRQUkDmXNJCko2zF7e",
+                    "senderName": "GiseleH",
+                    "data": "3JLP9vViLoRPJ1Pqt2uC6Ufqf7wgTrs4HuV4Ltgwdnf5ekcBCCf5MTm2Sg3sXHeuVnCpoJAyVdqgAbr7tcBoq3soNZTjteusXjjW3NSMNcJEAadaTYC68xGXGmvK1jRyioPqGaKiXKzR2jPPRV5SyiPd66788Z2Rqt3VQB98rvronX5w5tE9UUWRor6bmMeVL3dj7fHYhLPPE5VBpCS9Eskti7vnTgDUQxnjfr",
+                    "isText": true,
+                    "isEncrypted": false,
+                    "signature": "3jWvhQKSDt4Zqeup5sLfyNksVVphFW5iF11PsTZzXQLCCPH9pDMqwNoKE2oe3DPYz47VbbLgJaAWMVA44z9dUr9U",
+                    "decodedMessage": "for TrentB512 who computer crashed your registered name in qortal for your level 3 account was TrentB512 https://exqlorer.com/address/Qf58otnEXeoyvD7dvYmfEGpQ64oMD3uvwM"
+                
+            }
+        } catch (error) {
+            message = this.messageObj.decodedMessage
+        }
         let avatarImg = ''
         let nameMenu = ''
         let levelFounder = ''
@@ -209,9 +243,21 @@ class MessageTemplate extends LitElement {
                     <span class="message-data-level">${levelFounder}</span>
                     <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
                 </div>
-                <div class="message-data-avatar" style="width:42px; height:42px; ${this.messageObj.sender === this.myAddress ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
-                <div class="message-container">
-                <div id="messageContent" class="message ${this.messageObj.sender === this.myAddress ? "my-message float-left" : "other-message float-left"}">${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(this.messageObj.decodedMessage)))}</div>
+                <div class="message-data-avatar">
+                ${avatarImg}
+                </div>
+                <div class="message-container ${this.messageObj.sender === this.myAddress ? "my-message" : "other-message"}">
+                ${repliedToData && html`
+                    <div 
+                        class="original-message" 
+                        style=${this.messageObj.sender === this.myAddress && "background-color: rgb(179 179 179 / 79%)"}>
+                        <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
+                        <p class="replied-message">${repliedToData.decodedMessage}</p>
+                    </div>
+                    `}
+                <div id="messageContent" class="message">
+                    ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                </div>
                     <chat-menu 
                         tabindex="0"
                         class="chat-hover"
@@ -221,6 +267,9 @@ class MessageTemplate extends LitElement {
                         .showBlockUserModal=${() => this.showBlockUserModal()}
                         .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
                         .showBlockAddressIcon=${this.showBlockAddressIcon}
+                        .originalMessage=${this.messageObj}
+                        .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                        .focusChatEditor=${this.focusChatEditor}
                         @blur=${() => this.showBlockIconFunc(false)}
                     > 
                     </chat-menu>
@@ -250,7 +299,10 @@ class ChatMenu extends LitElement {
             showBlockUserModal: {type: Function},
             toblockaddress: { type: String, attribute: true },
             showBlockIconFunc: {type: Function},
-            showBlockAddressIcon: {type: Boolean}
+            showBlockAddressIcon: {type: Boolean},
+            originalMessage: {type: Object},
+            setRepliedToMessageObj: { type: Function },
+            focusChatEditor: {type: Function},
         }
     }
 
@@ -278,12 +330,21 @@ class ChatMenu extends LitElement {
     
     render() {
         return html` 
-            <div class="container" style=${this.showBlockAddressIcon && "width: 70px" }>
+            <div class="container">
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                     <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
+                </div>
+                <div 
+                    class="menu-icon tooltip" 
+                    data-text="${translate("blockpage.bcchange11")}" 
+                    @click="${() => {
+                        this.setRepliedToMessageObj(this.originalMessage);
+                        this.focusChatEditor();
+                        }}">
+                    <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
                     <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>

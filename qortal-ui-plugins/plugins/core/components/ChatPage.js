@@ -46,6 +46,7 @@ class ChatPage extends LitElement {
             hideNewMesssageBar: { attribute: false },
             chatEditorPlaceholder: { type: String },
             messagesRendered: { type: Array },
+            repliedToMessageObj: { type: Object },
         }
     }
 
@@ -63,12 +64,11 @@ class ChatPage extends LitElement {
 
         .chat-text-area .typing-area {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             position: absolute;
             bottom: 0;
             width: 98%;
             box-sizing: border-box;
-            padding: 5px;
             margin-bottom: 8px;
             border: 1px solid var(--black);
             border-radius: 10px;
@@ -90,10 +90,67 @@ class ChatPage extends LitElement {
             border: none;
         }
 
+        .repliedTo-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px 8px 10px;
+        }
+        
+        .repliedTo-subcontainer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .repliedTo-message {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+
+        .senderName {
+            margin: 0;
+            color: var(--mdc-theme-primary);
+            font-weight: bold;
+        }
+
+        .original-message {
+            margin: 0;
+        }
+
+        .reply-icon {
+            width: 20px;
+            color: var(--mdc-theme-primary);
+        }
+
+        .close-icon {
+            color: #676b71;
+            width: 25px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .close-icon:hover {
+            cursor: pointer;
+            color: #494c50;
+        }
+        
+        .chat-text-area .typing-area .chatbar {
+            width: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+            padding: 5px;
+        }
+
         .chat-text-area .typing-area .emoji-button {
             width: 45px;
             height: 40px;
-            padding: 5px;
+            padding-top: 4px;
             border: none;
             outline: none;
             background: transparent;
@@ -135,18 +192,38 @@ class ChatPage extends LitElement {
         this.isPasteMenuOpen = false
         this.chatEditorPlaceholder = this.renderPlaceholder()
         this.messagesRendered = []
+        this.repliedToMessageObj = null
     }
-
+    
     render() {
         return html`
             ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
             <div class="chat-text-area">
-                <div class="typing-area">
-                    <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                    <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
-                    <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                        ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
-                    </button>
+                    <div class="typing-area">
+                        ${this.repliedToMessageObj && html`
+                            <div class="repliedTo-container">
+                                <div class="repliedTo-subcontainer">
+                                    <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
+                                    <div class="repliedTo-message">
+                                        <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
+                                        <p class="original-message">${this.repliedToMessageObj.decodedMessage}</p>
+                                    </div>
+                                </div>
+                                <vaadin-icon
+                                 class="close-icon"
+                                 icon="vaadin:close-big"
+                                 slot="icon"
+                                 @click=${() => this.closeRepliedToContainer()}
+                                 ></vaadin-icon>
+                            </div>
+                        `}
+                    <div class="chatbar">
+                        <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                        <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
+                        <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                            ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                        </button>
+                    </div>
                 </div>
             </div>
         `
@@ -281,7 +358,17 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller(initialMessages) {
-        return html`<chat-scroller .initialMessages=${initialMessages} .messages=${this.messagesRendered} .emojiPicker=${this.emojiPicker} .escapeHTML=${escape} .getOldMessage=${this.getOldMessage} > </chat-scroller>`
+        return html`
+        <chat-scroller 
+        .initialMessages=${initialMessages} 
+        .messages=${this.messagesRendered} 
+        .emojiPicker=${this.emojiPicker} 
+        .escapeHTML=${escape} 
+        .getOldMessage=${this.getOldMessage}
+        .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
+        .focusChatEditor=${() => this.focusChatEditor()}
+        >
+        </chat-scroller>`
     }
 
     async getUpdateComplete() {
@@ -384,6 +471,23 @@ class ChatPage extends LitElement {
 
         }
     }
+        
+    async setRepliedToMessageObj(messageObj) {
+        console.log(messageObj, "Replied To Message Object Here")
+        this.repliedToMessageObj = {...messageObj};
+        this.requestUpdate();
+        await this.updateComplete;
+        console.log(this.repliedToMessageObj);
+    }
+
+    closeRepliedToContainer() {
+        this.repliedToMessageObj = null;
+        this.requestUpdate();
+    }
+ 
+    focusChatEditor() {
+       this.chatEditor.focus();
+    }
 
     /**
     * New Message Template implementation, takes in a message object.
@@ -436,10 +540,6 @@ class ChatPage extends LitElement {
   async  renderNewMessage(newMessage) {
 
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
-        const downObserver = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('downObserver');
-        const li = document.createElement('li');
-        li.innerHTML = this.chatMessageTemplate(newMessage);
-        li.id = newMessage.signature;
 
         if (newMessage.sender === this.selectedAddress.address) {
 
@@ -642,6 +742,13 @@ class ChatPage extends LitElement {
     }
 
     _sendMessage() {
+        // have params to determine if it's a reply or not
+        // have variable to determine if it's a response, holds signature in constructor
+        // need original message signature 
+        // need whole original message object, transform the data and put it in local storage
+        // create new var called repliedToData and use that to modify the UI
+        // find specific object property in local
+        
         this.isLoading = true;
         this.chatEditor.disable();
         const messageText = this.mirrorChatInput.value;
@@ -658,8 +765,24 @@ class ChatPage extends LitElement {
             this.chatEditor.enable();
             let err1string = get("chatpage.cchange24");
             parentEpml.request('showSnackBar', `${err1string}`);
+        } else if (this.repliedToMessageObj) {
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: this.repliedToMessageObj.signature,
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject);
         } else {
-            this.sendMessage(trimmedMessage);
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject);
         }
     }
 
