@@ -56,36 +56,60 @@ function createWindow() {
 		minWidth: 700,
 		minHeight: 640,
 		icon: iconPath(),
-		title: "Qortal",
+		title: "Qortal UI",
 		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: false,
 			partition: 'persist:webviewsession',
 			enableRemoteModule: false,
-                        nativeWindowOpen: false,
+                  nativeWindowOpen: false,
 			sandbox: true
 		},
 		show: false
 	})
-	myWindow.maximize();
-	myWindow.show();
+	myWindow.maximize()
+	myWindow.show()
 	myWindow.loadURL('http://localhost:12388/app/wallet')
 	myWindow.on('closed', function () {
 		myWindow = null
 	})
+	myWindow.on('minimize',function(event) {
+		event.preventDefault()
+		myWindow.hide()
+	})
 }
 
+
+
 const createTray = () => {
-	let myTray = new Tray(path.join(__dirname, 'img', 'icons', 'png', '32x32.png'))
-	const contextMenu = Menu.buildFromTemplate([{
-		label: "Quit", click() {
-			myTray.destroy();
-			app.quit();
+	let myTray = new Tray(__dirname + '/img/icons/png/tray/tray.png')
+	const contextMenu = Menu.buildFromTemplate([
+		{
+			label: `Qortal UI v${app.getVersion()}`,
+			enabled: false,
+        	},
+		{
+			type: 'separator',
 		},
-	}])
+		{
+			label: 'Show Qortal UI',
+			click: function () {
+				myWindow.maximize()
+				myWindow.show()
+			},
+		},
+		{
+			label: 'Quit',
+			click() {
+				myTray.destroy()
+				app.quit()
+			},
+		},
+	])
 	myTray.setTitle("QORTAL UI")
-	myTray.setToolTip("QORTAL UI")
+	myTray.setToolTip(`Qortal UI v${app.getVersion()}`)
 	myTray.setContextMenu(contextMenu)
+	myTray.on("double-click", () => myWindow.maximize() , myWindow.show())
 }
 
 const isLock = app.requestSingleInstanceLock();

@@ -1,9 +1,8 @@
 import { updateAccountInfo } from './update-account-info.js'
-// import { doUpdateStoredWalletName } from '../user-actions.js'
 import { doUpdateStoredWalletName } from './store-wallet.js'
 
 const GET_NAME_URL = 'names/address/'
-const CHECK_NAME_INTERVAL = 1000 * 3 // Every 3 seconds
+const CHECK_NAME_INTERVAL = 1000 * 10 // Every 10 seconds
 
 export const UPDATE_NAME_STATUSES = {
     LOADING: 'LOADING',
@@ -21,8 +20,6 @@ export const doUpdateAccountName = (address, expectedName, awaitingConfirm) => {
         const state = getState()
         const config = state.config
         const node = config.coin.node.api
-        // console.log(config.constants)
-        // const url = config.constants.proxyURL + node.url + node.tail + GET_NAME_URL + address
         const url = node.url + node.tail + GET_NAME_URL + address
         return fetch(url)
             .then(res => res.json())

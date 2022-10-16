@@ -21,7 +21,7 @@ import '@vaadin/grid/vaadin-grid-sorter'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-let workers = new Map();
+let workers = new Map()
 
 class TradePortal extends LitElement {
     static get properties() {
@@ -40,7 +40,20 @@ class TradePortal extends LitElement {
             isLoadingHistoricTrades: { type: Boolean },
             isLoadingOpenTrades: { type: Boolean },
             isLoadingMyOpenOrders: { type: Boolean },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            arrrWalletAddress: { type: String },
+            qortbtc: { type: Number },
+            qortltc: { type: Number },
+            qortdoge: { type: Number },
+            qortdgb: { type: Number },
+            qortrvn: { type: Number },
+            qortarrr: { type: Number },
+            btcqort: { type: Number },
+            ltcqort: { type: Number },
+            dogeqort: { type: Number },
+            dgbqort: { type: Number },
+            rvnqort: { type: Number },
+            arrrqort: { type: Number }
         }
     }
 
@@ -72,20 +85,17 @@ class TradePortal extends LitElement {
 			--_lumo-grid-border-color: var(--border);
 			--_lumo-grid-secondary-border-color: var(--border2);
 		}
-
 		paper-spinner-lite {
 			height: 30px;
 			width: 30px;
 			--paper-spinner-color: var(--mdc-theme-primary);
 			--paper-spinner-stroke-width: 3px;
 		}
-
 		mwc-tab-bar {
 			--mdc-text-transform: none;
 			--mdc-tab-color-default: var(--black);
 			--mdc-tab-text-label-color-default: var(--black);
 		}
-
 		#tabs-1 {
 			--mdc-tab-height: 42px;
 			border-left: 1px solid var(--tradeborder);
@@ -93,49 +103,39 @@ class TradePortal extends LitElement {
 			border-right: 1px solid var(--tradeborder);
                   color: var(--black);
 		}
-
 		#tab-buy[active] {
 			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
 		}
-
 		#tabs-1-content {
 			height: 100%;
 			padding-bottom: 10px;
 		}
-
 		#tabs-1-content > div {
 			height: 100%;
 			border: 1px solid var(--tradeborder);
 		}
-
 		#tabs-1-content .card {
 			border: none;
 		}
-
 		#tabs-1-content .btn-clear {
 			--mdc-icon-button-size: 32px;
 			color: var(--black);
 		}
-
 		#tab-sell[active] {
 			--mdc-theme-primary: rgb(255, 89, 89); 
 		}
-
 		#trade-portal-page {
 			background: var(--white);
 			padding: 12px 24px;
 		}
-
 		.divCard {
 			border: 1px solid var(--black);
 			padding: 1em;
 			box-shadow: 0 0.3px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 		}
-
 		h2 {
 			margin: 0;
 		}
-
 		h2,
 		h3,
 		h4,
@@ -143,7 +143,6 @@ class TradePortal extends LitElement {
 			color: var(--black);
 			font-weight: 400;
 		}
-
 		header {
 			display: flex;
 			flex: 0 1 auto;
@@ -158,17 +157,14 @@ class TradePortal extends LitElement {
 			border-right: 1px solid var(--tradeborder);
 			min-height: 40px;
 		}
-
 		p {
 			margin-bottom: 12px;
 		}
-
 		#trade-portal {
 			max-width: 100vw;
 			margin-left: auto;
 			margin-right: auto;
 		}
-
 		.box {
 			margin: 0;
 			padding: 0;
@@ -176,38 +172,29 @@ class TradePortal extends LitElement {
 			flex-flow: column;
 			height: 100%;
 		}
-
 		#first-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#first-trade-section > div {
 		}
-
 		#second-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#second-trade-section > div {
 		}
-
 		#third-trade-section {
 			margin-bottom: 10px;
 		}
-
 		#third-trade-section > div {
 		}
-
 		.trade-chart {
 			background-color: var(--white);
 			border: 2px #ddd solid;
 			text-align: center;
 		}
-
 		.open-trades {
 			text-align: center;
 		}
-
 		.no-last-seen {
 			background: rgb(255, 89, 89);
 			padding: 9px 1.3px;
@@ -215,11 +202,9 @@ class TradePortal extends LitElement {
 			width: 1rem;
 			margin: 0 auto;
 		}
-
 		.open-market-container {
 			text-align: center;
 		}
-
 		.card {
 			padding: 1em;
 			border: 1px var(--tradeborder) solid;
@@ -229,35 +214,46 @@ class TradePortal extends LitElement {
 			justify-content: space-evenly;
 			min-height: inherit;
 		}
-
 		.cancel {
 			--mdc-theme-primary: rgb(255, 89, 89);
 		}
-
 		.border-wrapper {
 			border: 1px var(--tradeborder) solid;
 			overflow: hidden;
 		}
-
 		.amt-text {
 			color: var(--tradehave);
 			font-size: 15px;
 			margin-top: 5px;
 			margin-bottom: 12px;
 		}
-
+		.exchange {
+			color: var(--black);
+			font-size: 18px;
+                  font-weight: bold;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+		.clear-button {
+                  display: inline;
+			float: right;
+			margin-bottom: 5px;
+		}
+		.exhcnage-text {
+                  display: inline;
+			float: left;
+			margin-bottom: 5px;
+		}
 		.balance-text {
                   display: inline;
 			float: right;
 			margin-bottom: 5px;
 		}
-
 		.fee-text {
                   display: inline;
 			float: left;
 			margin-bottom: 5px;
 		}
-
 		.tab-text {
 			color: var(--tradehave);
 			font-size: 12px;
@@ -265,58 +261,46 @@ class TradePortal extends LitElement {
 			margin-top: 2px;
 			margin-bottom: -12px;
 		}
-
 		.historic-trades {
 			text-align: center;
 		}
-
 		.my-open-orders {
 			text-align: center;
 		}
-
 		.my-historic-trades {
 			text-align: center;
 		}
-
 		.buttons {
 			width: auto !important;
 		}
-
 		.buy-button {
 			--mdc-theme-primary: rgba(55, 160, 51, 0.9);
 		}
-
 		.sell-button {
 			--mdc-theme-primary: rgb(255, 89, 89);
 		}
-
 		.full-width {
 			background-color: var(--white);
 			border: 2px #ddd solid;
 			height: 100px;
 			text-align: center;
 		}
-
 		vaading-grid {
 			font-size: .8em;
 		}
-
 		vaadin-grid-column {
 			flex-grow: 1;
 		}
-
 		.loadingContainer {
 			height: 100%;
 			width: 100%;
 		}
-
 		.loading,
 		.loading:after {
 			border-radius: 50%;
 			width: 5em;
 			height: 5em;
 		}
-
 		.loading {
 			margin: 10px auto;
 			border-width: .6em;
@@ -328,15 +312,13 @@ class TradePortal extends LitElement {
 			transform: translateZ(0px);
 			animation: 1.1s linear 0s infinite normal none running loadingAnimation;
 		}
-
 		mwc-select#coinSelectionMenu {
 			font-size: 24px;
+            width:220px;
 		}
-
 		mwc-select#coinSelectionMenu mwc-list-item {
 			line-height: 30px;
 		}
-
 		.coinName::before  {
 			content: "";
 			display: inline-block;
@@ -348,33 +330,29 @@ class TradePortal extends LitElement {
 			left: 10px;
 			top: 10px;
 		}
-
 		.btc.coinName:before  {
 			background-image: url('/img/qortbtc.png');
 		}
-
 		.ltc.coinName:before  {
 			background-image: url('/img/qortltc.png');
 		}
-
 		.doge.coinName:before  {
 			background-image: url('/img/qortdoge.png');
 		}
-
 		.dgb.coinName:before  {
 			background-image: url('/img/qortdgb.png');
 		}
-
 		.rvn.coinName:before  {
 			background-image: url('/img/qortrvn.png');
 		}
-
+            .arrr.coinName:before  {
+			background-image: url('/img/qortarrr.png');
+		}
 		.coinName {
 			display: inline-block;
 			height: 26px;
 			padding-left: 45px;
 		}
-
 		@-webkit-keyframes loadingAnimation {
 			0% {
 				-webkit-transform: rotate(0deg);
@@ -385,7 +363,6 @@ class TradePortal extends LitElement {
 				transform: rotate(360deg);
 			}
 		}
-
 		@keyframes loadingAnimation {
 			0% {
 				-webkit-transform: rotate(0deg);
@@ -395,13 +372,11 @@ class TradePortal extends LitElement {
 				-webkit-transform: rotate(360deg);
 				transform: rotate(360deg);
 			}
-		}
-			
+		}	
 		@media (min-width: 701px) {
 			* {
 			}
 			#trade-portal {}
-
 			#first-trade-section {
 				display: grid;
 				grid-template-columns:1fr 1fr 2fr;
@@ -412,7 +387,6 @@ class TradePortal extends LitElement {
 				align-items: stretch;
 				margin-bottom: 10px;
 			}
-
 			#second-trade-section {
 				display: grid;
 				grid-template-columns: 2fr  1fr;
@@ -423,9 +397,8 @@ class TradePortal extends LitElement {
 				align-items: stretch;
 				margin-bottom: 10px;
 			}
-
 		}
-	`
+        `
     }
 
     constructor() {
@@ -518,13 +491,30 @@ class TradePortal extends LitElement {
             tradeFee: "~0.006"
         }
 
+        let piratechain = {
+            name: "PIRATECHAIN",
+            balance: "0",
+            coinCode: "ARRR",
+            openOrders: [],
+            openFilteredOrders: [],
+            historicTrades: [],
+            myOrders: [],
+            myHistoricTrades: [],
+            myOfferingOrders: [],
+            openTradeOrders: null,
+            tradeOffersSocketCounter: 1,
+            coinAmount: this.amountString,
+            tradeFee: "~0.0002"
+        }
+
         this.listedCoins = new Map()
         this.listedCoins.set("QORTAL", qortal)
         this.listedCoins.set("BITCOIN", bitcoin)
         this.listedCoins.set("LITECOIN", litecoin)
         this.listedCoins.set("DOGECOIN", dogecoin)
         this.listedCoins.set("DIGIBYTE", digibyte)
-	  this.listedCoins.set("RAVENCOIN", ravencoin)
+        this.listedCoins.set("RAVENCOIN", ravencoin)
+        this.listedCoins.set("PIRATECHAIN", piratechain)
 
         workers.set("QORTAL", {
             tradesConnectedWorker: null,
@@ -556,6 +546,11 @@ class TradePortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
+        workers.set("PIRATECHAIN", {
+            tradesConnectedWorker: null,
+            handleStuckTradesConnectedWorker: null
+        })
+
         this.selectedCoin = "LITECOIN"
         this.selectedAddress = {}
         this.config = {}
@@ -570,6 +565,19 @@ class TradePortal extends LitElement {
         this.isLoadingOpenTrades = true
         this.isLoadingMyOpenOrders = false
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.arrrWalletAddress = ''
+        this.qortbtc = 0
+        this.qortltc = 0
+        this.qortdoge = 0
+        this.qortdgb = 0
+        this.qortrvn = 0
+        this.qortarrr = 0
+        this.btcqort = 0
+        this.ltcqort = 0
+        this.dogeqort = 0
+        this.dgbqort = 0
+        this.rvnqort = 0
+        this.arrrqort = 0
     }
 
     // TODO: Move each template to a separate components! Maybe
@@ -660,7 +668,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     openMarketTemplate() {
@@ -683,7 +691,7 @@ class TradePortal extends LitElement {
 									style="width: 100%; color: var(--black);"
 									id="buyAmountInput"
 									required readOnly
-                                                                        label=""
+                                                      label=""
 									placeholder="0.0000"
 									type="text" 
 									auto-validate="false"
@@ -807,7 +815,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>	
 		</div>
-	`
+        `
     }
 
     myOpenOrdersTemplate() {
@@ -873,7 +881,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     myHistoricTradesTemplate() {
@@ -933,7 +941,7 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
-	`
+        `
     }
 
     render() {
@@ -947,6 +955,7 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
+                              <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -961,11 +970,15 @@ class TradePortal extends LitElement {
 				</div>
 			</div>
 		</div>
+            <div style="text-align: center;">
+                <h2 style="color: var(--black);">${translate("tradepage.tchange33")}</h2>
+                <h3 style="color: var(--black);">1 <span style="color: #03a9f4;">QORT</span> = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</h3>
+            </div>
 		<!-- Manage Stuck Orders Dialog -->
 		<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
 			<div style="text-align: center;">
 				<h1>${translate("tradepage.tchange7")}</h1>
-				<hr />
+				<hr>
 			</div>
 			<div>
 				<vaadin-grid style="width: 500px" theme="compact column-borders row-stripes wrap-cell-content" id="stuckOrdersGrid" aria-label="My Offering Orders" .items="${this.listedCoins.get(this.selectedCoin).myOfferingOrders}">
@@ -977,7 +990,7 @@ class TradePortal extends LitElement {
 			</div>
 			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
-	`
+        `
     }
 
     firstUpdated() {
@@ -987,6 +1000,7 @@ class TradePortal extends LitElement {
         this.changeTheme()
         this.changeLanguage()
         this.updateWalletBalance()
+        this.fetchWalletAddress(this.selectedCoin)
 
         setTimeout(() => {
             this.displayTabContent('buy')
@@ -1011,6 +1025,48 @@ class TradePortal extends LitElement {
         this._stuckOrdersGrid = this.shadowRoot.getElementById('stuckOrdersGrid')
 
         this.getOpenOrdersGrid()
+
+        const getQortBtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/BITCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortbtc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortBtcPrice, 300000)
+        }
+
+        const getQortLtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/LITECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortltc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortLtcPrice, 300000)
+        }
+
+        const getQortDogePrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DOGECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdoge = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDogePrice, 300000)
+        }
+
+        const getQortDgbPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DIGIBYTE?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdgb = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDgbPrice, 300000)
+        }
+
+        const getQortRvnPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/RAVENCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortrvn = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortRvnPrice, 300000)
+        }
+
+        const getQortArrrPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/PIRATECHAIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortarrr = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortArrrPrice, 300000)
+        }
 
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
@@ -1053,7 +1109,15 @@ class TradePortal extends LitElement {
             })
 
             parentEpml.subscribe('config', (c) => {
-                if (!configLoaded) configLoaded = true
+                if (!configLoaded) {
+                    setTimeout(getQortBtcPrice, 1)
+                    setTimeout(getQortLtcPrice, 1)
+                    setTimeout(getQortDogePrice, 1)
+                    setTimeout(getQortDgbPrice, 1)
+                    setTimeout(getQortRvnPrice, 1)
+                    setTimeout(getQortArrrPrice, 1)
+                    configLoaded = true
+                }
                 this.config = JSON.parse(c)
             })
 
@@ -1064,10 +1128,10 @@ class TradePortal extends LitElement {
             let coinSelectionMenu = this.shadowRoot.getElementById("coinSelectionMenu")
 
             coinSelectionMenu.addEventListener('change', function () {
-                _this.setForeignCoin(coinSelectionMenu.value)
+                _this.setForeignCoin(coinSelectionMenu.value,false)
             })
 
-            _this.setForeignCoin(coinSelectionMenu.value)
+            _this.setForeignCoin(coinSelectionMenu.value,true)
         })
         parentEpml.imReady()
 
@@ -1096,6 +1160,68 @@ class TradePortal extends LitElement {
         }
     }
 
+    exchangeRateQort() {
+        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
+            return html`${this.qortbtc}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
+            return html`${this.qortltc}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
+            return html`${this.qortdoge}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
+            return html`${this.qortdgb}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
+            return html`${this.qortrvn}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
+            return html`${this.qortarrr}`
+        }
+    }
+
+    exchangeRateForeign() {
+        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/BITCOIN?inverse=false`
+            }).then((res) => {
+                this.btcqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.btcqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/LITECOIN?inverse=false`
+            }).then((res) => {
+                this.ltcqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.ltcqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DOGECOIN?inverse=false`
+            }).then((res) => {
+                this.dogeqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.dogeqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/DIGIBYTE?inverse=false`
+            }).then((res) => {
+                this.dgbqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.dgbqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/RAVENCOIN?inverse=false`
+            }).then((res) => {
+                this.rvnqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.rvnqort}`
+        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
+            parentEpml.request('apiCall', {
+                url: `/crosschain/price/PIRATECHAIN?inverse=false`
+            }).then((res) => {
+                this.arrrqort = (Number(res) / 1e8).toFixed(8)
+            })
+            return html`${this.arrrqort}`
+        }
+    }
+
     updateWalletBalance() {
         let _url = ``
         let _body = null
@@ -1121,6 +1247,10 @@ class TradePortal extends LitElement {
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
+            case 'PIRATECHAIN':
+                _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+                _body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+                break
             default:
                 break
         }
@@ -1129,20 +1259,59 @@ class TradePortal extends LitElement {
             url: _url,
             method: 'POST',
             body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
+            }
         })
-            .then((res) => {
-                if (isNaN(Number(res))) {
-                    let snack1string = get("tradepage.tchange30")
-                    parentEpml.request('showSnackBar', `${snack1string}`)
-                } else {
-                    this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
-                }
-            })
     }
 
-    setForeignCoin(coin) {
+    async fetchWalletAddress(coin) {
+        console.log("fetchWalletAddress: " + coin)
+        switch (coin) {
+            case 'PIRATECHAIN':
+                let res = await parentEpml.request('apiCall', {
+                    url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
+                    method: 'POST',
+                    body: `${window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58}`,
+                })
+                if (res != null && res.error != 1201) {
+                    this.arrrWalletAddress = res
+                }
+                break
+
+            default:
+                // Not used for other coins yet
+                break
+        }
+    }
+
+    setForeignCoin(coin,beingInitialized) {
         let _this = this
         this.selectedCoin = coin
+
+        let coinSelectionMenu=this.shadowRoot.getElementById("coinSelectionMenu")
+
+        if(beingInitialized){
+           //apply padding to the container
+            coinSelectionMenu.shadowRoot.querySelector('.mdc-select--outlined .mdc-select__anchor').setAttribute('style', 'padding-left: 60px;')
+            //create the coin pair container
+            let pairIconContainer = document.createElement("span")
+            let pairicon = (_this.listedCoins.get(_this.selectedCoin).coinCode).toLowerCase()
+            pairIconContainer.setAttribute("class","pairIconContainer")
+            pairIconContainer.setAttribute('style', 'left: 10px;top: 50%;transform: translate(0, -50%);height: 26px;width: 45px;position: absolute;background-repeat: no-repeat;background-size: cover;background-image: url(/img/qort'+pairicon+'.png);')
+            
+            //appending the coin pair container to the menu
+            coinSelectionMenu.shadowRoot.querySelector('.mdc-select--outlined .mdc-select__anchor').appendChild(pairIconContainer)
+        }else{//we need just to update the existing pair icon container
+            let pairIconContainer = coinSelectionMenu.shadowRoot.querySelector(".mdc-select--outlined .mdc-select__anchor span.pairIconContainer")
+            let pairicon = (_this.listedCoins.get(_this.selectedCoin).coinCode).toLowerCase()
+            pairIconContainer.style.backgroundImage='url(/img/qort'+pairicon+'.png)'
+        }
+
         this.isLoadingHistoricTrades = true
         this.isLoadingOpenTrades = true
         this.createConnection()
@@ -1153,6 +1322,7 @@ class TradePortal extends LitElement {
         this.clearSellForm()
         this.clearBuyForm()
         this.updateWalletBalance()
+        this.fetchWalletAddress(coin)
     }
 
     displayTabContent(tab) {
@@ -1162,18 +1332,21 @@ class TradePortal extends LitElement {
         tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
     }
 
-    reRenderHistoricTrades() {
+    async reRenderHistoricTrades() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingHistoricTrades = false
     }
 
-    reRenderOpenFilteredOrders() {
+    async reRenderOpenFilteredOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingOpenTrades = false
     }
 
-    reRenderMyOpenOrders() {
+    async reRenderMyOpenOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingMyOpenOrders = false
     }
 
@@ -1199,106 +1372,142 @@ class TradePortal extends LitElement {
     }
 
     processOfferingTrade(offer) {
-        const offerItem = {
-            ...offer,
-            qortAmount: parseFloat(offer.qortAmount),
-            price: parseFloat(offer.foreignAmount) / parseFloat(offer.qortAmount),
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+                const offerItem = {
+                    ...offer,
+                    qortAmount: parseFloat(offer.qortAmount),
+                    price: parseFloat(offer.foreignAmount) / parseFloat(offer.qortAmount),
+                }
+                const addOffer = () => {
+                    this.listedCoins.get(offer.foreignBlockchain).openOrders.unshift(offerItem)
+                }
+                const initOffer = () => {
+                    this.listedCoins.get(offer.foreignBlockchain).openOrders.push(offerItem)
+                }
+                this.listedCoins.get(offer.foreignBlockchain).openOrders.length === 0 ? initOffer() : addOffer()
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+            }
+        }catch(e){
+            console.log("Error adding offer from "+offer.foreignBlockchain)
         }
-        const addOffer = () => {
-            this.listedCoins.get(this.selectedCoin).openOrders.unshift(offerItem)
-        }
-        const initOffer = () => {
-            this.listedCoins.get(this.selectedCoin).openOrders.push(offerItem)
-        }
-        this.listedCoins.get(this.selectedCoin).openOrders.length === 0 ? initOffer() : addOffer()
-        this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
     }
 
     processRedeemedTrade(offer) {
-        // If trade is mine, add it to my historic trades and also add it to historic trades
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+                    
+                // If trade is mine, add it to my historic trades and also add it to historic trades
+                if (offer.qortalCreator === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    const offerItem = {
+                        ...offer,
+                        mode: 'SOLD',
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offerItem)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                } else if (offer.partnerQortalReceivingAddress === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    const offerItem = {
+                        ...offer,
+                        mode: 'BOUGHT',
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offerItem)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                }
+                // Add to historic trades
+                const addNewHistoricTrade = () => {
+                    this._historicTradesGrid.items.unshift(offer)
+                    this._historicTradesGrid.clearCache()
+                }
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
+                        
             }
-            const offerItem = {
-                ...offer,
-                mode: 'SOLD',
-            }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offerItem)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
-        } else if (offer.partnerQortalReceivingAddress === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
-            }
-            const offerItem = {
-                ...offer,
-                mode: 'BOUGHT',
-            }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offerItem)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+        }catch(e){
+            console.log("Error processing redeemed trade offer from "+offer.foreignBlockchain)
         }
-        // Add to historic trades
-        const addNewHistoricTrade = () => {
-            this._historicTradesGrid.items.unshift(offer)
-            this._historicTradesGrid.clearCache()
-        }
-        this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
     }
 
     processTradingTrade(offer) {
-        // Remove from open market orders
-        if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-            // Check and Update Wallet Balance
-            this.updateWalletBalance()
-        }
-        this._openOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._openOrdersGrid.items.splice(index, 1)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+                // Remove from open market orders
+                if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                    // Check and Update Wallet Balance
+                    this.updateWalletBalance()
+                }
+                this._openOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._openOrdersGrid.items.splice(index, 1)
+                        this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+                    }
+                })
+                this.listedCoins.get(offer.foreignBlockchain).openOrders = this.listedCoins.get(offer.foreignBlockchain).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
             }
-        })
-        this.listedCoins.get(this.selectedCoin).openOrders = this.listedCoins.get(this.selectedCoin).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
+        }catch(e){
+            console.log("Error processing trading trade offer from "+offer.foreignBlockchain)
+        }
     }
 
     processRefundedTrade(offer) {
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+            if (offer.qortalCreator === this.selectedAddress.address) {
+                // Check and Update Wallet Balance
+                if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                    this.updateWalletBalance()
+                }
+                // Add to my historic trades
+                this._myHistoricTradesGrid.items.unshift(offer)
+                this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
             }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offer)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+
+            }
+        }catch(e){
+            console.log("Error processing refunded trade offer from "+offer.foreignBlockchain)
         }
     }
 
     processCancelledTrade(offer) {
-        if (offer.qortalCreator === this.selectedAddress.address) {
-            // Check and Update Wallet Balance
-            if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1) {
-                this.updateWalletBalance()
+        try{
+            if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
+            
+                if (offer.qortalCreator === this.selectedAddress.address) {
+                    // Check and Update Wallet Balance
+                    if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
+                        this.updateWalletBalance()
+                    }
+                    // Add to my historic trades
+                    this._myHistoricTradesGrid.items.unshift(offer)
+                    this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+                }
+                this._openOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._openOrdersGrid.items.splice(index, 1)
+                        this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
+                    }
+                })
+                this.listedCoins.get(offer.foreignBlockchain).openOrders = this.listedCoins.get(offer.foreignBlockchain).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
+                this._stuckOrdersGrid.items.forEach((item, index) => {
+                    if (item.qortalAtAddress === offer.qortalAtAddress) {
+                        this._stuckOrdersGrid.items.splice(index, 1)
+                        this._stuckOrdersGrid.clearCache()
+                    }
+                })
             }
-            // Add to my historic trades
-            this._myHistoricTradesGrid.items.unshift(offer)
-            this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._myHistoricTradesGrid.clearCache() : null
+        }catch(e){
+            console.log("Error processing cancelled trade offer from "+offer.foreignBlockchain)
         }
-        this._openOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._openOrdersGrid.items.splice(index, 1)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
-            }
-        })
-        this.listedCoins.get(this.selectedCoin).openOrders = this.listedCoins.get(this.selectedCoin).openOrders.filter((order) => order.qortalAtAddress !== offer.qortalAtAddress)
-        this._stuckOrdersGrid.items.forEach((item, index) => {
-            if (item.qortalAtAddress === offer.qortalAtAddress) {
-                this._stuckOrdersGrid.items.splice(index, 1)
-                this._stuckOrdersGrid.clearCache()
-            }
-        })
     }
 
     /**
@@ -1314,7 +1523,6 @@ class TradePortal extends LitElement {
         offers.forEach((offer) => {
             if (offer.mode === 'OFFERING') {
                 this.processOfferingTrade(offer)
-                this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter > 1 ? this._openOrdersGrid.clearCache() : null
             } else if (offer.mode === 'REDEEMED') {
                 this.processRedeemedTrade(offer)
             } else if (offer.mode === 'TRADING') {
@@ -1572,6 +1780,49 @@ class TradePortal extends LitElement {
             })
         }
 
+        /**
+        * PirateChainACCTv1 TRADEBOT STATES
+        *  - BOB_WAITING_FOR_AT_CONFIRM
+        *  - BOB_WAITING_FOR_MESSAGE
+        *  - BOB_WAITING_FOR_AT_REDEEM
+        *  - BOB_DONE
+        *  - BOB_REFUNDED
+        *  - ALICE_WAITING_FOR_AT_LOCK
+        *  - ALICE_DONE
+        *  - ALICE_REFUNDING_A
+        *  - ALICE_REFUNDED
+        *
+        * @param {[{}]} states
+        */
+
+         const PirateChainACCTv1 = (states) => {
+            // Reverse the states
+            states.reverse()
+            states.forEach((state) => {
+                if (state.creatorAddress === this.selectedAddress.address) {
+                    if (state.tradeState == 'BOB_WAITING_FOR_AT_CONFIRM') {
+                        this.changeTradeBotState(state, 'PENDING')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_MESSAGE') {
+                        this.changeTradeBotState(state, 'LISTED')
+                    } else if (state.tradeState == 'BOB_WAITING_FOR_AT_REDEEM') {
+                        this.changeTradeBotState(state, 'TRADING')
+                    } else if (state.tradeState == 'BOB_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'BOB_REFUNDED') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_WAITING_FOR_AT_LOCK') {
+                        this.changeTradeBotState(state, 'BUYING')
+                    } else if (state.tradeState == 'ALICE_DONE') {
+                        this.handleCompletedState(state)
+                    } else if (state.tradeState == 'ALICE_REFUNDING_A') {
+                        this.changeTradeBotState(state, 'REFUNDING')
+                    } else if (state.tradeState == 'ALICE_REFUNDED') {
+                        this.handleCompletedState(state)
+                    }
+                }
+            })
+        }
+
         switch (this.selectedCoin) {
             case 'BITCOIN':
                 BitcoinACCTv1(tradeStates)
@@ -1588,13 +1839,16 @@ class TradePortal extends LitElement {
             case 'RAVENCOIN':
                 RavencoinACCTv1(tradeStates)
                 break
+            case 'PIRATECHAIN':
+                PirateChainACCTv1(tradeStates)
+                break
             default:
                 break
         }
 
         // Fill Historic Trades and Filter Stuck Trades
         if (this.listedCoins.get(this.selectedCoin).tradeOffersSocketCounter === 1) {
-            setTimeout(() => this.filterStuckTrades(tradeStates), 50)
+            setTimeout(() => this.filterStuckTrades(tradeStates), 250)
         }
     }
 
@@ -1637,7 +1891,6 @@ class TradePortal extends LitElement {
 
     initSocket() {
         let _relatedCoin = ""
-        let presenceTxns = null
         let tradePresenceTxns = null
         let offeringTrades = null
 
@@ -1661,14 +1914,13 @@ class TradePortal extends LitElement {
             return timestamp > thirtyMinsAgo
         }
 
-        const filterOffersUsingEitherPresence = (offeringTrade) => {
-            return lessThanThirtyMinsAgo(offeringTrade.lastSeen) || offeringTrade.tradePresenceExpiry > Date.now();
+        const filterOffersUsingTradePresence = (offeringTrade) => {
+            return offeringTrade.tradePresenceExpiry > Date.now();
         }
 
         const processOffersWithPresence = () => {
             if (offeringTrades === null) return
 
-            const waitFor = (ms) => new Promise((r) => setTimeout(r, ms))
             async function asyncForEach(array, callback) {
                 for (let index = 0; index < array.length; index++) {
                     await callback(array[index], index, array)
@@ -1676,23 +1928,15 @@ class TradePortal extends LitElement {
             }
 
             const startOfferPresenceMapping = async () => {
-                if (presenceTxns !== null) {
-                    await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(50)
-                        let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
-                        offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
-                    })
-                }
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
-                        await waitFor(50)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
                     })
                 }
 
-                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingEitherPresence(offeringTrade))
+                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingTradePresence(offeringTrade))
                 self.postMessage({ type: 'PRESENCE', data: { offers: offeringTrades, filteredOffers: filteredOffers, relatedCoin: _relatedCoin } })
             }
 
@@ -1706,7 +1950,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
                 tradeOffersSocketCounter += 1
             }
             // Message Event
@@ -1724,7 +1968,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeOffersWebSocket()
             }
             // Error Event
@@ -1743,7 +1986,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
             }
             // Message Event
             socket.onmessage = (e) => {
@@ -1758,7 +2001,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeBotWebSocket()
             }
             // Error Event
@@ -1777,7 +2019,7 @@ class TradePortal extends LitElement {
             const socket = new WebSocket(socketLink)
             // Open Connection
             socket.onopen = () => {
-                setTimeout(pingSocket, 50)
+                setTimeout(pingSocket, 250)
             }
             // Message Event
             socket.onmessage = (e) => {
@@ -1788,7 +2030,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradePresenceWebSocket()
             }
             // Error Event
@@ -1801,58 +2042,20 @@ class TradePortal extends LitElement {
             }
         }
 
-        // Will be removed in future - being replaced by tradepresence above
-        const initPresenceWebSocket = (restarted = false) => {
-            let socketTimeout
-            let socketLink = `ws://NODEURL/websockets/presence?presenceType=TRADE_BOT`
-            const socket = new WebSocket(socketLink)
-            // Open Connection
-            socket.onopen = () => {
-                setTimeout(pingSocket, 50)
-            }
-            // Message Event
-            socket.onmessage = (e) => {
-                presenceTxns = JSON.parse(e.data)
-                processOffersWithPresence()
-                restarted = false
-            }
-            // Closed Event
-            socket.onclose = () => {
-                clearTimeout(socketTimeout)
-                // Restart Socket Connection
-                restartPresenceWebSocket()
-            }
-            // Error Event
-            socket.onerror = (e) => {
-                clearTimeout(socketTimeout)
-            }
-            const pingSocket = () => {
-                socket.send('ping')
-                socketTimeout = setTimeout(pingSocket, 295000)
-            }
-        }
-
-        const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 20000)
-        }
-
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 20000)
+            setTimeout(() => initTradePresenceWebSocket(true), 1000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 20000)
+            setTimeout(() => initTradeOffersWebSocket(true), 1000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 20000)
+            setTimeout(() => initTradeBotWebSocket(true), 1000)
         }
 
         // Start TradeOffersWebSocket
         initTradeOffersWebSocket()
-
-        // Start PresenceWebSocket
-        initPresenceWebSocket()
 
         // Start TradePresenceWebSocket
         initTradePresenceWebSocket()
@@ -1885,6 +2088,9 @@ class TradePortal extends LitElement {
                     break
 				case 'RAVENCOIN':
                     _receivingAddress = this.selectedAddress.rvnWallet.address
+                    break
+                case 'PIRATECHAIN':
+                    _receivingAddress = this.arrrWalletAddress
                     break
                 default:
                     break
@@ -1954,6 +2160,9 @@ class TradePortal extends LitElement {
                 break
 			case 'RAVENCOIN':
                 _foreignKey = this.selectedAddress.rvnWallet.derivedMasterPrivateKey
+                break
+            case 'PIRATECHAIN':
+                _foreignKey = this.selectedAddress.arrrWallet.seed58
                 break
             default:
                 break
@@ -2327,18 +2536,12 @@ class TradePortal extends LitElement {
 
         const modifiers = [
             { searchValue: 'NODEURL', replaceValue: nodeUrl },
-            { searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin, },
+            { searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin },
         ]
 
         workers.get(this.selectedCoin).tradesConnectedWorker = this.inlineWorker(this.initSocket, modifiers)
 
-        workers.get(this.selectedCoin).tradesConnectedWorker.addEventListener(
-            'message',
-            function (event) {
-                handleMessage(event.data)
-            },
-            { passive: true }
-        )
+        workers.get(this.selectedCoin).tradesConnectedWorker.addEventListener('message', function (event) { handleMessage(event.data) }, { passive: true })
 
         workers.get(this.selectedCoin).tradesConnectedWorker.postMessage({ type: "set_coin", content: this.selectedCoin })
     }
@@ -2351,7 +2554,7 @@ class TradePortal extends LitElement {
         })
 
         const getCompletedTrades = async () => {
-            const url = `http://NODEURL/crosschain/trades?limit=100&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
+            const url = `http://NODEURL/crosschain/trades?limit=25&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
             const res = await fetch(url)
             const historicTrades = await res.json()
             const compareFn = (a, b) => {

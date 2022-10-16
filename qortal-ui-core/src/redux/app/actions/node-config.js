@@ -23,7 +23,7 @@ export const doLoadNodeConfig = () => {
 
                 if (checkNodes === null || checkNodes.length === 0) {
                     var saveNode = [];
-                    saveNode.push(obj1,obj2,obj3,obj4,obj5,obj6);
+                    saveNode.push(obj1,obj2);
                     localStorage.setItem('myQortalNodes', JSON.stringify(saveNode));
                     nodeConfig.knownNodes = JSON.parse(localStorage.getItem('myQortalNodes'));
                 } else{
@@ -73,6 +73,7 @@ const addNode = (payload) => {
 }
 
 const obj1 = {
+    name: 'Local Node',
     protocol: 'http',
     domain: '127.0.0.1',
     port: 12391,
@@ -80,36 +81,10 @@ const obj1 = {
 }
 
 const obj2 = {
-    protocol: 'http',
-    domain: 'node1.qortal.org',
-    port: 12391,
-    enableManagement: false
-}
-
-const obj3 = {
-    protocol: 'http',
-    domain: 'node2.qortal.org',
-    port: 12391,
-    enableManagement: false
-}
-
-const obj4 = {
+    name: 'Local Testnet',
     protocol: 'http',
     domain: '127.0.0.1',
     port: 62391,
     enableManagement: true
 }
 
-const obj5 = {
-    protocol: 'http',
-    domain: 'node1.qortal.org',
-    port: 62391,
-    enableManagement: false
-}
-
-const obj6 = {
-    protocol: 'http',
-    domain: 'node2.qortal.org',
-    port: 62391,
-    enableManagement: false
-}
