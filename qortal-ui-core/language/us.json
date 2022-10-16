@@ -53,7 +53,7 @@
       "qora":"Qora address seed",
       "backup":"Qortal wallet backup",
       "decrypt":"Decrypt backup",
-      "save":"Save in this browser.",
+      "save":"Save credentials",
       "prepare":"Preparing Your Account",
       "areyousure":"Are you sure you want to remove this wallet from saved wallets?",
       "error1":"Backup must be valid JSON",
