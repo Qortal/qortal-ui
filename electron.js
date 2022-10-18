@@ -4,7 +4,7 @@ const server = require('./server.js');
 const log = require('electron-log');
 const path = require('path');
 
-// THOUGHTS: Make this APP more modularize and platform agnostic...
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512')
 
 process.env['APP_PATH'] = app.getAppPath();
 

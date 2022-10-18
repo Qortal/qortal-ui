@@ -1,7 +1,8 @@
 const styles = {
     breakpoints: {
-        tablet: '',
         desktop: '',
+        laptop: '',
+        tablet: '',
         mobile: ''
     },
     theme: {
@@ -36,5 +37,4 @@ const styles = {
         ]
     }
 }
-
 module.exports = styles
