@@ -1,4 +1,5 @@
-import { LitElement, html, css} from 'lit-element';
+import { LitElement, html, css } from 'lit';
+import { render } from 'lit/html.js';
 import { get, translate } from 'lit-translate';
 import { Epml } from '../../../epml';
 import snackbar from './snackbar.js'
@@ -336,7 +337,6 @@ class ChatModals extends LitElement {
                 dismiss: true
             })
         }
-        console.log({ret})
         return ret
     }
 

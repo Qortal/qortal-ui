@@ -1270,7 +1270,6 @@ class TradePortal extends LitElement {
     }
 
     async fetchWalletAddress(coin) {
-        console.log("fetchWalletAddress: " + coin)
         switch (coin) {
             case 'PIRATECHAIN':
                 let res = await parentEpml.request('apiCall', {

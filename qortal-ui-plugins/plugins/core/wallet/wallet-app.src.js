@@ -4449,7 +4449,7 @@ class MultiWallet extends LitElement {
                 }
 
                 const arrrSortedTransactions = arrrTxs.sort(arrrCompareFn)
-                console.log(arrrSortedTransactions)
+
                 if (this._selectedWallet == coin) {
                     this.wallets.get(this._selectedWallet).transactions = arrrSortedTransactions
                 }

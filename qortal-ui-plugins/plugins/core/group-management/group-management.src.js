@@ -588,57 +588,42 @@ class GroupManagement extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_GROUP`;
-        await fetch(url)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            })
-            .then((json) => {
-                this.createFee = (Number(json) / 1e8).toFixed(8);
-            })
-            .catch((response) => {
-                console.log(response.status, response.statusText, 'Need Core Update');
-            })
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((json) => {
+            this.createFee = (Number(json) / 1e8).toFixed(8);
+        })
     }
 
     async unitJoinFee() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`;
-        await fetch(url)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            })
-            .then((json) => {
-                this.joinFee = (Number(json) / 1e8).toFixed(8);
-            })
-            .catch((response) => {
-                console.log(response.status, response.statusText, 'Need Core Update');
-            })
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((json) => {
+            this.joinFee = (Number(json) / 1e8).toFixed(8);
+        })
     }
 
     async unitLeaveFee() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=LEAVE_GROUP`;
-        await fetch(url)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            })
-            .then((json) => {
-                this.leaveFee = (Number(json) / 1e8).toFixed(8);
-            })
-            .catch((response) => {
-                console.log(response.status, response.statusText, 'Need Core Update');
-            })
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((json) => {
+            this.leaveFee = (Number(json) / 1e8).toFixed(8);
+        })
     }
 
     resetDefaultSettings() {

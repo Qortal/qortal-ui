@@ -140,7 +140,6 @@ class WebBrowser extends LitElement {
                 url: `/render/authorize/${this.name}?apiKey=${this.getApiKey()}`,
                 method: "POST"
             }).then(res => {
-                console.log(res)
                 if (res.error) {
                     // Authorization problem - API key incorrect?
                 }

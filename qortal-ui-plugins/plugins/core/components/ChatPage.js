@@ -342,17 +342,7 @@ class ChatPage extends LitElement {
             // TODO: Determine number of initial messages by screen height...
             this._messages.length <= 15 ? adjustMessages() : this._initialMessages = this._messages.splice(this._messages.length - 15);
             
-
             this.messagesRendered = this._initialMessages
-          
-            // try {
-            //     const viewElement = this.shadowRoot.querySelector('chat-scroller')
-            //     console.log({viewElement})
-            // // viewElement.scrollTop = this.viewElement.scrollHeight + 50
-            // } catch (error) {
-            //     console.error(error)
-            // }
-            
             
             this.isLoadingMessages = false
             setTimeout(() => this.downElementObserver(), 500)
@@ -551,7 +541,6 @@ class ChatPage extends LitElement {
             // Error Event
             directSocket.onerror = (e) => {
                 clearTimeout(directSocketTimeout)
-                console.log(`[DIRECT-SOCKET ==> ${cid}]: ${e.type}`);
             }
 
             const pingDirectSocket = () => {
@@ -613,7 +602,6 @@ class ChatPage extends LitElement {
             // Error Event
             groupSocket.onerror = (e) => {
                 clearTimeout(groupSocketTimeout)
-                console.log(`[GROUP-SOCKET ==> ${groupId}]: ${e.type}`);
             }
 
             const pingGroupSocket = () => {

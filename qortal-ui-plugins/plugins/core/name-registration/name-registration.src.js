@@ -288,19 +288,14 @@ class NameRegistration extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const url = `${nodeUrl}/transactions/unitfee?txType=REGISTER_NAME`;
-        await fetch(url)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            })
-            .then((json) => {
-                this.fee = (Number(json) / 1e8).toFixed(2);
-            })
-            .catch((response) => {
-                console.log(response.status, response.statusText, this.renderCoreText());
-            })
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((json) => {
+            this.fee = (Number(json) / 1e8).toFixed(2);
+        })
     }
 
     getApiKey() {
