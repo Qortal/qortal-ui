@@ -47,6 +47,7 @@ class ChatPage extends LitElement {
             chatEditorPlaceholder: { type: String },
             messagesRendered: { type: Array },
             repliedToMessageObj: { type: Object },
+            editedMessageObj: { type: Object },
         }
     }
 
@@ -127,9 +128,18 @@ class ChatPage extends LitElement {
             color: var(--mdc-theme-primary);
         }
 
+        .checkmark-icon {
+            width: 30px;
+            color: var(--mdc-theme-primary);
+            margin: 0 8px;
+        }
+        .checkmark-icon:hover {
+           cursor: pointer;
+        }
+
         .close-icon {
             color: #676b71;
-            width: 25px;
+            width: 18px;
             transition: all 0.1s ease-in-out;
         }
 
@@ -193,6 +203,7 @@ class ChatPage extends LitElement {
         this.chatEditorPlaceholder = this.renderPlaceholder()
         this.messagesRendered = []
         this.repliedToMessageObj = null
+        this.editedMessageObj = null
     }
     
     render() {
@@ -217,12 +228,40 @@ class ChatPage extends LitElement {
                                  ></vaadin-icon>
                             </div>
                         `}
+                        ${this.editedMessageObj && html`
+                            <div class="repliedTo-container">
+                                <div class="repliedTo-subcontainer">
+                                    <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
+                                    <div class="repliedTo-message">
+                                        <p class="senderName">${translate("chatpage.cchange25")}</p>
+                                        <p class="original-message">${this.editedMessageObj.decodedMessage}</p>
+                                    </div>
+                                </div>
+                                <vaadin-icon
+                                 class="close-icon"
+                                 icon="vaadin:close-big"
+                                 slot="icon"
+                                 @click=${() => this.closeEditMessageContainer()}
+                                 ></vaadin-icon>
+                            </div>
+                        `}
                     <div class="chatbar">
                         <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
                         <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
                         <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                             ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
                         </button>
+                        ${this.editedMessageObj ? (
+                            html`
+                                <vaadin-icon
+                                 class="checkmark-icon"
+                                 icon="vaadin:check"
+                                 slot="icon"
+                                 @click=${() => this.closeEditMessageContainer()}
+                                 ></vaadin-icon>
+                                 `
+                                 ) : html`<div></div>`
+                        }
                     </div>
                 </div>
             </div>
@@ -340,6 +379,13 @@ class ChatPage extends LitElement {
         parentEpml.imReady();
     }
 
+    updated(changedProperties) {
+        if (changedProperties && changedProperties.has('editedMessageObj')) {
+            console.log('yo123')
+            this.chatEditor.insertText(this.editedMessageObj.decodedMessage)
+        }
+      }
+
     changeLanguage() {
         const checkLanguage = localStorage.getItem('qortalLanguage')
 
@@ -366,6 +412,7 @@ class ChatPage extends LitElement {
         .escapeHTML=${escape} 
         .getOldMessage=${this.getOldMessage}
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
+        .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
         .focusChatEditor=${() => this.focusChatEditor()}
         >
         </chat-scroller>`
@@ -471,15 +518,31 @@ class ChatPage extends LitElement {
 
         }
     }
+
+    // set replied to message in chat editor
         
-    async setRepliedToMessageObj(messageObj) {
-        console.log(messageObj, "Replied To Message Object Here")
+     setRepliedToMessageObj(messageObj) {
         this.repliedToMessageObj = {...messageObj};
+        this.editedMessageObj = null;
         this.requestUpdate();
-        await this.updateComplete;
-        console.log(this.repliedToMessageObj);
     }
 
+    // set edited message in chat editor
+
+     setEditedMessageObj(messageObj) {
+        console.log(messageObj, "Edited Message Object Here")
+        this.editedMessageObj = {...messageObj};
+        this.repliedToMessageObj = null;
+        this.requestUpdate();
+        console.log(this.editedMessageObj);
+    }
+    
+    closeEditMessageContainer() {
+        this.editedMessageObj = null;
+        this.chatEditor.resetValue();
+        this.requestUpdate();
+    }
+ 
     closeRepliedToContainer() {
         this.repliedToMessageObj = null;
         this.requestUpdate();

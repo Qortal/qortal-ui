@@ -26,6 +26,7 @@ class ChatScroller extends LitElement {
             messages: { type: Array },
             hideMessages: { type: Array },
             setRepliedToMessageObj: { type: Function },
+            setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function }
         }
     }
@@ -56,6 +57,7 @@ class ChatScroller extends LitElement {
                     .messageObj=${message} 
                     .hideMessages=${this.hideMessages}
                     .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .setEditedMessageObj=${this.setEditedMessageObj}
                     .focusChatEditor=${this.focusChatEditor}
                     >
                     </message-template>`
@@ -150,6 +152,7 @@ class MessageTemplate extends LitElement {
             openDialogBlockUser: {type: Boolean},
             showBlockAddressIcon: { type: Boolean },
             setRepliedToMessageObj: { type: Function },
+            setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
         }
     }
@@ -258,21 +261,23 @@ class MessageTemplate extends LitElement {
                 <div id="messageContent" class="message">
                     ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
                 </div>
-                    <chat-menu 
-                        tabindex="0"
-                        class="chat-hover"
-                        style=${this.showBlockAddressIcon && "display: block"}
-                        toblockaddress="${this.messageObj.sender}" 
-                        .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
-                        .showBlockUserModal=${() => this.showBlockUserModal()}
-                        .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
-                        .showBlockAddressIcon=${this.showBlockAddressIcon}
-                        .originalMessage=${this.messageObj}
-                        .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                        .focusChatEditor=${this.focusChatEditor}
-                        @blur=${() => this.showBlockIconFunc(false)}
-                    > 
-                    </chat-menu>
+                <chat-menu 
+                    tabindex="0"
+                    class="chat-hover"
+                    style=${this.showBlockAddressIcon && "display: block"}
+                    toblockaddress="${this.messageObj.sender}" 
+                    .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
+                    .showBlockUserModal=${() => this.showBlockUserModal()}
+                    .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
+                    .showBlockAddressIcon=${this.showBlockAddressIcon}
+                    .originalMessage=${this.messageObj}
+                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .setEditedMessageObj=${this.setEditedMessageObj}
+                    .focusChatEditor=${this.focusChatEditor}
+                    .myAddress=${this.myAddress}
+                    @blur=${() => this.showBlockIconFunc(false)}
+                > 
+                </chat-menu>
                 </div>
             </li>
             <chat-modals 
@@ -294,21 +299,21 @@ class ChatMenu extends LitElement {
     static get properties() {
         return {
             menuItems: { type: Array },
-            selectedAddress: { type: Object },
-            showPrivateMessageModal: {type: Function},
-            showBlockUserModal: {type: Function},
+            showPrivateMessageModal: { type: Function },
+            showBlockUserModal: { type: Function },
             toblockaddress: { type: String, attribute: true },
-            showBlockIconFunc: {type: Function},
-            showBlockAddressIcon: {type: Boolean},
-            originalMessage: {type: Object},
+            showBlockIconFunc: { type: Function },
+            showBlockAddressIcon: { type: Boolean },
+            originalMessage: { type: Object },
             setRepliedToMessageObj: { type: Function },
-            focusChatEditor: {type: Function},
+            setEditedMessageObj: { type: Function },
+            focusChatEditor: { type: Function },
+            myAddress: { type: Object }
         }
     }
 
     constructor() {
         super();
-        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address;
         this.showPrivateMessageModal = () => {};
         this.showBlockUserModal = () => {};
     }
@@ -338,14 +343,27 @@ class ChatMenu extends LitElement {
                     <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
                 <div 
-                    class="menu-icon tooltip" 
-                    data-text="${translate("blockpage.bcchange11")}" 
-                    @click="${() => {
-                        this.setRepliedToMessageObj(this.originalMessage);
-                        this.focusChatEditor();
-                        }}">
+                class="menu-icon tooltip" 
+                data-text="${translate("blockpage.bcchange11")}" 
+                @click="${() => {
+                    this.setRepliedToMessageObj(this.originalMessage);
+                    this.focusChatEditor();
+                    }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
+                ${this.myAddress === this.originalMessage.sender ? (
+                    html`
+                    <div 
+                    class="menu-icon tooltip" 
+                    data-text="${translate("blockpage.bcchange12")}" 
+                    @click=${() => {
+                    this.setEditedMessageObj(this.originalMessage);
+                    this.focusChatEditor();
+                    }}>
+                        <vaadin-icon icon="vaadin:pencil" slot="icon"></vaadin-icon>
+                    </div>
+                    `
+                ) : html`<div></div>`}
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
                     <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
                 </div>
