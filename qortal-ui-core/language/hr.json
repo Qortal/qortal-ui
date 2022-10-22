@@ -121,7 +121,12 @@
       "import":"Uvoz Čvorovi",
       "export":"Izvozni Čvorovi",
       "deletecustomnode":"Ukloni sve prilagođene čvorove",
-      "warning":"Vaši postojeći čvorovi bit će izbrisani i novi će se stvoriti iz sigurnosne kopije."
+      "warning":"Vaši postojeći čvorovi bit će izbrisani i novi će se stvoriti iz sigurnosne kopije.",
+      "snack1":"Uspješno izbrisani i dodani standardni čvorovi",
+      "snack2":"UI spojen na čvor",
+      "snack3":"Uspješno dodan i spremljen prilagođeni čvor",
+      "snack4":"Čvorovi su uspješno spremljeni kao",
+      "snack5":"Čvorovi su uspješno uvezeni"
    },
    "appinfo":{
       "blockheight":"Visina bloka",

@@ -121,7 +121,12 @@
       "import":"Import Noduri",
       "export":"Export Noduri",
       "deletecustomnode":"Eliminati toate nodurile personalizate",
-      "warning":"Nodurile dvs. existente vor fi sterse si din backup vor fi create noi."
+      "warning":"Nodurile dvs. existente vor fi sterse si din backup vor fi create noi.",
+      "snack1":"Noduri standard au fost sterse si adaugate cu succes",
+      "snack2":"Interfata de utilizare conectata la nod",
+      "snack3":"Nod personalizat adaugat si salvat cu succes",
+      "snack4":"Nodurile au fost salvate cu succes ca",
+      "snack5":"Nodurile au fost importate cu succes"
    },
    "appinfo":{
       "blockheight":"Dimensiunea blocului",

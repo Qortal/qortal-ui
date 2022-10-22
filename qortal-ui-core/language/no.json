@@ -121,7 +121,12 @@
       "import":"Importer Noder",
       "export":"Eksporter Noder",
       "deletecustomnode":"Fjern alle egendefinerte noder",
-      "warning":"Dine eksisterende noder vil bli slettet og nye opprettet fra sikkerhetskopien."
+      "warning":"Dine eksisterende noder vil bli slettet og nye opprettet fra sikkerhetskopien.",
+      "snack1":"Slettet og lagt til standardnoder",
+      "snack2":"UI koblet til node",
+      "snack3":"Egendefinert node er lagt til og lagret",
+      "snack4":"Noder ble lagret som",
+      "snack5":"Noder ble importert"
    },
    "appinfo":{
       "blockheight":"Blokkhøyde",

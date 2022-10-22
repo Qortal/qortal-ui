@@ -121,7 +121,12 @@
       "import":"Importar Nodos",
       "export":"Exportar Nodos",
       "deletecustomnode":"Eliminar todos los nodos personalizados",
-      "warning":"Sus nodos existentes se eliminarán y se crearán nuevos a partir de la copia de seguridad."
+      "warning":"Sus nodos existentes se eliminarán y se crearán nuevos a partir de la copia de seguridad.",
+      "snack1":"Nodos estándar eliminados y agregados con éxito",
+      "snack2":"UI conectada al nodo",
+      "snack3":"Nodo personalizado agregado y guardado con éxito",
+      "snack4":"Nodos guardados con éxito como",
+      "snack5":"Nodos importados con éxito"
    },
    "appinfo":{
       "blockheight":"Altura del Bloque",
