@@ -1,4 +1,5 @@
-import { LitElement, html, css} from 'lit-element';
+import { LitElement, html, css } from 'lit';
+import { render } from 'lit/html.js';
 import { get, translate } from 'lit-translate';
 import { Epml } from '../../../epml';
 import snackbar from './snackbar.js'
@@ -182,6 +183,7 @@ class ChatModals extends LitElement {
                 timestamp: sendTimestamp,
                 recipient: recipient,
                 recipientPublicKey: _publicKey,
+                hasChatReference: 0,
                 message: messageText,
                 lastReference: reference,
                 proofOfWorkNonce: 0,
@@ -336,7 +338,6 @@ class ChatModals extends LitElement {
                 dismiss: true
             })
         }
-        console.log({ret})
         return ret
     }
 

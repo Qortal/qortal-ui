@@ -136,7 +136,6 @@ class GroupTransaction extends LitElement {
             let splitedUrl = decodeTempUrl.split('?')
             let myGroupId = splitedUrl[1]
             this.addMintingAccountMessage = myGroupId
-            console.log(myGroupId);
         }
 
         getGroupIdFromURL()

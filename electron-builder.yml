@@ -99,7 +99,7 @@ linux:
     StartupWMClass: qortal-ui
   executableArgs:
     - --no-sandbox
-    - '--js-flags="--max-old-space-size=6144"'
+    - '--js-flags="--max-old-space-size=3584"'
   target:
     - "deb"
     - "AppImage"

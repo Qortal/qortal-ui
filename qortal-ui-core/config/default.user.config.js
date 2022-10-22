@@ -3,7 +3,7 @@ const path = require('path')
 const user = {
     node: 0,
     nodeSettings: {
-        pingInterval: 10 * 1000, // (10 secs)
+        pingInterval: 30 * 1000,
     },
     server: {
         writeHosts: {
@@ -27,7 +27,7 @@ const user = {
         },
     },
     constants: {
-        pollingInterval: 10000, // How long between checking for new unconfirmed transactions and new blocks (in milliseconds).
+        pollingInterval: 30 * 1000, // How long between checking for new unconfirmed transactions and new blocks (in milliseconds).
         workerURL: '/build/worker.js',
     },
 
@@ -43,5 +43,4 @@ const user = {
         },
     },
 }
-
 module.exports = user

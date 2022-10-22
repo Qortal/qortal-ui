@@ -437,7 +437,6 @@ class Puzzles extends LitElement {
 
         let _guessAddress = publicKeyToAddress(_keyPair.publicKey)
 
-        console.log("Guess '" + _guessAddress + "' vs puzzle's address '" + this.selectedPuzzle.address + "'")
         if (_guessAddress !== this.selectedPuzzle.address) {
             this.error = true
             this.message = this.renderErr1Text()

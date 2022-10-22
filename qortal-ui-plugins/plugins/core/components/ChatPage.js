@@ -724,7 +724,6 @@ class ChatPage extends LitElement {
             // Error Event
             directSocket.onerror = (e) => {
                 clearTimeout(directSocketTimeout)
-                console.log(`[DIRECT-SOCKET ==> ${cid}]: ${e.type}`);
             }
 
             const pingDirectSocket = () => {
@@ -812,7 +811,6 @@ class ChatPage extends LitElement {
             // Error Event
             groupSocket.onerror = (e) => {
                 clearTimeout(groupSocketTimeout)
-                console.log(`[GROUP-SOCKET ==> ${groupId}]: ${e.type}`);
             }
 
             const pingGroupSocket = () => {
@@ -901,6 +899,7 @@ class ChatPage extends LitElement {
                         timestamp: Date.now(),
                         recipient: this._chatId,
                         recipientPublicKey: this._publicKey.key,
+                        hasChatReference: 0,
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,
@@ -918,6 +917,7 @@ class ChatPage extends LitElement {
                         timestamp: Date.now(),
                         groupID: Number(this._chatId),
                         hasReceipient: 0,
+                        hasChatReference: 0,
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,

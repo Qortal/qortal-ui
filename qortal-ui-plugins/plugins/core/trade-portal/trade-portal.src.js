@@ -1026,6 +1026,48 @@ class TradePortal extends LitElement {
 
         this.getOpenOrdersGrid()
 
+        const getQortBtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/BITCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortbtc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortBtcPrice, 300000)
+        }
+
+        const getQortLtcPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/LITECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortltc = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortLtcPrice, 300000)
+        }
+
+        const getQortDogePrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DOGECOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdoge = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDogePrice, 300000)
+        }
+
+        const getQortDgbPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/DIGIBYTE?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortdgb = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortDgbPrice, 300000)
+        }
+
+        const getQortRvnPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/RAVENCOIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortrvn = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortRvnPrice, 300000)
+        }
+
+        const getQortArrrPrice = () => {
+            parentEpml.request("apiCall", { url: `/crosschain/price/PIRATECHAIN?inverse=true` }).then((res) => {
+                setTimeout(() => { this.qortarrr = (Number(res) / 1e8).toFixed(8) }, 1)
+            })
+            setTimeout(getQortArrrPrice, 300000)
+        }
+
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
             this._textMenu(event)},
@@ -1067,7 +1109,15 @@ class TradePortal extends LitElement {
             })
 
             parentEpml.subscribe('config', (c) => {
-                if (!configLoaded) configLoaded = true
+                if (!configLoaded) {
+                    setTimeout(getQortBtcPrice, 1)
+                    setTimeout(getQortLtcPrice, 1)
+                    setTimeout(getQortDogePrice, 1)
+                    setTimeout(getQortDgbPrice, 1)
+                    setTimeout(getQortRvnPrice, 1)
+                    setTimeout(getQortArrrPrice, 1)
+                    configLoaded = true
+                }
                 this.config = JSON.parse(c)
             })
 
@@ -1112,46 +1162,16 @@ class TradePortal extends LitElement {
 
     exchangeRateQort() {
         if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/BITCOIN?inverse=true`
-            }).then((res) => {
-                this.qortbtc = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortbtc}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/LITECOIN?inverse=true`
-            }).then((res) => {
-                this.qortltc = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortltc}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/DOGECOIN?inverse=true`
-            }).then((res) => {
-                this.qortdoge = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortdoge}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/DIGIBYTE?inverse=true`
-            }).then((res) => {
-                this.qortdgb = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortdgb}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/RAVENCOIN?inverse=true`
-            }).then((res) => {
-                this.qortrvn = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortrvn}`
         } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
-            parentEpml.request('apiCall', {
-                url: `/crosschain/price/PIRATECHAIN?inverse=true`
-            }).then((res) => {
-                this.qortarrr = (Number(res) / 1e8).toFixed(8)
-            })
             return html`${this.qortarrr}`
         }
     }
@@ -1250,7 +1270,6 @@ class TradePortal extends LitElement {
     }
 
     async fetchWalletAddress(coin) {
-        console.log("fetchWalletAddress: " + coin)
         switch (coin) {
             case 'PIRATECHAIN':
                 let res = await parentEpml.request('apiCall', {
@@ -1312,18 +1331,21 @@ class TradePortal extends LitElement {
         tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
     }
 
-    reRenderHistoricTrades() {
+    async reRenderHistoricTrades() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingHistoricTrades = false
     }
 
-    reRenderOpenFilteredOrders() {
+    async reRenderOpenFilteredOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingOpenTrades = false
     }
 
-    reRenderMyOpenOrders() {
+    async reRenderMyOpenOrders() {
         this.requestUpdate()
+        await this.updateComplete
         this.isLoadingMyOpenOrders = false
     }
 
@@ -1868,7 +1890,6 @@ class TradePortal extends LitElement {
 
     initSocket() {
         let _relatedCoin = ""
-        let presenceTxns = null
         let tradePresenceTxns = null
         let offeringTrades = null
 
@@ -1892,14 +1913,13 @@ class TradePortal extends LitElement {
             return timestamp > thirtyMinsAgo
         }
 
-        const filterOffersUsingEitherPresence = (offeringTrade) => {
-            return lessThanThirtyMinsAgo(offeringTrade.lastSeen) || offeringTrade.tradePresenceExpiry > Date.now();
+        const filterOffersUsingTradePresence = (offeringTrade) => {
+            return offeringTrade.tradePresenceExpiry > Date.now();
         }
 
         const processOffersWithPresence = () => {
             if (offeringTrades === null) return
 
-            const waitFor = (ms) => new Promise((r) => setTimeout(r, ms))
             async function asyncForEach(array, callback) {
                 for (let index = 0; index < array.length; index++) {
                     await callback(array[index], index, array)
@@ -1907,23 +1927,15 @@ class TradePortal extends LitElement {
             }
 
             const startOfferPresenceMapping = async () => {
-                if (presenceTxns !== null) {
-                    await asyncForEach(presenceTxns, async (presence) => {
-                        await waitFor(250)
-                        let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === presence.address)
-                        offerIndex !== -1 ? (offeringTrades[offerIndex].lastSeen = presence.timestamp) : null
-                    })
-                }
 
                 if (tradePresenceTxns !== null) {
                     await asyncForEach(tradePresenceTxns, async (tradePresence) => {
-                        await waitFor(250)
                         let offerIndex = offeringTrades.findIndex((offeringTrade) => offeringTrade.qortalCreatorTradeAddress === tradePresence.tradeAddress)
                         offerIndex !== -1 ? (offeringTrades[offerIndex].tradePresenceExpiry = tradePresence.timestamp) : null
                     })
                 }
 
-                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingEitherPresence(offeringTrade))
+                let filteredOffers = offeringTrades.filter((offeringTrade) => filterOffersUsingTradePresence(offeringTrade))
                 self.postMessage({ type: 'PRESENCE', data: { offers: offeringTrades, filteredOffers: filteredOffers, relatedCoin: _relatedCoin } })
             }
 
@@ -1955,7 +1967,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeOffersWebSocket()
             }
             // Error Event
@@ -1989,7 +2000,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradeBotWebSocket()
             }
             // Error Event
@@ -2019,7 +2029,6 @@ class TradePortal extends LitElement {
             // Closed Event
             socket.onclose = () => {
                 clearTimeout(socketTimeout)
-                // Restart Socket Connection
                 restartTradePresenceWebSocket()
             }
             // Error Event
@@ -2032,58 +2041,20 @@ class TradePortal extends LitElement {
             }
         }
 
-        // Will be removed in future - being replaced by tradepresence above
-        const initPresenceWebSocket = (restarted = false) => {
-            let socketTimeout
-            let socketLink = `ws://NODEURL/websockets/presence?presenceType=TRADE_BOT`
-            const socket = new WebSocket(socketLink)
-            // Open Connection
-            socket.onopen = () => {
-                setTimeout(pingSocket, 250)
-            }
-            // Message Event
-            socket.onmessage = (e) => {
-                presenceTxns = JSON.parse(e.data)
-                processOffersWithPresence()
-                restarted = false
-            }
-            // Closed Event
-            socket.onclose = () => {
-                clearTimeout(socketTimeout)
-                // Restart Socket Connection
-                restartPresenceWebSocket()
-            }
-            // Error Event
-            socket.onerror = (e) => {
-                clearTimeout(socketTimeout)
-            }
-            const pingSocket = () => {
-                socket.send('ping')
-                socketTimeout = setTimeout(pingSocket, 295000)
-            }
-        }
-
-        const restartPresenceWebSocket = () => {
-            setTimeout(() => initPresenceWebSocket(true), 20000)
-        }
-
         const restartTradePresenceWebSocket = () => {
-            setTimeout(() => initTradePresenceWebSocket(true), 20000)
+            setTimeout(() => initTradePresenceWebSocket(true), 1000)
         }
 
         const restartTradeOffersWebSocket = () => {
-            setTimeout(() => initTradeOffersWebSocket(true), 20000)
+            setTimeout(() => initTradeOffersWebSocket(true), 1000)
         }
 
         const restartTradeBotWebSocket = () => {
-            setTimeout(() => initTradeBotWebSocket(true), 20000)
+            setTimeout(() => initTradeBotWebSocket(true), 1000)
         }
 
         // Start TradeOffersWebSocket
         initTradeOffersWebSocket()
-
-        // Start PresenceWebSocket
-        initPresenceWebSocket()
 
         // Start TradePresenceWebSocket
         initTradePresenceWebSocket()
@@ -2582,7 +2553,7 @@ class TradePortal extends LitElement {
         })
 
         const getCompletedTrades = async () => {
-            const url = `http://NODEURL/crosschain/trades?limit=100&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
+            const url = `http://NODEURL/crosschain/trades?limit=25&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
             const res = await fetch(url)
             const historicTrades = await res.json()
             const compareFn = (a, b) => {

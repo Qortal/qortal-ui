@@ -1,48 +1,48 @@
 {
-  "name": "qortal-ui",
-  "version": "2.0.0",
-  "description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
-  "keywords": [
-    "QORT",
-    "QORTAL",
-    "DECENTRALIZED"
-  ],
-  "main": "electron.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Qortal/qortal-ui.git"
-  },
-  "homepage": "https://qortal.org",
-  "author": "QORTAL <admin@qortal.org>",
-  "license": "GPL-3.0",
-  "scripts": {
-    "install_link:all": "(cd qortal-ui-core  && yarn install && yarn link) && (cd qortal-ui-plugins && yarn install && yarn link) && (cd qortal-ui-crypto  && yarn install && yarn link) && (yarn link qortal-ui-core && yarn link qortal-ui-plugins && yarn link qortal-ui-crypto)",
-    "dev": "node server.js",
-    "prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
-    "build-dev": "node build.js",
-    "build": "NODE_ENV=production node build.js",
-    "server": "NODE_ENV=production node server.js",
-    "watch": "node watch.js",
-    "watch-inline": "node watch-inline.js",
-    "start-electron": "NODE_ENV=production electron .",
-    "build-electron": "electron-builder build  --publish never",
-    "deploy-electron": "electron-builder build --win --publish never",
-    "release": "NODE_ENV=production electron-builder build --publish never",
-    "update-package-json": "node update-package-json.js",
-    "publish": "electron-builder -p always"
-  },
-  "dependencies": {
-    "electron-updater": "5.2.1",
-    "electron-log": "4.4.8"
-  },
-  "devDependencies": {
-    "electron": "17.4.11",
-    "electron-builder": "23.3.3",
-    "electron-notarize": "1.2.1",
-    "electron-packager": "16.0.0",
-    "shelljs": "0.8.5"
-  },
-  "engines": {
-    "node": ">=14.17.0"
-  }
+	"name": "qortal-ui",
+	"version": "2.1.1",
+	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
+	"keywords": [
+		"QORT",
+		"QORTAL",
+		"DECENTRALIZED"
+	],
+	"main": "electron.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Qortal/qortal-ui.git"
+	},
+	"homepage": "https://qortal.org",
+	"author": "QORTAL <admin@qortal.org>",
+	"license": "GPL-3.0",
+	"scripts": {
+		"install_link:all": "(cd qortal-ui-core  && yarn install && yarn link) && (cd qortal-ui-plugins && yarn install && yarn link) && (cd qortal-ui-crypto  && yarn install && yarn link) && (yarn link qortal-ui-core && yarn link qortal-ui-plugins && yarn link qortal-ui-crypto)",
+		"dev": "node server.js",
+		"prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
+		"build-dev": "node build.js",
+		"build": "NODE_ENV=production node build.js",
+		"server": "NODE_ENV=production node server.js",
+		"watch": "node watch.js",
+		"watch-inline": "node watch-inline.js",
+		"start-electron": "NODE_ENV=production electron .",
+		"build-electron": "electron-builder build  --publish never",
+		"deploy-electron": "electron-builder build --win --publish never",
+		"release": "NODE_ENV=production electron-builder build --publish never",
+		"update-package-json": "node update-package-json.js",
+		"publish": "electron-builder -p always"
+	},
+	"dependencies": {
+		"electron-log": "4.4.8",
+		"electron-updater": "5.2.1"
+	},
+	"devDependencies": {
+		"electron": "21.1.1",
+		"electron-builder": "23.3.3",
+		"electron-notarize": "1.2.1",
+		"electron-packager": "16.0.0",
+		"shelljs": "0.8.5"
+	},
+	"engines": {
+		"node": ">=16.15.0"
+	}
 }

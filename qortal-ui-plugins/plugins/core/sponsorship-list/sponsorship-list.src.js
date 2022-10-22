@@ -219,7 +219,6 @@ class SponsorshipList extends LitElement {
 			}
 
 		} catch (error) {
-			console.log({error})
 
 			this.isPageLoading = false
 		}
