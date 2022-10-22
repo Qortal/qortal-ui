@@ -410,6 +410,7 @@ class ChatWelcomePage extends LitElement {
                     timestamp: sendTimestamp,
                     recipient: recipient,
                     recipientPublicKey: _publicKey,
+                    hasChatReference: 0,
                     message: messageText,
                     lastReference: reference,
                     proofOfWorkNonce: 0,
