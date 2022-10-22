@@ -181,7 +181,7 @@ export const chatStyles = css`
 		display: none;
 		position: absolute;
 		top: -38px;
-		right: 25px;
+		right: 5px;
 	}
 
 	.emoji {
@@ -235,12 +235,10 @@ export const chatStyles = css`
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		gap: 5px;
 		background-color: white;
 		border: 1px solid #dad9d9;
 		border-radius: 5px;
 		height:100%;
-		width: 100px;
 		position: relative;
 	}
 
@@ -250,7 +248,7 @@ export const chatStyles = css`
 
 	.menu-icon {
 		width: 100%;
-		padding: 5px;
+		padding: 5px 7px;
 		display: flex;
 		align-items: center;
 		font-size: 13px;
@@ -307,7 +305,7 @@ export const chatStyles = css`
 	}
 
 	.block-user-container {
-		display: none;
+		display: block;
 		position: absolute;
 		left: -5px;
 	}
