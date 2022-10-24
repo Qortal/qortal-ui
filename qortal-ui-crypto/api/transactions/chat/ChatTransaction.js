@@ -82,16 +82,17 @@ export default class ChatTransaction extends ChatBase {
             this._isText,
             this._feeBytes
         )
-
+            console.log('updated test')
         // After the feature trigger timestamp we need to include chat reference
         if (new Date(this._timestamp).getTime() >= CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP) {
             params.push(this._hasChatReference)
 
             if (this._hasChatReference[0] == 1) {
+                console.log('past through', this._chatReference)
                 params.push(this._chatReference)
             }
         }
-
+        console.log({params})
         return params;
     }
 }

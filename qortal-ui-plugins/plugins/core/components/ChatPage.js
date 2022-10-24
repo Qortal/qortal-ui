@@ -503,9 +503,36 @@ class ChatPage extends LitElement {
 
     async processMessages(messages, isInitial) {
 
+        const findNewMessages = messages.map(async(msg)=> {
+            console.log({msg})
+            let msgItem = msg
+            try {
+             const response =   await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?chatreference=${msg.reference}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                });
+
+                if(response && Array.isArray(response) && response.length !== 0){
+                    let responseItem = {...response[0]}
+                    delete responseItem.timestamp
+                    msgItem = {
+                        ...msg,
+                        ...responseItem,
+                        editedTimestamp : response[0].timestamp
+                    }
+                }
+                console.log({response})
+            } catch (error) {
+                console.log(error)
+            }
+
+            return msgItem
+        })
+        const updateMessages = await Promise.all(findNewMessages)
+
         if (isInitial) {
 
-            this.messages = messages.map((eachMessage) => {
+           const decodedMessages = updateMessages.map((eachMessage) => {
 
                 if (eachMessage.isText === true) {
                     this.messageSignature = eachMessage.signature
@@ -518,7 +545,61 @@ class ChatPage extends LitElement {
                 }
             })
 
-            this._messages = [...this.messages].sort(function (a, b) {
+
+            const findNewMessages2 = decodedMessages.map(async(msg)=> {
+                console.log({msg})
+                let parsedMessageObj  = msg
+                try {
+                   parsedMessageObj = JSON.parse(msg.decodedMessage)
+                } catch (error) {
+                    return msg
+                }
+               
+                
+                let msgItem = msg
+                try {
+                    if(parsedMessageObj.repliedTo){
+                        const response =   await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                        });
+        
+                        if(response && Array.isArray(response) && response.length !== 0){
+                       
+                            msgItem = {
+                                ...msg,
+                                repliedToData : this.decodeMessage(response[0])
+                            }
+                        } else {
+
+                            const response2 =   await parentEpml.request('apiCall', {
+                                type: 'api',
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                            });
+
+                            if(response2 && Array.isArray(response2) && response2.length !== 0){
+                            
+                                msgItem = {
+                                    ...msg,
+                                    repliedToData : this.decodeMessage(response2[0])
+                                }
+                            }
+                        }
+                    
+                    }
+                
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+                return msgItem
+            })
+            const updateMessages2 = await Promise.all(findNewMessages2)
+
+
+
+            this._messages = updateMessages2.sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -905,7 +986,8 @@ class ChatPage extends LitElement {
         // need whole original message object, transform the data and put it in local storage
         // create new var called repliedToData and use that to modify the UI
         // find specific object property in local
-        
+        let typeMessage = 'regular';
+       
         this.isLoading = true;
         this.chatEditor.disable();
         const messageText = this.mirrorChatInput.value;
@@ -913,6 +995,8 @@ class ChatPage extends LitElement {
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
+
+        console.log('is replied', this.repliedToMessageObj)
 
         if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
@@ -923,14 +1007,35 @@ class ChatPage extends LitElement {
             let err1string = get("chatpage.cchange24");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else if (this.repliedToMessageObj) {
+            let chatReference = this.repliedToMessageObj.reference
+
+            if(this.repliedToMessageObj.chatReference){
+                chatReference = this.repliedToMessageObj.chatReference
+            }
+            typeMessage = 'reply'
             const messageObject = {
                 messageText,
                 images: [''],
-                repliedTo: this.repliedToMessageObj.signature,
+                repliedTo: chatReference,
                 version: 1
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage  );
+        } else if (this.editedMessageObj) {
+            let chatReference = this.repliedToMessageObj.reference
+
+            if(this.repliedToMessageObj.chatReference){
+                chatReference = this.repliedToMessageObj.chatReference
+            }
+            typeMessage = 'reply'
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: chatReference,
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
         } else {
             const messageObject = {
                 messageText,
@@ -939,11 +1044,12 @@ class ChatPage extends LitElement {
                 version: 1
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
         }
     }
 
-    async sendMessage(messageText) {
+    async sendMessage(messageText, typeMessage, chatReference) {
+        console.log({messageText}, 'hello')
         this.isLoading = true;
 
         let _reference = new Uint8Array(64);
@@ -959,7 +1065,8 @@ class ChatPage extends LitElement {
                         timestamp: Date.now(),
                         recipient: this._chatId,
                         recipientPublicKey: this._publicKey.key,
-                        hasChatReference: 0,
+                        hasChatReference: typeMessage === 'edit' ? 1 : 0,
+                        chatReference: chatReference,
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,
@@ -967,7 +1074,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 });
-
+                console.log({chatResponse})
                 _computePow(chatResponse)
             } else {
                 let groupResponse = await parentEpml.request('chat', {

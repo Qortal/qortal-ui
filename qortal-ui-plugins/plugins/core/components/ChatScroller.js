@@ -44,6 +44,7 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log({messages: this.messages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -202,20 +203,7 @@ class MessageTemplate extends LitElement {
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             message = parsedMessageObj.messageText
-            repliedToData = {
-                    "timestamp": 1663419371885,
-                    "txGroupId": 0,
-                    "reference": "5LuncmE2RsGVdQizkZLnjgqU8QozR2hHhkiSujUgywEfqAvm6RW4xZ7c9XjuMnb76bNmX2ntRNhnBF4ErvawM1dW",
-                    "senderPublicKey": "xmZXCYzGU2t3S6Ehm2zp4pVm83q9d143NKRgmiU1dXW",
-                    "sender": "Qj9aLrdK2FLQY6YssRQUkDmXNJCko2zF7e",
-                    "senderName": "GiseleH",
-                    "data": "3JLP9vViLoRPJ1Pqt2uC6Ufqf7wgTrs4HuV4Ltgwdnf5ekcBCCf5MTm2Sg3sXHeuVnCpoJAyVdqgAbr7tcBoq3soNZTjteusXjjW3NSMNcJEAadaTYC68xGXGmvK1jRyioPqGaKiXKzR2jPPRV5SyiPd66788Z2Rqt3VQB98rvronX5w5tE9UUWRor6bmMeVL3dj7fHYhLPPE5VBpCS9Eskti7vnTgDUQxnjfr",
-                    "isText": true,
-                    "isEncrypted": false,
-                    "signature": "3jWvhQKSDt4Zqeup5sLfyNksVVphFW5iF11PsTZzXQLCCPH9pDMqwNoKE2oe3DPYz47VbbLgJaAWMVA44z9dUr9U",
-                    "decodedMessage": "for TrentB512 who computer crashed your registered name in qortal for your level 3 account was TrentB512 https://exqlorer.com/address/Qf58otnEXeoyvD7dvYmfEGpQ64oMD3uvwM"
-                
-            }
+            repliedToData = this.messageObj.repliedToData
         } catch (error) {
             message = this.messageObj.decodedMessage
         }
@@ -238,7 +226,14 @@ class MessageTemplate extends LitElement {
         } else {
             nameMenu = html`<span>${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
         }
-
+        if(repliedToData){
+            try {
+                const parsedMsg =  JSON.parse(repliedToData.decodedMessage)
+                repliedToData.decodedMessage = parsedMsg
+            } catch (error) {
+              
+            }
+        }
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li class="clearfix message-parent">
                 <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
@@ -255,7 +250,7 @@ class MessageTemplate extends LitElement {
                         class="original-message" 
                         style=${this.messageObj.sender === this.myAddress && "background-color: rgb(179 179 179 / 79%)"}>
                         <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
-                        <p class="replied-message">${repliedToData.decodedMessage}</p>
+                        <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
                     </div>
                     `}
                 <div id="messageContent" class="message">
