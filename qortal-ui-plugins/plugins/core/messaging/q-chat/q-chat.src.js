@@ -811,7 +811,13 @@ class Chat extends LitElement {
         };
 
         const sendMessageRequest = async (isEncrypted, _publicKey) => {
-
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
             let chatResponse = await parentEpml.request('chat', {
                 type: 18,
                 nonce: this.selectedAddress.nonce,
@@ -820,7 +826,7 @@ class Chat extends LitElement {
                     recipient: recipient,
                     recipientPublicKey: _publicKey,
                     hasChatReference: 0,
-                    message: messageText,
+                    message: stringifyMessageObject,
                     lastReference: reference,
                     proofOfWorkNonce: 0,
                     isEncrypted: isEncrypted,

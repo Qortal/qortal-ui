@@ -221,7 +221,7 @@ class ChatPage extends LitElement {
                                     <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
                                     <div class="repliedTo-message">
                                         <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                        <p class="original-message">${this.repliedToMessageObj.decodedMessage}</p>
+                                        <p class="original-message">${this.repliedToMessageObj.message}</p>
                                     </div>
                                 </div>
                                 <vaadin-icon
@@ -238,7 +238,7 @@ class ChatPage extends LitElement {
                                     <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
                                     <div class="repliedTo-message">
                                         <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                        <p class="original-message">${this.editedMessageObj.decodedMessage}</p>
+                                        <p class="original-message">${this.editedMessageObj.message}</p>
                                     </div>
                                 </div>
                                 <vaadin-icon
@@ -274,7 +274,7 @@ class ChatPage extends LitElement {
 
     async firstUpdated() {
         const keys = await messagesCache.keys()
-        console.log({ keys })
+
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
 
@@ -389,8 +389,7 @@ class ChatPage extends LitElement {
     async updated(changedProperties) {
         if (changedProperties.has('messagesRendered')) {
             let data = {}
-            console.log('chatId', this._chatId)
-            console.log(this.isReceipient)
+     
             const chatReference1 = this.isReceipient ? 'direct' : 'group';
             const chatReference2 = this._chatId
             if (chatReference1 && chatReference2) {
@@ -399,8 +398,8 @@ class ChatPage extends LitElement {
 
         }
         if (changedProperties && changedProperties.has('editedMessageObj')) {
-            console.log('yo123')
-            this.chatEditor.insertText(this.editedMessageObj.decodedMessage)
+        
+            this.chatEditor.insertText(this.editedMessageObj.message)
         }
     }
 
@@ -451,7 +450,7 @@ class ChatPage extends LitElement {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}`,
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false`,
             });
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
@@ -475,7 +474,7 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}`,
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false`,
             });
 
 
@@ -504,7 +503,7 @@ class ChatPage extends LitElement {
     async processMessages(messages, isInitial) {
 
         const findNewMessages = messages.map(async(msg)=> {
-            console.log({msg})
+         
             let msgItem = msg
             try {
              const response =   await parentEpml.request('apiCall', {
@@ -521,7 +520,7 @@ class ChatPage extends LitElement {
                         editedTimestamp : response[0].timestamp
                     }
                 }
-                console.log({response})
+               
             } catch (error) {
                 console.log(error)
             }
@@ -547,7 +546,7 @@ class ChatPage extends LitElement {
 
 
             const findNewMessages2 = decodedMessages.map(async(msg)=> {
-                console.log({msg})
+         
                 let parsedMessageObj  = msg
                 try {
                    parsedMessageObj = JSON.parse(msg.decodedMessage)
@@ -622,15 +621,58 @@ class ChatPage extends LitElement {
             setTimeout(() => this.downElementObserver(), 500)
         } else {
 
-            messages.forEach((eachMessage) => {
+          
+            const findNewMessages2 = messages.map(async(msg)=> {
+                const _eachMessage = this.decodeMessage(msg)
+                let parsedMessageObj  = _eachMessage
+                try {
+                   parsedMessageObj = JSON.parse(_eachMessage.decodedMessage)
+                } catch (error) {
+                    return msg
+                }
+               
+                
+                let msgItem = _eachMessage
+                try {
+                    if(parsedMessageObj.repliedTo){
+                        const response =   await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`,
+                        });
+        
+                        if(response && Array.isArray(response) && response.length !== 0){
+                       
+                            msgItem = {
+                                ..._eachMessage,
+                                repliedToData : this.decodeMessage(response[0])
+                            }
+                        } else {
 
-                const _eachMessage = this.decodeMessage(eachMessage)
+                            const response2 =   await parentEpml.request('apiCall', {
+                                type: 'api',
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`,
+                            });
 
-
-                this.renderNewMessage(_eachMessage)
-
-
+                            if(response2 && Array.isArray(response2) && response2.length !== 0){
+                            
+                                msgItem = {
+                                    ..._eachMessage,
+                                    repliedToData : this.decodeMessage(response2[0])
+                                }
+                            }
+                        }
+                    
+                    }
+                
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+               
+                this.renderNewMessage(msgItem)
             })
+          await Promise.all(findNewMessages2)
 
 
             // this.newMessages = this.newMessages.concat(_newMessages)
@@ -654,11 +696,9 @@ class ChatPage extends LitElement {
     // set edited message in chat editor
 
      setEditedMessageObj(messageObj) {
-        console.log(messageObj, "Edited Message Object Here")
         this.editedMessageObj = {...messageObj};
         this.repliedToMessageObj = null;
         this.requestUpdate();
-        console.log(this.editedMessageObj);
     }
     
     closeEditMessageContainer() {
@@ -725,7 +765,17 @@ class ChatPage extends LitElement {
     }
 
     async renderNewMessage(newMessage) {
+        if(newMessage.chatReference){
+            const findOriginalMessageIndex = this.messagesRendered.findIndex(msg=> msg.reference === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference) )
+            if(findOriginalMessageIndex !== -1){
+                const newMessagesRendered = [...this.messagesRendered]
+                newMessagesRendered[findOriginalMessageIndex] = {...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, editedTimestamp: newMessage.timestamp }
+                this.messagesRendered = newMessagesRendered
+            await this.getUpdateComplete();
+            }
 
+            return
+        }
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
 
         if (newMessage.sender === this.selectedAddress.address) {
@@ -761,11 +811,11 @@ class ChatPage extends LitElement {
         if (this.isReceipient === true) {
             // direct chat
 
-            if (encodedMessageObj.isEncrypted === true && this._publicKey.hasPubKey === true) {
+            if (encodedMessageObj.isEncrypted === true && this._publicKey.hasPubKey === true && encodedMessageObj.data) {
 
                 let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, this._publicKey.key, encodedMessageObj.reference)
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage }
-            } else if (encodedMessageObj.isEncrypted === false) {
+            } else if (encodedMessageObj.isEncrypted === false && encodedMessageObj.data) {
 
                 let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
                 let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
@@ -821,7 +871,6 @@ class ChatPage extends LitElement {
 
             // Message Event
             directSocket.onmessage = async (e) => {
-
                 if (initial === 0) {
                     const isReceipient = this.chatId.includes('direct')
 
@@ -835,13 +884,13 @@ class ChatPage extends LitElement {
                         const lastMessage = cachedData[cachedData.length - 1]
                         const newMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}`,
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
                         });
                         getInitialMessages = [...cachedData, ...newMessages]
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true`,
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&haschatreference=false`,
                         });
 
 
@@ -852,8 +901,10 @@ class ChatPage extends LitElement {
                     initial = initial + 1
 
                 } else {
-
-                    this.processMessages(JSON.parse(e.data), false)
+                    if(e.data){
+                        this.processMessages(JSON.parse(e.data), false)
+                    }
+                    
                 }
             }
 
@@ -921,14 +972,14 @@ class ChatPage extends LitElement {
 
                         const newMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}`,
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
                         });
 
                         getInitialMessages = [...cachedData, ...newMessages]
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true`,
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&haschatreference=false`,
                         });
 
 
@@ -939,8 +990,10 @@ class ChatPage extends LitElement {
 
                     initial = initial + 1
                 } else {
-
-                    this.processMessages(JSON.parse(e.data), false)
+                    if(e.data){
+                        this.processMessages(JSON.parse(e.data), false)
+                    }
+                   
                 }
             }
 
@@ -991,12 +1044,11 @@ class ChatPage extends LitElement {
         this.isLoading = true;
         this.chatEditor.disable();
         const messageText = this.mirrorChatInput.value;
-
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
 
-        console.log('is replied', this.repliedToMessageObj)
+     
 
         if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
@@ -1014,7 +1066,7 @@ class ChatPage extends LitElement {
             }
             typeMessage = 'reply'
             const messageObject = {
-                messageText,
+                messageText: trimmedMessage,
                 images: [''],
                 repliedTo: chatReference,
                 version: 1
@@ -1022,23 +1074,31 @@ class ChatPage extends LitElement {
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject, typeMessage  );
         } else if (this.editedMessageObj) {
-            let chatReference = this.repliedToMessageObj.reference
+            typeMessage = 'edit'
+            let chatReference = this.editedMessageObj.reference
 
-            if(this.repliedToMessageObj.chatReference){
-                chatReference = this.repliedToMessageObj.chatReference
+            if(this.editedMessageObj.chatReference){
+                chatReference = this.editedMessageObj.chatReference
             }
-            typeMessage = 'reply'
+           
+            let message = ""
+        try {
+            const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
+            message = parsedMessageObj
+            
+        } catch (error) {
+            message = this.messageObj.decodedMessage
+        }
             const messageObject = {
-                messageText,
-                images: [''],
-                repliedTo: chatReference,
-                version: 1
+                ...message,
+                messageText: trimmedMessage,
+                
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
         } else {
             const messageObject = {
-                messageText,
+                messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
                 version: 1
@@ -1049,7 +1109,7 @@ class ChatPage extends LitElement {
     }
 
     async sendMessage(messageText, typeMessage, chatReference) {
-        console.log({messageText}, 'hello')
+   
         this.isLoading = true;
 
         let _reference = new Uint8Array(64);
@@ -1074,7 +1134,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 });
-                console.log({chatResponse})
+         
                 _computePow(chatResponse)
             } else {
                 let groupResponse = await parentEpml.request('chat', {

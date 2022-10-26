@@ -44,7 +44,6 @@ class ChatScroller extends LitElement {
 
 
     render() {
-        console.log({messages: this.messages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -219,7 +218,10 @@ class MessageTemplate extends LitElement {
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
             avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+        } else {
+            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
+     
 
         if (this.messageObj.sender === this.myAddress) {
             nameMenu = html`<span style="color: #03a9f4;">${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
@@ -265,7 +267,7 @@ class MessageTemplate extends LitElement {
                     .showBlockUserModal=${() => this.showBlockUserModal()}
                     .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
                     .showBlockAddressIcon=${this.showBlockAddressIcon}
-                    .originalMessage=${this.messageObj}
+                    .originalMessage=${{...this.messageObj, message}}
                     .setRepliedToMessageObj=${this.setRepliedToMessageObj}
                     .setEditedMessageObj=${this.setEditedMessageObj}
                     .focusChatEditor=${this.focusChatEditor}
