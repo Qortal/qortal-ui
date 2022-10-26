@@ -460,7 +460,92 @@ class ChatPage extends LitElement {
 
             })
 
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+            const findNewMessages = decodeMsgs.map(async(msg)=> {
+            
+                let msgItem = msg
+                try {
+                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                    if(!this.isReceipient){
+                        msgQuery = `&txGroupId=${msg.txGroupId}`
+                    }
+                 const response =   await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
+                    });
+    
+                    if(response && Array.isArray(response) && response.length !== 0){
+                        let responseItem = {...response[0]}
+                        delete responseItem.timestamp
+                        msgItem = {
+                            ...msg,
+                            ...responseItem,
+                            editedTimestamp : response[0].timestamp
+                        }
+                    }
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+                return msgItem
+            })
+            const updateMessages = await Promise.all(findNewMessages)
+            const findNewMessages2 = updateMessages.map(async(msg)=> {
+         
+                let parsedMessageObj  = msg
+                try {
+                   parsedMessageObj = JSON.parse(msg.decodedMessage)
+                } catch (error) {
+                    return msg
+                }
+               
+                
+                let msgItem = msg
+                try {
+                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                    if(!this.isReceipient){
+                        msgQuery = `&txGroupId=${msg.txGroupId}`
+                    }
+                    if(parsedMessageObj.repliedTo){
+                        const response =   await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+                        });
+        
+                        if(response && Array.isArray(response) && response.length !== 0){
+                       
+                            msgItem = {
+                                ...msg,
+                                repliedToData : this.decodeMessage(response[0])
+                            }
+                        } else {
+
+                            const response2 =   await parentEpml.request('apiCall', {
+                                type: 'api',
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+                            });
+
+                            if(response2 && Array.isArray(response2) && response2.length !== 0){
+                            
+                                msgItem = {
+                                    ...msg,
+                                    repliedToData : this.decodeMessage(response2[0])
+                                }
+                            }
+                        }
+                    
+                    }
+                
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+                return msgItem
+            })
+            const updateMessages2 = await Promise.all(findNewMessages2)
+
+            this.messagesRendered = [...updateMessages2, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -485,7 +570,91 @@ class ChatPage extends LitElement {
 
             })
 
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+            const findNewMessages = decodeMsgs.map(async(msg)=> {
+            
+                let msgItem = msg
+                try {
+                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                    if(!this.isReceipient){
+                        msgQuery = `&txGroupId=${msg.txGroupId}`
+                    }
+                 const response =   await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
+                    });
+    
+                    if(response && Array.isArray(response) && response.length !== 0){
+                        let responseItem = {...response[0]}
+                        delete responseItem.timestamp
+                        msgItem = {
+                            ...msg,
+                            ...responseItem,
+                            editedTimestamp : response[0].timestamp
+                        }
+                    }
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+                return msgItem
+            })
+            const updateMessages = await Promise.all(findNewMessages)
+            const findNewMessages2 = updateMessages.map(async(msg)=> {
+         
+                let parsedMessageObj  = msg
+                try {
+                   parsedMessageObj = JSON.parse(msg.decodedMessage)
+                } catch (error) {
+                    return msg
+                }
+               
+                
+                let msgItem = msg
+                try {
+                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                    if(!this.isReceipient){
+                        msgQuery = `&txGroupId=${msg.txGroupId}`
+                    }
+                    if(parsedMessageObj.repliedTo){
+                        const response =   await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+                        });
+        
+                        if(response && Array.isArray(response) && response.length !== 0){
+                       
+                            msgItem = {
+                                ...msg,
+                                repliedToData : this.decodeMessage(response[0])
+                            }
+                        } else {
+
+                            const response2 =   await parentEpml.request('apiCall', {
+                                type: 'api',
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+                            });
+
+                            if(response2 && Array.isArray(response2) && response2.length !== 0){
+                            
+                                msgItem = {
+                                    ...msg,
+                                    repliedToData : this.decodeMessage(response2[0])
+                                }
+                            }
+                        }
+                    
+                    }
+                
+                   
+                } catch (error) {
+                    console.log(error)
+                }
+    
+                return msgItem
+            })
+            const updateMessages2 = await Promise.all(findNewMessages2)
+            this.messagesRendered = [...updateMessages2, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -958,7 +1127,7 @@ class ChatPage extends LitElement {
                             type: 'api',
                             url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
                         });
-                        getInitialMessages = [...cachedData, ...newMessages]
+                        getInitialMessages = [...cachedData, ...newMessages].slice(-20)
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
@@ -1047,7 +1216,7 @@ class ChatPage extends LitElement {
                             url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
                         });
 
-                        getInitialMessages = [...cachedData, ...newMessages]
+                        getInitialMessages = [...cachedData, ...newMessages].slice(-20)
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
