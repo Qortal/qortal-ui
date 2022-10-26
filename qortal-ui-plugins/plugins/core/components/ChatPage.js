@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { use, get, translate, registerTranslateConfig } from 'lit-translate'
 import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -52,6 +52,7 @@ class ChatPage extends LitElement {
             messagesRendered: { type: Array },
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
+            chatMessageSize: { type: String}
         }
     }
 
@@ -261,7 +262,7 @@ class ChatPage extends LitElement {
                                  class="checkmark-icon"
                                  icon="vaadin:check"
                                  slot="icon"
-                                 @click=${() => this.closeEditMessageContainer()}
+                                 @click=${() => this._sendMessage()}
                                  ></vaadin-icon>
                                  `
                                  ) : html`<div></div>`
@@ -273,7 +274,6 @@ class ChatPage extends LitElement {
     }
 
     async firstUpdated() {
-        const keys = await messagesCache.keys()
 
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
@@ -282,7 +282,6 @@ class ChatPage extends LitElement {
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
-
         document.addEventListener('keydown', (e) => {
             if (!this.chatEditor.content.body.matches(':focus')) {
                 // WARNING: Deprecated methods from KeyBoard Event
@@ -387,9 +386,7 @@ class ChatPage extends LitElement {
     }
 
     async updated(changedProperties) {
-        if (changedProperties.has('messagesRendered')) {
-            let data = {}
-     
+        if (changedProperties.has('messagesRendered')) { 
             const chatReference1 = this.isReceipient ? 'direct' : 'group';
             const chatReference2 = this._chatId
             if (chatReference1 && chatReference2) {
@@ -501,14 +498,18 @@ class ChatPage extends LitElement {
     }
 
     async processMessages(messages, isInitial) {
-
+        const isReceipient = this.chatId.includes('direct')
         const findNewMessages = messages.map(async(msg)=> {
-         
+            
             let msgItem = msg
             try {
+                let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                if(!isReceipient){
+                    msgQuery = `&txGroupId=${msg.txGroupId}`
+                }
              const response =   await parentEpml.request('apiCall', {
                     type: 'api',
-                    url: `/chat/messages?chatreference=${msg.reference}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                    url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
                 });
 
                 if(response && Array.isArray(response) && response.length !== 0){
@@ -557,10 +558,14 @@ class ChatPage extends LitElement {
                 
                 let msgItem = msg
                 try {
+                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+                    if(!isReceipient){
+                        msgQuery = `&txGroupId=${msg.txGroupId}`
+                    }
                     if(parsedMessageObj.repliedTo){
                         const response =   await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
                         });
         
                         if(response && Array.isArray(response) && response.length !== 0){
@@ -573,7 +578,7 @@ class ChatPage extends LitElement {
 
                             const response2 =   await parentEpml.request('apiCall', {
                                 type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true&involving=${msg.recipient}&involving=${msg.sender}`,
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
                             });
 
                             if(response2 && Array.isArray(response2) && response2.length !== 0){
@@ -603,12 +608,7 @@ class ChatPage extends LitElement {
                     - b.timestamp
             })
 
-            const adjustMessages = () => {
-
-                let __msg = [...this._messages]
-                this._messages = []
-                this._initialMessages = __msg
-            }
+          
 
             // TODO: Determine number of initial messages by screen height...
             this._initialMessages = this._messages
@@ -633,11 +633,16 @@ class ChatPage extends LitElement {
                
                 
                 let msgItem = _eachMessage
+
+                let msgQuery = `&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`
+                if(!isReceipient){
+                    msgQuery = `&txGroupId=${_eachMessage.txGroupId}`
+                }
                 try {
                     if(parsedMessageObj.repliedTo){
                         const response =   await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`,
+                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
                         });
         
                         if(response && Array.isArray(response) && response.length !== 0){
@@ -650,7 +655,7 @@ class ChatPage extends LitElement {
 
                             const response2 =   await parentEpml.request('apiCall', {
                                 type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`,
+                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
                             });
 
                             if(response2 && Array.isArray(response2) && response2.length !== 0){
@@ -686,6 +691,73 @@ class ChatPage extends LitElement {
     }
 
     // set replied to message in chat editor
+
+
+    getMessageSize(message){
+        try {
+        
+         const messageText = message
+        // Format and Sanitize Message
+        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
+        const trimmedMessage = sanitizedMessage.trim();
+            let messageObject = {};
+
+            if (this.repliedToMessageObj) {
+                let chatReference = this.repliedToMessageObj.reference
+    
+                if(this.repliedToMessageObj.chatReference){
+                    chatReference = this.repliedToMessageObj.chatReference
+                }
+            
+                 messageObject = {
+                    messageText: trimmedMessage,
+                    images: [''],
+                    repliedTo: chatReference,
+                    version: 1
+                }
+                
+            } else if (this.editedMessageObj) {
+             
+    
+              
+               
+                let message = ""
+            try {
+                const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
+                message = parsedMessageObj
+                
+            } catch (error) {
+                message = this.messageObj.decodedMessage
+            }
+                messageObject = {
+                    ...message,
+                    messageText: trimmedMessage,
+                    
+                }
+              
+            } else {
+              messageObject = {
+                    messageText: trimmedMessage,
+                    images: [''],
+                    repliedTo: '',
+                    version: 1
+                }
+          
+         
+            }
+
+
+            const stringified = JSON.stringify(messageObject)
+            console.log({stringified})
+            const size =  new Blob([stringified]).size;
+            this.chatMessageSize = size
+          
+
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
         
      setRepliedToMessageObj(messageObj) {
         this.repliedToMessageObj = {...messageObj};
@@ -1144,7 +1216,8 @@ class ChatPage extends LitElement {
                         timestamp: Date.now(),
                         groupID: Number(this._chatId),
                         hasReceipient: 0,
-                        hasChatReference: 0,
+                        hasChatReference: typeMessage === 'edit' ? 1 : 0,
+                        chatReference: chatReference,
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,
@@ -1190,6 +1263,8 @@ class ChatPage extends LitElement {
 
             this.isLoading = false;
             this.chatEditor.enable();
+            this.closeEditMessageContainer()
+            this.closeRepliedToContainer()
         };
 
         // Exec..
@@ -1406,7 +1481,8 @@ class ChatPage extends LitElement {
 
                 ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste'].map(function (event) {
                     editor.content.body.addEventListener(event, function (e) {
-
+                    
+                        editorConfig.getMessageSize(editorConfig.mirrorElement.value)
                         if (e.type === 'click') {
 
                             e.preventDefault();
@@ -1517,6 +1593,7 @@ class ChatPage extends LitElement {
         };
 
         const editorConfig = {
+            getMessageSize: this.getMessageSize,
             mirrorElement: this.mirrorChatInput,
             editableElement: this.chatMessageInput,
             sendFunc: this._sendMessage,

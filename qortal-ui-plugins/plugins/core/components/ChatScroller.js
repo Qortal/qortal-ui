@@ -44,6 +44,8 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log({messages: this.messages})
+
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -73,6 +75,16 @@ class ChatScroller extends LitElement {
                 </div>
             </ul>
         `
+    }
+
+    shouldUpdate(changedProperties) {
+        // Only update element if prop1 changed.
+        return changedProperties.has('messages');
+      }
+
+    async updated(changedProperties) { 
+
+        console.log({changedProperties})
     }
 
     async firstUpdated() {
