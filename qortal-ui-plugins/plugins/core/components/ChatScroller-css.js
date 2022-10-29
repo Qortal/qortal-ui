@@ -320,4 +320,13 @@ export const chatStyles = css`
 		padding: 3px 8px;
 		box-shadow: rgba(77, 77, 82, 0.2) 0px 7px 29px 0px;
 	}
+
+	.reactions-bg {
+		background-color: #3C4048;
+		border-radius: 10px;
+		padding: 4px;
+		color: white;
+		margin-right: 10px;
+		cursor: pointer
+	}
 `
