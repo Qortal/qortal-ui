@@ -19,6 +19,7 @@ import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
+import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 
 const messagesCache = localForage.createInstance({
     name: "messages-cache",
@@ -455,101 +456,18 @@ class ChatPage extends LitElement {
             });
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
-
                 return this.decodeMessage(eachMessage)
-
-
-
-
-
             })
-
-            const findNewMessages = decodeMsgs.map(async(msg)=> {
             
-                let msgItem = msg
-                try {
-                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                    if(!this.isReceipient){
-                        msgQuery = `&txGroupId=${msg.txGroupId}`
-                    }
-                 const response =   await parentEpml.request('apiCall', {
-                        type: 'api',
-                        url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
-                    });
-    
-                    if(response && Array.isArray(response) && response.length !== 0){
-                        let responseItem = {...response[0]}
-                        delete responseItem.timestamp
-                        msgItem = {
-                            ...msg,
-                            ...responseItem,
-                            editedTimestamp : response[0].timestamp
-                        }
-                    }
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-                return msgItem
-            })
-            const updateMessages = await Promise.all(findNewMessages)
-            const findNewMessages2 = updateMessages.map(async(msg)=> {
          
-                let parsedMessageObj  = msg
-                try {
-                   parsedMessageObj = JSON.parse(msg.decodedMessage)
-                } catch (error) {
-                    return msg
-                }
-               
-                
-                let msgItem = msg
-                try {
-                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                    if(!this.isReceipient){
-                        msgQuery = `&txGroupId=${msg.txGroupId}`
-                    }
-                    if(parsedMessageObj.repliedTo){
-                        const response =   await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                        });
-        
-                        if(response && Array.isArray(response) && response.length !== 0){
-                       
-                            msgItem = {
-                                ...msg,
-                                repliedToData : this.decodeMessage(response[0])
-                            }
-                        } else {
-
-                            const response2 =   await parentEpml.request('apiCall', {
-                                type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                            });
-
-                            if(response2 && Array.isArray(response2) && response2.length !== 0){
-                            
-                                msgItem = {
-                                    ...msg,
-                                    repliedToData : this.decodeMessage(response2[0])
-                                }
-                            }
-                        }
-                    
-                    }
-                
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-                return msgItem
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	parentEpml,
+            isReceipient: this.isReceipient,
+            decodeMessageFunc: this.decodeMessage,
+            _publicKey: this._publicKey
             })
-            const updateMessages2 = await Promise.all(findNewMessages2)
-
-            this.messagesRendered = [...updateMessages2, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -565,100 +483,18 @@ class ChatPage extends LitElement {
 
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
-
                 return this.decodeMessage(eachMessage)
-
-
-
-
-
             })
 
-            const findNewMessages = decodeMsgs.map(async(msg)=> {
-            
-                let msgItem = msg
-                try {
-                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                    if(!this.isReceipient){
-                        msgQuery = `&txGroupId=${msg.txGroupId}`
-                    }
-                 const response =   await parentEpml.request('apiCall', {
-                        type: 'api',
-                        url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
-                    });
-    
-                    if(response && Array.isArray(response) && response.length !== 0){
-                        let responseItem = {...response[0]}
-                        delete responseItem.timestamp
-                        msgItem = {
-                            ...msg,
-                            ...responseItem,
-                            editedTimestamp : response[0].timestamp
-                        }
-                    }
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-                return msgItem
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	parentEpml,
+            isReceipient: this.isReceipient,
+            decodeMessageFunc: this.decodeMessage,
+            _publicKey: this._publicKey
             })
-            const updateMessages = await Promise.all(findNewMessages)
-            const findNewMessages2 = updateMessages.map(async(msg)=> {
-         
-                let parsedMessageObj  = msg
-                try {
-                   parsedMessageObj = JSON.parse(msg.decodedMessage)
-                } catch (error) {
-                    return msg
-                }
-               
-                
-                let msgItem = msg
-                try {
-                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                    if(!this.isReceipient){
-                        msgQuery = `&txGroupId=${msg.txGroupId}`
-                    }
-                    if(parsedMessageObj.repliedTo){
-                        const response =   await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                        });
-        
-                        if(response && Array.isArray(response) && response.length !== 0){
-                       
-                            msgItem = {
-                                ...msg,
-                                repliedToData : this.decodeMessage(response[0])
-                            }
-                        } else {
-
-                            const response2 =   await parentEpml.request('apiCall', {
-                                type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                            });
-
-                            if(response2 && Array.isArray(response2) && response2.length !== 0){
-                            
-                                msgItem = {
-                                    ...msg,
-                                    repliedToData : this.decodeMessage(response2[0])
-                                }
-                            }
-                        }
-                    
-                    }
-                
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-                return msgItem
-            })
-            const updateMessages2 = await Promise.all(findNewMessages2)
-            this.messagesRendered = [...updateMessages2, ...this.messagesRendered].sort(function (a, b) {
+          
+            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -672,40 +508,7 @@ class ChatPage extends LitElement {
 
     async processMessages(messages, isInitial) {
         const isReceipient = this.chatId.includes('direct')
-        const findNewMessages = messages.map(async(msg)=> {
-            
-            let msgItem = msg
-            try {
-                let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                if(!isReceipient){
-                    msgQuery = `&txGroupId=${msg.txGroupId}`
-                }
-             const response =   await parentEpml.request('apiCall', {
-                    type: 'api',
-                    url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
-                });
-
-                if(response && Array.isArray(response) && response.length !== 0){
-                    let responseItem = {...response[0]}
-                    delete responseItem.timestamp
-                    msgItem = {
-                        ...msg,
-                        ...responseItem,
-                        editedTimestamp : response[0].timestamp
-                    }
-                }
-               
-            } catch (error) {
-                console.log(error)
-            }
-
-            return msgItem
-        })
-        const updateMessages = await Promise.all(findNewMessages)
-
-        if (isInitial) {
-
-           const decodedMessages = updateMessages.map((eachMessage) => {
+         const decodedMessages = messages.map((eachMessage) => {
 
                 if (eachMessage.isText === true) {
                     this.messageSignature = eachMessage.signature
@@ -717,66 +520,20 @@ class ChatPage extends LitElement {
                     return _eachMessage
                 }
             })
+       
+        if (isInitial) {
 
+          
 
-            const findNewMessages2 = decodedMessages.map(async(msg)=> {
-         
-                let parsedMessageObj  = msg
-                try {
-                   parsedMessageObj = JSON.parse(msg.decodedMessage)
-                } catch (error) {
-                    return msg
-                }
-               
-                
-                let msgItem = msg
-                try {
-                    let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
-                    if(!isReceipient){
-                        msgQuery = `&txGroupId=${msg.txGroupId}`
-                    }
-                    if(parsedMessageObj.repliedTo){
-                        const response =   await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                        });
-        
-                        if(response && Array.isArray(response) && response.length !== 0){
-                       
-                            msgItem = {
-                                ...msg,
-                                repliedToData : this.decodeMessage(response[0])
-                            }
-                        } else {
-
-                            const response2 =   await parentEpml.request('apiCall', {
-                                type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                            });
-
-                            if(response2 && Array.isArray(response2) && response2.length !== 0){
-                            
-                                msgItem = {
-                                    ...msg,
-                                    repliedToData : this.decodeMessage(response2[0])
-                                }
-                            }
-                        }
-                    
-                    }
-                
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-                return msgItem
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodedMessages,
+	parentEpml,
+            isReceipient: isReceipient,
+            decodeMessageFunc: this.decodeMessage,
+            _publicKey: this._publicKey
             })
-            const updateMessages2 = await Promise.all(findNewMessages2)
 
-
-
-            this._messages = updateMessages2.sort(function (a, b) {
+            this._messages = replacedMessages.sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -793,64 +550,19 @@ class ChatPage extends LitElement {
             this.isLoadingMessages = false
             setTimeout(() => this.downElementObserver(), 500)
         } else {
+            const replacedMessages = await replaceMessagesEdited({
+            decodedMessages: decodedMessages,
+	        parentEpml,
+            isReceipient: isReceipient,
+            decodeMessageFunc: this.decodeMessage,
+            _publicKey: this._publicKey
+            })
 
           
-            const findNewMessages2 = messages.map(async(msg)=> {
-                const _eachMessage = this.decodeMessage(msg)
-                let parsedMessageObj  = _eachMessage
-                try {
-                   parsedMessageObj = JSON.parse(_eachMessage.decodedMessage)
-                } catch (error) {
-                    return msg
-                }
-               
-                
-                let msgItem = _eachMessage
-
-                let msgQuery = `&involving=${_eachMessage.recipient}&involving=${_eachMessage.sender}`
-                if(!isReceipient){
-                    msgQuery = `&txGroupId=${_eachMessage.txGroupId}`
-                }
-                try {
-                    if(parsedMessageObj.repliedTo){
-                        const response =   await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                        });
-        
-                        if(response && Array.isArray(response) && response.length !== 0){
-                       
-                            msgItem = {
-                                ..._eachMessage,
-                                repliedToData : this.decodeMessage(response[0])
-                            }
-                        } else {
-
-                            const response2 =   await parentEpml.request('apiCall', {
-                                type: 'api',
-                                url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-                            });
-
-                            if(response2 && Array.isArray(response2) && response2.length !== 0){
-                            
-                                msgItem = {
-                                    ..._eachMessage,
-                                    repliedToData : this.decodeMessage(response2[0])
-                                }
-                            }
-                        }
-                    
-                    }
-                
-                   
-                } catch (error) {
-                    console.log(error)
-                }
-    
-               
-                this.renderNewMessage(msgItem)
+            const renderEachMessage = replacedMessages.map(async(msg)=> {
+              await  this.renderNewMessage(msg)
             })
-          await Promise.all(findNewMessages2)
+          await Promise.all(renderEachMessage)
 
 
             // this.newMessages = this.newMessages.concat(_newMessages)
@@ -921,7 +633,6 @@ class ChatPage extends LitElement {
 
 
             const stringified = JSON.stringify(messageObject)
-            console.log({stringified})
             const size =  new Blob([stringified]).size;
             this.chatMessageSize = size
           
@@ -1050,18 +761,25 @@ class ChatPage extends LitElement {
      * @param {Object} encodedMessageObj 
      * 
      */
-    decodeMessage(encodedMessageObj) {
+    decodeMessage(encodedMessageObj, isReceipient, _publicKey ) {
+        let isReceipientVar 
+        let _publicKeyVar 
+        try {
+            isReceipientVar =  this.isReceipient === undefined ? isReceipient : this.isReceipient;
+            _publicKeyVar = this._publicKey === undefined ? _publicKey : this._publicKey
+        } catch (error) {
+            isReceipientVar = isReceipient
+            _publicKeyVar = _publicKey
+        }
+        
         let decodedMessageObj = {}
 
-        if (this.isReceipient === true) {
+        if (isReceipientVar === true) {
             // direct chat
-
-            if (encodedMessageObj.isEncrypted === true && this._publicKey.hasPubKey === true && encodedMessageObj.data) {
-
-                let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, this._publicKey.key, encodedMessageObj.reference)
+            if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
+                let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference)
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage }
             } else if (encodedMessageObj.isEncrypted === false && encodedMessageObj.data) {
-
                 let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
                 let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage }
@@ -1360,7 +1078,6 @@ class ChatPage extends LitElement {
         let _reference = new Uint8Array(64);
         window.crypto.getRandomValues(_reference);
         let reference = window.parent.Base58.encode(_reference);
-
         const sendMessageRequest = async () => {
             if (this.isReceipient === true) {
                 let chatResponse = await parentEpml.request('chat', {
