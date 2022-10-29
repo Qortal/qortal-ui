@@ -92,11 +92,11 @@ class ChatModals extends LitElement {
       // Send Private Message
 
   _sendMessage() {
-    this.isLoading = true
+    this.isLoading = true;
 
-    const recipient = this.shadowRoot.getElementById('sendTo').value
-    const messageBox = this.shadowRoot.getElementById('messageBox')
-    const messageText = messageBox.value
+    const recipient = this.shadowRoot.getElementById('sendTo').value;
+    const messageBox = this.shadowRoot.getElementById('messageBox');
+    const messageText = messageBox.value;
 
     if (recipient.length === 0) {
         this.isLoading = false
@@ -105,22 +105,21 @@ class ChatModals extends LitElement {
     } else {
         this.sendMessage()
     }
-  }
+  };
 
     async sendMessage() {
-        this.isLoading = true
-
-        const _recipient = this.shadowRoot.getElementById('sendTo').value
-        const messageBox = this.shadowRoot.getElementById('messageBox')
-        const messageText = messageBox.value
-        let recipient
+        this.isLoading = true;
+        const _recipient = this.shadowRoot.getElementById('sendTo').value;
+        const messageBox = this.shadowRoot.getElementById('messageBox');
+        const messageText = messageBox.value;
+        let recipient;
 
         const validateName = async (receiverName) => {
-            let myRes
+            let myRes;
             let myNameRes = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/names/${receiverName}`
-            })
+            });
 
             if (myNameRes.error === 401) {
                 myRes = false
@@ -128,7 +127,7 @@ class ChatModals extends LitElement {
                 myRes = myNameRes
             }
 
-            return myRes
+            return myRes;
         }
 
         const myNameRes = await validateName(_recipient)
@@ -139,7 +138,6 @@ class ChatModals extends LitElement {
 
             recipient = myNameRes.owner
         }
-
         let _reference = new Uint8Array(64);
         window.crypto.getRandomValues(_reference);
 
@@ -367,7 +365,11 @@ class ChatModals extends LitElement {
           <p style='margin-bottom:0;'>
               <textarea class='textarea' @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id='messageBox' placeholder='${translate('welcomepage.wcchange5')}' rows='1'></textarea>
           </p>
-          <mwc-button ?disabled='${this.isLoading}' slot='primaryAction' @click=${this._sendMessage}>${translate('welcomepage.wcchange6')}
+          <mwc-button ?disabled='${this.isLoading}' slot='primaryAction' @click=${() => {
+            console.log("here500");
+            this._sendMessage();
+          }
+        }>${translate('welcomepage.wcchange6')}
         </mwc-button>
           <mwc-button
               ?disabled='${this.isLoading}'

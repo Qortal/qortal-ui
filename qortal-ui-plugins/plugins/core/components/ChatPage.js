@@ -213,60 +213,64 @@ class ChatPage extends LitElement {
     
     render() {
         return html`
-            ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
-            <div class="chat-text-area">
-                    <div class="typing-area">
-                        ${this.repliedToMessageObj && html`
-                            <div class="repliedTo-container">
-                                <div class="repliedTo-subcontainer">
-                                    <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
-                                    <div class="repliedTo-message">
-                                        <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                        <p class="original-message">${this.repliedToMessageObj.message}</p>
+            <div>
+                <div>
+                    ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
+                </div>
+                <div class="chat-text-area">
+                        <div class="typing-area">
+                            ${this.repliedToMessageObj && html`
+                                <div class="repliedTo-container">
+                                    <div class="repliedTo-subcontainer">
+                                        <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
+                                        <div class="repliedTo-message">
+                                            <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
+                                            <p class="original-message">${this.repliedToMessageObj.message}</p>
+                                        </div>
                                     </div>
+                                    <vaadin-icon
+                                        class="close-icon"
+                                        icon="vaadin:close-big"
+                                        slot="icon"
+                                        @click=${() => this.closeRepliedToContainer()}
+                                        ></vaadin-icon>
                                 </div>
-                                <vaadin-icon
-                                 class="close-icon"
-                                 icon="vaadin:close-big"
-                                 slot="icon"
-                                 @click=${() => this.closeRepliedToContainer()}
-                                 ></vaadin-icon>
-                            </div>
-                        `}
-                        ${this.editedMessageObj && html`
-                            <div class="repliedTo-container">
-                                <div class="repliedTo-subcontainer">
-                                    <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
-                                    <div class="repliedTo-message">
-                                        <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                        <p class="original-message">${this.editedMessageObj.message}</p>
+                            `}
+                            ${this.editedMessageObj && html`
+                                <div class="repliedTo-container">
+                                    <div class="repliedTo-subcontainer">
+                                        <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
+                                        <div class="repliedTo-message">
+                                            <p class="senderName">${translate("chatpage.cchange25")}</p>
+                                            <p class="original-message">${this.editedMessageObj.message}</p>
+                                        </div>
                                     </div>
+                                    <vaadin-icon
+                                        class="close-icon"
+                                        icon="vaadin:close-big"
+                                        slot="icon"
+                                        @click=${() => this.closeEditMessageContainer()}
+                                        ></vaadin-icon>
                                 </div>
-                                <vaadin-icon
-                                 class="close-icon"
-                                 icon="vaadin:close-big"
-                                 slot="icon"
-                                 @click=${() => this.closeEditMessageContainer()}
-                                 ></vaadin-icon>
-                            </div>
-                        `}
-                    <div class="chatbar">
-                        <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                        <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
-                        <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                            ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
-                        </button>
-                        ${this.editedMessageObj ? (
-                            html`
-                                <vaadin-icon
-                                 class="checkmark-icon"
-                                 icon="vaadin:check"
-                                 slot="icon"
-                                 @click=${() => this._sendMessage()}
-                                 ></vaadin-icon>
-                                 `
-                                 ) : html`<div></div>`
-                        }
+                            `}
+                        <div class="chatbar">
+                            <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                            <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
+                            <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                                ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                            </button>
+                            ${this.editedMessageObj ? (
+                                html`
+                                    <vaadin-icon
+                                        class="checkmark-icon"
+                                        icon="vaadin:check"
+                                        slot="icon"
+                                        @click=${() => this._sendMessage()}
+                                        ></vaadin-icon>
+                                        `
+                                        ) : html`<div></div>`
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -274,7 +278,6 @@ class ChatPage extends LitElement {
     }
 
     async firstUpdated() {
-
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
 
@@ -384,6 +387,7 @@ class ChatPage extends LitElement {
         })
         parentEpml.imReady();
     }
+
 
     async updated(changedProperties) {
         if (changedProperties.has('messagesRendered')) { 
