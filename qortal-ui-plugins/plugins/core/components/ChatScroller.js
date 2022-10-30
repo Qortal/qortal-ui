@@ -13,6 +13,8 @@ import '@vaadin/icon';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
+import { EmojiPicker } from 'emoji-picker-js';
+
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class ChatScroller extends LitElement {
@@ -27,7 +29,8 @@ class ChatScroller extends LitElement {
             hideMessages: { type: Array },
             setRepliedToMessageObj: { type: Function },
             setEditedMessageObj: { type: Function },
-            focusChatEditor: { type: Function }
+            focusChatEditor: { type: Function },
+            sendMessage: { type: Function}
         }
     }
 
@@ -44,8 +47,6 @@ class ChatScroller extends LitElement {
 
 
     render() {
-        console.log({messages: this.messages})
-
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -61,6 +62,7 @@ class ChatScroller extends LitElement {
                     .setRepliedToMessageObj=${this.setRepliedToMessageObj}
                     .setEditedMessageObj=${this.setEditedMessageObj}
                     .focusChatEditor=${this.focusChatEditor}
+                    .sendMessage=${this.sendMessage}
                     >
                     </message-template>`
                 )}
@@ -81,11 +83,6 @@ class ChatScroller extends LitElement {
         // Only update element if prop1 changed.
         return changedProperties.has('messages');
       }
-
-    async updated(changedProperties) { 
-
-        console.log({changedProperties})
-    }
 
     async firstUpdated() {
         this.viewElement = this.shadowRoot.getElementById('viewElement')
@@ -166,6 +163,7 @@ class MessageTemplate extends LitElement {
             setRepliedToMessageObj: { type: Function },
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
+            sendMessage: { type: Function }
         }
     }
 
@@ -210,11 +208,14 @@ class MessageTemplate extends LitElement {
     render() {
         const hidemsg = this.hideMessages
         let message = ""
+        let reactions = []
         let repliedToData = null
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             message = parsedMessageObj.messageText
             repliedToData = this.messageObj.repliedToData
+         reactions = parsedMessageObj.reactions || []
+
         } catch (error) {
             message = this.messageObj.decodedMessage
         }
@@ -269,6 +270,16 @@ class MessageTemplate extends LitElement {
                     `}
                 <div id="messageContent" class="message">
                     ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                    
+                </div>
+                <div>
+                ${reactions.map((reaction)=> {
+                       return html`<span @click=${() => this.sendMessage({
+                        type: 'reaction',
+            editedMessageObj: this.messageObj,
+            reaction:  reaction.type,
+                       })} class="reactions-bg" >${reaction.type} ${reaction.qty}</span>`
+                    })}
                 </div>
                 <chat-menu 
                     tabindex="0"
@@ -285,6 +296,7 @@ class MessageTemplate extends LitElement {
                     .focusChatEditor=${this.focusChatEditor}
                     .myAddress=${this.myAddress}
                     @blur=${() => this.showBlockIconFunc(false)}
+                    .sendMessage=${this.sendMessage}
                 > 
                 </chat-menu>
                 </div>
@@ -317,7 +329,9 @@ class ChatMenu extends LitElement {
             setRepliedToMessageObj: { type: Function },
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
-            myAddress: { type: Object }
+            myAddress: { type: Object },
+            emojiPicker: { attribute: false },
+            sendMessage: {type: Function}
         }
     }
 
@@ -341,6 +355,34 @@ class ChatMenu extends LitElement {
             console.error('Copy to clipboard error:', err)
         }
     }
+
+  
+
+    firstUpdated(){
+        this.emojiPicker = new EmojiPicker({
+            style: "twemoji",
+            twemojiBaseUrl: '/emoji/',
+            showPreview: false,
+            showVariants: false,
+            showAnimation: false,
+            position: 'top-start',
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+        });
+
+      this.emojiPicker.on('emoji', selection => {
+        this.sendMessage({
+            type: 'reaction',
+            editedMessageObj: this.originalMessage,
+            reaction:  selection.emoji,
+         
+           
+        })
+ 
+    });
+      
+    }
+
+ 
     
     render() {
         return html` 
@@ -359,6 +401,15 @@ class ChatMenu extends LitElement {
                     this.focusChatEditor();
                     }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
+                </div>
+                <div 
+                class="menu-icon tooltip reaction" 
+                data-text="${translate("blockpage.bcchange13")}" 
+                @click=${(e) => {
+                    this.emojiPicker.togglePicker(e.target)
+                    }}
+               >
+                    <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
                 </div>
                 ${this.myAddress === this.originalMessage.sender ? (
                     html`

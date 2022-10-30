@@ -322,7 +322,6 @@ class ChatPage extends LitElement {
 
         // Attach Event Handler
         this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             use(checkLanguage)
@@ -447,6 +446,7 @@ class ChatPage extends LitElement {
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
         .focusChatEditor=${() => this.focusChatEditor()}
+        .sendMessage=${(val)=> this._sendMessage(val)}
         >
         </chat-scroller>`
     }
@@ -1002,7 +1002,7 @@ class ChatPage extends LitElement {
         // Add to the messages... TODO: Save messages to localstorage and fetch from it to make it persistent... 
     }
 
-    _sendMessage() {
+    _sendMessage(outSideMsg) {
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
         // need original message signature 
@@ -1018,9 +1018,58 @@ class ChatPage extends LitElement {
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
 
-     
+        if(outSideMsg && outSideMsg.type === 'reaction'){
+            typeMessage = 'edit'
+            let chatReference = outSideMsg.editedMessageObj.reference
 
-        if (/^\s*$/.test(trimmedMessage)) {
+            if(outSideMsg.editedMessageObj.chatReference){
+                chatReference = outSideMsg.editedMessageObj.chatReference
+            }
+           
+            let message = ""
+        try {
+            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+            message = parsedMessageObj
+            
+        } catch (error) {
+            message = outSideMsg.editedMessageObj.decodedMessage
+        }   
+
+            let reactions = message.reactions || []
+            const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
+            if(findEmojiIndex !== -1){
+                let users =  reactions[findEmojiIndex].users || []
+                const findUserIndex = users.find((user)=> user === this.selectedAddress.address )
+                if(findUserIndex !== -1){
+                  users.splice(findUserIndex, 1)
+                } else {
+                    users.push(this.selectedAddress.address)
+                }
+                reactions[findEmojiIndex] = {
+                    ...reactions[findEmojiIndex],
+                    qty: users.length,
+                    users
+                }
+                if(users.length === 0){
+                    reactions.splice(findEmojiIndex, 1)
+                }
+            } else {
+                reactions = [...reactions, {
+                    type: outSideMsg.reaction,
+                    qty: 1,
+                    users: [this.selectedAddress.address]
+                }]
+            }
+            
+            const messageObject = {
+                ...message,
+                reactions
+                
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
+
+        } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
         } else if (trimmedMessage.length >= 256) {
@@ -1057,7 +1106,7 @@ class ChatPage extends LitElement {
             message = parsedMessageObj
             
         } catch (error) {
-            message = this.messageObj.decodedMessage
+            message = this.editedMessageObj.decodedMessage
         }
             const messageObject = {
                 ...message,
