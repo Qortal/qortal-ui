@@ -53,7 +53,8 @@ class ChatPage extends LitElement {
             messagesRendered: { type: Array },
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
-            chatMessageSize: { type: String}
+            chatMessageSize: { type: String },
+            iframeHeight: { type:  Number }
         }
     }
 
@@ -61,6 +62,12 @@ class ChatPage extends LitElement {
         return css`
         html {
             scroll-behavior: smooth;
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-rows: minmax(66%, 92vh) minmax(40px, auto);
+            max-height: 100%;
         }
 
         .chat-text-area {
@@ -72,8 +79,6 @@ class ChatPage extends LitElement {
         .chat-text-area .typing-area {
             display: flex;
             flex-direction: column;
-            position: absolute;
-            bottom: 0;
             width: 98%;
             box-sizing: border-box;
             margin-bottom: 8px;
@@ -90,8 +95,6 @@ class ChatPage extends LitElement {
         .chat-text-area .typing-area .chat-editor {
             border-color: transparent;
             flex: 1;
-            max-height: 40px;
-            height: 40px;
             margin: 0;
             padding: 0;
             border: none;
@@ -210,11 +213,12 @@ class ChatPage extends LitElement {
         this.messagesRendered = []
         this.repliedToMessageObj = null
         this.editedMessageObj = null
+        this.iframeHeight = 40;
     }
     
     render() {
         return html`
-            <div>
+            <div class="chat-container">
                 <div>
                     ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
                 </div>
@@ -256,7 +260,8 @@ class ChatPage extends LitElement {
                             `}
                         <div class="chatbar">
                             <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                            <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
+                            <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
+                            </iframe>
                             <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                                 ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
                             </button>
@@ -280,7 +285,6 @@ class ChatPage extends LitElement {
 
     async firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
 
         // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
@@ -403,6 +407,16 @@ class ChatPage extends LitElement {
         
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
+
+        if (changedProperties && changedProperties.has('iframeHeight')) {
+           console.log({iframeHeight: this.iframeHeight})
+        }
+    }
+
+    calculateIFrameHeight(height) {
+        console.log(height, "height here")
+        this.iframeHeight = height;
+        this.requestUpdate();
     }
 
     changeLanguage() {
@@ -445,9 +459,6 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
-
-
-
 
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -575,9 +586,6 @@ class ChatPage extends LitElement {
         }
     }
 
-    // set replied to message in chat editor
-
-
     getMessageSize(message){
         try {
         
@@ -643,6 +651,8 @@ class ChatPage extends LitElement {
         
     }
         
+     // set replied to message in chat editor
+
      setRepliedToMessageObj(messageObj) {
         this.repliedToMessageObj = {...messageObj};
         this.editedMessageObj = null;
@@ -820,9 +830,6 @@ class ChatPage extends LitElement {
                 // Fallback to http
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
             }
-
-
-
 
             const directSocket = new WebSocket(directSocketLink);
 
@@ -1404,6 +1411,14 @@ class ChatPage extends LitElement {
 
                         if (e.type === 'keydown') {
 
+                            console.log(editorConfig.editableElement.contentDocument.body.scrollHeight);
+
+                            if (editorConfig.editableElement.contentDocument.body.scrollHeight > 40) {
+                                editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
+                            } else {
+                                editorConfig.calculateIFrameHeight(40);
+                            };
+
                             // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
@@ -1484,6 +1499,7 @@ class ChatPage extends LitElement {
 
         const editorConfig = {
             getMessageSize: this.getMessageSize,
+            calculateIFrameHeight: this.calculateIFrameHeight,
             mirrorElement: this.mirrorChatInput,
             editableElement: this.chatMessageInput,
             sendFunc: this._sendMessage,
