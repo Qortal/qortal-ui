@@ -329,4 +329,22 @@ export const chatStyles = css`
 		margin-right: 10px;
 		cursor: pointer
 	}
+
+	.image-container {
+		display: flex;
+	}
+	.image-delete-icon {
+		margin-left: 5px;
+    height: 20px;
+	cursor: pointer;
+	visibility: hidden;
+	transition: .2s all;
+	opacity: .8
+	}
+	.image-delete-icon:hover {
+		opacity: 1
+	}
+	.message-parent:hover .image-delete-icon {
+		visibility: visible;
+	}
 `
