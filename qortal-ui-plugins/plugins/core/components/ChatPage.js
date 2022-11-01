@@ -6,6 +6,8 @@ import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
+import ShortUniqueId from 'short-unique-id';
+import Compressor from 'compressorjs';
 
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
@@ -20,6 +22,7 @@ import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
+import { publishData } from '../../utils/publish-image.js';
 
 const messagesCache = localForage.createInstance({
     name: "messages-cache",
@@ -53,8 +56,9 @@ class ChatPage extends LitElement {
             messagesRendered: { type: Array },
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
-            chatMessageSize: { type: String },
-            iframeHeight: { type: Number }
+            iframeHeight: { type: Number },
+            chatMessageSize: { type: Number},
+            imageFile: {type: Object}
         }
     }
 
@@ -197,6 +201,8 @@ class ChatPage extends LitElement {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
+        this.insertImage = this.insertImage.bind(this)
+        this.getMessageSize = this.getMessageSize.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.selectedAddress = {}
@@ -219,7 +225,10 @@ class ChatPage extends LitElement {
         this.messagesRendered = []
         this.repliedToMessageObj = null
         this.editedMessageObj = null
-        this.iframeHeight = 40;
+        this.iframeHeight = 40
+        this.chatMessageSize = 5
+        this.imageFile = null
+        this.uid = new ShortUniqueId()
     }
     
     render() {
@@ -227,6 +236,46 @@ class ChatPage extends LitElement {
             <div class="chat-container">
                 <div>
                     ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
+                    <mwc-dialog id="showDialogPublicKey"    ?open=${this.imageFile}>
+					<div class="dialog-header" >
+						
+					</div>
+					<div class="dialog-container">
+						hello
+                        ${this.imageFile && html`
+                        <img src=${URL.createObjectURL(this.imageFile)} />
+                        `}
+                        
+					</div>
+                    <mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
+						@click=${()=>{
+							
+							this._sendMessage({
+            type: 'image',
+            imageFile:  this.imageFile,
+            caption: 'This is a caption'
+         
+           
+        })
+						}}
+					>
+					send
+					</mwc-button>
+					<mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
+						@click=${()=>{
+							
+						this.imageFile = null
+						}}
+					>
+					${translate("general.close")}
+					</mwc-button>
+				</mwc-dialog>
                 </div>
                 <div class="chat-text-area" style="${`height: ${this.iframeHeight}px`}">
                         <div class="typing-area">
@@ -289,7 +338,18 @@ class ChatPage extends LitElement {
         `
     }
 
+
+
+    insertImage(file){
+        this.imageFile = file
+        
+        
+    }
+
+
+
     async firstUpdated() {
+       
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
         // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
@@ -638,11 +698,10 @@ class ChatPage extends LitElement {
          
             }
 
-
             const stringified = JSON.stringify(messageObject)
             const size =  new Blob([stringified]).size;
             this.chatMessageSize = size
-          
+            
 
         } catch (error) {
             console.error(error)
@@ -1001,7 +1060,7 @@ class ChatPage extends LitElement {
         // Add to the messages... TODO: Save messages to localstorage and fetch from it to make it persistent... 
     }
 
-    _sendMessage(outSideMsg) {
+   async _sendMessage(outSideMsg) {
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
         // need original message signature 
@@ -1016,8 +1075,161 @@ class ChatPage extends LitElement {
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
+        
+        const getName = async (recipient)=> {
+            try {
+                
+                const getNames = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/names/address/${recipient}`,
+				})
+                if(Array.isArray(getNames) && getNames.length > 0 ){
+                    return getNames[0].name
+                } else {
+                    return ''
+                }
+            } catch (error) {
+                return ""
+            }
+        }
 
-        if(outSideMsg && outSideMsg.type === 'reaction'){
+        if(outSideMsg && outSideMsg.type === 'delete'){
+            const userName = outSideMsg.name
+            const identifier = outSideMsg.identifier
+            let compressedFile = ''
+            var str =
+    "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
+   
+    const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+      
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+          const slice = byteCharacters.slice(offset, offset + sliceSize);
+      
+          const byteNumbers = new Array(slice.length);
+          for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+          }
+      
+          const byteArray = new Uint8Array(byteNumbers);
+          byteArrays.push(byteArray);
+        }
+      
+        const blob = new Blob(byteArrays, {type: contentType});
+        return blob;
+      }
+      const blob = b64toBlob(str, 'image/png');
+
+            await new Promise(resolve =>{
+                new Compressor( blob, {
+                    quality: 0.6,
+                    maxWidth: 500,
+                    success(result){
+                        console.log({result})
+                        const file = new File([result], "name", {
+                            type: 'image/png'
+                        });
+                        console.log({file})
+                        compressedFile = file
+                        resolve()
+                    },
+                    error(err) {
+                        console.log(err.message);
+                      },
+                })
+            })
+            try {
+                console.log({userName, compressedFile, identifier, selectedAddress: this.selectedAddress})
+                await publishData({
+                    registeredName: userName  ,
+            file : compressedFile ,
+            service: 'IMAGE',
+            identifier : identifier,
+            parentEpml,
+            metaData: undefined,
+            uploadType: 'file',
+            selectedAddress: this.selectedAddress
+                   })
+            } catch (error) {
+                console.error(error)
+            }
+                   
+
+           
+                    typeMessage = 'edit'
+            let chatReference = outSideMsg.editedMessageObj.reference
+
+            if(outSideMsg.editedMessageObj.chatReference){
+                chatReference = outSideMsg.editedMessageObj.chatReference
+            }
+           
+            let message = ""
+        try {
+            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+            message = parsedMessageObj
+            
+        } catch (error) {
+            message = outSideMsg.editedMessageObj.decodedMessage
+        }
+            const messageObject = {
+                ...message,
+                isImageDeleted: true
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
+           
+
+        }
+      else  if(outSideMsg && outSideMsg.type === 'image'){
+            const userName = await getName(this.selectedAddress.address)
+            const id = this.uid();
+            const identifier = `qchat_${id}`
+            let compressedFile = ''
+            await new Promise(resolve =>{
+                new Compressor( outSideMsg.imageFile, {
+                    quality: 0.6,
+                    maxWidth: 500,
+                    success(result){
+                        const file = new File([result], "name", {
+                            type: outSideMsg.imageFile.type
+                        });
+                        compressedFile = file
+                        resolve()
+                    },
+                    error(err) {
+                        console.log(err.message);
+                      },
+                })
+            })
+     
+                   await publishData({
+                    registeredName: userName  ,
+            file : compressedFile ,
+            service: 'IMAGE',
+            identifier : identifier,
+            parentEpml,
+            metaData: undefined,
+            uploadType: 'file',
+            selectedAddress: this.selectedAddress
+                   })
+                    const messageObject = {
+                        messageText: outSideMsg.caption,
+                        images: [{
+                                service: "IMAGE",
+                                name: userName,
+                                identifier: identifier
+                        }],
+                        isImageDeleted: false,
+                        repliedTo: '',
+                        version: 1
+                    }
+                    const stringifyMessageObject = JSON.stringify(messageObject)
+                    this.sendMessage(stringifyMessageObject, typeMessage);
+           
+           
+       
+        }  else if(outSideMsg && outSideMsg.type === 'reaction'){
             typeMessage = 'edit'
             let chatReference = outSideMsg.editedMessageObj.reference
 
@@ -1271,10 +1483,12 @@ class ChatPage extends LitElement {
         return arr.length === 0
     }
 
+    
+
     initChatEditor() {
 
         const ChatEditor = function (editorConfig) {
-
+            
             const ChatEditor = function () {
                 const editor = this;
                 editor.init();
@@ -1421,11 +1635,14 @@ class ChatPage extends LitElement {
                 editor.mirror.value = unescapedValue;
             };
 
-            ChatEditor.prototype.listenChanges = function () {
+            ChatEditor.prototype.listenChanges =  function () {
                 const editor = this;
 
-                ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste'].map(function (event) {
-                    editor.content.body.addEventListener(event, function (e) {
+                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
+
+                for (let i = 0; i < events.length; i++) {
+                    const event = events[i]
+                    editor.content.body.addEventListener(event, async function (e) {
                     
                         editorConfig.getMessageSize(editorConfig.mirrorElement.value)
                         if (e.type === 'click') {
@@ -1435,10 +1652,29 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'paste') {
+                         
                             e.preventDefault();
-
+                            const item_list = await navigator.clipboard.read();
+    let image_type; // we will feed this later
+    const item = item_list.find( item => // choose the one item holding our image
+      item.types.some( type => { // does this item have our type
+        if( type.startsWith( 'image/' ) ) {
+          image_type = type; // store which kind of image type it is
+          return true;
+        }
+      } )
+    );
+    const blob = item && await item.getType( image_type );
+    var file = new File([blob], "name", {
+        type: image_type
+    });
+   
+    editorConfig.insertImage(file)
+   
+    
+                        
                             navigator.clipboard.readText().then(clipboardText => {
-
+    
                                 let escapedText = editorConfig.escape(clipboardText);
 
                                 editor.insertText(escapedText);
@@ -1508,7 +1744,7 @@ class ChatPage extends LitElement {
 
                         editor.updateMirror();
                     });
-                });
+                  }
 
                 editor.content.addEventListener('click', function (event) {
 
@@ -1548,7 +1784,10 @@ class ChatPage extends LitElement {
             emojiPicker: this.emojiPicker,
             escape: escape,
             unescape: unescape,
-            placeholder: this.chatEditorPlaceholder
+            placeholder: this.chatEditorPlaceholder,
+            imageFile: this.imageFile,
+            requestUpdate: this.requestUpdate,
+            insertImage: this.insertImage
         };
         this.chatEditor = new ChatEditor(editorConfig);
     }

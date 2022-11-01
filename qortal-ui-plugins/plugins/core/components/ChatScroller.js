@@ -210,19 +210,26 @@ class MessageTemplate extends LitElement {
         let message = ""
         let reactions = []
         let repliedToData = null
+        let image = null
+        let isImageDeleted = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             message = parsedMessageObj.messageText
             repliedToData = this.messageObj.repliedToData
+            isImageDeleted = parsedMessageObj.isImageDeleted
          reactions = parsedMessageObj.reactions || []
-
+           if(parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0){
+            image = parsedMessageObj.images[0]
+            }
         } catch (error) {
             message = this.messageObj.decodedMessage
         }
         let avatarImg = ''
+        let imageHTML = ''
         let nameMenu = ''
         let levelFounder = ''
         let hideit = hidemsg.includes(this.messageObj.sender)
+        
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
 
@@ -233,6 +240,13 @@ class MessageTemplate extends LitElement {
             avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
         } else {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+        }
+
+        if(image){
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
+            imageHTML = html`<img src="${imageUrl}" style="max-width:45vh; max-height:40vh; border-radius: 5px" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
         }
      
 
@@ -268,9 +282,21 @@ class MessageTemplate extends LitElement {
                         <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
                     </div>
                     `}
+                    ${image && !isImageDeleted ? html`
+                    <div class="image-container">
+                        ${imageHTML}<vaadin-icon
+                        @click=${() => this.sendMessage({
+                        type: 'delete',
+                        name: image.name,
+                        identifier: image.identifier,
+            editedMessageObj: this.messageObj,
+           
+                       })}
+                        class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                    </div>
+                    ` : html``}
                 <div id="messageContent" class="message">
                     ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
-                    
                 </div>
                 <div>
                 ${reactions.map((reaction)=> {
@@ -387,6 +413,15 @@ class ChatMenu extends LitElement {
     render() {
         return html` 
             <div class="container">
+            <div 
+                class="menu-icon tooltip reaction" 
+                data-text="${translate("blockpage.bcchange13")}" 
+                @click=${(e) => {
+                    this.emojiPicker.togglePicker(e.target)
+                    }}
+               >
+                    <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
+                </div>
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
@@ -402,15 +437,7 @@ class ChatMenu extends LitElement {
                     }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
-                <div 
-                class="menu-icon tooltip reaction" 
-                data-text="${translate("blockpage.bcchange13")}" 
-                @click=${(e) => {
-                    this.emojiPicker.togglePicker(e.target)
-                    }}
-               >
-                    <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
-                </div>
+                
                 ${this.myAddress === this.originalMessage.sender ? (
                     html`
                     <div 
