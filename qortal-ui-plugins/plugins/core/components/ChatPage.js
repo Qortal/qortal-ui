@@ -54,7 +54,7 @@ class ChatPage extends LitElement {
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
             chatMessageSize: { type: String },
-            iframeHeight: { type:  Number }
+            iframeHeight: { type: Number }
         }
     }
 
@@ -66,13 +66,15 @@ class ChatPage extends LitElement {
 
         .chat-container {
             display: grid;
-            grid-template-rows: minmax(66%, 92vh) minmax(40px, auto);
+            grid-template-rows: minmax(6%, 92vh) minmax(40px, auto);
             max-height: 100%;
         }
 
         .chat-text-area {
             display: flex;
             justify-content: center;
+            min-height: 60px;
+            max-height: 100%;
             overflow: hidden;
         }
 
@@ -93,8 +95,10 @@ class ChatPage extends LitElement {
         }
 
         .chat-text-area .typing-area .chat-editor {
+            display: flex;
+            max-height: -webkit-fill-available;
+            width: 100%;
             border-color: transparent;
-            flex: 1;
             margin: 0;
             padding: 0;
             border: none;
@@ -161,9 +165,10 @@ class ChatPage extends LitElement {
             width: auto;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
             height: auto;
             padding: 5px;
+            overflow-y: hidden;
         }
 
         .chat-text-area .typing-area .emoji-button {
@@ -193,6 +198,7 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
+        this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.selectedAddress = {}
         this.chatId = ''
         this.myAddress = ''
@@ -222,7 +228,7 @@ class ChatPage extends LitElement {
                 <div>
                     ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
                 </div>
-                <div class="chat-text-area">
+                <div class="chat-text-area" style="${`height: ${this.iframeHeight}px`}">
                         <div class="typing-area">
                             ${this.repliedToMessageObj && html`
                                 <div class="repliedTo-container">
@@ -285,7 +291,6 @@ class ChatPage extends LitElement {
 
     async firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
         // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
@@ -403,19 +408,13 @@ class ChatPage extends LitElement {
 
         }
         if (changedProperties && changedProperties.has('editedMessageObj')) {
-        
             this.chatEditor.insertText(this.editedMessageObj.message)
-        }
-
-        if (changedProperties && changedProperties.has('iframeHeight')) {
-           console.log({iframeHeight: this.iframeHeight})
         }
     }
 
     calculateIFrameHeight(height) {
         console.log(height, "height here")
         this.iframeHeight = height;
-        this.requestUpdate();
     }
 
     changeLanguage() {
@@ -1459,15 +1458,9 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'keydown') {
-
-                            console.log(editorConfig.editableElement.contentDocument.body.scrollHeight);
-
-                            if (editorConfig.editableElement.contentDocument.body.scrollHeight > 40) {
-                                editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                            } else {
-                                editorConfig.calculateIFrameHeight(40);
-                            };
-
+                            console.log(editorConfig.mirrorElement.scrollHeight);
+                            editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
+                            
                             // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
