@@ -347,4 +347,10 @@ export const chatStyles = css`
 	.message-parent:hover .image-delete-icon {
 		visibility: visible;
 	}
+
+	.imageContainer {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 `

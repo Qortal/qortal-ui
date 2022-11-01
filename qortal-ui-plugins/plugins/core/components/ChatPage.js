@@ -1644,6 +1644,7 @@ class ChatPage extends LitElement {
                          
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
+                            console.log({item_list})
     let image_type; // we will feed this later
     const item = item_list.find( item => // choose the one item holding our image
       item.types.some( type => { // does this item have our type
