@@ -41,7 +41,7 @@ export const chatStyles = css`
 	ul {
 		list-style: none;
 		margin: 0;
-		padding: 20px;
+		padding: 20px 17px;
 	}
 
 	.last-message-ref {
@@ -67,7 +67,7 @@ export const chatStyles = css`
 	.chat-list {
 		overflow-y: auto;
 		overflow-x: hidden;
-		height: 92vh;
+		height: 100%;
 		box-sizing: border-box;
 	}
 
@@ -79,6 +79,7 @@ export const chatStyles = css`
 
 	.message-data-name {
 		color: var(--black);
+		user-select: none;
 	}
 
 	.message-data-time {
@@ -86,6 +87,7 @@ export const chatStyles = css`
 		font-size: 13px;
 		padding-left: 6px;
 		padding-bottom: 4px;
+		user-select: none;
 	}
 
 	.message-data-level {
@@ -93,6 +95,7 @@ export const chatStyles = css`
 		font-size: 13px;
 		padding-left: 8px;
 		padding-bottom: 4px;
+		user-select: none;
 	}
 
 	.chat-bubble-container {
@@ -102,16 +105,27 @@ export const chatStyles = css`
 
 	.message-container {
 		position: relative;
+		margin-bottom: 20px;
+	}
+
+	.message-subcontainer {
+		position: relative;
     display: flex;
+		background-color: #f3f3f3;
     flex-grow: 0;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    background-color: whitesmoke;
     border-radius: 5px;
     padding: 10px 15px;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+	}
+
+	.message-reactions {
+		background-color: transparent;
+		width: 100%;
+		margin-left: 54px;
 	}
 
 	.original-message {
@@ -122,10 +136,10 @@ export const chatStyles = css`
     line-height: 19px;
     overflow-wrap: break-word;
     user-select: text;
-    font-size: 16px;
+    font-size: 13px;
     width: 90%;
     border-radius: 5px;
-    background-color: rgba(209, 209, 209, 0.79);
+    background-color: rgba(232, 232, 232, 0.79);
     padding: 8px 5px 8px 25px;
 		white-space: nowrap;
 	}
@@ -171,12 +185,19 @@ export const chatStyles = css`
 		float: left;
 	}
 
-	.message-parent:hover .chat-hover {
-		display: block;
+	.message-parent {
+		padding: 3px;
+		background: rgba(245, 245, 245, 0);
+		transition: all 0.1s ease-in-out;
 	}
 
-	.message-parent:hover .message-container {
-		filter:brightness(0.90);
+	.message-parent:hover {
+		background: var(--chat-bubble);
+    border-radius: 8px;
+	}
+
+	.message-parent:hover .chat-hover {
+		display: block;
 	}
 
 	.chat-hover {
@@ -192,16 +213,6 @@ export const chatStyles = css`
 		margin-bottom: -2px;
 		vertical-align: bottom;
 		object-fit: contain;
-	}
-
-	.my-message {
-		background: #d1d1d1;
-		border: 2px solid #eeeeee;
-	}
-
-	.other-message {
-		background: #f1f1f1;
-		border: 2px solid #dedede;
 	}
 	
 	.align-left {
@@ -324,12 +335,18 @@ export const chatStyles = css`
 	}
 
 	.reactions-bg {
-		background-color: #3C4048;
+		background-color: #d5d5d5;
 		border-radius: 10px;
-		padding: 4px;
-		color: white;
+		padding: 5px;
+		color: black;
 		margin-right: 10px;
-		cursor: pointer
+		transition: all 0.1s ease-in-out;
+		border: 0.5px solid transparent;
+		cursor: pointer;
+	}
+	
+	.reactions-bg:hover {
+		border: 0.5px solid #6b6969;
 	}
 
 	.image-container {

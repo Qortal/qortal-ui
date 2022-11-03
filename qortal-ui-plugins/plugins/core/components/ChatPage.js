@@ -8,7 +8,6 @@ registerTranslateConfig({
 })
 import ShortUniqueId from 'short-unique-id';
 import Compressor from 'compressorjs';
-
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
@@ -17,7 +16,6 @@ import './NameMenu.js'
 import './TimeAgo.js'
 import { EmojiPicker } from 'emoji-picker-js';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -56,6 +54,7 @@ class ChatPage extends LitElement {
             messagesRendered: { type: Array },
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
+            iframeHeight: { type: Number },
             chatMessageSize: { type: Number},
             imageFile: {type: Object}
         }
@@ -67,17 +66,23 @@ class ChatPage extends LitElement {
             scroll-behavior: smooth;
         }
 
+        .chat-container {
+            display: grid;
+            grid-template-rows: minmax(6%, 92vh) minmax(40px, auto);
+            max-height: 100%;
+        }
+
         .chat-text-area {
             display: flex;
             justify-content: center;
+            min-height: 60px;
+            max-height: 100%;
             overflow: hidden;
         }
 
         .chat-text-area .typing-area {
             display: flex;
             flex-direction: column;
-            position: absolute;
-            bottom: 0;
             width: 98%;
             box-sizing: border-box;
             margin-bottom: 8px;
@@ -92,10 +97,10 @@ class ChatPage extends LitElement {
         }
 
         .chat-text-area .typing-area .chat-editor {
+            display: flex;
+            max-height: -webkit-fill-available;
+            width: 100%;
             border-color: transparent;
-            flex: 1;
-            max-height: 40px;
-            height: 40px;
             margin: 0;
             padding: 0;
             border: none;
@@ -127,6 +132,7 @@ class ChatPage extends LitElement {
             margin: 0;
             color: var(--mdc-theme-primary);
             font-weight: bold;
+            user-select: none;
         }
 
         .original-message {
@@ -164,7 +170,8 @@ class ChatPage extends LitElement {
             justify-content: center;
             align-items: center;
             height: auto;
-            padding: 5px;
+            padding: 5px 5px 5px 7px;
+            overflow-y: hidden;
         }
 
         .chat-text-area .typing-area .emoji-button {
@@ -186,6 +193,27 @@ class ChatPage extends LitElement {
         img {
             border-radius: 25%;
         }
+
+        .paperclip-icon {
+            color: #494949;
+            width: 25px;
+        }
+
+        .paperclip-icon:hover {
+            cursor: pointer;
+        }
+
+        .send-icon {
+            width: 30px;
+            margin-left: 5px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .send-icon:hover {
+            cursor: pointer;
+            filter: brightness(1.1);
+        }
+
         `
     }
 
@@ -196,6 +224,7 @@ class ChatPage extends LitElement {
         this.insertImage = this.insertImage.bind(this)
         this.getMessageSize = this.getMessageSize.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
+        this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.selectedAddress = {}
         this.chatId = ''
         this.myAddress = ''
@@ -216,17 +245,19 @@ class ChatPage extends LitElement {
         this.messagesRendered = []
         this.repliedToMessageObj = null
         this.editedMessageObj = null
+        this.iframeHeight = 40
         this.chatMessageSize = 5
         this.imageFile = null
-        this.uid = new ShortUniqueId();
+        this.uid = new ShortUniqueId()
     }
     
     render() {
         return html`
-            ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
-            <mwc-dialog id="showDialogPublicKey"    ?open=${this.imageFile}>
-					<div class="dialog-header" >
-						
+            <div class="chat-container">
+                <div>
+                    ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
+                    <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile}>
+					<div class="dialog-header">
 					</div>
 					<div class="dialog-container">
 						hello
@@ -239,18 +270,15 @@ class ChatPage extends LitElement {
 						slot="primaryAction"
 						dialogAction="cancel"
 						class="red"
-						@click=${()=>{
-							
+						@click=${()=> {
 							this._sendMessage({
-            type: 'image',
-            imageFile:  this.imageFile,
-            caption: 'This is a caption'
-         
-           
-        })
+                                type: 'image',
+                                imageFile:  this.imageFile,
+                                caption: 'This is a caption'
+                            })
 						}}
 					>
-					send
+					    send
 					</mwc-button>
 					<mwc-button
 						slot="primaryAction"
@@ -264,59 +292,81 @@ class ChatPage extends LitElement {
 					${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
-            <div class="chat-text-area">
-                    <div class="typing-area">
-                        ${this.repliedToMessageObj && html`
-                            <div class="repliedTo-container">
-                                <div class="repliedTo-subcontainer">
-                                    <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
-                                    <div class="repliedTo-message">
-                                        <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                        <p class="original-message">${this.repliedToMessageObj.message}</p>
+                </div>
+                <div class="chat-text-area" style="${`height: ${this.iframeHeight}px; ${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
+                        <div class="typing-area">
+                            ${this.repliedToMessageObj && html`
+                                <div class="repliedTo-container">
+                                    <div class="repliedTo-subcontainer">
+                                        <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
+                                        <div class="repliedTo-message">
+                                            <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
+                                            <p class="original-message">${this.repliedToMessageObj.message}</p>
+                                        </div>
                                     </div>
+                                    <vaadin-icon
+                                        class="close-icon"
+                                        icon="vaadin:close-big"
+                                        slot="icon"
+                                        @click=${() => this.closeRepliedToContainer()}
+                                        ></vaadin-icon>
                                 </div>
-                                <vaadin-icon
-                                 class="close-icon"
-                                 icon="vaadin:close-big"
-                                 slot="icon"
-                                 @click=${() => this.closeRepliedToContainer()}
-                                 ></vaadin-icon>
-                            </div>
-                        `}
-                        ${this.editedMessageObj && html`
-                            <div class="repliedTo-container">
-                                <div class="repliedTo-subcontainer">
-                                    <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
-                                    <div class="repliedTo-message">
-                                        <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                        <p class="original-message">${this.editedMessageObj.message}</p>
+                            `}
+                            ${this.editedMessageObj && html`
+                                <div class="repliedTo-container">
+                                    <div class="repliedTo-subcontainer">
+                                        <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
+                                        <div class="repliedTo-message">
+                                            <p class="senderName">${translate("chatpage.cchange25")}</p>
+                                            <p class="original-message">${this.editedMessageObj.message}</p>
+                                        </div>
                                     </div>
+                                    <vaadin-icon
+                                        class="close-icon"
+                                        icon="vaadin:close-big"
+                                        slot="icon"
+                                        @click=${() => this.closeEditMessageContainer()}
+                                        ></vaadin-icon>
                                 </div>
-                                <vaadin-icon
-                                 class="close-icon"
-                                 icon="vaadin:close-big"
-                                 slot="icon"
-                                 @click=${() => this.closeEditMessageContainer()}
-                                 ></vaadin-icon>
-                            </div>
-                        `}
-                    <div class="chatbar">
-                        <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                        <iframe class="chat-editor" id="_chatEditorDOM" tabindex="-1"></iframe>
-                        <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                            ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
-                        </button>
-                        ${this.editedMessageObj ? (
-                            html`
-                                <vaadin-icon
-                                 class="checkmark-icon"
-                                 icon="vaadin:check"
-                                 slot="icon"
-                                 @click=${() => this._sendMessage()}
-                                 ></vaadin-icon>
-                                 `
-                                 ) : html`<div></div>`
-                        }
+                            `}
+                        <div class="chatbar">
+                            <vaadin-icon
+                            class="paperclip-icon"
+                            icon="vaadin:paperclip"
+                            slot="icon"
+                            @click=${() => this.closeEditMessageContainer()}
+                            ></vaadin-icon>
+                            <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                            <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
+                            </iframe>
+                            <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                                ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
+                            </button>
+                            ${this.editedMessageObj ? (
+                                html`
+                                <div>
+                                ${this.isLoading === false ? html`
+                                    <vaadin-icon
+                                        class="checkmark-icon"
+                                        icon="vaadin:check"
+                                        slot="icon"
+                                        @click=${() => this._sendMessage()}
+                                        >
+                                    </vaadin-icon>
+                                    ` :
+                                    html`
+                                    <paper-spinner-lite active></paper-spinner-lite>
+                                    `}
+                                </div>
+                                    `
+                            ) : 
+                                html`
+                                    <div style="display:flex;">
+                                        ${this.isLoading === false ? html`<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" />` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                                    </div>
+                                    `
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -336,8 +386,6 @@ class ChatPage extends LitElement {
     async firstUpdated() {
        
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
-
         // this.changeLanguage();
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
@@ -444,6 +492,7 @@ class ChatPage extends LitElement {
         parentEpml.imReady();
     }
 
+
     async updated(changedProperties) {
         if (changedProperties.has('messagesRendered')) { 
             const chatReference1 = this.isReceipient ? 'direct' : 'group';
@@ -454,9 +503,13 @@ class ChatPage extends LitElement {
 
         }
         if (changedProperties && changedProperties.has('editedMessageObj')) {
-        
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
+    }
+
+    calculateIFrameHeight(height) {
+        console.log(height, "height here")
+        this.iframeHeight = height;
     }
 
     changeLanguage() {
@@ -500,9 +553,6 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
-
-
-
 
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -630,9 +680,6 @@ class ChatPage extends LitElement {
         }
     }
 
-    // set replied to message in chat editor
-
-
     getMessageSize(message){
         try {
         
@@ -697,6 +744,8 @@ class ChatPage extends LitElement {
         
     }
         
+     // set replied to message in chat editor
+
      setRepliedToMessageObj(messageObj) {
         this.repliedToMessageObj = {...messageObj};
         this.editedMessageObj = null;
@@ -874,9 +923,6 @@ class ChatPage extends LitElement {
                 // Fallback to http
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
             }
-
-
-
 
             const directSocket = new WebSocket(directSocketLink);
 
@@ -1653,41 +1699,33 @@ class ChatPage extends LitElement {
                     
                         editorConfig.getMessageSize(editorConfig.mirrorElement.value)
                         if (e.type === 'click') {
-
                             e.preventDefault();
                             e.stopPropagation();
                         }
 
                         if (e.type === 'paste') {
-                         
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
                             console.log({item_list})
-    let image_type; // we will feed this later
-    const item = item_list.find( item => // choose the one item holding our image
-      item.types.some( type => { // does this item have our type
-        if( type.startsWith( 'image/' ) ) {
-          image_type = type; // store which kind of image type it is
-          return true;
-        }
-      } )
-    );
-    const blob = item && await item.getType( image_type );
-    var file = new File([blob], "name", {
-        type: image_type
-    });
-   
-    editorConfig.insertImage(file)
-   
-    
-                        
-                            navigator.clipboard.readText().then(clipboardText => {
-    
-                                let escapedText = editorConfig.escape(clipboardText);
+                            let image_type; // we will feed this later
+                            const item = item_list.find( item => // choose the one item holding our image
+                                item.types.some( type => { // does this item have our type
+                                if (type.startsWith( 'image/')) {
+                                    image_type = type; // store which kind of image type it is
+                                    return true;
+                                }
+                            })
+                            );
+                            const blob = item && await item.getType( image_type );
+                            var file = new File([blob], "name", {
+                            type: image_type
+                            });
 
+                            editorConfig.insertImage(file)
+                            navigator.clipboard.readText().then(clipboardText => {
+                                let escapedText = editorConfig.escape(clipboardText);
                                 editor.insertText(escapedText);
                             }).catch(err => {
-
                                 // Fallback if everything fails...
                                 let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
                                 editor.insertText(textData);
@@ -1702,7 +1740,9 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'keydown') {
-
+                            console.log(editorConfig.mirrorElement.scrollHeight);
+                            editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
+                            
                             // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
@@ -1783,6 +1823,7 @@ class ChatPage extends LitElement {
 
         const editorConfig = {
             getMessageSize: this.getMessageSize,
+            calculateIFrameHeight: this.calculateIFrameHeight,
             mirrorElement: this.mirrorChatInput,
             editableElement: this.chatMessageInput,
             sendFunc: this._sendMessage,

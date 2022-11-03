@@ -314,59 +314,65 @@ class MessageTemplate extends LitElement {
                 <div class="message-data-avatar">
                 ${avatarImg}
                 </div>
-                <div class="message-container ${this.messageObj.sender === this.myAddress ? "my-message" : "other-message"}">
-                ${repliedToData && html`
-                    <div 
-                        class="original-message" 
-                        style=${this.messageObj.sender === this.myAddress && "background-color: rgb(179 179 179 / 79%)"}>
-                        <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
-                        <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
+                <div class="message-container">
+                    <div class="message-subcontainer">
+                        ${repliedToData && html`
+                            <div class="original-message">
+                                <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
+                                <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
+                            </div>
+                            `}
+                            ${image && !isImageDeleted ? html`
+                                <div class="image-container">
+                                    ${imageHTML}<vaadin-icon
+                                    @click=${() => this.sendMessage({
+                                    type: 'delete',
+                                    name: image.name,
+                                    identifier: image.identifier,
+                        editedMessageObj: this.messageObj,
+                    
+                                })}
+                                    class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                                </div>
+                            ` : html``}
+                            <div id="messageContent" class="message">
+                                ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                            </div>
                     </div>
-                    `}
-                    ${image && !isImageDeleted ? html`
-                    <div class="image-container">
-                        ${imageHTML}<vaadin-icon
-                        @click=${() => this.sendMessage({
-                        type: 'delete',
-                        name: image.name,
-                        identifier: image.identifier,
-            editedMessageObj: this.messageObj,
-           
-                       })}
-                        class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                    <div class="message-reactions">
+                            ${reactions.map((reaction)=> {
+                                return html`
+                                <span 
+                                @click=${() => this.sendMessage({
+                                    type: 'reaction',
+                                    editedMessageObj: this.messageObj,
+                                    reaction:  reaction.type,
+                                    })} 
+                                class="reactions-bg">
+                                ${reaction.type} ${reaction.qty}
+                                </span>`
+                            })}
                     </div>
-                    ` : html``}
-                <div id="messageContent" class="message">
-                    ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                    <chat-menu 
+                        tabindex="0"
+                        class="chat-hover"
+                        style=${this.showBlockAddressIcon && "display: block"}
+                        toblockaddress="${this.messageObj.sender}" 
+                        .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
+                        .showBlockUserModal=${() => this.showBlockUserModal()}
+                        .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
+                        .showBlockAddressIcon=${this.showBlockAddressIcon}
+                        .originalMessage=${{...this.messageObj, message}}
+                        .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                        .setEditedMessageObj=${this.setEditedMessageObj}
+                        .focusChatEditor=${this.focusChatEditor}
+                        .myAddress=${this.myAddress}
+                        @blur=${() => this.showBlockIconFunc(false)}
+                        .sendMessage=${this.sendMessage}
+                    > 
+                    </chat-menu>
                 </div>
-                <div>
-                ${reactions.map((reaction)=> {
-                       return html`<span @click=${() => this.sendMessage({
-                        type: 'reaction',
-            editedMessageObj: this.messageObj,
-            reaction:  reaction.type,
-                       })} class="reactions-bg" >${reaction.type} ${reaction.qty}</span>`
-                    })}
-                </div>
-                <chat-menu 
-                    tabindex="0"
-                    class="chat-hover"
-                    style=${this.showBlockAddressIcon && "display: block"}
-                    toblockaddress="${this.messageObj.sender}" 
-                    .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
-                    .showBlockUserModal=${() => this.showBlockUserModal()}
-                    .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
-                    .showBlockAddressIcon=${this.showBlockAddressIcon}
-                    .originalMessage=${{...this.messageObj, message}}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .myAddress=${this.myAddress}
-                    @blur=${() => this.showBlockIconFunc(false)}
-                    .sendMessage=${this.sendMessage}
-                > 
-                </chat-menu>
-                </div>
+            </div>
             </li>
             <chat-modals 
                 .openDialogPrivateMessage=${this.openDialogPrivateMessage} 
