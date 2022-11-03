@@ -210,10 +210,28 @@ class ChatPage extends LitElement {
         }
 
         .send-icon:hover {
-            cursor: pointer;
             filter: brightness(1.1);
         }
+        .file-picker-container {
+            position: relative;
+            height: 25px;
+            width: 25px;
+        }
+        .file-picker-input-container {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            z-index: 10;
+            opacity: 0;
+            overflow: hidden;
+        }
 
+        input[type=file]::-webkit-file-upload-button { 
+    cursor: pointer; 
+}
+        
         `
     }
 
@@ -256,11 +274,12 @@ class ChatPage extends LitElement {
             <div class="chat-container">
                 <div>
                     ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
-                    <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile}>
+                    <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile} @closed=${()=> {
+                        this.imageFile = null
+                    }}>
 					<div class="dialog-header">
 					</div>
 					<div class="dialog-container">
-						hello
                         ${this.imageFile && html`
                         <img src=${URL.createObjectURL(this.imageFile)} />
                         `}
@@ -330,12 +349,23 @@ class ChatPage extends LitElement {
                                 </div>
                             `}
                         <div class="chatbar">
+                            <div class="file-picker-container">
                             <vaadin-icon
                             class="paperclip-icon"
                             icon="vaadin:paperclip"
                             slot="icon"
                             @click=${() => this.closeEditMessageContainer()}
-                            ></vaadin-icon>
+                            >
+                        </vaadin-icon>
+                        <div class="file-picker-input-container">
+                        <input 
+                        .value="${this.imageFile}"
+                        @change="${e => this.insertImage(e.target.files[0])}"
+                        class="file-picker-input" type="file" name="myImage" accept="image/*" />
+                        </div>
+                        
+                            </div>
+                            
                             <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
                             <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
                             </iframe>
@@ -376,13 +406,19 @@ class ChatPage extends LitElement {
 
 
     insertImage(file){
-        this.imageFile = file
         
+        if(file.type.includes('image')){
+            this.imageFile = file
+
+            return
+        }
+        
+        parentEpml.request('showSnackBar', get("chatpage.cchange28"))
         
     }
 
 
-
+  
     async firstUpdated() {
        
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)

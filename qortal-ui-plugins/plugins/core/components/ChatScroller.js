@@ -256,7 +256,6 @@ class MessageTemplate extends LitElement {
         imageHTMLRes.onclick= ()=> {
             this.openDialogImage = true
         }
-        let p = 0
         imageHTMLRes.onerror = ()=> {   
  
             console.log('inputRef', this.imageFetches)
@@ -270,8 +269,10 @@ class MessageTemplate extends LitElement {
                
             } else {
                 imageHTMLRes.src = '/img/chain.png'
-                imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; filter: opacity(0.5)"
-                ;
+                imageHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
+                imageHTMLRes.onclick= ()=> {
+                    
+                }
             }
            
         }
@@ -287,8 +288,9 @@ class MessageTemplate extends LitElement {
              imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
             imageHTML = createImage(imageUrl)
             imageHTMLDialog = createImage(imageUrl)
-            imageHTMLDialog.style= "height: 80vh ; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px"
+            imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px"
         }
+
      
 
         if (this.messageObj.sender === this.myAddress) {
