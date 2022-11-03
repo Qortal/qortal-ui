@@ -1129,7 +1129,8 @@ class ChatPage extends LitElement {
                 })
             })
             try {
-                console.log({userName, compressedFile, identifier, selectedAddress: this.selectedAddress})
+           
+
                 await publishData({
                     registeredName: userName  ,
             file : compressedFile ,
@@ -1171,13 +1172,21 @@ class ChatPage extends LitElement {
 
         }
       else  if(outSideMsg && outSideMsg.type === 'image'){
+
+        
             const userName = await getName(this.selectedAddress.address)
+            if(!userName){
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+                this.isLoading = false;
+                this.chatEditor.enable();
+                return
+            }
             const id = this.uid();
             const identifier = `qchat_${id}`
             let compressedFile = ''
             await new Promise(resolve =>{
                 new Compressor( outSideMsg.imageFile, {
-                    quality: 0.6,
+                    quality: .6,
                     maxWidth: 500,
                     success(result){
                         const file = new File([result], "name", {
@@ -1191,10 +1200,19 @@ class ChatPage extends LitElement {
                       },
                 })
             })
-     
+
+            const fileSize = compressedFile.size
+            if(fileSize > 5000000){
+                parentEpml.request('showSnackBar', get("chatpage.cchange26"))
+                this.isLoading = false;
+                this.chatEditor.enable();
+                return
+            }
+          console.log({userName, identifier })
+         
                    await publishData({
-                    registeredName: userName  ,
-            file : compressedFile ,
+                    registeredName: userName,
+            file : compressedFile,
             service: 'IMAGE',
             identifier : identifier,
             parentEpml,

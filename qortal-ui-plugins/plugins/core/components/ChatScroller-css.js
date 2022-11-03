@@ -15,6 +15,8 @@ export const chatStyles = css`
 		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 		--mdc-theme-primary: rgb(3, 169, 244);
 		--mdc-theme-secondary: var(--mdc-theme-primary);
+		--mdc-dialog-max-width: 85vw;
+		--mdc-dialog-max-height: 95vh;
 	}
 
 	* :focus-visible {

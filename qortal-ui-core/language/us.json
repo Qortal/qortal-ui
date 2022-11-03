@@ -484,7 +484,9 @@
       "cchange22": "Loading Messages...",
       "cchange23": "Cannot Decrypt Message!",
       "cchange24": "Maximum Characters per message is 255",
-      "cchange25": "Edit Message"
+      "cchange25": "Edit Message",
+      "cchange26": "File size exceeds 5 MB",
+      "cchange27": "A registered name is required to send images"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

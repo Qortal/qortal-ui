@@ -231,6 +231,7 @@ class MessageTemplate extends LitElement {
         }
         let avatarImg = ''
         let imageHTML = ''
+        let imageHTMLDialog = ''
         let imageUrl = ''
         let nameMenu = ''
         let levelFounder = ''
@@ -248,8 +249,34 @@ class MessageTemplate extends LitElement {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
 
-     const myFunction=()=>{
-        console.log('hello error')
+     const createImage=(imageUrl)=>{
+       const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer"
+        imageHTMLRes.onclick= ()=> {
+            this.openDialogImage = true
+        }
+        let p = 0
+        imageHTMLRes.onerror = ()=> {   
+ 
+            console.log('inputRef', this.imageFetches)
+            if(this.imageFetches < 4){
+
+                setTimeout(()=> {
+                    this.imageFetches = this.imageFetches + 1
+    
+                    imageHTMLRes.src = imageUrl
+                }, 500)
+               
+            } else {
+                imageHTMLRes.src = '/img/chain.png'
+                imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; filter: opacity(0.5)"
+                ;
+            }
+           
+        }
+
+        return imageHTMLRes
       }
 
      
@@ -258,32 +285,9 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
              imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
-            imageHTML = html`<img src="/auhoetuh/atouehtoueh" style="max-width:45vh; max-height:40vh; border-radius: 5px" onerror="myFunction()" />`
-            imageHTML = new Image();
-            imageHTML.src = imageUrl;
-            imageHTML.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer"
-            imageHTML.onclick= ()=> {
-                this.openDialogImage = true
-            }
-            let p = 0
-            imageHTML.onerror = ()=> {   
-     
-                console.log('inputRef', this.imageFetches)
-                if(this.imageFetches < 4){
-
-                    setTimeout(()=> {
-                        this.imageFetches = this.imageFetches + 1
-        
-                        imageHTML.src = imageUrl
-                    }, 500)
-                   
-                } else {
-                    imageHTML.src = '/img/chain.png'
-                    imageHTML.style= "max-width:45vh; max-height:40vh; border-radius: 5px; filter: opacity(0.5)"
-                    ;
-                }
-               
-            }
+            imageHTML = createImage(imageUrl)
+            imageHTMLDialog = createImage(imageUrl)
+            imageHTMLDialog.style= "height: 80vh ; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px"
         }
      
 
@@ -380,7 +384,7 @@ class MessageTemplate extends LitElement {
 						
 					</div>
 					<div class="dialog-container imageContainer">
-					<img src=${imageUrl} style="height: 80vh ; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px" />
+					${imageHTMLDialog}
 					</div>
                  
 					<mwc-button
