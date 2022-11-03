@@ -1681,23 +1681,22 @@ class ChatPage extends LitElement {
                     
                         editorConfig.getMessageSize(editorConfig.mirrorElement.value)
                         if (e.type === 'click') {
-
                             e.preventDefault();
                             e.stopPropagation();
                         }
 
                         if (e.type === 'paste') {
-                         
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
+                            console.log({item_list})
                             let image_type; // we will feed this later
                             const item = item_list.find( item => // choose the one item holding our image
-                            item.types.some( type => { // does this item have our type
-                            if( type.startsWith( 'image/' ) ) {
-                                image_type = type; // store which kind of image type it is
-                                return true;
-                            }
-                            } )
+                                item.types.some( type => { // does this item have our type
+                                if (type.startsWith( 'image/')) {
+                                    image_type = type; // store which kind of image type it is
+                                    return true;
+                                }
+                            })
                             );
                             const blob = item && await item.getType( image_type );
                             var file = new File([blob], "name", {
@@ -1705,14 +1704,10 @@ class ChatPage extends LitElement {
                             });
 
                             editorConfig.insertImage(file)
-                        
                             navigator.clipboard.readText().then(clipboardText => {
-    
                                 let escapedText = editorConfig.escape(clipboardText);
-
                                 editor.insertText(escapedText);
                             }).catch(err => {
-
                                 // Fallback if everything fails...
                                 let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
                                 editor.insertText(textData);

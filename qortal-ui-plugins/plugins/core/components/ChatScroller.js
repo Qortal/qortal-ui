@@ -163,7 +163,8 @@ class MessageTemplate extends LitElement {
             setRepliedToMessageObj: { type: Function },
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
-            sendMessage: { type: Function }
+            sendMessage: { type: Function },
+            openDialogImage: {type: Function}
         }
     }
 
@@ -174,6 +175,8 @@ class MessageTemplate extends LitElement {
         this.openDialogBlockUser = false
         this.showBlockAddressIcon = false
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.imageFetches = 0
+        this.openDialogImage = false
     }
 
     static styles = [chatStyles]
@@ -205,7 +208,9 @@ class MessageTemplate extends LitElement {
         }
     }
 
+    
     render() {
+      
         const hidemsg = this.hideMessages
         let message = ""
         let reactions = []
@@ -226,6 +231,7 @@ class MessageTemplate extends LitElement {
         }
         let avatarImg = ''
         let imageHTML = ''
+        let imageUrl = ''
         let nameMenu = ''
         let levelFounder = ''
         let hideit = hidemsg.includes(this.messageObj.sender)
@@ -242,11 +248,42 @@ class MessageTemplate extends LitElement {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
 
+     const myFunction=()=>{
+        console.log('hello error')
+      }
+
+     
+
         if(image){
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            const imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
-            imageHTML = html`<img src="${imageUrl}" style="max-width:45vh; max-height:40vh; border-radius: 5px" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+             imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
+            imageHTML = html`<img src="/auhoetuh/atouehtoueh" style="max-width:45vh; max-height:40vh; border-radius: 5px" onerror="myFunction()" />`
+            imageHTML = new Image();
+            imageHTML.src = imageUrl;
+            imageHTML.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer"
+            imageHTML.onclick= ()=> {
+                this.openDialogImage = true
+            }
+            let p = 0
+            imageHTML.onerror = ()=> {   
+     
+                console.log('inputRef', this.imageFetches)
+                if(this.imageFetches < 4){
+
+                    setTimeout(()=> {
+                        this.imageFetches = this.imageFetches + 1
+        
+                        imageHTML.src = imageUrl
+                    }, 500)
+                   
+                } else {
+                    imageHTML.src = '/img/chain.png'
+                    imageHTML.style= "max-width:45vh; max-height:40vh; border-radius: 5px; filter: opacity(0.5)"
+                    ;
+                }
+               
+            }
         }
      
 
@@ -342,6 +379,28 @@ class MessageTemplate extends LitElement {
                 toblockaddress=${this.messageObj.sender}
             >
             </chat-modals>
+            <mwc-dialog id="showDialogPublicKey"    ?open=${this.openDialogImage}  @closed=${()=> {
+                this.openDialogImage = false
+            }}>
+					<div class="dialog-header" >
+						
+					</div>
+					<div class="dialog-container imageContainer">
+					<img src=${imageUrl} style="height: 80vh ; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px" />
+					</div>
+                 
+					<mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
+						@click=${()=>{
+							
+						this.openDialogImage = false
+						}}
+					>
+					${translate("general.close")}
+					</mwc-button>
+				</mwc-dialog>
         `
     }
 }
