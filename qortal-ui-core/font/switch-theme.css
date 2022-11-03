@@ -7,6 +7,7 @@ html {
   --border: #d0d6de;
   --border2: #dde2e8;
   --copybutton: #707584;
+  --chat-bubble: #efefef73;
   --sectxt: #576374;
   --vdicon: #707b8a;
   --tradehead: #6a6c75;
@@ -17,11 +18,11 @@ html {
   --relaynodetxt: #646464;
   --menuhover: #eeeeee;
   --menuactive: #ebebeb;
-  --mainmenutext:#080808;
-  --mainmenutexthover:#080808;
+  --mainmenutext: #080808;
+  --mainmenutexthover: #080808;
   --switchbackground: #666666;
   --switchborder: #333333;
-  --sidetopbar:  #ffffff;
+  --sidetopbar: #ffffff;
   --nav-selected-color: #dddddd;
   --nav-selected-color-text: #333333;
   --nav-color-active: #d1d1d1;
@@ -43,6 +44,7 @@ html[theme="dark"] {
   --border: #0b305e;
   --border2: #0b305e;
   --copybutton: #d0d6de;
+  --chat-bubble: #9694941a;
   --sectxt: #bbc3cd;
   --vdicon: #d0d6de;
   --tradehead: #008fd5;
@@ -53,11 +55,11 @@ html[theme="dark"] {
   --relaynodetxt: #d4d4d4;
   --menuhover: #008fd5;
   --menuactive: #008fd5;
-  --mainmenutext:#008fd5;
-  --mainmenutexthover:#0f1a2e;
+  --mainmenutext: #008fd5;
+  --mainmenutexthover: #0f1a2e;
   --switchbackground: #eeeeee;
   --switchborder: #03a9f4;
-  --sidetopbar:  #070d19;
+  --sidetopbar: #070d19;
   --nav-selected-color: #0f1a2e;
   --nav-selected-color-text: #76c8f5;
   --nav-color-active: #d1d1d1;

@@ -8,7 +8,6 @@ registerTranslateConfig({
 })
 import ShortUniqueId from 'short-unique-id';
 import Compressor from 'compressorjs';
-
 import { escape, unescape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js'
 import './ChatScroller.js'
@@ -17,7 +16,6 @@ import './NameMenu.js'
 import './TimeAgo.js'
 import { EmojiPicker } from 'emoji-picker-js';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -134,6 +132,7 @@ class ChatPage extends LitElement {
             margin: 0;
             color: var(--mdc-theme-primary);
             font-weight: bold;
+            user-select: none;
         }
 
         .original-message {
@@ -169,9 +168,9 @@ class ChatPage extends LitElement {
             width: auto;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;
             height: auto;
-            padding: 5px;
+            padding: 5px 5px 5px 7px;
             overflow-y: hidden;
         }
 
@@ -194,6 +193,27 @@ class ChatPage extends LitElement {
         img {
             border-radius: 25%;
         }
+
+        .paperclip-icon {
+            color: #494949;
+            width: 25px;
+        }
+
+        .paperclip-icon:hover {
+            cursor: pointer;
+        }
+
+        .send-icon {
+            width: 30px;
+            margin-left: 5px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .send-icon:hover {
+            cursor: pointer;
+            filter: brightness(1.1);
+        }
+
         `
     }
 
@@ -236,9 +256,8 @@ class ChatPage extends LitElement {
             <div class="chat-container">
                 <div>
                     ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
-                    <mwc-dialog id="showDialogPublicKey"    ?open=${this.imageFile}>
-					<div class="dialog-header" >
-						
+                    <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile}>
+					<div class="dialog-header">
 					</div>
 					<div class="dialog-container">
 						hello
@@ -251,18 +270,15 @@ class ChatPage extends LitElement {
 						slot="primaryAction"
 						dialogAction="cancel"
 						class="red"
-						@click=${()=>{
-							
+						@click=${()=> {
 							this._sendMessage({
-            type: 'image',
-            imageFile:  this.imageFile,
-            caption: 'This is a caption'
-         
-           
-        })
+                                type: 'image',
+                                imageFile:  this.imageFile,
+                                caption: 'This is a caption'
+                            })
 						}}
 					>
-					send
+					    send
 					</mwc-button>
 					<mwc-button
 						slot="primaryAction"
@@ -277,7 +293,7 @@ class ChatPage extends LitElement {
 					</mwc-button>
 				</mwc-dialog>
                 </div>
-                <div class="chat-text-area" style="${`height: ${this.iframeHeight}px`}">
+                <div class="chat-text-area" style="${`height: ${this.iframeHeight}px; ${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                         <div class="typing-area">
                             ${this.repliedToMessageObj && html`
                                 <div class="repliedTo-container">
@@ -314,22 +330,41 @@ class ChatPage extends LitElement {
                                 </div>
                             `}
                         <div class="chatbar">
+                            <vaadin-icon
+                            class="paperclip-icon"
+                            icon="vaadin:paperclip"
+                            slot="icon"
+                            @click=${() => this.closeEditMessageContainer()}
+                            ></vaadin-icon>
                             <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
                             <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
                             </iframe>
                             <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                                ${this.isLoading === false ? html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                                ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                             </button>
                             ${this.editedMessageObj ? (
                                 html`
+                                <div>
+                                ${this.isLoading === false ? html`
                                     <vaadin-icon
                                         class="checkmark-icon"
                                         icon="vaadin:check"
                                         slot="icon"
                                         @click=${() => this._sendMessage()}
-                                        ></vaadin-icon>
-                                        `
-                                        ) : html`<div></div>`
+                                        >
+                                    </vaadin-icon>
+                                    ` :
+                                    html`
+                                    <paper-spinner-lite active></paper-spinner-lite>
+                                    `}
+                                </div>
+                                    `
+                            ) : 
+                                html`
+                                    <div style="display:flex;">
+                                        ${this.isLoading === false ? html`<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" />` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                                    </div>
+                                    `
                             }
                         </div>
                     </div>
@@ -1655,23 +1690,21 @@ class ChatPage extends LitElement {
                          
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
-    let image_type; // we will feed this later
-    const item = item_list.find( item => // choose the one item holding our image
-      item.types.some( type => { // does this item have our type
-        if( type.startsWith( 'image/' ) ) {
-          image_type = type; // store which kind of image type it is
-          return true;
-        }
-      } )
-    );
-    const blob = item && await item.getType( image_type );
-    var file = new File([blob], "name", {
-        type: image_type
-    });
-   
-    editorConfig.insertImage(file)
-   
-    
+                            let image_type; // we will feed this later
+                            const item = item_list.find( item => // choose the one item holding our image
+                            item.types.some( type => { // does this item have our type
+                            if( type.startsWith( 'image/' ) ) {
+                                image_type = type; // store which kind of image type it is
+                                return true;
+                            }
+                            } )
+                            );
+                            const blob = item && await item.getType( image_type );
+                            var file = new File([blob], "name", {
+                            type: image_type
+                            });
+
+                            editorConfig.insertImage(file)
                         
                             navigator.clipboard.readText().then(clipboardText => {
     
