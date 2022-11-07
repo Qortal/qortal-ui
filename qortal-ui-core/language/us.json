@@ -487,7 +487,8 @@
       "cchange25": "Edit Message",
       "cchange26": "File size exceeds 5 MB",
       "cchange27": "A registered name is required to send images",
-      "cchange28": "This file is not an image"
+      "cchange28": "This file is not an image",
+      "cchange29": "Maximum message size is 1000 bytes"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

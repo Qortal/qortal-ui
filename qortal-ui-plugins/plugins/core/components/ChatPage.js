@@ -1512,10 +1512,10 @@ class ChatPage extends LitElement {
         } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
-        } else if (trimmedMessage.length >= 256) {
+        } else if (this.chatMessageSize >= 1000) {
             this.isLoading = false;
             this.chatEditor.enable();
-            let err1string = get("chatpage.cchange24");
+            let err1string = get("chatpage.cchange29");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else if (this.repliedToMessageObj) {
             let chatReference = this.repliedToMessageObj.reference
@@ -1882,7 +1882,6 @@ class ChatPage extends LitElement {
                 for (let i = 0; i < events.length; i++) {
                     const event = events[i]
                     editor.content.body.addEventListener(event, async function (e) {
-                    console.log("hello world12")
                         if (e.type === 'click') {
                             e.preventDefault();
                             e.stopPropagation();
@@ -1891,30 +1890,34 @@ class ChatPage extends LitElement {
                         if (e.type === 'paste') {
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
-                            console.log({item_list})
                             let image_type; // we will feed this later
                             const item = item_list.find( item => // choose the one item holding our image
-                                item.types.some( type => { // does this item have our type
+                                item.types.some( type => { 
                                 if (type.startsWith( 'image/')) {
-                                    image_type = type; // store which kind of image type it is
+                                    image_type = type; 
                                     return true;
                                 }
                             })
                             );
-                            const blob = item && await item.getType( image_type );
+                            if(item){
+                                const blob = item && await item.getType( image_type );
                             var file = new File([blob], "name", {
                             type: image_type
                             });
 
                             editorConfig.insertImage(file)
-                            navigator.clipboard.readText().then(clipboardText => {
-                                let escapedText = editorConfig.escape(clipboardText);
-                                editor.insertText(escapedText);
-                            }).catch(err => {
-                                // Fallback if everything fails...
-                                let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
-                                editor.insertText(textData);
-                            })
+                            } else {
+                                navigator.clipboard.readText().then(clipboardText => {
+                                    let escapedText = editorConfig.escape(clipboardText);
+                                    editor.insertText(escapedText);
+                                }).catch(err => {
+                                    // Fallback if everything fails...
+                                    let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
+                                    editor.insertText(textData);
+                                })
+                            }
+                            
+                           
                             return false;
                         }
 
