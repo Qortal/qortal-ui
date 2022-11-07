@@ -168,13 +168,21 @@ class ChatPage extends LitElement {
         }
         
         .chat-text-area .typing-area .chatbar {
-            width: auto;
+            position: relative;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: auto;
             padding: 5px 5px 5px 7px;
             overflow-y: hidden;
+        }
+
+        .chatbar-container {
+            width: 100%;
+            display: flex;
+            height: auto;
+            overflow: hidden;
         }
 
         .chat-text-area .typing-area .emoji-button {
@@ -188,6 +196,98 @@ class ChatPage extends LitElement {
             max-height: 40px;
             color: var(--black);
         }
+
+        .message-size-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .message-size {
+            font-family: Roboto, sans-serif;
+            font-size: 12px;
+            color: black;
+        }
+
+        .lds-grid {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            left: 50%;
+            top: 40%;
+        }
+
+        .lds-grid div {
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #03a9f4;
+            animation: lds-grid 1.2s linear infinite;
+        }
+
+        .lds-grid div:nth-child(1) {
+            top: 4px;
+            left: 4px;
+            animation-delay: 0s;
+            }
+
+        .lds-grid div:nth-child(2) {
+            top: 4px;
+            left: 48px;
+            animation-delay: -0.4s;
+        }
+
+        .lds-grid div:nth-child(3) {
+            top: 4px;
+            left: 90px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(4) {
+            top: 50px;
+            left: 4px;
+            animation-delay: -0.4s;
+        }
+
+        .lds-grid div:nth-child(5) {
+            top: 50px;
+            left: 48px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(6) {
+            top: 50px;
+            left: 90px;
+            animation-delay: -1.2s;
+        }
+
+        .lds-grid div:nth-child(7) {
+            top: 95px;
+            left: 4px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(8) {
+            top: 95px;
+            left: 48px;
+            animation-delay: -1.2s;
+        }
+        
+        .lds-grid div:nth-child(9) {
+            top: 95px;
+            left: 90px;
+            animation-delay: -1.6s;
+        }
+
+        @keyframes lds-grid {
+            0%, 100% {
+            opacity: 1;
+            }
+            50% {
+            opacity: 0.5;
+            }
+    }   
 
         .float-left {
             float: left;
@@ -210,16 +310,19 @@ class ChatPage extends LitElement {
             width: 30px;
             margin-left: 5px;
             transition: all 0.1s ease-in-out;
+            cursor: pointer;
         }
 
         .send-icon:hover {
             filter: brightness(1.1);
         }
+
         .file-picker-container {
             position: relative;
             height: 25px;
             width: 25px;
         }
+
         .file-picker-input-container {
             position: absolute;
             top: 0px;
@@ -232,14 +335,15 @@ class ChatPage extends LitElement {
         }
 
         input[type=file]::-webkit-file-upload-button { 
-    cursor: pointer; 
-}
+            cursor: pointer; 
+        }   
         
         `
     }
 
     constructor() {
         super()
+        this.getMessageConfig = this.getMessageConfig.bind(this)
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
@@ -267,7 +371,7 @@ class ChatPage extends LitElement {
         this.repliedToMessageObj = null
         this.editedMessageObj = null
         this.iframeHeight = 40
-        this.chatMessageSize = 5
+        this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
     }
@@ -276,44 +380,56 @@ class ChatPage extends LitElement {
         return html`
             <div class="chat-container">
                 <div>
-                    ${this.isLoadingMessages ? html`<h1>${translate("chatpage.cchange22")}</h1>` : this.renderChatScroller(this._initialMessages)}
-                    <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile} @closed=${()=> {
-                        this.imageFile = null
-                    }}>
-					<div class="dialog-header">
-					</div>
-					<div class="dialog-container">
-                        ${this.imageFile && html`
-                        <img src=${URL.createObjectURL(this.imageFile)} />
-                        `}
-                        
-					</div>
-                    <mwc-button
-						slot="primaryAction"
-						dialogAction="cancel"
-						class="red"
-						@click=${()=> {
-							this._sendMessage({
-                                type: 'image',
-                                imageFile:  this.imageFile,
-                                caption: 'This is a caption'
-                            })
-						}}
-					>
-					    send
-					</mwc-button>
-					<mwc-button
-						slot="primaryAction"
-						dialogAction="cancel"
-						class="red"
-						@click=${()=>{
-							
-						this.imageFile = null
-						}}
-					>
-					${translate("general.close")}
-					</mwc-button>
-				</mwc-dialog>
+                    ${this.isLoadingMessages ? 
+                        html`
+                        <div class="lds-grid">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        ` : 
+                        this.renderChatScroller(this._initialMessages)}
+                        <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile} @closed=${()=> {
+                            this.imageFile = null
+                        }}>
+                            <div class="dialog-header"></div>
+                            <div class="dialog-container">
+                                ${this.imageFile && html`
+                                <img src=${URL.createObjectURL(this.imageFile)} />
+                                `}
+                            </div>
+                            <mwc-button
+                                slot="primaryAction"
+                                dialogAction="cancel"
+                                class="red"
+                                @click=${()=> {
+                                    this._sendMessage({
+                                        type: 'image',
+                                        imageFile:  this.imageFile,
+                                        caption: 'This is a caption'
+                                    })
+                                }}
+                            >
+                            send
+                            </mwc-button>
+                            <mwc-button
+                                slot="primaryAction"
+                                dialogAction="cancel"
+                                class="red"
+                                @click=${()=>{
+                                    
+                                this.imageFile = null
+                                }}
+                            >
+                            ${translate("general.close")}
+                        </mwc-button>
+                    </mwc-dialog>
                 </div>
                 <div class="chat-text-area" style="${`height: ${this.iframeHeight}px; ${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                         <div class="typing-area">
@@ -351,58 +467,78 @@ class ChatPage extends LitElement {
                                         ></vaadin-icon>
                                 </div>
                             `}
-                        <div class="chatbar">
-                            <div class="file-picker-container">
-                            <vaadin-icon
-                            class="paperclip-icon"
-                            icon="vaadin:paperclip"
-                            slot="icon"
-                            @click=${() => this.closeEditMessageContainer()}
+                        <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
+                            <div class="chatbar-container" style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}"
                             >
-                        </vaadin-icon>
-                        <div class="file-picker-input-container">
-                        <input 
-                        .value="${this.imageFile}"
-                        @change="${e => this.insertImage(e.target.files[0])}"
-                        class="file-picker-input" type="file" name="myImage" accept="image/*" />
-                        </div>
-                        
-                            </div>
-                            
-                            <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                            <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
-                            </iframe>
-                            <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                                ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
-                            </button>
-                            ${this.editedMessageObj ? (
-                                html`
-                                <div>
-                                ${this.isLoading === false ? html`
+                                <div class="file-picker-container">
                                     <vaadin-icon
-                                        class="checkmark-icon"
-                                        icon="vaadin:check"
+                                        class="paperclip-icon"
+                                        icon="vaadin:paperclip"
                                         slot="icon"
-                                        @click=${() => this._sendMessage()}
-                                        >
+                                        @click=${() => this.closeEditMessageContainer()}
+                                    >
                                     </vaadin-icon>
-                                    ` :
-                                    html`
-                                    <paper-spinner-lite active></paper-spinner-lite>
-                                    `}
-                                </div>
-                                    `
-                            ) : 
-                                html`
-                                    <div style="display:flex;">
-                                        ${this.isLoading === false ? html`<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" />` : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                                    <div class="file-picker-input-container">
+                                        <input 
+                                            .value="${this.imageFile}"
+                                            @change="${e => this.insertImage(e.target.files[0])}"
+                                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
                                     </div>
-                                    `
-                            }
+                                </div>
+                                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                                <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
+                                </iframe>
+                                <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                                    ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
+                                </button>
+                                ${this.editedMessageObj ? (
+                                    html`
+                                    <div>
+                                    ${this.isLoading === false ? html`
+                                        <vaadin-icon
+                                            class="checkmark-icon"
+                                            icon="vaadin:check"
+                                            slot="icon"
+                                            @click=${() => this._sendMessage()}
+                                            >
+                                        </vaadin-icon>
+                                        ` :
+                                        html`
+                                        <paper-spinner-lite active></paper-spinner-lite>
+                                        `}
+                                    </div>
+                                        `
+                                ) : 
+                                    html`
+                                        <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
+                                            ${this.isLoading === false ? html`
+                                                <img 
+                                                src="/img/qchat-send-message-icon.svg" 
+                                                alt="send-icon" 
+                                                class="send-icon" 
+                                                @click=${() => this._sendMessage()} />
+                                            ` : 
+                                            html`
+                                                <paper-spinner-lite active></paper-spinner-lite>
+                                        `}
+                                        </div>
+                                        `
+                                }
+                            </div>
+                                ${this.chatMessageSize >= 750 ? 
+                                    html`
+                                    <div class="message-size-container">
+                                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
+                                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                                        </div>
+                                    </div>
+                                    ` : 
+                                    html``}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         `
     }
 
@@ -429,6 +565,8 @@ class ChatPage extends LitElement {
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
+        console.log(this.chatMessageInput);
+        console.log(this.mirrorChatInput.clientHeight);
         document.addEventListener('keydown', (e) => {
             if (!this.chatEditor.content.body.matches(':focus')) {
                 // WARNING: Deprecated methods from KeyBoard Event
@@ -539,15 +677,16 @@ class ChatPage extends LitElement {
             if (chatReference1 && chatReference2) {
                 await messagesCache.setItem(`${chatReference1}-${chatReference2}`, this.messagesRendered);
             }
-
         }
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
+        if (changedProperties && changedProperties.has('chatMessageSize')) {
+            console.log(this.chatMessageSize, "Chat Message Size");
+        }
     }
 
     calculateIFrameHeight(height) {
-        console.log(height, "height here")
         this.iframeHeight = height;
     }
 
@@ -719,63 +858,54 @@ class ChatPage extends LitElement {
         }
     }
 
+    getMessageConfig() {
+        const textAreaElement = this.shadowRoot.getElementById('messageBox');
+        return textAreaElement.value;
+    }
+
     getMessageSize(message){
         try {
-        
-         const messageText = message
+         const messageText = message;
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
             let messageObject = {};
 
             if (this.repliedToMessageObj) {
-                let chatReference = this.repliedToMessageObj.reference
-    
-                if(this.repliedToMessageObj.chatReference){
-                    chatReference = this.repliedToMessageObj.chatReference
+                let chatReference = this.repliedToMessageObj.reference;
+                if (this.repliedToMessageObj.chatReference) {
+                    chatReference = this.repliedToMessageObj.chatReference;
                 }
-            
                  messageObject = {
                     messageText: trimmedMessage,
                     images: [''],
                     repliedTo: chatReference,
                     version: 1
                 }
-                
             } else if (this.editedMessageObj) {
-             
-    
-              
-               
-                let message = ""
-            try {
-                const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
-                message = parsedMessageObj
-                
-            } catch (error) {
-                message = this.messageObj.decodedMessage
-            }
+                let message = "";
+                try {
+                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage);
+                    message = parsedMessageObj;
+                 } catch (error) {
+                    message = this.messageObj.decodedMessage
+                }
                 messageObject = {
                     ...message,
                     messageText: trimmedMessage,
-                    
                 }
-              
             } else {
               messageObject = {
                     messageText: trimmedMessage,
                     images: [''],
                     repliedTo: '',
                     version: 1
-                }
-          
-         
+                };
             }
 
-            const stringified = JSON.stringify(messageObject)
+            const stringified = JSON.stringify(messageObject);
             const size =  new Blob([stringified]).size;
-            this.chatMessageSize = size
-            
+            this.chatMessageSize = size;
 
         } catch (error) {
             console.error(error)
@@ -1171,8 +1301,7 @@ class ChatPage extends LitElement {
             const userName = outSideMsg.name
             const identifier = outSideMsg.identifier
             let compressedFile = ''
-            var str =
-    "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
+            var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
    
     const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
         const byteCharacters = atob(b64Data);
@@ -1233,42 +1362,38 @@ class ChatPage extends LitElement {
                 this.chatEditor.enable();
                 return
             }
-                   
-
-           
-                    typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.reference
+                typeMessage = 'edit';
+                let chatReference = outSideMsg.editedMessageObj.reference;
 
             if(outSideMsg.editedMessageObj.chatReference){
                 chatReference = outSideMsg.editedMessageObj.chatReference
             }
            
-            let message = ""
+            let message = "";
         try {
-            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-            message = parsedMessageObj
+            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
+            message = parsedMessageObj;
             
         } catch (error) {
-            message = outSideMsg.editedMessageObj.decodedMessage
+            message = outSideMsg.editedMessageObj.decodedMessage;
         }
             const messageObject = {
                 ...message,
                 isImageDeleted: true
             }
-            const stringifyMessageObject = JSON.stringify(messageObject)
+            const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
            
 
         }
-      else  if(outSideMsg && outSideMsg.type === 'image'){
+        else if (outSideMsg && outSideMsg.type === 'image') {
 
-        
-            const userName = await getName(this.selectedAddress.address)
-            if(!userName){
-                parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+            const userName = await getName(this.selectedAddress.address);
+            if (!userName) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
                 this.chatEditor.enable();
-                return
+                return;
             }
             const id = this.uid();
             const identifier = `qchat_${id}`
@@ -1757,8 +1882,7 @@ class ChatPage extends LitElement {
                 for (let i = 0; i < events.length; i++) {
                     const event = events[i]
                     editor.content.body.addEventListener(event, async function (e) {
-                    
-                        editorConfig.getMessageSize(editorConfig.mirrorElement.value)
+                    console.log("hello world12")
                         if (e.type === 'click') {
                             e.preventDefault();
                             e.stopPropagation();
@@ -1801,10 +1925,13 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'keydown') {
-                            console.log(editorConfig.mirrorElement.scrollHeight);
+                            console.log("key pressed");
+                            console.log(editorConfig.getMessageConfig(), "this is the chat input value");
+                            console.log(editorConfig.editableElement.contentDocument.body.scrollHeight, "scroll height")
+                            console.log(editorConfig.mirrorElement.clientHeight, "client height")
                             editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                            
-                            // Handle Enter
+                            editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.innerHTML);
+                             // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
                                 // Update Mirror
@@ -1883,6 +2010,7 @@ class ChatPage extends LitElement {
         };
 
         const editorConfig = {
+            getMessageConfig: this.getMessageConfig,
             getMessageSize: this.getMessageSize,
             calculateIFrameHeight: this.calculateIFrameHeight,
             mirrorElement: this.mirrorChatInput,
@@ -1894,7 +2022,8 @@ class ChatPage extends LitElement {
             placeholder: this.chatEditorPlaceholder,
             imageFile: this.imageFile,
             requestUpdate: this.requestUpdate,
-            insertImage: this.insertImage
+            insertImage: this.insertImage,
+            chatMessageSize: this.chatMessageSize
         };
         this.chatEditor = new ChatEditor(editorConfig);
     }
