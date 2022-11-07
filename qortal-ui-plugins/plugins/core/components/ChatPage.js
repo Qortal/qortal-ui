@@ -21,7 +21,10 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
+import WebWorker from 'web-worker:./computePowWorker.js';
+import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
 
+// hello
 const messagesCache = localForage.createInstance({
     name: "messages-cache",
 });
@@ -1221,10 +1224,14 @@ class ChatPage extends LitElement {
             parentEpml,
             metaData: undefined,
             uploadType: 'file',
-            selectedAddress: this.selectedAddress
+            selectedAddress: this.selectedAddress,
+            worker: new WebWorkerImage()
                    })
             } catch (error) {
                 console.error(error)
+                this.isLoading = false;
+                this.chatEditor.enable();
+                return
             }
                    
 
@@ -1291,17 +1298,25 @@ class ChatPage extends LitElement {
                 return
             }
           console.log({userName, identifier })
-         
-                   await publishData({
-                    registeredName: userName,
-            file : compressedFile,
-            service: 'IMAGE',
-            identifier : identifier,
-            parentEpml,
-            metaData: undefined,
-            uploadType: 'file',
-            selectedAddress: this.selectedAddress
-                   })
+                try {
+                    await publishData({
+                        registeredName: userName,
+                file : compressedFile,
+                service: 'IMAGE',
+                identifier : identifier,
+                parentEpml,
+                metaData: undefined,
+                uploadType: 'file',
+                selectedAddress: this.selectedAddress,
+                worker: new WebWorkerImage()
+                       })
+                } catch (error) {
+                    console.error(error)
+                this.isLoading = false;
+                this.chatEditor.enable();
+                return
+                }
+                   
                     const messageObject = {
                         messageText: outSideMsg.caption,
                         images: [{
@@ -1477,23 +1492,33 @@ class ChatPage extends LitElement {
         };
 
         const _computePow = async (chatBytes) => {
-            const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
-            const chatBytesArray = new Uint8Array(_chatBytesArray);
-            const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result;
-            const hashPtr = window.parent.sbrk(32, window.parent.heap);
-            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
-            hashAry.set(chatBytesHash);
-
             const difficulty = this.balance === 0 ? 12 : 8;
-            const workBufferLength = 8 * 1024 * 1024;
-            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
-            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty);
+            const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
+              const worker = new WebWorker();
+            let nonce = null
+            let chatBytesArray = null
+              await new Promise((res, rej) => {
+                console.log({chatBytes})
+                worker.postMessage({chatBytes, path, difficulty});
+            
+                worker.onmessage = e => {
+                    
+                    
+                  worker.terminate()
+                  chatBytesArray = e.data.chatBytesArray
+                    nonce = e.data.nonce
+                    res()
+                 
+                }
+              })
 
             let _response = await parentEpml.request('sign_chat', {
                 nonce: this.selectedAddress.nonce,
                 chatBytesArray: chatBytesArray,
                 chatNonce: nonce
             });
+           
+
             getSendChatResponse(_response);
         };
 

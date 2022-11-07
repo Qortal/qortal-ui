@@ -14,9 +14,9 @@ export const publishData = async ({
 	service,
 	identifier,
 	parentEpml,
-	metaData,
 	uploadType,
 	selectedAddress,
+	worker
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -47,35 +47,23 @@ export const publishData = async ({
 
         const convertedBytes =
             window.parent.Base58.decode(convertedBytesBase58)
-        const _convertedBytesArray = Object.keys(convertedBytes).map(
-            function (key) {
-                return convertedBytes[key]
-            }
-        )
-        const convertedBytesArray = new Uint8Array(_convertedBytesArray)
-        const convertedBytesHash = new window.parent.Sha256()
-            .process(convertedBytesArray)
-            .finish().result
-        const hashPtr = window.parent.sbrk(32, window.parent.heap)
-        const hashAry = new Uint8Array(
-            window.parent.memory.buffer,
-            hashPtr,
-            32
-        )
-        
-        hashAry.set(convertedBytesHash)
-        const difficulty = 14
-        const workBufferLength = 8 * 1024 * 1024
-        const workBufferPtr = window.parent.sbrk(
-            workBufferLength,
-            window.parent.heap
-        )
-        let nonce = window.parent.computePow(
-            hashPtr,
-            workBufferPtr,
-            workBufferLength,
-            difficulty
-        )
+		let nonce = null
+		const computPath =window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
+			await new Promise((res, rej) => {
+       
+                worker.postMessage({convertedBytes, path: computPath});
+            
+                worker.onmessage = e => {
+                    
+                  worker.terminate()
+              
+                    nonce = e.data.nonce
+                    res()
+                 
+                }
+              })
+     
+  
         let response = await parentEpml.request("sign_arbitrary", {
             nonce: selectedAddress.nonce,
             arbitraryBytesBase58: transactionBytesBase58,
@@ -131,18 +119,7 @@ export const publishData = async ({
 				postBody = Buffer.from(fileBuffer).toString("base64")
 			}
 
-			// Optional metadata
-
-			// let title = encodeURIComponent(metaData.title || "")
-			// let description = encodeURIComponent(metaData.description || "")
-			// let category = encodeURIComponent(metaData.category || "")
-			// let tag1 = encodeURIComponent(metaData.tag1 || "")
-			// let tag2 = encodeURIComponent(metaData.tag2 || "")
-			// let tag3 = encodeURIComponent(metaData.tag3 || "")
-			// let tag4 = encodeURIComponent(metaData.tag4 || "")
-			// let tag5 = encodeURIComponent(metaData.tag5 || "")
-
-			// let metadataQueryString = `title=${title}&description=${description}&category=${category}&tags=${tag1}&tags=${tag2}&tags=${tag3}&tags=${tag4}&tags=${tag5}`
+		
 		
 			let uploadDataUrl = `/arbitrary/${service}/${registeredName}${urlSuffix}?apiKey=${getApiKey()}`
 			if (identifier != null && identifier.trim().length > 0) {
@@ -162,5 +139,10 @@ export const publishData = async ({
 		
 		
 	}
-    await validate()
+	try {
+		await validate()
+	} catch (error) {
+		throw new Error(error.message)
+	}
+   
 }
