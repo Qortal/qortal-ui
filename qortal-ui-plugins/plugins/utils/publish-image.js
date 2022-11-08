@@ -156,11 +156,6 @@ export const publishData = async ({
 			})
 			return uploadDataRes
 		}
-
-		
-
-		
-		
 	}
     await validate()
 }
