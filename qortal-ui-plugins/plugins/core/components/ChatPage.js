@@ -21,7 +21,10 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
+import WebWorker from 'web-worker:./computePowWorker.js';
+import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
 
+// hello
 const messagesCache = localForage.createInstance({
     name: "messages-cache",
 });
@@ -516,7 +519,7 @@ class ChatPage extends LitElement {
                                 this.imageFile = null
                                 }}
                             >
-                            ${translate("chatpage.cchange29")}
+                            ${translate("chatpage.cchange30")}
                             </mwc-button>
                             <mwc-button
                                 slot="primaryAction"
@@ -1429,20 +1432,22 @@ class ChatPage extends LitElement {
                 })
             })
             try {
-           
-
-            await publishData({
-                registeredName: userName,
-                file : compressedFile,
-                service: 'IMAGE',
-                identifier : identifier,
-                parentEpml,
-                metaData: undefined,
-                uploadType: 'file',
-                selectedAddress: this.selectedAddress
-            })
-            } catch (error) {
-                console.error(error);
+                await publishData({
+                    registeredName: userName  ,
+                    file : compressedFile ,
+                    service: 'IMAGE',
+                    identifier : identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: new WebWorkerImage()
+                   })
+                } catch (error) {
+                    console.error(error)
+                    this.isLoading = false;
+                    this.chatEditor.enable();
+                    return
             }
                 typeMessage = 'edit';
                 let chatReference = outSideMsg.editedMessageObj.reference;
@@ -1504,31 +1509,37 @@ class ChatPage extends LitElement {
                 this.chatEditor.enable();
                 return;
             }
-            await publishData({
-                registeredName: userName,
-                file : compressedFile,
-                service: 'IMAGE',
-                identifier : identifier,
-                parentEpml,
-                metaData: undefined,
-                uploadType: 'file',
-                selectedAddress: this.selectedAddress
-            })
-
-            const messageObject = {
-                messageText: outSideMsg.caption,
-                images: [{
-                    service: "IMAGE",
-                    name: userName,
-                    identifier: identifier
-                }],
-                isImageDeleted: false,
-                repliedTo: '',
-                version: 1
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage);
-
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file : compressedFile,
+                        service: 'IMAGE',
+                        identifier : identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: new WebWorkerImage()
+                       })
+                } catch (error) {
+                    console.error(error)
+                    this.isLoading = false;
+                    this.chatEditor.enable();
+                    return
+                }
+                const messageObject = {
+                    messageText: outSideMsg.caption,
+                    images: [{
+                            service: "IMAGE",
+                            name: userName,
+                            identifier: identifier
+                    }],
+                    isImageDeleted: false,
+                    repliedTo: '',
+                    version: 1
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if(outSideMsg && outSideMsg.type === 'reaction'){
             typeMessage = 'edit'
             let chatReference = outSideMsg.editedMessageObj.reference
@@ -1583,10 +1594,10 @@ class ChatPage extends LitElement {
         } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
-        } else if (trimmedMessage.length >= 256) {
+        } else if (this.chatMessageSize >= 1000) {
             this.isLoading = false;
             this.chatEditor.enable();
-            let err1string = get("chatpage.cchange24");
+            let err1string = get("chatpage.cchange29");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else if (this.repliedToMessageObj) {
             let chatReference = this.repliedToMessageObj.reference
@@ -1688,23 +1699,33 @@ class ChatPage extends LitElement {
         };
 
         const _computePow = async (chatBytes) => {
-            const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
-            const chatBytesArray = new Uint8Array(_chatBytesArray);
-            const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result;
-            const hashPtr = window.parent.sbrk(32, window.parent.heap);
-            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
-            hashAry.set(chatBytesHash);
-
             const difficulty = this.balance === 0 ? 12 : 8;
-            const workBufferLength = 8 * 1024 * 1024;
-            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
-            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty);
+            const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
+              const worker = new WebWorker();
+            let nonce = null
+            let chatBytesArray = null
+              await new Promise((res, rej) => {
+                console.log({chatBytes})
+                worker.postMessage({chatBytes, path, difficulty});
+            
+                worker.onmessage = e => {
+                    
+                    
+                  worker.terminate()
+                  chatBytesArray = e.data.chatBytesArray
+                    nonce = e.data.nonce
+                    res()
+                 
+                }
+              })
 
             let _response = await parentEpml.request('sign_chat', {
                 nonce: this.selectedAddress.nonce,
                 chatBytesArray: chatBytesArray,
                 chatNonce: nonce
             });
+           
+
             getSendChatResponse(_response);
         };
 
@@ -1951,30 +1972,34 @@ class ChatPage extends LitElement {
                         if (e.type === 'paste') {
                             e.preventDefault();
                             const item_list = await navigator.clipboard.read();
-                            console.log({item_list})
                             let image_type; // we will feed this later
                             const item = item_list.find( item => // choose the one item holding our image
-                                item.types.some( type => { // does this item have our type
+                                item.types.some( type => { 
                                 if (type.startsWith( 'image/')) {
-                                    image_type = type; // store which kind of image type it is
+                                    image_type = type; 
                                     return true;
                                 }
                             })
                             );
-                            const blob = item && await item.getType( image_type );
+                            if(item){
+                                const blob = item && await item.getType( image_type );
                             var file = new File([blob], "name", {
                             type: image_type
                             });
 
                             editorConfig.insertImage(file)
-                            navigator.clipboard.readText().then(clipboardText => {
-                                let escapedText = editorConfig.escape(clipboardText);
-                                editor.insertText(escapedText);
-                            }).catch(err => {
-                                // Fallback if everything fails...
-                                let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
-                                editor.insertText(textData);
-                            })
+                            } else {
+                                navigator.clipboard.readText().then(clipboardText => {
+                                    let escapedText = editorConfig.escape(clipboardText);
+                                    editor.insertText(escapedText);
+                                }).catch(err => {
+                                    // Fallback if everything fails...
+                                    let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
+                                    editor.insertText(textData);
+                                })
+                            }
+                            
+                           
                             return false;
                         }
 
