@@ -489,7 +489,9 @@
       "cchange27": "A registered name is required to send images",
       "cchange28": "This file is not an image",
       "cchange29": "Maximum message size is 1000 bytes",
-      "cchange30": "Cancel"
+      "cchange30": "Uploading image. This may take up to one minute.",
+      "cchange31": "Deleting image. This may take up to one minute.",
+      "cchange33": "Cancel"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

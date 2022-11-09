@@ -47,10 +47,80 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log({messages: this.messages})
+
+        let formattedMessages = this.messages.reduce((messageArray, message)=> {
+            const lastGroupedMessage = messageArray[messageArray.length - 1]
+            let timestamp
+            let sender
+            let repliedToData
+            if(lastGroupedMessage){
+                timestamp = lastGroupedMessage.timestamp
+                sender = lastGroupedMessage.sender
+                repliedToData = lastGroupedMessage.repliedToData
+            }
+            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData
+       
+            if(isSameGroup){
+                messageArray[messageArray.length - 1].messages = [...(messageArray[messageArray.length - 1]?.messages || []), message]
+            } else {
+                messageArray.push({
+                    messages: [message],
+                    ...message
+                })
+            }
+            return messageArray
+        }, [])
+
+        console.log({formattedMessages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
-                ${repeat(
+                ${formattedMessages.map((formattedMessage)=> {
+
+return  repeat(
+                            formattedMessage.messages,
+                    (message) => message.reference,
+                    (message, indexMessage) => html`
+                    <message-template 
+                    .emojiPicker=${this.emojiPicker} 
+                    .escapeHTML=${this.escapeHTML} 
+                    .messageObj=${message} 
+                    .hideMessages=${this.hideMessages}
+                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .setEditedMessageObj=${this.setEditedMessageObj}
+                    .focusChatEditor=${this.focusChatEditor}
+                    .sendMessage=${this.sendMessage}
+                    ?isfirstmessage=${indexMessage === 0}
+                    ?isSingleMessageInGroup=${formattedMessage.messages.length > 1}
+                    >
+                    </message-template>`
+                )
+                })}
+                <!-- ${repeat(
+                    testMessages,
+                    (testMessage)=> testMessage.signature,
+                    (testMessage)=> {
+                      return  repeat(
+                            testMessage.messages,
+                    (message) => message.reference,
+                    (message, indexMessage) => html`
+                    <message-template 
+                    .emojiPicker=${this.emojiPicker} 
+                    .escapeHTML=${this.escapeHTML} 
+                    .messageObj=${message} 
+                    .hideMessages=${this.hideMessages}
+                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                    .setEditedMessageObj=${this.setEditedMessageObj}
+                    .focusChatEditor=${this.focusChatEditor}
+                    .sendMessage=${this.sendMessage}
+                    ?isfirstmessage=${indexMessage === 0}
+                    >
+                    </message-template>`
+                )
+                    }
+                )} -->
+                <!-- ${repeat(
                     this.messages,
                     (message) => message.reference,
                     (message) => html`
@@ -65,7 +135,7 @@ class ChatScroller extends LitElement {
                     .sendMessage=${this.sendMessage}
                     >
                     </message-template>`
-                )}
+                )} -->
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
                     <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
@@ -164,7 +234,10 @@ class MessageTemplate extends LitElement {
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
             sendMessage: { type: Function },
-            openDialogImage: {type: Function}
+            openDialogImage: {type: Function},
+            isImageLoaded: {type: Boolean},
+            isFirstMessage: {type: Boolean},
+            isSingleMessageInGroup: {type: Boolean}
         }
     }
 
@@ -177,6 +250,9 @@ class MessageTemplate extends LitElement {
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.imageFetches = 0
         this.openDialogImage = false
+        this.isImageLoaded = false
+        this.isFirstMessage = false
+        this.isSingleMessageInGroup = false
     }
 
     static styles = [chatStyles]
@@ -210,12 +286,13 @@ class MessageTemplate extends LitElement {
 
     
     render() {
-        const hidemsg = this.hideMessages;
-        let message = "";
-        let reactions = [];
-        let repliedToData = null;
-        let image = null;
-        let isImageDeleted = false;
+        console.log('isFirst', this.isFirstMessage)
+        const hidemsg = this.hideMessages
+        let message = ""
+        let reactions = []
+        let repliedToData = null
+        let image = null
+        let isImageDeleted = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
             message = parsedMessageObj.messageText;
@@ -246,15 +323,19 @@ class MessageTemplate extends LitElement {
         } else {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
-
+  
      const createImage=(imageUrl)=>{
        const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
         imageHTMLRes.onclick= () => {
             this.openDialogImage = true
-        };
-        imageHTMLRes.onerror = () => {   
+        }
+        imageHTMLRes.onload = ()=> {
+            this.isImageLoaded = true
+        }
+        imageHTMLRes.onerror = ()=> {   
+ 
             console.log('inputRef', this.imageFetches)
             if (this.imageFetches < 4) {
                 setTimeout(()=> {
@@ -267,6 +348,8 @@ class MessageTemplate extends LitElement {
                 imageHTMLRes.onclick= () => {
                     
                 }
+
+                this.isImageLoaded = true
             }
         };
         return imageHTMLRes;
@@ -293,6 +376,8 @@ class MessageTemplate extends LitElement {
                 console.error(error);
             }
         }
+
+        
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li class="clearfix message-parent">
                 <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
@@ -312,7 +397,7 @@ class MessageTemplate extends LitElement {
                             </div>
                             `}
                             ${image && !isImageDeleted ? html`
-                                <div class="image-container">
+                                <div class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}>
                                     ${imageHTML}<vaadin-icon
                                     @click=${() => this.sendMessage({
                                     type: 'delete',
