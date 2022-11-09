@@ -61,11 +61,18 @@ class ChatPage extends LitElement {
             chatMessageSize: { type: Number},
             imageFile: {type: Object},
             isUploadingImage: {type: Boolean}
+            caption: { type: String }
         }
     }
 
     static get styles() {
         return css`
+        * {
+            /* Styling mdc dialog native props */
+            --mdc-dialog-min-width: 300px;
+            --mdc-dialog-box-shadow:rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -123,12 +130,14 @@ class ChatPage extends LitElement {
             flex-direction: row;
             align-items: center;
             gap: 15px;
+            width: 100%;
         }
 
         .repliedTo-message {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            width: 95%;
         }
 
 
@@ -140,6 +149,10 @@ class ChatPage extends LitElement {
         }
 
         .original-message {
+            color: black;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
             margin: 0;
         }
 
@@ -196,6 +209,41 @@ class ChatPage extends LitElement {
             cursor: pointer;
             max-height: 40px;
             color: var(--black);
+        }
+
+        .emoji-button-caption {
+            width: 45px;
+            height: 40px;
+            padding-top: 4px;
+            border: none;
+            outline: none;
+            background: transparent;
+            cursor: pointer;
+            max-height: 40px;
+            color: var(--black);
+        }
+
+        .caption-container {
+            width: 100%;
+            display: flex;
+            height: auto;
+            overflow: hidden;
+            justify-content: center;
+        }
+
+        .chatbar-caption {
+            font-family: Roboto, sans-serif;
+            width: 70%;
+            margin-right: 10px;
+            outline: none;
+            align-items: center;
+            font-size: 18px;
+            resize: none;
+            border-top: 0;
+            border-right: 0;
+            border-left: 0;
+            border-bottom: 1px solid #cac8c8;
+            padding: 3px;
         }
 
         .message-size-container {
@@ -419,12 +467,45 @@ class ChatPage extends LitElement {
 				}
 			}
         
+        .mdc-dialog .mdc-dialog__surface {
+            border-radius: 10px;
+        } 
+    
+        /* Add Image Modal Dialog Styling */
+
+        .dialog-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            padding: 18px 18px 0 18px;
+            gap: 15px;
+        }
+
+        .dialog-container:after {
+            position: absolute;
+            content: "";
+            bottom: -15px;
+            height: 1px;
+            width: 95%;
+            background: #dddddd;
+        }
+
+        .dialog-image {
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .red {
+            --mdc-theme-primary: #F44336;
+            }
         `
     }
 
     constructor() {
         super()
-        this.getMessageConfig = this.getMessageConfig.bind(this)
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
@@ -455,6 +536,7 @@ class ChatPage extends LitElement {
         this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
+        this.caption = ""
     }
     
     render() {
@@ -476,40 +558,74 @@ class ChatPage extends LitElement {
                         </div>
                         ` : 
                         this.renderChatScroller(this._initialMessages)}
-                        <mwc-dialog id="showDialogPublicKey" ?open=${this.imageFile} @closed=${()=> {
-                            this.imageFile = null
+                        <mwc-dialog 
+                            id="showDialogPublicKey" 
+                            ?open=${this.imageFile} 
+                            @closed=${() => {
+                                this.chatEditor.enable();
+                                this.caption = "";
+                                this.imageFile = null;
                         }}>
                             <div class="dialog-header"></div>
-                            <div class="dialog-container">
+                            <div class="dialog-container mdc-dialog mdc-dialog__surface">
                                 ${this.imageFile && html`
-                                <img src=${URL.createObjectURL(this.imageFile)} />
+                                    <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
                                 `}
-                            </div>
-                            <mwc-button
-                                slot="primaryAction"
-                                dialogAction="cancel"
-                                class="red"
-                                @click=${()=> {
-                                    this._sendMessage({
-                                        type: 'image',
-                                        imageFile:  this.imageFile,
-                                        caption: 'This is a caption'
-                                    })
-                                }}
-                            >
-                            send
-                            </mwc-button>
+                                <!-- Replace by reusable chatbar component -->
+                                    <div class="caption-container">
+                                        <textarea @change=${(e) => this.onCaptionChange(e.target.value)} .value=${this.caption} placeholder="Caption" class="chatbar-caption" tabindex='1' rows="1"></textarea>
+                                        <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
+                                            ${this.isLoading === false ? html`
+                                                <img 
+                                                src="/img/qchat-send-message-icon.svg" 
+                                                alt="send-icon" 
+                                                class="send-icon" 
+                                                @click=${()=> {
+                                                    this._sendMessage({
+                                                        type: 'image',
+                                                        imageFile:  this.imageFile,
+                                                        caption: this.caption,
+                                                    })
+                                                }} />
+                                            ` : 
+                                            html`
+                                                <paper-spinner-lite active></paper-spinner-lite>
+                                        `}
+                                        </div>
+                                    </div>
+                                    ${this.chatMessageSize >= 750 ? 
+                                    html`
+                                    <div class="message-size-container">
+                                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
+                                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                                        </div>
+                                    </div>
+                                    ` : 
+                                    html``}
+                                </div>
                             <mwc-button
                                 slot="primaryAction"
                                 dialogAction="cancel"
                                 class="red"
                                 @click=${()=>{
-                                    
-                                this.imageFile = null
+                                   this.imageFile = null
                                 }}
                             >
-                            ${translate("general.close")}
-                        </mwc-button>
+                            ${translate("chatpage.cchange33")}
+                            </mwc-button>
+                            <mwc-button
+                                slot="primaryAction"
+                                dialogAction="cancel"
+                                @click=${()=> {
+                                    this._sendMessage({
+                                        type: 'image',
+                                        imageFile:  this.imageFile,
+                                        caption: this.caption,
+                                    })
+                                }}
+                            >
+                            ${translate("chatpage.cchange9")}
+                            </mwc-button>
                     </mwc-dialog>
                 </div>
                 <div class="chat-text-area" style="${`height: ${this.iframeHeight}px; ${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
@@ -567,7 +683,7 @@ class ChatPage extends LitElement {
                                     </div>
                                 </div>
                                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                                <iframe style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
+                                <iframe id="_chatEditorDOM" style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
                                 </iframe>
                                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
@@ -648,21 +764,17 @@ class ChatPage extends LitElement {
         `
     }
 
-
-
     insertImage(file){
         
         if(file.type.includes('image')){
             this.imageFile = file
-
+            this.chatEditor.disable();
             return
         }
         
         parentEpml.request('showSnackBar', get("chatpage.cchange28"))
         
     }
-
-
   
     async firstUpdated() {
        
@@ -671,8 +783,6 @@ class ChatPage extends LitElement {
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
-        console.log(this.chatMessageInput);
-        console.log(this.mirrorChatInput.clientHeight);
         document.addEventListener('keydown', (e) => {
             if (!this.chatEditor.content.body.matches(':focus')) {
                 // WARNING: Deprecated methods from KeyBoard Event
@@ -790,10 +900,18 @@ class ChatPage extends LitElement {
         if (changedProperties && changedProperties.has('chatMessageSize')) {
             console.log(this.chatMessageSize, "Chat Message Size");
         }
+        if(changedProperties && changedProperties.has("imageFile")) {
+            this.chatbarCaption = this.shadowRoot.querySelector('.chatbar-caption');
+            this.chatbarCaption.focus();
+        }
     }
 
     calculateIFrameHeight(height) {
         this.iframeHeight = height;
+    }
+
+    onCaptionChange(e) {
+        this.caption = e;
     }
 
     changeLanguage() {
@@ -912,14 +1030,12 @@ class ChatPage extends LitElement {
        
         if (isInitial) {
 
-          
-
             const replacedMessages = await replaceMessagesEdited({
                 decodedMessages: decodedMessages,
-	parentEpml,
-            isReceipient: isReceipient,
-            decodeMessageFunc: this.decodeMessage,
-            _publicKey: this._publicKey
+                parentEpml,
+                isReceipient: isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
             })
 
             this._messages = replacedMessages.sort(function (a, b) {
@@ -927,17 +1043,11 @@ class ChatPage extends LitElement {
                     - b.timestamp
             })
 
-          
-
             // TODO: Determine number of initial messages by screen height...
-            this._initialMessages = this._messages
-
-
-            this.messagesRendered = this._initialMessages
-
-
-            this.isLoadingMessages = false
-            setTimeout(() => this.downElementObserver(), 500)
+            this._initialMessages = this._messages;
+            this.messagesRendered = this._initialMessages;
+            this.isLoadingMessages = false;
+            setTimeout(() => this.downElementObserver(), 500);
         } else {
             const replacedMessages = await replaceMessagesEdited({
             decodedMessages: decodedMessages,
@@ -947,26 +1057,17 @@ class ChatPage extends LitElement {
             _publicKey: this._publicKey
             })
 
-          
             const renderEachMessage = replacedMessages.map(async(msg)=> {
               await  this.renderNewMessage(msg)
             })
           await Promise.all(renderEachMessage)
-
 
             // this.newMessages = this.newMessages.concat(_newMessages)
             this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
-
-
         }
-    }
-
-    getMessageConfig() {
-        const textAreaElement = this.shadowRoot.getElementById('messageBox');
-        return textAreaElement.value;
     }
 
     getMessageSize(message){
@@ -1140,41 +1241,39 @@ class ChatPage extends LitElement {
      * 
      */
     decodeMessage(encodedMessageObj, isReceipient, _publicKey ) {
-        let isReceipientVar 
-        let _publicKeyVar 
+        let isReceipientVar;
+        let _publicKeyVar;
         try {
             isReceipientVar =  this.isReceipient === undefined ? isReceipient : this.isReceipient;
-            _publicKeyVar = this._publicKey === undefined ? _publicKey : this._publicKey
+            _publicKeyVar = this._publicKey === undefined ? _publicKey : this._publicKey;
         } catch (error) {
-            isReceipientVar = isReceipient
-            _publicKeyVar = _publicKey
+            isReceipientVar = isReceipient;
+            _publicKeyVar = _publicKey;
         }
         
-        let decodedMessageObj = {}
+        let decodedMessageObj = {};
 
         if (isReceipientVar === true) {
             // direct chat
             if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
-                let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference)
-                decodedMessageObj = { ...encodedMessageObj, decodedMessage }
+                let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);
+                decodedMessageObj = { ...encodedMessageObj, decodedMessage };
             } else if (encodedMessageObj.isEncrypted === false && encodedMessageObj.data) {
-                let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
-                let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
-                decodedMessageObj = { ...encodedMessageObj, decodedMessage }
+                let bytesArray = window.parent.Base58.decode(encodedMessageObj.data);
+                let decodedMessage = new TextDecoder('utf-8').decode(bytesArray);
+                decodedMessageObj = { ...encodedMessageObj, decodedMessage };
             } else {
-
-                decodedMessageObj = { ...encodedMessageObj, decodedMessage: "Cannot Decrypt Message!" }
+                decodedMessageObj = { ...encodedMessageObj, decodedMessage: "Cannot Decrypt Message!" };
             }
 
         } else {
             // group chat
-
-            let bytesArray = window.parent.Base58.decode(encodedMessageObj.data)
-            let decodedMessage = new TextDecoder('utf-8').decode(bytesArray)
-            decodedMessageObj = { ...encodedMessageObj, decodedMessage }
+            let bytesArray = window.parent.Base58.decode(encodedMessageObj.data);
+            let decodedMessage = new TextDecoder('utf-8').decode(bytesArray);
+            decodedMessageObj = { ...encodedMessageObj, decodedMessage };
         }
 
-        return decodedMessageObj
+        return decodedMessageObj;
     }
 
     async fetchChatMessages(chatId) {
@@ -1388,16 +1487,17 @@ class ChatPage extends LitElement {
         
         const getName = async (recipient)=> {
             try {
-                
                 const getNames = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/names/address/${recipient}`,
-				})
-                if(Array.isArray(getNames) && getNames.length > 0 ){
+				});
+
+                if (Array.isArray(getNames) && getNames.length > 0 ) {
                     return getNames[0].name
                 } else {
                     return ''
                 }
+
             } catch (error) {
                 return ""
             }
@@ -1431,7 +1531,7 @@ class ChatPage extends LitElement {
       }
       const blob = b64toBlob(str, 'image/png');
 
-            await new Promise(resolve =>{
+            await new Promise(resolve => {
                 new Compressor( blob, {
                     quality: 0.6,
                     maxWidth: 500,
@@ -1450,18 +1550,16 @@ class ChatPage extends LitElement {
                 })
             })
             try {
-           
-
                 await publishData({
-                    registeredName: userName  ,
-            file : compressedFile ,
-            service: 'IMAGE',
-            identifier : identifier,
-            parentEpml,
-            metaData: undefined,
-            uploadType: 'file',
-            selectedAddress: this.selectedAddress,
-            worker: new WebWorkerImage()
+                    registeredName: userName,
+                    file : compressedFile,
+                    service: 'IMAGE',
+                    identifier: identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: new WebWorkerImage()
                    })
                    this.isDeletingImage = false
             } catch (error) {
@@ -1474,7 +1572,7 @@ class ChatPage extends LitElement {
                 let chatReference = outSideMsg.editedMessageObj.reference;
 
             if(outSideMsg.editedMessageObj.chatReference){
-                chatReference = outSideMsg.editedMessageObj.chatReference
+                chatReference = outSideMsg.editedMessageObj.chatReference;
             }
            
             let message = "";
@@ -1504,9 +1602,9 @@ class ChatPage extends LitElement {
                 return;
             }
             const id = this.uid();
-            const identifier = `qchat_${id}`
-            let compressedFile = ''
-            await new Promise(resolve =>{
+            const identifier = `qchat_${id}`;
+            let compressedFile = '';
+            await new Promise(resolve => {
                 new Compressor( outSideMsg.imageFile, {
                     quality: .6,
                     maxWidth: 500,
@@ -1523,66 +1621,63 @@ class ChatPage extends LitElement {
                 })
             })
 
-            const fileSize = compressedFile.size
-            if(fileSize > 5000000){
-                parentEpml.request('showSnackBar', get("chatpage.cchange26"))
+            const fileSize = compressedFile.size;
+            if (fileSize > 5000000) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
                 this.chatEditor.enable();
-                return
+                return;
             }
         
                 try {
                     await publishData({
                         registeredName: userName,
-                file : compressedFile,
-                service: 'IMAGE',
-                identifier : identifier,
-                parentEpml,
-                metaData: undefined,
-                uploadType: 'file',
-                selectedAddress: this.selectedAddress,
-                worker: new WebWorkerImage()
+                        file : compressedFile,
+                        service: 'IMAGE',
+                        identifier : identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: new WebWorkerImage()
                        })
                 
                 this.isUploadingImage = false
                 } catch (error) {
                     console.error(error)
-                this.isLoading = false;
-                this.chatEditor.enable();
-                return
+                    this.isLoading = false;
+                    this.chatEditor.enable();
+                    return
                 }
-                   
-                    const messageObject = {
-                        messageText: outSideMsg.caption,
-                        images: [{
-                                service: "IMAGE",
-                                name: userName,
-                                identifier: identifier
-                        }],
-                        isImageDeleted: false,
-                        repliedTo: '',
-                        version: 1
-                    }
-                    const stringifyMessageObject = JSON.stringify(messageObject)
-                    this.sendMessage(stringifyMessageObject, typeMessage);
-           
-           
-       
-        }  else if(outSideMsg && outSideMsg.type === 'reaction'){
-            typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.reference
+                const messageObject = {
+                    messageText: outSideMsg.caption,
+                    images: [{
+                            service: "IMAGE",
+                            name: userName,
+                            identifier: identifier
+                    }],
+                    isImageDeleted: false,
+                    repliedTo: '',
+                    version: 1
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject);
+                this.sendMessage(stringifyMessageObject, typeMessage);
+        }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+            typeMessage = 'edit';
+            let chatReference = outSideMsg.editedMessageObj.reference;
 
-            if(outSideMsg.editedMessageObj.chatReference){
-                chatReference = outSideMsg.editedMessageObj.chatReference
+            if (outSideMsg.editedMessageObj.chatReference) {
+                chatReference = outSideMsg.editedMessageObj.chatReference;
             }
            
-            let message = ""
+            let message = "";
+
         try {
-            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-            message = parsedMessageObj
+            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
+            message = parsedMessageObj;
             
         } catch (error) {
-            message = outSideMsg.editedMessageObj.decodedMessage
+            message = outSideMsg.editedMessageObj.decodedMessage;
         }   
 
             let reactions = message.reactions || []
@@ -2038,12 +2133,9 @@ class ChatPage extends LitElement {
                         }
 
                         if (e.type === 'keydown') {
-                            console.log("key pressed");
-                            console.log(editorConfig.getMessageConfig(), "this is the chat input value");
-                            console.log(editorConfig.editableElement.contentDocument.body.scrollHeight, "scroll height")
-                            console.log(editorConfig.mirrorElement.clientHeight, "client height")
                             editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
                             editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.innerHTML);
+
                              // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
@@ -2123,7 +2215,6 @@ class ChatPage extends LitElement {
         };
 
         const editorConfig = {
-            getMessageConfig: this.getMessageConfig,
             getMessageSize: this.getMessageSize,
             calculateIFrameHeight: this.calculateIFrameHeight,
             mirrorElement: this.mirrorChatInput,

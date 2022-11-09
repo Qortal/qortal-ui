@@ -294,33 +294,32 @@ class MessageTemplate extends LitElement {
         let image = null
         let isImageDeleted = false
         try {
-            const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
-            message = parsedMessageObj.messageText
-            repliedToData = this.messageObj.repliedToData
-            isImageDeleted = parsedMessageObj.isImageDeleted
-         reactions = parsedMessageObj.reactions || []
+            const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
+            message = parsedMessageObj.messageText;
+            repliedToData = this.messageObj.repliedToData;
+            isImageDeleted = parsedMessageObj.isImageDeleted;
+            reactions = parsedMessageObj.reactions || [];
            if(parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0){
-            image = parsedMessageObj.images[0]
+                image = parsedMessageObj.images[0];
             }
         } catch (error) {
-            message = this.messageObj.decodedMessage
+            message = this.messageObj.decodedMessage;
         }
-        let avatarImg = ''
-        let imageHTML = ''
-        let imageHTMLDialog = ''
-        let imageUrl = ''
-        let nameMenu = ''
-        let levelFounder = ''
-        let hideit = hidemsg.includes(this.messageObj.sender)
-        
+        let avatarImg = '';
+        let imageHTML = '';
+        let imageHTMLDialog = '';
+        let imageUrl = '';
+        let nameMenu = '';
+        let levelFounder = '';
+        let hideit = hidemsg.includes(this.messageObj.sender);
 
-        levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
+        levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
 
         if (this.messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
         } else {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
@@ -328,8 +327,8 @@ class MessageTemplate extends LitElement {
      const createImage=(imageUrl)=>{
        const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
-        imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer"
-        imageHTMLRes.onclick= ()=> {
+        imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
+        imageHTMLRes.onclick= () => {
             this.openDialogImage = true
         }
         imageHTMLRes.onload = ()=> {
@@ -338,53 +337,43 @@ class MessageTemplate extends LitElement {
         imageHTMLRes.onerror = ()=> {   
  
             console.log('inputRef', this.imageFetches)
-            if(this.imageFetches < 4){
-
+            if (this.imageFetches < 4) {
                 setTimeout(()=> {
-                    this.imageFetches = this.imageFetches + 1
-    
-                    imageHTMLRes.src = imageUrl
-                }, 500)
-               
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 500);
             } else {
-                imageHTMLRes.src = '/img/chain.png'
+                imageHTMLRes.src = '/img/chain.png';
                 imageHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
-                imageHTMLRes.onclick= ()=> {
+                imageHTMLRes.onclick= () => {
                     
                 }
 
                 this.isImageLoaded = true
             }
-           
-        }
-
-        return imageHTMLRes
+        };
+        return imageHTMLRes;
       }
-
-     
-
-        if(image){
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-             imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
-            imageHTML = createImage(imageUrl)
-            imageHTMLDialog = createImage(imageUrl)
-            imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px"
+        if (image) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`;
+            imageHTML = createImage(imageUrl);
+            imageHTMLDialog = createImage(imageUrl);
+            imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
         }
-
-     
 
         if (this.messageObj.sender === this.myAddress) {
-            nameMenu = html`<span style="color: #03a9f4;">${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
+            nameMenu = html`<span style="color: #03a9f4;">${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`;
         } else {
-            nameMenu = html`<span>${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`
+            nameMenu = html`<span>${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`;
         }
-        if(repliedToData){
+        if (repliedToData) {
             try {
-                const parsedMsg =  JSON.parse(repliedToData.decodedMessage)
-                repliedToData.decodedMessage = parsedMsg
+                const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
+                repliedToData.decodedMessage = parsedMsg;
             } catch (error) {
-              
+                console.error(error);
             }
         }
 
@@ -414,8 +403,7 @@ class MessageTemplate extends LitElement {
                                     type: 'delete',
                                     name: image.name,
                                     identifier: image.identifier,
-                        editedMessageObj: this.messageObj,
-                    
+                                    editedMessageObj: this.messageObj,
                                 })}
                                     class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                 </div>
@@ -468,16 +456,16 @@ class MessageTemplate extends LitElement {
                 toblockaddress=${this.messageObj.sender}
             >
             </chat-modals>
-            <mwc-dialog id="showDialogPublicKey"    ?open=${this.openDialogImage}  @closed=${()=> {
-                this.openDialogImage = false
-            }}>
-					<div class="dialog-header" >
-						
-					</div>
+            <mwc-dialog 
+                id="showDialogPublicKey" 
+                ?open=${this.openDialogImage} 
+                @closed=${()=> {
+                    this.openDialogImage = false
+                }}>
+					<div class="dialog-header"></div>
 					<div class="dialog-container imageContainer">
-					${imageHTMLDialog}
+					    ${imageHTMLDialog}
 					</div>
-                 
 					<mwc-button
 						slot="primaryAction"
 						dialogAction="cancel"
@@ -487,7 +475,7 @@ class MessageTemplate extends LitElement {
 						this.openDialogImage = false
 						}}
 					>
-					${translate("general.close")}
+					    ${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
         `
