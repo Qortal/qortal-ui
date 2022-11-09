@@ -352,6 +352,10 @@ export const chatStyles = css`
 	.image-container {
 		display: flex;
 	}
+	.defaultSize {
+		width:45vh; 
+		height:40vh
+	}
 	.image-delete-icon {
 		margin-left: 5px;
     height: 20px;

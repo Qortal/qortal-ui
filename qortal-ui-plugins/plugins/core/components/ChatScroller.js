@@ -47,6 +47,32 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log({messages: this.messages})
+
+        let testMessages = this.messages.reduce((messageArray, message)=> {
+            const lastGroupedMessage = messageArray[messageArray.length - 1]
+            let timestamp
+            let sender
+            let repliedToData
+            if(lastGroupedMessage){
+                timestamp = lastGroupedMessage.timestamp
+                sender = lastGroupedMessage.sender
+                repliedToData = lastGroupedMessage.repliedToData
+            }
+            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData
+       
+            if(isSameGroup){
+                messageArray[messageArray.length - 1].messages = [...(messageArray[messageArray.length - 1]?.messages || []), message]
+            } else {
+                messageArray.push({
+                    messages: [message],
+                    ...message
+                })
+            }
+            return messageArray
+        }, [])
+
+        console.log({testMessages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -164,7 +190,8 @@ class MessageTemplate extends LitElement {
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
             sendMessage: { type: Function },
-            openDialogImage: {type: Function}
+            openDialogImage: {type: Function},
+            isImageLoaded: {type: Boolean}
         }
     }
 
@@ -177,6 +204,7 @@ class MessageTemplate extends LitElement {
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.imageFetches = 0
         this.openDialogImage = false
+        this.isImageLoaded = false
     }
 
     static styles = [chatStyles]
@@ -248,13 +276,16 @@ class MessageTemplate extends LitElement {
         } else {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
-
+  
      const createImage=(imageUrl)=>{
        const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer"
         imageHTMLRes.onclick= ()=> {
             this.openDialogImage = true
+        }
+        imageHTMLRes.onload = ()=> {
+            this.isImageLoaded = true
         }
         imageHTMLRes.onerror = ()=> {   
  
@@ -273,6 +304,8 @@ class MessageTemplate extends LitElement {
                 imageHTMLRes.onclick= ()=> {
                     
                 }
+
+                this.isImageLoaded = true
             }
            
         }
@@ -325,7 +358,7 @@ class MessageTemplate extends LitElement {
                             </div>
                             `}
                             ${image && !isImageDeleted ? html`
-                                <div class="image-container">
+                                <div class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}>
                                     ${imageHTML}<vaadin-icon
                                     @click=${() => this.sendMessage({
                                     type: 'delete',

@@ -59,7 +59,8 @@ class ChatPage extends LitElement {
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
             chatMessageSize: { type: Number},
-            imageFile: {type: Object}
+            imageFile: {type: Object},
+            isUploadingImage: {type: Boolean}
         }
     }
 
@@ -337,6 +338,86 @@ class ChatPage extends LitElement {
         input[type=file]::-webkit-file-upload-button { 
             cursor: pointer; 
         }   
+
+        .dialogCustom {
+				position: fixed;
+    				z-index: 10000;
+    				display: flex;
+    				justify-content: center;
+    				flex-direction: column;
+    				align-items: center;
+    				top: 10px;
+    				right: 20px;
+                    user-select: none;
+			}
+
+        .dialogCustom p {
+            color: var(--black)
+        }
+        .row {
+				display: flex;
+				width: 100%;
+				align-items: center;
+			}
+
+            .between {
+				justify-content: space-between;
+			}
+
+        .dialogCustomInner {
+				min-width: 300px;
+				height: 40px;
+				background-color: var(--white);
+				box-shadow: var(--mdc-dialog-box-shadow, 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12));
+				padding: 10px;
+				border-radius: 4px;
+			}
+			.dialogCustomInner ul {
+				padding-left: 0px
+			}
+			.dialogCustomInner li {
+				margin-bottom: 10px;
+			}
+            .marginLoader {
+                margin-right: 8px;
+            }
+            .smallLoading,
+			.smallLoading:after {
+				border-radius: 50%;
+				width: 2px;
+				height: 2px;
+			}
+			.smallLoading {
+				border-width: 0.6em;
+				border-style: solid;
+				border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+				rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+				font-size: 10px;
+				position: relative;
+				text-indent: -9999em;
+				transform: translateZ(0px);
+				animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+			}
+			@-webkit-keyframes loadingAnimation {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+			@keyframes loadingAnimation {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
         
         `
     }
@@ -538,6 +619,31 @@ class ChatPage extends LitElement {
                     </div>
                 </div>
             </div>
+            ${(this.isUploadingImage || this.isDeletingImage) ? html`
+					<div class="dialogCustom">
+                    <div class="dialogCustomInner">
+						<div class="dialog-container">
+						
+								<div class="row between">
+									
+									<div class=${`smallLoading marginLoader`}></div>
+                                    <p>
+                                    ${this.isDeletingImage ?
+                                        translate("chatpage.cchange31") : translate("chatpage.cchange30")}
+										
+									</p>
+								</div>
+
+								
+							
+						</div>
+						
+					</div>
+                                    
+			</div>
+                                </div>
+			`: ''}			
+		
         </div>
         `
     }
@@ -1298,6 +1404,7 @@ class ChatPage extends LitElement {
         }
 
         if(outSideMsg && outSideMsg.type === 'delete'){
+            this.isDeletingImage = true
             const userName = outSideMsg.name
             const identifier = outSideMsg.identifier
             let compressedFile = ''
@@ -1356,6 +1463,7 @@ class ChatPage extends LitElement {
             selectedAddress: this.selectedAddress,
             worker: new WebWorkerImage()
                    })
+                   this.isDeletingImage = false
             } catch (error) {
                 console.error(error)
                 this.isLoading = false;
@@ -1387,7 +1495,7 @@ class ChatPage extends LitElement {
 
         }
         else if (outSideMsg && outSideMsg.type === 'image') {
-
+            this.isUploadingImage = true;
             const userName = await getName(this.selectedAddress.address);
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
@@ -1422,7 +1530,7 @@ class ChatPage extends LitElement {
                 this.chatEditor.enable();
                 return
             }
-          console.log({userName, identifier })
+        
                 try {
                     await publishData({
                         registeredName: userName,
@@ -1435,6 +1543,8 @@ class ChatPage extends LitElement {
                 selectedAddress: this.selectedAddress,
                 worker: new WebWorkerImage()
                        })
+                
+                this.isUploadingImage = false
                 } catch (error) {
                     console.error(error)
                 this.isLoading = false;
