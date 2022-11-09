@@ -60,7 +60,7 @@ class ChatPage extends LitElement {
             iframeHeight: { type: Number },
             chatMessageSize: { type: Number},
             imageFile: {type: Object},
-            isUploadingImage: {type: Boolean}
+            isUploadingImage: {type: Boolean},
             caption: { type: String }
         }
     }
