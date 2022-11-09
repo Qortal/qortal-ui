@@ -46,7 +46,7 @@ export const chatStyles = css`
 
 	.last-message-ref {
 		position: fixed;
-		font-size: 20px;
+		font-size: 18px;
 		right: 40px;
 		bottom: 100px;
 		width: 50;
@@ -62,6 +62,10 @@ export const chatStyles = css`
 	.last-message-ref:hover {
 		cursor: pointer;
 		transform: scale(1.1);
+	}
+
+	.arrow-down-icon {
+		transform: scale(1.15);
 	}
 
 	.chat-list {
