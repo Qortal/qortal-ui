@@ -129,12 +129,14 @@ class ChatPage extends LitElement {
             flex-direction: row;
             align-items: center;
             gap: 15px;
+            width: 100%;
         }
 
         .repliedTo-message {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            width: 95%;
         }
 
 
@@ -146,6 +148,10 @@ class ChatPage extends LitElement {
         }
 
         .original-message {
+            color: black;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
             margin: 0;
         }
 
@@ -474,7 +480,7 @@ class ChatPage extends LitElement {
                         <mwc-dialog 
                             id="showDialogPublicKey" 
                             ?open=${this.imageFile} 
-                            @closed=${()=> {
+                            @closed=${() => {
                                 this.chatEditor.enable();
                                 this.caption = "";
                                 this.imageFile = null;
@@ -493,7 +499,13 @@ class ChatPage extends LitElement {
                                                 src="/img/qchat-send-message-icon.svg" 
                                                 alt="send-icon" 
                                                 class="send-icon" 
-                                                @click=${() => this._sendMessage()} />
+                                                @click=${()=> {
+                                                    this._sendMessage({
+                                                        type: 'image',
+                                                        imageFile:  this.imageFile,
+                                                        caption: this.caption,
+                                                    })
+                                                }} />
                                             ` : 
                                             html`
                                                 <paper-spinner-lite active></paper-spinner-lite>
@@ -515,8 +527,7 @@ class ChatPage extends LitElement {
                                 dialogAction="cancel"
                                 class="red"
                                 @click=${()=>{
-                                    
-                                this.imageFile = null
+                                   this.imageFile = null
                                 }}
                             >
                             ${translate("chatpage.cchange30")}
@@ -525,12 +536,11 @@ class ChatPage extends LitElement {
                                 slot="primaryAction"
                                 dialogAction="cancel"
                                 @click=${()=> {
-                                    // this._sendMessage({
-                                    //     type: 'image',
-                                    //     imageFile:  this.imageFile,
-                                    //     caption: 'This is a caption'
-                                    // })
-                                    console.log(this.caption);
+                                    this._sendMessage({
+                                        type: 'image',
+                                        imageFile:  this.imageFile,
+                                        caption: this.caption,
+                                    })
                                 }}
                             >
                             ${translate("chatpage.cchange9")}
@@ -1371,16 +1381,17 @@ class ChatPage extends LitElement {
         
         const getName = async (recipient)=> {
             try {
-                
                 const getNames = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/names/address/${recipient}`,
-				})
-                if(Array.isArray(getNames) && getNames.length > 0 ){
+				});
+
+                if (Array.isArray(getNames) && getNames.length > 0 ) {
                     return getNames[0].name
                 } else {
                     return ''
                 }
+
             } catch (error) {
                 return ""
             }
@@ -1433,10 +1444,10 @@ class ChatPage extends LitElement {
             })
             try {
                 await publishData({
-                    registeredName: userName  ,
-                    file : compressedFile ,
+                    registeredName: userName,
+                    file : compressedFile,
                     service: 'IMAGE',
-                    identifier : identifier,
+                    identifier: identifier,
                     parentEpml,
                     metaData: undefined,
                     uploadType: 'file',
@@ -1538,23 +1549,24 @@ class ChatPage extends LitElement {
                     repliedTo: '',
                     version: 1
                 }
-                const stringifyMessageObject = JSON.stringify(messageObject)
+                const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
-        }  else if(outSideMsg && outSideMsg.type === 'reaction'){
-            typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.reference
+        }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+            typeMessage = 'edit';
+            let chatReference = outSideMsg.editedMessageObj.reference;
 
-            if(outSideMsg.editedMessageObj.chatReference){
-                chatReference = outSideMsg.editedMessageObj.chatReference
+            if (outSideMsg.editedMessageObj.chatReference) {
+                chatReference = outSideMsg.editedMessageObj.chatReference;
             }
            
-            let message = ""
+            let message = "";
+
         try {
-            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-            message = parsedMessageObj
+            const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
+            message = parsedMessageObj;
             
         } catch (error) {
-            message = outSideMsg.editedMessageObj.decodedMessage
+            message = outSideMsg.editedMessageObj.decodedMessage;
         }   
 
             let reactions = message.reactions || []
