@@ -138,7 +138,7 @@ return  repeat(
                 )} -->
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
-                    <vaadin-icon icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
+                    <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
                         this.shadowRoot.getElementById('downObserver').scrollIntoView({
                             behavior: 'smooth',
                         }) 
