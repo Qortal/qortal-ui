@@ -53,7 +53,8 @@ class TradePortal extends LitElement {
             dogeqort: { type: Number },
             dgbqort: { type: Number },
             rvnqort: { type: Number },
-            arrrqort: { type: Number }
+            arrrqort: { type: Number },
+			qortRatio: {type: Number}
         }
     }
 
@@ -122,7 +123,7 @@ class TradePortal extends LitElement {
 			color: var(--black);
 		}
 		#tab-sell[active] {
-			--mdc-theme-primary: rgb(255, 89, 89); 
+			--mdc-theme-primary: rgb(255, 89, 89);
 		}
 		#trade-portal-page {
 			background: var(--white);
@@ -372,7 +373,7 @@ class TradePortal extends LitElement {
 				-webkit-transform: rotate(360deg);
 				transform: rotate(360deg);
 			}
-		}	
+		}
 		@media (min-width: 701px) {
 			* {
 			}
@@ -578,6 +579,7 @@ class TradePortal extends LitElement {
         this.dgbqort = 0
         this.rvnqort = 0
         this.arrrqort = 0
+		this.qortRatio = 0
     }
 
     // TODO: Move each template to a separate components! Maybe
@@ -693,7 +695,7 @@ class TradePortal extends LitElement {
 									required readOnly
                                                       label=""
 									placeholder="0.0000"
-									type="text" 
+									type="text"
 									auto-validate="false"
 									outlined value="${this.initialAmount}"
 								>
@@ -813,7 +815,7 @@ class TradePortal extends LitElement {
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 		</div>
         `
     }
@@ -972,7 +974,7 @@ class TradePortal extends LitElement {
 		</div>
             <div style="text-align: center;">
                 <h2 style="color: var(--black);">${translate("tradepage.tchange33")}</h2>
-                <h3 style="color: var(--black);">1 <span style="color: #03a9f4;">QORT</span> = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</h3>
+                <h3 style="color: var(--black);" @click=${() => this.setDefaultSellPrice()}>1 <span style="color: #03a9f4;">QORT</span> = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</h3>
             </div>
 		<!-- Manage Stuck Orders Dialog -->
 		<mwc-dialog id="manageStuckOrdersDialog" scrimClickAction="${this.cancelStuckOfferBtnDisable ? '' : 'close'}">
@@ -1085,11 +1087,7 @@ class TradePortal extends LitElement {
 
             use(checkLanguage)
 
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
-            } else {
-                this.theme = 'light'
-            }
+            this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
@@ -1141,11 +1139,7 @@ class TradePortal extends LitElement {
 
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
-        if (checkTheme === 'dark') {
-            this.theme = 'dark';
-        } else {
-            this.theme = 'light';
-        }
+		this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
@@ -1161,19 +1155,21 @@ class TradePortal extends LitElement {
     }
 
     exchangeRateQort() {
-        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
-            return html`${this.qortbtc}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
-            return html`${this.qortltc}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
-            return html`${this.qortdoge}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
-            return html`${this.qortdgb}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
-            return html`${this.qortrvn}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
-            return html`${this.qortarrr}`
-        }
+        switch(this.listedCoins.get(this.selectedCoin).coinCode){
+			case "BTC":
+				this.qortRatio = this.qortbtc; break;
+			case "LTC":
+				this.qortRatio = this.qortltc; break;
+			case "DOGE":
+				this.qortRatio = this.qortdoge; break;
+			case "DGB":
+				this.qortRatio = this.qortdgb; break;
+			case "RVN":
+				this.qortRatio = this.qortrvn; break;
+			case "ARRR":
+				this.qortRatio = this.qortarrr; break;
+		}
+		return html`${this.qortRatio}`
     }
 
     exchangeRateForeign() {
@@ -1302,7 +1298,7 @@ class TradePortal extends LitElement {
             let pairicon = (_this.listedCoins.get(_this.selectedCoin).coinCode).toLowerCase()
             pairIconContainer.setAttribute("class","pairIconContainer")
             pairIconContainer.setAttribute('style', 'left: 10px;top: 50%;transform: translate(0, -50%);height: 26px;width: 45px;position: absolute;background-repeat: no-repeat;background-size: cover;background-image: url(/img/qort'+pairicon+'.png);')
-            
+
             //appending the coin pair container to the menu
             coinSelectionMenu.shadowRoot.querySelector('.mdc-select--outlined .mdc-select__anchor').appendChild(pairIconContainer)
         }else{//we need just to update the existing pair icon container
@@ -1324,12 +1320,25 @@ class TradePortal extends LitElement {
         this.fetchWalletAddress(coin)
     }
 
-    displayTabContent(tab) {
-        const tabBuyContent = this.shadowRoot.getElementById('tab-buy-content')
-        const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
-        tabBuyContent.style.display = (tab === 'buy') ? 'block' : 'none'
-        tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
+	displayTabContent(tab) {
+		const tabPane = this.shadowRoot.getElementById("tabs-1")
+		tabPane.setAttribute("activeIndex", (tab === 'buy') ? '0': '1')
+
+		const tabBuyContent = this.shadowRoot.getElementById('tab-buy-content')
+		tabBuyContent.style.display = (tab === 'buy') ? 'block' : 'none'
+
+		const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
+		tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
+	}
+
+	setDefaultSellPrice()
+	{
+		this.displayTabContent('sell')
+        const tabSellPrice = this.shadowRoot.getElementById('sellPriceInput')
+		tabSellPrice.value = this.qortRatio.isNaN ? 0 : this.qortRatio
     }
+
+
 
     async reRenderHistoricTrades() {
         this.requestUpdate()
@@ -1355,6 +1364,7 @@ class TradePortal extends LitElement {
         this.shadowRoot.getElementById('buyTotalInput').value = parseFloat(sellerRequest.foreignAmount)
         this.shadowRoot.getElementById('qortalAtAddress').value = sellerRequest.qortalAtAddress
         this.buyBtnDisable = false
+		this.displayTabContent('buy')
     }
 
     getOpenOrdersGrid() {
@@ -1395,7 +1405,7 @@ class TradePortal extends LitElement {
     processRedeemedTrade(offer) {
         try{
             if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
-                    
+
                 // If trade is mine, add it to my historic trades and also add it to historic trades
                 if (offer.qortalCreator === this.selectedAddress.address) {
                     // Check and Update Wallet Balance
@@ -1428,7 +1438,7 @@ class TradePortal extends LitElement {
                     this._historicTradesGrid.clearCache()
                 }
                 this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
-                        
+
             }
         }catch(e){
             console.log("Error processing redeemed trade offer from "+offer.foreignBlockchain)
@@ -1438,7 +1448,7 @@ class TradePortal extends LitElement {
     processTradingTrade(offer) {
         try{
             if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
-            
+
                 // Remove from open market orders
                 if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                     // Check and Update Wallet Balance
@@ -1460,7 +1470,7 @@ class TradePortal extends LitElement {
     processRefundedTrade(offer) {
         try{
             if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
-            
+
             if (offer.qortalCreator === this.selectedAddress.address) {
                 // Check and Update Wallet Balance
                 if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
@@ -1480,7 +1490,7 @@ class TradePortal extends LitElement {
     processCancelledTrade(offer) {
         try{
             if(this.listedCoins.get(offer.foreignBlockchain).name!=''){//check if the foreignBlockchain value is part of supported blockchains
-            
+
                 if (offer.qortalCreator === this.selectedAddress.address) {
                     // Check and Update Wallet Balance
                     if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
