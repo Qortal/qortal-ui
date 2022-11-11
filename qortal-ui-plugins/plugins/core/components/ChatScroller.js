@@ -274,7 +274,7 @@ class MessageTemplate extends LitElement {
         let hideit = hidemsg.includes(this.messageObj.sender);
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
-
+        console.log({message})
         if (this.messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -334,8 +334,9 @@ class MessageTemplate extends LitElement {
                 console.error(error);
             }
         }
+        const escapedMessage = this.escapeHTML(message)
+        const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
 
-        
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li class="clearfix message-parent">
                 <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
@@ -367,7 +368,7 @@ class MessageTemplate extends LitElement {
                                 </div>
                             ` : html``}
                             <div id="messageContent" class="message">
-                                ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                                ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                             </div>
                     </div>
                     <div class="message-reactions">

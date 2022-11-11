@@ -61,7 +61,8 @@ class ChatPage extends LitElement {
             chatMessageSize: { type: Number},
             imageFile: {type: Object},
             isUploadingImage: {type: Boolean},
-            caption: { type: String }
+            caption: { type: String },
+            chatEditor: {type:  Object}
         }
     }
 
@@ -532,7 +533,7 @@ class ChatPage extends LitElement {
         this.messagesRendered = []
         this.repliedToMessageObj = null
         this.editedMessageObj = null
-        this.iframeHeight = 40
+        this.iframeHeight = 42
         this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
@@ -628,7 +629,7 @@ class ChatPage extends LitElement {
                             </mwc-button>
                     </mwc-dialog>
                 </div>
-                <div class="chat-text-area" style="${`height: ${this.iframeHeight}px; ${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
+                <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                         <div class="typing-area">
                             ${this.repliedToMessageObj && html`
                                 <div class="repliedTo-container">
@@ -683,7 +684,8 @@ class ChatPage extends LitElement {
                                     </div>
                                 </div>
                                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                                <iframe id="_chatEditorDOM" style="${`height: ${this.iframeHeight}px`}" class="chat-editor" id="_chatEditorDOM" tabindex="-1" height=${this.iframeHeight}>
+                                <iframe  
+                                }}" id="_chatEditorDOM"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
                                 </iframe>
                                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
@@ -775,6 +777,8 @@ class ChatPage extends LitElement {
         parentEpml.request('showSnackBar', get("chatpage.cchange28"))
         
     }
+
+ 
   
     async firstUpdated() {
        
@@ -907,7 +911,15 @@ class ChatPage extends LitElement {
     }
 
     calculateIFrameHeight(height) {
-        this.iframeHeight = height;
+
+        setTimeout(()=> {
+            const editorTest = this.shadowRoot.getElementById('_chatEditorDOM').contentWindow.document.getElementById('testingId').scrollHeight
+
+        console.log('editor', editorTest)
+        this.iframeHeight = editorTest + 20
+        }, 50)
+        
+      
     }
 
     onCaptionChange(e) {
@@ -1942,7 +1954,7 @@ class ChatPage extends LitElement {
                 const editor = this;
 
                 if (editor.content) {
-                    return editor.content.body.innerHTML;
+                    return editor.contentDiv.innerHTML;
                 }
             };
 
@@ -1950,7 +1962,7 @@ class ChatPage extends LitElement {
                 const editor = this;
 
                 if (value) {
-                    editor.content.body.innerHTML = value;
+                    editor.contentDiv.innerHTML = value;
                     editor.updateMirror();
                 }
 
@@ -1959,9 +1971,10 @@ class ChatPage extends LitElement {
 
             ChatEditor.prototype.resetValue = function () {
                 const editor = this;
-                editor.content.body.innerHTML = '';
+                editor.contentDiv.innerHTML = '';
                 editor.updateMirror();
                 editor.focus();
+                editorConfig.calculateIFrameHeight()
             };
 
             ChatEditor.prototype.styles = function () {
@@ -1973,7 +1986,7 @@ class ChatPage extends LitElement {
                     html {
                         cursor: text;
                     }
-                    body {
+                    div {
                         font-size: 1rem;
                         line-height: 1.38rem;
                         font-weight: 400;
@@ -1983,8 +1996,9 @@ class ChatPage extends LitElement {
                         white-space: break-spaces;
                         word-break: break-word;
                         outline: none;
+                        min-height: 20px;
                     }
-                    body[contentEditable=true]:empty:before {
+                    div[contentEditable=true]:empty:before {
                         content: attr(data-placeholder);
                         display: block;
                         color: rgb(103, 107, 113);
@@ -1993,7 +2007,7 @@ class ChatPage extends LitElement {
                         user-select: none;
                         white-space: nowrap;
                    }
-                   body[contentEditable=false]{
+                   div[contentEditable=false]{
                         background: rgba(0,0,0,0.1);
                    }
                    img.emoji {
@@ -2009,26 +2023,26 @@ class ChatPage extends LitElement {
             ChatEditor.prototype.enable = function () {
                 const editor = this;
 
-                editor.content.body.setAttribute('contenteditable', 'true');
+                editor.contentDiv.setAttribute('contenteditable', 'true');
                 editor.focus();
             };
 
             ChatEditor.prototype.disable = function () {
                 const editor = this;
 
-                editor.content.body.setAttribute('contenteditable', 'false');
+                editor.contentDiv.setAttribute('contenteditable', 'false');
             };
 
             ChatEditor.prototype.state = function () {
                 const editor = this;
 
-                return editor.content.body.getAttribute('contenteditable');
+                return editor.contentDiv.getAttribute('contenteditable');
             };
 
             ChatEditor.prototype.focus = function () {
                 const editor = this;
 
-                editor.content.body.focus();
+                editor.contentDiv.focus();
             };
 
             ChatEditor.prototype.clearSelection = function () {
@@ -2087,6 +2101,7 @@ class ChatPage extends LitElement {
                 for (let i = 0; i < events.length; i++) {
                     const event = events[i]
                     editor.content.body.addEventListener(event, async function (e) {
+                        console.log({event})
                         if (e.type === 'click') {
                             e.preventDefault();
                             e.stopPropagation();
@@ -2199,10 +2214,16 @@ class ChatPage extends LitElement {
                 editor.mirror = editorConfig.mirrorElement;
 
                 editor.content = (editor.frame.contentDocument || editor.frame.document);
-                editor.content.body.setAttribute('contenteditable', 'true');
-                editor.content.body.setAttribute('data-placeholder', editorConfig.placeholder);
-                editor.content.body.setAttribute('spellcheck', 'false');
-
+                
+                let elemDiv = document.createElement('div');
+                elemDiv.setAttribute('contenteditable', 'true');
+                elemDiv.setAttribute('spellcheck', 'false');
+                elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
+elemDiv.style.cssText = 'width:100%';
+elemDiv.id = 'testingId'
+editor.content.body.appendChild(elemDiv);
+                console.log('body', editor.frame.contentDocument.body, 'div', editor.frame.contentDocument.body.firstChild)
+                editor.contentDiv =  editor.frame.contentDocument.body.firstChild
                 editor.styles();
                 editor.listenChanges();
             };
