@@ -72,7 +72,6 @@ class ChatScroller extends LitElement {
             return messageArray
         }, [])
 
-        console.log({formattedMessages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -248,8 +247,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log('isFirst', this.isFirstMessage);
-        console.log("is single message in group", this.isSingleMessageInGroup);
         const hidemsg = this.hideMessages;
         let message = "";
         let reactions = [];
@@ -277,7 +274,7 @@ class MessageTemplate extends LitElement {
         let hideit = hidemsg.includes(this.messageObj.sender);
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
-
+        console.log({message})
         if (this.messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -298,7 +295,6 @@ class MessageTemplate extends LitElement {
             this.isImageLoaded = true;
         }
         imageHTMLRes.onerror = () => {   
-            console.log('inputRef', this.imageFetches);
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
@@ -338,8 +334,9 @@ class MessageTemplate extends LitElement {
                 console.error(error);
             }
         }
+        const escapedMessage = this.escapeHTML(message)
+        const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
 
-        
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
             class="clearfix message-parent" 
@@ -408,7 +405,7 @@ class MessageTemplate extends LitElement {
                                         </div>
                                     ` : html``}
                                     <div id="messageContent" class="message">
-                                        ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                     </div>
                             </div>
                                 <chat-menu 
@@ -445,7 +442,6 @@ class MessageTemplate extends LitElement {
                                     </span>`
                                 })}
                         </div>
-
                     </div>
                 </div>
             </div>
