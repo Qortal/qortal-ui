@@ -8,6 +8,8 @@ html {
   --border2: #dde2e8;
   --copybutton: #707584;
   --chat-bubble: #efefef73;
+  --chat-bubble-bg: #f3f3f3;
+  --chat-bubble-msg-color: #080808;
   --sectxt: #576374;
   --vdicon: #707b8a;
   --tradehead: #6a6c75;
@@ -45,6 +47,8 @@ html[theme="dark"] {
   --border2: #0b305e;
   --copybutton: #d0d6de;
   --chat-bubble: #9694941a;
+  --chat-bubble-bg: #2d3749;
+  --chat-bubble-msg-color: #ffffff;
   --sectxt: #bbc3cd;
   --vdicon: #d0d6de;
   --tradehead: #008fd5;

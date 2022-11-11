@@ -76,66 +76,27 @@ class ChatScroller extends LitElement {
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
-                ${formattedMessages.map((formattedMessage)=> {
-
-return  repeat(
+                ${formattedMessages.map((formattedMessage) => {
+                    return repeat(
                             formattedMessage.messages,
-                    (message) => message.reference,
-                    (message, indexMessage) => html`
-                    <message-template 
-                    .emojiPicker=${this.emojiPicker} 
-                    .escapeHTML=${this.escapeHTML} 
-                    .messageObj=${message} 
-                    .hideMessages=${this.hideMessages}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .sendMessage=${this.sendMessage}
-                    ?isfirstmessage=${indexMessage === 0}
-                    ?isSingleMessageInGroup=${formattedMessage.messages.length > 1}
-                    >
-                    </message-template>`
-                )
+                            (message) => message.reference,
+                            (message, indexMessage) => html`
+                            <message-template 
+                            .emojiPicker=${this.emojiPicker} 
+                            .escapeHTML=${this.escapeHTML} 
+                            .messageObj=${message} 
+                            .hideMessages=${this.hideMessages}
+                            .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                            .setEditedMessageObj=${this.setEditedMessageObj}
+                            .focusChatEditor=${this.focusChatEditor}
+                            .sendMessage=${this.sendMessage}
+                            ?isFirstMessage=${indexMessage === 0}
+                            ?isSingleMessageInGroup=${formattedMessage.messages.length > 1}
+                            ?isLastMessageInGroup=${indexMessage === formattedMessage.messages.length - 1}
+                            >
+                            </message-template>`
+                    )
                 })}
-                <!-- ${repeat(
-                    testMessages,
-                    (testMessage)=> testMessage.signature,
-                    (testMessage)=> {
-                      return  repeat(
-                            testMessage.messages,
-                    (message) => message.reference,
-                    (message, indexMessage) => html`
-                    <message-template 
-                    .emojiPicker=${this.emojiPicker} 
-                    .escapeHTML=${this.escapeHTML} 
-                    .messageObj=${message} 
-                    .hideMessages=${this.hideMessages}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .sendMessage=${this.sendMessage}
-                    ?isfirstmessage=${indexMessage === 0}
-                    >
-                    </message-template>`
-                )
-                    }
-                )} -->
-                <!-- ${repeat(
-                    this.messages,
-                    (message) => message.reference,
-                    (message) => html`
-                    <message-template 
-                    .emojiPicker=${this.emojiPicker} 
-                    .escapeHTML=${this.escapeHTML} 
-                    .messageObj=${message} 
-                    .hideMessages=${this.hideMessages}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .sendMessage=${this.sendMessage}
-                    >
-                    </message-template>`
-                )} -->
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
                     <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
@@ -234,10 +195,11 @@ class MessageTemplate extends LitElement {
             setEditedMessageObj: { type: Function },
             focusChatEditor: { type: Function },
             sendMessage: { type: Function },
-            openDialogImage: {type: Function},
-            isImageLoaded: {type: Boolean},
-            isFirstMessage: {type: Boolean},
-            isSingleMessageInGroup: {type: Boolean}
+            openDialogImage: { type: Function },
+            isImageLoaded: { type: Boolean },
+            isFirstMessage: { type: Boolean },
+            isSingleMessageInGroup: { type: Boolean },
+            isLastMessageInGroup: { type: Boolean },
         }
     }
 
@@ -253,6 +215,7 @@ class MessageTemplate extends LitElement {
         this.isImageLoaded = false
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
+        this.isLastMessageInGroup = false
     }
 
     static styles = [chatStyles]
@@ -284,22 +247,22 @@ class MessageTemplate extends LitElement {
         }
     }
 
-    
     render() {
-        console.log('isFirst', this.isFirstMessage)
-        const hidemsg = this.hideMessages
-        let message = ""
-        let reactions = []
-        let repliedToData = null
-        let image = null
-        let isImageDeleted = false
+        console.log('isFirst', this.isFirstMessage);
+        console.log("is single message in group", this.isSingleMessageInGroup);
+        const hidemsg = this.hideMessages;
+        let message = "";
+        let reactions = [];
+        let repliedToData = null;
+        let image = null;
+        let isImageDeleted = false;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
-           if(parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0){
+           if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
         } catch (error) {
@@ -324,21 +287,20 @@ class MessageTemplate extends LitElement {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
-     const createImage=(imageUrl)=>{
-       const imageHTMLRes = new Image();
+     const createImage = (imageUrl) => {
+        const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
         imageHTMLRes.onclick= () => {
-            this.openDialogImage = true
+            this.openDialogImage = true;
         }
-        imageHTMLRes.onload = ()=> {
-            this.isImageLoaded = true
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = ()=> {   
- 
-            console.log('inputRef', this.imageFetches)
+        imageHTMLRes.onerror = () => {   
+            console.log('inputRef', this.imageFetches);
             if (this.imageFetches < 4) {
-                setTimeout(()=> {
+                setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
                 }, 500);
@@ -379,71 +341,112 @@ class MessageTemplate extends LitElement {
 
         
         return hideit ? html`<li class="clearfix"></li>` : html`
-            <li class="clearfix message-parent">
-                <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
-                    <span class="message-data-name">${nameMenu}</span>
-                    <span class="message-data-level">${levelFounder}</span>
-                    <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
-                </div>
-                <div class="message-data-avatar">
-                ${avatarImg}
-                </div>
-                <div class="message-container">
-                    <div class="message-subcontainer">
-                        ${repliedToData && html`
-                            <div class="original-message">
-                                <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
-                                <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
-                            </div>
+            <li 
+            class="clearfix message-parent" 
+            style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false && reactions.length === 0) ? 
+            'padding-bottom: 0;' 
+            : null} 
+            ${this.isFirstMessage && 'margin-top: 20px;'}">
+                ${this.isFirstMessage ? (
+                    html`
+                    <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
+                        <span class="message-data-name">${nameMenu}</span>
+                        <span class="message-data-level">${levelFounder}</span>
+                        <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
+                    </div>
+                    `
+                ) : null}
+                <div>
+                    <div 
+                    class="message-container" 
+                    style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) && 'margin-bottom: 0'}">
+                        <div class="message-subcontainer1">
+                            ${(this.isSingleMessageInGroup === false || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) 
+                            ? (
+                                html`
+                                    <div class="message-data-avatar">
+                                        ${avatarImg}
+                                    </div>
+                                `
+                            ) : 
+                            html`
+                                <div class="message-data-avatar"></div>
                             `}
-                            ${image && !isImageDeleted ? html`
-                                <div class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}>
-                                    ${imageHTML}<vaadin-icon
-                                    @click=${() => this.sendMessage({
-                                    type: 'delete',
-                                    name: image.name,
-                                    identifier: image.identifier,
-                                    editedMessageObj: this.messageObj,
-                                })}
-                                    class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
-                                </div>
-                            ` : html``}
-                            <div id="messageContent" class="message">
-                                ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                            <div 
+                            class="${`message-subcontainer2 
+                            ${((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && 
+                            'message-triangle'}`}" 
+                            style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) ? 'margin-bottom: 0;' : null}
+                            ${(this.isFirstMessage === true && this.isSingleMessageInGroup === false && this.isLastMessageInGroup === false) 
+                            ? 'border-radius: 25px 25px 25px 0px;'
+                            : (this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
+                            ? 'border-radius: 8px 25px 25px 8px;'
+                            : (this.isFirstMessage === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) 
+                            ?  'border-radius: 27px 25px 25px 12px;'
+                            : (this.isSingleMessageInGroup === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ? 
+                            'border-radius: 10px 25px 25px 0;' 
+                            : null
+                            }">
+                                ${repliedToData && html`
+                                    <div class="original-message">
+                                        <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
+                                        <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
+                                    </div>
+                                    `}
+                                    ${image && !isImageDeleted ? html`
+                                        <div class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}>
+                                            ${imageHTML}<vaadin-icon
+                                            @click=${() => this.sendMessage({
+                                            type: 'delete',
+                                            name: image.name,
+                                            identifier: image.identifier,
+                                            editedMessageObj: this.messageObj,
+                                        })}
+                                            class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                                        </div>
+                                    ` : html``}
+                                    <div id="messageContent" class="message">
+                                        ${unsafeHTML(this.emojiPicker.parse(this.escapeHTML(message)))}
+                                    </div>
                             </div>
+                                <chat-menu 
+                                tabindex="0"
+                                class="chat-hover"
+                                style="${this.showBlockAddressIcon ? 'display: block;' : null} ${this.isFirstMessage && 'top: -50px'}"
+                                toblockaddress="${this.messageObj.sender}" 
+                                .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
+                                .showBlockUserModal=${() => this.showBlockUserModal()}
+                                .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
+                                .showBlockAddressIcon=${this.showBlockAddressIcon}
+                                .originalMessage=${{...this.messageObj, message}}
+                                .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                                .setEditedMessageObj=${this.setEditedMessageObj}
+                                .focusChatEditor=${this.focusChatEditor}
+                                .myAddress=${this.myAddress}
+                                @blur=${() => this.showBlockIconFunc(false)}
+                                .sendMessage=${this.sendMessage}
+                            > 
+                            </chat-menu>
+                        </div>
+                        <div class="message-reactions" style="${reactions.length > 0 && 
+                            'margin-top: 10px; margin-bottom: 5px;'}">
+                                ${reactions.map((reaction)=> {
+                                    return html`
+                                    <span 
+                                    @click=${() => this.sendMessage({
+                                        type: 'reaction',
+                                        editedMessageObj: this.messageObj,
+                                        reaction:  reaction.type,
+                                        })} 
+                                    class="reactions-bg">
+                                    ${reaction.type} ${reaction.qty}
+                                    </span>`
+                                })}
+                        </div>
+
                     </div>
-                    <div class="message-reactions">
-                            ${reactions.map((reaction)=> {
-                                return html`
-                                <span 
-                                @click=${() => this.sendMessage({
-                                    type: 'reaction',
-                                    editedMessageObj: this.messageObj,
-                                    reaction:  reaction.type,
-                                    })} 
-                                class="reactions-bg">
-                                ${reaction.type} ${reaction.qty}
-                                </span>`
-                            })}
-                    </div>
-                    <chat-menu 
-                        tabindex="0"
-                        class="chat-hover"
-                        style=${this.showBlockAddressIcon && "display: block"}
-                        toblockaddress="${this.messageObj.sender}" 
-                        .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
-                        .showBlockUserModal=${() => this.showBlockUserModal()}
-                        .showBlockIconFunc=${(props) => this.showBlockIconFunc(props)}
-                        .showBlockAddressIcon=${this.showBlockAddressIcon}
-                        .originalMessage=${{...this.messageObj, message}}
-                        .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                        .setEditedMessageObj=${this.setEditedMessageObj}
-                        .focusChatEditor=${this.focusChatEditor}
-                        .myAddress=${this.myAddress}
-                        @blur=${() => this.showBlockIconFunc(false)}
-                        .sendMessage=${this.sendMessage}
-                    > 
-                    </chat-menu>
                 </div>
             </div>
             </li>

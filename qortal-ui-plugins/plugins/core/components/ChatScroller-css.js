@@ -109,21 +109,43 @@ export const chatStyles = css`
 
 	.message-container {
 		position: relative;
-		margin-bottom: 20px;
 	}
 
-	.message-subcontainer {
+	.message-subcontainer1 {
+		position: relative;
+		display: flex;
+		align-items: flex-end;	
+	}
+
+	.message-subcontainer2 {
 		position: relative;
     display: flex;
-		background-color: #f3f3f3;
+		background-color: var(--chat-bubble-bg);
     flex-grow: 0;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     border-radius: 5px;
-    padding: 10px 15px;
+    padding: 12px 15px;
     gap: 10px;
-    margin-bottom: 10px;
+		width: fit-content;
+    min-width: 150px;
+	}
+
+	.message-triangle {
+		position: relative;
+	}
+
+	.message-triangle:after {
+		content: "";
+		position: absolute;
+		bottom: 0px;
+    left: -9px;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-width: 0px 0px 7px 9px;
+		border-color: transparent transparent var(--chat-bubble-bg) transparent;
 	}
 
 	.message-reactions {
@@ -170,7 +192,7 @@ export const chatStyles = css`
 	}
 
 	.message {
-		color: black;
+		color: var(--chat-bubble-msg-color);
 		line-height: 19px;
 		word-wrap: break-word;
 		-webkit-user-select: text;
@@ -178,12 +200,12 @@ export const chatStyles = css`
 		-ms-user-select: text;
 		user-select: text;
 		font-size: 16px;
-		width: 90%;
+		width: 100%;
 		position: relative;
 	}
 
 	.message-data-avatar {
-		margin: 0px 8px 3px 3px;
+		margin: 0px 10px 0px 3px;
 		width: 42px; 
 		height: 42px;
 		float: left;
@@ -207,7 +229,7 @@ export const chatStyles = css`
 	.chat-hover {
 		display: none;
 		position: absolute;
-		top: -38px;
+		top: -25px;
 		right: 5px;
 	}
 
