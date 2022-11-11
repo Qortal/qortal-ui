@@ -72,7 +72,6 @@ class ChatScroller extends LitElement {
             return messageArray
         }, [])
 
-        console.log({formattedMessages})
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -97,45 +96,7 @@ return  repeat(
                     </message-template>`
                 )
                 })}
-                <!-- ${repeat(
-                    testMessages,
-                    (testMessage)=> testMessage.signature,
-                    (testMessage)=> {
-                      return  repeat(
-                            testMessage.messages,
-                    (message) => message.reference,
-                    (message, indexMessage) => html`
-                    <message-template 
-                    .emojiPicker=${this.emojiPicker} 
-                    .escapeHTML=${this.escapeHTML} 
-                    .messageObj=${message} 
-                    .hideMessages=${this.hideMessages}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .sendMessage=${this.sendMessage}
-                    ?isfirstmessage=${indexMessage === 0}
-                    >
-                    </message-template>`
-                )
-                    }
-                )} -->
-                <!-- ${repeat(
-                    this.messages,
-                    (message) => message.reference,
-                    (message) => html`
-                    <message-template 
-                    .emojiPicker=${this.emojiPicker} 
-                    .escapeHTML=${this.escapeHTML} 
-                    .messageObj=${message} 
-                    .hideMessages=${this.hideMessages}
-                    .setRepliedToMessageObj=${this.setRepliedToMessageObj}
-                    .setEditedMessageObj=${this.setEditedMessageObj}
-                    .focusChatEditor=${this.focusChatEditor}
-                    .sendMessage=${this.sendMessage}
-                    >
-                    </message-template>`
-                )} -->
+                
                 <div id='downObserver'></div>
                 <div class='last-message-ref'>
                     <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
@@ -286,7 +247,6 @@ class MessageTemplate extends LitElement {
 
     
     render() {
-        console.log('isFirst', this.isFirstMessage)
         const hidemsg = this.hideMessages
         let message = ""
         let reactions = []
@@ -335,8 +295,6 @@ class MessageTemplate extends LitElement {
             this.isImageLoaded = true
         }
         imageHTMLRes.onerror = ()=> {   
- 
-            console.log('inputRef', this.imageFetches)
             if (this.imageFetches < 4) {
                 setTimeout(()=> {
                     this.imageFetches = this.imageFetches + 1;
