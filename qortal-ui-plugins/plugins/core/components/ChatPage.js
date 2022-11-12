@@ -507,6 +507,7 @@ class ChatPage extends LitElement {
 
     constructor() {
         super()
+        this.changeMsgInput = this.changeMsgInput.bind(this)
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
@@ -541,6 +542,7 @@ class ChatPage extends LitElement {
     }
     
     render() {
+        console.log(this.chatMessageInput, 'chatmsginput')
         return html`
             <div class="chat-container">
                 <div>
@@ -563,6 +565,7 @@ class ChatPage extends LitElement {
                             id="showDialogPublicKey" 
                             ?open=${this.imageFile} 
                             @closed=${() => {
+                                this.changeMsgInput('_chatEditorDOM')
                                 this.chatEditor.enable();
                                 this.caption = "";
                                 this.imageFile = null;
@@ -574,7 +577,10 @@ class ChatPage extends LitElement {
                                 `}
                                 <!-- Replace by reusable chatbar component -->
                                     <div class="caption-container">
-                                        <textarea @change=${(e) => this.onCaptionChange(e.target.value)} .value=${this.caption} placeholder="Caption" class="chatbar-caption" tabindex='1' rows="1"></textarea>
+                                    <iframe  
+                                }}" id="newChat"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
+                                </iframe>
+                                       
                                         <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
                                             ${this.isLoading === false ? html`
                                                 <img 
@@ -770,7 +776,9 @@ class ChatPage extends LitElement {
         
         if(file.type.includes('image')){
             this.imageFile = file
-            this.chatEditor.disable();
+            this.changeMsgInput('newChat')
+            // this.initChatEditor();
+            // this.chatEditor.disable();
             return
         }
         
@@ -778,7 +786,12 @@ class ChatPage extends LitElement {
         
     }
 
- 
+    changeMsgInput(id){
+        console.log({id})
+        this.chatEditor.remove()
+        this.chatMessageInput  = this.shadowRoot.getElementById(id);
+        this.initChatEditor();
+    }
   
     async firstUpdated() {
        
@@ -2205,6 +2218,17 @@ class ChatPage extends LitElement {
                     event.preventDefault();
                     editor.focus();
                 });
+            };
+
+            ChatEditor.prototype.remove = function () {
+                const editor = this;
+                editor.content.body
+                var old_element = editor.content.body
+                var new_element = old_element.cloneNode(true);
+                editor.content.body.parentNode.replaceChild(new_element, old_element);
+                while (editor.content.body.firstChild) {
+                    editor.content.body.removeChild(editor.content.body.lastChild);
+                  }
             };
 
             ChatEditor.prototype.init = function () {
