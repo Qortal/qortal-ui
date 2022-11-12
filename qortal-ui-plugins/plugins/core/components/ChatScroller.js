@@ -14,6 +14,7 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
+import {cropAddress} from "../../utils/cropAddress";
 
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -247,6 +248,8 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
+        const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
+        console.log({isFirstMessage: this.isFirstMessage, isSingleMessageInGroup: this.isSingleMessageInGroup, isLastMessageInGroup: this.isLastMessageInGroup, messageText: parsedMessageObj.messageText})
         const hidemsg = this.hideMessages;
         let message = "";
         let reactions = [];
@@ -321,11 +324,12 @@ class MessageTemplate extends LitElement {
             imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
         }
 
-        if (this.messageObj.sender === this.myAddress) {
-            nameMenu = html`<span style="color: #03a9f4;">${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`;
-        } else {
-            nameMenu = html`<span>${this.messageObj.senderName ? this.messageObj.senderName : this.messageObj.sender}</span>`;
-        }
+        nameMenu = html`
+            <span class="${this.messageObj.sender === this.myAddress && 'message-data-my-name'}">
+                ${this.messageObj.senderName ? this.messageObj.senderName : cropAddress(this.messageObj.sender)}
+            </span>
+        `;
+
         if (repliedToData) {
             try {
                 const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
@@ -347,7 +351,6 @@ class MessageTemplate extends LitElement {
                 ${this.isFirstMessage ? (
                     html`
                     <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
-                        <span class="message-data-name">${nameMenu}</span>
                         <span class="message-data-level">${levelFounder}</span>
                         <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
                     </div>
@@ -376,20 +379,32 @@ class MessageTemplate extends LitElement {
                             (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && 
                             'message-triangle'}`}" 
                             style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) ? 'margin-bottom: 0;' : null}
-                            ${(this.isFirstMessage === true && this.isSingleMessageInGroup === false && this.isLastMessageInGroup === false) 
-                            ? 'border-radius: 25px 25px 25px 0px;'
-                            : (this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
+                            ${(this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
                             ? 'border-radius: 8px 25px 25px 8px;'
                             : (this.isFirstMessage === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) 
                             ?  'border-radius: 27px 25px 25px 12px;'
-                            : (this.isSingleMessageInGroup === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ? 
+                            : (this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ? 
                             'border-radius: 10px 25px 25px 0;' 
+                            : this.isFirstMessage === true 
+                            ? 'border-radius: 25px 25px 25px 0px;'
                             : null
                             }">
+                                ${this.isFirstMessage  ? 
+                                    html`
+                                        <span class="message-data-name">
+                                            ${nameMenu}
+                                        </span>
+                                        `
+                                    : null
+                                }
                                 ${repliedToData && html`
                                     <div class="original-message">
-                                        <p class="original-message-sender">${repliedToData.sendName ?? repliedToData.sender}</p>
-                                        <p class="replied-message">${repliedToData.decodedMessage.messageText}</p>
+                                        <p class="original-message-sender">
+                                            ${repliedToData.sendName ?? cropAddress(repliedToData.sender)}
+                                        </p>
+                                        <p class="replied-message">
+                                            ${repliedToData.decodedMessage.messageText}
+                                        </p>
                                     </div>
                                     `}
                                     ${image && !isImageDeleted ? html`
