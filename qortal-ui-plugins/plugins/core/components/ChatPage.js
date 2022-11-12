@@ -130,6 +130,7 @@ class ChatPage extends LitElement {
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: center;
             gap: 15px;
             width: 100%;
         }
@@ -138,7 +139,7 @@ class ChatPage extends LitElement {
             display: flex;
             flex-direction: column;
             gap: 5px;
-            width: 95%;
+            width: 92%;
         }
 
 
@@ -639,13 +640,13 @@ class ChatPage extends LitElement {
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
                                             <p class="original-message">${this.repliedToMessageObj.message}</p>
                                         </div>
+                                        <vaadin-icon
+                                            class="close-icon"
+                                            icon="vaadin:close-big"
+                                            slot="icon"
+                                            @click=${() => this.closeRepliedToContainer()}
+                                            ></vaadin-icon>
                                     </div>
-                                    <vaadin-icon
-                                        class="close-icon"
-                                        icon="vaadin:close-big"
-                                        slot="icon"
-                                        @click=${() => this.closeRepliedToContainer()}
-                                        ></vaadin-icon>
                                 </div>
                             `}
                             ${this.editedMessageObj && html`
@@ -656,36 +657,40 @@ class ChatPage extends LitElement {
                                             <p class="senderName">${translate("chatpage.cchange25")}</p>
                                             <p class="original-message">${this.editedMessageObj.message}</p>
                                         </div>
+                                        <vaadin-icon
+                                            class="close-icon"
+                                            icon="vaadin:close-big"
+                                            slot="icon"
+                                            @click=${() => this.closeEditMessageContainer()}
+                                            ></vaadin-icon>
                                     </div>
-                                    <vaadin-icon
-                                        class="close-icon"
-                                        icon="vaadin:close-big"
-                                        slot="icon"
-                                        @click=${() => this.closeEditMessageContainer()}
-                                        ></vaadin-icon>
                                 </div>
                             `}
                         <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
                             <div class="chatbar-container" style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}"
                             >
-                                <div class="file-picker-container">
-                                    <vaadin-icon
-                                        class="paperclip-icon"
-                                        icon="vaadin:paperclip"
-                                        slot="icon"
-                                        @click=${() => this.closeEditMessageContainer()}
-                                    >
-                                    </vaadin-icon>
-                                    <div class="file-picker-input-container">
-                                        <input 
-                                            .value="${this.imageFile}"
-                                            @change="${e => this.insertImage(e.target.files[0])}"
-                                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
+                            ${this.accountName && (
+                                html`
+                                    <div class="file-picker-container">
+                                        <vaadin-icon
+                                            class="paperclip-icon"
+                                            icon="vaadin:paperclip"
+                                            slot="icon"
+                                            @click=${() => this.closeEditMessageContainer()}
+                                        >
+                                        </vaadin-icon>
+                                        <div class="file-picker-input-container">
+                                            <input 
+                                                .value="${this.imageFile}"
+                                                @change="${e => this.insertImage(e.target.files[0])}"
+                                                class="file-picker-input" type="file" name="myImage" accept="image/*" />
+                                        </div>
                                     </div>
-                                </div>
+                                    `
+                                )}
                                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
                                 <iframe  
-                                }}" id="_chatEditorDOM"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
+                                id="_chatEditorDOM"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
                                 </iframe>
                                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
@@ -787,6 +792,7 @@ class ChatPage extends LitElement {
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
+        this.accountName = window.parent.reduxStore.getState().app.accountInfo.names[0];
         document.addEventListener('keydown', (e) => {
             if (!this.chatEditor.content.body.matches(':focus')) {
                 // WARNING: Deprecated methods from KeyBoard Event
@@ -1515,7 +1521,7 @@ class ChatPage extends LitElement {
             }
         }
 
-        if(outSideMsg && outSideMsg.type === 'delete'){
+        if (outSideMsg && outSideMsg.type === 'delete') {
             this.isDeletingImage = true
             const userName = outSideMsg.name
             const identifier = outSideMsg.identifier
@@ -1542,19 +1548,18 @@ class ChatPage extends LitElement {
         return blob;
       }
       const blob = b64toBlob(str, 'image/png');
-
             await new Promise(resolve => {
-                new Compressor( blob, {
+                new Compressor(blob, {
                     quality: 0.6,
                     maxWidth: 500,
-                    success(result){
-                        console.log({result})
+                    success(result) {
+                        console.log({result});
                         const file = new File([result], "name", {
                             type: 'image/png'
                         });
-                        console.log({file})
-                        compressedFile = file
-                        resolve()
+                        console.log({file});
+                        compressedFile = file;
+                        resolve();
                     },
                     error(err) {
                         console.log(err.message);
@@ -1617,7 +1622,7 @@ class ChatPage extends LitElement {
             const identifier = `qchat_${id}`;
             let compressedFile = '';
             await new Promise(resolve => {
-                new Compressor( outSideMsg.imageFile, {
+                new Compressor(outSideMsg.imageFile, {
                     quality: .6,
                     maxWidth: 500,
                     success(result){
@@ -1632,7 +1637,6 @@ class ChatPage extends LitElement {
                       },
                 })
             })
-
             const fileSize = compressedFile.size;
             if (fileSize > 5000000) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
@@ -1844,8 +1848,6 @@ class ChatPage extends LitElement {
                 worker.postMessage({chatBytes, path, difficulty});
             
                 worker.onmessage = e => {
-                    
-                    
                   worker.terminate()
                   chatBytesArray = e.data.chatBytesArray
                     nonce = e.data.nonce
