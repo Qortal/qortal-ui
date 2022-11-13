@@ -22,7 +22,6 @@ class ChatScroller extends LitElement {
         return {
             getNewMessage: { attribute: false },
             getOldMessage: { attribute: false },
-            emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
             initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
             messages: { type: Array },
@@ -43,11 +42,19 @@ class ChatScroller extends LitElement {
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
+        this.emojiPicker = new EmojiPicker({
+            style: "twemoji",
+            twemojiBaseUrl: '/emoji/',
+            showPreview: false,
+            showVariants: false,
+            showAnimation: false,
+            position: 'top-start',
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+        });
     }
 
 
     render() {
-        console.log({messages: this.messages})
 
         let formattedMessages = this.messages.reduce((messageArray, message)=> {
             const lastGroupedMessage = messageArray[messageArray.length - 1]
@@ -82,9 +89,9 @@ return  repeat(
                     (message) => message.reference,
                     (message, indexMessage) => html`
                     <message-template 
-                    .emojiPicker=${this.emojiPicker} 
                     .escapeHTML=${this.escapeHTML} 
                     .messageObj=${message} 
+                    .emojiPicker=${this.emojiPicker} 
                     .hideMessages=${this.hideMessages}
                     .setRepliedToMessageObj=${this.setRepliedToMessageObj}
                     .setEditedMessageObj=${this.setEditedMessageObj}
@@ -126,6 +133,8 @@ return  repeat(
         this.downElementObserver()
         await this.updateComplete
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+
+        
     }
 
     _getOldMessage(_scrollElement) {
@@ -274,7 +283,6 @@ class MessageTemplate extends LitElement {
         let hideit = hidemsg.includes(this.messageObj.sender);
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
-        console.log({message})
         if (this.messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -368,7 +376,8 @@ class MessageTemplate extends LitElement {
                                 </div>
                             ` : html``}
                             <div id="messageContent" class="message">
-                                ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+
+                                ${this.emojiPicker && unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                             </div>
                     </div>
                     <div class="message-reactions">
@@ -458,7 +467,7 @@ class ChatMenu extends LitElement {
             focusChatEditor: { type: Function },
             myAddress: { type: Object },
             emojiPicker: { attribute: false },
-            sendMessage: {type: Function}
+            sendMessage: {type: Function},
         }
     }
 
@@ -499,12 +508,12 @@ class ChatMenu extends LitElement {
       this.emojiPicker.on('emoji', selection => {
         this.sendMessage({
             type: 'reaction',
-            editedMessageObj: this.originalMessage,
+editedMessageObj: this.originalMessage,
             reaction:  selection.emoji,
          
            
         })
- 
+        
     });
       
     }

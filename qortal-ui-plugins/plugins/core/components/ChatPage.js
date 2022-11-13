@@ -14,7 +14,7 @@ import './ChatScroller.js'
 import './LevelFounder.js'
 import './NameMenu.js'
 import './TimeAgo.js'
-import { EmojiPicker } from 'emoji-picker-js';
+import './ChatTextEditor'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -347,47 +347,6 @@ class ChatPage extends LitElement {
             border-radius: 25%;
         }
 
-        .paperclip-icon {
-            color: #494949;
-            width: 25px;
-        }
-
-        .paperclip-icon:hover {
-            cursor: pointer;
-        }
-
-        .send-icon {
-            width: 30px;
-            margin-left: 5px;
-            transition: all 0.1s ease-in-out;
-            cursor: pointer;
-        }
-
-        .send-icon:hover {
-            filter: brightness(1.1);
-        }
-
-        .file-picker-container {
-            position: relative;
-            height: 25px;
-            width: 25px;
-        }
-
-        .file-picker-input-container {
-            position: absolute;
-            top: 0px;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            z-index: 10;
-            opacity: 0;
-            overflow: hidden;
-        }
-
-        input[type=file]::-webkit-file-upload-button { 
-            cursor: pointer; 
-        }   
-
         .dialogCustom {
 				position: fixed;
     				z-index: 10000;
@@ -511,9 +470,9 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
-        this.getMessageSize = this.getMessageSize.bind(this)
+        // this.getMessageSize = this.getMessageSize.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
-        this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
+        // this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.selectedAddress = {}
         this.chatId = ''
         this.myAddress = ''
@@ -542,7 +501,6 @@ class ChatPage extends LitElement {
     }
     
     render() {
-        console.log(this.chatMessageInput, 'chatmsginput')
         return html`
             <div class="chat-container">
                 <div>
@@ -565,7 +523,7 @@ class ChatPage extends LitElement {
                             id="showDialogPublicKey" 
                             ?open=${this.imageFile} 
                             @closed=${() => {
-                                this.changeMsgInput('_chatEditorDOM')
+                                // this.changeMsgInput('_chatEditorDOM')
                                 this.chatEditor.enable();
                                 this.caption = "";
                                 this.imageFile = null;
@@ -672,74 +630,21 @@ class ChatPage extends LitElement {
                                 </div>
                             `}
                         <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
-                            <div class="chatbar-container" style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}"
-                            >
-                                <div class="file-picker-container">
-                                    <vaadin-icon
-                                        class="paperclip-icon"
-                                        icon="vaadin:paperclip"
-                                        slot="icon"
-                                        @click=${() => this.closeEditMessageContainer()}
-                                    >
-                                    </vaadin-icon>
-                                    <div class="file-picker-input-container">
-                                        <input 
-                                            .value="${this.imageFile}"
-                                            @change="${e => this.insertImage(e.target.files[0])}"
-                                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
-                                    </div>
-                                </div>
-                                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                                <iframe  
-                                }}" id="_chatEditorDOM"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
-                                </iframe>
-                                <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                                    ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
-                                </button>
-                                ${this.editedMessageObj ? (
-                                    html`
-                                    <div>
-                                    ${this.isLoading === false ? html`
-                                        <vaadin-icon
-                                            class="checkmark-icon"
-                                            icon="vaadin:check"
-                                            slot="icon"
-                                            @click=${() => this._sendMessage()}
-                                            >
-                                        </vaadin-icon>
-                                        ` :
-                                        html`
-                                        <paper-spinner-lite active></paper-spinner-lite>
-                                        `}
-                                    </div>
-                                        `
-                                ) : 
-                                    html`
-                                        <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
-                                            ${this.isLoading === false ? html`
-                                                <img 
-                                                src="/img/qchat-send-message-icon.svg" 
-                                                alt="send-icon" 
-                                                class="send-icon" 
-                                                @click=${() => this._sendMessage()} />
-                                            ` : 
-                                            html`
-                                                <paper-spinner-lite active></paper-spinner-lite>
-                                        `}
-                                        </div>
-                                        `
-                                }
-                            </div>
-                                ${this.chatMessageSize >= 750 ? 
-                                    html`
-                                    <div class="message-size-container">
-                                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
-                                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
-                                        </div>
-                                    </div>
-                                    ` : 
-                                    html``}
-                        </div>
+                        <chat-text-editor
+                        iframeId="_chatEditorDOM"
+                        placeholder=${this.chatEditorPlaceholder}
+                        ._sendMessage=${this._sendMessage}
+                                .setChatEditor=${(editor)=> this.setChatEditor(editor)}
+                                .chatEditor=${this.chatEditor}
+            .imageFile=${this.imageFile}
+            .insertImage=${this.insertImage}
+            .chatMessageInput=${this.chatMessageInput}
+            .editedMessageObj=${this.editedMessageObj}
+            .mirrorChatInput=${this.mirrorChatInput}
+            ?isLoading=${this.isLoading}
+            ?isLoadingMessages=${this.isLoadingMessages}
+                        ></chat-text-editor>
+                       
                     </div>
                 </div>
             </div>
@@ -772,11 +677,16 @@ class ChatPage extends LitElement {
         `
     }
 
+    setChatEditor(editor){
+        console.log({editor})
+        this.chatEditor = editor
+    }
+
     insertImage(file){
         
         if(file.type.includes('image')){
             this.imageFile = file
-            this.changeMsgInput('newChat')
+            // this.changeMsgInput('newChat')
             // this.initChatEditor();
             // this.chatEditor.disable();
             return
@@ -787,7 +697,7 @@ class ChatPage extends LitElement {
     }
 
     changeMsgInput(id){
-        console.log({id})
+  
         this.chatEditor.remove()
         this.chatMessageInput  = this.shadowRoot.getElementById(id);
         this.initChatEditor();
@@ -796,10 +706,7 @@ class ChatPage extends LitElement {
     async firstUpdated() {
        
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-        // this.changeLanguage();
-        this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
-        this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
-        this.chatMessageInput = this.shadowRoot.getElementById('_chatEditorDOM');
+
         document.addEventListener('keydown', (e) => {
             if (!this.chatEditor.content.body.matches(':focus')) {
                 // WARNING: Deprecated methods from KeyBoard Event
@@ -814,24 +721,6 @@ class ChatPage extends LitElement {
             }
         });
 
-        // Init EmojiPicker
-        this.emojiPicker = new EmojiPicker({
-            style: "twemoji",
-            twemojiBaseUrl: '/emoji/',
-            showPreview: false,
-            showVariants: false,
-            showAnimation: false,
-            position: 'top-start',
-            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
-        });
-
-        this.emojiPicker.on('emoji', selection => {
-            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
-            this.chatEditor.insertEmoji(emojiHtmlString);
-        });
-
-        // Attach Event Handler
-        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             use(checkLanguage)
@@ -872,9 +761,9 @@ class ChatPage extends LitElement {
             this.chatEditorPlaceholder = placeholder;
 
             this.isReceipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
-
+            
             // Init ChatEditor
-            this.initChatEditor();
+            // this.initChatEditor();
         }, 100)
 
         parentEpml.ready().then(() => {
@@ -914,25 +803,11 @@ class ChatPage extends LitElement {
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
-        if (changedProperties && changedProperties.has('chatMessageSize')) {
-            console.log(this.chatMessageSize, "Chat Message Size");
-        }
+     
         if(changedProperties && changedProperties.has("imageFile")) {
             this.chatbarCaption = this.shadowRoot.querySelector('.chatbar-caption');
             this.chatbarCaption.focus();
         }
-    }
-
-    calculateIFrameHeight(height) {
-
-        setTimeout(()=> {
-            const editorTest = this.shadowRoot.getElementById('_chatEditorDOM').contentWindow.document.getElementById('testingId').scrollHeight
-
-        console.log('editor', editorTest)
-        this.iframeHeight = editorTest + 20
-        }, 50)
-        
-      
     }
 
     onCaptionChange(e) {
@@ -953,7 +828,7 @@ class ChatPage extends LitElement {
     renderPlaceholder() {
         const mstring = get("chatpage.cchange8")
         const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
-        this.chatEditorPlaceholder = placeholder;
+        return placeholder;
     }
 
     renderChatScroller(initialMessages) {
@@ -961,7 +836,6 @@ class ChatPage extends LitElement {
         <chat-scroller 
         .initialMessages=${initialMessages} 
         .messages=${this.messagesRendered} 
-        .emojiPicker=${this.emojiPicker} 
         .escapeHTML=${escape} 
         .getOldMessage=${this.getOldMessage}
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
@@ -969,7 +843,8 @@ class ChatPage extends LitElement {
         .focusChatEditor=${() => this.focusChatEditor()}
         .sendMessage=${(val)=> this._sendMessage(val)}
         >
-        </chat-scroller>`
+        </chat-scroller>
+        `
     }
 
     async getUpdateComplete() {
@@ -1095,55 +970,6 @@ class ChatPage extends LitElement {
         }
     }
 
-    getMessageSize(message){
-        try {
-         const messageText = message;
-        // Format and Sanitize Message
-        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
-        const trimmedMessage = sanitizedMessage.trim();
-            let messageObject = {};
-
-            if (this.repliedToMessageObj) {
-                let chatReference = this.repliedToMessageObj.reference;
-                if (this.repliedToMessageObj.chatReference) {
-                    chatReference = this.repliedToMessageObj.chatReference;
-                }
-                 messageObject = {
-                    messageText: trimmedMessage,
-                    images: [''],
-                    repliedTo: chatReference,
-                    version: 1
-                }
-            } else if (this.editedMessageObj) {
-                let message = "";
-                try {
-                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage);
-                    message = parsedMessageObj;
-                 } catch (error) {
-                    message = this.messageObj.decodedMessage
-                }
-                messageObject = {
-                    ...message,
-                    messageText: trimmedMessage,
-                }
-            } else {
-              messageObject = {
-                    messageText: trimmedMessage,
-                    images: [''],
-                    repliedTo: '',
-                    version: 1
-                };
-            }
-
-            const stringified = JSON.stringify(messageObject);
-            const size =  new Blob([stringified]).size;
-            this.chatMessageSize = size;
-
-        } catch (error) {
-            console.error(error)
-        }
-        
-    }
         
      // set replied to message in chat editor
 
@@ -1182,47 +1008,6 @@ class ChatPage extends LitElement {
     * @property id or index
     * @property sender and other info..
     */
-    chatMessageTemplate(messageObj) {
-        const hidemsg = this.hideMessages
-
-        let avatarImg = ''
-        let nameMenu = ''
-        let levelFounder = ''
-        let hideit = hidemsg.includes(messageObj.sender)
-
-        levelFounder = `<level-founder checkleveladdress="${messageObj.sender}"></level-founder>`
-
-        if (messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
-        }
-
-        if (messageObj.sender === this.myAddress) {
-            nameMenu = `<span style="color: #03a9f4;">${messageObj.senderName ? messageObj.senderName : messageObj.sender}</span>`
-        } else {
-            nameMenu = `<name-menu toblockaddress="${messageObj.sender}" nametodialog="${messageObj.senderName ? messageObj.senderName : messageObj.sender}"></name-menu>`
-        }
-
-        if (hideit === true) {
-            return `
-                <li class="clearfix"></li>
-            `
-        } else {
-            return `
-                <li class="clearfix">
-                    <div class="message-data ${messageObj.sender === this.selectedAddress.address ? "" : ""}">
-                        <span class="message-data-name">${nameMenu}</span>
-                        <span class="message-data-level">${levelFounder}</span>
-                        <span class="message-data-time"><message-time timestamp=${messageObj.timestamp}></message-time></span>
-                    </div>
-                    <div class="message-data-avatar" style="width:42px; height:42px; ${messageObj.sender === this.selectedAddress.address ? "float:left;" : "float:left;"} margin:3px;">${avatarImg}</div>
-                    <div class="message ${messageObj.sender === this.selectedAddress.address ? "my-message float-left" : "other-message float-left"}">${this.emojiPicker.parse(escape(messageObj.decodedMessage))}</div>
-                </li>
-            `
-        }
-    }
 
     async renderNewMessage(newMessage) {
         if(newMessage.chatReference){
@@ -1505,7 +1290,9 @@ class ChatPage extends LitElement {
        
         this.isLoading = true;
         this.chatEditor.disable();
-        const messageText = this.mirrorChatInput.value;
+        const textInput = this.shadowRoot.querySelector('chat-text-editor').shadowRoot.getElementById('messageBox');
+        console.log({textInput})
+        const messageText = textInput.value;
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
@@ -1853,7 +1640,6 @@ class ChatPage extends LitElement {
             let nonce = null
             let chatBytesArray = null
               await new Promise((res, rej) => {
-                console.log({chatBytes})
                 worker.postMessage({chatBytes, path, difficulty});
             
                 worker.onmessage = e => {
@@ -1950,331 +1736,6 @@ class ChatPage extends LitElement {
     isEmptyArray(arr) {
         if (!arr) { return true }
         return arr.length === 0
-    }
-
-    
-
-    initChatEditor() {
-
-        const ChatEditor = function (editorConfig) {
-            
-            const ChatEditor = function () {
-                const editor = this;
-                editor.init();
-            };
-
-            ChatEditor.prototype.getValue = function () {
-                const editor = this;
-
-                if (editor.content) {
-                    return editor.contentDiv.innerHTML;
-                }
-            };
-
-            ChatEditor.prototype.setValue = function (value) {
-                const editor = this;
-
-                if (value) {
-                    editor.contentDiv.innerHTML = value;
-                    editor.updateMirror();
-                }
-
-                editor.focus();
-            };
-
-            ChatEditor.prototype.resetValue = function () {
-                const editor = this;
-                editor.contentDiv.innerHTML = '';
-                editor.updateMirror();
-                editor.focus();
-                editorConfig.calculateIFrameHeight()
-            };
-
-            ChatEditor.prototype.styles = function () {
-                const editor = this;
-
-                editor.styles = document.createElement('style');
-                editor.styles.setAttribute('type', 'text/css');
-                editor.styles.innerText = `
-                    html {
-                        cursor: text;
-                    }
-                    div {
-                        font-size: 1rem;
-                        line-height: 1.38rem;
-                        font-weight: 400;
-                        font-family: "Open Sans", helvetica, sans-serif;
-                        padding-right: 3px;
-                        text-align: left;
-                        white-space: break-spaces;
-                        word-break: break-word;
-                        outline: none;
-                        min-height: 20px;
-                    }
-                    div[contentEditable=true]:empty:before {
-                        content: attr(data-placeholder);
-                        display: block;
-                        color: rgb(103, 107, 113);
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        user-select: none;
-                        white-space: nowrap;
-                   }
-                   div[contentEditable=false]{
-                        background: rgba(0,0,0,0.1);
-                   }
-                   img.emoji {
-                        width: 1.7em;
-                        height: 1.5em;
-                       margin-bottom: -2px;
-                       vertical-align: bottom;
-                   }
-               `;
-                editor.content.head.appendChild(editor.styles);
-            };
-
-            ChatEditor.prototype.enable = function () {
-                const editor = this;
-
-                editor.contentDiv.setAttribute('contenteditable', 'true');
-                editor.focus();
-            };
-
-            ChatEditor.prototype.disable = function () {
-                const editor = this;
-
-                editor.contentDiv.setAttribute('contenteditable', 'false');
-            };
-
-            ChatEditor.prototype.state = function () {
-                const editor = this;
-
-                return editor.contentDiv.getAttribute('contenteditable');
-            };
-
-            ChatEditor.prototype.focus = function () {
-                const editor = this;
-
-                editor.contentDiv.focus();
-            };
-
-            ChatEditor.prototype.clearSelection = function () {
-                const editor = this;
-
-                let selection = editor.content.getSelection().toString();
-                if (!/^\s*$/.test(selection)) editor.content.getSelection().removeAllRanges();
-            };
-
-            ChatEditor.prototype.insertEmoji = function (emojiImg) {
-                const editor = this;
-
-                const doInsert = () => {
-
-                    if (editor.content.queryCommandSupported("InsertHTML")) {
-                        editor.content.execCommand("insertHTML", false, emojiImg);
-                        editor.updateMirror();
-                    }
-                };
-
-                editor.focus();
-                return doInsert();
-            };
-
-            ChatEditor.prototype.insertText = function (text) {
-                const editor = this;
-
-                const parsedText = editorConfig.emojiPicker.parse(text);
-                const doPaste = () => {
-
-                    if (editor.content.queryCommandSupported("InsertHTML")) {
-                        editor.content.execCommand("insertHTML", false, parsedText);
-                        editor.updateMirror();
-                    }
-                };
-
-                editor.focus();
-                return doPaste();
-            };
-
-            ChatEditor.prototype.updateMirror = function () {
-                const editor = this;
-
-                const chatInputValue = editor.getValue();
-                const filteredValue = chatInputValue.replace(/<img.*?alt=".*?/g, '').replace(/".?src=.*?>/g, '');
-
-                let unescapedValue = editorConfig.unescape(filteredValue);
-                editor.mirror.value = unescapedValue;
-            };
-
-            ChatEditor.prototype.listenChanges =  function () {
-                const editor = this;
-
-                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
-
-                for (let i = 0; i < events.length; i++) {
-                    const event = events[i]
-                    editor.content.body.addEventListener(event, async function (e) {
-                        console.log({event})
-                        if (e.type === 'click') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-
-                        if (e.type === 'paste') {
-                            e.preventDefault();
-                            const item_list = await navigator.clipboard.read();
-                            let image_type; // we will feed this later
-                            const item = item_list.find( item => // choose the one item holding our image
-                                item.types.some( type => { 
-                                if (type.startsWith( 'image/')) {
-                                    image_type = type; 
-                                    return true;
-                                }
-                            })
-                            );
-                            if(item){
-                                const blob = item && await item.getType( image_type );
-                            var file = new File([blob], "name", {
-                            type: image_type
-                            });
-
-                            editorConfig.insertImage(file)
-                            } else {
-                                navigator.clipboard.readText().then(clipboardText => {
-                                    let escapedText = editorConfig.escape(clipboardText);
-                                    editor.insertText(escapedText);
-                                }).catch(err => {
-                                    // Fallback if everything fails...
-                                    let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
-                                    editor.insertText(textData);
-                                })
-                            }
-                            
-                           
-                            return false;
-                        }
-
-                        if (e.type === 'contextmenu') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-
-                        if (e.type === 'keydown') {
-                            editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                            editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.innerHTML);
-
-                             // Handle Enter
-                            if (e.keyCode === 13 && !e.shiftKey) {
-
-                                // Update Mirror
-                                editor.updateMirror();
-
-                                if (editor.state() === 'false') return false;
-
-                                editorConfig.sendFunc();
-                                e.preventDefault();
-                                return false;
-                            }
-
-                            // Handle Commands with CTR or CMD
-                            if (e.ctrlKey || e.metaKey) {
-                                switch (e.keyCode) {
-                                    case 66:
-                                    case 98: e.preventDefault();
-                                        return false;
-                                    case 73:
-                                    case 105: e.preventDefault();
-                                        return false;
-                                    case 85:
-                                    case 117: e.preventDefault();
-                                        return false;
-                                }
-
-                                return false;
-                            }
-                        }
-
-                        if (e.type === 'blur') {
-                            editor.clearSelection();
-                        }
-
-                        if (e.type === 'drop') {
-                            e.preventDefault();
-
-                            let droppedText = e.dataTransfer.getData('text/plain')
-                            let escapedText = editorConfig.escape(droppedText)
-
-                            editor.insertText(escapedText);
-                            return false;
-                        }
-
-                        editor.updateMirror();
-                    });
-                  }
-
-                editor.content.addEventListener('click', function (event) {
-
-                    event.preventDefault();
-                    editor.focus();
-                });
-            };
-
-            ChatEditor.prototype.remove = function () {
-                const editor = this;
-                editor.content.body
-                var old_element = editor.content.body
-                var new_element = old_element.cloneNode(true);
-                editor.content.body.parentNode.replaceChild(new_element, old_element);
-                while (editor.content.body.firstChild) {
-                    editor.content.body.removeChild(editor.content.body.lastChild);
-                  }
-            };
-
-            ChatEditor.prototype.init = function () {
-                const editor = this;
-
-                editor.frame = editorConfig.editableElement;
-                editor.mirror = editorConfig.mirrorElement;
-
-                editor.content = (editor.frame.contentDocument || editor.frame.document);
-                
-                let elemDiv = document.createElement('div');
-                elemDiv.setAttribute('contenteditable', 'true');
-                elemDiv.setAttribute('spellcheck', 'false');
-                elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
-elemDiv.style.cssText = 'width:100%';
-elemDiv.id = 'testingId'
-editor.content.body.appendChild(elemDiv);
-                console.log('body', editor.frame.contentDocument.body, 'div', editor.frame.contentDocument.body.firstChild)
-                editor.contentDiv =  editor.frame.contentDocument.body.firstChild
-                editor.styles();
-                editor.listenChanges();
-            };
-
-
-            function doInit() {
-                return new ChatEditor();
-            }
-            return doInit();
-        };
-
-        const editorConfig = {
-            getMessageSize: this.getMessageSize,
-            calculateIFrameHeight: this.calculateIFrameHeight,
-            mirrorElement: this.mirrorChatInput,
-            editableElement: this.chatMessageInput,
-            sendFunc: this._sendMessage,
-            emojiPicker: this.emojiPicker,
-            escape: escape,
-            unescape: unescape,
-            placeholder: this.chatEditorPlaceholder,
-            imageFile: this.imageFile,
-            requestUpdate: this.requestUpdate,
-            insertImage: this.insertImage,
-            chatMessageSize: this.chatMessageSize
-        };
-        this.chatEditor = new ChatEditor(editorConfig);
     }
 }
 
