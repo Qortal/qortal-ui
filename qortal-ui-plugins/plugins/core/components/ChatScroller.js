@@ -14,8 +14,7 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
-import {cropAddress} from "../../utils/cropAddress";
-
+import { cropAddress } from "../../utils/cropAddress";
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class ChatScroller extends LitElement {
@@ -25,7 +24,6 @@ class ChatScroller extends LitElement {
             getOldMessage: { attribute: false },
             emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
-            initialMessages: { type: Array }, // First set of messages to load.. 15 messages max ( props )
             messages: { type: Array },
             hideMessages: { type: Array },
             setRepliedToMessageObj: { type: Function },
@@ -50,27 +48,27 @@ class ChatScroller extends LitElement {
     render() {
         console.log({messages: this.messages})
 
-        let formattedMessages = this.messages.reduce((messageArray, message)=> {
-            const lastGroupedMessage = messageArray[messageArray.length - 1]
-            let timestamp
-            let sender
-            let repliedToData
-            if(lastGroupedMessage){
-                timestamp = lastGroupedMessage.timestamp
-                sender = lastGroupedMessage.sender
-                repliedToData = lastGroupedMessage.repliedToData
+        let formattedMessages = this.messages.reduce((messageArray, message) => {
+            const lastGroupedMessage = messageArray[messageArray.length - 1];
+            let timestamp;
+            let sender;
+            let repliedToData;
+            if (lastGroupedMessage) {
+                timestamp = lastGroupedMessage.timestamp;
+                sender = lastGroupedMessage.sender;
+                repliedToData = lastGroupedMessage.repliedToData;
             }
-            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData
+            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData;
        
-            if(isSameGroup){
-                messageArray[messageArray.length - 1].messages = [...(messageArray[messageArray.length - 1]?.messages || []), message]
+            if (isSameGroup) {
+                messageArray[messageArray.length - 1].messages = [...(messageArray[messageArray.length - 1]?.messages || []), message];
             } else {
                 messageArray.push({
                     messages: [message],
                     ...message
-                })
+                });
             }
-            return messageArray
+            return messageArray;
         }, [])
 
         return html`
@@ -248,8 +246,7 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-        console.log({isFirstMessage: this.isFirstMessage, isSingleMessageInGroup: this.isSingleMessageInGroup, isLastMessageInGroup: this.isLastMessageInGroup, messageText: parsedMessageObj.messageText})
+        console.log(this.messageObj);
         const hidemsg = this.hideMessages;
         let message = "";
         let reactions = [];
@@ -282,9 +279,9 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`;
         } else {
-            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+            avatarImg = html`<img src='/img/qortal-chat-logo.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
      const createImage = (imageUrl) => {
@@ -348,14 +345,6 @@ class MessageTemplate extends LitElement {
             'padding-bottom: 0;' 
             : null} 
             ${this.isFirstMessage && 'margin-top: 20px;'}">
-                ${this.isFirstMessage ? (
-                    html`
-                    <div class="message-data ${this.messageObj.sender === this.myAddress ? "" : ""}">
-                        <span class="message-data-level">${levelFounder}</span>
-                        <span class="message-data-time"><message-time timestamp=${this.messageObj.timestamp}></message-time></span>
-                    </div>
-                    `
-                ) : null}
                 <div>
                     <div 
                     class="message-container" 
@@ -383,13 +372,14 @@ class MessageTemplate extends LitElement {
                             ? 'border-radius: 8px 25px 25px 8px;'
                             : (this.isFirstMessage === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) 
                             ?  'border-radius: 27px 25px 25px 12px;'
-                            : (this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ? 
+                            : (this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ?  
                             'border-radius: 10px 25px 25px 0;' 
-                            : this.isFirstMessage === true 
+                            : (this.isFirstMessage === true && this.isSingleMessageInGroup === false && this.isLastMessageInGroup === true) 
                             ? 'border-radius: 25px 25px 25px 0px;'
                             : null
                             }">
-                                ${this.isFirstMessage  ? 
+                            <div class="message-user-info">
+                                ${this.isFirstMessage ? 
                                     html`
                                         <span class="message-data-name">
                                             ${nameMenu}
@@ -397,6 +387,12 @@ class MessageTemplate extends LitElement {
                                         `
                                     : null
                                 }
+                                ${this.isFirstMessage ? (
+                                html`
+                                    <span class="message-data-level">${levelFounder}</span>
+                                `
+                                ) : null}
+                            </div>
                                 ${repliedToData && html`
                                     <div class="original-message">
                                         <p class="original-message-sender">
@@ -421,12 +417,23 @@ class MessageTemplate extends LitElement {
                                     ` : html``}
                                     <div id="messageContent" class="message">
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        <div class="${((this.isFirstMessage === false && 
+                                            this.isSingleMessageInGroup === true && 
+                                            this.isLastMessageInGroup === true) || 
+                                            (this.isFirstMessage === true && 
+                                            this.isSingleMessageInGroup === false &&
+                                            this.isLastMessageInGroup === true)) 
+                                            ? 'message-data-time'
+                                            : 'message-data-time-hidden'
+                                        }">
+                                            <message-time timestamp=${this.messageObj.timestamp}></message-time>
+                                        </div>
                                     </div>
                             </div>
                                 <chat-menu 
                                 tabindex="0"
                                 class="chat-hover"
-                                style="${this.showBlockAddressIcon ? 'display: block;' : null} ${this.isFirstMessage && 'top: -50px'}"
+                                style="${this.showBlockAddressIcon && 'display: block;'}"
                                 toblockaddress="${this.messageObj.sender}" 
                                 .showPrivateMessageModal=${() => this.showPrivateMessageModal()}
                                 .showBlockUserModal=${() => this.showBlockUserModal()}
@@ -538,9 +545,7 @@ class ChatMenu extends LitElement {
         }
     }
 
-  
-
-    firstUpdated(){
+    firstUpdated () {
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
             twemojiBaseUrl: '/emoji/',
@@ -558,13 +563,9 @@ class ChatMenu extends LitElement {
             reaction:  selection.emoji,
          
            
-        })
- 
-    });
-      
+         })
+        });
     }
-
- 
     
     render() {
         return html` 

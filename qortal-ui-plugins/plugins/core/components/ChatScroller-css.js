@@ -93,19 +93,32 @@ export const chatStyles = css`
 	}
 
 	.message-data-time {
-		color: #a8aab1;
+		color: #888888;
 		font-size: 13px;
-		padding-left: 6px;
-		padding-bottom: 4px;
 		user-select: none;
+		float: right;
+    padding-left: 15px;
+		padding-bottom: 3px;
+    transform: translateY(10px);
 	}
 
-	.message-data-level {
-		color: #03a9f4;
+	.message-data-time-hidden {
+		visibility: hidden;
+		transition: all 0.1s ease-in-out;
+		color: #888888;
 		font-size: 13px;
-		padding-left: 8px;
-		padding-bottom: 4px;
 		user-select: none;
+		float: right;
+    padding-left: 15px;
+		padding-bottom: 3px;
+    transform: translateY(10px);
+	}
+
+	.message-user-info {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		gap: 10px;
 	}
 
 	.chat-bubble-container {
@@ -229,6 +242,10 @@ export const chatStyles = css`
 
 	.message-parent:hover .chat-hover {
 		display: block;
+	}
+
+	.message-parent:hover .message-data-time-hidden {
+		visibility: visible;
 	}
 
 	.chat-hover {

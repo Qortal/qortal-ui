@@ -559,7 +559,7 @@ class ChatPage extends LitElement {
                             <div></div>
                         </div>
                         ` : 
-                        this.renderChatScroller(this._initialMessages)}
+                        this.renderChatScroller()}
                         <mwc-dialog 
                             id="showDialogPublicKey" 
                             ?open=${this.imageFile} 
@@ -900,9 +900,9 @@ class ChatPage extends LitElement {
         if (changedProperties.has('messagesRendered')) { 
             const chatReference1 = this.isReceipient ? 'direct' : 'group';
             const chatReference2 = this._chatId
-            if (chatReference1 && chatReference2) {
-                await messagesCache.setItem(`${chatReference1}-${chatReference2}`, this.messagesRendered);
-            }
+            // if (chatReference1 && chatReference2) {
+            //     await messagesCache.setItem(`${chatReference1}-${chatReference2}`, this.messagesRendered);
+            // }
         }
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
@@ -949,10 +949,9 @@ class ChatPage extends LitElement {
         this.chatEditorPlaceholder = placeholder;
     }
 
-    renderChatScroller(initialMessages) {
+    renderChatScroller() {
         return html`
         <chat-scroller 
-        .initialMessages=${initialMessages} 
         .messages=${this.messagesRendered} 
         .emojiPicker=${this.emojiPicker} 
         .escapeHTML=${escape} 
@@ -1062,8 +1061,7 @@ class ChatPage extends LitElement {
             })
 
             // TODO: Determine number of initial messages by screen height...
-            this._initialMessages = this._messages;
-            this.messagesRendered = this._initialMessages;
+            this.messagesRendered = this._messages;
             this.isLoadingMessages = false;
             setTimeout(() => this.downElementObserver(), 500);
         } else {
@@ -1189,7 +1187,7 @@ class ChatPage extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`
         }
 
         if (messageObj.sender === this.myAddress) {
