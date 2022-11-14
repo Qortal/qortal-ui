@@ -48,32 +48,42 @@ class LevelFounder extends LitElement {
                 font-weight: 400;
             }
 
-            .level {
-                position: relative;
-                display: inline;
-            }
-
             .custom {
                 --paper-tooltip-background: #03a9f4;
                 --paper-tooltip-text-color: #fff;
             }
 
+            .level-img-tooltip {
+                --paper-tooltip-background: #000000;
+                --paper-tooltip-text-color: #fff;
+                --paper-tooltip-delay-in: 300;
+                --paper-tooltip-delay-out: 3000;
+            }
+
+            .message-data {
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+            }
+
+            .message-data-level {
+                width: 20px;
+                height: 20px;
+            }
+
+
             .badge {
                 align-items: center;
-                background: #03a9f4;
+                background: rgb(3, 169, 244);
                 border: 1px solid transparent;
-                border-radius: 99em;
-                color: #fff;
+                border-radius: 50%;
+                color: rgb(255, 255, 255);
                 display: flex;
                 font-size: 10px;
                 font-weight: 400;
                 height: 12px;
+                width: 12px;
                 justify-content: center;
-                line-height: 1;
-                min-width: 12px;
-                position: absolute;
-                left: -16px;
-                top: -12px;
                 cursor: pointer;
             }
         `
@@ -87,7 +97,7 @@ class LevelFounder extends LitElement {
 
     render() {
         return html`
-            <div class="level">
+            <div class="message-data">
                 ${this.renderFounder()}
                 ${this.renderLevel()}
             </div>
@@ -135,21 +145,24 @@ class LevelFounder extends LitElement {
     }
 
     renderFounder() {
-        let adressfounder = this.memberInfo.flags
+        let adressfounder = this.memberInfo.flags;
         if (adressfounder === 1) {
-            return html `
-                <span id="founderTooltip" class="badge">F</span>
-                <paper-tooltip class="custom" for="founderTooltip" position="top">FOUNDER</paper-tooltip>
-            `
+        return html `
+            <span id="founderTooltip" class="badge">F</span>
+            <paper-tooltip class="custom" for="founderTooltip" position="top">FOUNDER</paper-tooltip>
+        `
         } else {
-            return html ``
+            return null;
         }
     }
 
     renderLevel() {
-        let adresslevel = this.memberInfo.level
+        let adresslevel = this.memberInfo.level;
         return html `
-            <span id="levelTooltip">${translate("mintingpage.mchange27")} ${adresslevel}</span>
+            <img id="level-img" src=${`/img/badges/level-${adresslevel}.png`} alt=${`badge-${adresslevel}`} class="message-data-level" />
+            <paper-tooltip class="level-img-tooltip" for="level-img" position="top" >
+            ${translate("mintingpage.mchange27")} ${adresslevel}
+            </paper-tooltip>
         `
     }
 
