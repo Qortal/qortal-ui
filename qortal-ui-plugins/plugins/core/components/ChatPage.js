@@ -1187,7 +1187,7 @@ class ChatPage extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
-            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+            avatarImg = `<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`
         }
 
         if (messageObj.sender === this.myAddress) {

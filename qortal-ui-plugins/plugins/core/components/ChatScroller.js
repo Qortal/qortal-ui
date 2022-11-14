@@ -279,9 +279,9 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`;
         } else {
-            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+            avatarImg = html`<img src='/img/qortal-chat-logo.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
      const createImage = (imageUrl) => {
