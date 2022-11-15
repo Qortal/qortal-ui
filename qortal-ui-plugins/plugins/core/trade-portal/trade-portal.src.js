@@ -72,7 +72,8 @@ class TradePortal extends LitElement {
             tradeAddressResult: { type: Array },
             displayTradeAddress: { type: String },
             displayTradeLevel: { type: String },
-            displayTradeBalance: { type: String }
+            displayTradeBalance: { type: String },
+		qortRatio: {type: Number}
         }
     }
 
@@ -1175,6 +1176,7 @@ class TradePortal extends LitElement {
 					<div style="text-align: center;">
 					    <h2 style="color: var(--black);">${translate("tradepage.tchange33")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("tradepage.tchange40")}</h2>
 					    <h3 style="color: var(--black);">1 <span style="color: #03a9f4;">QORT</span> = ${this.exchangeRateQort()} ${this.listedCoins.get(this.selectedCoin).coinCode}</h3>
+                                  <mwc-button dense unelevated label="${translate("tradepage.tchange47")}" @click=${() => this.setDefaultSellPrice()}></mwc-button>
 					</div>
                               <div></div>
 				</div>
@@ -1300,11 +1302,7 @@ class TradePortal extends LitElement {
 
             use(checkLanguage)
 
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
-            } else {
-                this.theme = 'light'
-            }
+            this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
@@ -1370,11 +1368,7 @@ class TradePortal extends LitElement {
 
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
-        if (checkTheme === 'dark') {
-            this.theme = 'dark';
-        } else {
-            this.theme = 'light';
-        }
+        this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
         document.querySelector('html').setAttribute('theme', this.theme);
     }
 
@@ -1398,19 +1392,29 @@ class TradePortal extends LitElement {
     }
 
     exchangeRateQort() {
-        if (this.listedCoins.get(this.selectedCoin).coinCode === "BTC") {
-            return html`${this.qortbtc}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "LTC") {
-            return html`${this.qortltc}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DOGE") {
-            return html`${this.qortdoge}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "DGB") {
-            return html`${this.qortdgb}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "RVN") {
-            return html`${this.qortrvn}`
-        } else if (this.listedCoins.get(this.selectedCoin).coinCode === "ARRR") {
-            return html`${this.qortarrr}`
+        switch(this.listedCoins.get(this.selectedCoin).coinCode) {
+            case "BTC":
+                this.qortRatio = this.qortbtc
+                break
+            case "LTC":
+                this.qortRatio = this.qortltc
+                break
+            case "DOGE":
+                this.qortRatio = this.qortdoge
+                break
+            case "DGB":
+                this.qortRatio = this.qortdgb
+                break
+            case "RVN":
+                this.qortRatio = this.qortrvn
+                break
+            case "ARRR":
+                this.qortRatio = this.qortarrr
+                break
+            default:
+                break
         }
+        return html`${this.qortRatio}`
     }
 
     exchangeRateForeign() {
@@ -1562,10 +1566,20 @@ class TradePortal extends LitElement {
     }
 
     displayTabContent(tab) {
+        const tabPane = this.shadowRoot.getElementById("tabs-1")
+        tabPane.setAttribute("activeIndex", (tab === 'buy') ? '0': '1')
+
         const tabBuyContent = this.shadowRoot.getElementById('tab-buy-content')
-        const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
         tabBuyContent.style.display = (tab === 'buy') ? 'block' : 'none'
+
+        const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
         tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
+    }
+
+    setDefaultSellPrice() {
+        this.displayTabContent('sell')
+        const tabSellPrice = this.shadowRoot.getElementById('sellPriceInput')
+        tabSellPrice.value = this.qortRatio.isNaN ? 0 : this.qortRatio
     }
 
     async reRenderHistoricTrades() {
@@ -1596,10 +1610,13 @@ class TradePortal extends LitElement {
         if (Number(haveFunds) > Number(buyFunds)) {
             this.buyBtnDisable = false
             this.autoBuyWarning = false
+            this.displayTabContent('buy')
         } else {
             this.buyBtnDisable = true
             this.autoBuyWarning = true
+            this.displayTabContent('buy')
         }
+
     }
 
     async getAllForAddress(tradeAddress) {
