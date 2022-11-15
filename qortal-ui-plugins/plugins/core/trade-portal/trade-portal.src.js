@@ -54,7 +54,13 @@ class TradePortal extends LitElement {
             dgbqort: { type: Number },
             rvnqort: { type: Number },
             arrrqort: { type: Number },
-			qortRatio: {type: Number}
+			qortRatio: {type: Number},
+			tradeInfoAccountName: { type: String },
+			tradeImageUrl: { type: String },
+			tradeAddressResult: { type: Array },
+			displayTradeAddress: { type: String },
+			displayTradeLevel: { type: String },
+			displayTradeBalance: { type: String }
         }
     }
 
