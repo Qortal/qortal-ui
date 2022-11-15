@@ -308,7 +308,20 @@
       "tchange30":"Neuspešna provera salda. Pokušajte ponovo!",
       "tchange31":"PRODATO",
       "tchange32":"KUPLJENO",
-      "tchange33":"Kurs"
+      "tchange33":"Prosek",
+      "tchange34":"Iznos ne može biti 0",
+      "tchange35":"Cena ne može biti 0",
+      "tchange36":"NA ČEKANJU AUTOMATSKA KUPOVINA",
+      "tchange37":"Nije pronađena narudžbina za automatsku kupovinu!",
+      "tchange38":"DODATI",
+      "tchange39":"AUTO KUPOVINA",
+      "tchange40":"Cena",
+      "tchange41":"Narudžbina za automatsku kupovinu je uspešno uklonjena!",
+      "tchange42":"TRŽIŠTE OTVORENI NALOG ZA PRODAJU",
+      "tchange43":"MOJA ISTORIJA KUPOVINE",
+      "tchange44":"Narudžbina za automatsku kupovinu je uspešno dodata!",
+      "tchange45":"AUTO KUPI SA",
+      "tchange46":"AUTO BUI"
    },
    "rewardsharepage":{
       "rchange1":"Udeo nagrade",
@@ -674,5 +687,14 @@
       "schange19":"Kopiraj sponzorski ključ",
       "schange20":"Stvaranje odnosa",
       "schange21":"Uklonite sponzorski ključ"
+   },
+   "explorerpage":{
+      "exp1":"Adresa ili ime za pretragu",
+      "exp2":"Stanje na računu",
+      "exp3":"Više informacija",
+      "exp4":"Adresa ili ime nisu pronađeni!",
+      "exp5":"Imajte na umu da registrovana imena razlikuju velika i mala slova.",
+      "exp6":"Osnivač",
+      "exp7":"Info"
    }
 }

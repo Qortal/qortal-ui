@@ -308,7 +308,20 @@
       "tchange30":"加載餘額失敗。請重新嘗試!",
       "tchange31":"已賣出",
       "tchange32":"已買入",
-      "tchange33":"匯率"
+      "tchange33":"平均",
+      "tchange34":"金額不能為0",
+      "tchange35":"價格不能為0",
+      "tchange36":"待定汽車購買",
+      "tchange37":"未找到自動購買訂單！",
+      "tchange38":"添加",
+      "tchange39":"自動購買訂單",
+      "tchange40":"價格",
+      "tchange41":"成功刪除自動購買訂單！",
+      "tchange42":"開市賣單",
+      "tchange43":"我的購買歷史",
+      "tchange44":"成功添加自動買單！",
+      "tchange45":"自動購買",
+      "tchange46":"自動購買"
    },
    "rewardsharepage":{
       "rchange1":"鑄幣密鑰",
@@ -674,5 +687,14 @@
       "schange19":"複製贊助密鑰",
       "schange20":"建立關係",
       "schange21":"刪除贊助密鑰"
+   },
+   "explorerpage":{
+      "exp1":"要搜索的地址或名稱",
+      "exp2":"賬戶餘額",
+      "exp3":"更多信息",
+      "exp4":"找不到地址或姓名！",
+      "exp5":"請注意，註冊名稱區分大小寫。",
+      "exp6":"創始人",
+      "exp7":"信息"
    }
 }

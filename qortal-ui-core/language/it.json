@@ -308,7 +308,20 @@
       "tchange30":"Impossibile recuperare il saldo. Riprova!",
       "tchange31":"VENDUTO",
       "tchange32":"ACQUISTATO",
-      "tchange33":"Tasso di cambio"
+      "tchange33":"Media",
+      "tchange34":"L'importo non può essere 0",
+      "tchange35":"Il prezzo non può essere 0",
+      "tchange36":"ACQUISTO AUTO IN ATTESA",
+      "tchange37":"Nessun ordine di acquisto automatico trovato!",
+      "tchange38":"INSERISCI",
+      "tchange39":"ORDINE DI ACQUISTO AUTOMATICO",
+      "tchange40":"Prezzo",
+      "tchange41":"Ordine di acquisto automatico rimosso con successo!",
+      "tchange42":"MERCATO APERTO ORDINI DI VENDITA",
+      "tchange43":"LA MIA STORIA DI ACQUISTO",
+      "tchange44":"Ordine di acquisto automatico aggiunto con successo!",
+      "tchange45":"ACQUISTA AUTO CON",
+      "tchange46":"ACQUISTO AUTO"
    },
    "rewardsharepage":{
       "rchange1":"Quote di ricompensa",
@@ -674,5 +687,14 @@
       "schange19":"Copia la chiave di sponsorizzazione",
       "schange20":"Creare relazione",
       "schange21":"Rimuovi la chiave di sponsorizzazione"
+   },
+   "explorerpage":{
+      "exp1":"Indirizzo o nome da cercare",
+      "exp2":"Saldo del conto",
+      "exp3":"Ulteriori informazioni",
+      "exp4":"Indirizzo o nome non trovato!",
+      "exp5":"Si noti che i nomi registrati fanno distinzione tra maiuscole e minuscole.",
+      "exp6":"Fondatore",
+      "exp7":"Informazioni"
    }
 }

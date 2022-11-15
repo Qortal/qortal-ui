@@ -308,7 +308,20 @@
       "tchange30":"Guthaben konnte nicht abgerufen werden. Versuchen Sie es nochmal!",
       "tchange31":"VERKAUFT",
       "tchange32":"GEKAUFT",
-      "tchange33":"Tauschrate"
+      "tchange33":"Durchschnitt",
+      "tchange34":"Betrag darf nicht 0 sein",
+      "tchange35":"Der Preis darf nicht 0 sein",
+      "tchange36":"AUSSTEHENDER AUTOKAUF",
+      "tchange37":"Keine automatische Kaufbestellung gefunden!",
+      "tchange38":"HINZUFÜGEN",
+      "tchange39":"AUTO KAUFAUFTRAG",
+      "tchange40":"Preis",
+      "tchange41":"Automatischer Kaufauftrag erfolgreich entfernt!",
+      "tchange42":"MARKET OFFENE VERKAUFSAUFTRÄGE",
+      "tchange43":"MEINE KAUFGESCHICHTE",
+      "tchange44":"Automatischer Kaufauftrag erfolgreich hinzugefügt!",
+      "tchange45":"AUTO KAUFEN MIT",
+      "tchange46":"AUTOKAUF"
    },
    "rewardsharepage":{
       "rchange1":"Belohnungsanteile",
@@ -674,5 +687,14 @@
       "schange19":"Sponsoring-Schlüssel kopieren",
       "schange20":"Beziehung schaffen",
       "schange21":"Sponsoring-Schlüssel entfernen"
+   },
+   "explorerpage":{
+      "exp1":"Adresse oder Name zum Suchen",
+      "exp2":"Kontostand",
+      "exp3":"Mehr Info",
+      "exp4":"Adresse oder Name nicht gefunden !",
+      "exp5":"Beachten Sie, dass bei registrierten Namen zwischen Groß- und Kleinschreibung unterschieden wird.",
+      "exp6":"Gründer",
+      "exp7":"Info"
    }
 }

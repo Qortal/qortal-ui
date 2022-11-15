@@ -308,7 +308,20 @@
       "tchange30":"Kunne ikke hente saldoen. Prøv igjen!",
       "tchange31":"SOLGT",
       "tchange32":"KJØPT",
-      "tchange33":"Vekslingskurs"
+      "tchange33":"Gjennomsnitt",
+      "tchange34":"Beløpet kan ikke være 0",
+      "tchange35":"Prisen kan ikke være 0",
+      "tchange36":"VENTENDE AUTOKJØP",
+      "tchange37":"Ingen autokjøpsordre funnet!",
+      "tchange38":"LEGGE TIL",
+      "tchange39":"AUTO KJØP ORDRE",
+      "tchange40":"Pris",
+      "tchange41":"Fjernet automatisk kjøpsordre!",
+      "tchange42":"MARKED ÅPNE SALGSORDRE",
+      "tchange43":"MIN KJØPSHISTORIE",
+      "tchange44":"Autokjøpsordre er lagt til!",
+      "tchange45":"AUTOKJØP MED",
+      "tchange46":"AUTOKJØP"
    },
    "rewardsharepage":{
       "rchange1":"Belønningsdel",
@@ -674,5 +687,14 @@
       "schange19":"Kopier sponsornøkkel",
       "schange20":"Skaper forhold",
       "schange21":"Fjern sponsornøkkel"
+   },
+   "explorerpage":{
+      "exp1":"Adresse eller navn for å søke",
+      "exp2":"Saldo",
+      "exp3":"Mer informasjon",
+      "exp4":"Finner ikke adresse eller navn!",
+      "exp5":"Merk at registrerte navn skiller mellom store og små bokstaver.",
+      "exp6":"Grunnlegger",
+      "exp7":"Info"
    }
 }

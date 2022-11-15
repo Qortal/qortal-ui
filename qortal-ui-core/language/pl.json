@@ -308,7 +308,20 @@
       "tchange30":"Nie udało się pobrać salda. Spróbuj ponownie!",
       "tchange31":"SPRZEDANY",
       "tchange32":"KUPIONY",
-      "tchange33":"Kurs wymiany"
+      "tchange33":"Przeciętny",
+      "tchange34":"Kwota nie może wynosić 0",
+      "tchange35":"Cena nie może wynosić 0",
+      "tchange36":"OCZEKUJĄCY NA AUTOMATYCZNY KUP",
+      "tchange37":"Nie znaleziono automatycznego zamówienia zakupu!",
+      "tchange38":"DODAJ",
+      "tchange39":"AUTOMATYCZNE ZAMÓWIENIE",
+      "tchange40":"Cena £",
+      "tchange41":"Pomyślnie usunięto automatyczne zamówienie zakupu!",
+      "tchange42":"RYNEK OTWARTYCH ZLECEŃ SPRZEDAŻY",
+      "tchange43":"MOJA HISTORIA ZAKUPÓW",
+      "tchange44":"Pomyślnie dodano automatyczne zamówienie zakupu!",
+      "tchange45":"AUTO KUP Z",
+      "tchange46":"AUTO KUP"
    },
    "rewardsharepage":{
       "rchange1":"Podział nagród",
@@ -674,5 +687,14 @@
       "schange19":"Kopiuj klucz sponsorski",
       "schange20":"Tworzenie relacji",
       "schange21":"Usuń klucz sponsorsk"
+   },
+   "explorerpage":{
+      "exp1":"Adres lub nazwa do wyszukania",
+      "exp2":"Bilans konta",
+      "exp3":"Więcej informacji",
+      "exp4":"Nie znaleziono adresu lub nazwy!",
+      "exp5":"Należy pamiętać, że w zarejestrowanych nazwach rozróżniana jest wielkość liter.",
+      "exp6":"Założyciel",
+      "exp7":"Informacje"
    }
 }

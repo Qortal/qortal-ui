@@ -308,7 +308,20 @@
       "tchange30":"Failed to Fetch Balance. Try again!",
       "tchange31":"SOLD",
       "tchange32":"BOUGHT",
-      "tchange33":"Exchange Rate"
+      "tchange33":"Average",
+      "tchange34":"Amount can not be 0",
+      "tchange35":"Price can not be 0",
+      "tchange36":"PENDING AUTO BUY",
+      "tchange37":"No auto buy order found !",
+      "tchange38":"ADD",
+      "tchange39":"AUTO BUY ORDER",
+      "tchange40":"Price",
+      "tchange41":"Successfully removed auto buy order!",
+      "tchange42":"MARKET OPEN SELL ORDERS",
+      "tchange43":"MY BUY HISTORY",
+      "tchange44":"Successfully added auto buy order!",
+      "tchange45":"AUTO BUY WITH",
+      "tchange46":"AUTO BUY"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",
@@ -674,5 +687,14 @@
       "schange19":"Copy Sponsorship Key",
       "schange20":"Creating relationship",
       "schange21":"Remove Sponsorship Key"
+   },
+   "explorerpage":{
+      "exp1":"Address or name to search",
+      "exp2":"Account Balance",
+      "exp3":"More Info",
+      "exp4":"Address or Name not found !",
+      "exp5":"Note that registered names are case-sensitive.",
+      "exp6":"Founder",
+      "exp7":"Info"
    }
 }

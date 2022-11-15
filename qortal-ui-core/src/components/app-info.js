@@ -114,7 +114,7 @@ class AppInfo extends connect(store)(LitElement) {
         setInterval(() => {
             this.getNodeInfo()
             this.getCoreInfo()
-        }, 60000)
+        }, 30000)
     }
 
     async getNodeInfo() {

@@ -308,7 +308,20 @@
       "tchange30":"Neuspješno dohvatiti stanje. Pokušajte ponovno!",
       "tchange31":"PRODANO",
       "tchange32":"KUPLJENO",
-      "tchange33":"Tečaj"
+      "tchange33":"Prosjek",
+      "tchange34":"Iznos ne može biti 0",
+      "tchange35":"Cijena ne može biti 0",
+      "tchange36":"ČEKA SE AUTO KUPNJA",
+      "tchange37":"Nije pronađena automatska narudžba za kupnju!",
+      "tchange38":"DODATI",
+      "tchange39":"AUTOMATSKA NARUDŽBA",
+      "tchange40":"Cijena",
+      "tchange41":"Uspješno uklonjena automatska narudžba za kupnju!",
+      "tchange42":"TRŽIŠNI OTVORENI PRODAJNI NALOGI",
+      "tchange43":"MOJA POVIJEST KUPNJE",
+      "tchange44":"Uspješno dodana automatska narudžba za kupnju!",
+      "tchange45":"AUTO KUPITE SA",
+      "tchange46":"AUTO OTKUP"
    },
    "rewardsharepage":{
       "rchange1":"Nagradni udio (Rewardshares)",
@@ -674,5 +687,14 @@
       "schange19":"Kopiraj ključ sponzorstva",
       "schange20":"Stvaranje odnosa",
       "schange21":"Ukloni sponzorski ključ"
+   },
+   "explorerpage":{
+      "exp1":"Adresa ili ime za pretraživanje",
+      "exp2":"Stanje na računu",
+      "exp3":"Više informacija",
+      "exp4":"Adresa ili ime nisu pronađeni!",
+      "exp5":"Imajte na umu da su registrirana imena osjetljiva na velika i mala slova.",
+      "exp6":"Osnivač",
+      "exp7":"Info"
    }
 }

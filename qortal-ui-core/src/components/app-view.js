@@ -7,6 +7,9 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@vaadin/text-field'
 
 import './wallet-profile.js'
 import './app-info.js'
@@ -16,12 +19,14 @@ import './qort-theme-toggle.js'
 import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
+import './user-info-view/user-info-view.js'
 
 class AppView extends connect(store)(LitElement) {
     static get properties() {
         return {
             config: { type: Object },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            searchContentString: { type: String }
         }
     }
 
@@ -29,9 +34,17 @@ class AppView extends connect(store)(LitElement) {
         return [
             css`
                 * {
-		    --mdc-theme-primary: rgb(3, 169, 244);
-		    --mdc-theme-secondary: var(--mdc-theme-primary);
-		    --mdc-theme-error: rgb(255, 89, 89);
+		        --mdc-theme-primary: rgb(3, 169, 244);
+		        --mdc-theme-secondary: var(--mdc-theme-primary);
+		        --mdc-theme-error: rgb(255, 89, 89);
+                    --lumo-primary-text-color: rgb(0, 167, 245);
+                    --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
+                    --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                    --lumo-primary-color: hsl(199, 100%, 48%);
+                    --lumo-base-color: var(--white);
+                    --lumo-body-text-color: var(--black);
+                    --lumo-secondary-text-color: var(--sectxt);
+                    --lumo-contrast-60pct: var(--vdicon);
                 }
 
                 :host {
@@ -55,6 +68,12 @@ class AppView extends connect(store)(LitElement) {
                     background: var(--sidetopbar);
                     color: var(--black);
                     border-top: var(--border);
+                }
+
+                .search {
+                    display: inline;
+                    width: 50%;
+                    align-items: center;
                 }
 
                 #sideBar {
@@ -89,6 +108,7 @@ class AppView extends connect(store)(LitElement) {
 
     constructor() {
         super()
+        this.searchContentString = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -115,6 +135,19 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+	                      <div class="search">
+	                          <vaadin-text-field
+                                    style="width: 375px"
+                                    theme="medium"
+                                    id="searchContent"
+                                    placeholder="${translate("explorerpage.exp1")}"
+                                    value="${this.searchContentString}"
+                                    @keydown="${this.searchKeyListener}"
+                                    clear-button-visible
+                                    >
+                                </vaadin-text-field>
+	                          <paper-icon-button icon="icons:search" @click="${() => this.openUserInfo()}"></paper-icon-button>
+	                      </div>
                             <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
@@ -138,17 +171,34 @@ class AppView extends connect(store)(LitElement) {
                     <show-plugin></show-plugin>
                 </app-header-layout>
             </app-drawer-layout>
+            <user-info-view></user-info-view>
             <user-settings></user-settings>
             <logout-view></logout-view>
         `
     }
 
     firstUpdated() {
-        // ...
     }
 
     stateChanged(state) {
         this.config = state.config
+    }
+
+    searchKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.openUserInfo()
+        }
+    }
+
+    clearSearchField() {
+        this.shadowRoot.getElementById('searchContent').value = this.searchContentString
+    }
+
+    openUserInfo() {
+        let sendInfoAddress = this.shadowRoot.getElementById('searchContent').value
+        const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')
+        infoDialog.openUserInfo(sendInfoAddress)
+        this.clearSearchField()
     }
 
     openSettings() {

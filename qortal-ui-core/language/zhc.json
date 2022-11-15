@@ -308,7 +308,20 @@
       "tchange30":"加载余额失败。请重新尝试!",
       "tchange31":"已卖出",
       "tchange32":"已买入",
-      "tchange33":"汇率"
+      "tchange33":"平均",
+      "tchange34":"金额不能为0",
+      "tchange35":"价格不能为0",
+      "tchange36":"待定汽车购买",
+      "tchange37":"未找到自动购买订单！",
+      "tchange38":"添加",
+      "tchange39":"自动购买订单",
+      "tchange40":"价格",
+      "tchange41":"成功删除自动购买订单！",
+      "tchange42":"开市卖单",
+      "tchange43":"我的购买历史",
+      "tchange44":"成功添加自动买单！",
+      "tchange45":"自动购买",
+      "tchange46":"自动购买"
    },
    "rewardsharepage":{
       "rchange1":"铸币密钥",
@@ -674,5 +687,14 @@
       "schange19":"复制赞助密钥",
       "schange20":"建立关系",
       "schange21":"删除赞助密钥"
+   },
+   "explorerpage":{
+      "exp1":"要搜索的地址或名称",
+      "exp2":"账户余额",
+      "exp3":"更多信息",
+      "exp4":"找不到地址或姓名！",
+      "exp5":"请注意，注册名称区分大小写。",
+      "exp6":"创始人",
+      "exp7":"信息"
    }
 }

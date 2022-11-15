@@ -308,7 +308,20 @@
       "tchange30":"Fallo en la obtención del saldo. Inténtelo de nuevo!",
       "tchange31":"VENDIDO",
       "tchange32":"COMPRADO",
-      "tchange33":"Tipo de cambio"
+      "tchange33":"Promedio",
+      "tchange34":"La cantidad no puede ser 0",
+      "tchange35":"El precio no puede ser 0",
+      "tchange36":"AUTO COMPRA PENDIENTE",
+      "tchange37":"No se ha encontrado ninguna orden de compra automática!",
+      "tchange38":"AGREGAR",
+      "tchange39":"AUTO ORDEN DE COMPRA",
+      "tchange40":"Precio",
+      "tchange41":"Orden de compra automática eliminada con éxito!",
+      "tchange42":"MERCADO ABIERTO ÓRDENES DE VENTA",
+      "tchange43":"MI HISTORIAL DE COMPRAS",
+      "tchange44":"Orden de compra automática agregada con éxito!",
+      "tchange45":"AUTO COMPRAR CON",
+      "tchange46":"COMPRA AUTOMÁTICA"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",
@@ -674,5 +687,14 @@
       "schange19":"Copiar clave de patrocinio",
       "schange20":"Creando relación",
       "schange21":"Eliminar clave de patrocinio"
+   },
+   "explorerpage":{
+      "exp1":"Dirección o nombre a buscar",
+      "exp2":"Saldo de la cuenta",
+      "exp3":"Más información",
+      "exp4":"No se encontró la dirección o el nombre!",
+      "exp5":"Tenga en cuenta que los nombres registrados distinguen entre mayúsculas y minúsculas.",
+      "exp6":"Fundador",
+      "exp7":"Información"
    }
 }

@@ -308,7 +308,20 @@
       "tchange30":"Nem sikerült lekérni az egyenleget. Próbáld újra!",
       "tchange31":"ELADOTT",
       "tchange32":"VÁSÁROLT",
-      "tchange33":"Árfolyam"
+      "tchange33":"Átlagos",
+      "tchange34":"Az összeg nem lehet 0",
+      "tchange35":"Az ár nem lehet 0",
+      "tchange36":"FÜGGŐBEN AUTOMATIKUS VÁSÁRLÁS",
+      "tchange37":"Nem található automatikus vásárlási rendelés!",
+      "tchange38":"HOZZÁAD",
+      "tchange39":"AUTOMATIKUS VÁSÁRLÁSI MEGRENDELÉS",
+      "tchange40":"Ár",
+      "tchange41":"Az automatikus vásárlási rendelés sikeresen eltávolítva!",
+      "tchange42":"NYÍLT PIACI ELADÁSI MEGRENDELÉSEK",
+      "tchange43":"VÁSÁRLÁSI TÖRTÉNETEM",
+      "tchange44":"Az automatikus vásárlási rendelés sikeresen hozzáadva!",
+      "tchange45":"AUTOMATIKUS VÁSÁRLÁS",
+      "tchange46":"AUTOMATIKUS VÁSÁRLÁS"
    },
    "rewardsharepage":{
       "rchange1":"Jutalommegosztások",
@@ -674,5 +687,14 @@
       "schange19":"Szponzori kulcs másolása",
       "schange20":"Kapcsolatteremtés",
       "schange21":"Szponzori kulcs távolítsa"
+   },
+   "explorerpage":{
+      "exp1":"Keresendő cím vagy név",
+      "exp2":"Számlaegyenleg",
+      "exp3":"Több információ",
+      "exp4":"Cím vagy név nem található!",
+      "exp5":"Vegye figyelembe, hogy a regisztrált nevek megkülönböztetik a kis- és nagybetűket.",
+      "exp6":"Alapító",
+      "exp7":"Info"
    }
 }
