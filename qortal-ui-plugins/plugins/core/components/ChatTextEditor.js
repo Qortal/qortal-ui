@@ -2,6 +2,7 @@ import { LitElement, html, css } from "lit"
 import { render } from "lit/html.js"
 import { escape, unescape } from 'html-escaper';
 import { EmojiPicker } from 'emoji-picker-js';
+import { inputKeyCodes } from '../../utils/keyCodes.js'
 
 
 class ChatTextEditor extends LitElement {
@@ -17,7 +18,8 @@ class ChatTextEditor extends LitElement {
             editedMessageObj: {type: Object},
             chatEditor: {type: Object},
             setChatEditor: {attribute: false},
-            iframeId: {type: String}
+            iframeId: {type: String},
+            hasGlobalEvents: {type: Boolean}
 		}
 	}
 
@@ -126,6 +128,9 @@ class ChatTextEditor extends LitElement {
         this.isLoading = false
         this.getMessageSize = this.getMessageSize.bind(this)
         this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
+        this.addGlobalEventListener = this.addGlobalEventListener.bind(this)
+        this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
+        this.initialChat = this.initialChat.bind(this)
         this.iframeHeight = 42
         
 	}
@@ -202,23 +207,40 @@ class ChatTextEditor extends LitElement {
 		`
 	}
 
+    initialChat(e) {
+        console.log('hello initial', this.chatEditor)
+        if (!this.chatEditor?.contentDiv.matches(':focus')) {
+            // WARNING: Deprecated methods from KeyBoard Event
+            if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
+                this.chatEditor.insertText('&nbsp;');
+            } else if (inputKeyCodes.includes(e.keyCode)) {
+                this.chatEditor.insertText(e.key);
+                return this.chatEditor.focus();
+            } else {
+                return this.chatEditor.focus();
+            }
+        }
+    }
+
+    addGlobalEventListener(){
+        document.addEventListener('keydown', this.initialChat);
+    }
+
+    removeGlobalEventListener(){
+        document.removeEventListener('keydown', this.initialChat);
+    }
+
 	async firstUpdated() {
+        console.log('this.hasGlobalEvents', this.hasGlobalEvents)
+        if(this.hasGlobalEvents){
+            this.addGlobalEventListener()
+        }
+    
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);
-        document.addEventListener('keydown', (e) => {
-            if (!this.chatEditor.content.body.matches(':focus')) {
-                // WARNING: Deprecated methods from KeyBoard Event
-                if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-                    this.chatEditor.insertText('&nbsp;');
-                } else if (inputKeyCodes.includes(e.keyCode)) {
-                    this.chatEditor.insertText(e.key);
-                    return this.chatEditor.focus();
-                } else {
-                    return this.chatEditor.focus();
-                }
-            }
-        });
+        console.log('test', this.chatMessageInput )
+       
         
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
@@ -227,10 +249,13 @@ class ChatTextEditor extends LitElement {
             showVariants: false,
             showAnimation: false,
             position: 'top-start',
-            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px',
+            zIndex: 100
+
         });
 
         this.emojiPicker.on('emoji', selection => {
+            console.log('hello selection')
             const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
             this.chatEditor.insertEmoji(emojiHtmlString);
         });
@@ -330,7 +355,7 @@ class ChatTextEditor extends LitElement {
             ChatEditor.prototype.getValue = function () {
                 const editor = this;
 
-                if (editor.content) {
+                if (editor.contentDiv) {
                     return editor.contentDiv.innerHTML;
                 }
             };
@@ -404,6 +429,10 @@ class ChatTextEditor extends LitElement {
                 editor.focus();
             };
 
+            ChatEditor.prototype.getMirrorElement = function (){
+                return editor.mirror
+            }
+
             ChatEditor.prototype.disable = function () {
                 const editor = this;
 
@@ -467,10 +496,12 @@ class ChatTextEditor extends LitElement {
                 const filteredValue = chatInputValue.replace(/<img.*?alt=".*?/g, '').replace(/".?src=.*?>/g, '');
 
                 let unescapedValue = editorConfig.unescape(filteredValue);
+                console.log({unescapedValue})
                 editor.mirror.value = unescapedValue;
             };
 
             ChatEditor.prototype.listenChanges =  function () {
+                
                 const editor = this;
 
                 const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
@@ -535,8 +566,17 @@ class ChatTextEditor extends LitElement {
                                 editor.updateMirror();
 
                                 if (editor.state() === 'false') return false;
-
-                                editorConfig.sendFunc();
+                                if(editorConfig.iframeId === 'newChat'){
+                                    editorConfig.sendFunc(
+                                        {
+                                            type: 'image',
+                                            imageFile:  editorConfig.imageFile,
+                                        }
+                                    );
+                                } else {
+                                    editorConfig.sendFunc();
+                                }
+                                
                                 e.preventDefault();
                                 return false;
                             }
@@ -586,13 +626,13 @@ class ChatTextEditor extends LitElement {
 
             ChatEditor.prototype.remove = function () {
                 const editor = this;
-                editor.content.body
                 var old_element = editor.content.body
                 var new_element = old_element.cloneNode(true);
                 editor.content.body.parentNode.replaceChild(new_element, old_element);
                 while (editor.content.body.firstChild) {
                     editor.content.body.removeChild(editor.content.body.lastChild);
                   }
+
             };
 
             ChatEditor.prototype.init = function () {
@@ -613,6 +653,7 @@ editor.content.body.appendChild(elemDiv);
                 editor.contentDiv =  editor.frame.contentDocument.body.firstChild
                 editor.styles();
                 editor.listenChanges();
+                
             };
 
 
@@ -635,7 +676,10 @@ editor.content.body.appendChild(elemDiv);
             imageFile: this.imageFile,
             requestUpdate: this.requestUpdate,
             insertImage: this.insertImage,
-            chatMessageSize: this.chatMessageSize
+            chatMessageSize: this.chatMessageSize,
+            addGlobalEventListener: this.addGlobalEventListener,
+            removeGlobalEventListener: this.removeGlobalEventListener,
+            iframeId: this.iframeId
         };
         console.log('after')
         const newChat = new ChatEditor(editorConfig)

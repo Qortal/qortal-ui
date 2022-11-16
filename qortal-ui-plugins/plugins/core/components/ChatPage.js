@@ -62,7 +62,8 @@ class ChatPage extends LitElement {
             imageFile: {type: Object},
             isUploadingImage: {type: Boolean},
             caption: { type: String },
-            chatEditor: {type:  Object}
+            chatEditor: {type:  Object},
+            chatEditorNewChat: {type: Object}
         }
     }
 
@@ -72,6 +73,7 @@ class ChatPage extends LitElement {
             /* Styling mdc dialog native props */
             --mdc-dialog-min-width: 300px;
             --mdc-dialog-box-shadow:rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+            --mdc-dialog-z-index: 5
         }
 
         html {
@@ -230,6 +232,9 @@ class ChatPage extends LitElement {
             height: auto;
             overflow: hidden;
             justify-content: center;
+            background: white;
+    padding: 5px;
+    border-radius: 1px;
         }
 
         .chatbar-caption {
@@ -520,13 +525,14 @@ class ChatPage extends LitElement {
                         ` : 
                         this.renderChatScroller(this._initialMessages)}
                         <mwc-dialog 
+                        
                             id="showDialogPublicKey" 
                             ?open=${this.imageFile} 
+                         
                             @closed=${() => {
-                                // this.changeMsgInput('_chatEditorDOM')
-                                this.chatEditor.enable();
-                                this.caption = "";
                                 this.imageFile = null;
+                                this.chatEditor.enable()
+                                
                         }}>
                             <div class="dialog-header"></div>
                             <div class="dialog-container mdc-dialog mdc-dialog__surface">
@@ -535,28 +541,26 @@ class ChatPage extends LitElement {
                                 `}
                                 <!-- Replace by reusable chatbar component -->
                                     <div class="caption-container">
-                                    <iframe  
+                                    <chat-text-editor
+                        iframeId="newChat"
+                        ?hasGlobalEvents=${false}
+                        placeholder=${this.chatEditorPlaceholder}
+                        ._sendMessage=${this._sendMessage}
+                                .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
+                                .chatEditor=${this.chatEditorNewChat}
+            .imageFile=${this.imageFile}
+            .insertImage=${this.insertImage}
+ 
+            .editedMessageObj=${this.editedMessageObj}
+
+            ?isLoading=${this.isLoading}
+            ?isLoadingMessages=${this.isLoadingMessages}
+                        ></chat-text-editor>
+                                    <!-- <iframe  
                                 }}" id="newChat"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
-                                </iframe>
+                                </iframe> -->
                                        
-                                        <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
-                                            ${this.isLoading === false ? html`
-                                                <img 
-                                                src="/img/qchat-send-message-icon.svg" 
-                                                alt="send-icon" 
-                                                class="send-icon" 
-                                                @click=${()=> {
-                                                    this._sendMessage({
-                                                        type: 'image',
-                                                        imageFile:  this.imageFile,
-                                                        caption: this.caption,
-                                                    })
-                                                }} />
-                                            ` : 
-                                            html`
-                                                <paper-spinner-lite active></paper-spinner-lite>
-                                        `}
-                                        </div>
+                                   
                                     </div>
                                     ${this.chatMessageSize >= 750 ? 
                                     html`
@@ -585,7 +589,6 @@ class ChatPage extends LitElement {
                                     this._sendMessage({
                                         type: 'image',
                                         imageFile:  this.imageFile,
-                                        caption: this.caption,
                                     })
                                 }}
                             >
@@ -631,6 +634,7 @@ class ChatPage extends LitElement {
                             `}
                         <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
                         <chat-text-editor
+                        ?hasGlobalEvents=${true}
                         iframeId="_chatEditorDOM"
                         placeholder=${this.chatEditorPlaceholder}
                         ._sendMessage=${this._sendMessage}
@@ -682,10 +686,15 @@ class ChatPage extends LitElement {
         this.chatEditor = editor
     }
 
+    setChatEditorNewChat(editor){
+        this.chatEditorNewChat = editor
+    }
+
     insertImage(file){
         
         if(file.type.includes('image')){
             this.imageFile = file
+            this.chatEditor.disable()
             // this.changeMsgInput('newChat')
             // this.initChatEditor();
             // this.chatEditor.disable();
@@ -707,19 +716,19 @@ class ChatPage extends LitElement {
        
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
-        document.addEventListener('keydown', (e) => {
-            if (!this.chatEditor.content.body.matches(':focus')) {
-                // WARNING: Deprecated methods from KeyBoard Event
-                if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-                    this.chatEditor.insertText('&nbsp;');
-                } else if (inputKeyCodes.includes(e.keyCode)) {
-                    this.chatEditor.insertText(e.key);
-                    return this.chatEditor.focus();
-                } else {
-                    return this.chatEditor.focus();
-                }
-            }
-        });
+        // document.addEventListener('keydown', (e) => {
+        //     if (!this.chatEditor.content.body.matches(':focus')) {
+        //         // WARNING: Deprecated methods from KeyBoard Event
+        //         if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
+        //             this.chatEditor.insertText('&nbsp;');
+        //         } else if (inputKeyCodes.includes(e.keyCode)) {
+        //             this.chatEditor.insertText(e.key);
+        //             return this.chatEditor.focus();
+        //         } else {
+        //             return this.chatEditor.focus();
+        //         }
+        //     }
+        // });
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -793,21 +802,15 @@ class ChatPage extends LitElement {
 
 
     async updated(changedProperties) {
-        if (changedProperties.has('messagesRendered')) { 
-            const chatReference1 = this.isReceipient ? 'direct' : 'group';
-            const chatReference2 = this._chatId
-            if (chatReference1 && chatReference2) {
-                await messagesCache.setItem(`${chatReference1}-${chatReference2}`, this.messagesRendered);
-            }
-        }
+    
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
      
-        if(changedProperties && changedProperties.has("imageFile")) {
-            this.chatbarCaption = this.shadowRoot.querySelector('.chatbar-caption');
-            this.chatbarCaption.focus();
-        }
+        // if(changedProperties && changedProperties.has("imageFile")) {
+        //     this.chatbarCaption = this.shadowRoot.querySelector('.chatbar-caption');
+        //     this.chatbarCaption.focus();
+        // }
     }
 
     onCaptionChange(e) {
@@ -1280,6 +1283,7 @@ class ChatPage extends LitElement {
     }
 
    async _sendMessage(outSideMsg) {
+
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
         // need original message signature 
@@ -1290,9 +1294,8 @@ class ChatPage extends LitElement {
        
         this.isLoading = true;
         this.chatEditor.disable();
-        const textInput = this.shadowRoot.querySelector('chat-text-editor').shadowRoot.getElementById('messageBox');
-        console.log({textInput})
-        const messageText = textInput.value;
+        this.chatEditorNewChat.disable()
+        const messageText = this.chatEditor.mirror.value;
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
@@ -1378,6 +1381,7 @@ class ChatPage extends LitElement {
                 console.error(error)
                 this.isLoading = false;
                 this.chatEditor.enable();
+                this.chatEditorNewChat.enable()
                 return
             }
                 typeMessage = 'edit';
@@ -1411,18 +1415,20 @@ class ChatPage extends LitElement {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
                 this.chatEditor.enable();
+                this.chatEditorNewChat.enable()
                 return;
             }
+            const image = this.imageFile
             const id = this.uid();
             const identifier = `qchat_${id}`;
             let compressedFile = '';
             await new Promise(resolve => {
-                new Compressor( outSideMsg.imageFile, {
+                new Compressor( image, {
                     quality: .6,
                     maxWidth: 500,
                     success(result){
                         const file = new File([result], "name", {
-                            type: outSideMsg.imageFile.type
+                            type: image.type
                         });
                         compressedFile = file
                         resolve()
@@ -1438,6 +1444,7 @@ class ChatPage extends LitElement {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
                 this.chatEditor.enable();
+                this.chatEditorNewChat.enable()
                 return;
             }
         
@@ -1459,10 +1466,15 @@ class ChatPage extends LitElement {
                     console.error(error)
                     this.isLoading = false;
                     this.chatEditor.enable();
+                    this.chatEditorNewChat.enable()
                     return
                 }
+                const messageTextWithImage = this.chatEditorNewChat.mirror.value;
+                // Format and Sanitize Message
+                const sanitizedMessageWithImage = messageTextWithImage.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
+                const trimmedMessageWithImage = sanitizedMessageWithImage.trim();
                 const messageObject = {
-                    messageText: outSideMsg.caption,
+                    messageText: trimmedMessageWithImage,
                     images: [{
                             service: "IMAGE",
                             name: userName,
@@ -1529,9 +1541,11 @@ class ChatPage extends LitElement {
         } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
+            this.chatEditorNewChat.enable()
         } else if (this.chatMessageSize >= 1000) {
             this.isLoading = false;
             this.chatEditor.enable();
+            this.chatEditorNewChat.enable()
             let err1string = get("chatpage.cchange29");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else if (this.repliedToMessageObj) {
@@ -1675,6 +1689,7 @@ class ChatPage extends LitElement {
 
             this.isLoading = false;
             this.chatEditor.enable();
+            this.chatEditorNewChat.enable()
             this.closeEditMessageContainer()
             this.closeRepliedToContainer()
         };
