@@ -114,16 +114,14 @@ class ChatScroller extends LitElement {
       }
 
     async firstUpdated() {
-        this.viewElement = this.shadowRoot.getElementById('viewElement')
-        this.upObserverElement = this.shadowRoot.getElementById('upObserver')
-        this.downObserverElement = this.shadowRoot.getElementById('downObserver')
-
-
+        this.viewElement = this.shadowRoot.getElementById('viewElement');
+        this.upObserverElement = this.shadowRoot.getElementById('upObserver');
+        this.downObserverElement = this.shadowRoot.getElementById('downObserver');
         // Intialize Observers
-        this.upElementObserver()
-        this.downElementObserver()
-        await this.updateComplete
-        this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+        this.upElementObserver();
+        this.downElementObserver();
+        await this.updateComplete;
+        this.viewElement.scrollTop = this.viewElement.scrollHeight;
     }
 
     _getOldMessage(_scrollElement) {
