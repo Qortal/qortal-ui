@@ -400,6 +400,11 @@ export const chatStyles = css`
 	.image-container {
 		display: flex;
 	}
+	.message-data-level  {
+		height: 21px;
+		width: 21px;
+		overflow: hidden;
+	}
 	.defaultSize {
 		width:45vh; 
 		height:40vh

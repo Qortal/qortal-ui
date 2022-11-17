@@ -208,7 +208,6 @@ class ChatTextEditor extends LitElement {
 	}
 
     initialChat(e) {
-        console.log('hello initial', this.chatEditor)
         if (!this.chatEditor?.contentDiv.matches(':focus')) {
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
@@ -231,7 +230,6 @@ class ChatTextEditor extends LitElement {
     }
 
 	async firstUpdated() {
-        console.log('this.hasGlobalEvents', this.hasGlobalEvents)
         if(this.hasGlobalEvents){
             this.addGlobalEventListener()
         }
@@ -239,7 +237,6 @@ class ChatTextEditor extends LitElement {
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);
-        console.log('test', this.chatMessageInput )
        
         
         this.emojiPicker = new EmojiPicker({
@@ -255,7 +252,6 @@ class ChatTextEditor extends LitElement {
         });
 
         this.emojiPicker.on('emoji', selection => {
-            console.log('hello selection')
             const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
             this.chatEditor.insertEmoji(emojiHtmlString);
         });
@@ -268,7 +264,6 @@ class ChatTextEditor extends LitElement {
 	}
 
     async updated(changedProperties) {
-       console.log({changedProperties})
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
@@ -344,7 +339,6 @@ class ChatTextEditor extends LitElement {
     }
 
     initChatEditor() {
-        console.log('hello editor')
         const ChatEditor = function (editorConfig) {
             
             const ChatEditor = function () {
@@ -496,7 +490,6 @@ class ChatTextEditor extends LitElement {
                 const filteredValue = chatInputValue.replace(/<img.*?alt=".*?/g, '').replace(/".?src=.*?>/g, '');
 
                 let unescapedValue = editorConfig.unescape(filteredValue);
-                console.log({unescapedValue})
                 editor.mirror.value = unescapedValue;
             };
 
@@ -681,9 +674,7 @@ editor.content.body.appendChild(elemDiv);
             removeGlobalEventListener: this.removeGlobalEventListener,
             iframeId: this.iframeId
         };
-        console.log('after')
         const newChat = new ChatEditor(editorConfig)
-        console.log({newChat})
         this.setChatEditor(newChat)
     }
 }
