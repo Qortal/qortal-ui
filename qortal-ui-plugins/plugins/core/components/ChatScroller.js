@@ -414,7 +414,10 @@ class MessageTemplate extends LitElement {
                                     </div>
                                     `}
                                     ${image && !isImageDeleted ? html`
-                                        <div class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}>
+                                        <div 
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        style=${this.isFirstMessage && "margin-top: 10px;"}
+                                        >
                                             ${imageHTML}<vaadin-icon
                                             @click=${() => this.sendMessage({
                                             type: 'delete',
@@ -425,7 +428,10 @@ class MessageTemplate extends LitElement {
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                         </div>
                                     ` : html``}
-                                    <div id="messageContent" class="message">
+                                    <div 
+                                    id="messageContent" 
+                                    class="message" 
+                                    style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         <div class="${((this.isFirstMessage === false && 
                                             this.isSingleMessageInGroup === true && 

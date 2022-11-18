@@ -435,6 +435,16 @@ class ChatPage extends LitElement {
             position: relative;
             display: flex;
             align-items: center;
+            flex-direction: column;
+            padding: 0 10px;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .dialog-container-loader {
+            position: relative;
+            display: flex;
+            align-items: center;
             padding: 0 10px;
             gap: 10px;
             height: 100%;
@@ -628,7 +638,7 @@ class ChatPage extends LitElement {
             ${(this.isUploadingImage || this.isDeletingImage) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
-                            <div class="dialog-container">
+                            <div class="dialog-container-loader">
                                 <div class=${`smallLoading marginLoader`}></div>
                                 <p>
                                 ${this.isDeletingImage ?
