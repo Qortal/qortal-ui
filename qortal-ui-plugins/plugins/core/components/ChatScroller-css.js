@@ -400,26 +400,33 @@ export const chatStyles = css`
 	.image-container {
 		display: flex;
 	}
+
 	.message-data-level  {
 		height: 21px;
 		width: 21px;
 		overflow: hidden;
 	}
+
 	.defaultSize {
-		width:45vh; 
-		height:40vh
+		width: 45vh; 
+		height: 40vh;
 	}
+
 	.image-delete-icon {
 		margin-left: 5px;
     height: 20px;
-	cursor: pointer;
-	visibility: hidden;
-	transition: .2s all;
-	opacity: .8
+		cursor: pointer;
+		visibility: hidden;
+		transition: .2s all;
+		opacity: 0.8;
+		color: rgb(228, 222, 222);
+    padding-left: 7px;
 	}
+	
 	.image-delete-icon:hover {
-		opacity: 1
+		opacity: 1;
 	}
+
 	.message-parent:hover .image-delete-icon {
 		visibility: visible;
 	}

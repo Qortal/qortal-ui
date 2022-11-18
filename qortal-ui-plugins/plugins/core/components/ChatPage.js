@@ -59,11 +59,11 @@ class ChatPage extends LitElement {
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
             chatMessageSize: { type: Number},
-            imageFile: {type: Object},
-            isUploadingImage: {type: Boolean},
+            imageFile: { type: Object },
+            isUploadingImage: { type: Boolean },
             caption: { type: String },
-            chatEditor: {type:  Object},
-            chatEditorNewChat: {type: Object}
+            chatEditor: { type:  Object },
+            chatEditorNewChat: { type: Object }
         }
     }
 
@@ -143,7 +143,6 @@ class ChatPage extends LitElement {
             gap: 5px;
             width: 92%;
         }
-
 
         .senderName {
             margin: 0;
@@ -234,8 +233,8 @@ class ChatPage extends LitElement {
             overflow: hidden;
             justify-content: center;
             background: white;
-    padding: 5px;
-    border-radius: 1px;
+            padding: 5px;
+            border-radius: 1px;
         }
 
         .chatbar-caption {
@@ -435,7 +434,16 @@ class ChatPage extends LitElement {
         .dialog-container {
             position: relative;
             display: flex;
+            align-items: center;
             flex-direction: column;
+            padding: 0 10px;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .dialog-container-loader {
+            position: relative;
+            display: flex;
             align-items: center;
             padding: 0 10px;
             gap: 10px;
@@ -523,29 +531,21 @@ class ChatPage extends LitElement {
                                 ${this.imageFile && html`
                                     <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
                                 `}
-                                <!-- Replace by reusable chatbar component -->
-                                    <div class="caption-container">
+                                <div class="caption-container">
                                     <chat-text-editor
-                        iframeId="newChat"
-                        ?hasGlobalEvents=${false}
-                        placeholder=${this.chatEditorPlaceholder}
-                        ._sendMessage=${this._sendMessage}
-                                .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
-                                .chatEditor=${this.chatEditorNewChat}
-            .imageFile=${this.imageFile}
-            .insertImage=${this.insertImage}
- 
-            .editedMessageObj=${this.editedMessageObj}
-
-            ?isLoading=${this.isLoading}
-            ?isLoadingMessages=${this.isLoadingMessages}
-                        ></chat-text-editor>
-                                    <!-- <iframe  
-                                }}" id="newChat"  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
-                                </iframe> -->
-                                       
-                                   
-                                    </div>
+                                        iframeId="newChat"
+                                        ?hasGlobalEvents=${false}
+                                        placeholder=${this.chatEditorPlaceholder}
+                                        ._sendMessage=${this._sendMessage}
+                                        .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
+                                        .chatEditor=${this.chatEditorNewChat}
+                                        .imageFile=${this.imageFile}
+                                        .insertImage=${this.insertImage}
+                                        .editedMessageObj=${this.editedMessageObj}
+                                        ?isLoading=${this.isLoading}
+                                        ?isLoadingMessages=${this.isLoadingMessages}>
+                                    </chat-text-editor>
+                                </div>
                                     ${this.chatMessageSize >= 750 ? 
                                     html`
                                     <div class="message-size-container">
@@ -617,29 +617,28 @@ class ChatPage extends LitElement {
                                 </div>
                             `}
                         <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
-                        <chat-text-editor
-                        ?hasGlobalEvents=${true}
-                        iframeId="_chatEditorDOM"
-                        placeholder=${this.chatEditorPlaceholder}
-                        ._sendMessage=${this._sendMessage}
+                            <chat-text-editor
+                                ?hasGlobalEvents=${true}
+                                iframeId="_chatEditorDOM"
+                                placeholder=${this.chatEditorPlaceholder}
+                                ._sendMessage=${this._sendMessage}
                                 .setChatEditor=${(editor)=> this.setChatEditor(editor)}
                                 .chatEditor=${this.chatEditor}
-            .imageFile=${this.imageFile}
-            .insertImage=${this.insertImage}
-            .chatMessageInput=${this.chatMessageInput}
-            .editedMessageObj=${this.editedMessageObj}
-            .mirrorChatInput=${this.mirrorChatInput}
-            ?isLoading=${this.isLoading}
-            ?isLoadingMessages=${this.isLoadingMessages}
-                        ></chat-text-editor>
-                       
+                                .imageFile=${this.imageFile}
+                                .insertImage=${this.insertImage}
+                                .chatMessageInput=${this.chatMessageInput}
+                                .editedMessageObj=${this.editedMessageObj}
+                                .mirrorChatInput=${this.mirrorChatInput}
+                                ?isLoading=${this.isLoading}
+                                ?isLoadingMessages=${this.isLoadingMessages}>                            
+                            </chat-text-editor>
                     </div>
                 </div>
             </div>
             ${(this.isUploadingImage || this.isDeletingImage) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
-                            <div class="dialog-container">
+                            <div class="dialog-container-loader">
                                 <div class=${`smallLoading marginLoader`}></div>
                                 <p>
                                 ${this.isDeletingImage ?
