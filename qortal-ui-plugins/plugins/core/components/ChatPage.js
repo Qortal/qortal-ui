@@ -644,7 +644,6 @@ class ChatPage extends LitElement {
     }
 
     setChatEditor(editor){
-        console.log({editor})
         this.chatEditor = editor
     }
 
@@ -763,17 +762,7 @@ class ChatPage extends LitElement {
     }
 
 
-    async updated(changedProperties) {
-    
-        if (changedProperties && changedProperties.has('editedMessageObj')) {
-            this.chatEditor.insertText(this.editedMessageObj.message)
-        }
-     
-        // if(changedProperties && changedProperties.has("imageFile")) {
-        //     this.chatbarCaption = this.shadowRoot.querySelector('.chatbar-caption');
-        //     this.chatbarCaption.focus();
-        // }
-    }
+ 
 
     onCaptionChange(e) {
         this.caption = e;
@@ -1310,11 +1299,9 @@ class ChatPage extends LitElement {
                     quality: 0.6,
                     maxWidth: 500,
                     success(result) {
-                        console.log({result});
                         const file = new File([result], "name", {
                             type: 'image/png'
                         });
-                        console.log({file});
                         compressedFile = file;
                         resolve();
                     },

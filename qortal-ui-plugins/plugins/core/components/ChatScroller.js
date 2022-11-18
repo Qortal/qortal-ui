@@ -120,6 +120,13 @@ class ChatScroller extends LitElement {
         return changedProperties.has('messages');
       }
 
+      async getUpdateComplete() {
+        await super.getUpdateComplete();
+        const marginElements = Array.from(this.shadowRoot.querySelectorAll('message-template'));
+        await Promise.all(marginElements.map(el => el.updateComplete));
+        return true;
+    }
+
     async firstUpdated() {
         this.viewElement = this.shadowRoot.getElementById('viewElement');
         this.upObserverElement = this.shadowRoot.getElementById('upObserver');
@@ -127,7 +134,7 @@ class ChatScroller extends LitElement {
         // Intialize Observers
         this.upElementObserver();
         this.downElementObserver();
-        await this.updateComplete;
+        await this.getUpdateComplete();
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
     }
 
@@ -251,7 +258,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log(this.messageObj);
         const hidemsg = this.hideMessages;
         let message = "";
         let reactions = [];
