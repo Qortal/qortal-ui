@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"CSOPORTKEZELÉS",
       "puzzles":"REJTVÉNYEK",
-      "nodemanagement":"CSOMÓPONTKEZELÉS"
+      "nodemanagement":"CSOMÓPONTKEZELÉS",
+      "trading":"KERESKEDÉS"
    },
    "login":{
       "login":"Bejelentkezés",
@@ -150,7 +151,9 @@
       "next":"Következő",
       "create":"Létrehozáshoz",
       "continue":"Folytatódik/folytatáshoz",
-      "save":"Mentéshez"
+      "save":"Mentéshez",
+      "balance":"Hitel",
+      "balances":"A PÉNZTÁRCSA EGYENLEGEK"
    },
    "startminting":{
       "smchange1":"Nem lehet lekérni a pénzverési számlákat",
@@ -322,7 +325,8 @@
       "tchange44":"Az automatikus vásárlási rendelés sikeresen hozzáadva!",
       "tchange45":"AUTOMATIKUS VÁSÁRLÁS",
       "tchange46":"AUTOMATIKUS VÁSÁRLÁS",
-      "tchange47":"Eladni ezen az áron"
+      "tchange47":"Eladni ezen az áron",
+      "tchange48":"NEM ELÉG"
    },
    "rewardsharepage":{
       "rchange1":"Jutalommegosztások",

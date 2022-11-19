@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GRUPPENMANAGEMENT",
       "puzzles":"RÄTSEL",
-      "nodemanagement":"KNOTENVERWALTUNG"
+      "nodemanagement":"KNOTENVERWALTUNG",
+      "trading":"HANDELN"
    },
    "login":{
       "login":"Einloggen",
@@ -150,7 +151,9 @@
       "next":"Weiter",
       "create":"Erstellen",
       "continue":"Fortsetzen",
-      "save":"Speichern"
+      "save":"Speichern",
+      "balance":"Guthaben",
+      "balances":"IHR WALLET-GUTHABEN"
    },
    "startminting":{
       "smchange1":"Prägekonten können nicht abgerufen werden",
@@ -322,7 +325,8 @@
       "tchange44":"Automatischer Kaufauftrag erfolgreich hinzugefügt!",
       "tchange45":"AUTO KAUFEN MIT",
       "tchange46":"AUTOKAUF",
-      "tchange47":"Verkaufe für diesen Preis"
+      "tchange47":"Verkaufe für diesen Preis",
+      "tchange48":"NICHT GENUG"
    },
    "rewardsharepage":{
       "rchange1":"Belohnungsanteile",

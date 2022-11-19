@@ -34,7 +34,8 @@
       "qchat":"Q-ĆASKANJE",
       "groupmanagement":"MENADŽMENT GRUPA",
       "puzzles":"SLAGALICE",
-      "nodemanagement":"MENADŽMENT ČVORIŠTA"
+      "nodemanagement":"MENADŽMENT ČVORIŠTA",
+      "trading":"TRADING"
    },
    "login":{
       "login":"Prijava",
@@ -150,7 +151,9 @@
       "next":"Dalje",
       "create":"Napravite",
       "continue":"Nastavite",
-      "save":"Sačuvajte"
+      "save":"Sačuvajte",
+      "balance":"Kredit",
+      "balances":"VAŠI STANJE U NOVČANIKU"
    },
    "startminting":{
       "smchange1":"Nije moguće preuzeti naloge za kovanje",
@@ -322,7 +325,8 @@
       "tchange44":"Narudžbina za automatsku kupovinu je uspešno dodata!",
       "tchange45":"AUTO KUPI SA",
       "tchange46":"AUTO BUI",
-      "tchange47":"Prodaj za ovu cenu"
+      "tchange47":"Prodaj za ovu cenu",
+      "tchange48":"NEDOVOLJNO"
    },
    "rewardsharepage":{
       "rchange1":"Udeo nagrade",

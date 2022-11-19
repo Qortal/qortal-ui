@@ -34,7 +34,8 @@
       "qchat":"Q-ČAVRLJANJE",
       "groupmanagement":"UPRAVLJANJE GRUPAMA",
       "puzzles":"ZAGONETKE",
-      "nodemanagement":"UPRAVLJANJE ČVOROVIMA"
+      "nodemanagement":"UPRAVLJANJE ČVOROVIMA",
+      "trading":"TRGOVANJE"
    },
    "login":{
       "login":"Prijavi se",
@@ -133,7 +134,8 @@
       "uiversion":"Verzija upravljačkog sučelja - UI",
       "coreversion":"Verzija jezgre - Core",
       "minting":"(Mintanje)",
-      "synchronizing":"Sinkroniziranje"
+      "synchronizing":"Sinkroniziranje",
+      "balance":"Balance"
    },
    "walletprofile":{
       "minterlevel":"Minter Level",
@@ -150,7 +152,9 @@
       "next":"Sljedeće",
       "create":"Stvori",
       "continue":"Nastavi",
-      "save":"Spremi"
+      "save":"Spremi",
+      "balance":"Kreditna",
+      "balances":"VAŠ NOVČANIK JE NA SALJU"
    },
    "startminting":{
       "smchange1":"Nije moguće dohvatiti račune za kovanje",
@@ -322,7 +326,8 @@
       "tchange44":"Uspješno dodana automatska narudžba za kupnju!",
       "tchange45":"AUTO KUPITE SA",
       "tchange46":"AUTO OTKUP",
-      "tchange47":"Prodaj za ovu cijenu"
+      "tchange47":"Prodaj za ovu cijenu",
+      "tchange48":"NEDOVOLJNO"
    },
    "rewardsharepage":{
       "rchange1":"Nagradni udio (Rewardshares)",

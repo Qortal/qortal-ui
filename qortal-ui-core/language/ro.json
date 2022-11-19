@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIONARE GRUP",
       "puzzles":"PUZZLE-URI",
-      "nodemanagement":"GESTIONARE NOD"
+      "nodemanagement":"GESTIONARE NOD",
+      "trading":"COMERCIAL"
    },
    "login":{
       "login":"Login",
@@ -150,7 +151,9 @@
       "next":"Inainte",
       "create":"Creaza",
       "continue":"Continua",
-      "save":"Salveza"
+      "save":"Salveza",
+      "balance":"Credit",
+      "balances":"SOLDELE PORTOTELULUI DVS"
    },
    "startminting":{
       "smchange1":"Nu se pot prelua conturile de batere",
@@ -322,7 +325,8 @@
       "tchange44":"Comanda de cumparare automata a fost adaugata cu succes!",
       "tchange45":"CUMPARA AUTOMATA CU",
       "tchange46":"CUMPARARE AUTOMATA",
-      "tchange47":"Vinde la acest pret"
+      "tchange47":"Vinde la acest pret",
+      "tchange48":"INSUFICIENT"
    },
    "rewardsharepage":{
       "rchange1":"Cote de recompensa",

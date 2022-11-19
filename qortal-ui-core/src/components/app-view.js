@@ -1,7 +1,9 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import { Epml } from '../epml.js'
+import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
+import { get, translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
@@ -21,12 +23,78 @@ import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 import './user-info-view/user-info-view.js'
 
+const parentEpml = new Epml({type: 'WINDOW', source: window.parent})
+
 class AppView extends connect(store)(LitElement) {
     static get properties() {
         return {
             config: { type: Object },
             theme: { type: String, reflect: true },
-            searchContentString: { type: String }
+            searchContentString: { type: String },
+            botQortWallet: { type: String },
+            botBtcWallet: { type: String },
+            botLtcWallet: { type: String },
+            botDogeWallet: { type: String },
+            botDgbWallet: { type: String },
+            botRvnWallet: { type: String },
+            botArrrWallet: { type: String },
+            arrrWalletAddress: { type: String },
+            qortWalletBalance: { type: Number },
+            btcWalletBalance: { type: Number },
+            ltcWalletBalance: { type: Number },
+            dogeWalletBalance: { type: Number },
+            dgbWalletBalance: { type: Number },
+            rvnWalletBalance: { type: Number },
+            arrrWalletBalance: { type: Number },
+            tradesOpenBtcQortal: { type: Array },
+            tradesOpenLtcQortal: { type: Array },
+            tradesOpenDogeQortal: { type: Array },
+            tradesOpenDgbQortal: { type: Array },
+            tradesOpenRvnQortal: { type: Array },
+            tradesOpenArrrQortal: { type: Array },
+            tradeBotBtcBook: { type: Array },
+            tradeBotLtcBook: { type: Array },
+            tradeBotDogeBook: { type: Array },
+            tradeBotDgbBook: { type: Array },
+            tradeBotRvnBook: { type: Array },
+            tradeBotArrrBook: { type: Array },
+            tradeBotBtcAt: { type: Array },
+            tradeBotLtcAt: { type: Array },
+            tradeBotDogeAt: { type: Array },
+            tradeBotDgbAt: { type: Array },
+            tradeBotRvnAt: { type: Array },
+            tradeBotArrrAt: { type: Array },
+            tradeBotAvailableBtcQortal: { type: Array },
+            tradeBotAvailableLtcQortal: { type: Array },
+            tradeBotAvailableDogeQortal: { type: Array },
+            tradeBotAvailableDgbQortal: { type: Array },
+            tradeBotAvailableRvnQortal: { type: Array },
+            tradeBotAvailableArrrQortal: { type: Array },
+            checkBtcAlice: { type: String },
+            checkLtcAlice: { type: String },
+            checkDogeAlice: { type: String },
+            checkDgbAlice: { type: String },
+            checkRvnAlice: { type: String },
+            checkArrrAlice: { type: String },
+            reAddBtcAmount: { type: Number },
+            reAddLtcAmount: { type: Number },
+            reAddDogeAmount: { type: Number },
+            reAddDgbAmount: { type: Number },
+            reAddRvnAmount: { type: Number },
+            reAddArrrAmount: { type: Number },
+            reAddBtcPrice: { type: Number },
+            reAddLtcPrice: { type: Number },
+            reAddDogePrice: { type: Number },
+            reAddDgbPrice: { type: Number },
+            reAddRvnPrice: { type: Number },
+            reAddArrrPrice: { type: Number },
+            botBtcBuyAtAddress: { type: String },
+            botLtcBuyAtAddress: { type: String },
+            botDogeBuyAtAddress: { type: String },
+            botDgbBuyAtAddress: { type: String },
+            botRvnBuyAtAddress: { type: String },
+            botArrrBuyAtAddress: { type: String },
+            balanceTicker: { type: String }
         }
     }
 
@@ -94,13 +162,134 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 #sideBar::-webkit-scrollbar-track {
-                     background-color: transparent;
+                    background-color: transparent;
                 }
 
                 #sideBar::-webkit-scrollbar-thumb {
-                     background-color: #333;
-                     border-radius: 6px;
-                     border: 3px solid #333;
+                    background-color: #333;
+                    border-radius: 6px;
+                    border: 3px solid #333;
+                }
+
+                #balanceheader {
+                    flex: 0 0 24px;
+                    padding: 12px;
+                    border-bottom: 1px solid var(--border);
+                    background: var(--sidetopbar);
+                }
+
+                .balanceheadertext {
+                    position: absolute;
+                    margin: auto;
+                    font-size: 16px;
+                    font-weight: 400;
+                    width: 250px;
+                    display: inline;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    color: var(--nav-text-color);
+                }
+
+                #balances {
+                    flex: 0 0 24px;
+                    padding: 12px;
+                    background: var(--sidetopbar);
+                }
+
+                .balancelist {
+                   align-items: center;
+                   float: left;
+                   opacity: 1;
+                   position: relative;
+                }
+
+                .balanceinfo {
+                    position: absolute;
+                    margin: auto;
+                    font-size: 14px;
+                    font-weight: 100;
+                    width: 250px;
+                    display: inline;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    color: var(--black);
+                }
+
+                .qort {
+                    animation: animate1 4s 2s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .btc {
+                    animation: animate2 4s 8s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .ltc {
+                    animation: animate3 4s 14s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .doge {
+                    animation: animate4 4s 20s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .dgb {
+                    animation: animate5 4s 26s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .rvn {
+                    animation: animate6 4s 32s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                .arrr {
+                    animation: animate7 4s 38s 1 ease-in-out ;
+                    color: var(--black);
+                    opacity: 0;
+                }
+
+                @keyframes animate1 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate2 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate3 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate4 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate5 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate6 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
+                }
+
+                @keyframes animate7 {
+                    0%,100% { opacity: 0; }
+                    50% { opacity: 10; }
                 }
             `
         ]
@@ -110,6 +299,74 @@ class AppView extends connect(store)(LitElement) {
         super()
         this.searchContentString = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.botQortWallet = ''
+        this.botBtcWallet = ''
+        this.botLtcWallet = ''
+        this.botDogeWallet = ''
+        this.botDgbWallet = ''
+        this.botRvnWallet = ''
+        this.botArrrWallet = ''
+        this.arrrWalletAddress = ''
+        this.qortWalletBalance = 0
+        this.btcWalletBalance = 0
+        this.ltcWalletBalance = 0
+        this.dogeWalletBalance = 0
+        this.dgbWalletBalance = 0
+        this.rvnWalletBalance = 0
+        this.arrrWalletBalance = 0
+        this.tradesOpenBtcQortal = []
+        this.tradesOpenLtcQortal = []
+        this.tradesOpenDogeQortal = []
+        this.tradesOpenDgbQortal = []
+        this.tradesOpenRvnQortal = []
+        this.tradesOpenArrrQortal = []
+        this.tradeBotBtcBook = []
+        this.tradeBotLtcBook = []
+        this.tradeBotDogeBook = []
+        this.tradeBotDgbBook = []
+        this.tradeBotRvnBook = []
+        this.tradeBotArrrBook = []
+        this.tradeBotBtcAt = []
+        this.tradeBotLtcAt = []
+        this.tradeBotDogeAt = []
+        this.tradeBotDgbAt = []
+        this.tradeBotRvnAt = []
+        this.tradeBotArrrAt = []
+        this.tradeBotAvailableBtcQortal = []
+        this.tradeBotAvailableLtcQortal = []
+        this.tradeBotAvailableDogeQortal = []
+        this.tradeBotAvailableDgbQortal = []
+        this.tradeBotAvailableRvnQortal = []
+        this.tradeBotAvailableArrrQortal = []
+        this.checkBtcAlice = ''
+        this.checkLtcAlice = ''
+        this.checkDogeAlice = ''
+        this.checkDgbAlice = ''
+        this.checkRvnAlice = ''
+        this.checkArrrAlice = ''
+        this.reAddBtcAmount = 0
+        this.reAddLtcAmount = 0
+        this.reAddDogeAmount = 0
+        this.reAddDgbAmount = 0
+        this.reAddRvnAmount = 0
+        this.reAddArrrAmount = 0
+        this.reAddBtcPrice = 0
+        this.reAddLtcPrice = 0
+        this.reAddDogePrice = 0
+        this.reAddDgbPrice = 0
+        this.reAddRvnPrice = 0
+        this.reAddArrrPrice = 0
+        this.botBtcBuyAtAddress = ''
+        this.botLtcBuyAtAddress = ''
+        this.botDogeBuyAtAddress = ''
+        this.botDgbBuyAtAddress = ''
+        this.botRvnBuyAtAddress = ''
+        this.botArrrBuyAtAddress = ''
+        this.balanceTicker = html`
+            <div id="balances">
+                <div class="balancelist"></div>
+            </div>
+        `
     }
 
     render() {
@@ -122,6 +379,10 @@ class AppView extends connect(store)(LitElement) {
                             <div class="sideBarMenu">
                                 <sidenav-menu></sidenav-menu>
                             </div>
+                            <div id="balanceheader">
+                                <span class="balanceheadertext">${translate("general.balances")}</span>
+                            </div>
+                            ${this.balanceTicker}
                             <app-info></app-info>
                         </div>
                     </app-header-layout>
@@ -177,7 +438,1498 @@ class AppView extends connect(store)(LitElement) {
         `
     }
 
-    firstUpdated() {
+    async firstUpdated() {
+
+        addTradeBotRoutes(parentEpml)
+        parentEpml.imReady()
+
+        const myAppNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const nodeAppUrl = myAppNode.protocol + '://' + myAppNode.domain + ':' + myAppNode.port
+        const appDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        await appDelay(3000)
+
+        this.botQortWallet = store.getState().app.selectedAddress.address
+        await this.updateQortWalletBalance()
+
+        this.botBtcWallet = store.getState().app.selectedAddress.btcWallet.address
+        await this.updateBtcWalletBalance()
+
+        this.botLtcWallet = store.getState().app.selectedAddress.ltcWallet.address
+        await this.updateLtcWalletBalance()
+
+        this.botDogeWallet = store.getState().app.selectedAddress.dogeWallet.address
+        await this.updateDogeWalletBalance()
+
+        this.botDgbWallet = store.getState().app.selectedAddress.dgbWallet.address
+        await this.updateDgbWalletBalance()
+
+        this.botRvnWallet = store.getState().app.selectedAddress.rvnWallet.address
+        await this.updateRvnWalletBalance()
+
+        this.botArrrWallet = store.getState().app.selectedAddress.arrrWallet.address
+        await this.fetchArrrWalletAddress()
+        await this.updateArrrWalletBalance()
+
+        await this.botBtcTradebook()
+        await this.botLtcTradebook()
+        await this.botDogeTradebook()
+        await this.botDgbTradebook()
+        await this.botRvnTradebook()
+        await this.botArrrTradebook()
+
+        window.addEventListener('storage', async () => {
+            this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+            await appDelay(500)
+            this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+            await appDelay(500)
+            this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+            await appDelay(500)
+            this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+            await appDelay(500)
+            this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+            await appDelay(500)
+            this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+            await appDelay(500)
+        })
+
+        this.renderBalances()
+
+        const getOpenTradesBTC = async () => {
+            let timerBTC
+
+            if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
+                clearTimeout(timerBTC)
+                timerBTC = setTimeout(getOpenTradesBTC, 150000)
+            } else {
+                const tradesOpenBtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=BITCOIN&limit=0`
+
+                const tradesOpenBtcQortal = await fetch(tradesOpenBtcQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenBtcQortal = tradesOpenBtcQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                await this.updateBtcWalletBalance()
+                filterMyBotPriceTradesBTC()
+                setTimeout(getOpenTradesBTC, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesBTC = async () => {
+            const tradeBotBtcUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=BITCOIN&apiKey=${this.getApiKey()}`
+
+            const tradeBotBtcAt = await fetch(tradeBotBtcUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotBtcAt = tradeBotBtcAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableBtcQortal = this.tradesOpenBtcQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotBtcBook[0].botBtcPrice)
+                const checkamount = parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableBtcQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableBtcQortal) === true) {
+                return
+            } else {
+                this.checkBtcAlice = this.tradeBotAvailableBtcQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotBtcAt.some(item => item.atAddress === this.checkBtcAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableBtcQortal = this.tradeBotAvailableBtcQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableBtcQortal) === true) {
+                return
+            } else {
+                const botbtcprice = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
+                const changebtcamount = parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount)
+                const reducebtcamount = parseFloat(this.tradeBotAvailableBtcQortal[0].qortAmount)
+                const tradebtcataddress = this.tradeBotAvailableBtcQortal[0].qortalAtAddress
+                const newbtcamount = this.round(parseFloat(changebtcamount - reducebtcamount))
+
+                this.reAddBtcAmount = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount))
+                this.reAddBtcPrice = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
+
+                localStorage.removeItem(this.botBtcWallet)
+                localStorage.setItem(this.botBtcWallet, "")
+
+                var oldBtcTradebook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                const newBtcTradebookItem = {
+                    botBtcQortAmount: newbtcamount,
+                    botBtcPrice: botbtcprice
+                }
+
+                oldBtcTradebook.push(newBtcTradebookItem)
+
+                localStorage.setItem(this.botBtcWallet, JSON.stringify(oldBtcTradebook))
+
+                this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botBtcBuyAtAddress = tradebtcataddress
+
+                this.buyBtcAction()
+
+                if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotBTCTradebook()
+                    } else {
+                        this.tradeBotBtcBook = this.tradeBotBtcBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
+                    return
+                } else {
+                    await this.updateBtcWalletBalance()
+                    const checkBotBtcFunds = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount) * parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
+                    const myBotBtcFunds = this.round(parseFloat(this.btcWalletBalance))
+
+                    if (Number(myBotBtcFunds) < Number(checkBotBtcFunds)) {
+                        this.removeBotBTCTradebook()
+                    } else {
+                        this.tradeBotBtcBook = this.tradeBotBtcBook
+                    }
+                }
+            }
+        }
+
+        const getOpenTradesLTC = async () => {
+            let timerLTC
+
+            if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
+                clearTimeout(timerLTC)
+                timerLTC = setTimeout(getOpenTradesLTC, 150000)
+            } else {
+                const tradesOpenLtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=LITECOIN&limit=0`
+
+                const tradesOpenLtcQortal = await fetch(tradesOpenLtcQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenLtcQortal = tradesOpenLtcQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                await this.updateLtcWalletBalance()
+                filterMyBotPriceTradesLTC()
+                setTimeout(getOpenTradesLTC, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesLTC = async () => {
+            const tradeBotLtcUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=LITECOIN&apiKey=${this.getApiKey()}`
+
+            const tradeBotLtcAt = await fetch(tradeBotLtcUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotLtcAt = tradeBotLtcAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableLtcQortal = this.tradesOpenLtcQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotLtcBook[0].botLtcPrice)
+                const checkamount = parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableLtcQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableLtcQortal) === true) {
+                return
+            } else {
+                this.checkLtcAlice = this.tradeBotAvailableLtcQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotLtcAt.some(item => item.atAddress === this.checkLtcAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableLtcQortal = this.tradeBotAvailableLtcQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableLtcQortal) === true) {
+                return
+            } else {
+                const botltcprice = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
+                const changeltcamount = parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount)
+                const reduceltcamount = parseFloat(this.tradeBotAvailableLtcQortal[0].qortAmount)
+                const tradeltcataddress = this.tradeBotAvailableLtcQortal[0].qortalAtAddress
+                const newltcamount = this.round(parseFloat(changeltcamount - reduceltcamount))
+
+                this.reAddLtcAmount = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount))
+                this.reAddLtcPrice = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
+
+                localStorage.removeItem(this.botLtcWallet)
+                localStorage.setItem(this.botLtcWallet, "")
+
+                var oldLtcTradebook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                const newLtcTradebookItem = {
+                    botLtcQortAmount: newltcamount,
+                    botLtcPrice: botltcprice
+                }
+
+                oldLtcTradebook.push(newLtcTradebookItem)
+
+                localStorage.setItem(this.botLtcWallet, JSON.stringify(oldLtcTradebook))
+
+                this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botLtcBuyAtAddress = tradeltcataddress
+
+                this.buyLtcAction()
+
+                if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotLTCTradebook()
+                    } else {
+                        this.tradeBotLtcBook = this.tradeBotLtcBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
+                    return
+                } else {
+                    await this.updateLtcWalletBalance()
+                    const checkBotLtcFunds = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount) * parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
+                    const myBotLtcFunds = this.round(parseFloat(this.ltcWalletBalance))
+
+                    if (Number(myBotLtcFunds) < Number(checkBotLtcFunds)) {
+                        this.removeBotLTCTradebook()
+                    } else {
+                        this.tradeBotLtcBook = this.tradeBotLtcBook
+                    }
+                }
+            }
+        }
+
+        const getOpenTradesDOGE = async () => {
+            let timerDOGE
+
+            if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
+                clearTimeout(timerDOGE)
+                timerDOGE = setTimeout(getOpenTradesDOGE, 150000)
+            } else {
+                const tradesOpenDogeQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=DOGECOIN&limit=0`
+
+                const tradesOpenDogeQortal = await fetch(tradesOpenDogeQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenDogeQortal = tradesOpenDogeQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                await this.updateDogeWalletBalance()
+                filterMyBotPriceTradesDOGE()
+                setTimeout(getOpenTradesDOGE, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesDOGE = async () => {
+            const tradeBotDogeUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=DOGECOIN&apiKey=${this.getApiKey()}`
+
+            const tradeBotDogeAt = await fetch(tradeBotDogeUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotDogeAt = tradeBotDogeAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableDogeQortal = this.tradesOpenDogeQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotDogeBook[0].botDogePrice)
+                const checkamount = parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableDogeQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableDogeQortal) === true) {
+                return
+            } else {
+                this.checkDogeAlice = this.tradeBotAvailableDogeQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotDogeAt.some(item => item.atAddress === this.checkDogeAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableDogeQortal = this.tradeBotAvailableDogeQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableDogeQortal) === true) {
+                return
+            } else {
+                const botdogeprice = this.round(parseFloat(this.tradeBotDogeBook[0].botDogePrice))
+                const changedogeamount = parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount)
+                const reducedogeamount = parseFloat(this.tradeBotAvailableDogeQortal[0].qortAmount)
+                const tradedogeataddress = this.tradeBotAvailableDogeQortal[0].qortalAtAddress
+                const newdogeamount = this.round(parseFloat(changedogeamount - reducedogeamount))
+
+                this.reAddDogeAmount = this.round(parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount))
+                this.reAddDogePrice = this.round(parseFloat(this.tradeBotDogeBook[0].botDogePrice))
+
+                localStorage.removeItem(this.botDogeWallet)
+                localStorage.setItem(this.botDogeWallet, "")
+
+                var oldDogeTradebook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                const newDogeTradebookItem = {
+                    botDogeQortAmount: newdogeamount,
+                    botDogePrice: botdogeprice
+                }
+
+                oldDogeTradebook.push(newDogeTradebookItem)
+
+                localStorage.setItem(this.botDogeWallet, JSON.stringify(oldDogeTradebook))
+
+                this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botDogeBuyAtAddress = tradedogeataddress
+
+                this.buyDogeAction()
+
+                if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotDOGETradebook()
+                    } else {
+                        this.tradeBotDogeBook = this.tradeBotDogeBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
+                    return
+                } else {
+                    await this.updateDogeWalletBalance()
+                    const checkBotDogeFunds = this.round(parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount) * parseFloat(this.tradeBotDogeBook[0].botDogePrice))
+                    const myBotDogeFunds = this.round(parseFloat(this.dogeWalletBalance))
+
+                    if (Number(myBotDogeFunds) < Number(checkBotDogeFunds)) {
+                        this.removeBotDOGETradebook()
+                    } else {
+                        this.tradeBotDogeBook = this.tradeBotDogeBook
+                    }
+                }
+            }
+        }
+
+        const getOpenTradesDGB = async () => {
+            let timerDGB
+
+            if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
+                clearTimeout(timerDGB)
+                timerDGB = setTimeout(getOpenTradesDGB, 150000)
+            } else {
+                const tradesOpenDgbQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=DIGIYBYTE&limit=0`
+
+                const tradesOpenDgbQortal = await fetch(tradesOpenDgbQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenDgbQortal = tradesOpenDgbQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                setTimeout(getOpenTradesDGB, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesDGB = async () => {
+            const tradeBotDgbUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=DIGIBYTE&apiKey=${this.getApiKey()}`
+
+            const tradeBotDgbAt = await fetch(tradeBotDgbUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotDgbAt = tradeBotDgbAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableDgbQortal = this.tradesOpenDgbQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotDgbBook[0].botDgbPrice)
+                const checkamount = parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableDgbQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableDgbQortal) === true) {
+                return
+            } else {
+                this.checkDgbAlice = this.tradeBotAvailableDgbQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotDgbAt.some(item => item.atAddress === this.checkDgbAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableDgbQortal = this.tradeBotAvailableDgbQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableDgbQortal) === true) {
+                return
+            } else {
+                const botdgbprice = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
+                const changedgbamount = parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount)
+                const reducedgbamount = parseFloat(this.tradeBotAvailableDgbQortal[0].qortAmount)
+                const tradedgbataddress = this.tradeBotAvailableDgbQortal[0].qortalAtAddress
+                const newdgbamount = this.round(parseFloat(changedgbamount - reducedgbamount))
+
+                this.reAddDgbAmount = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount))
+                this.reAddDgbPrice = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
+
+                localStorage.removeItem(this.botDgbWallet)
+                localStorage.setItem(this.botDgbWallet, "")
+
+                var oldDgbTradebook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                const newDgbTradebookItem = {
+                    botDgbQortAmount: newdgbamount,
+                    botDgbPrice: botdgbprice
+                }
+
+                oldDgbTradebook.push(newDgbTradebookItem)
+
+                localStorage.setItem(this.botDgbWallet, JSON.stringify(oldDgbTradebook))
+
+                this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botDgbBuyAtAddress = tradedgbataddress
+
+                this.buyDgbAction()
+
+                if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotDGBTradebook()
+                    } else {
+                        this.tradeBotDgbBook = this.tradeBotDgbBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
+                    return
+                } else {
+                    await this.updateDgbWalletBalance()
+                    const checkBotDgbFunds = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount) * parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
+                    const myBotDgbFunds = this.round(parseFloat(this.dgbWalletBalance))
+
+                    if (Number(myBotDgbFunds) < Number(checkBotDgbFunds)) {
+                        this.removeBotDGBTradebook()
+                    } else {
+                        this.tradeBotDgbBook = this.tradeBotDgbBook
+                    }
+                }
+            }
+        }
+
+        const getOpenTradesRVN = async () => {
+            let timerRVN
+
+            if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
+                clearTimeout(timerRVN)
+                timerRVN = setTimeout(getOpenTradesRVN, 150000)
+            } else {
+                const tradesOpenRvnQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=RAVENCOIN&limit=0`
+
+                const tradesOpenRvnQortal = await fetch(tradesOpenRvnQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenRvnQortal = tradesOpenRvnQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                setTimeout(getOpenTradesRVN, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesRVN = async () => {
+            const tradeBotRvnUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=RAVENCOIN&apiKey=${this.getApiKey()}`
+
+            const tradeBotRvnAt = await fetch(tradeBotRvnUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotRvnAt = tradeBotRvnAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableRvnQortal = this.tradesOpenRvnQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotRvnBook[0].botRvnPrice)
+                const checkamount = parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableRvnQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableRvnQortal) === true) {
+                return
+            } else {
+                this.checkRvnAlice = this.tradeBotAvailableRvnQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotRvnAt.some(item => item.atAddress === this.checkRvnAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableRvnQortal = this.tradeBotAvailableRvnQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableRvnQortal) === true) {
+                return
+            } else {
+                const botrvnprice = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
+                const changervnamount = parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount)
+                const reducervnamount = parseFloat(this.tradeBotAvailableRvnQortal[0].qortAmount)
+                const tradervnataddress = this.tradeBotAvailableRvnQortal[0].qortalAtAddress
+                const newrvnamount = this.round(parseFloat(changervnamount - reducervnamount))
+
+                this.reAddRvnAmount = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount))
+                this.reAddRvnPrice = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
+
+                localStorage.removeItem(this.botRvnWallet)
+                localStorage.setItem(this.botRvnWallet, "")
+
+                var oldRvnTradebook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                const newRvnTradebookItem = {
+                    botRvnQortAmount: newrvnamount,
+                    botRvnPrice: botrvnprice
+                }
+
+                oldRvnTradebook.push(newRvnTradebookItem)
+
+                localStorage.setItem(this.botRvnWallet, JSON.stringify(oldRvnTradebook))
+
+                this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botRvnBuyAtAddress = tradervnataddress
+
+                this.buyRvnAction()
+
+                if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotRVNTradebook()
+                    } else {
+                        this.tradeBotRvnBook = this.tradeBotRvnBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
+                    return
+                } else {
+                    await this.updateRvnWalletBalance()
+                    const checkBotRvnFunds = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount) * parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
+                    const myBotRvnFunds = this.round(parseFloat(this.rvnWalletBalance))
+
+                    if (Number(myBotRvnFunds) < Number(checkBotRvnFunds)) {
+                        this.removeBotRVNTradebook()
+                    } else {
+                        this.tradeBotRvnBook = this.tradeBotRvnBook
+                    }
+                }
+            }
+        }
+
+        const getOpenTradesARRR = async () => {
+            let timerARRR
+
+            if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
+                clearTimeout(timerARRR)
+                timerARRR = setTimeout(getOpenTradesARRR, 150000)
+            } else {
+                const tradesOpenArrrQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=PIRATECHAIN&limit=0`
+
+                const tradesOpenArrrQortal = await fetch(tradesOpenArrrQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesOpenArrrQortal = tradesOpenArrrQortal.map(item => {
+                    const expiryTime = item.creatorPresenceExpiry
+                    if (Number(expiryTime) > Date.now()) {
+                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                        return {
+                            qortAmount: item.qortAmount,
+                            price: roundedPrice,
+                            foreignAmount: item.expectedForeignAmount,
+                            qortalCreator: item.qortalCreator,
+                            qortalAtAddress: item.qortalAtAddress
+                        }
+                    }
+                }).filter(item => !!item)
+
+                setTimeout(getOpenTradesARRR, 150000)
+            }
+        }
+
+        const filterMyBotPriceTradesARRR = async () => {
+            const tradeBotArrrUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=PIRATECHAIN&apiKey=${this.getApiKey()}`
+
+            const tradeBotArrrAt = await fetch(tradeBotArrrUrl).then(response => {
+                return response.json()
+            })
+
+            this.tradeBotArrrAt = tradeBotArrrAt
+
+            await appDelay(1000)
+
+            this.tradeBotAvailableArrrQortal = this.tradesOpenArrrQortal.map(item => {
+                const listprice = parseFloat(item.price)
+                const listamount = parseFloat(item.qortAmount)
+                const checkprice = parseFloat(this.tradeBotArrrBook[0].botArrrPrice)
+                const checkamount = parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount)
+                if (Number(listprice) <= Number(checkprice) && Number(listamount) <= Number(checkamount)) {
+                    return {
+                        qortAmount: item.qortAmount,
+                        price: item.price,
+                        foreignAmount: item.foreignAmount,
+                        qortalCreator: item.qortalCreator,
+                        qortalAtAddress: item.qortalAtAddress
+                    }
+                }
+            }).filter(item => !!item)
+
+            this.tradeBotAvailableArrrQortal.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+            if (this.isEmptyArray(this.tradeBotAvailableArrrQortal) === true) {
+                return
+            } else {
+                this.checkArrrAlice = this.tradeBotAvailableArrrQortal[0].qortalAtAddress
+            }
+
+            await appDelay(1000)
+
+            if (this.tradeBotArrrAt.some(item => item.atAddress === this.checkArrrAlice)) {
+                return
+            } else {
+                this.tradeBotAvailableArrrQortal = this.tradeBotAvailableArrrQortal
+            }
+
+            await appDelay(1000)
+
+            if (this.isEmptyArray(this.tradeBotAvailableArrrQortal) === true) {
+                return
+            } else {
+                const botarrrprice = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
+                const changearrramount = parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount)
+                const reducearrramount = parseFloat(this.tradeBotAvailableArrrQortal[0].qortAmount)
+                const tradearrrataddress = this.tradeBotAvailableArrrQortal[0].qortalAtAddress
+                const newarrramount = this.round(parseFloat(changearrramount - reducearrramount))
+
+                this.reAddArrrAmount = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount))
+                this.reAddArrrPrice = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
+
+                localStorage.removeItem(this.botArrrWallet)
+                localStorage.setItem(this.botArrrWallet, "")
+
+                var oldArrrTradebook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                const newArrrTradebookItem = {
+                    botArrrQortAmount: newarrramount,
+                    botArrrPrice: botarrrprice
+                }
+
+                oldArrrTradebook.push(newArrrTradebookItem)
+
+                localStorage.setItem(this.botArrrWallet, JSON.stringify(oldArrrTradebook))
+
+                this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                await appDelay(1000)
+
+                this.botArrrBuyAtAddress = tradearrrataddress
+
+                this.buyArrrAction()
+
+                if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
+                    return
+                } else {
+                    const botamount = parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount)
+
+                    if (Number(botamount) === 0) {
+                        this.removeBotARRRTradebook()
+                    } else {
+                        this.tradeBotArrrBook = this.tradeBotArrrBook
+                    }
+                }
+
+                if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
+                    return
+                } else {
+                    await this.updateArrrWalletBalance()
+                    const checkBotArrrFunds = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount) * parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
+                    const myBotArrrFunds = this.round(parseFloat(this.arrrWalletBalance))
+
+                    if (Number(myBotArrrFunds) < Number(checkBotArrrFunds)) {
+                        this.removeBotARRRTradebook()
+                    } else {
+                        this.tradeBotArrrBook = this.tradeBotArrrBook
+                    }
+                }
+            }
+        }
+
+        await getOpenTradesBTC()
+        await appDelay(1000)
+        await getOpenTradesLTC()
+        await appDelay(1000)
+        await getOpenTradesDOGE()
+        await appDelay(1000)
+        await getOpenTradesDGB()
+        await appDelay(1000)
+        await getOpenTradesRVN()
+        await appDelay(1000)
+        await getOpenTradesARRR()
+    }
+
+    async renderBalances() {
+        const tickerTime = ms => new Promise(res => setTimeout(res, ms))
+        clearTimeout(this.updateBalancesTimeout)
+        this.balanceTicker = html`
+            <div id="balances">
+                <div class="balancelist"></div>
+            </div>
+        `
+        await tickerTime(1000)
+        this.balanceTicker = html`
+            <div id="balances">
+                <div class="balancelist">
+                    <span class="balanceinfo qort">QORT ${translate("general.balance")}: ${this.qortWalletBalance}</span>
+                    <span class="balanceinfo btc">BTC ${translate("general.balance")}: ${this.btcWalletBalance}</span>
+                    <span class="balanceinfo ltc">LTC ${translate("general.balance")}: ${this.ltcWalletBalance}</span>
+                    <span class="balanceinfo doge">DOGE ${translate("general.balance")}: ${this.dogeWalletBalance}</span>
+                    <span class="balanceinfo dgb">DGB ${translate("general.balance")}: ${this.dgbWalletBalance}</span>
+                    <span class="balanceinfo rvn">RVN ${translate("general.balance")}: ${this.rvnWalletBalance}</span>
+                    <span class="balanceinfo arrr">ARRR ${translate("general.balance")}: ${this.arrrWalletBalance}</span>
+                </div>
+            </div>
+        `
+        this.updateBalancesTimeout = setTimeout(() => this.renderBalances(), 45000)
+    }
+
+    async fetchArrrWalletAddress() {
+        let res = await parentEpml.request('apiCall', {
+            url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            body: `${store.getState().app.selectedAddress.arrrWallet.seed58}`,
+        })
+        if (res != null && res.error != 1201) {
+            this.arrrWalletAddress = res
+        }
+    }
+
+    async updateQortWalletBalance() {
+        clearTimeout(this.updateQortBalanceTimeout)
+        let qortAddress = store.getState().app.selectedAddress.address
+        await parentEpml.request('apiCall', {
+            url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
+        }).then((res) => {
+            this.qortWalletBalance = res
+            this.updateQortBalanceTimeout = setTimeout(() => this.updateQortWalletBalance(), 120000)
+        })
+    }
+
+    async updateBtcWalletBalance() {
+        clearTimeout(this.updateBtcBalanceTimeout)
+        let _url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.btcWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateBtcBalanceTimeout = setTimeout(() => this.updateBtcWalletBalance(), 120000)
+    }
+
+    async updateLtcWalletBalance() {
+        clearTimeout(this.updateLtcBalanceTimeout)
+        let _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.ltcWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateLtcBalanceTimeout = setTimeout(() => this.updateLtcWalletBalance(), 120000)
+    }
+
+    async updateDogeWalletBalance() {
+        clearTimeout(this.updateDogeBalanceTimeout)
+        let _url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.dogeWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateDogeBalanceTimeout = setTimeout(() => this.updateDogeWalletBalance(), 120000)
+    }
+
+    async updateDgbWalletBalance() {
+        clearTimeout(this.updateDgbBalanceTimeout)
+        let _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.dgbWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateDgbBalanceTimeout = setTimeout(() => this.updateDgbWalletBalance(), 120000)
+    }
+
+    async updateRvnWalletBalance() {
+        clearTimeout(this.updateRvnBalanceTimeout)
+        let _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.rvnWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateRvnBalanceTimeout = setTimeout(() => this.updateRvnWalletBalance(), 120000)
+    }
+
+    async updateArrrWalletBalance() {
+        clearTimeout(this.updateArrrBalanceTimeout)
+        let _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+        let _body = store.getState().app.selectedAddress.arrrWallet.seed58
+
+        await parentEpml.request('apiCall', {
+            url: _url,
+            method: 'POST',
+            body: _body,
+        }).then((res) => {
+            if (isNaN(Number(res))) {
+                let snack1string = get("tradepage.tchange30")
+                parentEpml.request('showSnackBar', `${snack1string}`)
+            } else {
+                this.arrrWalletBalance = (Number(res) / 1e8).toFixed(8)
+            }
+        })
+        this.updateArrrBalanceTimeout = setTimeout(() => this.updateArrrWalletBalance(), 120000)
+    }
+
+    botBtcTradebook() {
+        if (localStorage.getItem(this.botBtcWallet) === null) {
+            localStorage.setItem(this.botBtcWallet, "")
+        } else {
+            this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+        }
+    }
+
+    removeBotBTCTradebook() {
+        localStorage.removeItem(this.botBtcWallet)
+        localStorage.setItem(this.botBtcWallet, "")
+        this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+        this.tradeBotAvailableBtcQortal = []
+    }
+
+    botLtcTradebook() {
+        if (localStorage.getItem(this.botLtcWallet) === null) {
+            localStorage.setItem(this.botLtcWallet, "")
+        } else {
+            this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+        }
+    }
+
+    removeBotLTCTradebook() {
+        localStorage.removeItem(this.botLtcWallet)
+        localStorage.setItem(this.botLtcWallet, "")
+        this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+        this.tradeBotAvailableLtcQortal = []
+    }
+
+    botDogeTradebook() {
+        if (localStorage.getItem(this.botDogeWallet) === null) {
+            localStorage.setItem(this.botDogeWallet, "")
+        } else {
+            this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+        }
+    }
+
+    removeBotDOGETradebook() {
+        localStorage.removeItem(this.botDogeWallet)
+        localStorage.setItem(this.botDogeWallet, "")
+        this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+        this.tradeBotAvailableDogeQortal = []
+    }
+
+    botDgbTradebook() {
+        if (localStorage.getItem(this.botDgbWallet) === null) {
+            localStorage.setItem(this.botDgbWallet, "")
+        } else {
+            this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+        }
+    }
+
+    botRvnTradebook() {
+        if (localStorage.getItem(this.botRvnWallet) === null) {
+            localStorage.setItem(this.botRvnWallet, "")
+        } else {
+            this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+        }
+    }
+
+    botArrrTradebook() {
+        if (localStorage.getItem(this.botArrrWallet) === null) {
+            localStorage.setItem(this.botArrrWallet, "")
+        } else {
+            this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+        }
+    }
+
+    async buyBtcAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botBtcBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.btcWallet.derivedMasterPrivateKey,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botBtcWallet)
+                localStorage.setItem(this.botBtcWallet, "")
+
+                var oldBtcTradebook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                const newBtcTradebookItem = {
+                    botBtcQortAmount: this.reAddBtcAmount,
+                    botBtcPrice: this.reAddBtcPrice
+                }
+
+                oldBtcTradebook.push(newBtcTradebookItem)
+
+                localStorage.setItem(this.botBtcWallet, JSON.stringify(oldBtcTradebook))
+
+                this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botBtcWallet)
+                localStorage.setItem(this.botBtcWallet, "")
+
+                var oldBtcTradebook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                const newBtcTradebookItem = {
+                    botBtcQortAmount: this.reAddBtcAmount,
+                    botBtcPrice: this.reAddBtcPrice
+                }
+
+                oldBtcTradebook.push(newBtcTradebookItem)
+
+                localStorage.setItem(this.botBtcWallet, JSON.stringify(oldBtcTradebook))
+
+                this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+    }
+
+    async buyLtcAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botLtcBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botLtcWallet)
+                localStorage.setItem(this.botLtcWallet, "")
+
+                var oldLtcTradebook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                const newLtcTradebookItem = {
+                    botLtcQortAmount: this.reAddLtcAmount,
+                    botLtcPrice: this.reAddLtcPrice
+                }
+
+                oldLtcTradebook.push(newLtcTradebookItem)
+
+                localStorage.setItem(this.botLtcWallet, JSON.stringify(oldLtcTradebook))
+
+                this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botLtcWallet)
+                localStorage.setItem(this.botLtcWallet, "")
+
+                var oldLtcTradebook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                const newLtcTradebookItem = {
+                    botLtcQortAmount: this.reAddLtcAmount,
+                    botLtcPrice: this.reAddLtcPrice
+                }
+
+                oldLtcTradebook.push(newLtcTradebookItem)
+
+                localStorage.setItem(this.botLtcWallet, JSON.stringify(oldLtcTradebook))
+
+                this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+    }
+
+    async buyDogeAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botDogeBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.dogeWallet.derivedMasterPrivateKey,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botDogeWallet)
+                localStorage.setItem(this.botDogeWallet, "")
+
+                var oldDogeTradebook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                const newDogeTradebookItem = {
+                    botDogeQortAmount: this.reAddDogeAmount,
+                    botDogePrice: this.reAddDogePrice
+                }
+
+                oldDogeTradebook.push(newDogeTradebookItem)
+
+                localStorage.setItem(this.botDogeWallet, JSON.stringify(oldDogeTradebook))
+
+                this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botDogeWallet)
+                localStorage.setItem(this.botDogeWallet, "")
+
+                var oldDogeTradebook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                const newDogeTradebookItem = {
+                    botDogeQortAmount: this.reAddDogeAmount,
+                    botDogePrice: this.reAddDogePrice
+                }
+
+                oldDogeTradebook.push(newDogeTradebookItem)
+
+                localStorage.setItem(this.botDogeWallet, JSON.stringify(oldDogeTradebook))
+
+                this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+    }
+
+    async buyDgbAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botDgbBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.dgbWallet.derivedMasterPrivateKey,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botDgbWallet)
+                localStorage.setItem(this.botDgbWallet, "")
+
+                var oldDgbTradebook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                const newDgbTradebookItem = {
+                    botDgbQortAmount: this.reAddDgbAmount,
+                    botDgbPrice: this.reAddDgbPrice
+                }
+
+                oldDgbTradebook.push(newDgbTradebookItem)
+
+                localStorage.setItem(this.botDgbWallet, JSON.stringify(oldDgbTradebook))
+
+                this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botDgbWallet)
+                localStorage.setItem(this.botDgbWallet, "")
+
+                var oldDgbTradebook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                const newDgbTradebookItem = {
+                    botDgbQortAmount: this.reAddDgbAmount,
+                    botDgbPrice: this.reAddDgbPrice
+                }
+
+                oldDgbTradebook.push(newDgbTradebookItem)
+
+                localStorage.setItem(this.botDgbWallet, JSON.stringify(oldDgbTradebook))
+
+                this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+    }
+
+    async buyRvnAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botRvnBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.rvnWallet.derivedMasterPrivateKey,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botRvnWallet)
+                localStorage.setItem(this.botRvnWallet, "")
+
+                var oldRvnTradebook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                const newRvnTradebookItem = {
+                    botRvnQortAmount: this.reAddRvnAmount,
+                    botRvnPrice: this.reAddRvnPrice
+                }
+
+                oldRvnTradebook.push(newRvnTradebookItem)
+
+                localStorage.setItem(this.botRvnWallet, JSON.stringify(oldRvnTradebook))
+
+                this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botRvnWallet)
+                localStorage.setItem(this.botRvnWallet, "")
+
+                var oldRvnTradebook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                const newRvnTradebookItem = {
+                    botRvnQortAmount: this.reAddRvnAmount,
+                    botRvnPrice: this.reAddRvnPrice
+                }
+
+                oldRvnTradebook.push(newRvnTradebookItem)
+
+                localStorage.setItem(this.botRvnWallet, JSON.stringify(oldRvnTradebook))
+
+                this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
+    }
+
+    async buyArrrAction() {
+        const makeRequest = async () => {
+            const response = await parentEpml.request('tradeBotRespondRequest', {
+                atAddress: this.botArrrBuyAtAddress,
+                foreignKey: store.getState().app.selectedAddress.arrrWallet.seed58,
+                receivingAddress: store.getState().app.selectedAddress.address,
+            })
+            return response
+        }
+
+        const manageResponse = (response) => {
+            if (response === true) {
+                let snack5string = get("tradepage.tchange23")
+                parentEpml.request('showSnackBar', `${snack5string}`)
+            } else if (response === false) {
+                localStorage.removeItem(this.botArrrWallet)
+                localStorage.setItem(this.botArrrWallet, "")
+
+                var oldArrrTradebook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                const newArrrTradebookItem = {
+                    botArrrQortAmount: this.reAddArrrAmount,
+                    botArrrPrice: this.reAddArrrPrice
+                }
+
+                oldArrrTradebook.push(newArrrTradebookItem)
+
+                localStorage.setItem(this.botArrrWallet, JSON.stringify(oldArrrTradebook))
+
+                this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                let snack6string = get("tradepage.tchange24")
+                parentEpml.request('showSnackBar', `${snack6string}`)
+            } else {
+                localStorage.removeItem(this.botArrrWallet)
+                localStorage.setItem(this.botArrrWallet, "")
+
+                var oldArrrTradebook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                const newArrrTradebookItem = {
+                    botArrrQortAmount: this.reAddArrrAmount,
+                    botArrrPrice: this.reAddArrrPrice
+                }
+
+                oldArrrTradebook.push(newArrrTradebookItem)
+
+                localStorage.setItem(this.botArrrWallet, JSON.stringify(oldArrrTradebook))
+
+                this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
+
+                let snack7string = get("tradepage.tchange25")
+                parentEpml.request('showSnackBar', `${snack7string}: ${response.message}`)
+            }
+        }
+        const res = await makeRequest()
+        manageResponse(res)
     }
 
     stateChanged(state) {
@@ -209,6 +1961,24 @@ class AppView extends connect(store)(LitElement) {
     openLogout() {
         const logoutDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('logout-view')
         logoutDialog.openLogout()
+    }
+
+    getApiKey() {
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
+    }
+
+    isEmptyArray(arr) {
+        if (!arr) {
+            return true
+        }
+        return arr.length === 0
+    }
+
+    round(number) {
+        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+        return result
     }
 }
 

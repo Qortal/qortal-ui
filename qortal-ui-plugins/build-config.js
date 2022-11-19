@@ -70,16 +70,8 @@ const generateForPlugins = () => {
 			out: 'plugins/core/trade-portal/trade-portal.js',
 		},
 		{
-			in: 'plugins/core/trade-bot/trade-bot-btc/trade-bot-btc.src.js',
-			out: 'plugins/core/trade-bot/trade-bot-btc/trade-bot-btc.js',
-		},
-		{
-			in: 'plugins/core/trade-bot/trade-bot-ltc/trade-bot-ltc.src.js',
-			out: 'plugins/core/trade-bot/trade-bot-ltc/trade-bot-ltc.js',
-		},
-		{
-			in: 'plugins/core/trade-bot/trade-bot-doge/trade-bot-doge.src.js',
-			out: 'plugins/core/trade-bot/trade-bot-doge/trade-bot-doge.js',
+			in: 'plugins/core/trade-bot/trade-bot-portal.src.js',
+			out: 'plugins/core/trade-bot/trade-bot-portal.js',
 		},
 		{
 			in: 'plugins/core/wallet/wallet-app.src.js',

@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"ZARZĄDZANIE GRUPAMI",
       "puzzles":"PUZZLE",
-      "nodemanagement":"ZARZĄDZANIE WĘZŁAMI"
+      "nodemanagement":"ZARZĄDZANIE WĘZŁAMI",
+      "trading":"HANDLOWY"
    },
    "login":{
       "login":"Zaloguj się",
@@ -150,7 +151,9 @@
       "next":"Następny",
       "create":"Utwórz",
       "continue":"Kontynuuj",
-      "save":"Zapisz"
+      "save":"Zapisz",
+      "balance":"Saldo",
+      "balances":"SALDO TWOJEGO PORTFELA"
    },
    "startminting":{
       "smchange1":"Nie można pobrać kont menniczych",
@@ -322,7 +325,8 @@
       "tchange44":"Pomyślnie dodano automatyczne zamówienie zakupu!",
       "tchange45":"AUTO KUP Z",
       "tchange46":"AUTO KUP",
-      "tchange47":"Sprzedaj za tę cenę"
+      "tchange47":"Sprzedaj za tę cenę",
+      "tchange48":"NIEWYSTARCZAJĄCO"
    },
    "rewardsharepage":{
       "rchange1":"Podział nagród",

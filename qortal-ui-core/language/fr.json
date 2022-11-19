@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTION DE GROUPES",
       "puzzles":"PUZZLES",
-      "nodemanagement":"GESTION DE NOEUDS"
+      "nodemanagement":"GESTION DE NOEUDS",
+      "trading":"COMMERCE"
    },
    "login":{
       "login":"Connexion",
@@ -150,7 +151,9 @@
       "next":"Suivant",
       "create":"Créer",
       "continue":"Continuer",
-      "save":"Sauvegarder"
+      "save":"Sauvegarder",
+      "balance":"Solde",
+      "balances":"VOS SOLDES DE PORTEFEUILLE"
    },
    "startminting":{
       "smchange1":"Impossible de récupérer les comptes de frappe",
@@ -322,7 +325,8 @@
       "tchange44":"Commande d'achat automatique ajoutée avec succès !",
       "tchange45":"ACHAT AUTO AVEC",
       "tchange46":"ACHAT AUTOMATIQUE",
-      "tchange47":"Vendre à ce prix"
+      "tchange47":"Vendre à ce prix",
+      "tchange48":"PAS ASSEZ"
    },
    "rewardsharepage":{
       "rchange1":"Récompenses",

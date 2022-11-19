@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIÓN DE GRUPO",
       "puzzles":"ROMPECABEZAS",
-      "nodemanagement":"GESTIÓN DE NODO"
+      "nodemanagement":"GESTIÓN DE NODO",
+      "trading":"COMERCIO"
    },
    "login":{
       "login":"Iniciar sesión",
@@ -150,7 +151,9 @@
       "next":"Siguiente",
       "create":"Crear",
       "continue":"Continuar",
-      "save":"Guardar"
+      "save":"Guardar",
+      "balance":"Saldo",
+      "balances":"LOS SALDOS DE TU BILLETERA"
    },
    "startminting":{
       "smchange1":"No se pueden obtener cuentas de acuñación",
@@ -322,7 +325,8 @@
       "tchange44":"Orden de compra automática agregada con éxito!",
       "tchange45":"AUTO COMPRAR CON",
       "tchange46":"COMPRA AUTOMÁTICA",
-      "tchange47":"Vender por este precio"
+      "tchange47":"Vender por este precio",
+      "tchange48":"NO ES SUFICIENTE"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",

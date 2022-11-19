@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTIONE DEI GRUPPI",
       "puzzles":"PUZZLES",
-      "nodemanagement":"GESTIONE DEI NODI"
+      "nodemanagement":"GESTIONE DEI NODI",
+      "trading":"COMMERCIO"
    },
    "login":{
       "login":"Login",
@@ -150,7 +151,9 @@
       "next":"Avanti",
       "create":"Creare",
       "continue":"Continua",
-      "save":"Salva"
+      "save":"Salva",
+      "balance":"Saldo",
+      "balances":"IL TUO SALDO DEL PORTAFOGLIO"
    },
    "startminting":{
       "smchange1":"Impossibile recuperare i conti di conio",
@@ -322,7 +325,8 @@
       "tchange44":"Ordine di acquisto automatico aggiunto con successo!",
       "tchange45":"ACQUISTA AUTO CON",
       "tchange46":"ACQUISTO AUTO",
-      "tchange47":"Vendi a questo prezzo"
+      "tchange47":"Vendi a questo prezzo",
+      "tchange48":"NON ABBASTANZA"
    },
    "rewardsharepage":{
       "rchange1":"Quote di ricompensa",

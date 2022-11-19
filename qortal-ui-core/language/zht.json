@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"群組管理",
       "puzzles":"益智遊戲",
-      "nodemanagement":"節點管理"
+      "nodemanagement":"節點管理",
+      "trading":"貿易"
    },
    "login":{
       "login":"登入",
@@ -150,7 +151,9 @@
       "next":"下一步",
       "create":"創建",
       "continue":"繼續",
-      "save":"保存"
+      "save":"保存",
+      "balance":"信用",
+      "balances":"您的錢包餘額"
    },
    "startminting":{
       "smchange1":"無法獲取鑄幣帳戶",
@@ -322,7 +325,8 @@
       "tchange44":"成功添加自動買單！",
       "tchange45":"自動購買",
       "tchange46":"自動購買",
-      "tchange47":"以這個價格出售"
+      "tchange47":"以這個價格出售",
+      "tchange48":"不夠"
    },
    "rewardsharepage":{
       "rchange1":"鑄幣密鑰",

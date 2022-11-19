@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GESTÃO DE GRUPOS",
       "puzzles":"ENIGMAS",
-      "nodemanagement":"GERENCIAMENTO DO NÓDULO"
+      "nodemanagement":"GERENCIAMENTO DO NÓDULO",
+      "trading":"NEGOCIAÇÃO"
    },
    "login":{
       "login":"Login",
@@ -150,7 +151,9 @@
       "next":"Próximo",
       "create":"Criar",
       "continue":"Continuar",
-      "save":"Salvar"
+      "save":"Salvar",
+      "balance":"Saldo",
+      "balances":"SEUS SALDOS DE CARTEIRA"
    },
    "startminting":{
       "smchange1":"Não é possível buscar contas de cunhagem",
@@ -322,7 +325,8 @@
       "tchange44":"Pedido de compra automática adicionado com sucesso!",
       "tchange45":"COMPRA AUTOMÁTICA COM",
       "tchange46":"COMPRA AUTOMÁTICA",
-      "tchange47":"Vendo por este preço"
+      "tchange47":"Vendo por este preço",
+      "tchange48":"INSUFICIENTE"
    },
    "rewardsharepage":{
       "rchange1":"Ações de recompensa",

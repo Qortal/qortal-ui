@@ -162,22 +162,13 @@ class SidenavMenu extends connect(store)(LitElement) {
 				>
 					<vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
 				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.tradeportal')}"
-					href="/app/trade-portal"
-				>
-					<vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
-				</side-menu-item>
-				<side-menu-item label="${translate('tradepage.tchange46')}" expanded>
-					<vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
-					<side-menu-item label="${translate('tradepage.tchange45')} BTC" href="/app/trade-bot-btc">
-						<vaadin-icon icon="vaadin:start-cog" slot="icon"></vaadin-icon>
+				<side-menu-item label="${translate('sidemenu.trading')}" expanded>
+					<vaadin-icon icon="vaadin:cash" slot="icon"></vaadin-icon>
+					<side-menu-item label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
+						<vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
 					</side-menu-item>
-					<side-menu-item label="${translate('tradepage.tchange45')} LTC" href="/app/trade-bot-ltc">
-						<vaadin-icon icon="vaadin:start-cog" slot="icon"></vaadin-icon>
-					</side-menu-item>
-					<side-menu-item label="${translate('tradepage.tchange45')} DOGE" href="/app/trade-bot-doge">
-						<vaadin-icon icon="vaadin:start-cog" slot="icon"></vaadin-icon>
+					<side-menu-item label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
+						<vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
 					</side-menu-item>
 				</side-menu-item>
 				<side-menu-item

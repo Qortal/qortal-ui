@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GRUPPEADMINISTRASJON",
       "puzzles":"PUZZLES",
-      "nodemanagement":"NODEADMINISTRASJON"
+      "nodemanagement":"NODEADMINISTRASJON",
+      "trading":"HANDEL"
    },
    "login":{
       "login":"Logg på",
@@ -150,7 +151,9 @@
       "next":"Neste",
       "create":"Opprett",
       "continue":"Fortsett",
-      "save":"Lagre"
+      "save":"Lagre",
+      "balance":"Saldo",
+      "balances":"DIN WALLET-SALDO"
    },
    "startminting":{
       "smchange1":"Kan ikke hente myntingkontoer",
@@ -322,7 +325,8 @@
       "tchange44":"Autokjøpsordre er lagt til!",
       "tchange45":"AUTOKJØP MED",
       "tchange46":"AUTOKJØP",
-      "tchange47":"Selges for denne prisen"
+      "tchange47":"Selges for denne prisen",
+      "tchange48":"IKKE NOK"
    },
    "rewardsharepage":{
       "rchange1":"Belønningsdel",

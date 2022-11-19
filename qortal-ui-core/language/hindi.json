@@ -35,7 +35,8 @@
       "qchat":"क्यू-चैट",
       "groupmanagement":"समूह प्रबंधन",
       "puzzles":"पहेलि",
-      "nodemanagement":"नोड प्रबंधन"
+      "nodemanagement":"नोड प्रबंधन",
+      "trading":"व्यापार"
    },
    "login":{
       "login":"लॉग इन करें",
@@ -151,7 +152,9 @@
       "next":"अगला",
       "create":"बनाएं",
       "continue":"जारी रखें",
-      "save":"सहेजें"
+      "save":"सहेजें",
+      "balance":"संतुलन",
+      "balances":"आपका वॉलेट बैलेंस"
    },
    "startminting":{
       "smchange1":"खनन खाते नहीं लाए जा सकते",
@@ -323,7 +326,8 @@
       "tchange44":"स्वतः खरीद आदेश सफलतापूर्वक जोड़ा गया!",
       "tchange45":"ऑटो के साथ खरीदें",
       "tchange46":"ऑटो खरीदें",
-      "tchange47":"इस कीमत पर बेचें"
+      "tchange47":"इस कीमत पर बेचें",
+      "tchange48":"पर्याप्त नहीं"
    },
    "rewardsharepage":{
       "rchange1":"रिवॉर्डशेयर",

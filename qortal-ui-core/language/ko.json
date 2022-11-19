@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"그룹 관리",
       "puzzles":"퍼즐",
-      "nodemanagement":"노드 관리"
+      "nodemanagement":"노드 관리",
+      "trading":"무역"
    },
    "login":{
       "login":"로그인",
@@ -150,7 +151,9 @@
       "next":"다음",
       "create":"생성",
       "continue":"계속하다",
-      "save":"저장"
+      "save":"저장",
+      "balance":"균형",
+      "balances":"지갑 잔액"
    },
    "startminting":{
       "smchange1":"발행 계정을 가져올 수 없습니다",
@@ -322,7 +325,8 @@
       "tchange44":"자동 구매 주문을 성공적으로 추가했습니다!",
       "tchange45":"자동 구매",
       "tchange46":"자동 구매",
-      "tchange47":"이 가격에 팔아요"
+      "tchange47":"이 가격에 팔아요",
+      "tchange48":"부족한"
    },
    "rewardsharepage":{
       "rchange1":"보상 공유",

@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"GROUP MANAGEMENT",
       "puzzles":"PUZZLES",
-      "nodemanagement":"NODE MANAGEMENT"
+      "nodemanagement":"NODE MANAGEMENT",
+      "trading":"TRADING"
    },
    "login":{
       "login":"Login",
@@ -150,7 +151,9 @@
       "next":"Next",
       "create":"Create",
       "continue":"Continue",
-      "save":"Save"
+      "save":"Save",
+      "balance":"Balance",
+      "balances":"YOUR WALLET BALANCES"
    },
    "startminting":{
       "smchange1":"Cannot fetch minting accounts",
@@ -322,7 +325,8 @@
       "tchange44":"Successfully added auto buy order!",
       "tchange45":"AUTO BUY WITH",
       "tchange46":"AUTO BUY",
-      "tchange47":"Sell for this price"
+      "tchange47":"Sell for this price",
+      "tchange48":"NOT ENOUGH"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",

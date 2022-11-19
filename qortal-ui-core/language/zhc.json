@@ -34,7 +34,8 @@
       "qchat":"Q-CHAT",
       "groupmanagement":"群组管理",
       "puzzles":"益智游戏",
-      "nodemanagement":"节点管理"
+      "nodemanagement":"节点管理",
+      "trading":"贸易"
    },
    "login":{
       "login":"登入",
@@ -150,7 +151,9 @@
       "next":"下一步",
       "create":"新建",
       "continue":"继续",
-      "save":"保存"
+      "save":"保存",
+      "balance":"信用",
+      "balances":"您的钱包余额"
    },
    "startminting":{
       "smchange1":"无法获取铸币帐户",
@@ -322,7 +325,8 @@
       "tchange44":"成功添加自动买单！",
       "tchange45":"自动购买",
       "tchange46":"自动购买",
-      "tchange47":"以这个价格出售"
+      "tchange47":"以这个价格出售",
+      "tchange48":"不够"
    },
    "rewardsharepage":{
       "rchange1":"铸币密钥",
