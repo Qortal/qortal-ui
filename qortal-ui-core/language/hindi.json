@@ -36,7 +36,8 @@
       "groupmanagement":"समूह प्रबंधन",
       "puzzles":"पहेलि",
       "nodemanagement":"नोड प्रबंधन",
-      "trading":"व्यापार"
+      "trading":"व्यापार",
+      "groups":"समूह"
    },
    "login":{
       "login":"लॉग इन करें",

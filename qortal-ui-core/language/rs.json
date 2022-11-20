@@ -35,7 +35,8 @@
       "groupmanagement":"MENADŽMENT GRUPA",
       "puzzles":"SLAGALICE",
       "nodemanagement":"MENADŽMENT ČVORIŠTA",
-      "trading":"TRADING"
+      "trading":"TRADING",
+      "groups":"GRUPE"
    },
    "login":{
       "login":"Prijava",

@@ -480,17 +480,11 @@ class AppView extends connect(store)(LitElement) {
 
         window.addEventListener('storage', async () => {
             this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
-            await appDelay(500)
             this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
-            await appDelay(500)
             this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
-            await appDelay(500)
             this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
-            await appDelay(500)
             this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
-            await appDelay(500)
             this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
-            await appDelay(500)
         })
 
         this.renderBalances()
@@ -523,7 +517,7 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                await this.updateBtcWalletBalance()
+                await appDelay(1000)
                 filterMyBotPriceTradesBTC()
                 setTimeout(getOpenTradesBTC, 150000)
             }
@@ -602,9 +596,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botBtcBuyAtAddress = tradebtcataddress
+
+                await appDelay(1000)
 
                 this.buyBtcAction()
 
@@ -623,7 +617,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
                     return
                 } else {
-                    await this.updateBtcWalletBalance()
                     const checkBotBtcFunds = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount) * parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
                     const myBotBtcFunds = this.round(parseFloat(this.btcWalletBalance))
 
@@ -664,7 +657,7 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                await this.updateLtcWalletBalance()
+                await appDelay(1000)
                 filterMyBotPriceTradesLTC()
                 setTimeout(getOpenTradesLTC, 150000)
             }
@@ -743,9 +736,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botLtcBuyAtAddress = tradeltcataddress
+
+                await appDelay(1000)
 
                 this.buyLtcAction()
 
@@ -764,7 +757,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
                     return
                 } else {
-                    await this.updateLtcWalletBalance()
                     const checkBotLtcFunds = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount) * parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
                     const myBotLtcFunds = this.round(parseFloat(this.ltcWalletBalance))
 
@@ -805,7 +797,7 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                await this.updateDogeWalletBalance()
+                await appDelay(1000)
                 filterMyBotPriceTradesDOGE()
                 setTimeout(getOpenTradesDOGE, 150000)
             }
@@ -884,9 +876,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botDogeBuyAtAddress = tradedogeataddress
+
+                await appDelay(1000)
 
                 this.buyDogeAction()
 
@@ -905,7 +897,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
                     return
                 } else {
-                    await this.updateDogeWalletBalance()
                     const checkBotDogeFunds = this.round(parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount) * parseFloat(this.tradeBotDogeBook[0].botDogePrice))
                     const myBotDogeFunds = this.round(parseFloat(this.dogeWalletBalance))
 
@@ -946,6 +937,8 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
+                await appDelay(1000)
+                filterMyBotPriceTradesDGB()
                 setTimeout(getOpenTradesDGB, 150000)
             }
         }
@@ -1023,9 +1016,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.botDgbWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botDgbBuyAtAddress = tradedgbataddress
+
+                await appDelay(1000)
 
                 this.buyDgbAction()
 
@@ -1044,7 +1037,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
                     return
                 } else {
-                    await this.updateDgbWalletBalance()
                     const checkBotDgbFunds = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount) * parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
                     const myBotDgbFunds = this.round(parseFloat(this.dgbWalletBalance))
 
@@ -1085,6 +1077,8 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
+                await appDelay(1000)
+                filterMyBotPriceTradesRVN()
                 setTimeout(getOpenTradesRVN, 150000)
             }
         }
@@ -1162,9 +1156,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botRvnBuyAtAddress = tradervnataddress
+
+                await appDelay(1000)
 
                 this.buyRvnAction()
 
@@ -1183,7 +1177,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
                     return
                 } else {
-                    await this.updateRvnWalletBalance()
                     const checkBotRvnFunds = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount) * parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
                     const myBotRvnFunds = this.round(parseFloat(this.rvnWalletBalance))
 
@@ -1224,6 +1217,8 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
+                await appDelay(1000)
+                filterMyBotPriceTradesARRR()
                 setTimeout(getOpenTradesARRR, 150000)
             }
         }
@@ -1301,9 +1296,9 @@ class AppView extends connect(store)(LitElement) {
 
                 this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
 
-                await appDelay(1000)
-
                 this.botArrrBuyAtAddress = tradearrrataddress
+
+                await appDelay(1000)
 
                 this.buyArrrAction()
 
@@ -1322,7 +1317,6 @@ class AppView extends connect(store)(LitElement) {
                 if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
                     return
                 } else {
-                    await this.updateArrrWalletBalance()
                     const checkBotArrrFunds = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount) * parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
                     const myBotArrrFunds = this.round(parseFloat(this.arrrWalletBalance))
 

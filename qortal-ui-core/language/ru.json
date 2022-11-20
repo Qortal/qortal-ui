@@ -35,7 +35,8 @@
       "groupmanagement":"УПРАВЛЕНИЕ ГРУППАМИ",
       "puzzles":"ГОЛОВОЛОМКИ",
       "nodemanagement":"УПРАВЛЕНИЕ УЗЛАМИ",
-      "trading":"ТОРГОВЛЯ"
+      "trading":"ТОРГОВЛЯ",
+      "groups":"ГРУППЫ"
    },
    "login":{
       "login":"Войти",

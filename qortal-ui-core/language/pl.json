@@ -35,7 +35,8 @@
       "groupmanagement":"ZARZĄDZANIE GRUPAMI",
       "puzzles":"PUZZLE",
       "nodemanagement":"ZARZĄDZANIE WĘZŁAMI",
-      "trading":"HANDLOWY"
+      "trading":"HANDLOWY",
+      "groups":"GRUPY"
    },
    "login":{
       "login":"Zaloguj się",

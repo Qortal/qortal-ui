@@ -35,7 +35,8 @@
       "groupmanagement":"CSOPORTKEZELÉS",
       "puzzles":"REJTVÉNYEK",
       "nodemanagement":"CSOMÓPONTKEZELÉS",
-      "trading":"KERESKEDÉS"
+      "trading":"KERESKEDÉS",
+      "groups":"CSOPORTOK"
    },
    "login":{
       "login":"Bejelentkezés",

@@ -35,7 +35,8 @@
       "groupmanagement":"GESTIONARE GRUP",
       "puzzles":"PUZZLE-URI",
       "nodemanagement":"GESTIONARE NOD",
-      "trading":"COMERCIAL"
+      "trading":"COMERCIAL",
+      "groups":"GRUPURI"
    },
    "login":{
       "login":"Login",

@@ -35,7 +35,8 @@
       "groupmanagement":"그룹 관리",
       "puzzles":"퍼즐",
       "nodemanagement":"노드 관리",
-      "trading":"무역"
+      "trading":"무역",
+      "groups":"여러 떼"
    },
    "login":{
       "login":"로그인",

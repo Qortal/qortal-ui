@@ -35,7 +35,8 @@
       "groupmanagement":"GRUPPENMANAGEMENT",
       "puzzles":"RÄTSEL",
       "nodemanagement":"KNOTENVERWALTUNG",
-      "trading":"HANDELN"
+      "trading":"HANDELN",
+      "groups":"GRUPPEN"
    },
    "login":{
       "login":"Einloggen",

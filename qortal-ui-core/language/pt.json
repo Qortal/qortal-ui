@@ -35,7 +35,8 @@
       "groupmanagement":"GESTÃO DE GRUPOS",
       "puzzles":"ENIGMAS",
       "nodemanagement":"GERENCIAMENTO DO NÓDULO",
-      "trading":"NEGOCIAÇÃO"
+      "trading":"NEGOCIAÇÃO",
+      "groups":"GRUPOS"
    },
    "login":{
       "login":"Login",

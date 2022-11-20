@@ -35,7 +35,8 @@
       "groupmanagement":"UPRAVLJANJE GRUPAMA",
       "puzzles":"ZAGONETKE",
       "nodemanagement":"UPRAVLJANJE ČVOROVIMA",
-      "trading":"TRGOVANJE"
+      "trading":"TRGOVANJE",
+      "groups":"GRUPE"
    },
    "login":{
       "login":"Prijavi se",

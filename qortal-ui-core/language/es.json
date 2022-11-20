@@ -35,7 +35,8 @@
       "groupmanagement":"GESTIÓN DE GRUPO",
       "puzzles":"ROMPECABEZAS",
       "nodemanagement":"GESTIÓN DE NODO",
-      "trading":"COMERCIO"
+      "trading":"COMERCIO",
+      "groups":"GRUPOS"
    },
    "login":{
       "login":"Iniciar sesión",

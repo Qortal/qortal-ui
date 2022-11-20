@@ -35,7 +35,8 @@
       "groupmanagement":"GRUPPEADMINISTRASJON",
       "puzzles":"PUZZLES",
       "nodemanagement":"NODEADMINISTRASJON",
-      "trading":"HANDEL"
+      "trading":"HANDEL",
+      "groups":"GRUPPER"
    },
    "login":{
       "login":"Logg på",

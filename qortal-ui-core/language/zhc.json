@@ -35,7 +35,8 @@
       "groupmanagement":"群组管理",
       "puzzles":"益智游戏",
       "nodemanagement":"节点管理",
-      "trading":"贸易"
+      "trading":"贸易",
+      "groups":"团体"
    },
    "login":{
       "login":"登入",

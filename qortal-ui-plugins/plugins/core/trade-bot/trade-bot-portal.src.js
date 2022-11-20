@@ -799,6 +799,12 @@ class TradeBotPortal extends LitElement {
         this.displayTradeAddress = ''
         this.displayTradeLevel = ''
         this.displayTradeBalance = ''
+        this.tradeBotBtcBook = []
+        this.tradeBotLtcBook = []
+        this.tradeBotDogeBook = []
+        this.tradeBotDgbBook = []
+        this.tradeBotRvnBook = []
+        this.tradeBotArrrBook = []
     }
 
     openTradesTemplate() {
@@ -2004,6 +2010,12 @@ class TradeBotPortal extends LitElement {
         )
 
         window.addEventListener('storage', () => {
+            this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.btcWallet) || "[]")
+            this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.ltcWallet) || "[]")
+            this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.dogeWallet) || "[]")
+            this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.dgbWallet) || "[]")
+            this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.rvnWallet) || "[]")
+            this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.arrrWallet) || "[]")
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
 
@@ -2011,12 +2023,6 @@ class TradeBotPortal extends LitElement {
 
             this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
             document.querySelector('html').setAttribute('theme', this.theme)
-            this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.btcWallet) || "[]")
-            this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.ltcWallet) || "[]")
-            this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.dogeWallet) || "[]")
-            this.tradeBotDgbBook = JSON.parse(localStorage.getItem(this.dgbWallet) || "[]")
-            this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.rvnWallet) || "[]")
-            this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.arrrWallet) || "[]")
         })
 
         window.onkeyup = (e) => {
