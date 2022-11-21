@@ -195,17 +195,8 @@ class SidenavMenu extends connect(store)(LitElement) {
 				>
 					<vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
 				</side-menu-item>
-				<side-menu-item
-					label="${translate('sidemenu.groups')}"
-					expanded
-				>
+				<side-menu-item label="${translate('sidemenu.groups')}" href="/app/group-management">
 					<vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
-					<side-menu-item
-						label="${translate('sidemenu.groupmanagement')}"
-						href="/app/group-management"
-					>
-						<vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
-					</side-menu-item>
 				</side-menu-item>
 				<side-menu-item
 					label="${translate('sidemenu.puzzles')}"

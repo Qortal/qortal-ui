@@ -1381,12 +1381,13 @@ class AppView extends connect(store)(LitElement) {
     async updateQortWalletBalance() {
         clearTimeout(this.updateQortBalanceTimeout)
         let qortAddress = store.getState().app.selectedAddress.address
+
         await parentEpml.request('apiCall', {
             url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
         }).then((res) => {
             this.qortWalletBalance = res
-            this.updateQortBalanceTimeout = setTimeout(() => this.updateQortWalletBalance(), 120000)
         })
+        this.updateQortBalanceTimeout = setTimeout(() => this.updateQortWalletBalance(), 120000)
     }
 
     async updateBtcWalletBalance() {
@@ -1400,8 +1401,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.btcWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
@@ -1420,8 +1420,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.ltcWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
@@ -1440,8 +1439,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.dogeWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
@@ -1460,8 +1458,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.dgbWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
@@ -1480,8 +1477,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.rvnWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
@@ -1500,8 +1496,7 @@ class AppView extends connect(store)(LitElement) {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.arrrWalletBalance = (Number(res) / 1e8).toFixed(8)
             }

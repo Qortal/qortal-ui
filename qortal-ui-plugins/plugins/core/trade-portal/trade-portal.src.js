@@ -1504,8 +1504,7 @@ class TradePortal extends LitElement {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
             }

@@ -793,12 +793,6 @@ class TradeBotPortal extends LitElement {
         this.dgbqort = 0
         this.rvnqort = 0
         this.arrrqort = 0
-        this.tradeInfoAccountName = ''
-        this.tradeImageUrl = ''
-        this.tradeAddressResult = []
-        this.displayTradeAddress = ''
-        this.displayTradeLevel = ''
-        this.displayTradeBalance = ''
         this.tradeBotBtcBook = []
         this.tradeBotLtcBook = []
         this.tradeBotDogeBook = []
@@ -2257,8 +2251,7 @@ class TradeBotPortal extends LitElement {
             body: _body,
         }).then((res) => {
             if (isNaN(Number(res))) {
-                let snack1string = get("tradepage.tchange30")
-                parentEpml.request('showSnackBar', `${snack1string}`)
+                //...
             } else {
                 this.listedCoins.get(this.selectedCoin).balance = (Number(res) / 1e8).toFixed(8)
             }
@@ -2288,139 +2281,54 @@ class TradeBotPortal extends LitElement {
     }
 
     async getDoneTrades() {
+        let tradesUrl = ``
+        clearTimeout(this.updateDoneTradesTimeout)
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+
         switch (this.selectedCoin) {
             case 'BITCOIN':
-                this.isLoadingDoneTrades = true
-                const doneBtcQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=BITCOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneBtcQortal = await fetch(doneBtcQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneBtcQortal.map(item => {
-                    const searchBtcAddress = item.buyerReceivingAddress
-                    if (searchBtcAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=BITCOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
                 break
             case 'LITECOIN':
-                this.isLoadingDoneTrades = true
-                const doneLtcQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=LITECOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneLtcQortal = await fetch(doneLtcQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneLtcQortal.map(item => {
-                    const searchLtcAddress = item.buyerReceivingAddress
-                    if (searchLtcAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=LITECOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
                 break
             case 'DOGECOIN':
-                this.isLoadingDoneTrades = true
-                const doneDogeQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=DOGECOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneDogeQortal = await fetch(doneDogeQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneDogeQortal.map(item => {
-                    const searchDogeAddress = item.buyerReceivingAddress
-                    if (searchDogeAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=DOGECOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
                 break
             case 'DIGIBYTE':
-                this.isLoadingDoneTrades = true
-                const doneDgbQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=DIGIBYTE&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneDgbQortal = await fetch(doneDgbQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneDgbQortal.map(item => {
-                    const searchDgbAddress = item.buyerReceivingAddress
-                    if (searchDgbAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=DIGIBYTE&minimumTimestamp=1597310000000&limit=0&reverse=true`
 		    break
 		case 'RAVENCOIN':
-                this.isLoadingDoneTrades = true
-                const doneRvnQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=RAVENCOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneRvnQortal = await fetch(doneRvnQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneRvnQortal.map(item => {
-                    const searchRvnAddress = item.buyerReceivingAddress
-                    if (searchRvnAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=RAVENCOIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
                 break
             case 'PIRATECHAIN':
-                this.isLoadingDoneTrades = true
-                const doneArrrQortalUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=PIRATECHAIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
-
-                const doneArrrQortal = await fetch(doneArrrQortalUrl).then(response => {
-                   return response.json()
-                })
-
-                this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneArrrQortal.map(item => {
-                    const searchArrrAddress = item.buyerReceivingAddress
-                    if (searchArrrAddress == myAddress) {
-                        return {
-                            timestamp: item.tradeTimestamp,
-                            foreignAmount: item.foreignAmount,
-                            qortAmount: item.qortAmount        
-                        }
-                    }
-                }).filter(item => !!item)
-
-                this.isLoadingDoneTrades = false
+                tradesUrl = `${nodeUrl}/crosschain/trades?foreignBlockchain=PIRATECHAIN&minimumTimestamp=1597310000000&limit=0&reverse=true`
                 break
             default:
                 break
         }
+
+        this.isLoadingDoneTrades = true
+
+        const doneTradesAll = await fetch(tradesUrl).then(response => {
+           return response.json()
+        })
+
+        this.listedCoins.get(this.selectedCoin).myGridBoughtItems = doneTradesAll.map(item => {
+            const searchAddress = item.buyerReceivingAddress
+            if (searchAddress == myAddress) {
+                return {
+                    timestamp: item.tradeTimestamp,
+                    foreignAmount: item.foreignAmount,
+                    qortAmount: item.qortAmount        
+                }
+            }
+        }).filter(item => !!item)
+
+        this.isLoadingDoneTrades = false
+        this.updateDoneTradesTimeout = setTimeout(() => this.getDoneTrades(), 300000)
     }
 
     btcTradebook() {
