@@ -416,8 +416,7 @@ class MessageTemplate extends LitElement {
                                     ${image && !isImageDeleted ? html`
                                         <div 
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
-                                        style=${this.isFirstMessage && "margin-top: 10px;"}
-                                        >
+                                        style=${this.isFirstMessage && "margin-top: 10px;"}>
                                             ${imageHTML}<vaadin-icon
                                             @click=${() => this.sendMessage({
                                             type: 'delete',
@@ -427,6 +426,8 @@ class MessageTemplate extends LitElement {
                                         })}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                         </div>
+                                    ` : image && isImageDeleted ? html`
+                                        <p class="image-deleted-msg">This image has been deleted</p>
                                     ` : html``}
                                     <div 
                                     id="messageContent" 
@@ -630,7 +631,7 @@ editedMessageObj: this.originalMessage,
                 ${this.showBlockAddressIcon
                     ? html`
                         <div class="block-user-container">
-                            <div class="menu-icon block-user" @click="${() => this.showBlockUserModal()}">
+                            <div class="block-user" @click="${() => this.showBlockUserModal()}">
                                 <p>${translate("blockpage.bcchange1")}</p>
                                 <vaadin-icon icon="vaadin:close-circle" slot="icon"></vaadin-icon>
                             </div>                    

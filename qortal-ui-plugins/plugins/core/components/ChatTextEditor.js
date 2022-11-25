@@ -1,25 +1,30 @@
-import { LitElement, html, css } from "lit"
-import { render } from "lit/html.js"
+import { LitElement, html, css } from "lit";
+import { get } from 'lit-translate';
 import { escape, unescape } from 'html-escaper';
 import { EmojiPicker } from 'emoji-picker-js';
-import { inputKeyCodes } from '../../utils/keyCodes.js'
+import { inputKeyCodes } from '../../utils/keyCodes.js';
+import { Epml } from '../../../epml.js';
 
-
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class ChatTextEditor extends LitElement {
 	static get properties() {
 		return {
             isLoading: { type: Boolean },
             isLoadingMessages: { type: Boolean },
-            _sendMessage: {attribute: false},
-            placeholder: {type: String},
-            imageFile: {type: Object},
-            insertImage: {attribute: false},
+            _sendMessage: { attribute: false },
+            placeholder: { type: String },
+            imageFile: { type: Object },
+            insertImage: { attribute: false },
             iframeHeight: { type: Number },
-            editedMessageObj: {type: Object},
-            chatEditor: {type: Object},
-            setChatEditor: {attribute: false},
-            iframeId: {type: String},
-            hasGlobalEvents: {type: Boolean}
+            editedMessageObj: { type: Object },
+            chatEditor: { type: Object },
+            setChatEditor: { attribute: false },
+            iframeId: { type: String },
+            hasGlobalEvents: { type: Boolean },
+            theme: {
+                type: String,
+                reflect: true
+              }
 		}
 	}
 
@@ -40,6 +45,10 @@ class ChatTextEditor extends LitElement {
             display: flex;
             height: auto;
             overflow: hidden;
+        }
+
+        .chatbar-caption {
+            border-bottom: 2px solid var(--mdc-theme-primary);
         }
 
         .emoji-button {
@@ -65,8 +74,9 @@ class ChatTextEditor extends LitElement {
             font-size: 12px;
             color: black;
         }
+
         .paperclip-icon {
-            color: #494949;
+            color: var(--paperclip-icon);
             width: 25px;
         }
 
@@ -132,79 +142,91 @@ class ChatTextEditor extends LitElement {
         this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
         this.initialChat = this.initialChat.bind(this)
         this.iframeHeight = 42
-        
+        this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0];
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 	}
 
 	render() {
+        console.log(this.theme)
 		return html`
-			 <div class="chatbar-container" style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}"
+			 <div 
+             class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
+             style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}">
+                <div class="file-picker-container" @click=${(e) => {
+                    this.preventUserSendingImage(e)
+                }}>
+                    <vaadin-icon
+                        class="paperclip-icon"
+                        icon="vaadin:paperclip"
+                        slot="icon"
+                    >
+                    </vaadin-icon>     
+                    <div class="file-picker-input-container">
+                        <input 
+                            .value="${this.imageFile}"
+                            @change="${e => this.insertImage(e.target.files[0])}"
+                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
+                    </div>     
+                </div>
+                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                <iframe  
+                }}" id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
+                </iframe>
+                <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                    ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
+                </button>
+                ${this.editedMessageObj ? (
+                    html`
+                    <div>
+                    ${this.isLoading === false ? html`
+                        <vaadin-icon
+                            class="checkmark-icon"
+                            icon="vaadin:check"
+                            slot="icon"
+                            @click=${() => this._sendMessage()}
                             >
-                                <div class="file-picker-container">
-                                    <vaadin-icon
-                                        class="paperclip-icon"
-                                        icon="vaadin:paperclip"
-                                        slot="icon"
-                                    >
-                                    </vaadin-icon>
-                                    <div class="file-picker-input-container">
-                                        <input 
-                                            .value="${this.imageFile}"
-                                            @change="${e => this.insertImage(e.target.files[0])}"
-                                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
-                                    </div>
-                                </div>
-                                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                                <iframe  
-                                }}" id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
-                                </iframe>
-                                <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                                    ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
-                                </button>
-                                ${this.editedMessageObj ? (
-                                    html`
-                                    <div>
-                                    ${this.isLoading === false ? html`
-                                        <vaadin-icon
-                                            class="checkmark-icon"
-                                            icon="vaadin:check"
-                                            slot="icon"
-                                            @click=${() => this._sendMessage()}
-                                            >
-                                        </vaadin-icon>
-                                        ` :
-                                        html`
-                                        <paper-spinner-lite active></paper-spinner-lite>
-                                        `}
-                                    </div>
-                                        `
-                                ) : 
-                                    html`
-                                        <div style="display:flex; ${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px' : "margin-bottom: 0"}">
-                                            ${this.isLoading === false ? html`
-                                                <img 
-                                                src="/img/qchat-send-message-icon.svg" 
-                                                alt="send-icon" 
-                                                class="send-icon" 
-                                                @click=${() => this._sendMessage()} />
-                                            ` : 
-                                            html`
-                                                <paper-spinner-lite active></paper-spinner-lite>
-                                        `}
-                                        </div>
-                                        `
-                                }
-                            </div>
-                                ${this.chatMessageSize >= 750 ? 
-                                    html`
-                                    <div class="message-size-container">
-                                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
-                                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
-                                        </div>
-                                    </div>
-                                    ` : 
-                                    html``}
+                        </vaadin-icon>
+                        ` :
+                        html`
+                        <paper-spinner-lite active></paper-spinner-lite>
+                        `}
+                    </div>
+                        `
+                ) : 
+                    html`
+                        <div style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px;' : "margin-bottom: 0;"} ${this.iframeId === 'newChat' ? 'display: none;' : 'display: flex;'}">
+                            ${this.isLoading === false ? html`
+                                <img 
+                                src="/img/qchat-send-message-icon.svg" 
+                                alt="send-icon" 
+                                class="send-icon" 
+                                @click=${() => this._sendMessage()} />
+                            ` : 
+                            html`
+                                <paper-spinner-lite active></paper-spinner-lite>
+                        `}
                         </div>
+                        `
+                    }
+                </div>
+                ${this.chatMessageSize >= 750 ? 
+                    html`
+                    <div class="message-size-container">
+                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
+                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                        </div>
+                    </div>
+                    ` : 
+                    html``}
+                </div>
 		`
+	}
+
+    preventUserSendingImage(e) {
+            if (!this.userName) {
+                e.preventDefault();
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+           };
 	}
 
     initialChat(e) {
@@ -230,14 +252,27 @@ class ChatTextEditor extends LitElement {
     }
 
 	async firstUpdated() {
-        if(this.hasGlobalEvents){
-            this.addGlobalEventListener()
+        console.log(this.placeholder, "here500");
+        if (this.hasGlobalEvents) {
+            this.addGlobalEventListener();
         }
-    
+
+        window.addEventListener('storage', () => {
+            const checkTheme = localStorage.getItem('qortalTheme');
+            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId')
+            if (checkTheme === 'dark') {
+                this.theme = 'dark';
+                captionEditor.style.cssText = "color:#ffffff;"
+            } else {
+                this.theme = 'light';
+                captionEditor.style.cssText = "color:#080808;"
+            }
+        })
+
+
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
-        this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);
-       
+        this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);      
         
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
@@ -267,7 +302,11 @@ class ChatTextEditor extends LitElement {
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
-       
+        if (changedProperties && changedProperties.has('placeholder')) {
+            console.log(this.placeholder, "here600");
+            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId');
+            captionEditor.setAttribute('data-placeholder', this.placeholder);
+        }
     }
 
     shouldUpdate(changedProperties) {
@@ -327,20 +366,15 @@ class ChatTextEditor extends LitElement {
     }
 
     calculateIFrameHeight(height) {
-
         setTimeout(()=> {
-            const editorTest = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId').scrollHeight
-
-
-        this.iframeHeight = editorTest + 20
+            const editorTest = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId').scrollHeight;
+            this.iframeHeight = editorTest + 20;
         }, 50)
-        
-      
     }
 
     initChatEditor() {
-        const ChatEditor = function (editorConfig) {
-            
+        const ChatEditor = function (editorConfig) {    
+            console.log(editorConfig.placeholder, "here5600");        
             const ChatEditor = function () {
                 const editor = this;
                 editor.init();
@@ -382,6 +416,7 @@ class ChatTextEditor extends LitElement {
                     html {
                         cursor: text;
                     }
+
                     div {
                         font-size: 1rem;
                         line-height: 1.38rem;
@@ -394,6 +429,7 @@ class ChatTextEditor extends LitElement {
                         outline: none;
                         min-height: 20px;
                     }
+
                     div[contentEditable=true]:empty:before {
                         content: attr(data-placeholder);
                         display: block;
@@ -403,9 +439,11 @@ class ChatTextEditor extends LitElement {
                         user-select: none;
                         white-space: nowrap;
                    }
+
                    div[contentEditable=false]{
                         background: rgba(0,0,0,0.1);
                    }
+
                    img.emoji {
                         width: 1.7em;
                         height: 1.5em;
@@ -611,7 +649,6 @@ class ChatTextEditor extends LitElement {
                   }
 
                 editor.content.addEventListener('click', function (event) {
-
                     event.preventDefault();
                     editor.focus();
                 });
@@ -619,7 +656,7 @@ class ChatTextEditor extends LitElement {
 
             ChatEditor.prototype.remove = function () {
                 const editor = this;
-                var old_element = editor.content.body
+                var old_element = editor.content.body;
                 var new_element = old_element.cloneNode(true);
                 editor.content.body.parentNode.replaceChild(new_element, old_element);
                 while (editor.content.body.firstChild) {
@@ -640,10 +677,10 @@ class ChatTextEditor extends LitElement {
                 elemDiv.setAttribute('contenteditable', 'true');
                 elemDiv.setAttribute('spellcheck', 'false');
                 elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
-elemDiv.style.cssText = 'width:100%';
-elemDiv.id = 'testingId'
-editor.content.body.appendChild(elemDiv);
-                editor.contentDiv =  editor.frame.contentDocument.body.firstChild
+                elemDiv.style.cssText = `width:100%; ${editorConfig.theme === "dark" ? "color:#ffffff;" : "color: #080808"}`;
+                elemDiv.id = 'testingId';
+                editor.content.body.appendChild(elemDiv);
+                editor.contentDiv =  editor.frame.contentDocument.body.firstChild;
                 editor.styles();
                 editor.listenChanges();
                 
@@ -672,10 +709,11 @@ editor.content.body.appendChild(elemDiv);
             chatMessageSize: this.chatMessageSize,
             addGlobalEventListener: this.addGlobalEventListener,
             removeGlobalEventListener: this.removeGlobalEventListener,
-            iframeId: this.iframeId
+            iframeId: this.iframeId,
+            theme: this.theme
         };
-        const newChat = new ChatEditor(editorConfig)
-        this.setChatEditor(newChat)
+        const newChat = new ChatEditor(editorConfig);
+        this.setChatEditor(newChat);
     }
 }
 

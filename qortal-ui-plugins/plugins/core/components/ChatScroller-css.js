@@ -168,7 +168,7 @@ export const chatStyles = css`
 
 	.message-reactions {
 		background-color: transparent;
-		width: 100%;
+		width: calc(100% - 54px);
 		margin-left: 54px;
 	}
 
@@ -296,8 +296,8 @@ export const chatStyles = css`
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		background-color: white;
-		border: 1px solid #dad9d9;
+		background-color: var(--chat-menu-bg);
+		border: 1px solid var(--chat-menu-outline);
 		border-radius: 5px;
 		height:100%;
 		position: relative;
@@ -313,11 +313,12 @@ export const chatStyles = css`
 		display: flex;
 		align-items: center;
 		font-size: 13px;
+		color: var(--chat-menu-icon);
 	}
 
 	.menu-icon:hover {
 		border-radius: 5px;
-		background-color: #dad9d9;
+		background-color: var(--chat-menu-icon-hover);
 		transition: all 0.1s ease-in-out;
 		cursor: pointer;
 	}
@@ -372,14 +373,26 @@ export const chatStyles = css`
 	}
 
 	.block-user {
-		justify-content: space-between;
+		width: 100%;
+		padding: 5px 7px;
+		display: flex;
+		align-items: center;
+		font-size: 13px;
+		color: var(--chat-menu-icon);
+		justify-content: space-evenly;
 		border: 1px solid rgb(218, 217, 217);
 		border-radius: 5px;
-		background-color: white;
-		width: 90px;
+		background-color: var(--chat-menu-bg);
+		width: 150px;
 		height: 32px;
 		padding: 3px 8px;
 		box-shadow: rgba(77, 77, 82, 0.2) 0px 7px 29px 0px;
+	}
+
+	.block-user:hover {
+		cursor:pointer;
+		background-color: var(--block-user-bg-hover);
+		transition: all 0.1s ease-in-out 0s;
 	}
 
 	.reactions-bg {
@@ -394,7 +407,7 @@ export const chatStyles = css`
 	}
 	
 	.reactions-bg:hover {
-		border: 0.5px solid #6b6969;
+		border: 0.5px solid var(--reaction-bubble-outline);
 	}
 
 	.image-container {
@@ -410,6 +423,15 @@ export const chatStyles = css`
 	.defaultSize {
 		width: 45vh; 
 		height: 40vh;
+	}
+
+	.image-deleted-msg {
+		font-family: Roboto, sans-serif;
+		font-size: 14px;
+		font-style: italic;
+		color: var(--chat-bubble-msg-color);
+		margin: 0;
+		padding-top: 10px;
 	}
 
 	.image-delete-icon {
