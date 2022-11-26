@@ -491,7 +491,8 @@
       "cchange29": "Maximum message size is 1000 bytes",
       "cchange30": "Uploading image. This may take up to one minute.",
       "cchange31": "Deleting image. This may take up to one minute.",
-      "cchange33": "Cancel"
+      "cchange33": "Cancel",
+      "cchange34": "This chat message is using an older message version and cannot use this feature."
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
