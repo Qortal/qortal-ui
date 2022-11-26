@@ -36,7 +36,7 @@ class ChatHead extends LitElement {
             .img-icon {
                 float: left;
                 font-size:40px;
-                color: var(--black);
+                color: var(--chat-group);
             }
 
             .about {
@@ -82,7 +82,7 @@ class ChatHead extends LitElement {
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 <mwc-icon class="img-icon">account_circle</mwc-icon>
                 <div class="about">
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--black);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--black);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
+                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
                 </div>
             </li>
         `

@@ -1,24 +1,25 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, registerTranslateConfig } from 'lit-translate'
+import { LitElement, html, css } from 'lit';
+import { render } from 'lit/html.js';
+import { Epml } from '../../../epml.js';
+import { use, get, translate, registerTranslateConfig } from 'lit-translate';
 import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
+});
 import ShortUniqueId from 'short-unique-id';
 import Compressor from 'compressorjs';
 import { escape, unescape } from 'html-escaper';
-import { inputKeyCodes } from '../../utils/keyCodes.js'
-import './ChatScroller.js'
-import './LevelFounder.js'
-import './NameMenu.js'
-import './TimeAgo.js'
-import './ChatTextEditor'
-import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@material/mwc-button'
-import '@material/mwc-dialog'
-import '@material/mwc-icon'
+import { inputKeyCodes } from '../../utils/keyCodes.js';
+import './ChatScroller.js';
+import './LevelFounder.js';
+import './NameMenu.js';
+import './TimeAgo.js';
+import './ChatTextEditor';
+import './WrapperModal';
+import '@polymer/paper-spinner/paper-spinner-lite.js';
+import '@material/mwc-button';
+import '@material/mwc-dialog';
+import '@material/mwc-icon';
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
 import WebWorker from 'web-worker:./computePowWorker.js';
@@ -61,21 +62,14 @@ class ChatPage extends LitElement {
             chatMessageSize: { type: Number},
             imageFile: { type: Object },
             isUploadingImage: { type: Boolean },
-            caption: { type: String },
             chatEditor: { type:  Object },
-            chatEditorNewChat: { type: Object }
+            chatEditorNewChat: { type: Object },
+            userLanguage: { type: String },
         }
     }
 
     static get styles() {
         return css`
-        * {
-            /* Styling mdc dialog native props */
-            --mdc-dialog-min-width: 300px;
-            --mdc-dialog-box-shadow:rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-            --mdc-dialog-z-index: 5
-        }
-
         html {
             scroll-behavior: smooth;
         }
@@ -100,10 +94,9 @@ class ChatPage extends LitElement {
             width: 98%;
             box-sizing: border-box;
             margin-bottom: 8px;
-            border: 1px solid var(--black);
+            border: 1px solid var(--chat-bubble-bg);
             border-radius: 10px;
-            background: #f1f1f1;
-            color: var(--black);
+            background: var(--chat-bubble-bg);
         }
 
         .chat-text-area .typing-area textarea {
@@ -425,10 +418,6 @@ class ChatPage extends LitElement {
             }
         }
         
-        .mdc-dialog .mdc-dialog__surface {
-            border-radius: 10px;
-        } 
-    
         /* Add Image Modal Dialog Styling */
 
         .dialog-container {
@@ -452,7 +441,9 @@ class ChatPage extends LitElement {
 
         .dialog-image {
             width: 100%;
+            max-height: 300px;
             border-radius: 0;
+            object-fit: contain;
         }
 
         .red {
@@ -486,7 +477,7 @@ class ChatPage extends LitElement {
         this.isLoading = false
         this.isUserDown = false
         this.isPasteMenuOpen = false
-        this.chatEditorPlaceholder = this.renderPlaceholder()
+        this.chatEditorPlaceholder = ""
         this.messagesRendered = []
         this.repliedToMessageObj = null
         this.editedMessageObj = null
@@ -494,10 +485,13 @@ class ChatPage extends LitElement {
         this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
-        this.caption = ""
+        this.userLanguage = ""
     }
     
     render() {
+        console.log(this.chatEditorPlaceholder, "here1123")
+        const mstring = get("chatpage.cchange8");
+        console.log(mstring, "here5040");
         return html`
             <div class="chat-container">
                 <div>
@@ -516,69 +510,6 @@ class ChatPage extends LitElement {
                         </div>
                         ` : 
                         this.renderChatScroller()}
-                        <mwc-dialog 
-                        
-                            id="showDialogPublicKey" 
-                            ?open=${this.imageFile} 
-                         
-                            @closed=${() => {
-                                this.imageFile = null;
-                                this.chatEditor.enable()
-                                
-                        }}>
-                            <div class="dialog-header"></div>
-                            <div class="dialog-container mdc-dialog mdc-dialog__surface">
-                                ${this.imageFile && html`
-                                    <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
-                                `}
-                                <div class="caption-container">
-                                    <chat-text-editor
-                                        iframeId="newChat"
-                                        ?hasGlobalEvents=${false}
-                                        placeholder=${this.chatEditorPlaceholder}
-                                        ._sendMessage=${this._sendMessage}
-                                        .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
-                                        .chatEditor=${this.chatEditorNewChat}
-                                        .imageFile=${this.imageFile}
-                                        .insertImage=${this.insertImage}
-                                        .editedMessageObj=${this.editedMessageObj}
-                                        ?isLoading=${this.isLoading}
-                                        ?isLoadingMessages=${this.isLoadingMessages}>
-                                    </chat-text-editor>
-                                </div>
-                                    ${this.chatMessageSize >= 750 ? 
-                                    html`
-                                    <div class="message-size-container">
-                                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
-                                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
-                                        </div>
-                                    </div>
-                                    ` : 
-                                    html``}
-                                </div>
-                            <mwc-button
-                                slot="primaryAction"
-                                dialogAction="cancel"
-                                class="red"
-                                @click=${()=>{
-                                   this.imageFile = null
-                                }}
-                            >
-                            ${translate("chatpage.cchange33")}
-                            </mwc-button>
-                            <mwc-button
-                                slot="primaryAction"
-                                dialogAction="cancel"
-                                @click=${()=> {
-                                    this._sendMessage({
-                                        type: 'image',
-                                        imageFile:  this.imageFile,
-                                    })
-                                }}
-                            >
-                            ${translate("chatpage.cchange9")}
-                            </mwc-button>
-                    </mwc-dialog>
                 </div>
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                         <div class="typing-area">
@@ -630,7 +561,8 @@ class ChatPage extends LitElement {
                                 .editedMessageObj=${this.editedMessageObj}
                                 .mirrorChatInput=${this.mirrorChatInput}
                                 ?isLoading=${this.isLoading}
-                                ?isLoadingMessages=${this.isLoadingMessages}>                            
+                                ?isLoadingMessages=${this.isLoadingMessages}
+                                                               >                            
                             </chat-text-editor>
                     </div>
                 </div>
@@ -648,32 +580,87 @@ class ChatPage extends LitElement {
                         </div>                        
 			        </div>
             </div>
-			`: ''}			
+			`: ''}
+                <wrapper-modal 
+                .removeImage=${() => this.removeImage()} 
+                style=${this.imageFile ? "display: block" : "display: none"}>
+                    <div>
+                        <div class="dialog-container">
+                            ${this.imageFile && html`
+                                <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
+                            `}
+                            <div class="caption-container">
+                                <chat-text-editor
+                                    iframeId="newChat"
+                                    ?hasGlobalEvents=${false}
+                                    placeholder=${this.chatEditorPlaceholder}
+                                    ._sendMessage=${this._sendMessage}
+                                    .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
+                                    .chatEditor=${this.chatEditorNewChat}
+                                    .imageFile=${this.imageFile}
+                                    .insertImage=${this.insertImage}
+                                    .editedMessageObj=${this.editedMessageObj}
+                                    ?isLoading=${this.isLoading}
+                                    ?isLoadingMessages=${this.isLoadingMessages}>
+                                </chat-text-editor>
+                            </div>
+                                ${this.chatMessageSize >= 750 ? 
+                                html`
+                                <div class="message-size-container">
+                                    <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
+                                        ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                                    </div>
+                                </div>
+                                ` : 
+                                html``}
+                            <button
+                                class="red"
+                                @click=${()=>{
+                                this.imageFile = null
+                                }}
+                            >
+                                ${translate("chatpage.cchange33")}
+                            </button>
+                            <button
+                                @click=${()=> {
+                                    this._sendMessage({
+                                        type: 'image',
+                                        imageFile:  this.imageFile,
+                                    })
+                                }}
+                            >
+                                ${translate("chatpage.cchange9")}
+                            </button>
+                        </div>
+                </div>    	
+            </wrapper-modal>
         </div>
         `
     }
 
-    setChatEditor(editor){
-        this.chatEditor = editor
+    setChatEditor(editor) {
+        this.chatEditor = editor;
     }
 
-    setChatEditorNewChat(editor){
-        this.chatEditorNewChat = editor
+    setChatEditorNewChat(editor) {
+        this.chatEditorNewChat = editor;
     }
-
+    
     insertImage(file){
-        
-        if(file.type.includes('image')){
-            this.imageFile = file
-            this.chatEditor.disable()
+        if (file.type.includes('image')) {
+            this.imageFile = file;
+            this.chatEditor.disable();
             // this.changeMsgInput('newChat')
             // this.initChatEditor();
             // this.chatEditor.disable();
-            return
-        }
-        
-        parentEpml.request('showSnackBar', get("chatpage.cchange28"))
-        
+            return;
+        }       
+         parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
+    }
+
+    removeImage() {
+        this.imageFile = null;
+        this.chatEditor.enable();
     }
 
     changeMsgInput(id){
@@ -684,7 +671,6 @@ class ChatPage extends LitElement {
     }
   
     async firstUpdated() {
-       
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
         // document.addEventListener('keydown', (e) => {
@@ -701,9 +687,11 @@ class ChatPage extends LitElement {
         //     }
         // });
 
-        window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
-            use(checkLanguage)
+        window.addEventListener('storage', () => {                                                
+            const checkLanguage = localStorage.getItem('qortalLanguage');
+            use(checkLanguage);
+            console.log(checkLanguage, "language here");
+            this.userLanguage = checkLanguage;
         })
 
         const getAddressPublicKey = () => {
@@ -733,14 +721,15 @@ class ChatPage extends LitElement {
         };
 
         setTimeout(() => {
+            const isRecipient = this.chatId.includes('direct') === true ? true : false;
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
             this._chatId = this.chatId.split('/')[1];
-
-            const mstring = get("chatpage.cchange8")
-            const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
+            const mstring = get("chatpage.cchange8");
+            console.log(mstring, "here5090");
+            const placeholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`;
             this.chatEditorPlaceholder = placeholder;
 
-            this.isReceipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
+            isRecipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId);
             
             // Init ChatEditor
             // this.initChatEditor();
@@ -771,26 +760,16 @@ class ChatPage extends LitElement {
         parentEpml.imReady();
     }
 
-
- 
-
-    onCaptionChange(e) {
-        this.caption = e;
-    }
-
-    changeLanguage() {
-        const checkLanguage = localStorage.getItem('qortalLanguage')
-
-        if (checkLanguage === null || checkLanguage.length === 0) {
-            localStorage.setItem('qortalLanguage', 'us')
-            use('us')
-        } else {
-            use(checkLanguage)
+    async updated(changedProperties) {
+        if (changedProperties && changedProperties.has('userLanguage')) {
+            await new Promise(r => setTimeout(r, 100));
+            this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
         }
     }
 
     renderPlaceholder() {
-        const mstring = get("chatpage.cchange8")
+        const mstring = get("chatpage.cchange8");
+        console.log(mstring, "here11");
         const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
         return placeholder;
     }
@@ -832,10 +811,10 @@ class ChatPage extends LitElement {
          
             const replacedMessages = await replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
-	parentEpml,
-            isReceipient: this.isReceipient,
-            decodeMessageFunc: this.decodeMessage,
-            _publicKey: this._publicKey
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
             })
             this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -858,10 +837,10 @@ class ChatPage extends LitElement {
 
             const replacedMessages = await replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
-	parentEpml,
-            isReceipient: this.isReceipient,
-            decodeMessageFunc: this.decodeMessage,
-            _publicKey: this._publicKey
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
             })
           
             this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
@@ -892,7 +871,7 @@ class ChatPage extends LitElement {
             })
        
         if (isInitial) {
-
+            this.chatEditorPlaceholder = this.renderPlaceholder();
             const replacedMessages = await replaceMessagesEdited({
                 decodedMessages: decodedMessages,
                 parentEpml,
@@ -932,7 +911,6 @@ class ChatPage extends LitElement {
         }
     }
 
-        
      // set replied to message in chat editor
 
      setRepliedToMessageObj(messageObj) {
