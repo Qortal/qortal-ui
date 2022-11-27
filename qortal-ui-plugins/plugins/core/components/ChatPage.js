@@ -65,6 +65,7 @@ class ChatPage extends LitElement {
             chatEditor: { type:  Object },
             chatEditorNewChat: { type: Object },
             userLanguage: { type: String },
+            lastMessageRefVisible: { type: Boolean },
         }
     }
 
@@ -82,10 +83,10 @@ class ChatPage extends LitElement {
 
         .chat-text-area {
             display: flex;
+            position: relative;
             justify-content: center;
             min-height: 60px;
             max-height: 100%;
-            overflow: hidden;
         }
 
         .chat-text-area .typing-area {
@@ -145,7 +146,7 @@ class ChatPage extends LitElement {
         }
 
         .original-message {
-            color: black;
+            color: var(--chat-bubble-msg-color);
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -225,7 +226,7 @@ class ChatPage extends LitElement {
             height: auto;
             overflow: hidden;
             justify-content: center;
-            background: white;
+            background-color: var(--white);
             padding: 5px;
             border-radius: 1px;
         }
@@ -380,12 +381,14 @@ class ChatPage extends LitElement {
         .marginLoader {
             margin-right: 8px;
         }
+
         .smallLoading,
         .smallLoading:after {
             border-radius: 50%;
             width: 2px;
             height: 2px;
         }
+
         .smallLoading {
             border-width: 0.8em;
             border-style: solid;
@@ -397,6 +400,7 @@ class ChatPage extends LitElement {
             transform: translateZ(0px);
             animation: 1.1s linear 0s infinite normal none running loadingAnimation;
         }
+
         @-webkit-keyframes loadingAnimation {
             0% {
                 -webkit-transform: rotate(0deg);
@@ -407,6 +411,7 @@ class ChatPage extends LitElement {
                 transform: rotate(360deg);
             }
         }
+
         @keyframes loadingAnimation {
             0% {
                 -webkit-transform: rotate(0deg);
@@ -446,9 +451,67 @@ class ChatPage extends LitElement {
             object-fit: contain;
         }
 
-        .red {
-            --mdc-theme-primary: #F44336;
+        .last-message-ref {
+            position: absolute;
+            font-size: 18px;
+            top: -40px;
+            right: 30px;
+            width: 50;
+            height: 50;
+            z-index: 5;
+            color: black;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.1s ease-in-out;
+	    }
+
+        .last-message-ref:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+
+        .arrow-down-icon {
+            transform: scale(1.15);
+        }
+
+        .modal-button-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .modal-button {
+            font-family: Roboto, sans-serif;
+            font-size: 16px;
+            color: var(--mdc-theme-primary);
+            background-color: transparent;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal-button-red {
+            font-family: Roboto, sans-serif;
+            font-size: 16px;
+            color: #F44336;
+            background-color: transparent;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: none;
+            transition: all 0.3s ease-in-out;
             }
+
+        .modal-button-red:hover {
+            cursor: pointer;
+            background-color: #f4433663;
+            }
+
+        .modal-button:hover {
+            cursor: pointer;
+            background-color: #03a8f475;
+        }
         `
     }
 
@@ -486,12 +549,10 @@ class ChatPage extends LitElement {
         this.imageFile = null
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
+        this.lastMessageRefVisible = false
     }
     
     render() {
-        console.log(this.chatEditorPlaceholder, "here1123")
-        const mstring = get("chatpage.cchange8");
-        console.log(mstring, "here5040");
         return html`
             <div class="chat-container">
                 <div>
@@ -512,6 +573,17 @@ class ChatPage extends LitElement {
                         this.renderChatScroller()}
                 </div>
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
+                    <div 
+                    class='last-message-ref' 
+                    style=${(this.lastMessageRefVisible && !this.imageFile) ? 'opacity: 1;' : 'opacity: 0;'}>
+                        <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
+                            this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
+                            .scrollIntoView({
+                                behavior: 'smooth',
+                            });
+                        }}>
+                        </vaadin-icon>
+                        </div>
                         <div class="typing-area">
                             ${this.repliedToMessageObj && html`
                                 <div class="repliedTo-container">
@@ -613,29 +685,37 @@ class ChatPage extends LitElement {
                                 </div>
                                 ` : 
                                 html``}
-                            <button
-                                class="red"
-                                @click=${()=>{
-                                this.imageFile = null
-                                }}
-                            >
-                                ${translate("chatpage.cchange33")}
-                            </button>
-                            <button
-                                @click=${()=> {
-                                    this._sendMessage({
-                                        type: 'image',
-                                        imageFile:  this.imageFile,
-                                    })
-                                }}
-                            >
-                                ${translate("chatpage.cchange9")}
-                            </button>
+                            <div class="modal-button-row">
+                                <button
+                                    class="modal-button-red"
+                                    @click=${()=>{
+                                    this.imageFile = null
+                                    }}
+                                >
+                                
+                                    ${translate("chatpage.cchange33")}
+                                </button>
+                                <button
+                                    class="modal-button"
+                                    @click=${()=> {
+                                        this._sendMessage({
+                                            type: 'image',
+                                            imageFile:  this.imageFile,
+                                        })
+                                    }}
+                                >
+                                    ${translate("chatpage.cchange9")}
+                                </button>
+                            </div>
                         </div>
                 </div>    	
             </wrapper-modal>
         </div>
         `
+    }
+
+    showLastMessageRefScroller(props) {
+        this.lastMessageRefVisible = props;
     }
 
     setChatEditor(editor) {
@@ -646,7 +726,7 @@ class ChatPage extends LitElement {
         this.chatEditorNewChat = editor;
     }
     
-    insertImage(file){
+    insertImage(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
             this.chatEditor.disable();
@@ -663,13 +743,13 @@ class ChatPage extends LitElement {
         this.chatEditor.enable();
     }
 
-    changeMsgInput(id){
+    changeMsgInput(id) {
   
         this.chatEditor.remove()
         this.chatMessageInput  = this.shadowRoot.getElementById(id);
         this.initChatEditor();
     }
-  
+
     async firstUpdated() {
         // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
 
@@ -690,7 +770,6 @@ class ChatPage extends LitElement {
         window.addEventListener('storage', () => {                                                
             const checkLanguage = localStorage.getItem('qortalLanguage');
             use(checkLanguage);
-            console.log(checkLanguage, "language here");
             this.userLanguage = checkLanguage;
         })
 
@@ -725,7 +804,6 @@ class ChatPage extends LitElement {
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false;
             this._chatId = this.chatId.split('/')[1];
             const mstring = get("chatpage.cchange8");
-            console.log(mstring, "here5090");
             const placeholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`;
             this.chatEditorPlaceholder = placeholder;
 
@@ -769,7 +847,6 @@ class ChatPage extends LitElement {
 
     renderPlaceholder() {
         const mstring = get("chatpage.cchange8");
-        console.log(mstring, "here11");
         const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
         return placeholder;
     }
@@ -783,7 +860,8 @@ class ChatPage extends LitElement {
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
         .focusChatEditor=${() => this.focusChatEditor()}
-        .sendMessage=${(val)=> this._sendMessage(val)}
+        .sendMessage=${(val) => this._sendMessage(val)}
+        .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
         >
         </chat-scroller>
         `
