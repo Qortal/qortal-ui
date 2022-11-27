@@ -116,11 +116,11 @@ class ChatTextEditor extends LitElement {
             cursor: pointer; 
         }   
 
-        .chatbar-container  textarea {
+        .chatbar-container textarea {
             display: none;
         }
 
-        .chatbar-container  .chat-editor {
+        .chatbar-container .chat-editor {
             display: flex;
             max-height: -webkit-fill-available;
             width: 100%;
@@ -169,9 +169,7 @@ class ChatTextEditor extends LitElement {
                     </div>     
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                <iframe  
-                }}" id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}>
-                </iframe>
+                <iframe id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe>
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
@@ -259,13 +257,13 @@ class ChatTextEditor extends LitElement {
 
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
-            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId')
+            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId');
             if (checkTheme === 'dark') {
                 this.theme = 'dark';
-                captionEditor.style.cssText = "color:#ffffff;"
+                chatbar.style.cssText = "color:#ffffff;"
             } else {
                 this.theme = 'light';
-                captionEditor.style.cssText = "color:#080808;"
+                chatbar.style.cssText = "color:#080808;"
             }
         })
 
@@ -416,7 +414,34 @@ class ChatTextEditor extends LitElement {
                     html {
                         cursor: text;
                     }
+                    
+                    .chatbar-body {
+                        display: flex; 
+                        align-items: center;
+                    }
 
+                    .chatbar-body::-webkit-scrollbar-track {
+                        background-color: whitesmoke;
+                        border-radius: 7px;
+                    }
+            
+                    .chatbar-body::-webkit-scrollbar {
+                        width: 6px;
+                        border-radius: 7px;
+                        background-color: whitesmoke;
+                    }
+            
+                    .chatbar-body::-webkit-scrollbar-thumb {
+                        background-color: rgb(180, 176, 176);
+                        border-radius: 7px;
+                        transition: all 0.3s ease-in-out;
+                    }
+            
+                    .chatbar-body::-webkit-scrollbar-thumb:hover {
+                        background-color: rgb(148, 146, 146);
+                        cursor: pointer;
+                    }            
+                    
                     div {
                         font-size: 1rem;
                         line-height: 1.38rem;
@@ -433,11 +458,11 @@ class ChatTextEditor extends LitElement {
                     div[contentEditable=true]:empty:before {
                         content: attr(data-placeholder);
                         display: block;
-                        color: rgb(103, 107, 113);
                         text-overflow: ellipsis;
                         overflow: hidden;
                         user-select: none;
                         white-space: nowrap;
+                        opacity: 0.7;
                    }
 
                    div[contentEditable=false]{
@@ -672,6 +697,7 @@ class ChatTextEditor extends LitElement {
                 editor.mirror = editorConfig.mirrorElement;
 
                 editor.content = (editor.frame.contentDocument || editor.frame.document);
+                editor.content.body.classList.add("chatbar-body");
                 
                 let elemDiv = document.createElement('div');
                 elemDiv.setAttribute('contenteditable', 'true');

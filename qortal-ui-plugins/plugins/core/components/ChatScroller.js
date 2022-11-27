@@ -28,7 +28,8 @@ class ChatScroller extends LitElement {
             setRepliedToMessageObj: {attribute: false},
             setEditedMessageObj: {attribute: false},
             focusChatEditor: {attribute: false},
-            sendMessage: {attribute: false}
+            sendMessage: {attribute: false},
+            showLastMessageRefScroller: { type: Function },
         }
     }
 
@@ -54,7 +55,6 @@ class ChatScroller extends LitElement {
 
 
     render() {
-        console.log('messages', this.messages)
         let formattedMessages = this.messages.reduce((messageArray, message) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -103,14 +103,6 @@ class ChatScroller extends LitElement {
                     )
                 })}
                 <div id='downObserver'></div>
-                <div class='last-message-ref'>
-                    <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
-                        this.shadowRoot.getElementById('downObserver').scrollIntoView({
-                            behavior: 'smooth',
-                        }) 
-                    }}>
-                    </vaadin-icon>
-                </div>
             </ul>
         `
     }
@@ -151,9 +143,9 @@ class ChatScroller extends LitElement {
 
     _downObserverHandler(entries) {
         if (!entries[0].isIntersecting) {
-            this.shadowRoot.querySelector(".last-message-ref").style.opacity = '1'
+            this.showLastMessageRefScroller(true);
         } else {
-            this.shadowRoot.querySelector(".last-message-ref").style.opacity = '0'
+            this.showLastMessageRefScroller(false);
         }
     }
 

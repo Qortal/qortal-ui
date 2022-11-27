@@ -44,30 +44,6 @@ export const chatStyles = css`
 		padding: 20px 17px;
 	}
 
-	.last-message-ref {
-		position: fixed;
-		font-size: 18px;
-		right: 40px;
-		bottom: 100px;
-		width: 50;
-		height: 50;
-		z-index: 5;
-		opacity: 0;
-		color: black;
-		background-color: white;
-		border-radius: 50%;
-		transition: all 0.1s ease-in-out;
-	}
-
-	.last-message-ref:hover {
-		cursor: pointer;
-		transform: scale(1.1);
-	}
-
-	.arrow-down-icon {
-		transform: scale(1.15);
-	}
-
 	.chat-list {
 		overflow-y: auto;
 		overflow-x: hidden;
