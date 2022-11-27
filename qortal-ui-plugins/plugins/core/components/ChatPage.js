@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { render } from 'lit/html.js';
 import { Epml } from '../../../epml.js';
 import { use, get, translate, registerTranslateConfig } from 'lit-translate';
-import localForage from "localforage";
+// import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 });
@@ -25,10 +25,10 @@ import { publishData } from '../../utils/publish-image.js';
 import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
 
-// hello
-const messagesCache = localForage.createInstance({
-    name: "messages-cache",
-});
+
+// const messagesCache = localForage.createInstance({
+//     name: "messages-cache",
+// });
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -1142,8 +1142,8 @@ class ChatPage extends LitElement {
 
                     const chatReference1 = isReceipient ? 'direct' : 'group';
                     const chatReference2 = this.chatId.split('/')[1];
-                    const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
-
+                    // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+                    const cachedData = null
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
                         const lastMessage = cachedData[cachedData.length - 1]
@@ -1228,8 +1228,8 @@ class ChatPage extends LitElement {
                     const chatReference1 = isGroup ? 'group' : 'direct';
                     const chatReference2 = this.chatId.split('/')[1];
 
-                    const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
-
+                    // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+                    const cachedData = null;
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
 

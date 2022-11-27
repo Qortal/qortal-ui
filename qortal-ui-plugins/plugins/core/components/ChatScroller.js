@@ -25,10 +25,10 @@ class ChatScroller extends LitElement {
             escapeHTML: { attribute: false },
             messages: { type: Array },
             hideMessages: { type: Array },
-            setRepliedToMessageObj: { type: Function },
-            setEditedMessageObj: { type: Function },
-            focusChatEditor: { type: Function },
-            sendMessage: { type: Function},
+            setRepliedToMessageObj: {attribute: false},
+            setEditedMessageObj: {attribute: false},
+            focusChatEditor: {attribute: false},
+            sendMessage: {attribute: false},
             showLastMessageRefScroller: { type: Function },
         }
     }
@@ -193,11 +193,11 @@ class MessageTemplate extends LitElement {
             openDialogPrivateMessage: {type: Boolean},
             openDialogBlockUser: {type: Boolean},
             showBlockAddressIcon: { type: Boolean },
-            setRepliedToMessageObj: { type: Function },
-            setEditedMessageObj: { type: Function },
-            focusChatEditor: { type: Function },
-            sendMessage: { type: Function },
-            openDialogImage: { type: Function },
+            setRepliedToMessageObj: {attribute: false},
+            setEditedMessageObj: {attribute: false},
+            focusChatEditor: {attribute: false},
+            sendMessage: {attribute: false},
+            openDialogImage: {attribute: false},
             isImageLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
@@ -256,12 +256,14 @@ class MessageTemplate extends LitElement {
         let repliedToData = null;
         let image = null;
         let isImageDeleted = false;
+        let version = 0;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
+            version = parsedMessageObj.version
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
@@ -455,6 +457,7 @@ class MessageTemplate extends LitElement {
                                 .myAddress=${this.myAddress}
                                 @blur=${() => this.showBlockIconFunc(false)}
                                 .sendMessage=${this.sendMessage}
+                                version=${version}
                             > 
                             </chat-menu>
                         </div>
@@ -518,18 +521,19 @@ class ChatMenu extends LitElement {
     static get properties() {
         return {
             menuItems: { type: Array },
-            showPrivateMessageModal: { type: Function },
-            showBlockUserModal: { type: Function },
+            showPrivateMessageModal: {attribute: false},
+            showBlockUserModal: {attribute: false},
             toblockaddress: { type: String, attribute: true },
-            showBlockIconFunc: { type: Function },
+            showBlockIconFunc: {attribute: false},
             showBlockAddressIcon: { type: Boolean },
             originalMessage: { type: Object },
-            setRepliedToMessageObj: { type: Function },
-            setEditedMessageObj: { type: Function },
-            focusChatEditor: { type: Function },
+            setRepliedToMessageObj: {attribute: false},
+            setEditedMessageObj: {attribute: false},
+            focusChatEditor: {attribute: false},
             myAddress: { type: Object },
             emojiPicker: { attribute: false },
-            sendMessage: {type: Function},
+            sendMessage: {attribute: false},
+            version: {type: String}
         }
     }
 
@@ -552,6 +556,11 @@ class ChatMenu extends LitElement {
             parentEpml.request('showSnackBar', `${copyString2}`)
             console.error('Copy to clipboard error:', err)
         }
+    }
+
+    versionErrorSnack(){
+        let errorMsg = get("chatpage.cchange34")
+        parentEpml.request('showSnackBar', `${errorMsg}`)
     }
 
     firstUpdated () {
@@ -577,12 +586,17 @@ editedMessageObj: this.originalMessage,
     }
     
     render() {
+        console.log('version', this.version)
         return html` 
             <div class="container">
             <div 
                 class="menu-icon tooltip reaction" 
                 data-text="${translate("blockpage.bcchange13")}" 
                 @click=${(e) => {
+                    if(this.version === '0'){
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.emojiPicker.togglePicker(e.target)
                     }}
                >
@@ -598,6 +612,10 @@ editedMessageObj: this.originalMessage,
                 class="menu-icon tooltip" 
                 data-text="${translate("blockpage.bcchange11")}" 
                 @click="${() => {
+                    if(this.version === '0'){
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.setRepliedToMessageObj(this.originalMessage);
                     this.focusChatEditor();
                     }}">
@@ -610,6 +628,10 @@ editedMessageObj: this.originalMessage,
                     class="menu-icon tooltip" 
                     data-text="${translate("blockpage.bcchange12")}" 
                     @click=${() => {
+                    if(this.version === '0'){
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.setEditedMessageObj(this.originalMessage);
                     this.focusChatEditor();
                     }}>
