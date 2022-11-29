@@ -715,6 +715,7 @@
       "exp17":"SVA PLAĆANJA",
       "exp18":"Plaćanja",
       "exp19":"Poslano",
-      "exp20":"Primljeno"
+      "exp20":"Primljeno",
+	  "exp21":"Obrta",
    }
 }
