@@ -1147,7 +1147,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     </div>
                 </div>
                 <div class="buttons">
-                    <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp3")}</mwc-button>
+                    <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp21")}</mwc-button>
                     <mwc-button class='decline' @click=${() => this.closeCompleteInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
                 </div>
             </paper-dialog>
