@@ -476,7 +476,9 @@
       "dchange18":"Det oppstod en feil ved forsøk på å blokkere dette registrerte navnet. Prøv på nytt!",
       "dchange19":"Det oppstod en feil ved forsøk på å avfølge dette registrerte navnet. Prøv på nytt!",
       "dchange20":"Det oppstod en feil ved forsøk på å oppheve blokkeringen av dette registrerte navnet. Prøv på nytt!",
-      "dchange21":"Det oppstod en feil ved forsøk på å slette denne ressursen. Prøv på nytt!"
+      "dchange21":"Det oppstod en feil ved forsøk på å slette denne ressursen. Prøv på nytt!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Ny privat melding",
