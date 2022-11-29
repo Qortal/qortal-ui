@@ -476,7 +476,9 @@
       "dchange18":"Ocorreu um erro ao tentar bloquear esse nome registrado. Por favor, tente de novo!",
       "dchange19":"Ocorreu um erro ao tentar desseguir esse nome registrado. Por favor, tente de novo!",
       "dchange20":"Ocorreu um erro ao tentar desbloquear esse nome registrado. Por favor, tente de novo!",
-      "dchange21":"Ocorreu um erro ao tentar excluir esse recurso. Por favor, tente de novo!"
+      "dchange21":"Ocorreu um erro ao tentar excluir esse recurso. Por favor, tente de novo!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Nova Mensagem Privada",
