@@ -476,7 +476,9 @@
       "dchange18":"嘗試關注此註冊名稱時發生錯誤。 請再試一次!",
       "dchange19":"嘗試取消關注此註冊名稱時發生錯誤。 請再試一次!",
       "dchange20":"嘗試解封此註冊名稱時發生錯誤。 請再試一次!",
-      "dchange21":"嘗試刪除此資源時出錯。 請再試一次"
+      "dchange21":"嘗試刪除此資源時出錯。 請再試一次",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"建立新的私人對話",
