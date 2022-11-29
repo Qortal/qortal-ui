@@ -1063,21 +1063,6 @@ class UserInfoView extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userInfoDialog" modal>
-                <div class="card-container">
-                    <span class="level">${translate("mintingpage.mchange27")} ${this.displayLevel}</span>
-                    ${this.founderBadge()}
-                    ${this.avatarImage()}
-                    <h2>${this.infoAccountName}</h2>
-                    <h4>${this.displayAddress}</h4>
-                    <p>${translate("explorerpage.exp2")}: ${this.displayBalance} QORT</p>
-                </div>
-                <div class="buttons">
-                    <mwc-button @click=${() => this.openCompleteInfoDialog()}>${translate("explorerpage.exp3")}</mwc-button>
-                    <mwc-button class='decline' @click=${() => this.closeInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
-                </div>
-            </paper-dialog>
-
             <paper-dialog class="full-info-wrapper" id="userFullInfoDialog" modal>
                 <div class="full-info-logo">${this.avatarFullImage()}</div>
                 <h3>${this.infoAccountName}</h3>
@@ -1518,6 +1503,19 @@ class UserInfoView extends connect(store)(LitElement) {
         this.shadowRoot.getElementById('showTxDetailsDialog').open()
     }
 
+    async getAllWithAddress(myAddress) {
+        await this.getAddressUserInfo(myAddress)
+        await this.getAddressUserAvatar(myAddress)
+        await this.getAddressUserBalance(myAddress)
+        this.displayAddress = this.addressResult.address
+        this.displayLevel = this.addressResult.level
+        this.isLoadingCompleteInfo = true
+        this.shadowRoot.getElementById('userFullInfoDialog').open()
+        await this.getStartMint()
+        await this.getPaymentsGridItems()
+        this.isLoadingCompleteInfo = false
+    }
+
     async getBoughtBTCGridItems() {
         const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -1785,15 +1783,6 @@ class UserInfoView extends connect(store)(LitElement) {
     openTrades() {
         this.shadowRoot.getElementById('userMoreInfoDialog').open()
         this.shadowRoot.getElementById('userInfoDialog').close()
-    }
-
-    async openCompleteInfoDialog() {
-        this.isLoadingCompleteInfo = true
-        this.shadowRoot.getElementById('userFullInfoDialog').open()
-        this.shadowRoot.getElementById('userMoreInfoDialog').close()
-        await this.getStartMint()
-        await this.getPaymentsGridItems()
-        this.isLoadingCompleteInfo = false
     }
 
     async openUserBoughtDialog() {
