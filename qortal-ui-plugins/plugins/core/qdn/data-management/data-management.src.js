@@ -176,6 +176,7 @@ class DataManagement extends LitElement {
             <div id="websites-list-page">
                 <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
                     <h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("datapage.dchange1")}</h2>
+                    <mwc-button style="float:right;" @click=${() => this.createBootstrap()}><mwc-icon>add_circle</mwc-icon>&nbsp;${translate("datapage.dchange22")}</mwc-button>
                 </div>
         	<div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("datapage.dchange2")}</h3>
@@ -319,6 +320,18 @@ class DataManagement extends LitElement {
         } else {
             use(checkLanguage)
         }
+    }
+
+    createBootstrap() {
+        parentEpml
+            .request("apiCall", {
+                url: `/bootstrap/create?apiKey=${this.getApiKey()}`,
+                method: "POST"
+            })
+            .then((res) => {
+                let err7string = get("datapage.dchange23")
+                parentEpml.request('showSnackBar', `${err7string}`);
+            });
     }
 
     searchListener(e) {
