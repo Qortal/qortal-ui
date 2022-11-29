@@ -1841,10 +1841,6 @@ class UserInfoView extends connect(store)(LitElement) {
         this.isLoadingSoldTradesARRR = false
     }
 
-    closeInfoDialog() {
-        this.shadowRoot.getElementById('userInfoDialog').close()
-    }
-
     closeErrorDialog() {
         this.shadowRoot.getElementById('userErrorDialog').close()
     }
