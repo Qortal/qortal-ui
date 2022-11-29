@@ -1073,7 +1073,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     <p>${translate("explorerpage.exp2")}: ${this.displayBalance} QORT</p>
                 </div>
                 <div class="buttons">
-                    <mwc-button @click=${() => this.openMoreInfoDialog()}>${translate("explorerpage.exp3")}</mwc-button>
+                    <mwc-button @click=${() => this.openCompleteInfoDialog()}>${translate("explorerpage.exp3")}</mwc-button>
                     <mwc-button class='decline' @click=${() => this.closeInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
                 </div>
             </paper-dialog>
@@ -1162,6 +1162,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     </div>
                 </div>
                 <div class="buttons">
+                    <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp21")}</mwc-button>
                     <mwc-button class='decline' @click=${() => this.closeCompleteInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
                 </div>
             </paper-dialog>
@@ -1179,7 +1180,6 @@ class UserInfoView extends connect(store)(LitElement) {
 
             <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userMoreInfoDialog" modal>
                 <div class="card-container-button">
-                    <mwc-button dense unelevated label="${translate("explorerpage.exp14")}" @click=${() => this.openCompleteInfoDialog()}></mwc-button><br><br>
                     <mwc-button dense unelevated label="${translate("explorerpage.exp8")}" @click=${() => this.openUserBoughtDialog()}></mwc-button><br><br>
                     <mwc-button dense unelevated label="${translate("explorerpage.exp9")}" @click=${() => this.openUserSoldDialog()}></mwc-button><br><br>
                 </div>
@@ -1782,7 +1782,7 @@ class UserInfoView extends connect(store)(LitElement) {
         }).filter(item => !!item)
     }
 
-    openMoreInfoDialog() {
+    openTrades() {
         this.shadowRoot.getElementById('userMoreInfoDialog').open()
         this.shadowRoot.getElementById('userInfoDialog').close()
     }
