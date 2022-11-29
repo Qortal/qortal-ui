@@ -476,7 +476,9 @@
       "dchange18":"Wystąpił błąd podczas próby zablokowania tej zarejestrowanej nazwy. Spróbuj ponownie!",
       "dchange19":"Wystąpił błąd podczas próby zaprzestania obserwowania tej zarejestrowanej nazwy. Spróbuj ponownie!",
       "dchange20":"Wystąpił błąd podczas próby odblokowania tej zarejestrowanej nazwy. Spróbuj ponownie!",
-      "dchange21":"Wystąpił błąd podczas próby usunięcia tego zasobu. Spróbuj ponownie!"
+      "dchange21":"Wystąpił błąd podczas próby usunięcia tego zasobu. Spróbuj ponownie!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Nowa Prywatna Wiadomość",
