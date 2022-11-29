@@ -702,6 +702,19 @@
       "exp4":"Adresa ili ime nisu pronađeni!",
       "exp5":"Imajte na umu da su registrirana imena osjetljiva na velika i mala slova.",
       "exp6":"Osnivač",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Prikaži sve kupovine",
+      "exp9":"Prikaži sve prodajne trgovine",
+      "exp10":"POVIJEST KUPNJE",
+      "exp11":"POVIJEST PRODAJE",
+      "exp12":"Još nema transakcija kupnje.",
+      "exp13":"Još nema prodajnih transakcija.",
+      "exp14":"Prikaži potpune informacije",
+      "exp15":"Kovanje od",
+      "exp16":"Nije kovano",
+      "exp17":"SVA PLAĆANJA",
+      "exp18":"Plaćanja",
+      "exp19":"Poslano",
+      "exp20":"Primljeno"
    }
 }

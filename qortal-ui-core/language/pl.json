@@ -701,6 +701,19 @@
       "exp4":"Nie znaleziono adresu lub nazwy!",
       "exp5":"Należy pamiętać, że w zarejestrowanych nazwach rozróżniana jest wielkość liter.",
       "exp6":"Założyciel",
-      "exp7":"Informacje"
+      "exp7":"Informacje",
+      "exp8":"Pokaż wszystkie transakcje kupna",
+      "exp9":"Pokaż wszystkie transakcje sprzedaży",
+      "exp10":"KUP HISTORIĘ",
+      "exp11":"HISTORIA SPRZEDAŻY",
+      "exp12":"Nie dokonano jeszcze żadnych transakcji kupna.",
+      "exp13":"Nie dokonano jeszcze żadnych transakcji sprzedaży.",
+      "exp14":"Pokaż pełne informacje",
+      "exp15":"Bicie od",
+      "exp16":"Bez bicia",
+      "exp17":"WSZYSTKIE PŁATNOŚCI",
+      "exp18":"Płatności",
+      "exp19":"Wysłane",
+      "exp20":"Otrzymano"
    }
 }

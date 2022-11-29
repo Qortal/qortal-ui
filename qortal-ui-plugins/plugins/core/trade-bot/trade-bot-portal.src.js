@@ -755,7 +755,7 @@ class TradeBotPortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
-        this.selectedCoin = "BITCOIN"
+        this.selectedCoin = "LITECOIN"
         this.selectedAddress = {}
         this.config = {}
         this.sellBtnDisable = false
@@ -1437,8 +1437,8 @@ class TradeBotPortal extends LitElement {
 			<div style="min-height: 50px; display: flex; padding-bottom: 10px; padding-top: 10px; margin: auto;">
 				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">${translate("tradepage.tchange39")} - &nbsp;</h2>
 				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
-					<mwc-list-item value="BITCOIN" selected><span class="coinName btc" style="color: var(--black);">BTC / QORT</span></mwc-list-item>
-					<mwc-list-item value="LITECOIN"><span class="coinName ltc" style="color: var(--black);">LTC / QORT</span></mwc-list-item>
+					<mwc-list-item value="BITCOIN"><span class="coinName btc" style="color: var(--black);">BTC / QORT</span></mwc-list-item>
+					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">LTC / QORT</span></mwc-list-item>
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">DOGE / QORT</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">DGB / QORT</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">RVN / QORT</span></mwc-list-item>

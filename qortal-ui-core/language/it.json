@@ -701,6 +701,19 @@
       "exp4":"Indirizzo o nome non trovato!",
       "exp5":"Si noti che i nomi registrati fanno distinzione tra maiuscole e minuscole.",
       "exp6":"Fondatore",
-      "exp7":"Informazioni"
+      "exp7":"Informazioni",
+      "exp8":"Mostra tutte le compravendite",
+      "exp9":"Mostra tutte le operazioni di vendita",
+      "exp10":"ACQUISTA CRONOLOGIA",
+      "exp11":"VENDI STORIA",
+      "exp12":"Nessuna operazione di acquisto ancora effettuata.",
+      "exp13":"Nessuna operazione di vendita ancora effettuata.",
+      "exp14":"Mostra informazioni complete",
+      "exp15":"Conio da",
+      "exp16":"Non conio",
+      "exp17":"TUTTI I PAGAMENTI",
+      "exp18":"Pagamenti",
+      "exp19":"Inviato",
+      "exp20":"Ricevuto"
    }
 }

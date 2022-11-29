@@ -701,6 +701,19 @@
       "exp4":"Cím vagy név nem található!",
       "exp5":"Vegye figyelembe, hogy a regisztrált nevek megkülönböztetik a kis- és nagybetűket.",
       "exp6":"Alapító",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Minden vételi ügylet megjelenítése",
+      "exp9":"Minden eladási ügylet megjelenítése",
+      "exp10":"VÁSÁRLÁSI ELŐZMÉNYEK",
+      "exp11":"ELADÁSI ELŐZMÉNYEK",
+      "exp12":"Még nem történt vásárlási ügylet."
+      "exp13":"Még nem történt eladási ügylet."",
+      "exp14":"Teljes információ megjelenítése",
+      "exp15":"A pénzverés óta",
+      "exp16":"Nem pénzverés",
+      "exp17":"MINDEN FIZETÉS",
+      "exp18":"Kifizetések",
+      "exp19":"Elküldve",
+      "exp20":"Fogadott"
    }
 }

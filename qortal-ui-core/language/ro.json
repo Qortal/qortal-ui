@@ -701,6 +701,19 @@
       "exp4":"Adresa sau Numele nu a fost găsit!",
       "exp5":"Retineti că numele înregistrate sunt sensibile la majuscule.",
       "exp6":"Fondator",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Afișati toate tranzactiile de cumpărare",
+      "exp9":"Afișati toate tranzactiile de vânzare",
+      "exp10":"ISTORICUL CUMPĂRĂRII",
+      "exp11":"ISTORICUL VÂNZĂRILOR",
+      "exp12":"Nu s-a efectuat încă tranzactii de cumpărare.",
+      "exp13":"Încă nu au fost efectuate tranzactii de vânzare.",
+      "exp14":"Afișati informatiile complete",
+      "exp15":"Battering de la",
+      "exp16":"Nu se bate",
+      "exp17":"TOATE PLĂTILE",
+      "exp18":"Plăti",
+      "exp19":"Trimis",
+      "exp20":"Primit"
    }
 }

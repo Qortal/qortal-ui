@@ -701,6 +701,19 @@
       "exp4":"Adresse oder Name nicht gefunden !",
       "exp5":"Beachten Sie, dass bei registrierten Namen zwischen Groß- und Kleinschreibung unterschieden wird.",
       "exp6":"Gründer",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Alle Kaufgeschäfte anzeigen",
+      "exp9":"Alle Verkaufsgeschäfte anzeigen",
+      "exp10":"KAUFGESCHICHTE",
+      "exp11":"VERKAUFSGESCHICHTE",
+      "exp12":"Noch keine Kauftransaktionen getätigt.",
+      "exp13":"Noch keine Verkaufsgeschäfte getätigt.",
+      "exp14":"Vollständige Informationen anzeigen",
+      "exp15":"Prägung seit",
+      "exp16":"Nicht am prägen",
+      "exp17":"ALLE ZAHLUNGEN",
+      "exp18":"Zahlungen",
+      "exp19":"Gesendet",
+      "exp20":"Empfangen"
    }
 }

@@ -701,6 +701,19 @@
       "exp4":"Adresse ou nom introuvable !",
       "exp5":"Notez que les noms enregistrés sont sensibles à la casse.",
       "exp6":"Fondateur",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Afficher toutes les transactions d'achat",
+      "exp9":"Afficher toutes les transactions de vente",
+      "exp10":"ACHETER L'HISTORIQUE",
+      "exp11":"HISTORIQUE DE VENTE",
+      "exp12":"Aucune transaction d'achat n'a encore été effectuée.",
+      "exp13":"Aucune transaction de vente n'a encore été effectuée.",
+      "exp14":"Afficher les informations complètes",
+      "exp15":"Fabrication depuis",
+      "exp16":"Pas de frappe",
+      "exp17":"TOUS LES PAIEMENTS",
+      "exp18":"Paiements",
+      "exp19":"Envoyé",
+      "exp20":"Reçu"
    }
 }

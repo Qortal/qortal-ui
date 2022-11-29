@@ -701,6 +701,19 @@
       "exp4":"Finner ikke adresse eller navn!",
       "exp5":"Merk at registrerte navn skiller mellom store og små bokstaver.",
       "exp6":"Grunnlegger",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Vis alle kjøpshandler",
+      "exp9":"Vis alle salgshandler",
+      "exp10":"KJØPHISTORIE",
+      "exp11":"SELGSHISTORIE",
+      "exp12":"Ingen kjøpshandler gjort ennå.",
+      "exp13":"Ingen salgshandler gjort ennå.",
+      "exp14":"Vis fullstendig informasjon",
+      "exp15":"Preging siden",
+      "exp16":"Ikke preging",
+      "exp17":"ALLE BETALINGER",
+      "exp18":"Betalinger",
+      "exp19":"Sendt",
+      "exp20":"Motta"
    }
 }

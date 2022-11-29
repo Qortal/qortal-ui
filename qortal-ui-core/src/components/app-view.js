@@ -15,13 +15,15 @@ import '@vaadin/text-field'
 
 import './wallet-profile.js'
 import './app-info.js'
-import './sidenav-menu.js'
 import './show-plugin.js'
 import './qort-theme-toggle.js'
 import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 import './user-info-view/user-info-view.js'
+import '../functional-components/side-menu.js'
+import '../functional-components/side-menu-item.js'
+import './start-minting.js'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent})
 
@@ -29,7 +31,10 @@ class AppView extends connect(store)(LitElement) {
     static get properties() {
         return {
             config: { type: Object },
+            urls: { type: Object },
+            nodeType: { type: String, reflect: true },
             theme: { type: String, reflect: true },
+            addressInfo: { type: Object },
             searchContentString: { type: String },
             botQortWallet: { type: String },
             botBtcWallet: { type: String },
@@ -113,19 +118,28 @@ class AppView extends connect(store)(LitElement) {
                     --lumo-body-text-color: var(--black);
                     --lumo-secondary-text-color: var(--sectxt);
                     --lumo-contrast-60pct: var(--vdicon);
+                    --item-selected-color: var(--nav-selected-color);
+                    --item-selected-color-text: var(--nav-selected-color-text);
+                    --item-color-active: var(--nav-color-active);
+                    --item-color-hover: var(--nav-color-hover);
+                    --item-text-color: var(--nav-text-color);
+                    --item-icon-color: var(--nav-icon-color);
+                    --item-border-color: var(--nav-border-color);
+                    --item-border-selected-color: var(--nav-border-selected-color);
                 }
 
                 :host {
                     --app-drawer-width: 260px;
                 }
 
-                app-drawer-layout:not([narrow]) [drawer-toggle]:not(sidenav-menu) {
+                app-drawer-layout:not([narrow]) [drawer-toggle]:not(side-menu-item) {
                     display: none;
                 }
 
                 app-drawer {
                     box-shadow: var(--shadow-2);
                     background: var(--sidetopbar);
+                    --app-drawer-scrim-background: rgba(0,0,0,0);
                 }
 
                 app-header {
@@ -136,6 +150,16 @@ class AppView extends connect(store)(LitElement) {
                     background: var(--sidetopbar);
                     color: var(--black);
                     border-top: var(--border);
+                }
+
+                .s-menu {
+                    list-style: none;
+                    padding: 0px 0px;
+                    background: var(--sidetopbar);
+                    border-radius: 2px;
+                    width: 100%;
+                    border-top: 1px solid var(--border);
+                    outline: none;
                 }
 
                 .search {
@@ -298,6 +322,9 @@ class AppView extends connect(store)(LitElement) {
     constructor() {
         super()
         this.searchContentString = ''
+        this.urls = [];
+        this.nodeType = ''
+        this.addressInfo = {}
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.botQortWallet = ''
         this.botBtcWallet = ''
@@ -371,13 +398,17 @@ class AppView extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-desktop')}' fullbleed >
+            <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-laptop')}' fullbleed>
                 <app-drawer swipe-open slot="drawer" id="appdrawer">
                     <app-header-layout>
                         <div id="sideBar">
                             <wallet-profile></wallet-profile>
                             <div class="sideBarMenu">
-                                <sidenav-menu></sidenav-menu>
+                                <div class="s-menu">
+                                    <side-menu>
+                                        ${this.renderNodeTypeMenu()}
+                                    </side-menu>
+                                </div>
                             </div>
                             <div id="balanceheader">
                                 <span class="balanceheadertext">${translate("general.balances")}</span>
@@ -396,19 +427,22 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
-	                      <div class="search">
-	                          <vaadin-text-field
-                                    style="width: 375px"
-                                    theme="medium"
-                                    id="searchContent"
-                                    placeholder="${translate("explorerpage.exp1")}"
-                                    value="${this.searchContentString}"
-                                    @keydown="${this.searchKeyListener}"
-                                    clear-button-visible
+                            <div style="display: inline;">
+	                          <div class="search">
+	                              <vaadin-text-field
+                                        style="width: 350px"
+                                        theme="medium"
+                                        id="searchContent"
+                                        placeholder="${translate("explorerpage.exp1")}"
+                                        value="${this.searchContentString}"
+                                        @keydown="${this.searchKeyListener}"
+                                        clear-button-visible
                                     >
-                                </vaadin-text-field>
-	                          <paper-icon-button icon="icons:search" @click="${() => this.openUserInfo()}"></paper-icon-button>
+                                    </vaadin-text-field>
+	                              <paper-icon-button icon="icons:search" @click="${() => this.openUserInfo()}"></paper-icon-button>
+	                          </div>
 	                      </div>
+                            <div>&nbsp;&nbsp;&nbsp;</div>
                             <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
@@ -442,6 +476,8 @@ class AppView extends connect(store)(LitElement) {
 
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
+
+        this.getNodeType()
 
         const myAppNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         const nodeAppUrl = myAppNode.protocol + '://' + myAppNode.domain + ':' + myAppNode.port
@@ -1342,6 +1378,130 @@ class AppView extends connect(store)(LitElement) {
         await getOpenTradesARRR()
     }
 
+    async getNodeType() {
+        const myAppNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const nodeAppUrl = myAppNode.protocol + '://' + myAppNode.domain + ':' + myAppNode.port
+        const url = `${nodeAppUrl}/admin/info`
+        await fetch(url).then((response) => {
+            return response.json()
+        }).then((data) => {
+            this.nodeType = data.type
+        })
+    }
+
+    renderNodeTypeMenu() {
+        const addressInfo = this.addressInfo
+        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
+        const isSponsor = +addressInfo?.level >= 5
+
+        if (this.nodeType === 'lite') {
+            return html`
+                <side-menu-item drawer-toggle label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
+                    <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
+                    <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                    <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                    <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                ${this.renderNodeManagement()}
+            `
+        } else {
+            return html`
+                <side-menu-item label="${translate('sidemenu.minting')}" expanded>
+                    <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
+                        <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
+                        <vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+				
+                    <side-menu-item drawer-toggle label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
+                        <vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
+                    <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item label="${translate('sidemenu.trading')}" expanded>
+                    <vaadin-icon icon="vaadin:cash" slot="icon"></vaadin-icon>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
+                        <vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+
+                    <side-menu-item drawer-toggle label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
+                        <vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
+                    <vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                    <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
+                    <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.websites')}" href="/app/websites">
+                    <vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.groups')}" href="/app/group-management">
+                    <vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item drawer-toggle label="${translate('sidemenu.puzzles')}" href="/app/puzzles">
+                    <vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
+                </side-menu-item>
+
+                <side-menu-item label="${translate('sidemenu.management')}" expanded>
+                    <vaadin-icon icon="vaadin:cogs" slot="icon"></vaadin-icon>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                        <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+
+                    ${this.renderNodeManagement()}
+                </side-menu-item>
+
+                <div>
+                    <start-minting></start-minting>
+                </div>
+            `
+        }
+    }
+
+    renderNodeManagement() {
+        const checkNodeManagement = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        if ((checkNodeManagement.enableManagement = true)) {
+            return html`
+                <side-menu-item drawer-toggle label="${translate('sidemenu.nodemanagement')}" href="/app/node-management">
+                    <vaadin-icon icon="vaadin:cloud" slot="icon"></vaadin-icon>
+                </side-menu-item>
+            `
+        } else {
+            return html``
+        }
+    }
+
     async renderBalances() {
         const tickerTime = ms => new Promise(res => setTimeout(res, ms))
         clearTimeout(this.updateBalancesTimeout)
@@ -1923,6 +2083,8 @@ class AppView extends connect(store)(LitElement) {
 
     stateChanged(state) {
         this.config = state.config
+        this.urls = state.app.registeredUrls
+        this.addressInfo = state.app.accountInfo.addressInfo
     }
 
     searchKeyListener(e) {

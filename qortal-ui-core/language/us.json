@@ -701,6 +701,19 @@
       "exp4":"Address or Name not found !",
       "exp5":"Note that registered names are case-sensitive.",
       "exp6":"Founder",
-      "exp7":"Info"
+      "exp7":"Info",
+      "exp8":"Show all buy trades",
+      "exp9":"Show all sell trades",
+      "exp10":"BUY HISTORY",
+      "exp11":"SELL HISTORY",
+      "exp12":"No buy trades made yet.",
+      "exp13":"No sell trades made yet.",
+      "exp14":"Show complete info",
+      "exp15":"Minting Since",
+      "exp16":"Not Minting",
+      "exp17":"ALL PAYMENTS",
+      "exp18":"Payments",
+      "exp19":"Sent",
+      "exp20":"Received"
    }
 }

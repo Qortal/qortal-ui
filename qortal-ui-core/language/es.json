@@ -701,6 +701,19 @@
       "exp4":"No se encontró la dirección o el nombre!",
       "exp5":"Tenga en cuenta que los nombres registrados distinguen entre mayúsculas y minúsculas.",
       "exp6":"Fundador",
-      "exp7":"Información"
+      "exp7":"Información",
+      "exp8":"Mostrar todas las operaciones de compra",
+      "exp9":"Mostrar todas las operaciones de venta",
+      "exp10":"HISTORIAL DE COMPRAS",
+      "exp11":"HISTORIAL DE VENTAS",
+      "exp12":"Aún no se han realizado operaciones de compra.",
+      "exp13":"Aún no se han realizado operaciones de venta.",
+      "exp14":"Mostrar información completa",
+      "exp15":"Acuñando desde",
+      "exp16":"No acuña",
+      "exp17":"TODOS LOS PAGOS",
+      "exp18":"Pagos",
+      "exp19":"Enviado",
+      "exp20":"Recibido"
    }
 }

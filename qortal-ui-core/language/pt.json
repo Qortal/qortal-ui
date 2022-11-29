@@ -701,6 +701,19 @@
       "exp4":"Endereço ou nome não encontrado!",
       "exp5":"Observe que os nomes registrados diferenciam maiúsculas de minúsculas.",
       "exp6":"Fundador",
-      "exp7":"Informações"
+      "exp7":"Informações",
+      "exp8":"Mostrar todas as negociações de compra",
+      "exp9":"Mostrar todas as negociações de venda",
+      "exp10":"COMPRAR HISTÓRICO",
+      "exp11":"HISTÓRICO DE VENDAS",
+      "exp12":"Nenhuma negociação de compra feita ainda.",
+      "exp13":"Nenhuma negociação de venda feita ainda.",
+      "exp14":"Mostrar informações completas",
+      "exp15":"Criando desde",
+      "exp16":"Não está cunhando",
+      "exp17":"TODOS OS PAGAMENTOS",
+      "exp18":"Pagamentos",
+      "exp19":"Enviado",
+      "exp20":"Recebido"
    }
 }
