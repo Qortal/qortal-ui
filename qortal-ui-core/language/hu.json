@@ -476,7 +476,9 @@
       "dchange18":"Hiba történt a regisztrált név letiltásakor. Próbálkozzon újra!",
       "dchange19":"Hiba történt, amikor megpróbálta megszüntetni a regisztrált név követését. Próbálkozzon újra!",
       "dchange20":"Hiba történt a regisztrált név blokkolásának feloldásakor. Próbálkozzon újra!",
-      "dchange21":"Hiba történt az erőforrás törlésekor. Próbálkozzon újra!"
+      "dchange21":"Hiba történt az erőforrás törlésekor. Próbálkozzon újra!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Új Privát Üzenet",
