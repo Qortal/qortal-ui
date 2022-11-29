@@ -476,7 +476,9 @@
       "dchange18":"Une erreur s’est produite lors de la tentative de blocage de ce nom enregistré. Veuillez réessayer!",
       "dchange19":"Une erreur s’est produite lors de la tentative de désabonnement de ce nom enregistré. Veuillez réessayer!",
       "dchange20":"Une erreur s’est produite lors de la tentative de déverrouillage de ce nom enregistré. Veuillez réessayer!",
-      "dchange21":"Une erreur s’est produite lors de la suppression de cette ressource. Veuillez réessayer!"
+      "dchange21":"Une erreur s’est produite lors de la suppression de cette ressource. Veuillez réessayer!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Nouveau message privé",
