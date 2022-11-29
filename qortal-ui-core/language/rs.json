@@ -476,7 +476,9 @@
       "dchange18":"Desila se greška pri pokušaju blokiranja ovog registrovanog imena. Molim pokušajte ponovo!",
       "dchange19":"Desila se greška pri pokušaju otpraćivanja ovog registrovanog imena. Molim pokušajte ponovo!",
       "dchange20":"Desila se greška pri pokušaju odblokiranja ovog registrovanog imena. Molim pokušajte ponovo!",
-      "dchange21":"Desila se greška pri pokušaju brisanja ovog resursa. Molim pokušajte ponovo!"
+      "dchange21":"Desila se greška pri pokušaju brisanja ovog resursa. Molim pokušajte ponovo!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Nova Privatna poruka",
