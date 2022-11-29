@@ -714,6 +714,7 @@
       "exp17":"WSZYSTKIE PŁATNOŚCI",
       "exp18":"Płatności",
       "exp19":"Wysłane",
-      "exp20":"Otrzymano"
+      "exp20":"Otrzymano",
+	  "exp21":"Transakcji"
    }
 }

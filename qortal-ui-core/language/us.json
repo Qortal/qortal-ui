@@ -714,6 +714,7 @@
       "exp17":"ALL PAYMENTS",
       "exp18":"Payments",
       "exp19":"Sent",
-      "exp20":"Received"
+      "exp20":"Received",
+      "exp21":"Trades"
    }
 }

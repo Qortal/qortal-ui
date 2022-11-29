@@ -1063,21 +1063,6 @@ class UserInfoView extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userInfoDialog" modal>
-                <div class="card-container">
-                    <span class="level">${translate("mintingpage.mchange27")} ${this.displayLevel}</span>
-                    ${this.founderBadge()}
-                    ${this.avatarImage()}
-                    <h2>${this.infoAccountName}</h2>
-                    <h4>${this.displayAddress}</h4>
-                    <p>${translate("explorerpage.exp2")}: ${this.displayBalance} QORT</p>
-                </div>
-                <div class="buttons">
-                    <mwc-button @click=${() => this.openMoreInfoDialog()}>${translate("explorerpage.exp3")}</mwc-button>
-                    <mwc-button class='decline' @click=${() => this.closeInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
-                </div>
-            </paper-dialog>
-
             <paper-dialog class="full-info-wrapper" id="userFullInfoDialog" modal>
                 <div class="full-info-logo">${this.avatarFullImage()}</div>
                 <h3>${this.infoAccountName}</h3>
@@ -1162,6 +1147,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     </div>
                 </div>
                 <div class="buttons">
+                    <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp21")}</mwc-button>
                     <mwc-button class='decline' @click=${() => this.closeCompleteInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
                 </div>
             </paper-dialog>
@@ -1177,18 +1163,17 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userMoreInfoDialog" modal>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userTrades" modal>
                 <div class="card-container-button">
-                    <mwc-button dense unelevated label="${translate("explorerpage.exp14")}" @click=${() => this.openCompleteInfoDialog()}></mwc-button><br><br>
                     <mwc-button dense unelevated label="${translate("explorerpage.exp8")}" @click=${() => this.openUserBoughtDialog()}></mwc-button><br><br>
                     <mwc-button dense unelevated label="${translate("explorerpage.exp9")}" @click=${() => this.openUserSoldDialog()}></mwc-button><br><br>
                 </div>
                 <div class="buttons">
-                    <mwc-button class='decline' @click=${() => this.closeMoreInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
+                    <mwc-button class='decline' @click=${() => this.closeTrades()} dialog-dismiss>${translate("general.close")}</mwc-button>
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog" modal>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.boughtBTCTemplate()}
@@ -1208,7 +1193,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog" modal>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.soldBTCTemplate()}
@@ -1328,7 +1313,11 @@ class UserInfoView extends connect(store)(LitElement) {
         await this.getAddressUserBalance(myAddress)
         this.displayAddress = this.addressResult.address
         this.displayLevel = this.addressResult.level
-        this.shadowRoot.getElementById('userInfoDialog').open()
+        this.isLoadingCompleteInfo = true
+        this.shadowRoot.getElementById('userFullInfoDialog').open()
+        await this.getStartMint()
+        await this.getPaymentsGridItems()
+        this.isLoadingCompleteInfo = false
     }
 
     async getAddressUserInfo(infoAddress) {
@@ -1782,18 +1771,9 @@ class UserInfoView extends connect(store)(LitElement) {
         }).filter(item => !!item)
     }
 
-    openMoreInfoDialog() {
-        this.shadowRoot.getElementById('userMoreInfoDialog').open()
+    openTrades() {
+        this.shadowRoot.getElementById('userTrades').open()
         this.shadowRoot.getElementById('userInfoDialog').close()
-    }
-
-    async openCompleteInfoDialog() {
-        this.isLoadingCompleteInfo = true
-        this.shadowRoot.getElementById('userFullInfoDialog').open()
-        this.shadowRoot.getElementById('userMoreInfoDialog').close()
-        await this.getStartMint()
-        await this.getPaymentsGridItems()
-        this.isLoadingCompleteInfo = false
     }
 
     async openUserBoughtDialog() {
@@ -1852,16 +1832,12 @@ class UserInfoView extends connect(store)(LitElement) {
         this.isLoadingSoldTradesARRR = false
     }
 
-    closeInfoDialog() {
-        this.shadowRoot.getElementById('userInfoDialog').close()
-    }
-
     closeErrorDialog() {
         this.shadowRoot.getElementById('userErrorDialog').close()
     }
 
-    closeMoreInfoDialog() {
-        this.shadowRoot.getElementById('userMoreInfoDialog').close()
+    closeTrades() {
+        this.shadowRoot.getElementById('userTrades').close()
     }
 
     closeCompleteInfoDialog() {
