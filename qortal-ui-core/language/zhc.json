@@ -476,7 +476,9 @@
       "dchange18":"尝试关注此注册名称时发生错误。 请再试一次!",
       "dchange19":"尝试取消关注此注册名称时发生错误。 请再试一次!",
       "dchange20":"尝试解封此注册名称时发生错误。 请再试一次!",
-      "dchange21":"尝试删除此资源时出错。 请再试一次"
+      "dchange21":"尝试删除此资源时出错。 请再试一次",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"新的私人对话",
