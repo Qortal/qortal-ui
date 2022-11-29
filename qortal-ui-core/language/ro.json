@@ -476,7 +476,9 @@
       "dchange18":"A aparut o eroare in timpul incercarii de a bloca acest nume inregistrat. Va rugam sa incercati din nou!",
       "dchange19":"A aparut o eroare atunci cand ati incercat sa dezactivati urmarirea acestui nume inregistrat. Va rugam sa incercati din nou!",
       "dchange20":"A aparut o eroare atunci cand ati incercat sa deblocati acest nume inregistrat. Va rugam sa incercati din nou!",
-      "dchange21":"A aparut o eroare atunci cand ati incercat sa stergeti aceasta resursa. Va rugam sa incercati din nou!"
+      "dchange21":"A aparut o eroare atunci cand ati incercat sa stergeti aceasta resursa. Va rugam sa incercati din nou!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Mesaj privat nou",
