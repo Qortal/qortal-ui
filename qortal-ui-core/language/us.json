@@ -476,7 +476,9 @@
       "dchange18":"Error occurred when trying to block this registered name. Please try again!",
       "dchange19":"Error occurred when trying to unfollow this registered name. Please try again!",
       "dchange20":"Error occurred when trying to unblock this registered name. Please try again!",
-      "dchange21":"Error occurred when trying to delete this resource. Please try again!"
+      "dchange21":"Error occurred when trying to delete this resource. Please try again!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"New Private Message",
