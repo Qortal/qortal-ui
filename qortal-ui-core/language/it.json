@@ -476,7 +476,9 @@
       "dchange18":"Si è verificato un errore durante il tentativo di bloccare questo nome registrato. Per favore, riprova!",
       "dchange19":"Si è verificato un errore durante il tentativo di smettere di seguire questo nome registrato. Per favore, riprova!",
       "dchange20":"Si è verificato un errore durante il tentativo di sbloccare questo nome registrato. Per favore, riprova!",
-      "dchange21":"Si è verificato un errore durante il tentativo di eliminare questa risorsa. Per favore, riprova!"
+      "dchange21":"Si è verificato un errore durante il tentativo di eliminare questa risorsa. Per favore, riprova!",
+      "dchange22":"Create Bootstrap",
+      "dchange23":"Successfully Created Bootstrap"
    },
    "chatpage":{
       "cchange1":"Nuovo messaggio privato",
