@@ -78,6 +78,7 @@ class ChatScroller extends LitElement {
             return messageArray;
         }, [])
 
+    
         return html`
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
@@ -136,8 +137,8 @@ class ChatScroller extends LitElement {
 
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
-            let _scrollElement = entries[0].target.nextElementSibling
-            this._getOldMessage(_scrollElement)
+            let _scrollElement = entries[0].target.nextElementSibling;
+            this._getOldMessage(_scrollElement);
         }
     }
 
@@ -155,9 +156,8 @@ class ChatScroller extends LitElement {
             rootMargin: '0px',
             threshold: 1
         };
-
-        const observer = new IntersectionObserver(this._upObserverhandler, options)
-        observer.observe(this.upObserverElement)
+        const observer = new IntersectionObserver(this._upObserverhandler, options);
+        observer.observe(this.upObserverElement);
     }
 
     downElementObserver() {
@@ -166,17 +166,13 @@ class ChatScroller extends LitElement {
         rootMargin: '0px',
         threshold: 1
     }
-
     // identify an element to observe
-    const elementToObserve = this.downObserverElement
-
+    const elementToObserve = this.downObserverElement;
     // passing it a callback function
-    const observer = new IntersectionObserver(this._downObserverHandler, options)
-
+    const observer = new IntersectionObserver(this._downObserverHandler, options);
     // call `observe()` on that MutationObserver instance,
     // passing it the element to observe, and the options object
-    observer.observe(elementToObserve)
-
+    observer.observe(elementToObserve);
     }
 }
 
@@ -577,16 +573,13 @@ class ChatMenu extends LitElement {
       this.emojiPicker.on('emoji', selection => {
         this.sendMessage({
             type: 'reaction',
-editedMessageObj: this.originalMessage,
+            editedMessageObj: this.originalMessage,
             reaction:  selection.emoji,
-         
-           
          })
         });
     }
     
     render() {
-        console.log('version', this.version)
         return html` 
             <div class="container">
             <div 
@@ -601,7 +594,7 @@ editedMessageObj: this.originalMessage,
                     }}
                >
                     <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
-                </div>
+                </div>                
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>

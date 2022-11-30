@@ -59,7 +59,7 @@ class ChatPage extends LitElement {
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
-            chatMessageSize: { type: Number},
+            // chatMessageSize: { type: Number},
             imageFile: { type: Object },
             isUploadingImage: { type: Boolean },
             chatEditor: { type:  Object },
@@ -545,7 +545,7 @@ class ChatPage extends LitElement {
         this.repliedToMessageObj = null
         this.editedMessageObj = null
         this.iframeHeight = 42
-        this.chatMessageSize = 0
+        // this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
@@ -619,7 +619,7 @@ class ChatPage extends LitElement {
                                     </div>
                                 </div>
                             `}
-                        <div class="chatbar" style="${this.chatMessageSize >= 750 && 'padding-bottom: 7px'}">
+                        <div class="chatbar">
                             <chat-text-editor
                                 ?hasGlobalEvents=${true}
                                 iframeId="_chatEditorDOM"
@@ -676,15 +676,6 @@ class ChatPage extends LitElement {
                                     ?isLoadingMessages=${this.isLoadingMessages}>
                                 </chat-text-editor>
                             </div>
-                                ${this.chatMessageSize >= 750 ? 
-                                html`
-                                <div class="message-size-container">
-                                    <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
-                                        ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
-                                    </div>
-                                </div>
-                                ` : 
-                                html``}
                             <div class="modal-button-row">
                                 <button
                                     class="modal-button-red"
@@ -875,7 +866,7 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
-
+        
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -1553,13 +1544,15 @@ class ChatPage extends LitElement {
             this.isLoading = false;
             this.chatEditor.enable();
             this.chatEditorNewChat.enable()
-        } else if (this.chatMessageSize >= 1000) {
-            this.isLoading = false;
-            this.chatEditor.enable();
-            this.chatEditorNewChat.enable()
-            let err1string = get("chatpage.cchange29");
-            parentEpml.request('showSnackBar', `${err1string}`);
-        } else if (this.repliedToMessageObj) {
+        } 
+        // else if (this.chatMessageSize >= 1000) {
+        //     this.isLoading = false;
+        //     this.chatEditor.enable();
+        //     this.chatEditorNewChat.enable()
+        //     let err1string = get("chatpage.cchange29");
+        //     parentEpml.request('showSnackBar', `${err1string}`);
+        // } 
+        else if (this.repliedToMessageObj) {
             let chatReference = this.repliedToMessageObj.reference
 
             if(this.repliedToMessageObj.chatReference){

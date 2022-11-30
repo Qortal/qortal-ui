@@ -21,6 +21,7 @@ class ChatTextEditor extends LitElement {
             setChatEditor: { attribute: false },
             iframeId: { type: String },
             hasGlobalEvents: { type: Boolean },
+            chatMessageSize: { type: Number },
             theme: {
                 type: String,
                 reflect: true
@@ -142,14 +143,14 @@ class ChatTextEditor extends LitElement {
         this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
         this.initialChat = this.initialChat.bind(this)
         this.iframeHeight = 42
-        this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0];
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
+        this.chatMessageSize = 0
+        this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0]
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 	}
 
 	render() {
-        console.log(this.theme)
 		return html`
-			 <div 
+            <div 
              class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
              style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}">
                 <div class="file-picker-container" @click=${(e) => {
@@ -176,17 +177,24 @@ class ChatTextEditor extends LitElement {
                 ${this.editedMessageObj ? (
                     html`
                     <div>
-                    ${this.isLoading === false ? html`
-                        <vaadin-icon
-                            class="checkmark-icon"
-                            icon="vaadin:check"
-                            slot="icon"
-                            @click=${() => this._sendMessage()}
-                            >
-                        </vaadin-icon>
-                        ` :
-                        html`
-                        <paper-spinner-lite active></paper-spinner-lite>
+                        ${this.isLoading === false ? html`
+                            <vaadin-icon
+                                class="checkmark-icon"
+                                icon="vaadin:check"
+                                slot="icon"
+                                @click=${() => {
+                                    if (this.chatMessageSize > 1000 ) {
+                                        parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+                                        return;
+                                    }
+                                    this._sendMessage();
+                                    this.chatMessageSize = 0;
+                                }}
+                                >
+                            </vaadin-icon>
+                            ` :
+                            html`
+                            <paper-spinner-lite active></paper-spinner-lite>
                         `}
                     </div>
                         `
@@ -198,7 +206,15 @@ class ChatTextEditor extends LitElement {
                                 src="/img/qchat-send-message-icon.svg" 
                                 alt="send-icon" 
                                 class="send-icon" 
-                                @click=${() => this._sendMessage()} />
+                                @click=${() => {
+                                    if (this.chatMessageSize > 1000 ) {
+                                    parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+                                    return;
+                                    }
+                                    this._sendMessage();
+                                    this.chatMessageSize = 0;
+                                }} 
+                                />
                             ` : 
                             html`
                                 <paper-spinner-lite active></paper-spinner-lite>
@@ -207,16 +223,16 @@ class ChatTextEditor extends LitElement {
                         `
                     }
                 </div>
-                ${this.chatMessageSize >= 750 ? 
-                    html`
-                    <div class="message-size-container">
-                        <div class="message-size" style="${this.chatMessageSize >= 1000 && 'color: #bd1515'}">
-                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                    ${this.chatMessageSize >= 750 ? 
+                        html`
+                        <div class="message-size-container">
+                            <div class="message-size" style="${this.chatMessageSize > 1000 && 'color: #bd1515'}">
+                                ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                            </div>
                         </div>
-                    </div>
-                    ` : 
+                        ` : 
                     html``}
-                </div>
+            </div>
 		`
 	}
 
@@ -257,7 +273,7 @@ class ChatTextEditor extends LitElement {
 
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
-            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId');
+            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             if (checkTheme === 'dark') {
                 this.theme = 'dark';
                 chatbar.style.cssText = "color:#ffffff;"
@@ -301,8 +317,7 @@ class ChatTextEditor extends LitElement {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
         if (changedProperties && changedProperties.has('placeholder')) {
-            console.log(this.placeholder, "here600");
-            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId');
+            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
         }
     }
@@ -356,6 +371,7 @@ class ChatTextEditor extends LitElement {
             const stringified = JSON.stringify(messageObject);
             const size =  new Blob([stringified]).size;
             this.chatMessageSize = size;
+            console.log(this.chatMessageSize, "here600");
 
         } catch (error) {
             console.error(error)
@@ -365,14 +381,13 @@ class ChatTextEditor extends LitElement {
 
     calculateIFrameHeight(height) {
         setTimeout(()=> {
-            const editorTest = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId').scrollHeight;
+            const editorTest = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId').scrollHeight;
             this.iframeHeight = editorTest + 20;
         }, 50)
     }
 
     initChatEditor() {
         const ChatEditor = function (editorConfig) {    
-            console.log(editorConfig.placeholder, "here5600");        
             const ChatEditor = function () {
                 const editor = this;
                 editor.init();
@@ -560,7 +575,7 @@ class ChatTextEditor extends LitElement {
                 
                 const editor = this;
 
-                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
+                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keyup', 'blur', 'paste']
 
                 for (let i = 0; i < events.length; i++) {
                     const event = events[i]
@@ -611,9 +626,11 @@ class ChatTextEditor extends LitElement {
                             return false;
                         }
 
-                        if (e.type === 'keydown') {
+                        if (e.type === 'keyup') {
+                            console.log(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML, "here 12");
+
                             editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                            editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.innerHTML);
+                            editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
 
                              // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
@@ -622,7 +639,7 @@ class ChatTextEditor extends LitElement {
                                 editor.updateMirror();
 
                                 if (editor.state() === 'false') return false;
-                                if(editorConfig.iframeId === 'newChat'){
+                                if (editorConfig.iframeId === 'newChat') {
                                     editorConfig.sendFunc(
                                         {
                                             type: 'image',
@@ -630,6 +647,10 @@ class ChatTextEditor extends LitElement {
                                         }
                                     );
                                 } else {
+                                    if (this.chatMessageSize > 1000 ) {
+                                        parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+                                        return;
+                                    }
                                     editorConfig.sendFunc();
                                 }
                                 
@@ -704,7 +725,7 @@ class ChatTextEditor extends LitElement {
                 elemDiv.setAttribute('spellcheck', 'false');
                 elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
                 elemDiv.style.cssText = `width:100%; ${editorConfig.theme === "dark" ? "color:#ffffff;" : "color: #080808"}`;
-                elemDiv.id = 'testingId';
+                elemDiv.id = 'chatbarId';
                 editor.content.body.appendChild(elemDiv);
                 editor.contentDiv =  editor.frame.contentDocument.body.firstChild;
                 editor.styles();
