@@ -886,6 +886,7 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
+       
 
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -910,8 +911,12 @@ class ChatPage extends LitElement {
                     - b.timestamp
             })
             await this.getUpdateComplete();
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
 
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
 
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -937,8 +942,13 @@ class ChatPage extends LitElement {
                     - b.timestamp
             })
             await this.getUpdateComplete();
-
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+          
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
+            
 
         }
 
