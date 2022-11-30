@@ -250,7 +250,6 @@ class ChatTextEditor extends LitElement {
     }
 
 	async firstUpdated() {
-        console.log(this.placeholder, "here500");
         if (this.hasGlobalEvents) {
             this.addGlobalEventListener();
         }
@@ -301,7 +300,6 @@ class ChatTextEditor extends LitElement {
             this.chatEditor.insertText(this.editedMessageObj.message)
         }
         if (changedProperties && changedProperties.has('placeholder')) {
-            console.log(this.placeholder, "here600");
             const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('testingId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
         }
@@ -371,8 +369,7 @@ class ChatTextEditor extends LitElement {
     }
 
     initChatEditor() {
-        const ChatEditor = function (editorConfig) {    
-            console.log(editorConfig.placeholder, "here5600");        
+        const ChatEditor = function (editorConfig) {         
             const ChatEditor = function () {
                 const editor = this;
                 editor.init();

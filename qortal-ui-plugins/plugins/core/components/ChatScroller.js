@@ -31,7 +31,9 @@ class ChatScroller extends LitElement {
             focusChatEditor: {attribute: false},
             sendMessage: {attribute: false},
             showLastMessageRefScroller: { type: Function },
-            emojiPicker: { attribute: false }
+            emojiPicker: { attribute: false },
+            isLoadingMessages: { type: Boolean},
+            setIsLoadingMessages: {attribute: false}
         }
     }
 
@@ -71,6 +73,11 @@ class ChatScroller extends LitElement {
             return messageArray;
         }, [])
         return html`
+              ${this.isLoadingMessages ?  html`
+                <div class="spinnerContainer">
+                        <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                        ` : ''}
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
                 ${formattedMessages.map((formattedMessage) => {
@@ -101,6 +108,9 @@ class ChatScroller extends LitElement {
     }
 
     shouldUpdate(changedProperties) {
+        if(changedProperties.has('isLoadingMessages')){
+            return true
+        }
         // Only update element if prop1 changed.
         return changedProperties.has('messages');
       }
@@ -144,6 +154,7 @@ class ChatScroller extends LitElement {
 
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
+            this.setIsLoadingMessages(true)
             let _scrollElement = entries[0].target.nextElementSibling
             this._getOldMessage(_scrollElement)
         }

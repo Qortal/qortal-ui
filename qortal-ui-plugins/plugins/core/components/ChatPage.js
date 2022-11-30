@@ -67,6 +67,7 @@ class ChatPage extends LitElement {
             chatEditorNewChat: { type: Object },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
+            isLoadingOldMessages: {type: Boolean}
         }
     }
 
@@ -873,11 +874,15 @@ class ChatPage extends LitElement {
         .sendMessage=${(val) => this._sendMessage(val)}
         .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
         .emojiPicker=${this.emojiPicker} 
+        ?isLoadingMessages=${this.isLoadingOldMessages}
+        .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
         >
         </chat-scroller>
         `
     }
-
+    setIsLoadingMessages(val){
+        this.isLoadingOldMessages = val
+    }
     async getUpdateComplete() {
         await super.getUpdateComplete();
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-scroller'));
@@ -886,8 +891,7 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
-       
-
+ 
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -910,14 +914,17 @@ class ChatPage extends LitElement {
                 return a.timestamp
                     - b.timestamp
             })
+            this.isLoadingOldMessages = false
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
 
             const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+          
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
-
+           
+        
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -941,14 +948,15 @@ class ChatPage extends LitElement {
                 return a.timestamp
                     - b.timestamp
             })
+            this.isLoadingOldMessages = false
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
             const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
-          
+            
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
-            
+         
 
         }
 
