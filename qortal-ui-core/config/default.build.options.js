@@ -21,7 +21,6 @@ const apiComponents = {
     }
 }
 
-
 const functionalComponents = {
     'loading-ripple': {
         file: 'functional-components/loading-ripple.js',
@@ -114,6 +113,10 @@ const elementComponents = {
                         className: 'NotificationsView'
                     }
                 }
+            },
+            'user-info-view': {
+                file: 'components/user-info-view/user-info-view.js',
+                className: 'UserInfoView'
             }
         }
     }
