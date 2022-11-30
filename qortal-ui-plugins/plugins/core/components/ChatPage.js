@@ -24,6 +24,7 @@ import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
 import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import { EmojiPicker } from 'emoji-picker-js';
 
 
 // const messagesCache = localForage.createInstance({
@@ -550,6 +551,15 @@ class ChatPage extends LitElement {
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
         this.lastMessageRefVisible = false
+        this.emojiPicker = new EmojiPicker({
+            style: "twemoji",
+            twemojiBaseUrl: '/emoji/',
+            showPreview: false,
+            showVariants: false,
+            showAnimation: false,
+            position: 'top-start',
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+        });
     }
     
     render() {
@@ -862,6 +872,7 @@ class ChatPage extends LitElement {
         .focusChatEditor=${() => this.focusChatEditor()}
         .sendMessage=${(val) => this._sendMessage(val)}
         .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
+        .emojiPicker=${this.emojiPicker} 
         >
         </chat-scroller>
         `
