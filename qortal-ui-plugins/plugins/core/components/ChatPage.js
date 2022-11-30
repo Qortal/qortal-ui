@@ -1397,6 +1397,7 @@ class ChatPage extends LitElement {
                         const file = new File([result], "name", {
                             type: 'image/png'
                         });
+                       
                         compressedFile = file;
                         resolve();
                     },
@@ -1409,7 +1410,7 @@ class ChatPage extends LitElement {
                 await publishData({
                     registeredName: userName,
                     file : compressedFile,
-                    service: 'IMAGE',
+                    service: 'QCHAT_IMAGE',
                     identifier: identifier,
                     parentEpml,
                     metaData: undefined,
@@ -1480,7 +1481,7 @@ class ChatPage extends LitElement {
                 })
             })
             const fileSize = compressedFile.size;
-            if (fileSize > 5000000) {
+            if (fileSize > 500000) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
                 this.chatEditor.enable();
@@ -1492,7 +1493,7 @@ class ChatPage extends LitElement {
                     await publishData({
                         registeredName: userName,
                         file : compressedFile,
-                        service: 'IMAGE',
+                        service: 'QCHAT_IMAGE',
                         identifier : identifier,
                         parentEpml,
                         metaData: undefined,
@@ -1516,7 +1517,7 @@ class ChatPage extends LitElement {
                 const messageObject = {
                     messageText: trimmedMessageWithImage,
                     images: [{
-                            service: "IMAGE",
+                            service: "QCHAT_IMAGE",
                             name: userName,
                             identifier: identifier
                     }],
