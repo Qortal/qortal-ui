@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-plugins",
-	"version": "2.2.4",
+	"version": "2.2.5",
 	"description": "QORTAL-UI Plugins",
 	"keywords": [
 		"QORT",
@@ -60,6 +60,6 @@
 		"rollup-plugin-progress": "1.1.2"
 	},
 	"engines": {
-		"node": ">=16.15.0"
+		"node": ">=16.17.0"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-core",
-	"version": "2.2.4",
+	"version": "2.2.5",
 	"description": "QORTAL-UI Core",
 	"keywords": [
 		"QORT",
@@ -80,6 +80,6 @@
 		"rollup-plugin-scss": "3.0.0"
 	},
 	"engines": {
-		"node": ">=16.15.0"
+		"node": ">=16.17.0"
 	}
 }
