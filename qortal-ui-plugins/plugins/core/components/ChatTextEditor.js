@@ -266,7 +266,6 @@ class ChatTextEditor extends LitElement {
     }
 
 	async firstUpdated() {
-        console.log(this.placeholder, "here500");
         if (this.hasGlobalEvents) {
             this.addGlobalEventListener();
         }
@@ -387,7 +386,7 @@ class ChatTextEditor extends LitElement {
     }
 
     initChatEditor() {
-        const ChatEditor = function (editorConfig) {    
+        const ChatEditor = function (editorConfig) {        
             const ChatEditor = function () {
                 const editor = this;
                 editor.init();

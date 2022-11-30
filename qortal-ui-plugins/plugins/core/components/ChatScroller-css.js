@@ -435,4 +435,9 @@ export const chatStyles = css`
 		align-items: center;
 		height: 100%;
 	}
+	.spinnerContainer {
+		display: flex;
+		width: 100%;
+		justify-content: center
+	}
 `

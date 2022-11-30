@@ -17,6 +17,7 @@ import { EmojiPicker } from 'emoji-picker-js';
 import { cropAddress } from "../../utils/cropAddress";
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+let toggledMessage = {}
 class ChatScroller extends LitElement {
     static get properties() {
         return {
@@ -30,6 +31,9 @@ class ChatScroller extends LitElement {
             focusChatEditor: {attribute: false},
             sendMessage: {attribute: false},
             showLastMessageRefScroller: { type: Function },
+            emojiPicker: { attribute: false },
+            isLoadingMessages: { type: Boolean},
+            setIsLoadingMessages: {attribute: false}
         }
     }
 
@@ -41,16 +45,7 @@ class ChatScroller extends LitElement {
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
-        this.emojiPicker = new EmojiPicker({
-            style: "twemoji",
-            twemojiBaseUrl: '/emoji/',
-            showPreview: false,
-            showVariants: false,
-            showAnimation: false,
-            position: 'top-start',
-            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
-        });
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")    
     }
 
 
@@ -77,9 +72,13 @@ class ChatScroller extends LitElement {
             }
             return messageArray;
         }, [])
-
-    
+        
         return html`
+              ${this.isLoadingMessages ?  html`
+                <div class="spinnerContainer">
+                        <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                        ` : ''}
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
                 ${formattedMessages.map((formattedMessage) => {
@@ -99,6 +98,7 @@ class ChatScroller extends LitElement {
                             ?isFirstMessage=${indexMessage === 0}
                             ?isSingleMessageInGroup=${formattedMessage.messages.length > 1}
                             ?isLastMessageInGroup=${indexMessage === formattedMessage.messages.length - 1}
+                            .setToggledMessage=${this.setToggledMessage}
                             >
                             </message-template>`
                     )
@@ -109,6 +109,9 @@ class ChatScroller extends LitElement {
     }
 
     shouldUpdate(changedProperties) {
+        if(changedProperties.has('isLoadingMessages')){
+            return true
+        }
         // Only update element if prop1 changed.
         return changedProperties.has('messages');
       }
@@ -120,7 +123,22 @@ class ChatScroller extends LitElement {
         return true;
     }
 
+    setToggledMessage(message){
+        toggledMessage = message
+    }
+
+
     async firstUpdated() {
+        this.emojiPicker.on('emoji', selection => {
+
+            this.sendMessage({
+                type: 'reaction',
+    editedMessageObj: toggledMessage,
+                reaction:  selection.emoji,
+             
+               
+             })
+            });
         this.viewElement = this.shadowRoot.getElementById('viewElement');
         this.upObserverElement = this.shadowRoot.getElementById('upObserver');
         this.downObserverElement = this.shadowRoot.getElementById('downObserver');
@@ -137,6 +155,7 @@ class ChatScroller extends LitElement {
 
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
+            this.setIsLoadingMessages(true);
             let _scrollElement = entries[0].target.nextElementSibling;
             this._getOldMessage(_scrollElement);
         }
@@ -198,6 +217,7 @@ class MessageTemplate extends LitElement {
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
             isLastMessageInGroup: { type: Boolean },
+            setToggledMessage: {attribute: false}
         }
     }
 
@@ -237,7 +257,13 @@ class MessageTemplate extends LitElement {
     }
 
     showBlockIconFunc(bool) {
-        this.shadowRoot.querySelector(".chat-hover").focus({ preventScroll: true })
+        const chatHover = this.shadowRoot.querySelector(".chat-hover")
+
+        if(chatHover){
+            chatHover.querySelector(".chat-hover").focus({ preventScroll: true })
+        }
+      
+       
         if(bool) {
             this.showBlockAddressIcon = true;
         } else {
@@ -454,6 +480,8 @@ class MessageTemplate extends LitElement {
                                 @blur=${() => this.showBlockIconFunc(false)}
                                 .sendMessage=${this.sendMessage}
                                 version=${version}
+                                .emojiPicker=${this.emojiPicker} 
+                                .setToggledMessage=${this.setToggledMessage}
                             > 
                             </chat-menu>
                         </div>
@@ -529,7 +557,8 @@ class ChatMenu extends LitElement {
             myAddress: { type: Object },
             emojiPicker: { attribute: false },
             sendMessage: {attribute: false},
-            version: {type: String}
+            version: {type: String},
+            setToggledMessage: {attribute: false}
         }
     }
 
@@ -559,26 +588,6 @@ class ChatMenu extends LitElement {
         parentEpml.request('showSnackBar', `${errorMsg}`)
     }
 
-    firstUpdated () {
-        this.emojiPicker = new EmojiPicker({
-            style: "twemoji",
-            twemojiBaseUrl: '/emoji/',
-            showPreview: false,
-            showVariants: false,
-            showAnimation: false,
-            position: 'top-start',
-            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
-        });
-
-      this.emojiPicker.on('emoji', selection => {
-        this.sendMessage({
-            type: 'reaction',
-            editedMessageObj: this.originalMessage,
-            reaction:  selection.emoji,
-         })
-        });
-    }
-    
     render() {
         return html` 
             <div class="container">
@@ -590,7 +599,13 @@ class ChatMenu extends LitElement {
                         this.versionErrorSnack()
                         return
                     }
-                    this.emojiPicker.togglePicker(e.target)
+                    try {
+                        this.setToggledMessage(this.originalMessage)
+                        this.emojiPicker.togglePicker(e.target)
+                    } catch (error) {
+                        console.log({error})
+                    }
+                    
                     }}
                >
                     <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>

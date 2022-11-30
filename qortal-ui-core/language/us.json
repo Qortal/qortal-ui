@@ -485,7 +485,7 @@
       "cchange23": "Cannot Decrypt Message!",
       "cchange24": "Maximum Characters per message is 255",
       "cchange25": "Edit Message",
-      "cchange26": "File size exceeds 5 MB",
+      "cchange26": "File size exceeds 0.5 MB",
       "cchange27": "A registered name is required to send images",
       "cchange28": "This file is not an image",
       "cchange29": "Maximum message size is 1000 bytes",

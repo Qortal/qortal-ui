@@ -17,13 +17,9 @@ export const replaceMessagesEdited = async ({
 				url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
 			})
 
-            console.log({response})
-
 			if (response && Array.isArray(response) && response.length !== 0) {
 				let responseItem = { ...response[0] }
-                console.log('right before')
                 const decodeResponseItem = decodeMessageFunc(responseItem, isReceipient, _publicKey)
-               console.log({decodeResponseItem})
 				delete decodeResponseItem.timestamp
 				msgItem = {
 					...msg,
@@ -43,24 +39,20 @@ export const replaceMessagesEdited = async ({
 		try {
 			parsedMessageObj = JSON.parse(msg.decodedMessage)
 		} catch (error) {
-            console.log('error', {parsedMessageObj})
+            console.log('error')
 			return msg
 		}
-        console.log('noerror')
 		let msgItem = msg
 		try {
 			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
 			if (!isReceipient) {
 				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
-
-            console.log({parsedMessageObj})
 			if (parsedMessageObj.repliedTo) {
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
 				})
-                console.log({response2: response})
 				if (
 					response &&
 					Array.isArray(response) &&

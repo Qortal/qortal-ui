@@ -24,6 +24,7 @@ import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
 import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import { EmojiPicker } from 'emoji-picker-js';
 
 
 // const messagesCache = localForage.createInstance({
@@ -66,6 +67,7 @@ class ChatPage extends LitElement {
             chatEditorNewChat: { type: Object },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
+            isLoadingOldMessages: {type: Boolean}
         }
     }
 
@@ -550,6 +552,15 @@ class ChatPage extends LitElement {
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
         this.lastMessageRefVisible = false
+        this.emojiPicker = new EmojiPicker({
+            style: "twemoji",
+            twemojiBaseUrl: '/emoji/',
+            showPreview: false,
+            showVariants: false,
+            showAnimation: false,
+            position: 'top-start',
+            boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
+        });
     }
     
     render() {
@@ -853,11 +864,16 @@ class ChatPage extends LitElement {
         .focusChatEditor=${() => this.focusChatEditor()}
         .sendMessage=${(val) => this._sendMessage(val)}
         .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
+        .emojiPicker=${this.emojiPicker} 
+        ?isLoadingMessages=${this.isLoadingOldMessages}
+        .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
         >
         </chat-scroller>
         `
     }
-
+    setIsLoadingMessages(val){
+        this.isLoadingOldMessages = val
+    }
     async getUpdateComplete() {
         await super.getUpdateComplete();
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-scroller'));
@@ -866,7 +882,7 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
-        
+ 
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -889,10 +905,17 @@ class ChatPage extends LitElement {
                 return a.timestamp
                     - b.timestamp
             })
+            this.isLoadingOldMessages = false
             await this.getUpdateComplete();
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
 
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+          
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
+           
+        
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -916,9 +939,15 @@ class ChatPage extends LitElement {
                 return a.timestamp
                     - b.timestamp
             })
+            this.isLoadingOldMessages = false
             await this.getUpdateComplete();
-
-            scrollElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
+         
 
         }
 
@@ -1359,6 +1388,7 @@ class ChatPage extends LitElement {
                         const file = new File([result], "name", {
                             type: 'image/png'
                         });
+                       
                         compressedFile = file;
                         resolve();
                     },
@@ -1371,7 +1401,7 @@ class ChatPage extends LitElement {
                 await publishData({
                     registeredName: userName,
                     file : compressedFile,
-                    service: 'IMAGE',
+                    service: 'QCHAT_IMAGE',
                     identifier: identifier,
                     parentEpml,
                     metaData: undefined,
@@ -1442,7 +1472,7 @@ class ChatPage extends LitElement {
                 })
             })
             const fileSize = compressedFile.size;
-            if (fileSize > 5000000) {
+            if (fileSize > 500000) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
                 this.chatEditor.enable();
@@ -1454,7 +1484,7 @@ class ChatPage extends LitElement {
                     await publishData({
                         registeredName: userName,
                         file : compressedFile,
-                        service: 'IMAGE',
+                        service: 'QCHAT_IMAGE',
                         identifier : identifier,
                         parentEpml,
                         metaData: undefined,
@@ -1478,7 +1508,7 @@ class ChatPage extends LitElement {
                 const messageObject = {
                     messageText: trimmedMessageWithImage,
                     images: [{
-                            service: "IMAGE",
+                            service: "QCHAT_IMAGE",
                             name: userName,
                             identifier: identifier
                     }],
