@@ -70,7 +70,6 @@ class ChatScroller extends LitElement {
                     ...message
                 });
             }
-            console.log(messageArray, 'messages here');
             return messageArray;
         }, [])
         
@@ -156,6 +155,9 @@ class ChatScroller extends LitElement {
 
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
+            if(this.messages.length < 20){
+                return
+            }
             this.setIsLoadingMessages(true);
             let _scrollElement = entries[0].target.nextElementSibling;
             this._getOldMessage(_scrollElement);

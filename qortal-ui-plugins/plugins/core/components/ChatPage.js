@@ -800,6 +800,7 @@ class ChatPage extends LitElement {
                 }
             })
         };
+       
 
         setTimeout(() => {
             const isRecipient = this.chatId.includes('direct') === true ? true : false;
@@ -847,9 +848,30 @@ class ChatPage extends LitElement {
         }
     }
 
-    renderPlaceholder() {
+   async renderPlaceholder() {
+        const getName = async (recipient)=> {
+            try {
+                const getNames = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/names/address/${recipient}`,
+				});
+
+                if (Array.isArray(getNames) && getNames.length > 0 ) {
+                    return getNames[0].name
+                } else {
+                    return ''
+                }
+
+            } catch (error) {
+                return ""
+            }
+        }
+        let userName = ""
+        if(this.isReceipient){
+             userName = await getName(this._chatId);
+        }
         const mstring = get("chatpage.cchange8");
-        const placeholder = this.isReceipient === true ? `Message ${this._chatId}` : `${mstring}`;
+        const placeholder = this.isReceipient === true ? `Message ${userName ? userName : this._chatId}` : `${mstring}`;
         return placeholder;
     }
 
@@ -950,7 +972,6 @@ class ChatPage extends LitElement {
          
 
         }
-
     }
 
     async processMessages(messages, isInitial) {
@@ -969,7 +990,7 @@ class ChatPage extends LitElement {
             })
        
         if (isInitial) {
-            this.chatEditorPlaceholder = this.renderPlaceholder();
+            this.chatEditorPlaceholder = await this.renderPlaceholder();
             const replacedMessages = await replaceMessagesEdited({
                 decodedMessages: decodedMessages,
                 parentEpml,
