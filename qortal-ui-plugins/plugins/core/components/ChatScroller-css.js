@@ -188,7 +188,7 @@ export const chatStyles = css`
 	.message {
 		color: var(--chat-bubble-msg-color);
 		line-height: 19px;
-		word-wrap: break-word;
+		overflow-wrap: anywhere;
 		-webkit-user-select: text;
 		-moz-user-select: text;
 		-ms-user-select: text;

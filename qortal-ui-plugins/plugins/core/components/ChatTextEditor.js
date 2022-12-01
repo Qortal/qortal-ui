@@ -140,6 +140,7 @@ class ChatTextEditor extends LitElement {
         this.getMessageSize = this.getMessageSize.bind(this)
         this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.addGlobalEventListener = this.addGlobalEventListener.bind(this)
+        this.sendMessageFunc = this.sendMessageFunc.bind(this)
         this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
         this.initialChat = this.initialChat.bind(this)
         this.iframeHeight = 42
@@ -152,7 +153,8 @@ class ChatTextEditor extends LitElement {
 		return html`
             <div 
              class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
-             style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'align-items: flex-end' : "align-items: center"}">
+             style="${(this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60
+             && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") ? 'align-items: flex-end' : "align-items: center"}">
                 <div class="file-picker-container" @click=${(e) => {
                     this.preventUserSendingImage(e)
                 }}>
@@ -187,8 +189,7 @@ class ChatTextEditor extends LitElement {
                                         parentEpml.request('showSnackBar', get("chatpage.cchange29"));
                                         return;
                                     }
-                                    this._sendMessage();
-                                    this.chatMessageSize = 0;
+                                    this.sendMessageFunc();
                                 }}
                                 >
                             </vaadin-icon>
@@ -211,8 +212,7 @@ class ChatTextEditor extends LitElement {
                                     parentEpml.request('showSnackBar', get("chatpage.cchange29"));
                                     return;
                                     }
-                                    this._sendMessage();
-                                    this.chatMessageSize = 0;
+                                    this.sendMessageFunc();
                                 }} 
                                 />
                             ` : 
@@ -319,6 +319,11 @@ class ChatTextEditor extends LitElement {
             const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
         }
+        if (changedProperties && changedProperties.has("chatMessageSize")) {
+            console.log(this.chatMessageInput, "chat message input");
+            console.log(this.chatMessageInput.contentDocument.body.scrollHeight > 60, "scroll height > 60");
+            console.log( this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML !== "", "content body text");
+        }
     }
 
     shouldUpdate(changedProperties) {
@@ -326,6 +331,12 @@ class ChatTextEditor extends LitElement {
        if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
         return true
       }
+
+    sendMessageFunc(props) {
+        console.log("here123");
+        this.chatMessageSize = 0;
+        this._sendMessage(props);
+    }
 
     getMessageSize(message){
         try {
@@ -574,7 +585,7 @@ class ChatTextEditor extends LitElement {
                 
                 const editor = this;
 
-                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keyup', 'blur', 'paste']
+                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
 
                 for (let i = 0; i < events.length; i++) {
                     const event = events[i]
@@ -605,10 +616,15 @@ class ChatTextEditor extends LitElement {
 
                             editorConfig.insertImage(file)
                             } else {
-                                navigator.clipboard.readText().then(clipboardText => {
+                                navigator.clipboard.readText()
+                                .then(clipboardText => {
                                     let escapedText = editorConfig.escape(clipboardText);
                                     editor.insertText(escapedText);
-                                }).catch(err => {
+                                })
+                                .then(() => {
+                                    editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
+                                })
+                                .catch(err => {
                                     // Fallback if everything fails...
                                     let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
                                     editor.insertText(textData);
@@ -625,12 +641,15 @@ class ChatTextEditor extends LitElement {
                             return false;
                         }
 
-                        if (e.type === 'keyup') {
-                            console.log(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML, "here 12");
-
-                            editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                            editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
-
+                        if (e.type === 'keydown') {
+                            await new Promise((res, rej) => {
+                                setTimeout(() => {
+                                    console.log(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML, "here 18");
+                                    editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
+                                    editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
+                                }, 0);
+                                res();
+                            })
                              // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
@@ -645,14 +664,14 @@ class ChatTextEditor extends LitElement {
                                             imageFile:  editorConfig.imageFile,
                                         }
                                     );
+                                } else if (this.chatMessageSize > 1000) {
+                                    e.preventDefault();
+                                    parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+                                    return false;
                                 } else {
-                                    if (this.chatMessageSize > 1000 ) {
-                                        parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-                                        return;
-                                    }
                                     editorConfig.sendFunc();
                                 }
-                                
+
                                 e.preventDefault();
                                 return false;
                             }
@@ -744,7 +763,7 @@ class ChatTextEditor extends LitElement {
             calculateIFrameHeight: this.calculateIFrameHeight,
             mirrorElement: this.mirrorChatInput,
             editableElement: this.chatMessageInput,
-            sendFunc: this._sendMessage,
+            sendFunc: this.sendMessageFunc,
             emojiPicker: this.emojiPicker,
             escape: escape,
             unescape: unescape,

@@ -70,6 +70,7 @@ class ChatScroller extends LitElement {
                     ...message
                 });
             }
+            console.log(messageArray, 'messages here');
             return messageArray;
         }, [])
         
