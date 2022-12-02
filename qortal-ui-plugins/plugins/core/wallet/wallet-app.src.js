@@ -1758,6 +1758,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="btcBookGrid" ?hidden="${this.isEmptyArray(this.btcBook)}" aria-label="BTC Addressbook" .items="${this.btcBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -1792,6 +1795,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="ltcBookGrid" ?hidden="${this.isEmptyArray(this.ltcBook)}" aria-label="LTC Addressbook" .items="${this.ltcBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -1826,6 +1832,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dogeBookGrid" ?hidden="${this.isEmptyArray(this.dogeBook)}" aria-label="DOGE Addressbook" .items="${this.dogeBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -1860,6 +1869,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dgbBookGrid" ?hidden="${this.isEmptyArray(this.dgbBook)}" aria-label="DGB Addressbook" .items="${this.dgbBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -1894,6 +1906,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="rvnBookGrid" ?hidden="${this.isEmptyArray(this.rvnBook)}" aria-label="RVN Addressbook" .items="${this.rvnBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -1928,6 +1943,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="arrrBookGrid" ?hidden="${this.isEmptyArray(this.arrrBook)}" aria-label="ARRR Addressbook" .items="${this.arrrBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
