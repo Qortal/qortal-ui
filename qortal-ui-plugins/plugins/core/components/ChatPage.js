@@ -60,14 +60,14 @@ class ChatPage extends LitElement {
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
-            // chatMessageSize: { type: Number},
             imageFile: { type: Object },
             isUploadingImage: { type: Boolean },
             chatEditor: { type:  Object },
             chatEditorNewChat: { type: Object },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
-            isLoadingOldMessages: {type: Boolean}
+            isLoadingOldMessages: {type: Boolean},
+            isEditMessageOpen: { type: Boolean }
         }
     }
 
@@ -121,14 +121,13 @@ class ChatPage extends LitElement {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px 8px 10px;
+            padding: 10px 10px 8px 10px;
         }
         
         .repliedTo-subcontainer {
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
             gap: 15px;
             width: 100%;
         }
@@ -137,7 +136,7 @@ class ChatPage extends LitElement {
             display: flex;
             flex-direction: column;
             gap: 5px;
-            width: 92%;
+            width: 100%;
         }
 
         .senderName {
@@ -153,20 +152,12 @@ class ChatPage extends LitElement {
             overflow: hidden;
             white-space: nowrap;
             margin: 0;
+            width: 800px;
         }
 
         .reply-icon {
             width: 20px;
             color: var(--mdc-theme-primary);
-        }
-
-        .checkmark-icon {
-            width: 30px;
-            color: var(--mdc-theme-primary);
-            margin: 0 8px;
-        }
-        .checkmark-icon:hover {
-           cursor: pointer;
         }
 
         .close-icon {
@@ -523,9 +514,7 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
-        // this.getMessageSize = this.getMessageSize.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
-        // this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
         this.selectedAddress = {}
         this.chatId = ''
         this.myAddress = ''
@@ -547,11 +536,11 @@ class ChatPage extends LitElement {
         this.repliedToMessageObj = null
         this.editedMessageObj = null
         this.iframeHeight = 42
-        // this.chatMessageSize = 0
         this.imageFile = null
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
         this.lastMessageRefVisible = false
+        this.isEditMessageOpen = false
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
             twemojiBaseUrl: '/emoji/',
@@ -645,7 +634,7 @@ class ChatPage extends LitElement {
                                 .mirrorChatInput=${this.mirrorChatInput}
                                 ?isLoading=${this.isLoading}
                                 ?isLoadingMessages=${this.isLoadingMessages}
-                                                               >                            
+                                ?isEditMessageOpen=${this.isEditMessageOpen}>                           
                             </chat-text-editor>
                     </div>
                 </div>
@@ -684,17 +673,11 @@ class ChatPage extends LitElement {
                                     .insertImage=${this.insertImage}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
-                                    ?isLoadingMessages=${this.isLoadingMessages}>
+                                    ?isLoadingMessages=${this.isLoadingMessages}></chat-text-editor>
                                 </chat-text-editor>
                             </div>
                             <div class="modal-button-row">
-                                <button
-                                    class="modal-button-red"
-                                    @click=${()=>{
-                                    this.imageFile = null
-                                    }}
-                                >
-                                
+                                <button class="modal-button-red" @click=${() => this.removeImage()}>
                                     ${translate("chatpage.cchange33")}
                                 </button>
                                 <button
@@ -753,22 +736,6 @@ class ChatPage extends LitElement {
     }
 
     async firstUpdated() {
-        // TODO: Load and fetch messages from localstorage (maybe save messages to localstorage...)
-
-        // document.addEventListener('keydown', (e) => {
-        //     if (!this.chatEditor.content.body.matches(':focus')) {
-        //         // WARNING: Deprecated methods from KeyBoard Event
-        //         if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-        //             this.chatEditor.insertText('&nbsp;');
-        //         } else if (inputKeyCodes.includes(e.keyCode)) {
-        //             this.chatEditor.insertText(e.key);
-        //             return this.chatEditor.focus();
-        //         } else {
-        //             return this.chatEditor.focus();
-        //         }
-        //     }
-        // });
-
         window.addEventListener('storage', () => {                                                
             const checkLanguage = localStorage.getItem('qortalLanguage');
             use(checkLanguage);
@@ -845,6 +812,9 @@ class ChatPage extends LitElement {
         if (changedProperties && changedProperties.has('userLanguage')) {
             await new Promise(r => setTimeout(r, 100));
             this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
+        }
+        if (changedProperties && changedProperties.has('isEditMessageOpen')) {
+            console.log(this.isEditMessageOpen, "1111");
         }
     }
 
@@ -1048,8 +1018,8 @@ class ChatPage extends LitElement {
     
     closeEditMessageContainer() {
         this.editedMessageObj = null;
+        this.isEditMessageOpen = !this.isEditMessageOpen;
         this.chatEditor.resetValue();
-        this.requestUpdate();
     }
  
     closeRepliedToContainer() {
@@ -1596,13 +1566,6 @@ class ChatPage extends LitElement {
             this.chatEditor.enable();
             this.chatEditorNewChat.enable()
         } 
-        // else if (this.chatMessageSize >= 1000) {
-        //     this.isLoading = false;
-        //     this.chatEditor.enable();
-        //     this.chatEditorNewChat.enable()
-        //     let err1string = get("chatpage.cchange29");
-        //     parentEpml.request('showSnackBar', `${err1string}`);
-        // } 
         else if (this.repliedToMessageObj) {
             let chatReference = this.repliedToMessageObj.reference
 
