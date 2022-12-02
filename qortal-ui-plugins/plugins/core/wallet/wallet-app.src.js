@@ -559,6 +559,13 @@ class MultiWallet extends LitElement {
                 width: 185px;
             }
 
+            .square {
+                width: 42px;
+                height: 42px;
+                object-fit: cover;
+                aspect-ratio: 1 / 1;
+            }
+
             @media (max-width: 863px) {
                 .wallet {
                     width: 100%;
@@ -1714,6 +1721,9 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="qortBookGrid" ?hidden="${this.isEmptyArray(this.qortBook)}" aria-label="QORT Addressbook" .items="${this.qortBook}" all-rows-visible>
+                        <vaadin-grid-column header="" .renderer=${(root, column, data) => {
+                            render(html`${this.renderAvatar(data.item)}`, root)
+                        }}></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
@@ -5351,6 +5361,14 @@ class MultiWallet extends LitElement {
                 }
             }
         })
+    }
+
+    renderAvatar(nameObj) {
+        let name = nameObj.name
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
+        return html`<img class="square" src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     isEmptyArray(arr) {
