@@ -93,7 +93,8 @@ class MultiWallet extends LitElement {
             dogeBookAddress: { type: String },
             dgbBookAddress: { type: String },
             rvnBookAddress: { type: String },
-            arrrBookAddress: { type: String }
+            arrrBookAddress: { type: String },
+            myElementId: { type: String }
         }
     }
 
@@ -649,7 +650,6 @@ class MultiWallet extends LitElement {
         this.dgbBookAddress = ''
         this.rvnBookAddress = ''
         this.arrrBookAddress = ''
-
         this.recipient = ''
         this.btcRecipient = ''
         this.ltcRecipient = ''
@@ -661,6 +661,7 @@ class MultiWallet extends LitElement {
         this.arrrWalletAddress = ''
         this.errorMessage = ''
         this.successMessage = ''
+        this.myElementId = ''
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
@@ -730,6 +731,14 @@ class MultiWallet extends LitElement {
                 if (value === 'false' && this.isTextMenuOpen === true) {
                     this.clearSelection()
                     this.isTextMenuOpen = false
+                }
+            })
+
+            parentEpml.subscribe('frame_paste_menu_switch', async res => {
+                res = JSON.parse(res)
+                if (res.isOpen === false && this.isPasteMenuOpen === true) {
+                    this.pasteToTextBox(this.myElementId)
+                    this.isPasteMenuOpen = false
                 }
             })
         })
@@ -2498,7 +2507,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'amountInput')
+                    this.myElementId = this.shadowRoot.getElementById('amountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2521,7 +2532,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'recipient')
+                    this.myElementId = this.shadowRoot.getElementById('recipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2544,7 +2557,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'btcAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('btcAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2567,7 +2582,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'btcRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('btcRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2590,7 +2607,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'ltcAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('ltcAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2613,7 +2632,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'ltcRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('ltcRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2636,7 +2657,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'dogeAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('dogeAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2659,7 +2682,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'dogeRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('dogeRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2682,7 +2707,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'dgbAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('dgbAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2705,7 +2732,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'dgbRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('dgbRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2728,7 +2757,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'rvnAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('rvnAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2751,7 +2782,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'rvnRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('rvnRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2774,7 +2807,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'arrrAmountInput')
+                    this.myElementId = this.shadowRoot.getElementById('arrrAmountInput')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2797,7 +2832,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'arrrRecipient')
+                    this.myElementId = this.shadowRoot.getElementById('arrrRecipient')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -2820,7 +2857,9 @@ class MultiWallet extends LitElement {
                 let selectedText = getSelectedText()
                 if (selectedText && typeof selectedText === 'string') {
                 } else {
+                    this.myElementId = ''
                     this.pasteMenu(event, 'arrrMemo')
+                    this.myElementId = this.shadowRoot.getElementById('arrrMemo')
                     this.isPasteMenuOpen = true
                     event.preventDefault()
                     event.stopPropagation()
@@ -3856,9 +3895,8 @@ class MultiWallet extends LitElement {
     pasteToTextBox(elementId) {
         window.focus()
         navigator.clipboard.readText().then((clipboardText) => {
-            let element = this.shadowRoot.getElementById(elementId)
-            element.value += clipboardText
-            element.focus()
+            elementId.value += clipboardText
+            elementId.focus()
         })
     }
 

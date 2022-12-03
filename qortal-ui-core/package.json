@@ -73,7 +73,7 @@
 		"random-sentence-generator": "0.0.8",
 		"redux": "4.2.0",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.5.0",
+		"rollup": "3.5.1",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-postcss": "4.0.2",
 		"rollup-plugin-progress": "1.1.2",
