@@ -22,6 +22,7 @@ class ChatTextEditor extends LitElement {
             iframeId: { type: String },
             hasGlobalEvents: { type: Boolean },
             chatMessageSize: { type: Number },
+            isEditMessageOpen: { type: Boolean },
             theme: {
                 type: String,
                 reflect: true
@@ -130,6 +131,16 @@ class ChatTextEditor extends LitElement {
             padding: 0;
             border: none;
         }
+        
+        .checkmark-icon {
+            width: 30px;
+            color: var(--mdc-theme-primary);
+            margin-bottom: 6px;
+        }
+
+        .checkmark-icon:hover {
+           cursor: pointer;
+        }
 		`
 	}
 
@@ -150,11 +161,18 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
+        let scrollHeightBool = false;
+        try {
+            if (this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") {
+                    scrollHeightBool = true;
+                }
+        } catch (error) {
+            scrollHeightBool = false;
+        }
 		return html`
             <div 
              class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
-             style="${(this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60
-             && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") ? 'align-items: flex-end' : "align-items: center"}">
+             style="${scrollHeightBool ? 'align-items: flex-end' : "align-items: center"}">
                 <div class="file-picker-container" @click=${(e) => {
                     this.preventUserSendingImage(e)
                 }}>
@@ -166,13 +184,16 @@ class ChatTextEditor extends LitElement {
                     </vaadin-icon>     
                     <div class="file-picker-input-container">
                         <input 
-                            .value="${this.imageFile}"
-                            @change="${e => this.insertImage(e.target.files[0])}"
+                            @change="${e => {
+                                e.preventDefault();
+                                this.insertImage(e.target.files[0]);
+                                    }
+                                }"
                             class="file-picker-input" type="file" name="myImage" accept="image/*" />
                     </div>     
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                <iframe id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe>
+                <iframe style=${(this.iframeId === "newChat" && this.iframeHeight > 42) && "height: 100%;"} id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe>
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
@@ -185,10 +206,6 @@ class ChatTextEditor extends LitElement {
                                 icon="vaadin:check"
                                 slot="icon"
                                 @click=${() => {
-                                    if (this.chatMessageSize > 1000 ) {
-                                        parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-                                        return;
-                                    }
                                     this.sendMessageFunc();
                                 }}
                                 >
@@ -201,17 +218,13 @@ class ChatTextEditor extends LitElement {
                         `
                 ) : 
                     html`
-                        <div style="${this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 ? 'margin-bottom: 5px;' : "margin-bottom: 0;"} ${this.iframeId === 'newChat' ? 'display: none;' : 'display: flex;'}">
+                        <div style="${ scrollHeightBool ? 'margin-bottom: 5px;' : "margin-bottom: 0;"} ${this.iframeId === 'newChat' ? 'display: none;' : 'display: flex;'}">
                             ${this.isLoading === false ? html`
                                 <img 
                                 src="/img/qchat-send-message-icon.svg" 
                                 alt="send-icon" 
                                 class="send-icon" 
                                 @click=${() => {
-                                    if (this.chatMessageSize > 1000 ) {
-                                    parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-                                    return;
-                                    }
                                     this.sendMessageFunc();
                                 }} 
                                 />
@@ -225,7 +238,7 @@ class ChatTextEditor extends LitElement {
                 </div>
                     ${this.chatMessageSize >= 750 ? 
                         html`
-                        <div class="message-size-container">
+                        <div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
                             <div class="message-size" style="${this.chatMessageSize > 1000 && 'color: #bd1515'}">
                                 ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
                             </div>
@@ -312,17 +325,29 @@ class ChatTextEditor extends LitElement {
 	}
 
     async updated(changedProperties) {
+        console.log({changedProperties});
         if (changedProperties && changedProperties.has('editedMessageObj')) {
-            this.chatEditor.insertText(this.editedMessageObj.message)
+            if (this.editedMessageObj) {
+                this.chatEditor.insertText(this.editedMessageObj.message);
+                this.getMessageSize(this.editedMessageObj.message);
+            } else {
+                this.chatEditor.insertText("");
+                this.chatMessageSize = 0;
+            }
         }
         if (changedProperties && changedProperties.has('placeholder')) {
             const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
         }
         if (changedProperties && changedProperties.has("chatMessageSize")) {
-            console.log(this.chatMessageInput, "chat message input");
-            console.log(this.chatMessageInput.contentDocument.body.scrollHeight > 60, "scroll height > 60");
-            console.log( this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML !== "", "content body text");
+            console.log(this.chatMessageSize, "chat message size");
+        }
+        if (changedProperties && changedProperties.has("iframeHeight")) {
+            console.log(this.iframeHeight, "iframe height");
+        }
+        if (changedProperties && changedProperties.has("imageFile")) {
+            console.log(this.imageFile, "imageFile");
+            this.chatMessageInput = "newChat";
         }
     }
 
@@ -333,12 +358,16 @@ class ChatTextEditor extends LitElement {
       }
 
     sendMessageFunc(props) {
-        console.log("here123");
+        if (this.chatMessageSize > 1000 ) {
+            parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+            return;
+        };
         this.chatMessageSize = 0;
         this._sendMessage(props);
     }
 
     getMessageSize(message){
+        console.log("super12");
         try {
          const messageText = message;
         // Format and Sanitize Message
@@ -381,8 +410,6 @@ class ChatTextEditor extends LitElement {
             const stringified = JSON.stringify(messageObject);
             const size =  new Blob([stringified]).size;
             this.chatMessageSize = size;
-            console.log(this.chatMessageSize, "here600");
-
         } catch (error) {
             console.error(error)
         }
@@ -664,10 +691,6 @@ class ChatTextEditor extends LitElement {
                                             imageFile:  editorConfig.imageFile,
                                         }
                                     );
-                                } else if (this.chatMessageSize > 1000) {
-                                    e.preventDefault();
-                                    parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-                                    return false;
                                 } else {
                                     editorConfig.sendFunc();
                                 }

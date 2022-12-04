@@ -260,14 +260,7 @@ class MessageTemplate extends LitElement {
     }
 
     showBlockIconFunc(bool) {
-        const chatHover = this.shadowRoot.querySelector(".chat-hover")
-
-        if(chatHover){
-            chatHover.querySelector(".chat-hover").focus({ preventScroll: true })
-        }
-      
-       
-        if(bool) {
+        if (bool) {
             this.showBlockAddressIcon = true;
         } else {
             this.showBlockAddressIcon = false;
