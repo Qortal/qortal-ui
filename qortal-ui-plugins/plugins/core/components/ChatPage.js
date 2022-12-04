@@ -655,7 +655,7 @@ class ChatPage extends LitElement {
 			`: ''}
                 <wrapper-modal 
                 .removeImage=${() => this.removeImage()} 
-                style=${this.imageFile ? "display: block" : "display: none"}>
+                style=${(this.imageFile && !this.isUploadingImage) ? "display: block" : "display: none"}>
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
@@ -673,7 +673,7 @@ class ChatPage extends LitElement {
                                     .insertImage=${this.insertImage}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
-                                    ?isLoadingMessages=${this.isLoadingMessages}></chat-text-editor>
+                                    ?isLoadingMessages=${this.isLoadingMessages}>
                                 </chat-text-editor>
                             </div>
                             <div class="modal-button-row">
@@ -813,8 +813,11 @@ class ChatPage extends LitElement {
             await new Promise(r => setTimeout(r, 100));
             this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
         }
-        if (changedProperties && changedProperties.has('isEditMessageOpen')) {
-            console.log(this.isEditMessageOpen, "1111");
+        // if (changedProperties && changedProperties.has('isEditMessageOpen')) {
+        //     console.log(this.isEditMessageOpen, "1111");
+        // }
+        if (changedProperties && changedProperties.has('imageFile')) {
+            console.log(this.imageFile, "1111");
         }
     }
 
@@ -1466,11 +1469,11 @@ class ChatPage extends LitElement {
             if (fileSize > 500000) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
+                this.isUploadingImage = false;
                 this.chatEditor.enable();
-                this.chatEditorNewChat.enable()
+                this.chatEditorNewChat.enable();
                 return;
             }
-        
                 try {
                     await publishData({
                         registeredName: userName,
@@ -1482,15 +1485,16 @@ class ChatPage extends LitElement {
                         uploadType: 'file',
                         selectedAddress: this.selectedAddress,
                         worker: new WebWorkerImage()
-                       })
-                
-                this.isUploadingImage = false
+                    });
+                this.isUploadingImage = false;
+                this.imageFile = null;
                 } catch (error) {
                     console.error(error)
                     this.isLoading = false;
+                    this.isUploadingImage = false;
                     this.chatEditor.enable();
-                    this.chatEditorNewChat.enable()
-                    return
+                    this.chatEditorNewChat.enable();
+                    return;
                 }
                 const messageTextWithImage = this.chatEditorNewChat.mirror.value;
                 // Format and Sanitize Message
@@ -1506,7 +1510,7 @@ class ChatPage extends LitElement {
                     isImageDeleted: false,
                     repliedTo: '',
                     version: 1
-                }
+                };
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if (outSideMsg && outSideMsg.type === 'reaction') {

@@ -24,7 +24,7 @@ export const wrapperModalStyles = css`
     background-color: var(--white);
     left: 50%;
     top: 0px;
-    transform: translate(-50%, 40%);
+    transform: translate(-50%, 10%);
     border-radius: 12px;
     overflow-y: auto;
     animation: 1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;

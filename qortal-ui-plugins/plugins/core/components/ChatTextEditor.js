@@ -161,12 +161,9 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
-        console.log(this.isEditMessageOpen, "here5000");
         let scrollHeightBool = false;
         try {
-            if (this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60
-                // && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== ""
-                ) {
+            if (this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") {
                     scrollHeightBool = true;
                 }
         } catch (error) {
@@ -330,18 +327,17 @@ class ChatTextEditor extends LitElement {
     async updated(changedProperties) {
         console.log({changedProperties});
         if (changedProperties && changedProperties.has('editedMessageObj')) {
-            this.chatEditor.insertText(this.editedMessageObj.message);
-            this.getMessageSize(this.editedMessageObj.message);
+            if (this.editedMessageObj) {
+                this.chatEditor.insertText(this.editedMessageObj.message);
+                this.getMessageSize(this.editedMessageObj.message);
+            } else {
+                this.chatEditor.insertText("");
+                this.chatMessageSize = 0;
+            }
         }
         if (changedProperties && changedProperties.has('placeholder')) {
             const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
-        }
-        if (changedProperties && changedProperties.has("isEditMessageOpen")) {
-            if (this.iframeId === "newChat") {
-                console.log(this.isEditMessageOpen, 'isEditMessageOpen');
-                this.getMessageSize("");
-            }
         }
         if (changedProperties && changedProperties.has("chatMessageSize")) {
             console.log(this.chatMessageSize, "chat message size");
@@ -355,11 +351,11 @@ class ChatTextEditor extends LitElement {
         }
     }
 
-    // shouldUpdate(changedProperties) {
-    //     // Only update element if prop1 changed.
-    //    if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
-    //     return true
-    //   }
+    shouldUpdate(changedProperties) {
+        // Only update element if prop1 changed.
+       if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
+        return true
+      }
 
     sendMessageFunc(props) {
         if (this.chatMessageSize > 1000 ) {
