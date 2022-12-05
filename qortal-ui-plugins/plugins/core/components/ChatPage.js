@@ -820,15 +820,15 @@ class ChatPage extends LitElement {
     }
 
     async updated(changedProperties) {
+     
         if (changedProperties && changedProperties.has('userLanguage')) {
-            await new Promise(r => setTimeout(r, 100));
-            this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
-        }
-        // if (changedProperties && changedProperties.has('isEditMessageOpen')) {
-        //     console.log(this.isEditMessageOpen, "1111");
-        // }
-        if (changedProperties && changedProperties.has('imageFile')) {
-            console.log(this.imageFile, "1111");
+            const userLang = changedProperties.get('userLanguage')
+
+            if(userLang){
+                await new Promise(r => setTimeout(r, 100));
+                this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
+            }
+            
         }
     }
 
