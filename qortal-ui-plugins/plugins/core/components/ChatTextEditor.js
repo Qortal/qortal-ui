@@ -150,6 +150,7 @@ class ChatTextEditor extends LitElement {
         this.isLoading = false
         this.getMessageSize = this.getMessageSize.bind(this)
         this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
+        this.resetIFrameHeight = this.resetIFrameHeight.bind(this)
         this.addGlobalEventListener = this.addGlobalEventListener.bind(this)
         this.sendMessageFunc = this.sendMessageFunc.bind(this)
         this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
@@ -402,14 +403,25 @@ class ChatTextEditor extends LitElement {
                     ...message,
                     messageText: trimmedMessage,
                 }
-            } else {
+            } else if(this.imageFile && this.iframeId === 'newChat') {
               messageObject = {
                     messageText: trimmedMessage,
-                    images: [''],
+                    images: [{
+                        service: "QCHAT_IMAGE",
+                        name: '123456789123456789123456789',
+                        identifier: '123456'
+                }],
                     repliedTo: '',
                     version: 1
                 };
-            }
+            } else {
+                messageObject = {
+                      messageText: trimmedMessage,
+                      images: [''],
+                      repliedTo: '',
+                      version: 1
+                  };
+              }
 
             const stringified = JSON.stringify(messageObject);
             const size =  new Blob([stringified]).size;
@@ -426,7 +438,9 @@ class ChatTextEditor extends LitElement {
             this.iframeHeight = editorTest + 20;
         }, 50)
     }
-
+    resetIFrameHeight(height) {
+        this.iframeHeight = 42;
+    }
     initChatEditor() {
         const ChatEditor = function (editorConfig) {        
             const ChatEditor = function () {
@@ -458,7 +472,7 @@ class ChatTextEditor extends LitElement {
                 editor.contentDiv.innerHTML = '';
                 editor.updateMirror();
                 editor.focus();
-                editorConfig.calculateIFrameHeight()
+                editorConfig.resetIFrameHeight()
             };
 
             ChatEditor.prototype.styles = function () {
@@ -802,7 +816,8 @@ class ChatTextEditor extends LitElement {
             addGlobalEventListener: this.addGlobalEventListener,
             removeGlobalEventListener: this.removeGlobalEventListener,
             iframeId: this.iframeId,
-            theme: this.theme
+            theme: this.theme,
+            resetIFrameHeight: this.resetIFrameHeight
         };
         const newChat = new ChatEditor(editorConfig);
         this.setChatEditor(newChat);

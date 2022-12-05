@@ -654,7 +654,10 @@ class ChatPage extends LitElement {
             </div>
 			`: ''}
                 <wrapper-modal 
-                .removeImage=${() => this.removeImage()} 
+                .removeImage=${() => {
+                    this.chatEditorNewChat.resetValue()
+                    this.removeImage()
+                } } 
                 style=${(this.imageFile && !this.isUploadingImage) ? "display: block" : "display: none"}>
                     <div>
                         <div class="dialog-container">
@@ -673,17 +676,23 @@ class ChatPage extends LitElement {
                                     .insertImage=${this.insertImage}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
-                                    ?isLoadingMessages=${this.isLoadingMessages}>
+                                    ?isLoadingMessages=${this.isLoadingMessages}
+                                    id="chatTextCaption"
+                                    >
                                 </chat-text-editor>
                             </div>
                             <div class="modal-button-row">
-                                <button class="modal-button-red" @click=${() => this.removeImage()}>
+                                <button class="modal-button-red" @click=${() => {
+                                this.chatEditorNewChat.resetValue()
+                                this.removeImage()
+                                }}>
                                     ${translate("chatpage.cchange33")}
                                 </button>
                                 <button
                                     class="modal-button"
                                     @click=${()=> {
-                                        this._sendMessage({
+                                        const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
+                                        chatTextEditor.sendMessageFunc({
                                             type: 'image',
                                             imageFile:  this.imageFile,
                                         })
@@ -698,6 +707,8 @@ class ChatPage extends LitElement {
         </div>
         `
     }
+
+    
 
     showLastMessageRefScroller(props) {
         this.lastMessageRefVisible = props;
@@ -1700,6 +1711,7 @@ class ChatPage extends LitElement {
         const getSendChatResponse = (response) => {
             if (response === true) {
                 this.chatEditor.resetValue();
+                this.chatEditorNewChat.resetValue()
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
