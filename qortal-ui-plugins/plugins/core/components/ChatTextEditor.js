@@ -183,12 +183,16 @@ class ChatTextEditor extends LitElement {
                     >
                     </vaadin-icon>     
                     <div class="file-picker-input-container">
-                        <input 
+                    <input 
                             @change="${e => {
-                                e.preventDefault();
                                 this.insertImage(e.target.files[0]);
+                                const filePickerInput = this.shadowRoot.getElementById('file-picker') 
+                                if(filePickerInput){
+                                    filePickerInput.value = ""
+                                }
                                     }
                                 }"
+                            id="file-picker"
                             class="file-picker-input" type="file" name="myImage" accept="image/*" />
                     </div>     
                 </div>
