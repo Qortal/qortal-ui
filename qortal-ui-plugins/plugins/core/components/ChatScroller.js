@@ -356,6 +356,7 @@ class MessageTemplate extends LitElement {
             } catch (error) {
                 console.error(error);
             }
+            
         }
         const escapedMessage = this.escapeHTML(message)
         const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
@@ -418,7 +419,7 @@ class MessageTemplate extends LitElement {
                                 ${repliedToData && html`
                                     <div class="original-message">
                                         <p class="original-message-sender">
-                                            ${repliedToData.sendName ?? cropAddress(repliedToData.sender)}
+                                            ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
                                             ${repliedToData.decodedMessage.messageText}

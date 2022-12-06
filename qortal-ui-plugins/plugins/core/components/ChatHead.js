@@ -106,7 +106,6 @@ class ChatHead extends LitElement {
       }
 
     render() {
-        console.log('this.chatInfo',this.chatInfo)
         let avatarImg = '';
         let backupAvatarImg = ''
         if(this.chatInfo.name){
