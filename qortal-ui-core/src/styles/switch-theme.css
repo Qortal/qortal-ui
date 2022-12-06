@@ -42,6 +42,10 @@ html {
   --nav-border-color: #eeeeee;
   --nav-border-selected-color: #03a9f4;
   --background: url("/img/qortal_background_light_.jpg");
+  --chatHeadBg: #ebebeb;
+  --chatHeadBgActive: #ebebeb;
+  --chatHeadText: #080808;
+  --chatHeadTextActive: #080808;
 }
 
 html[theme="dark"] {
@@ -88,4 +92,8 @@ html[theme="dark"] {
   --nav-border-color: #0b305e;
   --nav-border-selected-color: #76c8f5;
   --background: url("/img/qortal_background_dark_.jpg");
+  --chatHeadBg: #008fd5;
+  --chatHeadBgActive: #0f1a2e;
+  --chatHeadText: #ffffff;
+  --chatHeadTextActive: #ffffff;
 }
