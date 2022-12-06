@@ -75,7 +75,7 @@ export const replaceMessagesEdited = async ({
 					) {
 						msgItem = {
 							...msg,
-							repliedToData: decodeMessageFunc(response2[0]),
+							repliedToData: decodeMessageFunc(response2[0], isReceipient, _publicKey),
 						}
 					}
 				}
