@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "Français",
+
+  "electron_translate_1": "Afficher l'interface utilisateur de Qortal",
+  "electron_translate_2": "Quitter",
+  "electron_translate_3": "Mise à jour disponible",
+  "electron_translate_4": "Une nouvelle version de l'UI Qortal est disponible. Vous voulez la télécharger ?",
+  "electron_translate_5": "INSTALLER MAINTENANT",
+  "electron_translate_6": "PEUT-ÊTRE PLUS TARD",
+  "electron_translate_7": "Mise à jour prête à installer",
+  "electron_translate_8": "Une nouvelle version de l'interface utilisateur de Qortal a été téléchargée.",
+  "electron_translate_9": "Cliquez sur INSTALLER MAINTENANT pour appliquer la mise à jour, PEUT-ÊTRE PLUS TARD pour ne pas mettre à jour l'interface utilisateur.",
+  "electron_translate_10": "Erreur lors de la mise à jour...",
+  "electron_translate_11": "TÉLÉCHARGER LA MISE À JOUR",
+  "electron_translate_12": "Il sera téléchargé ⌛️ en arrière-plan !"
+}

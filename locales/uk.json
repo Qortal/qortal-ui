@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "Українська, Україна",
+
+  "electron_translate_1": "Show Qortal UI",
+  "electron_translate_2": "Quit",
+  "electron_translate_3": "Update available",
+  "electron_translate_4": "A new Qortal UI version is available. You want to download it ?",
+  "electron_translate_5": "INSTALL NOW",
+  "electron_translate_6": "MAYBE LATER",
+  "electron_translate_7": "Update ready to install",
+  "electron_translate_8": "A new Qortal UI version has been downloaded.",
+  "electron_translate_9": "Click INSTALL NOW to apply update, MAYBE LATER to not update the UI.",
+  "electron_translate_10": "Error while Updating...",
+  "electron_translate_11": "DOWNLOAD UPDATE",
+  "electron_translate_12": "It will be downloaded ⌛️ in the background!"
+}

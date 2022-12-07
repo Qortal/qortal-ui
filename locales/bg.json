@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "Български",
+
+  "electron_translate_1": "Показване на Qortal UI",
+  "electron_translate_2": "Изход",
+  "electron_translate_3": "Налична е актуализация",
+  "electron_translate_4": "Налична е нова версия на Qortal UI. Искате ли да я изтеглите?",
+  "electron_translate_5": "ИНСТАЛИРАНЕ СЕГА",
+  "electron_translate_6": "МОЖЕ БИ ПО-КЪСНО",
+  "electron_translate_7": "Актуализацията е готова за инсталиране",
+  "electron_translate_8": "Беше изтеглена нова версия на Qortal UI.",
+  "electron_translate_9": "Щракнете върху ИНСТАЛИРАНЕ СЕГА, за да приложите актуализация, МОЖЕ БИ ПО-КЪСНО, за да не актуализирате потребителския интерфейс.",
+  "electron_translate_10": "Грешка при актуализиране...",
+  "electron_translate_11": "ИЗТЕГЛЕТЕ АКТУАЛИЗАЦИЯТА",
+  "electron_translate_12": "Ще бъде изтеглено ⌛️ във фонов режим!"
+}

@@ -1,6 +1,8 @@
 import { store } from '../store.js'
 import * as api from 'qortal-ui-crypto'
 import snackbar from '../functional-components/snackbar.js'
+import copyTextMenu from '../functional-components/copy-text-menu.js';
+import framePasteMenu from '../functional-components/frame-paste-menu.js';
 
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
@@ -21,6 +23,27 @@ export const routes = {
 		const url = req.data.url
 		delete req.data.url
 		return api.request(url, req.data)
+	},
+
+	openCopyTextMenu: async (req) => {
+		const textMenuObject = {
+			selectedText: req.data.selectedText,
+			eventObject: req.data.eventObject,
+			isFrame: req.data.isFrame,
+		};
+		copyTextMenu.open(textMenuObject);
+	},
+
+	closeCopyTextMenu: async (req) => {
+		copyTextMenu.close();
+	},
+
+	openFramePasteMenu: async (req) => {
+		framePasteMenu.open(req.data);
+	},
+
+	closeFramePasteMenu: async (req) => {
+		framePasteMenu.close();
 	},
 
 	transaction: async (req) => {
