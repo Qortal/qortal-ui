@@ -16,7 +16,7 @@
   "author": "QORTAL <admin@qortal.org>",
   "license": "GPL-3.0",
   "scripts": {
-    "install_link:all": "(cd qortal-ui-core  && yarn install && yarn link) && (cd qortal-ui-plugins && yarn install && yarn link) && (cd qortal-ui-crypto  && yarn install && yarn link) && (yarn link qortal-ui-core && yarn link qortal-ui-plugins && yarn link qortal-ui-crypto)",
+    "install_link:all": "(cd qortal-ui-core && yarn install && yarn link) && (cd qortal-ui-plugins && yarn install && yarn link) && (cd qortal-ui-crypto  && yarn install && yarn link) && (yarn link qortal-ui-core && yarn link qortal-ui-plugins && yarn link qortal-ui-crypto)",
     "dev": "node server.js",
     "prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > qortal-ui-core/src/redux/app/version.js",
     "build-dev": "node build.js",
@@ -33,7 +33,8 @@
   },
   "dependencies": {
     "electron-log": "4.4.8",
-    "electron-updater": "5.3.0"
+    "electron-updater": "5.3.0",
+    "os-locale": "3.0.0"
   },
   "devDependencies": {
     "electron": "22.0.0",
