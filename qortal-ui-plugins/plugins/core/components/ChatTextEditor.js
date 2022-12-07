@@ -523,6 +523,7 @@ class ChatTextEditor extends LitElement {
                         word-break: break-word;
                         outline: none;
                         min-height: 20px;
+                        width: 100%;
                     }
 
                     div[contentEditable=true]:empty:before {
@@ -537,6 +538,7 @@ class ChatTextEditor extends LitElement {
 
                    div[contentEditable=false]{
                         background: rgba(0,0,0,0.1);
+                        width: 100%;
                    }
 
                    img.emoji {
