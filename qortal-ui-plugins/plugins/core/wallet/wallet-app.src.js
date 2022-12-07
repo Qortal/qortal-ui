@@ -708,7 +708,7 @@ class MultiWallet extends LitElement {
         this.wallets.get('doge').wallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
         this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
         this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
-        this.wallets.get('arrr').wallet = window.parent.reduxStore.getState().app.selectedAddress.arrWallet
+        this.wallets.get('arrr').wallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 
         this._selectedWallet = 'qort'
 
