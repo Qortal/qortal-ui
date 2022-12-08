@@ -32,6 +32,7 @@ class TradePortal extends LitElement {
             selectedAddress: { type: Object },
             config: { type: Object },
             listedCoins: { type: Map },
+            nodeInfo: { type: Array },
             sellBtnDisable: { type: Boolean },
             isSellLoading: { type: Boolean },
             isBuyLoading: { type: Boolean },
@@ -732,6 +733,7 @@ class TradePortal extends LitElement {
 
         this.selectedCoin = "LITECOIN"
         this.selectedAddress = {}
+        this.nodeInfo = []
         this.config = {}
         this.sellBtnDisable = false
         this.isSellLoading = false
@@ -1243,6 +1245,24 @@ class TradePortal extends LitElement {
         this._myHistoricTradesGrid = this.shadowRoot.getElementById('myHistoricTradesGrid')
         this._stuckOrdersGrid = this.shadowRoot.getElementById('stuckOrdersGrid')
 
+        const getNodeInfo = () => {
+            parentEpml.request("apiCall", { url: `/admin/status` }).then((res) => {
+                this.nodeInfo = res
+                getSellButtonStatus()
+            })
+            setTimeout(getNodeInfo, 30000)
+        }
+
+        const getSellButtonStatus = () => {
+            if (this.nodeInfo.isSynchronizing === true) {
+                this.sellBtnDisable = true
+            } else if (this.nodeInfo.isSynchronizing === false) {
+                this.sellBtnDisable = false
+            } else {
+                this.sellBtnDisable = true
+            }
+        }
+
         const getQortBtcPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/BITCOIN?inverse=true` }).then((res) => {
                 setTimeout(() => { this.qortbtc = (Number(res) / 1e8).toFixed(8) }, 1)
@@ -1338,6 +1358,7 @@ class TradePortal extends LitElement {
 
             parentEpml.subscribe('config', (c) => {
                 if (!configLoaded) {
+                    setTimeout(getNodeInfo, 1)
                     setTimeout(getQortBtcPrice, 1)
                     setTimeout(getQortLtcPrice, 1)
                     setTimeout(getQortDogePrice, 1)
