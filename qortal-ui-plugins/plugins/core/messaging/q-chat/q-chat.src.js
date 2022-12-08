@@ -579,7 +579,7 @@ class Chat extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        const err1string = 'No regitered name'
+        const err1string = 'No registered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 
