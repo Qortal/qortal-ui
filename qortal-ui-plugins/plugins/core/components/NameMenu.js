@@ -407,7 +407,7 @@ class NameMenu extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        const err3string = 'No regitered name'
+        const err3string = 'No registered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 

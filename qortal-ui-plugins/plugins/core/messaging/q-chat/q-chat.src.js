@@ -392,7 +392,14 @@ class Chat extends LitElement {
                         <br>
                     </div>
                     <vaadin-grid theme="compact" id="blockedGrid" ?hidden="${this.isEmptyArray(this.blockedUserList)}" aria-label="Blocked List" .items="${this.blockedUserList}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" .renderer=${(root, column, data) => {
+                            if (data.item.name = 'No registered name') {
+                                render(html`${translate("chatpage.cchange15")}`, root);
+                            } else {
+                                render(html`${data.item.name}`, root);
+                            }
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange12")}" path="owner"></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderUnblockButton(data.item)}`, root);
@@ -448,7 +455,6 @@ class Chat extends LitElement {
             let splitedUrl = decodeURI(tempUrl).split('?')
             let urlData = splitedUrl[1]
             if (urlData !== undefined) {
-
                 this.chatId = urlData
             }
         }
