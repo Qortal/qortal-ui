@@ -65,6 +65,7 @@ class MultiWallet extends LitElement {
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
             btnDisable: { type: Boolean },
+            qortWarning: { type: Boolean },
             isValidAmount: { type: Boolean },
             balance: { type: Number },
             balanceString: { type: String },
@@ -576,6 +577,19 @@ class MultiWallet extends LitElement {
                 cursor: pointer;
             }
 
+		.warning-text {
+			animation: blinker 1.5s linear infinite;
+			text-align: center;
+			margin-top: 10px;
+			color: rgb(255, 89, 89);
+		}
+
+		@keyframes blinker {
+			50% {
+				opacity: 0;
+			}
+		}
+
             @media (max-width: 764px) {
                 .wallet {
                     width: 100%;
@@ -665,6 +679,7 @@ class MultiWallet extends LitElement {
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
+        this.qortWarning = false
 	  this.balance = 0
         this.amount = 0
         this.btcAmount = 0
@@ -1205,7 +1220,7 @@ class MultiWallet extends LitElement {
                             <mwc-textfield
                                 style="width: 100%;"
                                 required
-                                @input="${(e) => { this._checkAmount(e) }}"
+                                @input="${(e) => { this.checkQortAmount(e) }}"
                                 id="amountInput"
                                 label="${translate("walletpage.wchange11")} (QORT)"
                                 type="number"
@@ -1237,6 +1252,7 @@ class MultiWallet extends LitElement {
                                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
                                     ${translate("walletpage.wchange17")} QORT
                                 </vaadin-button>
+                                <div style="display:${this.qortWarning ? 'inline' : 'none'}">${this.renderWarning()}</div>
                             </div>
                         </div>
                     </div>
@@ -2869,6 +2885,10 @@ class MultiWallet extends LitElement {
         })
     }
 
+    renderWarning() {
+        return html`<span class="warning-text">${translate("tradepage.tchange48")} QORT</span>`
+    }
+
     renderClearSuccess() {
         let strSuccessValue = this.successMessage
         if (strSuccessValue === "") {
@@ -3738,11 +3758,16 @@ class MultiWallet extends LitElement {
     }
 
     calculateQortAll() {
+        this.amount = 0
+        this.shadowRoot.getElementById('amountInput').value = this.amount
         if (this.balance < 0.00110000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
-            this.amount = (this.balance - 0.00100000).toFixed(8)
+            this.amount = (this.balance - 0.00110000).toFixed(8)
+            this.shadowRoot.getElementById('amountInput').value = this.amount
+            this.shadowRoot.getElementById('amountInput').blur()
+            this.shadowRoot.getElementById('amountInput').focus()
         }
     }
 
@@ -3888,6 +3913,85 @@ class MultiWallet extends LitElement {
                 }
             } else {
                 this.btnDisable = false
+            }
+        }
+    }
+
+    checkQortAmount(e) {
+        const targetAmount = e.target.value
+        const target = e.target
+        this.btnDisable = true
+        this.qortWarning = false
+
+        if (targetAmount.length === 0) {
+            this.isValidAmount = false
+            this.btnDisable = true
+            this.qortWarning = false
+            e.target.blur()
+            e.target.focus()
+            e.target.invalid = true
+        } else {
+            const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+            const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
+            const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+            if (Number(myFunds) >= Number(checkQortAmount)) {
+                this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                this.btnDisable = false
+                this.qortWarning = false
+            } else {
+                this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                this.btnDisable = true
+                this.qortWarning = true
+            }
+        }
+
+        e.target.blur()
+        e.target.focus()
+
+        e.target.validityTransform = (newValue, nativeValidity) => {
+            if (newValue.includes('-') === true) {
+                this.btnDisable = true
+                this.qortWarning = false
+                return {
+                    valid: false,
+                }
+            } else if (!nativeValidity.valid) {
+                if (newValue.includes('.') === true) {
+                    let myAmount = newValue.split('.')
+                    if (myAmount[1].length > 8) {
+                        this.btnDisable = true
+                        this.qortWarning = false
+                    } else {
+                        const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+                        const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
+                        const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+                        if (Number(myFunds) >= Number(checkQortAmount)) {
+                            this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                            this.btnDisable = false
+                            this.qortWarning = false
+                        } else {
+                            this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                            this.btnDisable = true
+                            this.qortWarning = true
+                        }
+                        return {
+                            valid: true,
+                        }
+                    }
+                }
+            } else {
+                const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+                const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
+                const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+                if (Number(myFunds) >= Number(checkQortAmount)) {
+                    this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                    this.btnDisable = false
+                    this.qortWarning = false
+                } else {
+                    this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+                    this.btnDisable = true
+                    this.qortWarning = true
+                }
             }
         }
     }
@@ -5406,6 +5510,11 @@ class MultiWallet extends LitElement {
     decimals(num) {
         num = parseFloat(num)
         return num % 1 > 0 ? (num + '').split('.')[1] : '0'
+    }
+
+    round(number) {
+        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+        return result
     }
 
     subtract(num1, num2) {
