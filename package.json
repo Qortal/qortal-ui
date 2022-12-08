@@ -37,13 +37,13 @@
     "os-locale": "3.0.0"
   },
   "devDependencies": {
-    "electron": "22.0.0",
+    "electron": "21.3.3",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
     "@electron/notarize": "1.2.3",
     "shelljs": "0.8.5"
   },
   "engines": {
-    "node": ">=16.17.0"
+    "node": ">=16.16.0"
   }
 }

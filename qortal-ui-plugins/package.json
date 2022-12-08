@@ -43,23 +43,23 @@
 		"@polymer/paper-tooltip": "3.0.1",
 		"@rollup/plugin-alias": "4.0.2",
 		"@rollup/plugin-babel": "6.0.3",
-		"@rollup/plugin-commonjs": "23.0.3",
+		"@rollup/plugin-commonjs": "23.0.4",
 		"@rollup/plugin-node-resolve": "15.0.1",
 		"@rollup/plugin-replace": "5.0.1",
-		"@rollup/plugin-terser": "0.1.0",
-		"@vaadin/button": "23.2.10",
-		"@vaadin/grid": "23.2.10",
-		"@vaadin/icons": "23.2.10",
+		"@rollup/plugin-terser": "0.2.0",
+		"@vaadin/button": "23.2.11",
+		"@vaadin/grid": "23.2.11",
+		"@vaadin/icons": "23.2.11",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
 		"html-escaper": "3.0.3",
 		"lit": "2.4.1",
 		"lit-translate": "2.0.1",
-		"rollup": "3.5.1",
+		"rollup": "3.7.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2"
 	},
 	"engines": {
-		"node": ">=16.17.0"
+		"node": ">=16.16.0"
 	}
 }
