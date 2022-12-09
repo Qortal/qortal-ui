@@ -34,7 +34,10 @@ class Chat extends LitElement {
             balance: { type: Number },
             theme: { type: String, reflect: true },
             blockedUsers: { type: Array },
-            blockedUserList: { type: Array }
+            blockedUserList: { type: Array },
+            privateMessagePlaceholder: { type: String},
+            chatEditor: { type:  Object },
+            imageFile: { type: Object }
         }
     }
 
@@ -321,9 +324,12 @@ class Chat extends LitElement {
         this.isLoading = false
         this.showNewMesssageBar = this.showNewMesssageBar.bind(this)
         this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
+        this.insertImage = this.insertImage.bind(this)
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.blockedUsers = []
         this.blockedUserList = []
+        this.privateMessagePlaceholder = ""
+        this.imageFile = null
     }
 
     render() {
@@ -362,17 +368,33 @@ class Chat extends LitElement {
 
                     <p>${translate("chatpage.cchange6")}</p>
 
-                    <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="${translate("chatpage.cchange7")}" rows="1"></textarea>
-                    <p style="margin-bottom:0;">
-                        <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("chatpage.cchange8")}" rows="1"></textarea>
-                    </p>
+                    <textarea 
+                        class="input" 
+                        ?disabled=${this.isLoading} 
+                        id="sendTo" 
+                        placeholder="${translate("chatpage.cchange7")}" 
+                        rows="1">
+                    </textarea>
 
+                    <chat-text-editor 
+                        id="messageBox"
+                        iframeId="privateMessage" 
+                        ?hasGlobalEvents=${true}
+                        placeholder="${translate("chatpage.cchange8")}"
+                        _sendMessage=${this._sendMessage}
+                        .setChatEditor=${(editor)=> this.setChatEditor(editor)}
+                        .chatEditor=${this.chatEditor}
+                        .imageFile=${this.imageFile}
+                        .insertImage=${this.insertImage}
+                        ?isLoading=${this.isLoading}>
+                    </chat-text-editor>
+                    
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
                         @click=${this._sendMessage}
                     >
-                    ${this.isLoading === false ? this.renderSendText() : html`<paper-spinner-lite active></paper-spinner-lite>`}
+                        ${this.isLoading === false ? this.renderSendText() : html`<paper-spinner-lite active></paper-spinner-lite>`}
                     </mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
@@ -380,7 +402,7 @@ class Chat extends LitElement {
                         dialogAction="cancel"
                         class="red"
                     >
-                    ${translate("general.close")}
+                        ${translate("general.close")}
                    </mwc-button>
                 </mwc-dialog>
 
@@ -416,7 +438,6 @@ class Chat extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeLanguage()
         this.changeTheme()
         this.getChatBlockedList()
@@ -523,6 +544,7 @@ class Chat extends LitElement {
                 this.config = JSON.parse(c)
             })
             parentEpml.subscribe('chat_heads', chatHeads => {
+                console.log("here51");
                 chatHeads = JSON.parse(chatHeads)
                 this.getChatHeadFromState(chatHeads)
             })
@@ -540,6 +562,19 @@ class Chat extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    setChatEditor(editor) {
+        this.chatEditor = editor;
+    }
+
+    insertImage(file) {
+        if (file.type.includes('image')) {
+            this.imageFile = file;
+            this.chatEditor.disable();
+            return;
+        }       
+         parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
     }
 
     renderLoadingText() {
@@ -712,7 +747,7 @@ class Chat extends LitElement {
         const compareArgs = (a, b) => {
             return b.timestamp - a.timestamp
         }
-
+        console.log({chatHeadMasterList});
         this.chatHeads = chatHeadMasterList.sort(compareArgs)
     }
 

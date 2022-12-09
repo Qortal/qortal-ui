@@ -172,7 +172,7 @@ class ChatTextEditor extends LitElement {
         }
 		return html`
             <div 
-             class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
+             class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
              style="${scrollHeightBool ? 'align-items: flex-end' : "align-items: center"}">
                 <div class="file-picker-container" @click=${(e) => {
                     this.preventUserSendingImage(e)
@@ -299,7 +299,6 @@ class ChatTextEditor extends LitElement {
                 chatbar.style.cssText = "color:#080808;"
             }
         })
-
 
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');

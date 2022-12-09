@@ -510,7 +510,6 @@ class ChatPage extends LitElement {
 
     constructor() {
         super()
-        this.changeMsgInput = this.changeMsgInput.bind(this)
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
@@ -629,9 +628,7 @@ class ChatPage extends LitElement {
                                 .chatEditor=${this.chatEditor}
                                 .imageFile=${this.imageFile}
                                 .insertImage=${this.insertImage}
-                                .chatMessageInput=${this.chatMessageInput}
                                 .editedMessageObj=${this.editedMessageObj}
-                                .mirrorChatInput=${this.mirrorChatInput}
                                 ?isLoading=${this.isLoading}
                                 ?isLoadingMessages=${this.isLoadingMessages}
                                 ?isEditMessageOpen=${this.isEditMessageOpen}>                           
@@ -726,9 +723,6 @@ class ChatPage extends LitElement {
         if (file.type.includes('image')) {
             this.imageFile = file;
             this.chatEditor.disable();
-            // this.changeMsgInput('newChat')
-            // this.initChatEditor();
-            // this.chatEditor.disable();
             return;
         }       
          parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
@@ -737,13 +731,6 @@ class ChatPage extends LitElement {
     removeImage() {
         this.imageFile = null;
         this.chatEditor.enable();
-    }
-
-    changeMsgInput(id) {
-  
-        this.chatEditor.remove()
-        this.chatMessageInput  = this.shadowRoot.getElementById(id);
-        this.initChatEditor();
     }
 
     async firstUpdated() {
