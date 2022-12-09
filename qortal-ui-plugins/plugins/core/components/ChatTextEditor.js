@@ -329,7 +329,6 @@ class ChatTextEditor extends LitElement {
 	}
 
     async updated(changedProperties) {
-        console.log({changedProperties});
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             if (this.editedMessageObj) {
                 this.chatEditor.insertText(this.editedMessageObj.message);
@@ -343,14 +342,8 @@ class ChatTextEditor extends LitElement {
             const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
             captionEditor.setAttribute('data-placeholder', this.placeholder);
         }
-        if (changedProperties && changedProperties.has("chatMessageSize")) {
-            console.log(this.chatMessageSize, "chat message size");
-        }
-        if (changedProperties && changedProperties.has("iframeHeight")) {
-            console.log(this.iframeHeight, "iframe height");
-        }
+       
         if (changedProperties && changedProperties.has("imageFile")) {
-            console.log(this.imageFile, "imageFile");
             this.chatMessageInput = "newChat";
         }
     }
@@ -371,7 +364,6 @@ class ChatTextEditor extends LitElement {
     }
 
     getMessageSize(message){
-        console.log("super12");
         try {
          const messageText = message;
         // Format and Sanitize Message
@@ -522,6 +514,7 @@ class ChatTextEditor extends LitElement {
                         word-break: break-word;
                         outline: none;
                         min-height: 20px;
+                        width: 100%;
                     }
 
                     div[contentEditable=true]:empty:before {
@@ -536,6 +529,7 @@ class ChatTextEditor extends LitElement {
 
                    div[contentEditable=false]{
                         background: rgba(0,0,0,0.1);
+                        width: 100%;
                    }
 
                    img.emoji {
@@ -688,7 +682,6 @@ class ChatTextEditor extends LitElement {
                         if (e.type === 'keydown') {
                             await new Promise((res, rej) => {
                                 setTimeout(() => {
-                                    console.log(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML, "here 18");
                                     editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
                                     editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
                                 }, 0);
