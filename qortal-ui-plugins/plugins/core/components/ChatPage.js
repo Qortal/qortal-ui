@@ -67,7 +67,8 @@ class ChatPage extends LitElement {
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: {type: Boolean},
-            isEditMessageOpen: { type: Boolean }
+            isEditMessageOpen: { type: Boolean },
+            webSocket: {attribute: false}
         }
     }
 
@@ -746,13 +747,11 @@ class ChatPage extends LitElement {
         this.initChatEditor();
     }
 
-    async firstUpdated() {
-        window.addEventListener('storage', () => {                                                
-            const checkLanguage = localStorage.getItem('qortalLanguage');
-            use(checkLanguage);
-            this.userLanguage = checkLanguage;
-        })
-
+    async initUpdate(){
+        if(this.webSocket){
+            this.webSocket.close()
+            this.webSocket= ''
+        }
         const getAddressPublicKey = () => {
 
             parentEpml.request('apiCall', {
@@ -794,6 +793,16 @@ class ChatPage extends LitElement {
             // this.initChatEditor();
         }, 100)
 
+     
+    }
+
+    async firstUpdated() {
+        window.addEventListener('storage', () => {                                                
+            const checkLanguage = localStorage.getItem('qortalLanguage');
+            use(checkLanguage);
+            this.userLanguage = checkLanguage;
+        })
+
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -817,10 +826,11 @@ class ChatPage extends LitElement {
             })
         })
         parentEpml.imReady();
+
+    await this.initUpdate()
     }
 
     async updated(changedProperties) {
-     
         if (changedProperties && changedProperties.has('userLanguage')) {
             const userLang = changedProperties.get('userLanguage')
 
@@ -830,6 +840,10 @@ class ChatPage extends LitElement {
             }
             
         }
+        if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
+           await this.initUpdate()
+        }
+        
     }
 
    async renderPlaceholder() {
@@ -1151,22 +1165,22 @@ class ChatPage extends LitElement {
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
             }
 
-            const directSocket = new WebSocket(directSocketLink);
+            this.webSocket  = new WebSocket(directSocketLink);
 
             // Open Connection
-            directSocket.onopen = () => {
+            this.webSocket.onopen = () => {
 
                 setTimeout(pingDirectSocket, 50)
             }
 
             // Message Event
-            directSocket.onmessage = async (e) => {
+            this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
                     const isReceipient = this.chatId.includes('direct')
 
-
-                    const chatReference1 = isReceipient ? 'direct' : 'group';
-                    const chatReference2 = this.chatId.split('/')[1];
+                    // commented out code= localstorage persistance
+                    // const chatReference1 = isReceipient ? 'direct' : 'group';
+                    // const chatReference2 = this.chatId.split('/')[1];
                     // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
                     const cachedData = null
                     let getInitialMessages = []
@@ -1199,17 +1213,17 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            directSocket.onclose = () => {
+            this.webSocket.onclose = () => {
                 clearTimeout(directSocketTimeout)
             }
 
             // Error Event
-            directSocket.onerror = (e) => {
+            this.webSocket.onerror = (e) => {
                 clearTimeout(directSocketTimeout)
             }
 
             const pingDirectSocket = () => {
-                directSocket.send('ping')
+                this.webSocket.send('ping')
 
                 directSocketTimeout = setTimeout(pingDirectSocket, 295000)
             }
@@ -1237,16 +1251,16 @@ class ChatPage extends LitElement {
                 groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}`;
             }
 
-            const groupSocket = new WebSocket(groupSocketLink);
+            this.webSocket = new WebSocket(groupSocketLink);
 
             // Open Connection
-            groupSocket.onopen = () => {
+            this.webSocket.onopen = () => {
 
                 setTimeout(pingGroupSocket, 50)
             }
 
             // Message Event
-            groupSocket.onmessage = async (e) => {
+            this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
                     const isGroup = this.chatId.includes('group')
@@ -1288,17 +1302,17 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            groupSocket.onclose = () => {
+            this.webSocket.onclose = () => {
                 clearTimeout(groupSocketTimeout)
             }
 
             // Error Event
-            groupSocket.onerror = (e) => {
+            this.webSocket.onerror = (e) => {
                 clearTimeout(groupSocketTimeout)
             }
 
             const pingGroupSocket = () => {
-                groupSocket.send('ping')
+                this.webSocket.send('ping')
 
                 groupSocketTimeout = setTimeout(pingGroupSocket, 295000)
             }

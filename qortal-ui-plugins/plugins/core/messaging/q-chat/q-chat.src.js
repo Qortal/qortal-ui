@@ -34,7 +34,8 @@ class Chat extends LitElement {
             balance: { type: Number },
             theme: { type: String, reflect: true },
             blockedUsers: { type: Array },
-            blockedUserList: { type: Array }
+            blockedUserList: { type: Array },
+            activeChatHeadUrl: {type: String}
         }
     }
 
@@ -324,6 +325,13 @@ class Chat extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.blockedUsers = []
         this.blockedUserList = []
+        this.activeChatHeadUrl = ''
+
+   
+    }
+
+    setActiveChatHeadUrl(url){
+        this.activeChatHeadUrl = url
     }
 
     render() {
@@ -349,7 +357,8 @@ class Chat extends LitElement {
                         <span>${translate("chatpage.cchange5")} <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
                     </div>
                     <div class="chat-history">
-                        ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
+               
+                        ${window.parent.location.pathname !== "/app/q-chat" || this.activeChatHeadUrl ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
                     </div>
                 </div>
 
@@ -416,21 +425,15 @@ class Chat extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeLanguage()
         this.changeTheme()
         this.getChatBlockedList()
         this.getLocalBlockedList()
 
-        setInterval(() => {
-            this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
-        }, 1000)
-
         const getBlockedUsers = async () => {
             let blockedUsers = await parentEpml.request('apiCall', {
                 url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
             })
-
             this.blockedUsers = blockedUsers
             setTimeout(getBlockedUsers, 60000)
         }
@@ -455,7 +458,7 @@ class Chat extends LitElement {
 
         const runFunctionsAfterPageLoad = () => {
             // Functions to exec after render while waiting for page info...
-            getDataFromURL()
+            // getDataFromURL()
 
             try {
                 let key = `${window.parent.reduxStore.getState().app.selectedAddress.address.substr(0, 10)}_chat-heads`
@@ -572,6 +575,8 @@ class Chat extends LitElement {
                 hidelist.push(item)
             })
             localStorage.setItem("MessageBlockedAddresses", JSON.stringify(hidelist))
+     
+            this.blockedUserList = hidelist
         })
     }
 
@@ -604,6 +609,7 @@ class Chat extends LitElement {
                         obj.push(noName)
                     }
                     localStorage.setItem("ChatBlockedAddresses", JSON.stringify(obj))
+                    this.blockedUserList = JSON.parse(localStorage.getItem("ChatBlockedAddresses") || "[]")
                 })
             })
         })
@@ -681,20 +687,20 @@ class Chat extends LitElement {
 
         let tempUrl = document.location.href
         let splitedUrl = decodeURI(tempUrl).split('?')
-        let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
+        // let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
 
         return chatHeadArr.map(eachChatHead => {
-            return html`<chat-head activeChatHeadUrl=${activeChatHeadUrl} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
+            return html`<chat-head activeChatHeadUrl=${this.activeChatHeadUrl} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
         })
     }
 
     renderChatPage(chatId) {
+        
         // Check for the chat ID from and render chat messages
         // Else render Welcome to Q-CHat
 
         // TODO: DONE: Do the above in the ChatPage 
-
-        return html`<chat-page .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${chatId}></chat-page>`
+        return html`<chat-page .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${this.activeChatHeadUrl}></chat-page>`
     }
 
     setChatHeads(chatObj) {
