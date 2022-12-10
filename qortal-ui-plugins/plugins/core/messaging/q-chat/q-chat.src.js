@@ -330,7 +330,9 @@ class Chat extends LitElement {
    
     }
 
-    setActiveChatHeadUrl(url){
+  async  setActiveChatHeadUrl(url){
+        this.activeChatHeadUrl = ''
+        await this.updateComplete;
         this.activeChatHeadUrl = url
     }
 

@@ -33,7 +33,8 @@ class ChatScroller extends LitElement {
             showLastMessageRefScroller: { type: Function },
             emojiPicker: { attribute: false },
             isLoadingMessages: { type: Boolean},
-            setIsLoadingMessages: {attribute: false}
+            setIsLoadingMessages: {attribute: false},
+            chatId: { type: String }
         }
     }
 
@@ -110,6 +111,9 @@ class ChatScroller extends LitElement {
 
     shouldUpdate(changedProperties) {
         if(changedProperties.has('isLoadingMessages')){
+            return true
+        }
+        if(changedProperties.has('chatId') && changedProperties.get('chatId')){
             return true
         }
         // Only update element if prop1 changed.

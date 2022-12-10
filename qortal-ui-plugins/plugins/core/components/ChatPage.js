@@ -876,6 +876,7 @@ class ChatPage extends LitElement {
     renderChatScroller() {
         return html`
         <chat-scroller 
+        chatId=${this.chatId}
         .messages=${this.messagesRendered} 
         .escapeHTML=${escape} 
         .getOldMessage=${this.getOldMessage}
