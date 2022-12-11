@@ -14,6 +14,7 @@ class ChatHead extends LitElement {
             iconName: { type: String },
             activeChatHeadUrl: { type: String },
             isImageLoaded: { type: Boolean },
+            setActiveChatHeadUrl: {attribute: false}
         }
     }
 
@@ -116,8 +117,6 @@ class ChatHead extends LitElement {
           
         }
 
-       
-
         return html`
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 ${this.isImageLoaded ? html`${avatarImg}` : html`` }
@@ -150,8 +149,19 @@ class ChatHead extends LitElement {
         parentEpml.imReady()
     }
 
+    shouldUpdate(changedProperties) {
+        if(changedProperties.has('activeChatHeadUrl')){
+            return true
+        }
+        if(changedProperties.has('chatInfo')){
+            return true
+        }
+        
+        return false
+      }
+   
     getUrl(chatUrl) {
-        this.onPageNavigation(`/app/q-chat/${chatUrl}`)
+        this.setActiveChatHeadUrl(chatUrl)
     }
 
     onPageNavigation(pageUrl) {
