@@ -19,7 +19,7 @@
 	"dependencies": {
 		"@hapi/hapi": "21.0.0",
 		"@hapi/inert": "7.0.0",
-		"sass": "1.56.1"
+		"sass": "1.56.2"
 	},
 	"devDependencies": {
 		"@babel/core": "7.20.5",
@@ -66,14 +66,14 @@
 		"bcryptjs": "2.4.3",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
-		"lit": "2.4.1",
+		"lit": "2.5.0",
 		"lit-translate": "2.0.1",
 		"postcss": "8.4.19",
 		"pwa-helpers": "0.9.1",
 		"random-sentence-generator": "0.0.8",
 		"redux": "4.2.0",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.7.0",
+		"rollup": "3.7.2",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-postcss": "4.0.2",
 		"rollup-plugin-progress": "1.1.2",
