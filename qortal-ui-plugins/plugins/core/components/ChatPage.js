@@ -811,6 +811,7 @@ class ChatPage extends LitElement {
                 ...parsedMessageObj,
                 type: 'forward'
             }
+            delete message.reactions
             const stringifyMessageObject = JSON.stringify(message)
             this.sendMessage(stringifyMessageObject, undefined, '', true,  {
                 isReceipient: true,
