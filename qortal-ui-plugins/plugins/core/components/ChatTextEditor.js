@@ -223,7 +223,13 @@ class ChatTextEditor extends LitElement {
                         `
                 ) : 
                     html`
-                        <div style="${ scrollHeightBool ? 'margin-bottom: 5px;' : "margin-bottom: 0;"} ${this.iframeId === 'newChat' ? 'display: none;' : 'display: flex;'}">
+                        <div 
+                        style="${scrollHeightBool 
+                        ? 'margin-bottom: 5px;' 
+                        : "margin-bottom: 0;"} 
+                        ${this.iframeId === 'newChat'
+                        ? 'display: none;' 
+                        : 'display: flex;'}">
                             ${this.isLoading === false ? html`
                                 <img 
                                 src="/img/qchat-send-message-icon.svg" 
@@ -354,13 +360,13 @@ class ChatTextEditor extends LitElement {
         return true
       }
 
-    sendMessageFunc(props) {
+    sendMessageFunc() {
         if (this.chatMessageSize > 1000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
             return;
         };
         this.chatMessageSize = 0;
-        this._sendMessage(props);
+        this._sendMessage();
     }
 
     getMessageSize(message){

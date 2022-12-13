@@ -1554,35 +1554,31 @@ class ChatPage extends LitElement {
                     users: [this.selectedAddress.address]
                 }]
             }
-            
             const messageObject = {
                 ...message,
                 reactions
-                
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
-
         } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
-            this.chatEditorNewChat.enable()
+            this.chatEditorNewChat.enable();
         } 
         else if (this.repliedToMessageObj) {
-            let chatReference = this.repliedToMessageObj.reference
-
+            let chatReference = this.repliedToMessageObj.reference;
             if(this.repliedToMessageObj.chatReference){
-                chatReference = this.repliedToMessageObj.chatReference
+                chatReference = this.repliedToMessageObj.chatReference;
             }
-            typeMessage = 'reply'
+            typeMessage = 'reply';
             const messageObject = {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: chatReference,
                 version: 1
             }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage  );
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
         } else if (this.editedMessageObj) {
             typeMessage = 'edit'
             let chatReference = this.editedMessageObj.reference

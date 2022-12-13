@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import WebWorker from 'web-worker:../../components/computePowWorker.js';
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -324,6 +325,7 @@ class Chat extends LitElement {
         this.isLoading = false
         this.showNewMesssageBar = this.showNewMesssageBar.bind(this)
         this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
+        this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.blockedUsers = []
@@ -381,10 +383,10 @@ class Chat extends LitElement {
                         iframeId="privateMessage" 
                         ?hasGlobalEvents=${true}
                         placeholder="${translate("chatpage.cchange8")}"
-                        _sendMessage=${this._sendMessage}
                         .setChatEditor=${(editor)=> this.setChatEditor(editor)}
                         .chatEditor=${this.chatEditor}
-                        .imageFile=${this.imageFile}
+                        .imageFile=${this.imageFile}.
+                        ._sendMessage=${this._sendMessage}
                         .insertImage=${this.insertImage}
                         ?isLoading=${this.isLoading}>
                     </chat-text-editor>
@@ -392,7 +394,7 @@ class Chat extends LitElement {
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
-                        @click=${this._sendMessage}
+                        @click=${this.sendMessageFunc}
                     >
                         ${this.isLoading === false ? this.renderSendText() : html`<paper-spinner-lite active></paper-spinner-lite>`}
                     </mwc-button>
@@ -544,7 +546,6 @@ class Chat extends LitElement {
                 this.config = JSON.parse(c)
             })
             parentEpml.subscribe('chat_heads', chatHeads => {
-                console.log("here51");
                 chatHeads = JSON.parse(chatHeads)
                 this.getChatHeadFromState(chatHeads)
             })
@@ -567,6 +568,162 @@ class Chat extends LitElement {
     setChatEditor(editor) {
         this.chatEditor = editor;
     }
+
+    async _sendMessage() { 
+        console.log("here1");
+        this.isLoading = true;
+        this.chatEditor.disable();
+        const messageText = this.chatEditor.mirror.value;
+        // Format and Sanitize Message
+        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
+        const trimmedMessage = sanitizedMessage.trim();
+      
+        if (/^\s*$/.test(trimmedMessage)) {
+            this.isLoading = false;
+            this.chatEditor.enable();
+        } else {
+            const messageObject = {
+                messageText: trimmedMessage,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            this.sendMessage(stringifyMessageObject);
+        }
+        console.log("here2");
+    }
+      
+      async sendMessage(messageText) {
+        console.log("here3");
+        this.isLoading = true;
+      
+        const _recipient = this.shadowRoot.getElementById('sendTo').value;
+      
+        let recipient;
+      
+        const validateName = async (receiverName) => {  
+            let myRes;
+            try {                
+                let myNameRes = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/names/${receiverName}`
+                });
+                if (myNameRes.error === 401) {
+                    myRes = false;
+                } else {
+                    myRes = myNameRes;
+                }
+                return myRes;
+            } catch (error) {
+                return "";
+            }
+        };
+      
+        const myNameRes = await validateName(_recipient);
+        if (!myNameRes) {
+            recipient = _recipient;
+        } else {
+            recipient = myNameRes.owner;
+        };
+      
+        const getAddressPublicKey = async () => {
+            let isEncrypted;
+            let _publicKey;
+      
+            let addressPublicKey = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/publickey/${recipient}`
+            })
+            
+            if (addressPublicKey.error === 102) {
+                _publicKey = false;
+                let err4string = get("chatpage.cchange19");
+                parentEpml.request('showSnackBar', `${err4string}`);
+                this.isLoading = false;
+            } else if (addressPublicKey !== false) {
+                isEncrypted = 1;
+                _publicKey = addressPublicKey;
+                sendMessageRequest(isEncrypted, _publicKey);
+            } else {
+                isEncrypted = 0;
+                _publicKey = this.selectedAddress.address;
+                sendMessageRequest(isEncrypted, _publicKey);
+            }
+        };
+        let _reference = new Uint8Array(64);
+        window.crypto.getRandomValues(_reference);
+        let reference = window.parent.Base58.encode(_reference);
+        const sendMessageRequest = async (isEncrypted, _publicKey) => {
+            let chatResponse = await parentEpml.request('chat', {
+                type: 18,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    timestamp: Date.now(),
+                    recipient: recipient,
+                    recipientPublicKey: _publicKey,
+                    hasChatReference: 0,
+                    message: messageText,
+                    lastReference: reference,
+                    proofOfWorkNonce: 0,
+                    isEncrypted: isEncrypted,
+                    isText: 1
+                }
+            });
+            console.log({chatResponse});
+            
+            _computePow(chatResponse);
+    };
+      
+        const _computePow = async (chatBytes) => {
+            const difficulty = this.balance === 0 ? 12 : 8;
+            const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full';
+            console.log("here4");
+            const worker = new WebWorker();
+            console.log("here5");
+            let nonce = null;
+            let chatBytesArray = null;
+              await new Promise((res, rej) => {
+                console.log(chatBytes, "chatBytes");
+                console.log(path, "path");
+                console.log(difficulty, "difficulty");
+                worker.postMessage({chatBytes, path, difficulty});
+            
+                worker.onmessage = e => {
+                  worker.terminate();
+                  chatBytesArray = e.data.chatBytesArray;
+                    nonce = e.data.nonce;
+                    res();
+                }
+              });
+              
+            let _response = await parentEpml.request('sign_chat', {
+                nonce: this.selectedAddress.nonce,
+                chatBytesArray: chatBytesArray,
+                chatNonce: nonce
+            });
+           
+            getSendChatResponse(_response);
+        };
+      
+        const getSendChatResponse = (response) => {
+            if (response === true) {
+                this.chatEditor.resetValue();
+            } else if (response.error) {
+                parentEpml.request('showSnackBar', response.message);
+            } else {
+                let err2string = get("chatpage.cchange21");
+                parentEpml.request('showSnackBar', `${err2string}`);
+            }
+      
+            this.isLoading = false;
+            this.chatEditor.enable();
+        };
+      
+        // Exec..
+        getAddressPublicKey();
+      
+      }
 
     insertImage(file) {
         if (file.type.includes('image')) {
@@ -747,7 +904,6 @@ class Chat extends LitElement {
         const compareArgs = (a, b) => {
             return b.timestamp - a.timestamp
         }
-        console.log({chatHeadMasterList});
         this.chatHeads = chatHeadMasterList.sort(compareArgs)
     }
 
@@ -760,163 +916,6 @@ class Chat extends LitElement {
             this.chatHeadsObj = chatObj
             this.setChatHeads(chatObj)
         }
-    }
-
-    _sendMessage() {
-
-        this.isLoading = true
-
-        const recipient = this.shadowRoot.getElementById('sendTo').value
-        const messageBox = this.shadowRoot.getElementById('messageBox')
-        const messageText = messageBox.value
-
-        if (recipient.length === 0) {
-            this.isLoading = false
-        } else if (messageText.length === 0) {
-            this.isLoading = false
-        } else {
-            this.sendMessage()
-        }
-    }
-
-    async sendMessage(e) {
-
-        this.isLoading = true
-
-        const _recipient = this.shadowRoot.getElementById('sendTo').value
-        const messageBox = this.shadowRoot.getElementById('messageBox')
-        const messageText = messageBox.value
-        let recipient
-
-        const validateName = async (receiverName) => {
-
-            let myRes
-            let myNameRes = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${receiverName}`
-            })
-
-            if (myNameRes.error === 401) {
-                myRes = false
-            } else {
-                myRes = myNameRes
-            }
-            return myRes
-        }
-
-        const myNameRes = await validateName(_recipient)
-        if (!myNameRes) {
-
-            recipient = _recipient
-        } else {
-
-            recipient = myNameRes.owner
-        }
-
-        let _reference = new Uint8Array(64);
-        window.crypto.getRandomValues(_reference);
-
-        let sendTimestamp = Date.now()
-
-        let reference = window.parent.Base58.encode(_reference)
-
-        const getAddressPublicKey = async () => {
-            let isEncrypted
-            let _publicKey
-
-            let addressPublicKey = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/publickey/${recipient}`
-            })
-
-            if (addressPublicKey.error === 102) {
-                _publicKey = false
-                let err4string = get("chatpage.cchange19")
-                parentEpml.request('showSnackBar', `${err4string}`)
-                this.isLoading = false
-            } else if (addressPublicKey !== false) {
-                isEncrypted = 1
-                _publicKey = addressPublicKey
-                sendMessageRequest(isEncrypted, _publicKey)
-            } else {
-                isEncrypted = 0
-                _publicKey = this.selectedAddress.address
-                sendMessageRequest(isEncrypted, _publicKey)
-            }
-        };
-
-        const sendMessageRequest = async (isEncrypted, _publicKey) => {
-            const messageObject = {
-                messageText,
-                images: [''],
-                repliedTo: '',
-                version: 1
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            let chatResponse = await parentEpml.request('chat', {
-                type: 18,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    timestamp: sendTimestamp,
-                    recipient: recipient,
-                    recipientPublicKey: _publicKey,
-                    hasChatReference: 0,
-                    message: stringifyMessageObject,
-                    lastReference: reference,
-                    proofOfWorkNonce: 0,
-                    isEncrypted: isEncrypted,
-                    isText: 1
-                }
-            })
-
-            _computePow(chatResponse)
-        }
-
-        const _computePow = async (chatBytes) => {
-
-            const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
-            const chatBytesArray = new Uint8Array(_chatBytesArray)
-            const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
-            const hashPtr = window.parent.sbrk(32, window.parent.heap);
-            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
-
-            hashAry.set(chatBytesHash);
-
-            const difficulty = this.balance === 0 ? 12 : 8
-
-            const workBufferLength = 8 * 1024 * 1024;
-            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
-
-            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
-
-            let _response = await parentEpml.request('sign_chat', {
-                nonce: this.selectedAddress.nonce,
-                chatBytesArray: chatBytesArray,
-                chatNonce: nonce
-            })
-
-            getSendChatResponse(_response)
-        }
-
-        const getSendChatResponse = (response) => {
-
-            if (response === true) {
-                messageBox.value = ""
-                let err5string = get("chatpage.cchange20")
-                parentEpml.request('showSnackBar', `${err5string}`)
-                this.isLoading = false
-            } else if (response.error) {
-                parentEpml.request('showSnackBar', response.message)
-                this.isLoading = false
-            } else {
-                let err6string = get("chatpage.cchange21")
-                parentEpml.request('showSnackBar', `${err6string}`)
-                this.isLoading = false
-            }
-        }
-
-        // Exec..
-        getAddressPublicKey()
     }
 
     _textMenu(event) {
