@@ -30,11 +30,13 @@ class ChatScroller extends LitElement {
             setEditedMessageObj: {attribute: false},
             focusChatEditor: {attribute: false},
             sendMessage: {attribute: false},
+            sendMessageForward: {attribute: false},
             showLastMessageRefScroller: { type: Function },
             emojiPicker: { attribute: false },
             isLoadingMessages: { type: Boolean},
             setIsLoadingMessages: {attribute: false},
-            chatId: { type: String }
+            chatId: { type: String },
+            setForwardProperties: {attribute: false},
         }
     }
 
@@ -51,6 +53,7 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log({messages: this.messages})
         let formattedMessages = this.messages.reduce((messageArray, message) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -96,10 +99,12 @@ class ChatScroller extends LitElement {
                             .setEditedMessageObj=${this.setEditedMessageObj}
                             .focusChatEditor=${this.focusChatEditor}
                             .sendMessage=${this.sendMessage}
+                            .sendMessageForward=${this.sendMessageForward}
                             ?isFirstMessage=${indexMessage === 0}
                             ?isSingleMessageInGroup=${formattedMessage.messages.length > 1}
                             ?isLastMessageInGroup=${indexMessage === formattedMessage.messages.length - 1}
                             .setToggledMessage=${this.setToggledMessage}
+                            .setForwardProperties=${this.setForwardProperties}
                             >
                             </message-template>`
                     )
@@ -219,12 +224,14 @@ class MessageTemplate extends LitElement {
             setEditedMessageObj: {attribute: false},
             focusChatEditor: {attribute: false},
             sendMessage: {attribute: false},
+            sendMessageForward: {attribute: false},
             openDialogImage: {attribute: false},
             isImageLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
             isLastMessageInGroup: { type: Boolean },
-            setToggledMessage: {attribute: false}
+            setToggledMessage: {attribute: false},
+            setForwardProperties: {attribute: false},
         }
     }
 
@@ -279,6 +286,7 @@ class MessageTemplate extends LitElement {
         let image = null;
         let isImageDeleted = false;
         let version = 0;
+        let isForwarded = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
             message = parsedMessageObj.messageText;
@@ -286,6 +294,7 @@ class MessageTemplate extends LitElement {
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
             version = parsedMessageObj.version
+            isForwarded = parsedMessageObj.type === 'forward'
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
@@ -299,6 +308,7 @@ class MessageTemplate extends LitElement {
         let nameMenu = '';
         let levelFounder = '';
         let hideit = hidemsg.includes(this.messageObj.sender);
+        let forwarded = ''
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
         if (this.messageObj.senderName) {
@@ -351,6 +361,11 @@ class MessageTemplate extends LitElement {
             <span class="${this.messageObj.sender === this.myAddress && 'message-data-my-name'}">
                 ${this.messageObj.senderName ? this.messageObj.senderName : cropAddress(this.messageObj.sender)}
             </span>
+        `;
+        forwarded = html`
+        <span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">
+            ${translate("blockpage.bcchange17")}
+        </span>
         `;
 
         if (repliedToData) {
@@ -410,6 +425,14 @@ class MessageTemplate extends LitElement {
                                     html`
                                         <span class="message-data-name">
                                             ${nameMenu}
+                                        </span>
+                                        `
+                                    : null
+                                }
+                                ${isForwarded ? 
+                                    html`
+                                        <span class="message-data-name">
+                                            ${forwarded}
                                         </span>
                                         `
                                     : null
@@ -480,9 +503,11 @@ class MessageTemplate extends LitElement {
                                 .myAddress=${this.myAddress}
                                 @blur=${() => this.showBlockIconFunc(false)}
                                 .sendMessage=${this.sendMessage}
+                                .sendMessageForward=${this.sendMessageForward}
                                 version=${version}
                                 .emojiPicker=${this.emojiPicker} 
                                 .setToggledMessage=${this.setToggledMessage}
+                                .setForwardProperties=${this.setForwardProperties}
                             > 
                             </chat-menu>
                         </div>
@@ -559,7 +584,9 @@ class ChatMenu extends LitElement {
             emojiPicker: { attribute: false },
             sendMessage: {attribute: false},
             version: {type: String},
-            setToggledMessage: {attribute: false}
+            setToggledMessage: {attribute: false},
+            sendMessageForward: {attribute: false},
+            setForwardProperties: {attribute: false}
         }
     }
 
@@ -589,6 +616,51 @@ class ChatMenu extends LitElement {
         parentEpml.request('showSnackBar', `${errorMsg}`)
     }
 
+    async messageForwardFunc(){
+        let parsedMessageObj = {}
+        let publicKey = {
+            hasPubKey: false,
+            key: ''
+        }
+        try {
+             parsedMessageObj = JSON.parse(this.originalMessage.decodedMessage);
+            
+        } catch (error) {
+            parsedMessageObj = {}
+        }
+
+        try {
+         const res =   await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/publickey/${this._chatId}`
+            })
+            if (res.error === 102) {
+                publicKey.key = ''
+                publicKey.hasPubKey = false
+            } else if (res !== false) {
+                publicKey.key = res
+                publicKey.hasPubKey = true
+            } else {
+                publicKey.key = ''
+                publicKey.hasPubKey = false
+            }
+        } catch (error) {
+            
+        }
+        
+        try {
+            const message = {
+                ...parsedMessageObj,
+                type: 'forward'
+            }
+            const stringifyMessageObject = JSON.stringify(message)
+            this.setForwardProperties(stringifyMessageObject)
+           
+        } catch (error) {
+            console.log({error})
+        }
+    }
+
     render() {
         return html` 
             <div class="container">
@@ -610,6 +682,14 @@ class ChatMenu extends LitElement {
                     }}
                >
                     <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
+                </div>
+                <div 
+                class="menu-icon tooltip" 
+                data-text="${translate("blockpage.bcchange14")}" 
+                @click="${() => {
+                    this.messageForwardFunc()
+                    }}">
+                    <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
                 </div>                
                 <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>

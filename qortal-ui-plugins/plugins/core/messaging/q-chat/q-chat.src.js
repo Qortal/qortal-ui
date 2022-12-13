@@ -702,7 +702,7 @@ class Chat extends LitElement {
         // Else render Welcome to Q-CHat
 
         // TODO: DONE: Do the above in the ChatPage 
-        return html`<chat-page .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${this.activeChatHeadUrl}></chat-page>`
+        return html`<chat-page .chatHeads=${this.chatHeads} .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${this.activeChatHeadUrl}></chat-page>`
     }
 
     setChatHeads(chatObj) {
