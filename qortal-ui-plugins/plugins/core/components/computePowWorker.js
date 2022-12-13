@@ -15,7 +15,6 @@ function sbrk(size, heap){
 
 
 self.addEventListener('message', async e => {
-  console.log({data: e.data})
  const response = await computePow(e.data.chatBytes, e.data.path, e.data.difficulty)
  postMessage(response)
 

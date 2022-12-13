@@ -571,6 +571,8 @@ class ChatPage extends LitElement {
         });
         this.openForwardOpen = false
     }
+
+    
     
     render() {
         return html`
@@ -1674,7 +1676,7 @@ class ChatPage extends LitElement {
             const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
             if(findEmojiIndex !== -1){
                 let users =  reactions[findEmojiIndex].users || []
-                const findUserIndex = users.find((user)=> user === this.selectedAddress.address )
+                const findUserIndex = users.findIndex((user)=> user === this.selectedAddress.address )
                 if(findUserIndex !== -1){
                   users.splice(findUserIndex, 1)
                 } else {
