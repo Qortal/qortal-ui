@@ -16,6 +16,7 @@ import './NameMenu.js';
 import './TimeAgo.js';
 import './ChatTextEditor';
 import './WrapperModal';
+import './ChatSelect.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
@@ -67,7 +68,11 @@ class ChatPage extends LitElement {
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: {type: Boolean},
-            isEditMessageOpen: { type: Boolean }
+            isEditMessageOpen: { type: Boolean },
+            webSocket: {attribute: false},
+            chatHeads: {type: Array},
+            forwardActiveChatHeadUrl: {type: String},
+            openForwardOpen: {type: Boolean}
         }
     }
 
@@ -75,6 +80,15 @@ class ChatPage extends LitElement {
         return css`
         html {
             scroll-behavior: smooth;
+        }
+
+        .chat-head-container {
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: column;
+            height: 50vh;
+            overflow-y: auto;
+            width: 100%;
         }
 
         .chat-container {
@@ -428,6 +442,11 @@ class ChatPage extends LitElement {
             height: 100%;
         }
 
+        .dialog-container-title {
+            color: var(--black);
+            font-size: 18px;
+        }
+
         .dialog-container-loader {
             position: relative;
             display: flex;
@@ -549,7 +568,10 @@ class ChatPage extends LitElement {
             position: 'top-start',
             boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px'
         });
+        this.openForwardOpen = false
     }
+
+    
     
     render() {
         return html`
@@ -701,11 +723,105 @@ class ChatPage extends LitElement {
                         </div>
                 </div>    	
             </wrapper-modal>
+            <wrapper-modal 
+                .removeImage=${() => {
+                   this.openForwardOpen = false
+                   this.forwardActiveChatHeadUrl = ""
+                } } 
+                style=${this.openForwardOpen ? "display: block" : "display: none"}>
+                    <div>
+                        <div class="dialog-container">
+                            <div>
+                                <p class="dialog-container-title">${translate("blockpage.bcchange16")}</p>
+                            </div>
+                          <div class="chat-head-container">
+                             ${this.chatHeads.map((item)=> {
+                                return html`<chat-select activeChatHeadUrl=${this.forwardActiveChatHeadUrl} .setActiveChatHeadUrl=${(val)=> {
+                                    this.forwardActiveChatHeadUrl = val
+                                }} chatInfo=${JSON.stringify(item)}></chat-select>`
+                             })}
+                           </div>
+                          
+                            <div class="modal-button-row">
+                                <button class="modal-button-red" @click=${() => {
+                                this.openForwardOpen = false
+                   this.forwardActiveChatHeadUrl = ""
+                                }}>
+                                    ${translate("chatpage.cchange33")}
+                                </button>
+                                <button
+                                    ?disabled=${!this.forwardActiveChatHeadUrl}
+                                    class="modal-button"
+                                    @click=${()=> {
+                                       this.sendForwardMessage()
+                                    }}
+                                >
+                                    ${translate("blockpage.bcchange14")}
+                                </button>
+                            </div>
+                        </div>
+                </div>    	
+            </wrapper-modal>
         </div>
         `
     }
 
-    
+    setForwardProperties(forwardedMessage){
+        this.openForwardOpen = true
+        this.forwardedMessage = forwardedMessage
+    }
+
+   async sendForwardMessage(){
+        let parsedMessageObj = {}
+        let publicKey = {
+            hasPubKey: false,
+            key: ''
+        }
+        try {
+             parsedMessageObj = JSON.parse(this.forwardedMessage);
+            
+        } catch (error) {
+            parsedMessageObj = {}
+        }
+
+        try {
+         const res =   await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/publickey/${this.forwardChatId}`
+            })
+            if (res.error === 102) {
+                publicKey.key = ''
+                publicKey.hasPubKey = false
+            } else if (res !== false) {
+                publicKey.key = res
+                publicKey.hasPubKey = true
+            } else {
+                publicKey.key = ''
+                publicKey.hasPubKey = false
+            }
+        } catch (error) {
+            
+        }
+        
+        try {
+            const message = {
+                ...parsedMessageObj,
+                type: 'forward'
+            }
+            delete message.reactions
+            const stringifyMessageObject = JSON.stringify(message)
+            this.sendMessage(stringifyMessageObject, undefined, '', true,  {
+                isReceipient: true,
+                chatId: 'Qdxha59Cm1Ty4QkKMBWPnKrNigcDCDk6eq',
+                publicKey: {
+                    hasPubKey: false,
+                    key: ''
+                }
+            })
+        } catch (error) {
+            console.log({error})
+        }
+    }
 
     showLastMessageRefScroller(props) {
         this.lastMessageRefVisible = props;
@@ -733,13 +849,18 @@ class ChatPage extends LitElement {
         this.chatEditor.enable();
     }
 
-    async firstUpdated() {
-        window.addEventListener('storage', () => {                                                
-            const checkLanguage = localStorage.getItem('qortalLanguage');
-            use(checkLanguage);
-            this.userLanguage = checkLanguage;
-        })
+    changeMsgInput(id) {
+  
+        this.chatEditor.remove()
+        this.chatMessageInput  = this.shadowRoot.getElementById(id);
+        this.initChatEditor();
+    }
 
+    async initUpdate(){
+        if(this.webSocket){
+            this.webSocket.close()
+            this.webSocket= ''
+        }
         const getAddressPublicKey = () => {
 
             parentEpml.request('apiCall', {
@@ -781,6 +902,16 @@ class ChatPage extends LitElement {
             // this.initChatEditor();
         }, 100)
 
+     
+    }
+
+    async firstUpdated() {
+        window.addEventListener('storage', () => {                                                
+            const checkLanguage = localStorage.getItem('qortalLanguage');
+            use(checkLanguage);
+            this.userLanguage = checkLanguage;
+        })
+
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -804,10 +935,11 @@ class ChatPage extends LitElement {
             })
         })
         parentEpml.imReady();
+
+    await this.initUpdate()
     }
 
     async updated(changedProperties) {
-     
         if (changedProperties && changedProperties.has('userLanguage')) {
             const userLang = changedProperties.get('userLanguage')
 
@@ -817,6 +949,10 @@ class ChatPage extends LitElement {
             }
             
         }
+        if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
+           await this.initUpdate()
+        }
+        
     }
 
    async renderPlaceholder() {
@@ -849,6 +985,7 @@ class ChatPage extends LitElement {
     renderChatScroller() {
         return html`
         <chat-scroller 
+        chatId=${this.chatId}
         .messages=${this.messagesRendered} 
         .escapeHTML=${escape} 
         .getOldMessage=${this.getOldMessage}
@@ -856,10 +993,12 @@ class ChatPage extends LitElement {
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
         .focusChatEditor=${() => this.focusChatEditor()}
         .sendMessage=${(val) => this._sendMessage(val)}
+        .sendMessageForward=${(messageText, typeMessage, chatReference, isForward, forwardParams)=> this.sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams)}
         .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
         .emojiPicker=${this.emojiPicker} 
         ?isLoadingMessages=${this.isLoadingOldMessages}
         .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
+        .setForwardProperties=${(forwardedMessage)=> this.setForwardProperties(forwardedMessage)}
         >
         </chat-scroller>
         `
@@ -1119,7 +1258,6 @@ class ChatPage extends LitElement {
     async fetchChatMessages(chatId) {
 
         const initDirect = async (cid) => {
-
             let initial = 0
 
             let directSocketTimeout
@@ -1138,22 +1276,22 @@ class ChatPage extends LitElement {
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
             }
 
-            const directSocket = new WebSocket(directSocketLink);
+            this.webSocket  = new WebSocket(directSocketLink);
 
             // Open Connection
-            directSocket.onopen = () => {
+            this.webSocket.onopen = () => {
 
                 setTimeout(pingDirectSocket, 50)
             }
 
             // Message Event
-            directSocket.onmessage = async (e) => {
+            this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
                     const isReceipient = this.chatId.includes('direct')
 
-
-                    const chatReference1 = isReceipient ? 'direct' : 'group';
-                    const chatReference2 = this.chatId.split('/')[1];
+                    // commented out code= localstorage persistance
+                    // const chatReference1 = isReceipient ? 'direct' : 'group';
+                    // const chatReference2 = this.chatId.split('/')[1];
                     // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
                     const cachedData = null
                     let getInitialMessages = []
@@ -1186,17 +1324,17 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            directSocket.onclose = () => {
+            this.webSocket.onclose = () => {
                 clearTimeout(directSocketTimeout)
             }
 
             // Error Event
-            directSocket.onerror = (e) => {
+            this.webSocket.onerror = (e) => {
                 clearTimeout(directSocketTimeout)
             }
 
             const pingDirectSocket = () => {
-                directSocket.send('ping')
+                this.webSocket.send('ping')
 
                 directSocketTimeout = setTimeout(pingDirectSocket, 295000)
             }
@@ -1224,16 +1362,16 @@ class ChatPage extends LitElement {
                 groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}`;
             }
 
-            const groupSocket = new WebSocket(groupSocketLink);
+            this.webSocket = new WebSocket(groupSocketLink);
 
             // Open Connection
-            groupSocket.onopen = () => {
+            this.webSocket.onopen = () => {
 
                 setTimeout(pingGroupSocket, 50)
             }
 
             // Message Event
-            groupSocket.onmessage = async (e) => {
+            this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
                     const isGroup = this.chatId.includes('group')
@@ -1275,17 +1413,17 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            groupSocket.onclose = () => {
+            this.webSocket.onclose = () => {
                 clearTimeout(groupSocketTimeout)
             }
 
             // Error Event
-            groupSocket.onerror = (e) => {
+            this.webSocket.onerror = (e) => {
                 clearTimeout(groupSocketTimeout)
             }
 
             const pingGroupSocket = () => {
-                groupSocket.send('ping')
+                this.webSocket.send('ping')
 
                 groupSocketTimeout = setTimeout(pingGroupSocket, 295000)
             }
@@ -1533,7 +1671,7 @@ class ChatPage extends LitElement {
             const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
             if(findEmojiIndex !== -1){
                 let users =  reactions[findEmojiIndex].users || []
-                const findUserIndex = users.find((user)=> user === this.selectedAddress.address )
+                const findUserIndex = users.findIndex((user)=> user === this.selectedAddress.address )
                 if(findUserIndex !== -1){
                   users.splice(findUserIndex, 1)
                 } else {
@@ -1614,8 +1752,7 @@ class ChatPage extends LitElement {
         }
     }
 
-    async sendMessage(messageText, typeMessage, chatReference) {
-   
+    async sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams) {
         this.isLoading = true;
 
         let _reference = new Uint8Array(64);
@@ -1663,7 +1800,55 @@ class ChatPage extends LitElement {
             }
         };
 
-        const _computePow = async (chatBytes) => {
+        const sendForwardRequest = async () => {
+            const { publicKey } = forwardParams
+
+            const isRecipient = this.forwardActiveChatHeadUrl.includes('direct') === true ? true : false;
+            
+            const chatId = this.forwardActiveChatHeadUrl.split('/')[1];
+            this.openForwardOpen = false
+            if (isRecipient === true) {
+                let chatResponse = await parentEpml.request('chat', {
+                    type: 18,
+                    nonce: this.selectedAddress.nonce,
+                    params: {
+                        timestamp: Date.now(),
+                        recipient: chatId,
+                        recipientPublicKey: publicKey.key,
+                        hasChatReference:  0,
+                        chatReference: "",
+                        message: messageText,
+                        lastReference: reference,
+                        proofOfWorkNonce: 0,
+                        isEncrypted: publicKey.hasPubKey === false ? 0 : 1,
+                        isText: 1
+                    }
+                });
+         
+                _computePow(chatResponse, true)
+            } else {
+                let groupResponse = await parentEpml.request('chat', {
+                    type: 181,
+                    nonce: this.selectedAddress.nonce,
+                    params: {
+                        timestamp: Date.now(),
+                        groupID: Number(chatId),
+                        hasReceipient: 0,
+                        hasChatReference: 0,
+                        chatReference: chatReference,
+                        message: messageText,
+                        lastReference: reference,
+                        proofOfWorkNonce: 0,
+                        isEncrypted: 0, // Set default to not encrypted for groups
+                        isText: 1
+                    }
+                });
+
+                _computePow(groupResponse, true)
+            }
+        };
+
+        const _computePow = async (chatBytes, isForward) => {
             const difficulty = this.balance === 0 ? 12 : 8;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
               const worker = new WebWorker();
@@ -1688,13 +1873,17 @@ class ChatPage extends LitElement {
             });
            
 
-            getSendChatResponse(_response);
+            getSendChatResponse(_response, isForward);
         };
 
-        const getSendChatResponse = (response) => {
+        const getSendChatResponse = (response, isForward) => {
             if (response === true) {
                 this.chatEditor.resetValue();
                 this.chatEditorNewChat.resetValue()
+                if(isForward){
+                    let successString = get("blockpage.bcchange15");
+                    parentEpml.request('showSnackBar', `${successString}`);
+                }
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
@@ -1707,9 +1896,14 @@ class ChatPage extends LitElement {
             this.chatEditorNewChat.enable()
             this.closeEditMessageContainer()
             this.closeRepliedToContainer()
+            this.openForwardOpen = false
+            this.forwardActiveChatHeadUrl = ""
         };
 
-        // Exec..
+        if(isForward){
+            sendForwardRequest();
+            return
+        }
         sendMessageRequest();
     }
 

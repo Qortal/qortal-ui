@@ -518,7 +518,11 @@
       "bcchange10": "More",
       "bcchange11": "Reply",
       "bcchange12": "Edit",
-      "bcchange13": "Reaction"
+      "bcchange13": "Reaction",
+      "bcchange14": "Forward",
+      "bcchange15": "Message Forwarded",
+      "bcchange16": "Choose recipient",
+      "bcchange17": "FORWARDED"
    },
    "grouppage": {
       "gchange1": "Qortal Groups",

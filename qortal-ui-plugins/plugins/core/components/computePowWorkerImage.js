@@ -17,7 +17,6 @@ function sbrk(size, heap){
 
 
 self.addEventListener('message', async e => {
-  console.log({data: e.data})
  const response = await computePow(e.data.convertedBytes, e.data.path)
  postMessage(response)
  
@@ -75,7 +74,7 @@ const workBufferPtr = sbrk(
         });
 }
 
-console.log({path})
+
 loadWebAssembly(path)
     .then(wasmModule => {
         response =  {

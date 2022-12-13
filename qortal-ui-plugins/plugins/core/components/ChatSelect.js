@@ -5,7 +5,7 @@ import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-class ChatHead extends LitElement {
+class ChatSelect extends LitElement {
     static get properties() {
         return {
             selectedAddress: { type: Object },
@@ -20,10 +20,15 @@ class ChatHead extends LitElement {
 
     static get styles() {
         return css`
+            ul {
+                list-style-type: none;
+                }
             li {
                 padding: 10px 2px 20px 5px;
                 cursor: pointer;
                 width: 100%;
+                display: flex;
+                box-sizing: border-box;
             }
 
             li:hover {
@@ -36,7 +41,6 @@ class ChatHead extends LitElement {
             }
 
             .img-icon {
-                float: left;
                 font-size:40px;
                 color: var(--chat-group);
             }
@@ -124,7 +128,7 @@ class ChatHead extends LitElement {
                 ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
                 ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
                 <div class="about">
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
+                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> </div>
                 </div>
             </li>
         `
@@ -169,4 +173,4 @@ class ChatHead extends LitElement {
     }
 }
 
-window.customElements.define('chat-head', ChatHead)
+window.customElements.define('chat-select', ChatSelect)
