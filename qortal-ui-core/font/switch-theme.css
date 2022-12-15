@@ -47,6 +47,7 @@ html {
   --chatHeadBgActive: #ebebeb;
   --chatHeadText: #080808;
   --chatHeadTextActive: #080808;
+  --lightChatHeadHover: #1e1f201a;
 }
 
 html[theme="dark"] {
@@ -98,4 +99,5 @@ html[theme="dark"] {
   --chatHeadBgActive: #0f1a2e;
   --chatHeadText: #ffffff;
   --chatHeadTextActive: #ffffff;
+  --lightChatHeadHover: #e0e1e31a;
 }

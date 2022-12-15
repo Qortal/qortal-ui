@@ -5,7 +5,7 @@ import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-class ChatSelect extends LitElement {
+class ChatSideNavHeads extends LitElement {
     static get properties() {
         return {
             selectedAddress: { type: Object },
@@ -24,15 +24,17 @@ class ChatSelect extends LitElement {
                 list-style-type: none;
                 }
             li {
-                padding: 10px 2px 20px 5px;
+                padding: 10px 2px 10px 5px;
                 cursor: pointer;
                 width: 100%;
                 display: flex;
                 box-sizing: border-box;
+                font-size: 14px;
+                transition: 0.2s background-color;
             }
 
             li:hover {
-                background-color: var(--menuhover);
+                background-color: var(--lightChatHeadHover);
             }
 
             .active {
@@ -88,7 +90,7 @@ class ChatSelect extends LitElement {
     createImage(imageUrl)  {
         const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
-        imageHTMLRes.style= "width:40px; height:40px; float: left; border-radius:50%";
+        imageHTMLRes.style= "width:30px; height:30px; float: left; border-radius:50%; font-size:14px";
         imageHTMLRes.onclick= () => {
             this.openDialogImage = true;
         }
@@ -122,11 +124,11 @@ class ChatSelect extends LitElement {
         }
 
         return html`
-            <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
+            <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix">
                 ${this.isImageLoaded ? html`${avatarImg}` : html`` }
                 ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
-                ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
-                ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
+                ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
+                ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
                 <div class="about">
                     <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> </div>
                 </div>
@@ -175,4 +177,4 @@ class ChatSelect extends LitElement {
     }
 }
 
-window.customElements.define('chat-select', ChatSelect)
+window.customElements.define('chat-side-nav-heads', ChatSideNavHeads)

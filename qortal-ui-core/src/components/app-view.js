@@ -55,6 +55,8 @@ class AppView extends connect(store)(LitElement) {
                     background: var(--sidetopbar);
                     color: var(--black);
                     border-top: var(--border);
+                    height: 48px;
+                    padding: 3px;
                 }
 
                 #sideBar {
