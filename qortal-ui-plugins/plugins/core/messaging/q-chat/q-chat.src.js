@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { render } from 'lit/html.js';
 import { Epml } from '../../../../epml.js';
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate';
-import WebWorker from 'web-worker:./computePowWorker.js';
+import WebWorker from 'web-worker:./computePowWorker.src.js';
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
