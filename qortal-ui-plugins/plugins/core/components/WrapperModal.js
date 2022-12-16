@@ -5,7 +5,8 @@ import { wrapperModalStyles } from './WrapperModal-css.js'
 export class WrapperModal extends LitElement {
   static get properties() {
 		return {
-      removeImage: { type: Function },
+      onClickFunc: { attribute: false },
+      closePrivateMessage: { attribute: false },
     }
 	}
 
@@ -15,7 +16,7 @@ export class WrapperModal extends LitElement {
     return html`
       <div>
         <div class="backdrop" @click=${() => {
-          this.removeImage()
+            this.onClickFunc();
         }}></div>
           <div class="modal-body">
             <slot></slot>

@@ -1,23 +1,24 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-import WebWorker from 'web-worker:../../components/computePowWorker.js';
+import { LitElement, html, css } from 'lit';
+import { render } from 'lit/html.js';
+import { Epml } from '../../../../epml.js';
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate';
+import WebWorker from 'web-worker:./computePowWorker.js';
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-import '../../components/ChatWelcomePage.js'
-import '../../components/ChatHead.js'
-import '../../components/ChatPage.js'
-import snackbar from '../../components/snackbar.js'
-import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@material/mwc-button'
-import '@material/mwc-dialog'
-import '@material/mwc-icon'
-import '@material/mwc-snackbar'
-import '@vaadin/grid'
+import '../../components/ChatWelcomePage.js';
+import '../../components/ChatHead.js';
+import '../../components/ChatPage.js';
+import '../../components/WrapperModal.js';
+import snackbar from '../../components/snackbar.js';
+import '@polymer/paper-spinner/paper-spinner-lite.js';
+import '@material/mwc-button';
+import '@material/mwc-dialog';
+import '@material/mwc-icon';
+import '@material/mwc-snackbar';
+import '@vaadin/grid';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -39,7 +40,8 @@ class Chat extends LitElement {
             privateMessagePlaceholder: { type: String},
             chatEditor: { type:  Object },
             imageFile: { type: Object },
-            activeChatHeadUrl: {type: String}
+            activeChatHeadUrl: {type: String},
+            openPrivateMessage: { type: Boolean }
         }
     }
 
@@ -303,6 +305,54 @@ class Chat extends LitElement {
                 resize: none;
                 background: #eee;
             }
+
+            .dialog-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                padding: 0 10px;
+                gap: 10px;
+                height: 100%;
+            }
+            .modal-button-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            }
+
+            .modal-button {
+                font-family: Roboto, sans-serif;
+                font-size: 16px;
+                color: var(--mdc-theme-primary);
+                background-color: transparent;
+                padding: 8px 10px;
+                border-radius: 5px;
+                border: none;
+                transition: all 0.3s ease-in-out;
+            }
+
+            .modal-button-red {
+                font-family: Roboto, sans-serif;
+                font-size: 16px;
+                color: #F44336;
+                background-color: transparent;
+                padding: 8px 10px;
+                border-radius: 5px;
+                border: none;
+                transition: all 0.3s ease-in-out;
+                }
+
+            .modal-button-red:hover {
+                cursor: pointer;
+                background-color: #f4433663;
+                }
+
+            .modal-button:hover {
+                cursor: pointer;
+                background-color: #03a8f475;
+            }
     `
     }
 
@@ -334,6 +384,7 @@ class Chat extends LitElement {
         this.privateMessagePlaceholder = ""
         this.imageFile = null
         this.activeChatHeadUrl = ''
+        this.openPrivateMessage = false
     }
 
   async setActiveChatHeadUrl(url) {
@@ -347,7 +398,10 @@ class Chat extends LitElement {
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
                     <div class="search">
-                        <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>${translate("chatpage.cchange1")}</div>
+                        <div class="create-chat" @click=${() => {
+                            this.openPrivateMessage = true;
+                            }}>${translate("chatpage.cchange1")}
+                            </div>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
@@ -371,51 +425,65 @@ class Chat extends LitElement {
                 </div>
 
                 <!-- Start Chatting Dialog -->
-                <mwc-dialog id="startChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
-                    <div style="text-align:center">
-                        <h1>${translate("chatpage.cchange1")}</h1>
-                        <hr>
-                    </div>
-
-                    <p>${translate("chatpage.cchange6")}</p>
-
-                    <textarea 
-                        class="input" 
-                        ?disabled=${this.isLoading} 
-                        id="sendTo" 
-                        placeholder="${translate("chatpage.cchange7")}" 
-                        rows="1">
-                    </textarea>
-
-                    <chat-text-editor 
-                        id="messageBox"
-                        iframeId="privateMessage" 
-                        ?hasGlobalEvents=${true}
-                        placeholder="${translate("chatpage.cchange8")}"
-                        .setChatEditor=${(editor)=> this.setChatEditor(editor)}
-                        .chatEditor=${this.chatEditor}
-                        .imageFile=${this.imageFile}.
-                        ._sendMessage=${this._sendMessage}
-                        .insertImage=${this.insertImage}
-                        ?isLoading=${this.isLoading}>
-                    </chat-text-editor>
-                    
-                    <mwc-button
-                        ?disabled="${this.isLoading}"
-                        slot="primaryAction"
-                        @click=${this.sendMessageFunc}
-                    >
-                        ${this.isLoading === false ? this.renderSendText() : html`<paper-spinner-lite active></paper-spinner-lite>`}
-                    </mwc-button>
-                    <mwc-button
-                        ?disabled="${this.isLoading}"
-                        slot="secondaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                        ${translate("general.close")}
-                   </mwc-button>
-                </mwc-dialog>
+                <wrapper-modal 
+                    .onClickFunc=${() => {
+                        this.chatEditor.resetValue();
+                        this.openPrivateMessage = false;
+                    } } 
+                    style=${this.openPrivateMessage ? "display: block" : "display: none"}>
+                    <div>
+                        <div class="dialog-container">
+                            <div style="text-align: center">
+                                <h1>${translate("chatpage.cchange1")}</h1>
+                                <hr>
+                            </div>
+                            <p>${translate("chatpage.cchange6")}</p>
+                            <textarea 
+                                class="input" 
+                                ?disabled=${this.isLoading} 
+                                id="sendTo" 
+                                placeholder="${translate("chatpage.cchange7")}" 
+                                rows="1">
+                            </textarea>
+                            <chat-text-editor 
+                                iframeId="privateMessage" 
+                                ?hasGlobalEvents=${false}
+                                placeholder="${translate("chatpage.cchange8")}"
+                                .setChatEditor=${(editor)=> this.setChatEditor(editor)}
+                                .chatEditor=${this.chatEditor}
+                                .imageFile=${this.imageFile}
+                                ._sendMessage=${this._sendMessage}
+                                .insertImage=${this.insertImage}
+                                ?isLoading=${this.isLoading}
+                                .isLoadingMessages=${false}
+                                id="messageBox"
+                                >
+                            </chat-text-editor>
+                            <div class="modal-button-row">
+                                <button 
+                                    class="modal-button-red" 
+                                    @click=${() => {
+                                    this.chatEditor.resetValue();
+                                    this.openPrivateMessage = false;
+                                    }}
+                                    ?disabled="${this.isLoading}"
+                                >
+                                    ${translate("chatpage.cchange33")}
+                                </button>
+                                <button
+                                    class="modal-button"
+                                    @click=${this.sendMessageFunc}
+                                    ?disabled="${this.isLoading}">
+                                        ${this.isLoading === false 
+                                        ? this.renderSendText() 
+                                        : html`
+                                            <paper-spinner-lite active></paper-spinner-lite>
+                                        `}
+                                </button>
+                            </div>
+                        </div>
+                    </div>    	
+                </wrapper-modal>
 
                 <!-- Blocked User Dialog -->
                 <mwc-dialog id="blockedUserDialog">
@@ -574,14 +642,12 @@ class Chat extends LitElement {
     }
 
     async _sendMessage() { 
-        console.log("here1");
         this.isLoading = true;
         this.chatEditor.disable();
         const messageText = this.chatEditor.mirror.value;
         // Format and Sanitize Message
         const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
-      
         if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
             this.chatEditor.enable();
@@ -595,11 +661,9 @@ class Chat extends LitElement {
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject);
         }
-        console.log("here2");
     }
       
       async sendMessage(messageText) {
-        console.log("here3");
         this.isLoading = true;
       
         const _recipient = this.shadowRoot.getElementById('sendTo').value;
@@ -644,6 +708,7 @@ class Chat extends LitElement {
                 _publicKey = false;
                 let err4string = get("chatpage.cchange19");
                 parentEpml.request('showSnackBar', `${err4string}`);
+                this.chatEditor.enable();
                 this.isLoading = false;
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1;
@@ -674,7 +739,6 @@ class Chat extends LitElement {
                     isText: 1
                 }
             });
-            console.log({chatResponse});
             
             _computePow(chatResponse);
     };
@@ -682,17 +746,11 @@ class Chat extends LitElement {
         const _computePow = async (chatBytes) => {
             const difficulty = this.balance === 0 ? 12 : 8;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full';
-            console.log("here4");
             const worker = new WebWorker();
-            console.log("here5");
             let nonce = null;
             let chatBytesArray = null;
               await new Promise((res, rej) => {
-                console.log(chatBytes, "chatBytes");
-                console.log(path, "path");
-                console.log(difficulty, "difficulty");
                 worker.postMessage({chatBytes, path, difficulty});
-            
                 worker.onmessage = e => {
                   worker.terminate();
                   chatBytesArray = e.data.chatBytesArray;
@@ -712,6 +770,9 @@ class Chat extends LitElement {
       
         const getSendChatResponse = (response) => {
             if (response === true) {
+                this.setActiveChatHeadUrl(`direct/${recipient}`);
+                this.shadowRoot.getElementById('sendTo').value = "";
+                this.openPrivateMessage = false;
                 this.chatEditor.resetValue();
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);

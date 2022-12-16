@@ -174,9 +174,12 @@ class ChatTextEditor extends LitElement {
             <div 
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
              style="${scrollHeightBool ? 'align-items: flex-end' : "align-items: center"}">
-                <div class="file-picker-container" @click=${(e) => {
-                    this.preventUserSendingImage(e)
-                }}>
+                <div 
+                    style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
+                    class="file-picker-container" 
+                    @click=${(e) => {
+                        this.preventUserSendingImage(e)
+                    }}>
                     <vaadin-icon
                         class="paperclip-icon"
                         icon="vaadin:paperclip"
@@ -328,7 +331,10 @@ class ChatTextEditor extends LitElement {
         });
 
 
-        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
+        this.emojiPickerHandler.addEventListener('click', () => {
+            console.log("yo what's up?")
+            this.emojiPicker.togglePicker(this.emojiPickerHandler)
+        });
 
         await this.updateComplete;
         this.initChatEditor();
@@ -366,6 +372,7 @@ class ChatTextEditor extends LitElement {
             return;
         };
         this.chatMessageSize = 0;
+        this.chatEditor.updateMirror();
         this._sendMessage();
     }
 
@@ -693,11 +700,10 @@ class ChatTextEditor extends LitElement {
                                 }, 0);
                                 res();
                             })
+
                              // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
-                                // Update Mirror
-                                editor.updateMirror();
 
                                 if (editor.state() === 'false') return false;
                                 if (editorConfig.iframeId === 'newChat') {

@@ -673,9 +673,9 @@ class ChatPage extends LitElement {
             </div>
 			`: ''}
                 <wrapper-modal 
-                .removeImage=${() => {
-                    this.chatEditorNewChat.resetValue()
-                    this.removeImage()
+                .onClickFunc=${() => {
+                    this.chatEditorNewChat.resetValue();
+                    this.removeImage();
                 } } 
                 style=${(this.imageFile && !this.isUploadingImage) ? "display: block" : "display: none"}>
                     <div>
@@ -724,7 +724,7 @@ class ChatPage extends LitElement {
                 </div>    	
             </wrapper-modal>
             <wrapper-modal 
-                .removeImage=${() => {
+                .onClickFunc=${() => {
                    this.openForwardOpen = false
                    this.forwardActiveChatHeadUrl = ""
                 } } 
