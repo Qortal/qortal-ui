@@ -331,10 +331,7 @@ class ChatTextEditor extends LitElement {
         });
 
 
-        this.emojiPickerHandler.addEventListener('click', () => {
-            console.log("yo what's up?")
-            this.emojiPicker.togglePicker(this.emojiPickerHandler)
-        });
+        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
 
         await this.updateComplete;
         this.initChatEditor();
