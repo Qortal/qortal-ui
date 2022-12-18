@@ -341,7 +341,7 @@ export const qchatStyles = css`
     background: none;
     border-radius: 50%;
     padding: 6px 3px;
-    font-size: 19px;
+    font-size: 21px;
   }
 
   .search-icon:hover {
@@ -353,5 +353,16 @@ export const qchatStyles = css`
     position: absolute;
     top: 25px;
     right: 25px;
+  }
+
+  .user-verified {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #04aa2e;
+    font-size: 13px;
   }
 `

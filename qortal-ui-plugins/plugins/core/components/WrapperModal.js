@@ -6,7 +6,6 @@ export class WrapperModal extends LitElement {
   static get properties() {
 		return {
       onClickFunc: { attribute: false },
-      closePrivateMessage: { attribute: false },
     }
 	}
 

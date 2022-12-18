@@ -44,7 +44,9 @@ class Chat extends LitElement {
             imageFile: { type: Object },
             activeChatHeadUrl: {type: String},
             openPrivateMessage: { type: Boolean },
-            userFound: { type: Array} 
+            userFound: { type: Array},
+            userFoundModalOpen: { type: Boolean },
+            userSelected: { type: String}
         }
     }
 
@@ -81,6 +83,8 @@ class Chat extends LitElement {
         this.activeChatHeadUrl = ''
         this.openPrivateMessage = false
         this.userFound = []
+        this.userFoundModalOpen = false
+        this.userSelected = ''
     }
 
   async setActiveChatHeadUrl(url) {
@@ -90,7 +94,7 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log(6, "here");
+        console.log(22, "here");
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -126,6 +130,9 @@ class Chat extends LitElement {
                     .onClickFunc=${() => {
                         this.chatEditor.resetValue();
                         this.openPrivateMessage = false;
+                        this.shadowRoot.getElementById('sendTo').value = "";
+                        this.userFoundModalOpen = false;
+                        this.userFound = [];
                     } } 
                     style=${this.openPrivateMessage ? "display: block" : "display: none"}>
                     <div style=${"position: relative"}>
@@ -142,13 +149,26 @@ class Chat extends LitElement {
                                     ?disabled=${this.isLoading} 
                                     id="sendTo" 
                                     placeholder="${translate("chatpage.cchange7")}" 
+                                    value=${this.userSelected}
+                                    @keypress=${() => this.userSelected = ""}
                                 />
-                                <vaadin-icon 
-                                    @click=${this.userSearch}
-                                    slot="icon" 
-                                    icon="vaadin:search"
-                                    class="search-icon">
-                                </vaadin-icon>
+                                ${this.userSelected ? (
+                                    html`
+                                    <div class="user-verified">
+                                        <p >User Verified</p>
+                                        <vaadin-icon icon="vaadin:check-circle-o" slot="icon"></vaadin-icon>
+                                    </div>
+                                    `
+                                ) : (
+                                    html`                                    
+                                    <vaadin-icon 
+                                        @click=${this.userSearch}
+                                        slot="icon" 
+                                        icon="vaadin:open-book"
+                                        class="search-icon">
+                                    </vaadin-icon>
+                                    `
+                                )}
                             </div>
                             
                             <chat-text-editor 
@@ -189,15 +209,20 @@ class Chat extends LitElement {
                             </div>
                         </div>
                         <div class="search-results-div">
-                            ${this.userFound.length > 0 ? (
-                                html`
-                                <chat-search-results 
-                                    .onClickFunc=${() => console.log('user selected')}
-                                    .searchResults=${this.userFound}
-                                    ?loading=${this.isLoading}>
-                                </chat-search-results>
-                                `
-                            ) : null}
+                            <chat-search-results 
+                                .onClickFunc=${(result) => {
+                                    this.userSelected = result;
+                                    this.userFound = [];
+                                    this.userFoundModalOpen = false;
+                                }}
+                                .closeFunc=${() => {
+                                    this.userFoundModalOpen = false;
+                                    this.userFound = [];
+                                }}
+                                .searchResults=${this.userFound}
+                                ?isOpen=${this.userFoundModalOpen}
+                                ?loading=${this.isLoading}>
+                            </chat-search-results>
                         </div>
                     </div>    	
                 </wrapper-modal>
@@ -255,6 +280,7 @@ class Chat extends LitElement {
         const nameInput = this.shadowRoot.getElementById('sendTo');
 
         nameInput.addEventListener('keydown', stopKeyEventPropagation);
+
         this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
 
         // let typingTimer;                
@@ -372,21 +398,36 @@ class Chat extends LitElement {
         if (changedProperties && changedProperties.has('userFound')) {
             console.log(this.userFound, "user found array here");
         }
+        if (changedProperties && changedProperties.has('userSelected')) {
+            console.log(this.userSelected, "user selected here");
+        }
     }
 
    async userSearch() {
+    const nameValue = this.shadowRoot.getElementById('sendTo').value;
+        if(!nameValue) {
+            this.userFound = [];
+            this.userFoundModalOpen = true;
+            return;
+        }
         try {
-            let result = await parentEpml.request('apiCall', {
+            const result = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/names/${this.shadowRoot.getElementById('sendTo').value}`
+                url: `/names/${nameValue}`
             })
-            console.log({result});
-            this.userFound = [
-                ...this.userFound, 
-                result.owner,
-              ];
+            if (result.error === 401) {
+                this.userFound = [];
+            } else {
+                this.userFound = [
+                    ...this.userFound, 
+                    result.name,
+                  ];
+            }
+            this.userFoundModalOpen = true;
         } catch (error) {
             console.error(error);
+            let err4string = get("chatpage.cchange35");
+            parentEpml.request('showSnackBar', `${err4string}`)
         }
     }
 
