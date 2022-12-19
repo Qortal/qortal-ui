@@ -1,11 +1,12 @@
-const { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, dialog, webContents } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, dialog, webContents, nativeTheme } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const server = require('./server.js')
 const log = require('electron-log')
 const path = require('path')
 const i18n = require("./lib/i18n.js")
 
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512')
+app.disableHardwareAcceleration()
+app.enableSandbox()
 
 process.env['APP_PATH'] = app.getAppPath()
 
@@ -41,14 +42,6 @@ const editMenu = Menu.buildFromTemplate([
 
 Menu.setApplicationMenu(editMenu)
 
-let myWindow = null;
-
-const APP_ICON = path.join(__dirname, 'img', 'icons')
-
-const iconPath = () => {
-	return APP_ICON + (process.platform === 'win32' ? '/ico/256x256.ico' : '/png/256x256.png')
-}
-
 function createWindow() {
 	myWindow = new BrowserWindow({
 		backgroundColor: '#eee',
@@ -56,15 +49,14 @@ function createWindow() {
 		height: 720,
 		minWidth: 700,
 		minHeight: 640,
-		icon: iconPath(),
+		icon: path.join(__dirname + '/img/icons/png/256x256.png'),
 		title: "Qortal UI",
 		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: false,
+			nodeIntegrationInWorker: true,
 			partition: 'persist:webviewsession',
-			enableRemoteModule: false,
-                  nativeWindowOpen: false,
-			sandbox: true
+			enableRemoteModule: false
 		},
 		show: false
 	})
@@ -74,14 +66,26 @@ function createWindow() {
 	myWindow.on('closed', function () {
 		myWindow = null
 	})
-	myWindow.on('minimize',function(event) {
+	myWindow.on('minimize', function (event) {
 		event.preventDefault()
 		myWindow.hide()
+	})
+	ipcMain.handle('dark-mode:toggle', () => {
+		if (nativeTheme.shouldUseDarkColors) {
+			nativeTheme.themeSource = 'light'
+		} else {
+			nativeTheme.themeSource = 'dark'
+		}
+		return nativeTheme.shouldUseDarkColors
+	})
+
+	ipcMain.handle('dark-mode:system', () => {
+		nativeTheme.themeSource = 'system'
 	})
 }
 
 const createTray = () => {
-	let myTray = new Tray(__dirname + '/img/icons/png/tray/tray.png')
+	let myTray = new Tray(path.join(__dirname + '/img/icons/png/tray/tray.png'))
 	const contextMenu = Menu.buildFromTemplate([
 		{
 			label: `Qortal UI v${app.getVersion()}`,
@@ -99,7 +103,7 @@ const createTray = () => {
 		},
 		{
 			label: i18n.__("electron_translate_2"),
-			click() {
+			click: function () {
 				myTray.destroy()
 				app.quit()
 			},
@@ -116,14 +120,7 @@ const isLock = app.requestSingleInstanceLock()
 if (!isLock) {
 	app.quit()
 } else {
-	app.on('second-instance', (event, cmd, dir) => {
-		if (myWindow) {
-			if (myWindow.isMinimized()) myWindow.restore()
-			myWindow.focus()
-		}
-	})
-	app.allowRendererProcessReuse = true
-	app.on('ready', () => {
+	app.whenReady().then(() => {
 		createWindow();
 		createTray();
 		if (process.platform === 'win32') {
@@ -133,16 +130,16 @@ if (!isLock) {
 		setInterval(() => {
 			autoUpdater.checkForUpdatesAndNotify()
 		}, 1000 * 60 * 720)
+		app.on('activate', function () {
+			if (BrowserWindow.getAllWindows().length === 0) {
+				createWindow()
+				createTray()
+			}
+		})
 	})
 	app.on('window-all-closed', function () {
 		if (process.platform !== 'darwin') {
 			app.quit();
-		}
-	})
-	app.on('activate', function () {
-		if (myWindow === null) {
-			createWindow()
-			createTray()
 		}
 	})
 	ipcMain.on('app_version', (event) => {
@@ -194,5 +191,8 @@ if (!isLock) {
 			body: err
 		})
 		n.show()
+	})
+	process.on('uncaughtException', function (err) {
+		log.info("***WHOOPS TIME****"+err)
 	})
 }
