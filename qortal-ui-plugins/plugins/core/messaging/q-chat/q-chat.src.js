@@ -56,31 +56,26 @@ class Chat extends LitElement {
                 --_lumo-grid-secondary-border-color: var(--border2);
                 --mdc-dialog-min-width: 750px;
             }
-
             paper-spinner-lite {
                 height: 24px;
                 width: 24px;
                 --paper-spinner-color: var(--mdc-theme-primary);
                 --paper-spinner-stroke-width: 2px;
             }
-
             *,
             *:before,
             *:after {
                 box-sizing: border-box;
             }
-
             ul {
                 list-style: none;
                 padding: 0;
             }
-
             .container {
                 margin: 0 auto;
                 width: 100%;
                 background: var(--white);
             }
-
             .people-list {
                 width: 20vw;
                 float: left;
@@ -88,7 +83,6 @@ class Chat extends LitElement {
                 overflow-y: hidden;
                 border-right: 3px #ddd solid;
             }
-
             .people-list .blockedusers {
                 position: absolute;
                 bottom: 0;
@@ -98,13 +92,11 @@ class Chat extends LitElement {
                 border-top: 1px solid var(--border);
                 border-right: 3px #ddd solid;
             }
-
             .people-list .search {
                 padding-top: 20px;
                 padding-left: 20px;
                 padding-right: 20px;
             }
-
             .center {
                 margin: 0;
                 position: absolute;
@@ -113,7 +105,6 @@ class Chat extends LitElement {
                 -ms-transform: translateX(-50%);
                 transform: translateX(-50%);
             }
-
             .people-list .create-chat {
                 border-radius: 5px;
                 border: none;
@@ -126,19 +117,16 @@ class Chat extends LitElement {
                 text-align: center;
                 cursor: pointer;
             }
-
             .people-list .create-chat:hover {
                 opacity: .8;
                 box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
             }
-
             .people-list ul {
                 padding: 0;
                 height: 85vh;
                 overflow-y: auto;
                 overflow-x: hidden;     
             }
-
             .chat {
                 width: 80vw;
                 height: 100vh;
@@ -149,7 +137,6 @@ class Chat extends LitElement {
                 color: #434651;
                 box-sizing: border-box;
             }
-
             .chat .new-message-bar {
                 display: flex;
                 flex: 0 1 auto;
@@ -172,17 +159,14 @@ class Chat extends LitElement {
                 opacity: .85;
                 cursor: pointer;
             }
-
             .chat .new-message-bar:hover {
                 opacity: .75;
                 transform: translateY(-1px);
                 box-shadow: 0 3px 7px rgba(0, 0, 0, .2);
             }
-
             .hide-new-message-bar {
                 display: none !important;
             }
-
             .chat .chat-history {
                 position: absolute;
                 top: 0;
@@ -194,7 +178,6 @@ class Chat extends LitElement {
                 height: 100vh;
                 box-sizing: border-box;
             }
-
             .chat .chat-message {
                 padding: 10px;
                 height: 10%;
@@ -202,7 +185,6 @@ class Chat extends LitElement {
                 width: 100%;
                 background-color: #eee;
             }
-
             .chat .chat-message textarea {
                 width: 90%;
                 border: none;
@@ -211,7 +193,6 @@ class Chat extends LitElement {
                 border-radius: 5px;
                 resize: none;
             }
-
             .chat .chat-message button {
                 float: right;
                 color: #94c2ed;
@@ -225,18 +206,15 @@ class Chat extends LitElement {
                 margin-top: 4px;
                 margin-right: 4px;
             }
-
             .chat .chat-message button:hover {
                 color: #75b1e8;
             }
-
             .online,
             .offline,
             .me {
                 margin-right: 3px;
                 font-size: 10px;
             }
-
             .clearfix:after {
                 visibility: hidden;
                 display: block;
@@ -245,37 +223,30 @@ class Chat extends LitElement {
                 clear: both;
                 height: 0;
             }
-
             .red {
                 --mdc-theme-primary: red;
             }
-
             h2 {
                 margin:0;
             }
-
             h2, h3, h4, h5 {
                 color: var(--black);
                 font-weight: 400;
             }
-
             [hidden] {
                 display: hidden !important;
                 visibility: none !important;
             }
-
             .details {
                 display: flex;
                 font-size: 18px;
             }
-
             .title {
                 font-weight:600;
                 font-size:12px;
                 line-height: 32px;
                 opacity: 0.66;
             }
-
             .input {
                 width: 100%;
                 border: none;
@@ -286,7 +257,6 @@ class Chat extends LitElement {
                 resize: none;
                 background: #eee;
             }
-
             .textarea {
                 width: 100%;
                 border: none;
@@ -342,7 +312,6 @@ class Chat extends LitElement {
                         </div>
                     </div>
                 </div>
-
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
                         <span style="flex: 1;">${translate("chatpage.cchange4")}</span>
@@ -352,21 +321,17 @@ class Chat extends LitElement {
                         ${window.parent.location.pathname !== "/app/q-chat" ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
                     </div>
                 </div>
-
                 <!-- Start Chatting Dialog -->
                 <mwc-dialog id="startChatDialog" scrimClickAction="${this.isLoading ? '' : 'close'}">
                     <div style="text-align:center">
                         <h1>${translate("chatpage.cchange1")}</h1>
                         <hr>
                     </div>
-
                     <p>${translate("chatpage.cchange6")}</p>
-
                     <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="${translate("chatpage.cchange7")}" rows="1"></textarea>
                     <p style="margin-bottom:0;">
                         <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("chatpage.cchange8")}" rows="1"></textarea>
                     </p>
-
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
@@ -383,7 +348,6 @@ class Chat extends LitElement {
                     ${translate("general.close")}
                    </mwc-button>
                 </mwc-dialog>
-
                 <!-- Blocked User Dialog -->
                 <mwc-dialog id="blockedUserDialog">
                     <div style="text-align:center">
@@ -846,7 +810,7 @@ class Chat extends LitElement {
 
             hashAry.set(chatBytesHash);
 
-            const difficulty = this.balance === 0 ? 12 : 8
+            const difficulty = this.balance < 4 ? 18 : 8
 
             const workBufferLength = 8 * 1024 * 1024;
             const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
