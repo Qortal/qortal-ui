@@ -6,6 +6,7 @@ export class WrapperModal extends LitElement {
   static get properties() {
 		return {
       removeImage: { type: Function },
+      customStyle: {type: String}
     }
 	}
 
@@ -17,7 +18,7 @@ export class WrapperModal extends LitElement {
         <div class="backdrop" @click=${() => {
           this.removeImage()
         }}></div>
-          <div class="modal-body">
+          <div class="modal-body" style=${this.customStyle ? this.customStyle : ""}>
             <slot></slot>
           </div>
       </div>

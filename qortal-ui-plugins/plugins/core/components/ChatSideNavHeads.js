@@ -124,7 +124,7 @@ class ChatSideNavHeads extends LitElement {
         }
 
         return html`
-            <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix">
+            <li @click=${() => this.getUrl(this.chatInfo)} class="clearfix">
                 ${this.isImageLoaded ? html`${avatarImg}` : html`` }
                 ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
                 ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}

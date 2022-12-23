@@ -10,6 +10,7 @@ registerTranslateConfig({
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
+import '../../components/ChatGroupsManagement.js'
 import snackbar from '../../components/snackbar.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
@@ -342,6 +343,7 @@ class Chat extends LitElement {
                 <div class="people-list" id="people-list">
                     <div class="search">
                         <div class="create-chat" @click=${() => this.shadowRoot.querySelector('#startChatDialog').show()}>${translate("chatpage.cchange1")}</div>
+                        <chat-groups-management></chat-groups-management>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}

@@ -662,6 +662,7 @@ class ChatMenu extends LitElement {
     }
 
     render() {
+        console.log(this.messages, 'this.messages')
         return html` 
             <div class="container">
             <div 

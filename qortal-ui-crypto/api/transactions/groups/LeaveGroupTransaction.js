@@ -58,6 +58,7 @@ export default class LeaveGroupTransaction extends TransactionBase {
             this._rGroupIdBytes,
             this._feeBytes
         )
+        console.log('check exec params2', params)
         return params;
     }
 }

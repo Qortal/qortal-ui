@@ -3,6 +3,8 @@ import { render } from 'lit/html.js';
 import {animate} from '@lit-labs/motion';
 import { Epml } from '../../../epml.js';
 import { use, get, translate, registerTranslateConfig } from 'lit-translate';
+import { chatStyles } from './ChatScroller-css.js'
+
 // import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -20,6 +22,8 @@ import './WrapperModal';
 import './ChatSelect.js'
 import './ChatSideNavHeads.js'
 import './ChatLeaveGroup.js'
+import './ChatGroupSettings.js'
+import './ChatRightPanel.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
@@ -615,29 +619,35 @@ class ChatPage extends LitElement {
         this.groupMembers = []
         this.shifted = false
         this.groupInfo = {}
+        this.pageNumber = 1
     }
 
-    _toggle() {
-        this.shifted = !this.shifted;
+    _toggle(value) {
+        console.log('toggel', value, this.shifted)
+        this.shifted = value === (false || true) ? value : !this.shifted;
+        this.requestUpdate()
       }
     
     render() {
-        console.log('this.chatHeads', this.chatHeads)
+        console.log('this._chatId', this._chatId)
         return html`
             <div class="main-container">
             <div class="chat-container">
+                ${(!this.isReceipient && +this._chatId !== 0) ? html`
                 <div style="display:flex; height:40px; padding:3px; margin:0px;background-color: var(--chat-bubble-bg); box-sizing: border-box; align-items: center;justify-content: space-between">
-                <div>
-                <p style="color: var(--black);margin:0px;padding:0px">Name</p>
+                <div @click=${this._toggle} style="height: 100%;display: flex;align-items: center;flex-grow: 1;cursor: pointer;cursor:pointer;user-select:none">
+                <p style="color: var(--black);margin:0px;padding:0px">${this.groupInfo && this.groupInfo.groupName}</p>
                 </div>
                    <div style="display:flex;height:100%;align-items:center">
                     <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
-                    <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:cog" slot="icon"></vaadin-icon>
-                    <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon>
+                    <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings>
+                    <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon> -->
                     <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
                     <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group>
                     </div>
                 </div>
+                ` : html`<div></div>`}
+               
                 <div>
                     ${this.isLoadingMessages ? 
                         html`
@@ -829,34 +839,42 @@ class ChatPage extends LitElement {
                 </div>    	
             </wrapper-modal>
         </div>
-        <div class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
-                <p>Exit Icon</p>
-                <span>Group Avatar</span> <p>Group Name</p>
-                <p>Group owner</p>
-                <p>100 Members</p>
-                <p>Description</p>
-                <p>date created</p>
-                <p>private / public</p>
-                <p>approvalThreshold</p>
-                <p>"minimumBlockDelay": 0, "maximumBlockDelay": 0</p>
-                <p class="chat-right-panel-label">Admins</p>
-                ${this.groupAdmin.map((item)=> {
-                                return html`<chat-side-nav-heads activeChatHeadUrl="" setActiveChatHeadUrl=${(val)=> {
-                                    
-                                }} chatInfo=${JSON.stringify(item)}></chat-side-nav-heads>`
-                             })}
-                
-                <p class="chat-right-panel-label">Members</p>
-                ${this.groupAdmin.map((item)=> {
-                                return html`<chat-side-nav-heads activeChatHeadUrl="" setActiveChatHeadUrl=${(val)=> {
-                                    
-                                }} chatInfo=${JSON.stringify(item)}></chat-side-nav-heads>`
-                             })}
-            </div>
-
+        <div  class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
+               <chat-right-panel .getMoreMembers=${(val)=> this.getMoreMembers(val)} .toggle=${(val)=> this._toggle(val)} .selectedAddress=${this.selectedAddress} .groupMembers=${this.groupMembers} .groupAdmin=${this.groupAdmin} .leaveGroupObj=${this.groupInfo}></chat-right-panel>
            
             </div>
+            </div>
         `
+    }
+
+    async getMoreMembers(groupId){
+        console.log('getMoreMembers', groupId)
+        try {
+            const getMembers = await parentEpml.request("apiCall", {
+                type: "api",
+                url: `/groups/members/${groupId}?onlyAdmins=false&limit=20&offset=${this.pageNumber * 20}`,
+            });
+        
+            const getMembersWithName = (getMembers.members || []).map(async (member) => {
+                let memberItem = member
+                try {
+                  const name =  await this.getName(member.member)
+                   memberItem = {
+                    address: member.member,
+                    name: name ? name : undefined
+                  }
+                } catch (error) {
+                    console.log(error)
+                }
+        
+                return memberItem
+            })
+            const membersWithName = await Promise.all(getMembersWithName)
+            this.groupMembers = membersWithName
+            this.pageNumber = this.pageNumber + 1
+        } catch (error) {
+          
+        }
     }
 
     setForwardProperties(forwardedMessage){
@@ -957,6 +975,7 @@ class ChatPage extends LitElement {
             this.webSocket.close()
             this.webSocket= ''
         }
+        this.pageNumber = 1
         const getAddressPublicKey = () => {
 
             parentEpml.request('apiCall', {
@@ -1006,7 +1025,7 @@ class ChatPage extends LitElement {
             try {
                 const getMembers = await parentEpml.request("apiCall", {
 					type: "api",
-					url: `/groups/members/${groupId}?onlyAdmins=false&limit=20`,
+					url: `/groups/members/${groupId}?onlyAdmins=false&limit=20&offset=0`,
 				});
                 const getMembersAdmins = await parentEpml.request("apiCall", {
 					type: "api",
@@ -1404,6 +1423,7 @@ async getName (recipient) {
         let decodedMessageObj = {};
 
         if (isReceipientVar === true) {
+            console.log('encoded', encodedMessageObj.isEncrypted, _publicKeyVar.hasPubKey,encodedMessageObj.data)
             // direct chat
             if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
                 let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);

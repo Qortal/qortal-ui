@@ -10,6 +10,7 @@ export const wrapperModalStyles = css`
     background: rgb(186 186 186 / 26%);
     overflow: hidden;
     animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards; 
+    z-index: 50
   }
 
   .modal-body {
@@ -29,6 +30,7 @@ export const wrapperModalStyles = css`
     overflow-y: auto;
     animation: 1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;
     max-height: 80%;
+    z-index: 51
   }
 
   @keyframes backdrop_blur {

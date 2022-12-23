@@ -8,9 +8,16 @@ import '@material/mwc-dialog';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon';
 import './WrapperModal';
+import '@vaadin/tabs'
+import '@vaadin/tabs/theme/material/vaadin-tabs.js';
+import '@vaadin/avatar';
+import '@vaadin/grid';
+import '@vaadin/grid/vaadin-grid-filter-column.js';
+import { columnBodyRenderer } from '@vaadin/grid/lit.js';
+
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-class ChatLeaveGroup extends LitElement {
+class ChatGroupsManagement extends LitElement {
   static get properties() {
     return {
       isLoading: { type: Boolean },
@@ -20,7 +27,9 @@ class ChatLeaveGroup extends LitElement {
       message: {type: String},
       chatHeads: {type: Array},
       setActiveChatHeadUrl: {attribute: false},
-      selectedAddress: {attribute: Object}
+      selectedAddress: {attribute: Object},
+      currentTab: {type: Number},
+      groups: {type: Array}
     }
   }
 
@@ -33,6 +42,8 @@ class ChatLeaveGroup extends LitElement {
     this.error = false
     this.message = ''
     this.chatHeads = []
+    this.currentTab = 0
+    this.groups = []
   }
 
   static get styles() {
@@ -59,8 +70,26 @@ class ChatLeaveGroup extends LitElement {
     `
   }
 
-  firstUpdated() {
+  async getJoinedGroups(){
+    let joinedG = await parentEpml.request('apiCall', {
+        url: `/groups/member/${this.selectedAddress.address}`
+    })
+    return joinedG
+}
+
+ async firstUpdated() {
+
+    try {
+        let _joinedGroups = await this.getJoinedGroups()
+        this.joinedGroups = _joinedGroups
+    } catch (error) {
+        
+    }
     
+    }
+
+    _tabChanged(e) {
+        this.currentTab = e.detail.value
     }
 
     async unitFee() {
@@ -188,6 +217,16 @@ class ChatLeaveGroup extends LitElement {
         validateReceiver()
     }
 
+    nameRenderer(person){
+        console.log({person})
+        return html`
+          <vaadin-horizontal-layout style="align-items: center;display:flex" theme="spacing">
+            <vaadin-avatar style="margin-right:5px" img="${person.pictureUrl}" .name="${person.displayName}"></vaadin-avatar>
+            <span> ${person.displayName} </span>
+          </vaadin-horizontal-layout>
+        `;
+      };
+
   render() {
     return html`
          <vaadin-icon @click=${()=> {
@@ -199,50 +238,37 @@ class ChatLeaveGroup extends LitElement {
                     if(this.isLoading) return
                     this.isOpenLeaveModal = false
                 } } 
+                customStyle=${"width: 90%; max-width: 900px; height: 90%"}
                 style=${(this.isOpenLeaveModal) ? "display: block" : "display: none"}>
-                    <div style="text-align:center">
-                        <h1>${translate("grouppage.gchange35")}</h1>
-                        <hr>
-                    </div>
+             <div style="width: 100%;height: 100%;display: flex; flex-direction: column;background:var(--mdc-theme-surface)">    
+                <div style="height: 50px;display: flex; flex:0">
+                <vaadin-tabs id="tabs" selected="${this.currentTab}" @selected-changed="${this._tabChanged}" style="width: 100%">
+            
+                <vaadin-tab>Groups</vaadin-tab>
+                <vaadin-tab>Group Join Requests</vaadin-tab>
+                <vaadin-tab>Invites</vaadin-tab>
+                <vaadin-tab>Blocked Users</vaadin-tab>
+</vaadin-tabs>
+                </div>
                     
-                    <div class="itemList">
-                        <span class="title">${translate("grouppage.gchange4")}</span>
-                        <br>
-                        <div><span>${this.leaveGroupObj.groupName}</span></div>
-
-                        <span class="title">${translate("grouppage.gchange5")}</span>
-                        <br>
-                        <div><span>${this.leaveGroupObj.description}</span></div>
-
-                        <span class="title">${translate("grouppage.gchange10")}</span>
-                        <br>
-                        <div><span>${this.leaveGroupObj.owner}</span></div>
-
-                        <span class="title">${translate("grouppage.gchange31")}</span>
-                        <br>
-                        <div><span><time-ago datetime=${this.timeIsoString(this.leaveGroupObj.created)}></time-ago></span></div>
-
-                        ${!this.leaveGroupObj.updated ? "" : html`<span class="title">${translate("grouppage.gchange32")}</span>
-                        <br>
-                        <div><span><time-ago datetime=${this.timeIsoString(this.leaveGroupObj.updated)}></time-ago></span></div>`}
-                    </div>
-
-                    <div style="text-align:right; height:36px;">
-                        <span ?hidden="${!this.isLoading}">
-                            <!-- loading message -->
-                            ${translate("grouppage.gchange36")} &nbsp;
-                            <paper-spinner-lite
-                                style="margin-top:12px;"
-                                ?active="${this.isLoading}"
-                                alt="Leaving"
-                            >
-                            </paper-spinner-lite>
-                        </span>
-                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
-                            ${this.message}
-                        </span>
-                    </div>
+                <div style="width: 100%;display: flex; flex-direction: column; flex-grow: 1; overflow:auto;background:var(--mdc-theme-surface)">
+             
+                    ${this.currentTab === 0 ? html`
+                    <div>
                     
+
+                     <!-- Groups tab -->
+                    <!-- Search groups and be able to join -->
+                    <p>Search groups</p>
+                    <!-- Click group and it goes to that group and open right panel and settings -->
+                    <p>Current groups as owner</p>
+                    <p>Current groups as member</p>
+                    </div>
+                    ` : ''}
+                   
+                   
+                </div>
+                <div style="width: 100%;height: 50;display: flex; flex: 0">  
                     <button
                     class="modal-button"
                         ?disabled="${this.isLoading}"
@@ -260,9 +286,11 @@ class ChatLeaveGroup extends LitElement {
                     >
                     ${translate("general.close")}
                     </button>
+                </div>
+                    </div>  
                 </wrapper-modal >
     `;
   }
 }
 
-customElements.define('chat-leave-group', ChatLeaveGroup);
+customElements.define('chat-groups-management', ChatGroupsManagement);

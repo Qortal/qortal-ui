@@ -523,6 +523,7 @@ class GroupManagement extends LitElement {
                     setTimeout(getOpen_JoinedGroups, 1)
                     configLoaded = true
                 }
+                console.log('parse', JSON.parse(c))
                 this.config = JSON.parse(c)
             })
             parentEpml.subscribe('copy_menu_switch', async value => {

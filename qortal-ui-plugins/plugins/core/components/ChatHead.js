@@ -21,7 +21,9 @@ class ChatHead extends LitElement {
     static get styles() {
         return css`
             li {
-                padding: 10px 2px 20px 5px;
+           
+                width: 100%;
+                padding: 7px 5px 7px 5px;
                 cursor: pointer;
                 width: 100%;
             }
