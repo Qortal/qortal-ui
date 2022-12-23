@@ -18,6 +18,20 @@
     url(Montserrat.ttf) format('truetype');
 }
 
+@font-face {
+  font-family: 'KoHo';
+  src: local('KoHo'),
+    local('KoHo'),
+    url(KoHo.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Livvic';
+  src: local('Livvic'),
+    local('Livvic'),
+    url(Livvic.ttf) format('truetype');
+}
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

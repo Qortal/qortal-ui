@@ -363,14 +363,14 @@ class ChatTextEditor extends LitElement {
         return true
       }
 
-    sendMessageFunc() {
+    sendMessageFunc(props) {
         if (this.chatMessageSize > 1000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
             return;
         };
         this.chatMessageSize = 0;
         this.chatEditor.updateMirror();
-        this._sendMessage();
+        this._sendMessage(props);
     }
 
     getMessageSize(message){

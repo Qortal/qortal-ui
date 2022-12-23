@@ -16,7 +16,6 @@ export class ChatSearchResults extends LitElement {
   static styles = [chatSearchResultsStyles]
 
   render() {
-    console.log(10, "search results here");
     return html`
       <div class="chat-results-card" style=${this.isOpen ? "display: block;" : "display: none;"}>
         <vaadin-icon 
@@ -49,7 +48,7 @@ export class ChatSearchResults extends LitElement {
                           this.onClickFunc(result);
                       }}>
                         <p class="chat-result">
-                          ${result}
+                          ${result.name}
                         </p>
                       </div>
                     `

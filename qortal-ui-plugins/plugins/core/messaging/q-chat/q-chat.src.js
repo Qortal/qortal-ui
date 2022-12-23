@@ -42,16 +42,15 @@ class Chat extends LitElement {
             privateMessagePlaceholder: { type: String},
             chatEditor: { type:  Object },
             imageFile: { type: Object },
-            activeChatHeadUrl: {type: String},
+            activeChatHeadUrl: { type: String },
             openPrivateMessage: { type: Boolean },
             userFound: { type: Array},
             userFoundModalOpen: { type: Boolean },
-            userSelected: { type: String}
+            userSelected: { type: Object }
         }
     }
 
  static styles = [qchatStyles]
-
 
     constructor() {
         super()
@@ -84,7 +83,7 @@ class Chat extends LitElement {
         this.openPrivateMessage = false
         this.userFound = []
         this.userFoundModalOpen = false
-        this.userSelected = ''
+        this.userSelected = {}
     }
 
   async setActiveChatHeadUrl(url) {
@@ -94,7 +93,6 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log(22, "here");
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -149,13 +147,16 @@ class Chat extends LitElement {
                                     ?disabled=${this.isLoading} 
                                     id="sendTo" 
                                     placeholder="${translate("chatpage.cchange7")}" 
-                                    value=${this.userSelected}
-                                    @keypress=${() => this.userSelected = ""}
+                                    value=${this.userSelected.name}
+                                    @keypress=${() => {
+                                        this.userSelected = {};
+                                        this.requestUpdate();
+                                        }}
                                 />
-                                ${this.userSelected ? (
+                                ${this.userSelected.name ? (
                                     html`
                                     <div class="user-verified">
-                                        <p >User Verified</p>
+                                        <p >${translate("chatpage.cchange38")}</p>
                                         <vaadin-icon icon="vaadin:check-circle-o" slot="icon"></vaadin-icon>
                                     </div>
                                     `
@@ -198,7 +199,7 @@ class Chat extends LitElement {
                                 </button>
                                 <button
                                     class="modal-button"
-                                    @click=${this.sendMessageFunc}
+                                    @click=${this._sendMessage}
                                     ?disabled="${this.isLoading}">
                                         ${this.isLoading === false 
                                         ? this.renderSendText() 
@@ -394,15 +395,6 @@ class Chat extends LitElement {
         parentEpml.imReady()
     }
 
-    async updated(changedProperties) {
-        if (changedProperties && changedProperties.has('userFound')) {
-            console.log(this.userFound, "user found array here");
-        }
-        if (changedProperties && changedProperties.has('userSelected')) {
-            console.log(this.userSelected, "user selected here");
-        }
-    }
-
    async userSearch() {
     const nameValue = this.shadowRoot.getElementById('sendTo').value;
         if(!nameValue) {
@@ -420,7 +412,7 @@ class Chat extends LitElement {
             } else {
                 this.userFound = [
                     ...this.userFound, 
-                    result.name,
+                    result,
                   ];
             }
             this.userFoundModalOpen = true;
