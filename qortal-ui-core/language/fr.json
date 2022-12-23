@@ -502,7 +502,9 @@
       "cchange21":"Échec de l’envoi, veuillez réessayer...",
       "cchange22":"Chargement des messages...",
       "cchange23":"Impossible de déchiffrer le message!",
-      "cchange24":"Le nombre maximum de caractères par message est 255"
+      "cchange24":"Le nombre maximum de caractères par message est 255",
+      "cchange25":"Votre solde est inférieur à 4,20 QORT",
+      "cchange26":"En raison de la nécessité de lutter contre le spam, les comptes avec un solde Qort inférieur à 4,20 mettront beaucoup de temps à ENVOYER des messages dans Q-Chat. Si vous souhaitez augmenter immédiatement la vitesse d'envoi des messages Q-Chat, obtenez plus de 4,20 QORT à votre adresse. Cela peut être fait avec des métiers dans le portail commercial, ou par le biais d'un autre Qortian vous donnant le QORT. Une fois que vous avez plus de 4,20 QORT dans votre compte, les messages Q-Chat seront instantanés et cette boîte de dialogue ne sera plus Nous vous remercions de votre compréhension de cette méthode de prévention du spam nécessaire, et nous espérons que vous apprécierez Qortal !"
    },
    "welcomepage":{
       "wcchange1":"Bienvenue dans Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Paiements",
       "exp19":"Envoyé",
       "exp20":"Reçu",
-	  "exp21":"Métiers"
+	"exp21":"Métiers"
+   },
+   "managegroup":{
+      "mg1":"Membres du groupe",
+      "mg2":"Inviter au groupe",
+      "mg3":"Administrateurs du groupe",
+      "mg4":"Groupe de mise à jour",
+      "mg5":"Fermer le groupe de gestion",
+      "mg6":"BAN",
+      "mg7":"COUP DE PIED",
+      "mg8":"ID de groupe",
+      "mg9":"Rejoint",
+      "mg10":"Ajouter un administrateur de groupe",
+      "mg11":"Êtes-vous sûr d'ajouter ce membre aux admins ?",
+      "mg12":"En appuyant sur confirmer, une demande d'ajout d'administrateur sera envoyée !",
+      "mg13":"Supprimer l'administrateur du groupe",
+      "mg14":"Supprimer l'adresse administrateur",
+      "mg15":"Êtes-vous sûr de supprimer ce membre des admins ?",
+      "mg16":"En appuyant sur confirmer, la demande de suppression de l'administrateur sera envoyée !",
+      "mg17":"Bannir un membre du groupe",
+      "mg18":"Nom du membre",
+      "mg19":"Adresse du membre",
+      "mg20":"Combien de temps pour interdire",
+      "mg21":"Raison du bannissement",
+      "mg22":"Êtes-vous sûr de bannir ce membre du groupe ?",
+      "mg23":"En appuyant sur confirmer, la demande d'interdiction sera envoyée !",
+      "mg24":"TOUJOURS",
+      "mg25":"Membres bannis",
+      "mg26":"ANNULER L'INTERDICTION",
+      "mg27":"Expiration de l'interdiction",
+      "mg28":"Annuler l'exclusion du membre du groupe",
+      "mg29":"Êtes-vous sûr d'annuler l'exclusion de ce membre du groupe ?",
+      "mg30":"En appuyant sur confirmer, la demande d'annulation du bannissement sera envoyée !",
+      "mg31":"Expulser un membre du groupe",
+      "mg32":"Raison du coup de pied",
+      "mg33":"Êtes-vous sûr d'exclure ce membre du groupe ?",
+      "mg34":"En appuyant sur confirmer, la demande de kick sera envoyée !"
    }
 }

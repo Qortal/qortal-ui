@@ -502,7 +502,9 @@
       "cchange21":"Envio falhou, por favor, tente novamente...",
       "cchange22":"Carregando Mensagens...",
       "cchange23":"Não foi possível descriptografar mensagem!",
-      "cchange24":"Caracteres máximos por mensagem é 255"
+      "cchange24":"Caracteres máximos por mensagem é 255",
+      "cchange25":"Seu saldo está abaixo de 4,20 QORT",
+      "cchange26":"Por necessidade de combater o spam, contas com saldo abaixo de 4,20 Qort levarão muito tempo para ENVIAR mensagens no Q-Chat. Se você deseja aumentar imediatamente a velocidade de envio de mensagens do Q-Chat, obtenha acima de 4,20 QORT para o seu endereço. Isso pode ser feito com negociações no Portal de Negociações, ou por meio de outro Qortian que lhe forneça o QORT. Assim que você tiver mais de 4,20 QORT em sua conta, as mensagens do Q-Chat serão instantâneas e esta caixa de diálogo não será mais show. Obrigado por sua compreensão deste método necessário de prevenção de spam e esperamos que você goste do Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Bem-vindo ao Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Pagamentos",
       "exp19":"Enviado",
       "exp20":"Recebido",
-	  "exp21":"Comércios"
+	"exp21":"Comércios"
+   },
+   "managegroup":{
+      "mg1":"Membros do grupo",
+      "mg2":"Convidar para grupo",
+      "mg3":"Administradores de grupo",
+      "mg4":"Atualizar grupo",
+      "mg5":"Fechar Gerenciar Grupo",
+      "mg6":"BAN",
+      "mg7":"Chute",
+      "mg8":"ID do Grupo",
+      "mg9":"Entrou",
+      "mg10":"Adicionar administrador de grupo",
+      "mg11":"Tem certeza que deseja adicionar este membro aos administradores?",
+      "mg12":"Ao pressionar confirmar, a solicitação de adição de administrador será enviada!",
+      "mg13":"Remover administrador do grupo",
+      "mg14":"Remover endereço do administrador",
+      "mg15":"Tem certeza que deseja remover este membro dos administradores?",
+      "mg16":"Ao pressionar confirmar, a solicitação de remoção do administrador será enviada!",
+      "mg17":"Banir membro do grupo",
+      "mg18":"Nome do membro",
+      "mg19":"Endereço do Membro",
+      "mg20":"Quanto tempo para banir",
+      "mg21":"Motivo do Banimento",
+      "mg22":"Tem certeza que deseja banir este membro do grupo?",
+      "mg23":"Ao clicar em confirmar, o pedido de banimento será enviado!",
+      "mg24":"PARA SEMPRE",
+      "mg25":"Membros banidos",
+      "mg26":"CANCELAR BAN",
+      "mg27":"Expiração do banimento",
+      "mg28":"Cancelar banimento de membro do grupo",
+      "mg29":"Tem certeza que deseja cancelar o banimento deste membro do grupo ?",
+      "mg30":"Ao apertar confirmar, o pedido de cancelamento de ban será enviado!",
+      "mg31":"Expulsar membro do grupo",
+      "mg32":"Motivo do Chute",
+      "mg33":"Tem certeza que deseja expulsar este membro do grupo?",
+      "mg34":"Ao apertar confirmar, o pedido de kick será enviado!"
    }
 }

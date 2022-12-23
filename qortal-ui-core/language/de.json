@@ -502,7 +502,9 @@
       "cchange21":"Senden fehlgeschlagen, bitte erneut versuchen...",
       "cchange22":"Lade Nachrichten...",
       "cchange23":"Nachricht kann nicht entschlüsselt werden!",
-      "cchange24":"Die maximale Zeichenzahl pro Nachricht beträgt 255"
+      "cchange24":"Die maximale Zeichenzahl pro Nachricht beträgt 255",
+      "cchange25":"Ihr Guthaben liegt unter 4,20 QORT",
+      "cchange26":"Aus Gründen der Spam-Bekämpfung benötigen Konten mit einem Qort-Guthaben von weniger als 4,20 viel Zeit, um Nachrichten in Q-Chat zu SENDEN. Wenn Sie die Sendegeschwindigkeit für Q-Chat-Nachrichten sofort erhöhen möchten, besorgen Sie sich über 4,20 QORT an Ihre Adresse. Dies kann mit Trades im Handelsportal oder über einen anderen Qortian erfolgen, der Ihnen die QORT gibt. Sobald Sie über 4,20 QORT in Ihrem Konto haben, werden Q-Chat-Nachrichten sofort gesendet und dieser Dialog wird nicht mehr angezeigt Show. Vielen Dank für Ihr Verständnis für diese notwendige Spam-Präventionsmethode, und wir hoffen, dass Ihnen Qortal gefällt!"
    },
    "welcomepage":{
       "wcchange1":"Willkommen zu Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Zahlungen",
       "exp19":"Gesendet",
       "exp20":"Empfangen",
-	  "exp21":"Trades"
+	"exp21":"Trades"
+   },
+   "managegroup":{
+      "mg1":"Gruppenmitglieder",
+      "mg2":"Zur Gruppe einladen",
+      "mg3":"Gruppen-Admins",
+      "mg4":"Gruppe aktualisieren",
+      "mg5":"Gruppe verwalten schließen",
+      "mg6":"BAN",
+      "mg7":"KICK",
+      "mg8":"Gruppen-ID",
+      "mg9":"Beigetreten",
+      "mg10":"Gruppenadministrator hinzufügen",
+      "mg11":"Sind Sie sicher, dass Sie dieses Mitglied zu den Administratoren hinzufügen möchten?",
+      "mg12":"Beim Drücken auf Bestätigen wird eine Admin-Anfrage gesendet!",
+      "mg13":"Gruppenadministrator entfernen",
+      "mg14":"Admin-Adresse entfernen",
+      "mg15":"Möchten Sie dieses Mitglied wirklich aus den Administratoren entfernen?",
+      "mg16":"Beim Drücken auf Bestätigen wird eine Admin-Anforderung zum Entfernen gesendet!",
+      "mg17":"Mitglied aus Gruppe sperren",
+      "mg18":"Mitgliedsname",
+      "mg19":"Mitgliedsadresse",
+      "mg20":"Wie lange verbieten",
+      "mg21":"Grund für Sperre",
+      "mg22":"Möchtest du dieses Mitglied wirklich aus der Gruppe verbannen?",
+      "mg23":"Beim Drücken auf Bestätigen wird die Sperranfrage gesendet!",
+      "mg24":"FÜR IMMER",
+      "mg25":"Gesperrte Mitglieder",
+      "mg26":"VERBOT AUFHEBEN",
+      "mg27":"Ablauf der Sperre",
+      "mg28":"Sperrung eines Gruppenmitglieds aufheben",
+      "mg29":"Sind Sie sicher, dass Sie die Sperre für dieses Mitglied aus der Gruppe aufheben wollen?",
+      "mg30":"Beim Drücken auf Bestätigen wird die Anfrage zum Aufheben des Verbots gesendet!",
+      "mg31":"Mitglied aus Gruppe werfen",
+      "mg32":"Grund für Tritt",
+      "mg33":"Wollen Sie dieses Mitglied wirklich aus der Gruppe werfen?",
+      "mg34":"Beim Bestätigen wird die Kick-Anfrage gesendet!"
    }
 }

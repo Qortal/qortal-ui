@@ -13,7 +13,8 @@ import './ChatScroller.js'
 import './LevelFounder.js'
 import './NameMenu.js'
 import './TimeAgo.js'
-import { EmojiPicker } from 'emoji-picker-js';
+import { EmojiPicker } from 'emoji-picker-js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 import '@material/mwc-button'
@@ -46,6 +47,7 @@ class ChatPage extends LitElement {
             hideNewMesssageBar: { attribute: false },
             chatEditorPlaceholder: { type: String },
             messagesRendered: { type: Array },
+            myTrimmedMeassage: { type: String }
         }
     }
 
@@ -54,13 +56,11 @@ class ChatPage extends LitElement {
         html {
             scroll-behavior: smooth;
         }
-
         .chat-text-area {
             display: flex;
             justify-content: center;
             overflow: hidden;
         }
-
         .chat-text-area .typing-area {
             display: flex;
             flex-direction: row;
@@ -75,11 +75,9 @@ class ChatPage extends LitElement {
             background: #f1f1f1;
             color: var(--black);
         }
-
         .chat-text-area .typing-area textarea {
             display: none;
         }
-
         .chat-text-area .typing-area .chat-editor {
             border-color: transparent;
             flex: 1;
@@ -89,7 +87,6 @@ class ChatPage extends LitElement {
             padding: 0;
             border: none;
         }
-
         .chat-text-area .typing-area .emoji-button {
             width: 45px;
             height: 40px;
@@ -101,13 +98,27 @@ class ChatPage extends LitElement {
             max-height: 40px;
             color: var(--black);
         }
-
         .float-left {
             float: left;
         }
-
         img {
             border-radius: 25%;
+        }
+        paper-dialog.warning {
+            width: 50%;
+            max-width: 50vw;
+            height: 30%;
+            max-height: 30vh;
+            text-align: center;
+            background-color: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+            border-radius: 15px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+        .buttons {
+            text-align:right;
         }
         `
     }
@@ -135,6 +146,7 @@ class ChatPage extends LitElement {
         this.isPasteMenuOpen = false
         this.chatEditorPlaceholder = this.renderPlaceholder()
         this.messagesRendered = []
+        this.myTrimmedMeassage = ''
     }
 
     render() {
@@ -149,6 +161,16 @@ class ChatPage extends LitElement {
                     </button>
                 </div>
             </div>
+
+            <paper-dialog class="warning" id="confirmDialog" modal>
+                <h2 style="color: var(--black);">${translate("chatpage.cchange25")}</h2>
+                <hr>
+                <br>
+                <h3 style="color: var(--black);">${translate("chatpage.cchange26")}</h3>
+                <div class="buttons">
+                    <mwc-button @click=${() => this.sendMessage(this.myTrimmedMeassage)} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -647,7 +669,13 @@ class ChatPage extends LitElement {
             let err1string = get("chatpage.cchange24");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else {
-            this.sendMessage(trimmedMessage);
+            if (this.balance < 20) {
+                this.myTrimmedMeassage = ''
+                this.myTrimmedMeassage = trimmedMessage
+                this.shadowRoot.getElementById('confirmDialog').open()
+            } else {
+                this.sendMessage(trimmedMessage)
+            }
         }
     }
 

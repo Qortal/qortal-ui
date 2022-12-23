@@ -502,7 +502,9 @@
       "cchange21":"Mesajul nu s-a trimis, te rog sa incerci din nou...",
       "cchange22":"Se incarca mesajele...",
       "cchange23":"Nu se poate decripta mesajul!",
-      "cchange24":"Numarul maxim de caractere pe mesaj este 255"
+      "cchange24":"Numarul maxim de caractere pe mesaj este 255",
+      "cchange25":"Soldul dvs. este sub 4,20 QORT",
+      "cchange26":"Din nevoia de a combate spam-ul, conturile cu soldul Qort sub 4,20 va dura mult timp pentru a TRIMITE mesaje în Q-Chat. Dacă doriți să creșteți imediat viteza de trimitere a mesajelor Q-Chat, obțineți peste 4,20 QORT la adresa dvs. Acest lucru se poate face cu tranzacții în Portalul de comerț sau printr-un alt Qortian care vă oferă QORT. După ce aveți peste 4,20 QORT în contul dvs., mesajele Q-Chat vor fi instantanee și acest dialog nu va mai fi Vă mulțumim pentru înțelegerea acestei metode necesare de prevenire a spamului și sperăm să vă bucurați de Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Bine ai venit la Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Plăti",
       "exp19":"Trimis",
       "exp20":"Primit",
-	  "exp21":"Meserii"
+	"exp21":"Meserii"
+   },
+   "managegroup":{
+      "mg1":"Membrii grupului",
+      "mg2":"Invitați la grup",
+      "mg3":"Administratori de grup",
+      "mg4":"Actualizare grup",
+      "mg5":"Închideți grupul de gestionare",
+      "mg6":"BAN",
+      "mg7":"KICK",
+      "mg8":"ID grup",
+      "mg9":"S-a alăturat",
+      "mg10":"Adăugați administrator de grup",
+      "mg11":"Sigur adăugați acest membru la administratori?",
+      "mg12":"La apăsarea confirmării, va fi trimisă cererea de adăugare a administratorului!",
+      "mg13":"Elimină administratorul grupului",
+      "mg14":"Elimină adresa de administrator",
+      "mg15":"Sunteți sigur că eliminați acest membru de la administratori?",
+      "mg16":"La apăsarea confirmării, va fi trimisă cererea de eliminare a administratorului!",
+      "mg17":"Excludeți membrul din grup",
+      "mg18":"Numele membrului",
+      "mg19":"Adresa membrului",
+      "mg20":"Cât timp se interzice",
+      "mg21":"Motivul interzicerii",
+      "mg22":"Sigur interziceți acest membru din grup?",
+      "mg23":"La apăsarea confirmării, cererea de ban va fi trimisă!",
+      "mg24":"Pentru totdeauna",
+      "mg25":"Membri interziși",
+      "mg26":"Anulați interzicerea",
+      "mg27":"Expirare interzis",
+      "mg28":"Anulați interzicerea membrului din grup",
+      "mg29":"Sigur anulați interdicția pentru acest membru din grup?",
+      "mg30":"La apăsarea confirmării, cererea de anulare a interzicerii va fi trimisă!",
+      "mg31":"Loviți membrul din grup",
+      "mg32":"Motivul lovirii",
+      "mg33":"Sigur îl dați afară pe acest membru din grup?",
+      "mg34":"La apăsarea confirmării, cererea de lovire va fi trimisă!"
    }
 }

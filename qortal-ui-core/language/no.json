@@ -502,7 +502,9 @@
       "cchange21":"Sending mislyktes. Prøv på nytt...",
       "cchange22":"Laster meldinger...",
       "cchange23":"Kan ikke dekryptere melding!",
-      "cchange24":"Maksimalt antall tegn per melding er 255"
+      "cchange24":"Maksimalt antall tegn per melding er 255",
+      "cchange25":"Saldoen din er under 4,20 QORT",
+      "cchange26":"Av behovet for å bekjempe spam, vil kontoer med under 4.20 Qort-saldo bruke lang tid på å SENDE meldinger i Q-Chat. Hvis du umiddelbart ønsker å øke sendehastigheten for Q-Chat-meldinger, få over 4.20 QORT til adressen din. Dette kan gjøres med handler i handelsportalen, eller ved at en annen Qortian gir deg QORT. Når du har over 4,20 QORT på kontoen din, vil Q-Chat-meldinger være øyeblikkelig og denne dialogen vil ikke lenger show. Takk for at du forstår denne nødvendige spamforebyggingsmetoden, og vi håper du liker Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Velkommen til Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Betalinger",
       "exp19":"Sendt",
       "exp20":"Motta",
-	  "exp21":"Handler"
+	"exp21":"Handler"
+   },
+   "managegroup":{
+      "mg1":"Gruppemedlemmer",
+      "mg2":"Inviter til gruppe",
+      "mg3":"Gruppe administratorer",
+      "mg4":"Oppdater gruppe",
+      "mg5":"Lukk Administrer gruppe",
+      "mg6":"BANNE",
+      "mg7":"KICK",
+      "mg8":"Gruppe ID",
+      "mg9":"Bli med",
+      "mg10":"Legg til gruppeadministrator",
+      "mg11":"Er du sikker på å legge til dette medlemmet til administratorer?",
+      "mg12":"Når du trykker på bekreftelse, vil forespørsel om legg til admin bli sendt!",
+      "mg13":"Fjern gruppeadministrator",
+      "mg14":"Fjern administratoradresse",
+      "mg15":"Er du sikker på å fjerne dette medlemmet fra administratorer?",
+      "mg16":"Når du trykker på bekreftelse, vil forespørsel om fjerning bli sendt!",
+      "mg17":"Utesteng medlem fra gruppen",
+      "mg18":"Medlemsnavn",
+      "mg19":"Medlemsadresse",
+      "mg20":"Hvor lenge å utestenge",
+      "mg21":"Årsak til forbud",
+      "mg22":"Er du sikker på å utestenge dette medlemmet fra gruppen?",
+      "mg23":"Når du trykker på bekreftelse, vil forbudsforespørselen bli sendt!",
+      "mg24":"FOR ALLTID",
+      "mg25":"Utstengte medlemmer",
+      "mg26":"AVBRYT FORBINDELSE",
+      "mg27":"Forbudsutløp",
+      "mg28":"Avbryt utesteng medlem fra gruppen",
+      "mg29":"Er du sikker på å avbryte utestengelsen for dette medlemmet fra gruppen?",
+      "mg30":"Når du trykker på bekreftelse, vil forespørselen om kansellering bli sendt!",
+      "mg31":"Spark medlem fra gruppen",
+      "mg32":"Grunn til spark",
+      "mg33":"Er du sikker på å sparke dette medlemmet fra gruppen?",
+      "mg34":"Når du trykker på bekreft, vil sparkeforespørselen bli sendt!"
    }
 }

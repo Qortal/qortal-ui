@@ -502,7 +502,9 @@
       "cchange21":"Invio fallito, per favore riprova...",
       "cchange22":"Caricamento messaggi...",
       "cchange23":"Impossibile decifrare il messaggio!",
-      "cchange24":"Il massimo di caratteri per messaggio è 255"
+      "cchange24":"Il massimo di caratteri per messaggio è 255",
+      "cchange25":"Il tuo saldo è inferiore a 4,20 QORT",
+      "cchange26":"Per la necessità di combattere lo spam, gli account con un saldo Qort inferiore a 4.20 impiegheranno molto tempo per INVIARE messaggi in Q-Chat. Se desideri aumentare immediatamente la velocità di invio per i messaggi Q-Chat, ottieni oltre 4.20 QORT al tuo indirizzo. Questo può essere fatto con scambi nel Portale commerciale, o tramite un altro Qortian che ti fornisce il QORT. Una volta che hai più di 4.20 QORT nel tuo account, i messaggi Q-Chat saranno istantanei e questa finestra di dialogo non sarà più show. Grazie per la tua comprensione di questo necessario metodo di prevenzione dello spam e speriamo che ti piaccia Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Benvenuto in Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Pagamenti",
       "exp19":"Inviato",
       "exp20":"Ricevuto",
-	  "exp21":"Mestieri"
+	"exp21":"Mestieri"
+   },
+   "managegroup":{
+      "mg1":"Membri del gruppo",
+      "mg2":"Invita al gruppo",
+      "mg3":"Amministratori gruppo",
+      "mg4":"Aggiorna gruppo",
+      "mg5":"Chiudi Gestisci gruppo",
+      "mg6":"BAN",
+      "mg7":"CALCI",
+      "mg8":"ID gruppo",
+      "mg9":"Iscritto",
+      "mg10":"Aggiungi amministratore gruppo",
+      "mg11":"Sei sicuro di aggiungere questo membro agli amministratori ?",
+      "mg12":"Premendo conferma, verrà inviata la richiesta di aggiunta admin!",
+      "mg13":"Rimuovi amministratore gruppo",
+      "mg14":"Rimuovi indirizzo amministratore",
+      "mg15":"Sei sicuro di rimuovere questo membro dagli amministratori?",
+      "mg16":"Premendo conferma, verrà inviata la richiesta di rimozione admin!",
+      "mg17":"Escludi membro dal gruppo",
+      "mg18":"Nome membro",
+      "mg19":"Indirizzo membro",
+      "mg20":"Per quanto tempo vietare",
+      "mg21":"Motivo dell'esclusione",
+      "mg22":"Sei sicuro di escludere questo membro dal gruppo ?",
+      "mg23":"Premendo conferma, verrà inviata la richiesta di ban!",
+      "mg24":"PER SEMPRE",
+      "mg25":"Membri bannati",
+      "mg26":"ANNULLA BAN",
+      "mg27":"Scadenza ban",
+      "mg28":"Annulla Escludi membro dal gruppo",
+      "mg29":"Sei sicuro di voler annullare il ban per questo membro dal gruppo ?",
+      "mg30":"Premendo conferma, verrà inviata la richiesta di annullamento ban!",
+      "mg31":"Espelle un membro dal gruppo",
+      "mg32":"Motivo del calcio",
+      "mg33":"Sei sicuro di cacciare questo membro dal gruppo?",
+      "mg34":"Premendo conferma, la richiesta di kick verrà inviata!"
    }
 }

@@ -502,7 +502,9 @@
       "cchange21":"Wysyłanie nie powiodło się, spróbuj ponownie...",
       "cchange22":"Ładowanie wiadomości...",
       "cchange23":"Nie można odszyfrować wiadomości!",
-      "cchange24":"Maksymalna liczba znaków na wiadomość to 255"
+      "cchange24":"Maksymalna liczba znaków na wiadomość to 255",
+      "cchange25":"Twoje saldo jest poniżej 4,20 QORT",
+      "cchange26":"Ze względu na konieczność zwalczania spamu konta z saldem poniżej 4,20 Qort będą potrzebowały dużo czasu na WYSYŁANIE wiadomości w Q-Chat. Jeśli chcesz natychmiast zwiększyć prędkość wysyłania wiadomości Q-Chat, uzyskaj ponad 4,20 QORT na Twój adres. Można to zrobić za pomocą transakcji w Portalu handlowym lub za pośrednictwem innego Qortian, który przekaże Ci QORT. Gdy masz ponad 4,20 QORT na swoim koncie, wiadomości Q-Chat będą natychmiastowe i to okno dialogowe nie będzie już więcej pokaż. Dziękujemy za zrozumienie tej niezbędnej metody zapobiegania spamowi i mamy nadzieję, że spodoba ci się Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Witamy w Q-Chat",
@@ -715,6 +717,42 @@
       "exp18":"Płatności",
       "exp19":"Wysłane",
       "exp20":"Otrzymano",
-	  "exp21":"Transakcji"
+	"exp21":"Transakcji"
+   },
+   "managegroup":{
+      "mg1":"Członkowie grupy",
+      "mg2":"Zaproś do grupy",
+      "mg3":"Administratorzy grupy",
+      "mg4":"Grupa aktualizacji",
+      "mg5":"Zamknij Zarządzaj grupą",
+      "mg6":"BAN",
+      "mg7":"KOPANIE",
+      "mg8":"Identyfikator grupy",
+      "mg9":"Dołączył",
+      "mg10":"Dodaj administratora grupy",
+      "mg11":"Czy na pewno chcesz dodać tego członka do administratorów?",
+      "mg12":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o dodanie administratora!",
+      "mg13":"Usuń administratora grupy",
+      "mg14":"Usuń adres administratora",
+      "mg15":"Czy na pewno chcesz usunąć tego członka z listy administratorów?",
+      "mg16":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o usunięcie administratora!",
+      "mg17":"Zablokuj członka grupy",
+      "mg18":"Nazwa członka",
+      "mg19":"Adres członka",
+      "mg20":"Jak długo banować",
+      "mg21":"Powód bana",
+      "mg22":"Czy na pewno chcesz zablokować tego członka grupy?",
+      "mg23":"Po naciśnięciu potwierdzenia, prośba o ban zostanie wysłana!",
+      "mg24":"ZAWSZE",
+      "mg25":"Zablokowani członkowie",
+      "mg26":"ANULUJ BAN",
+      "mg27":"Wygaśnięcie bana",
+      "mg28":"Anuluj zablokowanie członka z grupy",
+      "mg29":"Czy na pewno chcesz anulować bana dla tego członka grupy?",
+      "mg30":"Po naciśnięciu potwierdzenia zostanie wysłane żądanie anulowania bana!",
+      "mg31":"Wyrzuć członka z grupy",
+      "mg32":"Powód wyrzucenia",
+      "mg33":"Czy na pewno chcesz wyrzucić tego członka z grupy?",
+      "mg34":"Po naciśnięciu potwierdzenia prośba o wyrzucenie zostanie wysłana!"
    }
 }

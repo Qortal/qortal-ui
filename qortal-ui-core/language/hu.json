@@ -502,7 +502,9 @@
       "cchange21":"A küldés sikertelen, próbálkozzon újra...",
       "cchange22":"Üzenetek Betöltése...",
       "cchange23":"Az Üzenet Nem Visszafejthető!",
-      "cchange24":"Üzenetenkénti maximális karakterszám 255"
+      "cchange24":"Üzenetenkénti maximális karakterszám 255",
+      "cchange25":"Az Ön egyenlege 4,20 QORT alatt van",
+      "cchange26":"A spam elleni küzdelem szükségessége miatt a 4,20 alatti Qort-egyenleggel rendelkező fiókoknál sokáig tart az üzenetek KÜLDÉSE a Q-Chat szolgáltatásban. Ha azonnal meg szeretné növelni a Q-Chat üzenetek küldési sebességét, szerezzen be 4,20 feletti QORT az Ön címére. Ezt megteheti a Kereskedelmi Portálon végzett kereskedésekkel, vagy egy másik QORT-al, amely megadja a QORT-t. Ha 4,20 QORT felett van a fiókjában, a Q-Chat üzenetek azonnal megjelennek, és ez a párbeszédpanel többé nem Köszönjük, hogy megértette ezt a szükséges spammegelőzési módszert, és reméljük, hogy élvezni fogja a Qortalt!"
    },
    "welcomepage":{
       "wcchange1":"Üdvözöljük a Q-Chathoz",
@@ -706,8 +708,8 @@
       "exp9":"Minden eladási ügylet megjelenítése",
       "exp10":"VÁSÁRLÁSI ELŐZMÉNYEK",
       "exp11":"ELADÁSI ELŐZMÉNYEK",
-      "exp12":"Még nem történt vásárlási ügylet."
-      "exp13":"Még nem történt eladási ügylet."",
+      "exp12":"Még nem történt vásárlási ügylet.",
+      "exp13":"Még nem történt eladási ügylet.",
       "exp14":"Teljes információ megjelenítése",
       "exp15":"A pénzverés óta",
       "exp16":"Nem pénzverés",
@@ -715,6 +717,42 @@
       "exp18":"Kifizetések",
       "exp19":"Elküldve",
       "exp20":"Fogadott",
-	  "exp21":"Passzátszelek"
+	"exp21":"Passzátszelek"
+   },
+   "managegroup":{
+      "mg1":"Csoporttagok",
+      "mg2":"Meghívás csoportba",
+      "mg3":"Csoportadminisztrátorok",
+      "mg4":"Csoport frissítése",
+      "mg5":"Csoportkezelés bezárása",
+      "mg6":"BAN",
+      "mg7":"KICK",
+      "mg8":"Csoportazonosító",
+      "mg9":"Csatlakozva",
+      "mg10":"Csoportadminisztrátor hozzáadása",
+      "mg11":"Biztosan felveszi ezt a tagot a rendszergazdák közé?",
+      "mg12":"A megerősítés megnyomására a rendszer elküldi az adminisztrátor felvételét!",
+      "mg13":"Csoportadminisztrátor eltávolítása",
+      "mg14":"Rendszergazdai cím eltávolítása",
+      "mg15":"Biztosan eltávolítja ezt a tagot az adminisztrátorok közül?",
+      "mg16":"A megerősítés megnyomására adminisztrátor eltávolítási kérelmet küldünk!",
+      "mg17":"Tag kitiltása a csoportból",
+      "mg18":"Tag neve",
+      "mg19":"Tag címe",
+      "mg20":"Meddig tiltható",
+      "mg21":"A kitiltás oka",
+      "mg22":"Biztosan kitiltja ezt a tagot a csoportból?",
+      "mg23":"A megerősítés megnyomására a kitiltási kérelem elküldésre kerül!",
+      "mg24":"ÖRÖK",
+      "mg25":"Tiltott tagok",
+      "mg26":"TILTÁS TÖRLÉSE",
+      "mg27":"A kitiltás lejárta",
+      "mg28":"Tag kitiltása a csoportból",
+      "mg29":"Biztosan törli ennek a tagnak a csoportból való kitiltását?",
+      "mg30":"A megerősítés megnyomására a rendszer elküldi a kitiltási kérelmet!",
+      "mg31":"Tag kirúgása a csoportból",
+      "mg32":"Reason For Kick",
+      "mg33":"Biztosan kirúgod ezt a tagot a csoportból?",
+      "mg34":"A megerősítés megnyomására elküldésre kerül a rúgás kérés!"
    }
 }

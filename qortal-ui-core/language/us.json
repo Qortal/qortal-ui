@@ -502,7 +502,9 @@
       "cchange21":"Sending failed, Please retry...",
       "cchange22":"Loading Messages...",
       "cchange23":"Cannot Decrypt Message!",
-      "cchange24":"Maximum Characters per message is 255"
+      "cchange24":"Maximum Characters per message is 255",
+      "cchange25":"Your Balance Is Under 4.20 QORT",
+      "cchange26":"Out of the need to combat spam, accounts with under 4.20 Qort balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4.20 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4.20 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!"
    },
    "welcomepage":{
       "wcchange1":"Welcome to Q-Chat",
@@ -716,5 +718,41 @@
       "exp19":"Sent",
       "exp20":"Received",
       "exp21":"Trades"
+   },
+   "managegroup":{
+      "mg1":"Group Members",
+      "mg2":"Invite To Group",
+      "mg3":"Group Admins",
+      "mg4":"Update Group",
+      "mg5":"Close Manage Group",
+      "mg6":"BAN",
+      "mg7":"KICK",
+      "mg8":"Group ID",
+      "mg9":"Joined",
+      "mg10":"Add Group Admin",
+      "mg11":"Are you sure to add this member to admins ?",
+      "mg12":"On pressing confirm, add admin request will be sent!",
+      "mg13":"Remove Group Admin",
+      "mg14":"Remove Admin Address",
+      "mg15":"Are you sure to remove this member from admins ?",
+      "mg16":"On pressing confirm, remove admin request will be sent!",
+      "mg17":"Ban Member From Group",
+      "mg18":"Member Name",
+      "mg19":"Member Address",
+      "mg20":"How Long To Ban",
+      "mg21":"Reason For Ban",
+      "mg22":"Are you sure to ban this member from the group ?",
+      "mg23":"On pressing confirm, the ban request will be sent!",
+      "mg24":"FOREVER",
+      "mg25":"Banned Members",
+      "mg26":"CANCEL BAN",
+      "mg27":"Ban Expiry",
+      "mg28":"Cancel Ban Member From Group",
+      "mg29":"Are you sure to cancel the ban for this member from the group ?",
+      "mg30":"On pressing confirm, the cancel ban request will be sent!",
+      "mg31":"Kick Member From Group",
+      "mg32":"Reason For Kick",
+      "mg33":"Are you sure to kick this member from the group ?",
+      "mg34":"On pressing confirm, the kick request will be sent!"
    }
 }
