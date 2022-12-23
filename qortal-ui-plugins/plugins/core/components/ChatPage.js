@@ -669,7 +669,7 @@ class ChatPage extends LitElement {
             let err1string = get("chatpage.cchange24");
             parentEpml.request('showSnackBar', `${err1string}`);
         } else {
-            if (this.balance < 20) {
+            if (this.balance < 4) {
                 this.myTrimmedMeassage = ''
                 this.myTrimmedMeassage = trimmedMessage
                 this.shadowRoot.getElementById('confirmDialog').open()
