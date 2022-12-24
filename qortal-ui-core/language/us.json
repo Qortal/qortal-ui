@@ -465,8 +465,8 @@
       "cchange3": "Blocked Users",
       "cchange4": "New Message",
       "cchange5": "(Click to scroll down)",
-      "cchange6": "Type the name or address of who you want to chat with to send a private message!",
-      "cchange7": "Name / Address",
+      "cchange6": "Type the name or address of who you want to chat with to send a private message! You can validate the person's name by clicking on the book icon.",
+      "cchange7": "Username / Address",
       "cchange8": "Message...",
       "cchange9": "Send",
       "cchange10": "Blocked Users List",
@@ -478,7 +478,7 @@
       "cchange16": "Successfully unblocked this user.",
       "cchange17": "Error occurred when trying to unblock this user. Please try again!",
       "cchange18": "unblock",
-      "cchange19": "Invalid Name / Address, Check the name / address and retry...",
+      "cchange19": "Invalid Username / Address, Check the name / address and retry...",
       "cchange20": "Message Sent Successfully!",
       "cchange21": "Sending failed, Please retry...",
       "cchange22": "Loading Messages...",
@@ -492,7 +492,11 @@
       "cchange30": "Uploading image. This may take up to one minute.",
       "cchange31": "Deleting image. This may take up to one minute.",
       "cchange33": "Cancel",
-      "cchange34": "This chat message is using an older message version and cannot use this feature."
+      "cchange34": "This chat message is using an older message version and cannot use this feature.",
+      "cchange35": "Error when trying to fetch the user's name. Please try again!",
+      "cchange36": "Search Results",
+      "cchange37": "No Results Found",
+      "cchange38": "User Verified"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
@@ -521,7 +525,7 @@
       "bcchange13": "Reaction",
       "bcchange14": "Forward",
       "bcchange15": "Message Forwarded",
-      "bcchange16": "Choose recipient",
+      "bcchange16": "Choose Recipient or Search for One Below",
       "bcchange17": "FORWARDED"
    },
    "grouppage": {

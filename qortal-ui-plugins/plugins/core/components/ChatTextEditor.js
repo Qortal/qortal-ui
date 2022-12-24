@@ -172,11 +172,14 @@ class ChatTextEditor extends LitElement {
         }
 		return html`
             <div 
-             class=${["chatbar-container", this.iframeId === "newChat" ? "chatbar-caption" : ""].join(" ")}
+             class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
              style="${scrollHeightBool ? 'align-items: flex-end' : "align-items: center"}">
-                <div class="file-picker-container" @click=${(e) => {
-                    this.preventUserSendingImage(e)
-                }}>
+                <div 
+                    style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
+                    class="file-picker-container" 
+                    @click=${(e) => {
+                        this.preventUserSendingImage(e)
+                    }}>
                     <vaadin-icon
                         class="paperclip-icon"
                         icon="vaadin:paperclip"
@@ -223,7 +226,13 @@ class ChatTextEditor extends LitElement {
                         `
                 ) : 
                     html`
-                        <div style="${ scrollHeightBool ? 'margin-bottom: 5px;' : "margin-bottom: 0;"} ${this.iframeId === 'newChat' ? 'display: none;' : 'display: flex;'}">
+                        <div 
+                        style="${scrollHeightBool 
+                        ? 'margin-bottom: 5px;' 
+                        : "margin-bottom: 0;"} 
+                        ${this.iframeId === 'newChat'
+                        ? 'display: none;' 
+                        : 'display: flex;'}">
                             ${this.isLoading === false ? html`
                                 <img 
                                 src="/img/qchat-send-message-icon.svg" 
@@ -300,7 +309,6 @@ class ChatTextEditor extends LitElement {
             }
         })
 
-
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
         this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);      
@@ -361,6 +369,7 @@ class ChatTextEditor extends LitElement {
             return;
         };
         this.chatMessageSize = 0;
+        this.chatEditor.updateMirror();
         this._sendMessage(props);
     }
 
@@ -688,11 +697,10 @@ class ChatTextEditor extends LitElement {
                                 }, 0);
                                 res();
                             })
+
                              // Handle Enter
                             if (e.keyCode === 13 && !e.shiftKey) {
 
-                                // Update Mirror
-                                editor.updateMirror();
 
                                 if (editor.state() === 'false') return false;
                                 if (editorConfig.iframeId === 'newChat') {
