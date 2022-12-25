@@ -159,7 +159,7 @@ class AppInfo extends connect(store)(LitElement) {
                         error: 'error'
                     }
                  }
-                    if(data === 'false'){
+                    if(data === 'false' && this.nodeInfo.isSynchronizing !== true){
                     let _reference = new Uint8Array(64);
                     window.crypto.getRandomValues(_reference);
                     let reference = window.parent.Base58.encode(_reference);
