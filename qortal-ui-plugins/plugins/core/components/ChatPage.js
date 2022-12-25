@@ -1673,6 +1673,39 @@ class ChatPage extends LitElement {
     }
 
    async _sendMessage(outSideMsg) {
+
+        if(this.isReceipient){
+           let hasPublicKey = true
+            if(!this._publicKey.hasPubKey){
+                hasPublicKey = false
+                try {
+                    const res =   await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/addresses/publickey/${this.selectedAddress.address}`
+                    })
+                    if (res.error === 102) {
+                        this._publicKey.key = ''
+                        this._publicKey.hasPubKey = false
+                    } else if (res !== false) {
+                        this._publicKey.key = res
+                        this._publicKey.hasPubKey = true
+                        hasPublicKey = true
+                    } else {
+                        this._publicKey.key = ''
+                        this._publicKey.hasPubKey = false
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+
+                if(!hasPublicKey || !this._publicKey.hasPubKey){
+                    let err4string = get("chatpage.cchange39");
+                parentEpml.request('showSnackBar', `${err4string}`)
+                return
+                }
+                
+            }
+        }
         console.log(outSideMsg);
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
@@ -1997,7 +2030,7 @@ class ChatPage extends LitElement {
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,
-                        isEncrypted: this._publicKey.hasPubKey === false ? 0 : 1,
+                        isEncrypted: 1,
                         isText: 1
                     }
                 });
@@ -2081,6 +2114,12 @@ class ChatPage extends LitElement {
             this.openForwardOpen = false;
             this.chatEditor.enable();
             if (isRecipient === true) {
+                if(!publicKey.hasPubKey){
+                    let err4string = get("chatpage.cchange39");
+                    parentEpml.request('showSnackBar', `${err4string}`)
+                    getSendChatResponse(false)
+                    return
+                }
                 let chatResponse = await parentEpml.request('chat', {
                     type: 18,
                     nonce: this.selectedAddress.nonce,
@@ -2093,7 +2132,7 @@ class ChatPage extends LitElement {
                         message: messageText,
                         lastReference: reference,
                         proofOfWorkNonce: 0,
-                        isEncrypted: publicKey.hasPubKey === false ? 0 : 1,
+                        isEncrypted: 1,
                         isText: 1
                     }
                 });
