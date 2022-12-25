@@ -496,7 +496,8 @@
       "cchange35": "Error when trying to fetch the user's name. Please try again!",
       "cchange36": "Search Results",
       "cchange37": "No Results Found",
-      "cchange38": "User Verified"
+      "cchange38": "User Verified",
+      "cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain."
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
