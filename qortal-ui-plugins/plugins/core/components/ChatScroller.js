@@ -36,7 +36,8 @@ class ChatScroller extends LitElement {
             isLoadingMessages: { type: Boolean},
             setIsLoadingMessages: {attribute: false},
             chatId: { type: String },
-            setForwardProperties: {attribute: false},
+            setForwardProperties: { attribute: false },
+            setOpenPrivateMessage: { attribute: false },
         }
     }
 
@@ -48,17 +49,27 @@ class ChatScroller extends LitElement {
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")    
+        this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
     }
 
 
     render() {
-        console.log({messages: this.messages})
-        let formattedMessages = this.messages.reduce((messageArray, message) => {
+        let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
             let sender;
             let repliedToData;
+            
+            let firstMessageInChat;
+
+            if (index === 0) {
+                firstMessageInChat = true;
+            } else {
+                firstMessageInChat = false;
+            }
+
+            message = {...message, firstMessageInChat}
+
             if (lastGroupedMessage) {
                 timestamp = lastGroupedMessage.timestamp;
                 sender = lastGroupedMessage.sender;
@@ -105,6 +116,7 @@ class ChatScroller extends LitElement {
                             ?isLastMessageInGroup=${indexMessage === formattedMessage.messages.length - 1}
                             .setToggledMessage=${this.setToggledMessage}
                             .setForwardProperties=${this.setForwardProperties}
+                            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                             >
                             </message-template>`
                     )
@@ -132,21 +144,18 @@ class ChatScroller extends LitElement {
         return true;
     }
 
-    setToggledMessage(message){
-        toggledMessage = message
+    setToggledMessage (message) {
+        toggledMessage = message;
     }
-
 
     async firstUpdated() {
         this.emojiPicker.on('emoji', selection => {
 
             this.sendMessage({
                 type: 'reaction',
-    editedMessageObj: toggledMessage,
+                editedMessageObj: toggledMessage,
                 reaction:  selection.emoji,
-             
-               
-             })
+                })
             });
         this.viewElement = this.shadowRoot.getElementById('viewElement');
         this.upObserverElement = this.shadowRoot.getElementById('upObserver');
@@ -217,22 +226,24 @@ class MessageTemplate extends LitElement {
             emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
             hideMessages: { type: Array },
-            openDialogPrivateMessage: {type: Boolean},
-            openDialogBlockUser: {type: Boolean},
+            openDialogPrivateMessage: { type: Boolean },
+            openDialogBlockUser: { type: Boolean },
             showBlockAddressIcon: { type: Boolean },
-            setRepliedToMessageObj: {attribute: false},
-            setEditedMessageObj: {attribute: false},
-            focusChatEditor: {attribute: false},
-            sendMessage: {attribute: false},
-            sendMessageForward: {attribute: false},
-            openDialogImage: {attribute: false},
+            setRepliedToMessageObj: { attribute: false },
+            setEditedMessageObj: { attribute: false },
+            focusChatEditor: { attribute: false },
+            sendMessage: { attribute: false },
+            sendMessageForward: { attribute: false },
+            openDialogImage: { attribute: false },
+            openDeleteImage: { type: Boolean },
             isImageLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
             isLastMessageInGroup: { type: Boolean },
             setToggledMessage: {attribute: false},
             setForwardProperties: {attribute: false},
-            viewImage: {type: Boolean}
+            viewImage: {type: Boolean},
+            setOpenPrivateMessage : { attribute: false }
         }
     }
 
@@ -477,12 +488,10 @@ class MessageTemplate extends LitElement {
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
                                             ${imageHTML}<vaadin-icon
-                                            @click=${() => this.sendMessage({
-                                            type: 'delete',
-                                            name: image.name,
-                                            identifier: image.identifier,
-                                            editedMessageObj: this.messageObj,
-                                        })}
+                                            @click=${() => {
+                                                this.openDeleteImage = true;
+                                                this.chatE
+                                                }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                         </div>
                                     ` : image && isImageDeleted ? html`
@@ -527,6 +536,8 @@ class MessageTemplate extends LitElement {
                                 .emojiPicker=${this.emojiPicker} 
                                 .setToggledMessage=${this.setToggledMessage}
                                 .setForwardProperties=${this.setForwardProperties}
+                                ?firstMessageInChat=${this.messageObj.firstMessageInChat}
+                                .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                             > 
                             </chat-menu>
                         </div>
@@ -580,6 +591,31 @@ class MessageTemplate extends LitElement {
 					    ${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
+                <mwc-dialog
+                hideActions
+                ?open=${this.openDeleteImage} 
+                @closed=${()=> {
+                    this.openDeleteImage = false;
+                }}>
+                <div class="delete-image-msg">
+                    <p>Are you sure you want to delete this image?</p>
+                </div>
+                <div class="modal-button-row" @click=${() => this.openDeleteImage = false}>
+                    <button class="modal-button-red">
+                       Cancel 
+                    </button>
+                    <button
+                    class="modal-button" 
+                    @click=${() => this.sendMessage({
+                                type: 'delete',
+                                name: image.name,
+                                identifier: image.identifier,
+                                editedMessageObj: this.messageObj,
+                            })}>
+                        Yes
+                    </button>
+                </div>
+                </mwc-dialog>
         `
     }
 }
@@ -601,11 +637,13 @@ class ChatMenu extends LitElement {
             focusChatEditor: {attribute: false},
             myAddress: { type: Object },
             emojiPicker: { attribute: false },
-            sendMessage: {attribute: false},
-            version: {type: String},
-            setToggledMessage: {attribute: false},
-            sendMessageForward: {attribute: false},
-            setForwardProperties: {attribute: false}
+            sendMessage: { attribute: false },
+            version: { type: String },
+            setToggledMessage: { attribute: false },
+            sendMessageForward: { attribute: false },
+            setForwardProperties: { attribute: false },
+            firstMessageInChat: { type: Boolean },
+            setOpenPrivateMessage: { attribute: false }
         }
     }
 
@@ -684,7 +722,7 @@ class ChatMenu extends LitElement {
         return html` 
             <div class="container">
             <div 
-                class="menu-icon tooltip reaction" 
+                class=${`menu-icon reaction ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange13")}" 
                 @click=${(e) => {
                     if(this.version === '0'){
@@ -703,24 +741,27 @@ class ChatMenu extends LitElement {
                     <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
                 </div>
                 <div 
-                class="menu-icon tooltip" 
+                class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange14")}" 
                 @click="${() => {
                     this.messageForwardFunc()
                     }}">
                     <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
                 </div>                
-                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange9")}" @click="${() => this.showPrivateMessageModal()}">   
+                <div class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} data-text="${translate("blockpage.bcchange9")}" @click="${() => this.setOpenPrivateMessage({
+                    name: this.originalMessage.senderName ? this.originalMessage.senderName : this.originalMessage.sender,
+                    open: true   
+                })}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
-                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
+                <div class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
                     <vaadin-icon icon="vaadin:copy" slot="icon"></vaadin-icon>
                 </div>
                 <div 
-                class="menu-icon tooltip" 
+                class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange11")}" 
                 @click="${() => {
-                    if(this.version === '0'){
+                    if (this.version === '0') {
                         this.versionErrorSnack()
                         return
                     }
@@ -733,7 +774,7 @@ class ChatMenu extends LitElement {
                 ${this.myAddress === this.originalMessage.sender ? (
                     html`
                     <div 
-                    class="menu-icon tooltip" 
+                    class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`}
                     data-text="${translate("blockpage.bcchange12")}" 
                     @click=${() => {
                     if(this.version === '0'){
@@ -747,7 +788,7 @@ class ChatMenu extends LitElement {
                     </div>
                     `
                 ) : html`<div></div>`}
-                <div class="menu-icon tooltip" data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
+                <div class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} data-text="${translate("blockpage.bcchange10")}" @click="${() => this.showBlockIconFunc(true)}">
                     <vaadin-icon icon="vaadin:ellipsis-dots-h" slot="icon"></vaadin-icon>
                 </div>
                 ${this.showBlockAddressIcon

@@ -25,7 +25,8 @@ class ChatWelcomePage extends LitElement {
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
             balance: { type: Number },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            setOpenPrivateMessage: { attribute: false }
         }
     }
 
@@ -212,7 +213,14 @@ class ChatWelcomePage extends LitElement {
                     <div class="center-box">
                         <mwc-icon class="img-icon">chat</mwc-icon><br>
                         <span style="font-size: 20px; color: var(--black);">${this.myAddress.address}</span>
-                        <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>${translate("welcomepage.wcchange2")}</div>
+                        <div 
+                            class="start-chat" 
+                            @click="${() => this.setOpenPrivateMessage({
+                            name: "",
+                            open: true   
+                            })}">
+                            ${translate("welcomepage.wcchange2")}
+                        </div>
                     </div>
                 </div>
 

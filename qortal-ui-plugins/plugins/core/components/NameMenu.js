@@ -250,15 +250,15 @@ class NameMenu extends LitElement {
     }
 
     firstUpdated() {
-        this.getChatBlockedAdresses()
+        this.getChatBlockedAdresses();
 
 	  setInterval(() => {
 	      this.getChatBlockedAdresses();
 	  }, 60000)
 
         window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
-            use(checkLanguage)
+            const checkLanguage = localStorage.getItem('qortalLanguage');
+            use(checkLanguage);
         })
 
         window.onclick = function(event) {
