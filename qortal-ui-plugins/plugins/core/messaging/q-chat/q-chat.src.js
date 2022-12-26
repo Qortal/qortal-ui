@@ -70,8 +70,9 @@ class Chat extends LitElement {
         this.messages = []
         this.btnDisable = false
         this.isLoading = false
-        this.showNewMesssageBar = this.showNewMesssageBar.bind(this)
-        this.hideNewMesssageBar = this.hideNewMesssageBar.bind(this)
+        this.showNewMessageBar = this.showNewMessageBar.bind(this)
+        this.hideNewMessageBar = this.hideNewMessageBar.bind(this)
+        this.setOpenPrivateMessage = this.setOpenPrivateMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
@@ -393,6 +394,11 @@ class Chat extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    setOpenPrivateMessage(props) {
+        this.openPrivateMessage = props.open;
+        this.shadowRoot.getElementById("sendTo").value = props.name
     }
 
    async userSearch() {
@@ -720,7 +726,11 @@ class Chat extends LitElement {
     }
 
     renderChatWelcomePage() {
-        return html`<chat-welcome-page myAddress=${JSON.stringify(this.selectedAddress)}></chat-welcome-page>`
+        return html`
+        <chat-welcome-page 
+            myAddress=${JSON.stringify(this.selectedAddress)}
+            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}>
+        </chat-welcome-page>`
     }
 
     renderChatHead(chatHeadArr) {
@@ -740,7 +750,7 @@ class Chat extends LitElement {
         // Else render Welcome to Q-CHat
 
         // TODO: DONE: Do the above in the ChatPage 
-        return html`<chat-page .chatHeads=${this.chatHeads} .hideNewMesssageBar=${this.hideNewMesssageBar} .showNewMesssageBar=${this.showNewMesssageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${this.activeChatHeadUrl}></chat-page>`
+        return html`<chat-page .chatHeads=${this.chatHeads} .hideNewMessageBar=${this.hideNewMessageBar} .showNewMessageBar=${this.showNewMessageBar} myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} chatId=${this.activeChatHeadUrl} .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}></chat-page>`
     }
 
     setChatHeads(chatObj) {
@@ -830,11 +840,11 @@ class Chat extends LitElement {
         viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
     }
 
-    showNewMesssageBar() {
+    showNewMessageBar() {
         this.shadowRoot.getElementById('newMessageBar').classList.remove('hide-new-message-bar')
     }
 
-    hideNewMesssageBar() {
+    hideNewMessageBar() {
         this.shadowRoot.getElementById('newMessageBar').classList.add('hide-new-message-bar')
     }
 }
