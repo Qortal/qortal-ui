@@ -200,7 +200,11 @@ class Chat extends LitElement {
                                 </button>
                                 <button
                                     class="modal-button"
-                                    @click=${this._sendMessage}
+                                    @click=${()=> {
+                                        this.chatEditor.updateMirror()
+                                        this._sendMessage()
+                                    
+                                    }}
                                     ?disabled="${this.isLoading}">
                                         ${this.isLoading === false 
                                         ? this.renderSendText() 
@@ -507,9 +511,10 @@ class Chat extends LitElement {
                 _publicKey = addressPublicKey;
                 sendMessageRequest(isEncrypted, _publicKey);
             } else {
-                isEncrypted = 0;
-                _publicKey = this.selectedAddress.address;
-                sendMessageRequest(isEncrypted, _publicKey);
+                let err4string = get("chatpage.cchange39");
+                parentEpml.request('showSnackBar', `${err4string}`);
+                this.chatEditor.enable();
+                this.isLoading = false;
             }
         };
         let _reference = new Uint8Array(64);
@@ -527,7 +532,7 @@ class Chat extends LitElement {
                     message: messageText,
                     lastReference: reference,
                     proofOfWorkNonce: 0,
-                    isEncrypted: isEncrypted,
+                    isEncrypted: 1,
                     isText: 1
                 }
             });
