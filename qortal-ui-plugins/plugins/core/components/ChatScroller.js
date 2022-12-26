@@ -226,15 +226,16 @@ class MessageTemplate extends LitElement {
             emojiPicker: { attribute: false },
             escapeHTML: { attribute: false },
             hideMessages: { type: Array },
-            openDialogPrivateMessage: {type: Boolean},
-            openDialogBlockUser: {type: Boolean},
+            openDialogPrivateMessage: { type: Boolean },
+            openDialogBlockUser: { type: Boolean },
             showBlockAddressIcon: { type: Boolean },
-            setRepliedToMessageObj: {attribute: false},
-            setEditedMessageObj: {attribute: false},
-            focusChatEditor: {attribute: false},
-            sendMessage: {attribute: false},
-            sendMessageForward: {attribute: false},
-            openDialogImage: {attribute: false},
+            setRepliedToMessageObj: { attribute: false },
+            setEditedMessageObj: { attribute: false },
+            focusChatEditor: { attribute: false },
+            sendMessage: { attribute: false },
+            sendMessageForward: { attribute: false },
+            openDialogImage: { attribute: false },
+            openDeleteImage: { type: Boolean },
             isImageLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
@@ -468,12 +469,10 @@ class MessageTemplate extends LitElement {
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
                                             ${imageHTML}<vaadin-icon
-                                            @click=${() => this.sendMessage({
-                                            type: 'delete',
-                                            name: image.name,
-                                            identifier: image.identifier,
-                                            editedMessageObj: this.messageObj,
-                                        })}
+                                            @click=${() => {
+                                                this.openDeleteImage = true;
+                                                this.chatE
+                                                }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                         </div>
                                     ` : image && isImageDeleted ? html`
@@ -573,6 +572,31 @@ class MessageTemplate extends LitElement {
 					    ${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
+                <mwc-dialog
+                hideActions
+                ?open=${this.openDeleteImage} 
+                @closed=${()=> {
+                    this.openDeleteImage = false;
+                }}>
+                <div class="delete-image-msg">
+                    <p>Are you sure you want to delete this image?</p>
+                </div>
+                <div class="modal-button-row" @click=${() => this.openDeleteImage = false}>
+                    <button class="modal-button-red">
+                       Cancel 
+                    </button>
+                    <button
+                    class="modal-button" 
+                    @click=${() => this.sendMessage({
+                                type: 'delete',
+                                name: image.name,
+                                identifier: image.identifier,
+                                editedMessageObj: this.messageObj,
+                            })}>
+                        Yes
+                    </button>
+                </div>
+                </mwc-dialog>
         `
     }
 }

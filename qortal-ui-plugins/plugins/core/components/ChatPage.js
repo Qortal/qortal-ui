@@ -804,7 +804,7 @@ class ChatPage extends LitElement {
                 .onClickFunc=${() => {
                     this.chatEditorNewChat.resetValue();
                     this.removeImage();
-                } } 
+                }} 
                 style=${(this.imageFile && !this.isUploadingImage) ? "display: block" : "display: none"}>
                     <div>
                         <div class="dialog-container">
