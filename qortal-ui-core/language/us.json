@@ -497,7 +497,8 @@
       "cchange36": "Search Results",
       "cchange37": "No Results Found",
       "cchange38": "User Verified",
-      "cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain."
+      "cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain.",
+      "cchange40": "IMAGE (click to view)"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

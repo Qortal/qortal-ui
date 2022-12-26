@@ -232,6 +232,7 @@ class MessageTemplate extends LitElement {
             isLastMessageInGroup: { type: Boolean },
             setToggledMessage: {attribute: false},
             setForwardProperties: {attribute: false},
+            viewImage: {type: Boolean}
         }
     }
 
@@ -248,6 +249,7 @@ class MessageTemplate extends LitElement {
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
+        this.viewImage = false
     }
 
     static styles = [chatStyles]
@@ -352,9 +354,13 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`;
-            imageHTML = createImage(imageUrl);
-            imageHTMLDialog = createImage(imageUrl);
-            imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
+            
+            if(this.viewImage || this.myAddress === this.messageObj.sender){
+                imageHTML = createImage(imageUrl);
+                imageHTMLDialog = createImage(imageUrl) 
+                imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
+            }
+           
         }
 
         nameMenu = html`
@@ -453,7 +459,20 @@ class MessageTemplate extends LitElement {
                                         </p>
                                     </div>
                                     `}
-                                    ${image && !isImageDeleted ? html`
+                                    ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
+                                        <div 
+                                        @click=${()=> {
+                                            this.viewImage = true
+                                        }}
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        style=${this.isFirstMessage && "margin-top: 10px;"}>
+                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                        ${translate("chatpage.cchange40")}
+                                        </div>
+                                           
+                                        </div>
+                                    ` : html``}
+                                    ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
                                         <div 
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
