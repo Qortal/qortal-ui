@@ -135,7 +135,8 @@
       "uiversion":"UI Version",
       "coreversion":"Core Version",
       "minting":"(Minting)",
-      "synchronizing":"Synchronizing"
+      "synchronizing":"Synchronizing",
+      "peers":"Connected Peers"
    },
    "walletprofile":{
       "minterlevel":"Minter Level",
@@ -371,7 +372,29 @@
       "nchange15":"Set Avatar",
       "nchange16":"Need Core Update",
       "nchange17":"Name Already Exists!",
-      "nchange18":"Name Registration Successful!"
+      "nchange18":"Name Registration Successful!",
+      "nchange19":"Sell Name",
+      "nchange20":"Cancel Sell",
+      "nchange21":"Buy Name",
+      "nchange22":"Open Market Names To Sell",
+      "nchange23":"Sell Price",
+      "nchange24":"No Names To Sell",
+      "nchange25":"Name To Sell",
+      "nchange26":"Are you sure to sell this name ?",
+      "nchange27":"For this price in QORT",
+      "nchange28":"On pressing confirm, the sell name request will be sent!",
+      "nchange29":"Name To Cancel",
+      "nchange30":"Are you sure to cancel the sell for this name ?",
+      "nchange31":"On pressing confirm, the cancel sell name request will be sent!",
+      "nchange32":"Sell Name Request Successful!",
+      "nchange33":"Cancel Sell Name Request Successful!",
+      "nchange34":"Buy Name Request Successful!",
+      "nchange35":"YOU HAVE A NAME!",
+      "nchange36":"Only accounts with no registered name can buy a name.",
+      "nchange37":"ATTENTION!",
+      "nchange38":"You not have enough qort to buy this name.",
+      "nchange39":"Are you sure to buy this name ?",
+      "nchange40":"On pressing confirm, the buy name request will be sent!"
    },
    "websitespage":{
       "schange1":"Browse Websites",
@@ -753,6 +776,22 @@
       "mg31":"Kick Member From Group",
       "mg32":"Reason For Kick",
       "mg33":"Are you sure to kick this member from the group ?",
-      "mg34":"On pressing confirm, the kick request will be sent!"
+      "mg34":"On pressing confirm, the kick request will be sent!",
+      "mg35":"No Open Group Invites",
+      "mg36":"Your Open Group Invites",
+      "mg37":"Address or name to invite",
+      "mg38":"Invite Expiry Time",
+      "mg39":"All Fields Are Required",
+      "mg40":"Are you sure to invite this member to the group ?",
+      "mg41":"On pressing confirm, the invite request will be sent!",
+      "mg42":"Group Type",
+      "mg43":"Invite Expiry",
+      "mg44":"Public Group",
+      "mg45":"Private Group",
+      "mg46":"Cancel Invite",
+      "mg47":"Cancel Invite To Group",
+      "mg48":"Are you sure to cancel the invite for this member ?",
+      "mg49":"On pressing confirm, the cancel invite request will be sent!",
+      "mg50":"Coming Soon..."
    }
 }

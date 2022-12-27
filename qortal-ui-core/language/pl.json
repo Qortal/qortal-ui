@@ -135,7 +135,8 @@
       "uiversion":"Wersja interfejsu użytkownika",
       "coreversion":"Wersja rdzenia",
       "minting":"(Minting)",
-      "synchronizing":"Synchronizacja"
+      "synchronizing":"Synchronizacja",
+      "peers":"Połączeni rówieśnicy"
    },
    "walletprofile":{
       "minterlevel":"Poziom Mintera",
@@ -371,7 +372,29 @@
       "nchange15":"Ustaw awatara",
       "nchange16":"Potrzebna aktualizacja rdzenia",
       "nchange17":"Nazwa już istnieje!",
-      "nchange18":"Rejestracja nazwy powiodła się!"
+      "nchange18":"Rejestracja nazwy powiodła się!",
+      "nchange19":"Nazwa sprzedaży",
+      "nchange20":"Anuluj sprzedaż",
+      "nchange21":"Kup nazwę",
+      "nchange22":"Otwórz nazwy rynków do sprzedaży",
+      "nchange23":"Cena sprzedaży",
+      "nchange24":"Brak nazw do sprzedania",
+      "nchange25":"Nazwa do sprzedania",
+      "nchange26":"Czy na pewno chcesz sprzedać tę nazwę?",
+      "nchange27":"Za tę cenę w QORT",
+      "nchange28":"Po naciśnięciu potwierdzenia zostanie wysłane zapytanie o nazwę sprzedaży!",
+      "nchange29":"Nazwa do anulowania",
+      "nchange30":"Czy na pewno chcesz anulować sprzedaż dla tej nazwy?",
+      "nchange31":"Po naciśnięciu potwierdzenia zostanie wysłane żądanie anulowania nazwy sprzedaży!",
+      "nchange32":"Żądanie nazwy sprzedaży powiodło się!",
+      "nchange33":"Anulowanie żądania nazwy sprzedaży powiodło się!",
+      "nchange34":"Żądanie nazwy zakupu powiodło się!",
+      "nchange35":"MASZ IMIĘ!",
+      "nchange36":"Tylko konta bez zarejestrowanej nazwy mogą kupić nazwę.",
+      "nchange37":"UWAGA!",
+      "nchange38":"Nie masz wystarczającej ilości qort, aby kupić tę nazwę.",
+      "nchange39":"Czy na pewno kupisz tę nazwę?",
+      "nchange40":"Po naciśnięciu potwierdzenia, prośba o nazwę kupna zostanie wysłana!"
    },
    "websitespage":{
       "schange1":"Przeglądaj strony internetowe",
@@ -753,6 +776,22 @@
       "mg31":"Wyrzuć członka z grupy",
       "mg32":"Powód wyrzucenia",
       "mg33":"Czy na pewno chcesz wyrzucić tego członka z grupy?",
-      "mg34":"Po naciśnięciu potwierdzenia prośba o wyrzucenie zostanie wysłana!"
+      "mg34":"Po naciśnięciu potwierdzenia prośba o wyrzucenie zostanie wysłana!",
+      "mg35":"Brak otwartych zaproszeń do grup",
+      "mg36":"Twoje otwarte zaproszenia do grupy",
+      "mg37":"Adres lub nazwa do zaproszenia",
+      "mg38":"Czas wygaśnięcia zaproszenia",
+      "mg39":"Wszystkie pola są wymagane",
+      "mg40":"Czy na pewno chcesz zaprosić tego członka do grupy?",
+      "mg41":"Po naciśnięciu potwierdzenia, prośba o zaproszenie zostanie wysłana!",
+      "mg42":"Typ grupy",
+      "mg43":"Wygaśnięcie zaproszenia",
+      "mg44":"Grupa publiczna",
+      "mg45":"Grupa prywatna",
+      "mg46":"Anuluj zaproszenie",
+      "mg47":"Anuluj zaproszenie do grupy",
+      "mg48":"Czy na pewno chcesz anulować zaproszenie dla tego członka?",
+      "mg49":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o anulowanie zaproszenia!",
+      "mg50":"Już wkrótce..."
    }
 }

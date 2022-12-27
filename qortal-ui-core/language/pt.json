@@ -135,7 +135,8 @@
       "uiversion":"Versão do UI",
       "coreversion":"Versão do Core",
       "minting":"(Minerando)",
-      "synchronizing":"Sincronizando"
+      "synchronizing":"Sincronizando",
+      "peers":"Pares conectados"
    },
    "walletprofile":{
       "minterlevel":"Nível do Minerador",
@@ -371,7 +372,29 @@
       "nchange15":"Escolher Avatar",
       "nchange16":"Precisa atualizar o CORE",
       "nchange17":"Nome já existe!",
-      "nchange18":"Registro de nome bem sucedido!"
+      "nchange18":"Registro de nome bem sucedido!",
+      "nchange19":"Nome de venda",
+      "nchange20":"Cancelar venda",
+      "nchange21":"Nome da compra",
+      "nchange22":"Nomes de mercado aberto para vender",
+      "nchange23":"Preço de venda",
+      "nchange24":"Sem nomes para vender",
+      "nchange25":"Nome para vender",
+      "nchange26":"Tem certeza que vende este nome ?",
+      "nchange27":"Por este preço em QORT",
+      "nchange28":"Ao clicar em confirmar, a solicitação do nome de venda será enviada!",
+      "nchange29":"Nome para Cancelar",
+      "nchange30":"Tem certeza que deseja cancelar a venda deste nome ?",
+      "nchange31":"Ao pressionar confirmar, a solicitação de cancelamento de nome de venda será enviada!",
+      "nchange32":"Solicitação de nome de venda bem-sucedida!",
+      "nchange33":"Cancelar solicitação de nome de venda com sucesso!",
+      "nchange34":"Pedido de nome de compra bem-sucedido!",
+      "nchange35":"VOCÊ TEM UM NOME!",
+      "nchange36":"Apenas contas sem nome registrado podem comprar um nome.",
+      "nchange37":"ATENÇÃO!",
+      "nchange38":"Você não tem qort suficiente para comprar este nome.",
+      "nchange39":"Tem certeza que deseja comprar este nome ?",
+      "nchange40":"Ao pressionar confirmar, a solicitação do nome de compra será enviada!"
    },
    "websitespage":{
       "schange1":"Navegar Sites",
@@ -753,6 +776,22 @@
       "mg31":"Expulsar membro do grupo",
       "mg32":"Motivo do Chute",
       "mg33":"Tem certeza que deseja expulsar este membro do grupo?",
-      "mg34":"Ao apertar confirmar, o pedido de kick será enviado!"
+      "mg34":"Ao apertar confirmar, o pedido de kick será enviado!",
+      "mg35":"Nenhum convite de grupo aberto",
+      "mg36":"Seus convites para grupos abertos",
+      "mg37":"Endereço ou nome para convidar",
+      "mg38":"Tempo de expiração do convite",
+      "mg39":"Todos os campos são obrigatórios",
+      "mg40":"Tem certeza que deseja convidar este membro para o grupo?",
+      "mg41":"Ao clicar em confirmar, a solicitação de convite será enviada!",
+      "mg42":"Tipo de grupo",
+      "mg43":"Convite Expiração",
+      "mg44":"Grupo público",
+      "mg45":"Grupo Privado",
+      "mg46":"Cancelar convite",
+      "mg47":"Cancelar convite para grupo",
+      "mg48":"Tem certeza que deseja cancelar o convite para este membro ?",
+      "mg49":"Ao pressionar confirmar, a solicitação de cancelamento do convite será enviada!",
+      "mg50":"Em Breve..."
    }
 }

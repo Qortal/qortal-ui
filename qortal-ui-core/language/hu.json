@@ -135,7 +135,8 @@
       "uiversion":"UI Verzió",
       "coreversion":"Mag verzió",
       "minting":"(Verés)",
-      "synchronizing":"Szinkronizálása"
+      "synchronizing":"Szinkronizálása",
+      "peers":"Connected Peers"
    },
    "walletprofile":{
       "minterlevel":"Pénzverő Szint",
@@ -371,7 +372,29 @@
       "nchange15":"Avatar Beállítása",
       "nchange16":"Alapvető Frissítésre Van Szükség",
       "nchange17":"A Név Már Létezik!",
-      "nchange18":"Sikeres Névregisztráció!"
+      "nchange18":"Sikeres Névregisztráció!",
+      "nchange19":"Eladási név",
+      "nchange20":"Eladás törlése",
+      "nchange21":"Vásárlási név",
+      "nchange22":"Eladó nyílt piaci nevek",
+      "nchange23":"Eladási ár",
+      "nchange24":"Nincsenek eladható nevek",
+      "nchange25":"Eladó név",
+      "nchange26":"Biztosan eladja ezt a nevet?",
+      "nchange27":"Erre az árra QORT-ban",
+      "nchange28":"A megerősítés megnyomására elküldjük az eladási névkérést!",
+      "nchange29":"Megszakítandó név",
+      "nchange30":"Biztosan visszavonja ennek a névnek az eladását?",
+      "nchange31":"A megerősítés megnyomására elküldjük az eladási név törlési kérelmét!",
+      "nchange32":"Eladási névkérés sikeres!",
+      "nchange33":"Az eladási névkérés törlése sikeres!",
+      "nchange34":"Névvásárlási kérelem sikeres!",
+      "nchange35":"VAN NEVE!",
+      "nchange36":"Csak a regisztrált név nélküli fiókok vásárolhatnak nevet.",
+      "nchange37":"FIGYELEM!",
+      "nchange38":"Nincs elég qortja ennek a névnek a megvásárlásához.",
+      "nchange39":"Biztosan megveszi ezt a nevet?",
+      "nchange40":"A megerősítés megnyomására a vásárlási névkérelem elküldésre kerül!"
    },
    "websitespage":{
       "schange1":"Webhelyek Böngészése",
@@ -753,6 +776,22 @@
       "mg31":"Tag kirúgása a csoportból",
       "mg32":"Reason For Kick",
       "mg33":"Biztosan kirúgod ezt a tagot a csoportból?",
-      "mg34":"A megerősítés megnyomására elküldésre kerül a rúgás kérés!"
+      "mg34":"A megerősítés megnyomására elküldésre kerül a rúgás kérés!",
+      "mg35":"Nincs nyitott csoportmeghívás",
+      "mg36":"Az Ön nyílt csoportos meghívásai",
+      "mg37":"Meghívandó cím vagy név",
+      "mg38":"Meghívás lejárati ideje",
+      "mg39":"Minden mező kitöltése kötelező",
+      "mg40":"Biztosan meghívja ezt a tagot a csoportba?",
+      "mg41":"A megerősítés megnyomására a rendszer elküldi a meghívási kérelmet!",
+      "mg42":"Csoporttípus",
+      "mg43":"Meghívás lejárt",
+      "mg44":"Nyilvános csoport",
+      "mg45":"Privát csoport",
+      "mg46":"Meghívás visszavonása",
+      "mg47":"Csoportba való meghívás visszavonása",
+      "mg48":"Biztosan visszavonja ennek a tagnak a meghívását?",
+      "mg49":"A megerősítés megnyomására a rendszer elküldi a meghívó visszavonási kérelmét!",
+      "mg50":"Hamarosan..."
    }
 }

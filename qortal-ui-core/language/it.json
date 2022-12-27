@@ -135,7 +135,8 @@
       "uiversion":"Versione UI",
       "coreversion":"Versione principale",
       "minting":"(Minting)",
-      "synchronizing":"Sincronizzazione"
+      "synchronizing":"Sincronizzazione",
+      "peers":"Pari connessi"
    },
    "walletprofile":{
       "minterlevel":"Livello Minter",
@@ -371,7 +372,29 @@
       "nchange15":"Imposta avatar",
       "nchange16":"Necessita aggiornamento principale",
       "nchange17":"Il nome esiste già!",
-      "nchange18":"Registrazione nome riuscita!"
+      "nchange18":"Registrazione nome riuscita!",
+      "nchange19":"Vendi nome",
+      "nchange20":"Annulla vendita",
+      "nchange21":"Acquista nome",
+      "nchange22":"Nomi di mercato aperto da vendere",
+      "nchange23":"Prezzo di vendita",
+      "nchange24":"Nessun nome da vendere",
+      "nchange25":"Nome da vendere",
+      "nchange26":"Sei sicuro di vendere questo nome?",
+      "nchange27":"Per questo prezzo in QORT",
+      "nchange28":"Premendo conferma, verrà inviata la richiesta di vendita del nome!",
+      "nchange29":"Nome da cancellare",
+      "nchange30":"Sei sicuro di annullare la vendita per questo nome?",
+      "nchange31":"Premendo conferma, verrà inviata la richiesta di annullamento della vendita del nome!",
+      "nchange32":"Richiesta di vendita del nome riuscita!",
+      "nchange33":"Annulla la richiesta di vendita del nome riuscita!",
+      "nchange34":"Richiesta acquisto nome riuscita!",
+      "nchange35":"HAI UN NOME!",
+      "nchange36":"Solo gli account senza nome registrato possono acquistare un nome.",
+      "nchange37":"ATTENZIONE!",
+      "nchange38":"Non hai abbastanza qort per acquistare questo nome.",
+      "nchange39":"Sei sicuro di acquistare questo nome?",
+      "nchange40":"Premendo conferma, verrà inviata la richiesta di acquisto del nome!"
    },
    "websitespage":{
       "schange1":"Sfoglia siti Web",
@@ -753,6 +776,22 @@
       "mg31":"Espelle un membro dal gruppo",
       "mg32":"Motivo del calcio",
       "mg33":"Sei sicuro di cacciare questo membro dal gruppo?",
-      "mg34":"Premendo conferma, la richiesta di kick verrà inviata!"
+      "mg34":"Premendo conferma, la richiesta di kick verrà inviata!",
+      "mg35":"Nessun invito di gruppo aperto",
+      "mg36":"I tuoi inviti di gruppo aperti",
+      "mg37":"Indirizzo o nome da invitare",
+      "mg38":"Tempo di scadenza invito",
+      "mg39":"Tutti i campi sono obbligatori",
+      "mg40":"Sei sicuro di invitare questo membro nel gruppo ?",
+      "mg41":"Premendo conferma, la richiesta di invito verrà inviata!",
+      "mg42":"Tipo gruppo",
+      "mg43":"Scadenza invito",
+      "mg44":"Gruppo pubblico",
+      "mg45":"Gruppo privato",
+      "mg46":"Annulla invito",
+      "mg47":"Annulla invito al gruppo",
+      "mg48":"Sei sicuro di annullare l'invito per questo membro ?",
+      "mg49":"Premendo conferma, verrà inviata la richiesta di annullamento dell'invito!",
+      "mg50":"Prossimamente..."
    }
 }

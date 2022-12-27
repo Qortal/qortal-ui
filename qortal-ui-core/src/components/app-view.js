@@ -9,9 +9,11 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
+import '@vaadin/button'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/text-field'
+import '@vaadin/tooltip'
 
 import './wallet-profile.js'
 import './app-info.js'
@@ -197,7 +199,7 @@ class AppView extends connect(store)(LitElement) {
 
                 #balanceheader {
                     flex: 0 0 24px;
-                    padding: 12px;
+                    padding: 12px 12px 20px 12px;
                     border-bottom: 1px solid var(--border);
                     background: var(--sidetopbar);
                 }
@@ -411,7 +413,13 @@ class AppView extends connect(store)(LitElement) {
                                 </div>
                             </div>
                             <div id="balanceheader">
-                                <span class="balanceheadertext">${translate("general.balances")}</span>
+                                <span class="balanceheadertext">
+                                    ${translate("general.balances")}
+                                    <vaadin-button theme="icon" id="reload" @click="${() => this.getAllBalances()}">
+                                        <vaadin-icon icon="vaadin:refresh"></vaadin-icon>
+                                    </vaadin-button>
+                                    <vaadin-tooltip text="Reload Balances" for="reload" position="top"></vaadin-tooltip>
+                                </span>
                             </div>
                             ${this.balanceTicker}
                             <app-info></app-info>
@@ -486,26 +494,14 @@ class AppView extends connect(store)(LitElement) {
         await appDelay(3000)
 
         this.botQortWallet = store.getState().app.selectedAddress.address
-        await this.updateQortWalletBalance()
-
         this.botBtcWallet = store.getState().app.selectedAddress.btcWallet.address
-        await this.updateBtcWalletBalance()
-
         this.botLtcWallet = store.getState().app.selectedAddress.ltcWallet.address
-        await this.updateLtcWalletBalance()
-
         this.botDogeWallet = store.getState().app.selectedAddress.dogeWallet.address
-        await this.updateDogeWalletBalance()
-
         this.botDgbWallet = store.getState().app.selectedAddress.dgbWallet.address
-        await this.updateDgbWalletBalance()
-
         this.botRvnWallet = store.getState().app.selectedAddress.rvnWallet.address
-        await this.updateRvnWalletBalance()
-
         this.botArrrWallet = store.getState().app.selectedAddress.arrrWallet.address
-        await this.fetchArrrWalletAddress()
-        await this.updateArrrWalletBalance()
+
+        await this.getAllBalances()
 
         await this.botBtcTradebook()
         await this.botLtcTradebook()
@@ -532,6 +528,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerBTC)
                 timerBTC = setTimeout(getOpenTradesBTC, 150000)
             } else {
+                await this.updateBtcWalletBalance()
                 const tradesOpenBtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=BITCOIN&limit=0`
 
                 const tradesOpenBtcQortal = await fetch(tradesOpenBtcQortalUrl).then(response => {
@@ -672,6 +669,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerLTC)
                 timerLTC = setTimeout(getOpenTradesLTC, 150000)
             } else {
+                await this.updateLtcWalletBalance()
                 const tradesOpenLtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=LITECOIN&limit=0`
 
                 const tradesOpenLtcQortal = await fetch(tradesOpenLtcQortalUrl).then(response => {
@@ -812,6 +810,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerDOGE)
                 timerDOGE = setTimeout(getOpenTradesDOGE, 150000)
             } else {
+                await this.updateDogeWalletBalance()
                 const tradesOpenDogeQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=DOGECOIN&limit=0`
 
                 const tradesOpenDogeQortal = await fetch(tradesOpenDogeQortalUrl).then(response => {
@@ -952,6 +951,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerDGB)
                 timerDGB = setTimeout(getOpenTradesDGB, 150000)
             } else {
+                await this.updateDgbWalletBalance()
                 const tradesOpenDgbQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=DIGIYBYTE&limit=0`
 
                 const tradesOpenDgbQortal = await fetch(tradesOpenDgbQortalUrl).then(response => {
@@ -1092,6 +1092,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerRVN)
                 timerRVN = setTimeout(getOpenTradesRVN, 150000)
             } else {
+                await this.updateRvnWalletBalance()
                 const tradesOpenRvnQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=RAVENCOIN&limit=0`
 
                 const tradesOpenRvnQortal = await fetch(tradesOpenRvnQortalUrl).then(response => {
@@ -1232,6 +1233,7 @@ class AppView extends connect(store)(LitElement) {
                 clearTimeout(timerARRR)
                 timerARRR = setTimeout(getOpenTradesARRR, 150000)
             } else {
+                await this.updateArrrWalletBalance()
                 const tradesOpenArrrQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=PIRATECHAIN&limit=0`
 
                 const tradesOpenArrrQortal = await fetch(tradesOpenArrrQortalUrl).then(response => {
@@ -1502,6 +1504,17 @@ class AppView extends connect(store)(LitElement) {
         }
     }
 
+    async getAllBalances() {
+        await this.updateQortWalletBalance()
+        await this.updateBtcWalletBalance()
+        await this.updateLtcWalletBalance()
+        await this.updateDogeWalletBalance()
+        await this.updateDgbWalletBalance()
+        await this.updateRvnWalletBalance()
+        await this.fetchArrrWalletAddress()
+        await this.updateArrrWalletBalance()
+    }
+
     async renderBalances() {
         const tickerTime = ms => new Promise(res => setTimeout(res, ms))
         clearTimeout(this.updateBalancesTimeout)
@@ -1539,7 +1552,6 @@ class AppView extends connect(store)(LitElement) {
     }
 
     async updateQortWalletBalance() {
-        clearTimeout(this.updateQortBalanceTimeout)
         let qortAddress = store.getState().app.selectedAddress.address
 
         await parentEpml.request('apiCall', {
@@ -1547,11 +1559,9 @@ class AppView extends connect(store)(LitElement) {
         }).then((res) => {
             this.qortWalletBalance = res
         })
-        this.updateQortBalanceTimeout = setTimeout(() => this.updateQortWalletBalance(), 120000)
     }
 
     async updateBtcWalletBalance() {
-        clearTimeout(this.updateBtcBalanceTimeout)
         let _url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
 
@@ -1566,11 +1576,9 @@ class AppView extends connect(store)(LitElement) {
                 this.btcWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateBtcBalanceTimeout = setTimeout(() => this.updateBtcWalletBalance(), 120000)
     }
 
     async updateLtcWalletBalance() {
-        clearTimeout(this.updateLtcBalanceTimeout)
         let _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
 
@@ -1585,11 +1593,9 @@ class AppView extends connect(store)(LitElement) {
                 this.ltcWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateLtcBalanceTimeout = setTimeout(() => this.updateLtcWalletBalance(), 120000)
     }
 
     async updateDogeWalletBalance() {
-        clearTimeout(this.updateDogeBalanceTimeout)
         let _url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
 
@@ -1604,11 +1610,9 @@ class AppView extends connect(store)(LitElement) {
                 this.dogeWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateDogeBalanceTimeout = setTimeout(() => this.updateDogeWalletBalance(), 120000)
     }
 
     async updateDgbWalletBalance() {
-        clearTimeout(this.updateDgbBalanceTimeout)
         let _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
 
@@ -1623,11 +1627,9 @@ class AppView extends connect(store)(LitElement) {
                 this.dgbWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateDgbBalanceTimeout = setTimeout(() => this.updateDgbWalletBalance(), 120000)
     }
 
     async updateRvnWalletBalance() {
-        clearTimeout(this.updateRvnBalanceTimeout)
         let _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
 
@@ -1642,11 +1644,9 @@ class AppView extends connect(store)(LitElement) {
                 this.rvnWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateRvnBalanceTimeout = setTimeout(() => this.updateRvnWalletBalance(), 120000)
     }
 
     async updateArrrWalletBalance() {
-        clearTimeout(this.updateArrrBalanceTimeout)
         let _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
         let _body = store.getState().app.selectedAddress.arrrWallet.seed58
 
@@ -1661,7 +1661,6 @@ class AppView extends connect(store)(LitElement) {
                 this.arrrWalletBalance = (Number(res) / 1e8).toFixed(8)
             }
         })
-        this.updateArrrBalanceTimeout = setTimeout(() => this.updateArrrWalletBalance(), 120000)
     }
 
     botBtcTradebook() {

@@ -135,7 +135,8 @@
       "uiversion":"Versiunea UI",
       "coreversion":"Versiune Program",
       "minting":"Minting (Producere a monedei)",
-      "synchronizing":"Se sincronizeaza"
+      "synchronizing":"Se sincronizeaza",
+      "peers":"Peers conectați"
    },
    "walletprofile":{
       "minterlevel":"Nivelul Minter-ului",
@@ -371,7 +372,29 @@
       "nchange15":"Configureaza Avatar",
       "nchange16":"Este necesara actualizarea versiunii de baza",
       "nchange17":"Numele Exista deja!",
-      "nchange18":"Inregistrarea numelui s-a realizat cu succes!"
+      "nchange18":"Inregistrarea numelui s-a realizat cu succes!",
+      "nchange19":"Numele vinde",
+      "nchange20":"Anulați vânzarea",
+      "nchange21":"Cumpărați numele",
+      "nchange22":"Nume piețe deschise de vândut",
+      "nchange23":"Preț de vânzare",
+      "nchange24":"Fără nume de vândut",
+      "nchange25":"Nume de vândut",
+      "nchange26":"Sunteți sigur că veți vinde acest nume?",
+      "nchange27":"Pentru acest preț în QORT",
+      "nchange28":"La apăsarea confirmării, cererea de nume de vânzare va fi trimisă!",
+      "nchange29":"Nume de anulat",
+      "nchange30":"Sunteți sigur că anulați vânzarea pentru acest nume?",
+      "nchange31":"La apăsarea confirmării, cererea de anulare a numelui de vânzare va fi trimisă!",
+      "nchange32":"Solicitarea numelui de vânzare a reușit!",
+      "nchange33":"Anulați cererea de nume de vânzare reușită!",
+      "nchange34":"Solicitarea de cumpărare a numelui a reușit!",
+      "nchange35":"AI UN NUME!",
+      "nchange36":"Numai conturile fără nume înregistrat pot cumpăra un nume.",
+      "nchange37":"ATENȚIE!",
+      "nchange38":"Nu aveți suficient qort pentru a cumpăra acest nume.",
+      "nchange39":"Sunteți sigur că veți cumpăra acest nume?",
+      "nchange40":"La apăsarea confirmării, cererea de nume de cumpărare va fi trimisă!"
    },
    "websitespage":{
       "schange1":"Navigati pe Site-uri Web",
@@ -753,6 +776,22 @@
       "mg31":"Loviți membrul din grup",
       "mg32":"Motivul lovirii",
       "mg33":"Sigur îl dați afară pe acest membru din grup?",
-      "mg34":"La apăsarea confirmării, cererea de lovire va fi trimisă!"
+      "mg34":"La apăsarea confirmării, cererea de lovire va fi trimisă!",
+      "mg35":"Fără invitații de grup deschise",
+      "mg36":"Invitațiile dvs. de grup deschis",
+      "mg37":"Adresa sau numele de invitat",
+      "mg38":"Timp de expirare a invitației",
+      "mg39":"Toate câmpurile sunt obligatorii",
+      "mg40":"Sigur inviți acest membru în grup?",
+      "mg41":"La apăsarea confirmării, cererea de invitație va fi trimisă!",
+      "mg42":"Tipul de grup",
+      "mg43":"Expirare invitație",
+      "mg44":"Grup public",
+      "mg45":"Grup privat",
+      "mg46":"Anulați invitația",
+      "mg47":"Anulați invitația la grup",
+      "mg48":"Sigur anulați invitația pentru acest membru?",
+      "mg49":"La apăsarea confirmării, cererea de anulare a invitației va fi trimisă!",
+      "mg50":"În curând..."
    }
 }

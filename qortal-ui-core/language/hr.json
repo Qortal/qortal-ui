@@ -136,7 +136,7 @@
       "coreversion":"Verzija jezgre - Core",
       "minting":"(Mintanje)",
       "synchronizing":"Sinkroniziranje",
-      "balance":"Balance"
+      "peers":"Povezani vršnjaci"
    },
    "walletprofile":{
       "minterlevel":"Minter Level",
@@ -372,7 +372,29 @@
       "nchange15":"Namjesti Avatar",
       "nchange16":"Potrebno ažuriranje jezgre (core)",
       "nchange17":"Ime već postoji!",
-      "nchange18":"Registracija imena uspješna!"
+      "nchange18":"Registracija imena uspješna!",
+      "nchange19":"Ime prodaje",
+      "nchange20":"Otkaži prodaju",
+      "nchange21":"Ime kupovine",
+      "nchange22":"Imena otvorenog tržišta za prodaju",
+      "nchange23":"Prodajna cijena",
+      "nchange24":"Nema imena za prodaju",
+      "nchange25":"Ime za prodaju",
+      "nchange26":"Jeste li sigurni da ćete prodati ovo ime?",
+      "nchange27":"Za ovu cijenu u QORT",
+      "nchange28":"Pritiskom na potvrdu, zahtjev za prodajnim imenom bit će poslan!",
+      "nchange29":"Ime za poništavanje",
+      "nchange30":"Jeste li sigurni da ćete otkazati prodaju za ovo ime?",
+      "nchange31":"Pritiskom na potvrdu, zahtjev za poništenje prodajnog imena bit će poslan!",
+      "nchange32":"Zahtjev za ime prodaje uspješan!",
+      "nchange33":"Uspješno poništite zahtjev za ime prodaje!",
+      "nchange34":"Zahtjev za naziv kupnje uspješan!",
+      "nchange35":"IMATE IME!",
+      "nchange36":"Samo računi bez registriranog imena mogu kupiti ime.",
+      "nchange37":"PAŽNJA!",
+      "nchange38":"Nemate dovoljno qort da kupite ovo ime.",
+      "nchange39":"Jeste li sigurni da želite kupiti ovo ime?",
+      "nchange40":"Pritiskom na potvrdu, zahtjev za kupnju imena bit će poslan!"
    },
    "websitespage":{
       "schange1":"Pregledavanje web stranica",
@@ -754,6 +776,22 @@
       "mg31":"Izbaci člana iz grupe",
       "mg32":"Razlog za udarac",
       "mg33":"Jeste li sigurni da ćete ovog člana izbaciti iz grupe?",
-      "mg34":"Pritiskom na potvrdu, zahtjev za izbačaj će biti poslan!"
+      "mg34":"Pritiskom na potvrdu, zahtjev za izbačaj će biti poslan!",
+      "mg35":"Nema otvorenih grupnih poziva",
+      "mg36":"Vaše otvorene grupne pozivnice",
+      "mg37":"Adresa ili ime za poziv",
+      "mg38":"Vrijeme isteka poziva",
+      "mg39":"Sva su polja obavezna",
+      "mg40":"Jeste li sigurni da želite pozvati ovog člana u grupu?",
+      "mg41":"Pritiskom na potvrdu, zahtjev za pozivnicu bit će poslan!",
+      "mg42":"Vrsta grupe",
+      "mg43":"Istek poziva",
+      "mg44":"Javna grupa",
+      "mg45":"Privatna grupa",
+      "mg46":"Poništi poziv",
+      "mg47":"Otkaži poziv u grupu",
+      "mg48":"Jeste li sigurni da želite otkazati poziv za ovog člana?",
+      "mg49":"Pritiskom na potvrdu, zahtjev za pozivnicu za otkazivanje bit će poslan!",
+      "mg50":"Uskoro..."
    }
 }

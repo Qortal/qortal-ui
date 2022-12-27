@@ -135,7 +135,8 @@
       "uiversion":"Versjon av brukergrensesnitt",
       "coreversion":"Versjon av kjerne",
       "minting":"(Minter)",
-      "synchronizing":"Synkroniserer"
+      "synchronizing":"Synkroniserer",
+      "peers":"Tilknyttede jevnaldrende"
    },
    "walletprofile":{
       "minterlevel":"Minternivå",
@@ -371,7 +372,29 @@
       "nchange15":"Sett avatar",
       "nchange16":"Behøver core-oppdatering",
       "nchange17":"Navnet finnes allerede!",
-      "nchange18":"Navneregistrering vellykket!"
+      "nchange18":"Navneregistrering vellykket!",
+      "nchange19":"Selgsnavn",
+      "nchange20":"Avbryt salg",
+      "nchange21":"Kjøp navn",
+      "nchange22":"Åpne markedsnavn å selge",
+      "nchange23":"Selgspris",
+      "nchange24":"Ingen navn å selge",
+      "nchange25":"Navn å selge",
+      "nchange26":"Er du sikker på å selge dette navnet?",
+      "nchange27":"For denne prisen i QORT",
+      "nchange28":"Når du trykker bekrefte, vil forespørselen om salgsnavn bli sendt!",
+      "nchange29":"Navn som skal avbrytes",
+      "nchange30":"Er du sikker på å kansellere salget for dette navnet?",
+      "nchange31":"Når du trykker på bekreftelse, vil forespørselen om kansellering av salgsnavn bli sendt!",
+      "nchange32":"Selgsnavneforespørselen er vellykket!",
+      "nchange33":"Avbryt forespørsel om salg av navn vellykket!",
+      "nchange34":"Kjøp navneforespørsel vellykket!",
+      "nchange35":"DU HAR ET NAVN!",
+      "nchange36":"Bare kontoer uten registrert navn kan kjøpe et navn.",
+      "nchange37":"OBS!",
+      "nchange38":"Du har ikke nok qort til å kjøpe dette navnet.",
+      "nchange39":"Er du sikker på å kjøpe dette navnet?",
+      "nchange40":"Når du trykker bekreft, vil forespørselen om kjøpsnavn bli sendt!"
    },
    "websitespage":{
       "schange1":"Bla gjennom nettsteder",
@@ -753,6 +776,22 @@
       "mg31":"Spark medlem fra gruppen",
       "mg32":"Grunn til spark",
       "mg33":"Er du sikker på å sparke dette medlemmet fra gruppen?",
-      "mg34":"Når du trykker på bekreft, vil sparkeforespørselen bli sendt!"
+      "mg34":"Når du trykker på bekreft, vil sparkeforespørselen bli sendt!",
+      "mg35":"Ingen åpne gruppeinvitasjoner",
+      "mg36":"Dine åpne gruppeinvitasjoner",
+      "mg37":"Adresse eller navn å invitere",
+      "mg38":"Utløpstid for invitasjon",
+      "mg39":"Alle felt er påkrevd",
+      "mg40":"Er du sikker på å invitere dette medlemmet til gruppen?",
+      "mg41":"Når du trykker bekrefte, vil invitasjonsforespørselen bli sendt!",
+      "mg42":"Gruppetype",
+      "mg43":"Invitasjonsutløp",
+      "mg44":"Offentlig gruppe",
+      "mg45":"Privat gruppe",
+      "mg46":"Avbryt invitasjon",
+      "mg47":"Avbryt invitasjon til gruppe",
+      "mg48":"Er du sikker på å avbryte invitasjonen til dette medlemmet?",
+      "mg49":"Når du trykker på bekreftelse, vil forespørselen om kansellering av invitasjon bli sendt!",
+      "mg50":"Kommer snart..."
    }
 }

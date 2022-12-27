@@ -135,7 +135,8 @@
       "uiversion":"Versión de la UI",
       "coreversion":"Versión del Core",
       "minting":"(Acuñando)",
-      "synchronizing":"Sincronizando"
+      "synchronizing":"Sincronizando",
+      "peers":"Compañeros conectados"
    },
    "walletprofile":{
       "minterlevel":"Nivel del acuñador",
@@ -371,7 +372,29 @@
       "nchange15":"Establecer Avatar",
       "nchange16":"Es necesario actualizar el Core",
       "nchange17":"El Nombre ya existe!",
-      "nchange18":"Registro de nombre existoso!"
+      "nchange18":"Registro de nombre existoso!",
+      "nchange19":"Nombre de venta",
+      "nchange20":"Cancelar venta",
+      "nchange21":"Nombre de compra",
+      "nchange22":"Nombres de mercado abierto para vender",
+      "nchange23":"Precio de venta",
+      "nchange24":"No hay nombres para vender",
+      "nchange25":"Nombre para vender",
+      "nchange26":"¿Estás seguro de vender este nombre?",
+      "nchange27":"Por este precio en QORT",
+      "nchange28":"¡Al presionar confirmar, se enviará la solicitud de nombre de venta!",
+      "nchange29":"Nombre para cancelar",
+      "nchange30":"¿Está seguro de cancelar la venta de este nombre?",
+      "nchange31":"¡Al presionar confirmar, se enviará la solicitud de cancelación de nombre de venta!",
+      "nchange32":"¡Solicitud de nombre de venta exitosa!",
+      "nchange33":"¡Cancelar solicitud de venta de nombre exitosa!",
+      "nchange34":"¡Solicitud de nombre de compra exitosa!",
+      "nchange35":"¡TIENES UN NOMBRE!",
+      "nchange36":"Solo las cuentas sin nombre registrado pueden comprar un nombre.",
+      "nchange37":"¡ATENCIÓN!",
+      "nchange38":"No tienes suficiente qort para comprar este nombre.",
+      "nchange39":"¿Estás seguro de comprar este nombre?",
+      "nchange40":"¡Al presionar confirmar, se enviará la solicitud de compra de nombre!"
    },
    "websitespage":{
       "schange1":"Navegar sitios web",
@@ -753,6 +776,22 @@
       "mg31":"Expulsar miembro del grupo",
       "mg32":"Motivo de la patada",
       "mg33":"¿Estás seguro de expulsar a este miembro del grupo?",
-      "mg34":"¡Al presionar confirmar, se enviará la solicitud de patada!"
+      "mg34":"¡Al presionar confirmar, se enviará la solicitud de patada!",
+      "mg35":"Sin invitaciones de grupo abierto",
+      "mg36":"Su grupo abierto invita",
+      "mg37":"Dirección o nombre a invitar",
+      "mg38":"Tiempo de vencimiento de la invitación",
+      "mg39":"Todos los campos son obligatorios",
+      "mg40":"¿Estás seguro de invitar a este miembro al grupo?",
+      "mg41":"¡Al presionar confirmar, se enviará la solicitud de invitación!",
+      "mg42":"Tipo de grupo",
+      "mg43":"Caducidad de la invitación",
+      "mg44":"Grupo Público",
+      "mg45":"Grupo Privado",
+      "mg46":"Cancelar invitación",
+      "mg47":"Cancelar invitación al grupo",
+      "mg48":"¿Estás seguro de cancelar la invitación de este miembro?",
+      "mg49":"¡Al presionar confirmar, se enviará la solicitud de cancelación de invitación!",
+      "mg50":"Próximamente..."
    }
 }
