@@ -120,9 +120,16 @@ const isLock = app.requestSingleInstanceLock()
 if (!isLock) {
 	app.quit()
 } else {
+	app.on('second-instance', (event, commandLine, workingDirectory) => {
+		if (myWindow) {
+			if (myWindow.isMinimized())
+			myWindow.maximize()
+			myWindow.show()
+		}
+	})
 	app.whenReady().then(() => {
-		createWindow();
-		createTray();
+		createWindow()
+		createTray()
 		if (process.platform === 'win32') {
 			app.setAppUserModelId("org.qortal.QortalUI")
 		}
@@ -143,7 +150,7 @@ if (!isLock) {
 		}
 	})
 	ipcMain.on('app_version', (event) => {
-		log.info(app.getVersion());
+		log.info(app.getVersion())
 		mainWindow.webContents.send('app_version', { version: app.getVersion() })
 	})
 	autoUpdater.on('update-available', (event) => {
