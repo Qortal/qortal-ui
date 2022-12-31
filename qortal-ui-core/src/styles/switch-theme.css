@@ -46,6 +46,8 @@ html {
   --chatHeadBgActive: #ebebeb;
   --chatHeadText: #080808;
   --chatHeadTextActive: #080808;
+  --group-header: #929292;
+  --group-drop-shadow: rgb(17 17 26 / 10%) 0px 1px 0px;
 }
 
 html[theme="dark"] {
@@ -96,4 +98,6 @@ html[theme="dark"] {
   --chatHeadBgActive: #0f1a2e;
   --chatHeadText: #ffffff;
   --chatHeadTextActive: #ffffff;
+  --group-header: #c8c8c8;
+  --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px
 }

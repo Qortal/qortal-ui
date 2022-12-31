@@ -532,12 +532,14 @@ class ChatPage extends LitElement {
             cursor: pointer;
             background-color: #03a8f475;
         }
+
         .chat-container {
             display: grid;
             grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto);
             max-height: 100%;
            flex: 3;
         }
+
         .chat-right-panel {
             flex: 0;
             border-left: 3px solid rgb(221, 221, 221);
@@ -545,29 +547,49 @@ class ChatPage extends LitElement {
             overflow-y: auto;
             background: transparent;
         }
+
         .movedin {
-      flex: 1 !important;
-      background: transparent;
+            flex: 1 !important;
+            background: transparent;
         }
       
-        .chat-right-panel-label {
-            color: white;
-            padding: 5px;
-            font-size: 16px;
-            user-select: none;
-        }
         .main-container {
             display: flex;
             height: 100%;
         }
-        .top-bar-icon {
-            cursor: pointer;
-            height: 18px;
-            width: 18px;
-            transition: .2s all;
+
+        .group-nav-container {
+            display: flex;
+            height: 40px; 
+            padding: 25px 5px 25px 20px; 
+            margin: 0px;
+            background-color: var(--chat-bubble-bg); 
+            box-sizing: border-box; 
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--group-drop-shadow);
         }
+
+        .top-bar-icon {
+            border-radius: 50%;
+            color: var(--chat-bubble-msg-color);
+            transition: 0.3s all ease-in-out;
+            padding: 5px;
+            background-color: transparent;
+        }
+
         .top-bar-icon:hover {
+            background-color: #e6e6e69b;
+            cursor: pointer;
             color: var(--black)
+        }
+
+        .group-name {
+            font-family: Raleway, sans-serif;
+            font-size: 16px;
+            color: var(--black);
+            margin:0px;
+            padding:0px;
         }
         `
     }
@@ -634,16 +656,16 @@ class ChatPage extends LitElement {
             <div class="main-container">
             <div class="chat-container">
                 ${(!this.isReceipient && +this._chatId !== 0) ? html`
-                <div style="display:flex; height:40px; padding:3px; margin:0px;background-color: var(--chat-bubble-bg); box-sizing: border-box; align-items: center;justify-content: space-between">
+                <div class="group-nav-container">
                 <div @click=${this._toggle} style="height: 100%;display: flex;align-items: center;flex-grow: 1;cursor: pointer;cursor:pointer;user-select:none">
-                <p style="color: var(--black);margin:0px;padding:0px">${this.groupInfo && this.groupInfo.groupName}</p>
+                <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
                 </div>
                    <div style="display:flex;height:100%;align-items:center">
                     <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
-                    <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings>
+                    <!-- <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings> -->
                     <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon> -->
                     <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
-                    <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group>
+                    <!-- <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group> -->
                     </div>
                 </div>
                 ` : html`<div></div>`}
