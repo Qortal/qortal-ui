@@ -59,7 +59,7 @@
 		"html-escaper": "3.0.3",
 		"lit": "2.5.0",
 		"lit-translate": "2.0.1",
-		"rollup": "3.8.1",
+		"rollup": "3.9.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2"
 	},
