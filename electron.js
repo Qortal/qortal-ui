@@ -42,6 +42,8 @@ const editMenu = Menu.buildFromTemplate([
 
 Menu.setApplicationMenu(editMenu)
 
+let myWindow = null
+
 function createWindow() {
 	myWindow = new BrowserWindow({
 		backgroundColor: '#eee',
