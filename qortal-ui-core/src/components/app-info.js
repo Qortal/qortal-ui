@@ -113,7 +113,7 @@ class AppInfo extends connect(store)(LitElement) {
 
     async confirmPublicKeyOnChain(address) {
         const _computePow2 = async (chatBytes) => {
-            const difficulty = 15;
+            const difficulty = 14;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
             const worker = new WebWorker();
             let nonce = null
