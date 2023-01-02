@@ -701,7 +701,6 @@ class ChatPage extends LitElement {
     }
     
     render() {
-        console.log(5, 'Chat Page Here');
         return html`
             <div class="chat-container">
                 <div>
@@ -838,7 +837,6 @@ class ChatPage extends LitElement {
                                 <button
                                     class="modal-button"
                                     @click=${()=> {
-                                        console.log("image here");
                                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                                         chatTextEditor.sendMessageFunc({
                                             type: 'image',
@@ -1720,7 +1718,6 @@ class ChatPage extends LitElement {
                 
             }
         }
-        console.log(outSideMsg);
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
         // need original message signature 

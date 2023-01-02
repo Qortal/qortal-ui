@@ -147,6 +147,10 @@ class AppInfo extends connect(store)(LitElement) {
 			if (!stop) {
 				stop = true;
 				try {
+                if(this.publicKeyisOnChainConfirmation){
+                    clearInterval(this.interval)
+                    return
+                }
             const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
 		    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const url = `${nodeUrl}/addresses/publickey/${address}`;
