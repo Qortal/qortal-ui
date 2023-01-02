@@ -792,6 +792,8 @@
       "mg47":"Anulați invitația la grup",
       "mg48":"Sigur anulați invitația pentru acest membru?",
       "mg49":"La apăsarea confirmării, cererea de anulare a invitației va fi trimisă!",
-      "mg50":"În curând..."
+      "mg50":"În curând...",
+      "mg51":"Minim 3 caractere / Maxim 32 de caractere",
+      "mg52":"Maximum 128 de caractere"
    }
 }

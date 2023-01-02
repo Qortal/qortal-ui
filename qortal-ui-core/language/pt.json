@@ -792,6 +792,8 @@
       "mg47":"Cancelar convite para grupo",
       "mg48":"Tem certeza que deseja cancelar o convite para este membro ?",
       "mg49":"Ao pressionar confirmar, a solicitação de cancelamento do convite será enviada!",
-      "mg50":"Em Breve..."
+      "mg50":"Em Breve...",
+      "mg51":"Mínimo de 3 caracteres / Máximo de 32 caracteres",
+      "mg52":"Máximo de 128 caracteres"
    }
 }

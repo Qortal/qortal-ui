@@ -792,6 +792,8 @@
       "mg47":"Cancelar invitación al grupo",
       "mg48":"¿Estás seguro de cancelar la invitación de este miembro?",
       "mg49":"¡Al presionar confirmar, se enviará la solicitud de cancelación de invitación!",
-      "mg50":"Próximamente..."
+      "mg50":"Próximamente...",
+      "mg51":"Mínimo 3 Caracteres / Máximo 32 Caracteres",
+      "mg52":"Máximo de 128 caracteres"
    }
 }

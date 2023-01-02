@@ -405,6 +405,11 @@ class GroupManagement extends LitElement {
 			--mdc-icon-button-size: 32px;
 			color: green;
 		}
+
+		select {
+			background: var(--white);
+			color: var(--black);
+		}
         `
     }
 
@@ -887,7 +892,7 @@ class GroupManagement extends LitElement {
                         >
                         </mwc-textfield>
                     </p>
-                        ${translate("managegroup.mg36")}
+                        ${translate("managegroup.mg38")}
                         <select required validationMessage="${translate("grouppage.gchange14")}" id="inviteMemberTime" label="Expiry Time">
                             <option value="reject" selected>${translate("grouppage.gchange15")}</option>
                             <option value="10800">3 ${translate("grouppage.gchange24")}</option>
@@ -1196,10 +1201,35 @@ class GroupManagement extends LitElement {
                         <h1>${translate("grouppage.gchange12")}</h1>
                         <hr>
                     </div>
-                    
-                    <mwc-textfield style="width: 100%;" ?disabled="${this.isLoading}" label="${translate("grouppage.gchange4")}" id="groupNameInput"></mwc-textfield>
-                    <p style="margin-bottom:0;">
-                        <mwc-textfield style="width:100%;" ?disabled="${this.isLoading}" label="${translate("grouppage.gchange5")}" id="groupDescInput"></mwc-textfield>
+                    <p>
+                        <mwc-textfield
+                            style="width: 100%; color: var(--black);"
+                            ?disabled="${this.isLoading}"
+                            required
+                            outlined
+                            id="groupNameInput"
+                            label="${translate("grouppage.gchange4")}"
+                            type="text"
+                            helper="${translate("managegroup.mg51")}"
+                            maxLength="32"
+                            charCounter="true"
+                        >
+                        </mwc-textfield>
+                    </p>
+                    <p>
+                        <mwc-textfield
+                            style="width: 100%; color: var(--black);"
+                            ?disabled="${this.isLoading}"
+                            required
+                            outlined
+                            id="groupDescInput"
+                            label="${translate("grouppage.gchange5")}"
+                            type="text"
+                            helper="${translate("managegroup.mg52")}"
+                            maxLength="128"
+                            charCounter="true"
+                        >
+                        </mwc-textfield>
                     </p>
                     <p>
                         ${translate("grouppage.gchange13")}:

@@ -792,6 +792,8 @@
       "mg47":"Otkaži poziv u grupu",
       "mg48":"Da li ste sigurni da otkažete poziv za ovog člana?",
       "mg49":"Pritiskom na potvrdi, zahtev za otkazivanje pozivnice će biti poslat!",
-      "mg50":"Uskoro..."
+      "mg50":"Uskoro...",
+      "mg51":"Najmanje 3 znaka / maksimalno 32 znaka",
+      "mg52":"Maksimalno 128 znakova"
    }
 }

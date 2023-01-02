@@ -792,6 +792,8 @@
       "mg47":"Avbryt invitasjon til gruppe",
       "mg48":"Er du sikker på å avbryte invitasjonen til dette medlemmet?",
       "mg49":"Når du trykker på bekreftelse, vil forespørselen om kansellering av invitasjon bli sendt!",
-      "mg50":"Kommer snart..."
+      "mg50":"Kommer snart...",
+      "mg51":"Minimum 3 tegn / maksimum 32 tegn",
+      "mg52": "Maksimalt 128 tegn"
    }
 }

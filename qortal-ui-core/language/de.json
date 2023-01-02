@@ -792,6 +792,8 @@
       "mg47":"Einladung zur Gruppe abbrechen",
       "mg48":"Möchten Sie die Einladung für dieses Mitglied wirklich abbrechen?",
       "mg49":"Beim Drücken auf Bestätigen wird die Anfrage zum Abbrechen der Einladung gesendet!",
-      "mg50":"Kommt bald..."
+      "mg50":"Kommt bald...",
+      "mg51":"Minimum 3 Zeichen / Maximum 32 Zeichen",
+      "mg52":"Maximal 128 Zeichen"
    }
 }

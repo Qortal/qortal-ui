@@ -792,6 +792,8 @@
       "mg47":"Csoportba való meghívás visszavonása",
       "mg48":"Biztosan visszavonja ennek a tagnak a meghívását?",
       "mg49":"A megerősítés megnyomására a rendszer elküldi a meghívó visszavonási kérelmét!",
-      "mg50":"Hamarosan..."
+      "mg50":"Hamarosan...",
+      "mg51":"Minimum 3 karakter / legfeljebb 32 karakter",
+      "mg52":"Legfeljebb 128 karakter"
    }
 }

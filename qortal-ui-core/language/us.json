@@ -792,6 +792,8 @@
       "mg47":"Cancel Invite To Group",
       "mg48":"Are you sure to cancel the invite for this member ?",
       "mg49":"On pressing confirm, the cancel invite request will be sent!",
-      "mg50":"Coming Soon..."
+      "mg50":"Coming Soon...",
+      "mg51":"Minimum 3 Characters / Maximum 32 Characters",
+      "mg52":"Maximum 128 Characters"
    }
 }

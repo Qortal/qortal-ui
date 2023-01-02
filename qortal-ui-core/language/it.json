@@ -792,6 +792,8 @@
       "mg47":"Annulla invito al gruppo",
       "mg48":"Sei sicuro di annullare l'invito per questo membro ?",
       "mg49":"Premendo conferma, verrà inviata la richiesta di annullamento dell'invito!",
-      "mg50":"Prossimamente..."
+      "mg50":"Prossimamente...",
+      "mg51":"Minimo 3 caratteri / Massimo 32 caratteri",
+      "mg52":"Massimo 128 caratteri"
    }
 }

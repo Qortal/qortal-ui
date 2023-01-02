@@ -792,6 +792,8 @@
       "mg47":"Annuler l'invitation au groupe",
       "mg48":"Êtes-vous sûr d'annuler l'invitation de ce membre ?",
       "mg49":"En appuyant sur confirmer, la demande d'annulation d'invitation sera envoyée !",
-      "mg50":"Bientôt disponible..."
+      "mg50":"Bientôt disponible...",
+      "mg51":"Minimum 3 caractères / Maximum 32 caractères",
+      "mg52":"Maximum 128 caractères"
    }
 }

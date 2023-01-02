@@ -792,6 +792,8 @@
       "mg47":"Anuluj zaproszenie do grupy",
       "mg48":"Czy na pewno chcesz anulować zaproszenie dla tego członka?",
       "mg49":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o anulowanie zaproszenia!",
-      "mg50":"Już wkrótce..."
+      "mg50":"Już wkrótce...",
+      "mg51": "Minimum 3 znaki / Maksymalnie 32 znaki",
+      "mg52": "Maksymalnie 128 znaków"
    }
 }
