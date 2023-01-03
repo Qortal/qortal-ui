@@ -446,4 +446,52 @@ export const chatStyles = css`
 		width: 100%;
 		justify-content: center
 	}
+
+	.delete-image-msg {
+		font-family: Livvic, sans-serif;
+		font-size: 20px;
+		color: var(--chat-bubble-msg-color);
+		letter-spacing: 0.3px;
+		font-weight: 300;
+		text-align: center;
+	}
+
+	.modal-button-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+  }
+
+  .modal-button {
+      font-family: Roboto, sans-serif;
+      font-size: 16px;
+      color: var(--mdc-theme-primary);
+      background-color: transparent;
+      padding: 8px 10px;
+      border-radius: 5px;
+      border: none;
+      transition: all 0.3s ease-in-out;
+  }
+
+  .modal-button-red {
+      font-family: Roboto, sans-serif;
+      font-size: 16px;
+      color: #F44336;
+      background-color: transparent;
+      padding: 8px 10px;
+      border-radius: 5px;
+      border: none;
+      transition: all 0.3s ease-in-out;
+  }
+
+  .modal-button-red:hover {
+      cursor: pointer;
+      background-color: #f4433663;
+  }
+
+  .modal-button:hover {
+      cursor: pointer;
+      background-color: #03a8f475;
+  }
 `

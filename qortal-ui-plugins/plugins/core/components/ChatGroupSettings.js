@@ -43,9 +43,11 @@ class ChatGroupSettings extends LitElement {
             width: 18px;
             transition: .2s all;
         }
+
         .top-bar-icon:hover {
             color: var(--black)
         }
+        
         .modal-button {
             font-family: Roboto, sans-serif;
             font-size: 16px;

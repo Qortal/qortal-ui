@@ -23,8 +23,8 @@ class ChatRightPanel extends LitElement {
 			groupAdmin: { attribute: false },
 			groupMembers: { attribute: false },
 			selectedHead: { type: Object },
-            toggle: {attribute: false},
-            getMoreMembers:{attribute: false}
+            toggle: { attribute: false },
+            getMoreMembers:{ attribute: false }
 		}
 	}
 
@@ -44,80 +44,135 @@ class ChatRightPanel extends LitElement {
         this.downObserverElement = ''
 	}
 
-	static get styles() {
-		return css`
-			.top-bar-icon {
-				cursor: pointer;
-				height: 18px;
-				width: 18px;
-				transition: 0.2s all;
-			}
-			.top-bar-icon:hover {
-				color: var(--black);
-			}
-			.modal-button {
-				font-family: Roboto, sans-serif;
-				font-size: 16px;
-				color: var(--mdc-theme-primary);
-				background-color: transparent;
-				padding: 8px 10px;
-				border-radius: 5px;
-				border: none;
-				transition: all 0.3s ease-in-out;
-			}
-            .close-row {
-                width: 100%;
-                display: flex;
-                justify-content: flex-end;
-                height: 50px;
-                flex:0
+static get styles() {
+return css`
+    .top-bar-icon {
+        cursor: pointer;
+        height: 18px;
+        width: 18px;
+        transition: 0.2s all;
+    }
 
-            }
-            .container-body {
-                width: 100%;
-                display: flex; 
-                flex-direction: column; 
-                flex-grow: 1; 
-                overflow:auto;
-                margin-top: 15px;
-                padding: 0px 5px;
-                box-sizing: border-box;
-            }
-            .container-body::-webkit-scrollbar-track {
-                        background-color: whitesmoke;
-                        border-radius: 7px;
-                    }
-            
-                    .container-body::-webkit-scrollbar {
-                        width: 6px;
-                        border-radius: 7px;
-                        background-color: whitesmoke;
-                    }
-            
-                    .container-body::-webkit-scrollbar-thumb {
-                        background-color: rgb(180, 176, 176);
-                        border-radius: 7px;
-                        transition: all 0.3s ease-in-out;
-                    }
-            
-                    .container-body::-webkit-scrollbar-thumb:hover {
-                        background-color: rgb(148, 146, 146);
-                        cursor: pointer;
-                    }    
-            p {
-                color: var(--black);
-                margin: 0px;
-                padding: 0px;
-                word-break: break-all;
-            }
-            .container {
-                display: flex;
-                width: 100%;
-                flex-direction: column;
-                height: 100%;
-            }
-		`
-	}
+    .top-bar-icon:hover {
+        color: var(--black);
+    }
+
+    .modal-button {
+        font-family: Roboto, sans-serif;
+        font-size: 16px;
+        color: var(--mdc-theme-primary);
+        background-color: transparent;
+        padding: 8px 10px;
+        border-radius: 5px;
+        border: none;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .close-row {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        height: 50px;
+        flex:0
+
+    }
+
+    .container-body {
+        width: 100%;
+        display: flex; 
+        flex-direction: column; 
+        flex-grow: 1; 
+        overflow:auto;
+        margin-top: 5px;
+        padding: 0px 6px;
+        box-sizing: border-box;
+    }
+
+    .container-body::-webkit-scrollbar-track {
+        background-color: whitesmoke;
+        border-radius: 7px;
+    }
+    
+    .container-body::-webkit-scrollbar {
+        width: 6px;
+        border-radius: 7px;
+        background-color: whitesmoke;
+    }
+    
+    .container-body::-webkit-scrollbar-thumb {
+        background-color: rgb(180, 176, 176);
+        border-radius: 7px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .container-body::-webkit-scrollbar-thumb:hover {
+        background-color: rgb(148, 146, 146);
+        cursor: pointer;
+    }   
+
+    p {
+        color: var(--black);
+        margin: 0px;
+        padding: 0px;
+        word-break: break-all;
+    }
+
+    .container {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .chat-right-panel-label {
+        font-family: Montserrat, sans-serif;
+        color: var(--group-header);
+        padding: 5px;
+        font-size: 13px;
+        user-select: none;
+    }
+
+    .group-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .group-name {
+        font-family: Raleway, sans-serif;
+        font-size: 20px;
+        color: var(--chat-bubble-msg-color);
+        text-align: center;
+        user-select: none;
+    }
+
+    .group-description {
+        font-family: Roboto, sans-serif;
+        color: var(--chat-bubble-msg-color);
+        letter-spacing: 0.3px;
+        font-weight: 300;
+        font-size: 14px;
+        margin-top: 15px;
+        word-break: break-word;
+        user-select: none;
+    }
+
+    .group-subheader {
+        font-family: Montserrat, sans-serif;
+        font-size: 14px;
+        color: var(--chat-bubble-msg-color);
+    }
+
+    .group-data {
+        font-family: Roboto, sans-serif;
+        letter-spacing: 0.3px;
+        font-weight: 300;
+        font-size: 14px;
+        color: var(--chat-bubble-msg-color);
+    }
+`
+}
 
 	firstUpdated() {
         this.viewElement = this.shadowRoot.getElementById('viewElement');
@@ -167,20 +222,20 @@ class ChatRightPanel extends LitElement {
 	}
 
 	async unitFee(txType) {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/transactions/unitfee?txType=${txType}`
-        let fee = null
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const url = `${nodeUrl}/transactions/unitfee?txType=${txType}`;
+        let fee = null;
 
         try {
-            const res = await fetch(url)
-            const data = await res.json()
-            fee = (Number(data) / 1e8).toFixed(3)
+            const res = await fetch(url);
+            const data = await res.json();
+            fee = (Number(data) / 1e8).toFixed(3);
         } catch (error) {
-            fee = null
+            fee = null;
         }
   
-      return fee
+      return fee;
     }
 
 	async getLastRef() {
@@ -188,7 +243,7 @@ class ChatRightPanel extends LitElement {
 			type: "api",
 			url: `/addresses/lastreference/${this.selectedAddress.address}`,
 		})
-		return myRef
+		return myRef;
 	}
 
 	getTxnRequestResponse(txnResponse, reference) {
@@ -381,7 +436,8 @@ class ChatRightPanel extends LitElement {
             }
         }
 	render() {
-        console.log('this.groupMembers', this.groupMembers)
+        console.log('this.groupMembers', this.groupMembers);
+        console.log(5, "Chat Right Panel Here");
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
         <div class="container">
@@ -389,42 +445,44 @@ class ChatRightPanel extends LitElement {
         <vaadin-icon class="top-bar-icon" @click=${()=> this.toggle(false)} style="margin: 0px 10px" icon="vaadin:close" slot="icon"></vaadin-icon>
         </div>
         <div id="viewElement" class="container-body">
-            <p style="font-size: 20px;">${this.leaveGroupObj && this.leaveGroupObj.groupName}</p>
-                <p style="font-size: 14px;margin-top: 5px">${this.leaveGroupObj && this.leaveGroupObj.description}</p>
-                <p style="font-size: 14px;margin-top: 10px">Members: ${this.leaveGroupObj && this.leaveGroupObj.memberCount}</p>
-
-                <p style="font-size: 14px;margin-top: 5px">Date created : ${new Date(this.leaveGroupObj.created).toLocaleDateString("en-US")}</p>
-                <br />
-                <p class="chat-right-panel-label">Group Owner</p>
-                ${owner.map((item) => {
-					return html`<chat-side-nav-heads
-						activeChatHeadUrl=""
-						.setActiveChatHeadUrl=${(val) => {}}
-						chatInfo=${JSON.stringify(item)}
-					></chat-side-nav-heads>`
-				})}
-                <p class="chat-right-panel-label">Admins</p>
-                ${this.groupAdmin.map((item) => {
-					return html`<chat-side-nav-heads
-						activeChatHeadUrl=""
-						.setActiveChatHeadUrl=${(val) => {}}
-						chatInfo=${JSON.stringify(item)}
-					></chat-side-nav-heads>`
-				})}
-                <p class="chat-right-panel-label">Members</p>
-                ${this.groupMembers.map((item) => {
-					return html`<chat-side-nav-heads
-						activeChatHeadUrl=""
-						.setActiveChatHeadUrl=${(val) => {
-							console.log({ val })
-							this.selectedHead = val
-							this.isOpenLeaveModal = true
-						}}
-						chatInfo=${JSON.stringify(item)}
-					></chat-side-nav-heads>`
-				})}
-                <div id='downObserver'></div>
+            <p class="group-name">${this.leaveGroupObj && this.leaveGroupObj.groupName}</p> 
+            <div class="group-info">
+                <p class="group-description">${this.leaveGroupObj && this.leaveGroupObj.description}</p>
+                <p class="group-subheader">Members: <span class="group-data">${this.leaveGroupObj && this.leaveGroupObj.memberCount}</span></p>
+    
+                <p class="group-subheader">Date created : <span class="group-data">${new Date(this.leaveGroupObj.created).toLocaleDateString("en-US")}</span></p>
             </div>
+            <br />
+            <p class="chat-right-panel-label">GROUP OWNER</p>
+            ${owner.map((item) => {
+                return html`<chat-side-nav-heads
+                    activeChatHeadUrl=""
+                    .setActiveChatHeadUrl=${(val) => {}}
+                    chatInfo=${JSON.stringify(item)}
+                ></chat-side-nav-heads>`
+            })}
+            <p class="chat-right-panel-label">ADMINS</p>
+            ${this.groupAdmin.map((item) => {
+                return html`<chat-side-nav-heads
+                    activeChatHeadUrl=""
+                    .setActiveChatHeadUrl=${(val) => {}}
+                    chatInfo=${JSON.stringify(item)}
+                ></chat-side-nav-heads>`
+            })}
+            <p class="chat-right-panel-label">MEMBERS</p>
+            ${this.groupMembers.map((item) => {
+                return html`<chat-side-nav-heads
+                    activeChatHeadUrl=""
+                    .setActiveChatHeadUrl=${(val) => {
+                        console.log({ val })
+                        this.selectedHead = val
+                        this.isOpenLeaveModal = true
+                    }}
+                    chatInfo=${JSON.stringify(item)}
+                ></chat-side-nav-heads>`
+            })}
+            <div id='downObserver'></div>
+        </div>
 
          <wrapper-modal 
                 .removeImage=${() => {

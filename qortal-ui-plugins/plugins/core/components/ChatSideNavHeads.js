@@ -47,16 +47,13 @@ class ChatSideNavHeads extends LitElement {
                 color: var(--chat-group);
             }
 
-            .about {
-                margin-top: 8px;
-            }
-
-            .about {
-                padding-left: 8px;
-            }
-
             .status {
                 color: #92959e;
+            }
+
+            .clearfix {
+                display: flex;
+                align-items: center;
             }
 
             .clearfix:after {
@@ -129,7 +126,7 @@ class ChatSideNavHeads extends LitElement {
                 ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
                 ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
                 ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
-                <div class="about">
+                <div>
                     <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> </div>
                 </div>
             </li>

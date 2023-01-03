@@ -2,19 +2,49 @@
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: url(MaterialIcons-Regular.eot);
+  /* For IE6-8 */
   src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(MaterialIcons-Regular.woff2) format('woff2'),
-       url(MaterialIcons-Regular.woff) format('woff'),
-       url(MaterialIcons-Regular.ttf) format('truetype');
+    local('MaterialIcons-Regular'),
+    url(MaterialIcons-Regular.woff2) format('woff2'),
+    url(MaterialIcons-Regular.woff) format('woff'),
+    url(MaterialIcons-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: local('Montserrat'),
+    local('Montserrat'),
+    url(Montserrat.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: local('Raleway'),
+    local('Raleway'),
+    url(Raleway.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'KoHo';
+  src: local('KoHo'),
+    local('KoHo'),
+    url(KoHo.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Livvic';
+  src: local('Livvic'),
+    local('Livvic'),
+    url(Livvic.ttf) format('truetype');
 }
 
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
+  font-size: 24px;
+  /* Preferred icon size */
   display: inline-block;
   line-height: 1;
   text-transform: none;

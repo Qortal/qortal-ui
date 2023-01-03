@@ -366,7 +366,6 @@ class ChatModals extends LitElement {
               <textarea class='textarea' @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id='messageBox' placeholder='${translate('welcomepage.wcchange5')}' rows='1'></textarea>
           </p>
           <mwc-button ?disabled='${this.isLoading}' slot='primaryAction' @click=${() => {
-            console.log("here500");
             this._sendMessage();
           }
         }>${translate('welcomepage.wcchange6')}
