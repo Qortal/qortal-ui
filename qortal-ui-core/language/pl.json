@@ -606,7 +606,11 @@
       "gchange51":"Dołącz",
       "gchange52":"Administrator",
       "gchange53":"Członek",
-      "gchange54":"Członkowie"
+      "gchange54":"Członkowie",
+      "gchange55":"Wyszukaj grupę prywatną",
+      "gchange56":"Nazwa grupy do wyszukania",
+      "gchange57":"Nie znaleziono nazwy grupy prywatnej",
+      "gchange58":"Zauważ, że nazwa grupy musi dokładnie pasować."
    },
    "puzzlepage":{
       "pchange1":"Zagadki",

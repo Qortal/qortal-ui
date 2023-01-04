@@ -606,7 +606,11 @@
       "gchange51":"Bli med",
       "gchange52":"Admin",
       "gchange53":"Medlem",
-      "gchange54":"Medlemmer"
+      "gchange54":"Medlemmer",
+      "gchange55":"Søk i privat gruppe",
+      "gchange56":"Gruppenavn å søke",
+      "gchange57":"Privat gruppenavn ikke funnet",
+      "gchange58":"Merk at gruppenavnet må samsvare nøyaktig."
    },
    "puzzlepage":{
       "pchange1":"Puzzles",

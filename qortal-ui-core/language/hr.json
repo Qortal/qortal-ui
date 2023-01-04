@@ -606,7 +606,11 @@
       "gchange51":"Pridruži",
       "gchange52":"Admin",
       "gchange53":"Član",
-      "gchange54":"Članovi"
+      "gchange54":"Članovi",
+      "gchange55":"Traži privatnu grupu",
+      "gchange56":"Naziv grupe za pretraživanje",
+      "gchange57":"Ime privatne grupe nije pronađeno",
+      "gchange58":"Imajte na umu da se naziv grupe mora točno podudarati."
    },
    "puzzlepage":{
       "pchange1":"Zagonetke",

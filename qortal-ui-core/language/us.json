@@ -606,7 +606,11 @@
       "gchange51":"Join",
       "gchange52":"Admin",
       "gchange53":"Member",
-      "gchange54":"Members"
+      "gchange54":"Members",
+      "gchange55":"Search Private Group",
+      "gchange56":"Group Name To Search",
+      "gchange57":"Private Group Name Not Found",
+      "gchange58":"Note that group name must exact match."
    },
    "puzzlepage":{
       "pchange1":"Puzzles",

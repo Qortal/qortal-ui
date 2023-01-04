@@ -30,8 +30,10 @@ class GroupManagement extends LitElement {
         return {
             loading: { type: Boolean },
             publicGroups: { type: Array },
+            privateGroups: { type: Array },
             joinedGroups: { type: Array },
             groupInvites: { type: Array },
+            privateGroupSearch: { type: Array },
             newMembersList: { type: Array },
             newAdminsList: { type: Array },
             newBannedList: { type: Array },
@@ -77,6 +79,7 @@ class GroupManagement extends LitElement {
             toInviteMemberToGroup: { type: String },
             toCancelInviteMemberName: { type: String },
             toCancelInviteMemberAddress: { type: String },
+            searchGroupName: { type: String },
             errorMessage: { type: String },
             successMessage: { type: String }
         }
@@ -410,6 +413,13 @@ class GroupManagement extends LitElement {
 			background: var(--white);
 			color: var(--black);
 		}
+
+            #search {
+               width: 100%;
+               display: flex;
+               margin: auto;
+               align-items: center;
+            }
         `
     }
 
@@ -418,8 +428,10 @@ class GroupManagement extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.selectedAddress = {}
         this.publicGroups = []
+        this.privateGroups = []
         this.joinedGroups = []
         this.groupInvites = []
+        this.privateGroupSearch = []
         this.newMembersList = []
         this.newAdminsList = []
         this.newBannedList = []
@@ -458,6 +470,7 @@ class GroupManagement extends LitElement {
         this.toInviteMemberToGroup = ''
         this.toCancelInviteMemberName = ''
         this.toCancelInviteMemberAddress = ''
+        this.searchGroupName = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.selectedView = { id: 'group-members', name: 'Group Members' }
@@ -1137,6 +1150,45 @@ class GroupManagement extends LitElement {
                 </div>
 
                 <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("grouppage.gchange55")}</h3>
+	              <div id="search">
+	                  <vaadin-text-field
+                            theme="medium"
+                            style="width: 20em"
+                            minlength="3"
+                            maxlength="32"
+                            id="searchGroupName"
+                            placeholder="${translate("grouppage.gchange56")}"
+                            value="${this.searchGroupName}"
+                            @keydown="${this.searchGroupListener}"
+                            clear-button-visible
+                         >
+	                      <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	                  </vaadin-text-field>&nbsp;&nbsp;<br>
+                        <vaadin-button theme="medium" @click="${(e) => this.doGroupSearch(e)}">
+	                      <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                      ${translate("websitespage.schange35")}
+                        </vaadin-button>
+	              </div><br />
+                    <vaadin-grid theme="large" id="priveGroupSearchGrid" ?hidden="${this.isEmptyArray(this.privateGroupSearch)}" .items="${this.privateGroupSearch}" aria-label="My Search Result" all-rows-visible>
+                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
+                            if (data.item.isOpen === true) {
+                                render(html`${translate("managegroup.mg44")}`, root)
+                            } else {
+                                render(html`${translate("managegroup.mg45")}`, root)
+                            }
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("grouppage.gchange51")}</mwc-button>`, root)
+                        }}></vaadin-grid-column>
+                    </vaadin-grid>
+                </div>
+
+                <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
                         <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
@@ -1150,7 +1202,9 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.joinedGroups) ? html`
-                        <span style="color: var(--black);">${translate("grouppage.gchange8")}</span>
+                        <div style="text-align: center;">
+                            <span style="color: var(--black);">${translate("grouppage.gchange8")}</span>
+                        </div>
                     `: ''}
                 </div>
 
@@ -1175,7 +1229,9 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.groupInvites) ? html`
-                        <span style="color: var(--black);">${translate("managegroup.mg35")}</span>
+                        <div style="text-align: center;">
+                            <span style="color: var(--black);">${translate("managegroup.mg35")}</span>
+                        </div>
                     `: ''}
                 </div>
 
@@ -1477,6 +1533,22 @@ class GroupManagement extends LitElement {
                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
+
+                <mwc-dialog id="privateGroupErrorDialog" scrimClickAction="" escapeKeyAction="">
+                    <div style="text-align: center;">
+                        <mwc-icon class="error-icon">warning</mwc-icon>
+                        <h2>${translate("grouppage.gchange57")}</h2>
+                        <h4>${translate("grouppage.gchange58")}</h4>
+                    </div>
+
+                    <mwc-button
+                        slot="primaryAction"
+                        @click=${() => this.closePrivateGroupErrorDialog()}
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
         `
     }
@@ -1502,6 +1574,14 @@ class GroupManagement extends LitElement {
             })
             let myGs = openG.filter(myG => myG.isOpen === true)
             return myGs
+        }
+
+        const getPrivateGroups = async () => {
+            let privateG = await parentEpml.request('apiCall', {
+                url: `/groups?limit=0&reverse=true`
+            })
+            let myPgs = privateG.filter(myP => myP.isOpen === false)
+            return myPgs
         }
 
         const getJoinedGroups = async () => {
@@ -1563,13 +1643,15 @@ class GroupManagement extends LitElement {
         const getOpen_JoinedGroups = async () => {
             let _joinedGroups = await getJoinedGroups()
             let _publicGroups = await getOpenPublicGroups()
+            let _privateGroups = await getPrivateGroups()
             let results = _publicGroups.filter(myOpenGroup => {
                 let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
                 return !value
             });
             this.publicGroups = results
+            this.privateGroups = _privateGroups
             this.joinedGroups = _joinedGroups
-            setTimeout(getOpen_JoinedGroups, 30000)
+            setTimeout(getOpen_JoinedGroups, 60000)
         }
 
         window.addEventListener("contextmenu", (event) => {
@@ -1720,6 +1802,36 @@ class GroupManagement extends LitElement {
                 </div>
             `
         }
+    }
+
+    searchGroupListener(e) {
+        if (e.key === 'Enter') {
+            this.doGroupSearch(e)
+        }
+    }
+
+    doGroupSearch(e) {
+        this.renderSearchResult()
+    }
+
+    renderSearchResult() {
+        this.privateGroupSearch = []
+        let searchGroupName = this.shadowRoot.getElementById('searchGroupName').value
+        if (searchGroupName.length === 0) {
+            let err1string = get("websitespage.schange34")
+            parentEpml.request('showSnackBar', `${err1string}`)
+        } else {
+            this.privateGroupSearch = this.privateGroups.filter(myS => myS.groupName === searchGroupName)
+            if (this.privateGroupSearch.length === 0) {
+                this.shadowRoot.querySelector('#privateGroupErrorDialog').show()
+            }
+        }
+    }
+
+    closePrivateGroupErrorDialog() {
+        this.shadowRoot.querySelector('#privateGroupErrorDialog').close()
+        this.shadowRoot.getElementById('searchGroupName').value = ''
+        this.privateGroupSearch = []
     }
 
     renderBanButton(groupObj) {
@@ -1939,6 +2051,7 @@ class GroupManagement extends LitElement {
     closeFieldErrorDialog() {
         this.shadowRoot.querySelector('#fieldErrorDialog').close()
     }
+
     async unitCreateFee() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
