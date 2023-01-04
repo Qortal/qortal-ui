@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "Türkçe",
+
+  "electron_translate_1": "Qortal Kullanıcı Arayüzünü Göster",
+  "electron_translate_2": "Çık",
+  "electron_translate_3": "Güncelleme mevcut",
+  "electron_translate_4": "Yeni bir Qortal UI sürümü mevcut. İndirmek istiyor musunuz?",
+  "electron_translate_5": "ŞİMDİ YÜKLE",
+  "electron_translate_6": "BELKİ SONRA",
+  "electron_translate_7": "Güncelleme yüklenmeye hazır",
+  "electron_translate_8": "Yeni bir Qortal UI sürümü indirildi.",
+  "electron_translate_9": "Güncellemeyi uygulamak için ŞİMDİ YÜKLE'ye tıklayın, kullanıcı arayüzünü güncellememek için MAYBE SONRA tıklayın.",
+  "electron_translate_10": "Güncelleme Sırasında Hata...",
+  "electron_translate_11": "GÜNCELLEMEYİ İNDİRİN",
+  "electron_translate_12": "Arka planda ⌛️ indirilecek!"
+}

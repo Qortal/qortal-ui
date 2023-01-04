@@ -3,10 +3,11 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
 const progress = require('rollup-plugin-progress');
-const { terser } = require("rollup-plugin-terser");
-const path = require('path');
+const terser = require('@rollup/plugin-terser');
 const alias = require('@rollup/plugin-alias');
 const webWorkerLoader = require('rollup-plugin-web-worker-loader');
+const path = require('path');
+
 
 const generateRollupConfig = (file, { outputDir, aliases }) => {
 

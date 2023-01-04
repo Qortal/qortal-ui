@@ -34,6 +34,7 @@ import { publishData } from '../../utils/publish-image.js';
 import { EmojiPicker } from 'emoji-picker-js';
 import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import '@polymer/paper-dialog/paper-dialog.js'
 
 // const messagesCache = localForage.createInstance({
 //     name: "messages-cache",
@@ -89,7 +90,8 @@ class ChatPage extends LitElement {
             userFound: { type: Array },
             userFoundModalOpen: { type: Boolean },
             webWorker: { type: Object },
-            webWorkerImage: { type: Object }
+            webWorkerImage: { type: Object },
+            myTrimmedMeassage: { type: String }
         }
     }
 
@@ -453,6 +455,27 @@ class ChatPage extends LitElement {
   .float-left {
       float: left;
   }
+
+  img {
+      border-radius: 25%;
+  }
+
+  paper-dialog.warning {
+            width: 50%;
+            max-width: 50vw;
+            height: 30%;
+            max-height: 30vh;
+            text-align: center;
+            background-color: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+            border-radius: 15px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+        .buttons {
+            text-align:right;
+        }
 
   .dialogCustom {
       position: fixed;
@@ -993,7 +1016,6 @@ class ChatPage extends LitElement {
                                 <button
                                     class="modal-button"
                                     @click=${()=> {
-                                        console.log("image here");
                                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                                         chatTextEditor.sendMessageFunc({
                                             type: 'image',
@@ -1007,6 +1029,15 @@ class ChatPage extends LitElement {
                         </div>
                 </div>    	
             </wrapper-modal>
+            <paper-dialog class="warning" id="confirmDialog" modal>
+                <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
+                <hr>
+                <br>
+                <h3 style="color: var(--black);">${translate("chatpage.cchange42")}</h3>
+                <div class="buttons">
+                    <mwc-button @click=${() => this.sendMessage(this.myTrimmedMeassage)} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
+                </div>
+            </paper-dialog>
             <wrapper-modal 
                 .onClickFunc=${() => {
                    this.openForwardOpen = false;
@@ -1997,7 +2028,6 @@ async getName (recipient) {
                 
             }
         }
-        console.log(outSideMsg);
         // have params to determine if it's a reply or not
         // have variable to determine if it's a response, holds signature in constructor
         // need original message signature 
@@ -2310,7 +2340,14 @@ async getName (recipient) {
                 version: 1
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage);
+           
+            if (this.balance < 4) {
+                this.myTrimmedMeassage = ''
+                this.myTrimmedMeassage = stringifyMessageObject
+                this.shadowRoot.getElementById('confirmDialog').open()
+            } else {
+                this.sendMessage(stringifyMessageObject, typeMessage);
+            }
         }
     }
 
@@ -2465,8 +2502,7 @@ async getName (recipient) {
         };
 
         const _computePow = async (chatBytes, isForward) => {
-            const difficulty = this.balance === 0 ? 12 : 8;
-
+            const difficulty = this.balance < 4 ? 18 : 8;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 
               let worker;

@@ -103,9 +103,10 @@ class AppInfo extends connect(store)(LitElement) {
     render() {
         return html`
             <div id="profileInMenu">
-                <span class="info">${translate("appinfo.blockheight")}: ${this.nodeInfo.height ? this.nodeInfo.height : ''}  <span class=${this.cssStatus}>${this._renderStatus()}</span></span>
                 <span class="info">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</span>
                 ${this._renderCoreVersion()}
+                <span class="info">${translate("appinfo.blockheight")}: ${this.nodeInfo.height ? this.nodeInfo.height : ''}  <span class=${this.cssStatus}>${this._renderStatus()}</span></span>
+                <span class="info">${translate("appinfo.peers")}: ${this.nodeInfo.numberOfConnections ? this.nodeInfo.numberOfConnections : ''}
                 <a id="pageLink"></a>
             </div>
         `
@@ -113,7 +114,7 @@ class AppInfo extends connect(store)(LitElement) {
 
     async confirmPublicKeyOnChain(address) {
         const _computePow2 = async (chatBytes) => {
-            const difficulty = 15;
+            const difficulty = 14;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
             const worker = new WebWorker();
             let nonce = null
@@ -147,6 +148,10 @@ class AppInfo extends connect(store)(LitElement) {
 			if (!stop) {
 				stop = true;
 				try {
+                if(this.publicKeyisOnChainConfirmation){
+                    clearInterval(this.interval)
+                    return
+                }
             const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
 		    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const url = `${nodeUrl}/addresses/publickey/${address}`;
@@ -218,7 +223,7 @@ class AppInfo extends connect(store)(LitElement) {
         setInterval(() => {
             this.getNodeInfo()
             this.getCoreInfo()
-        }, 60000)
+        }, 30000)
     }
 
     async getNodeInfo() {

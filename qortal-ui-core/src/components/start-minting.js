@@ -187,7 +187,6 @@ class StartMinting extends connect(store)(LitElement) {
 
 	firstUpdated() {
 		this.getMintingAcccounts();
-		this.shadowRoot.querySelector('mdc-dialog--open').setAttribute('style', 'width: 100vw')
 	}
 
 	renderErrorMsg1() {
@@ -229,9 +228,6 @@ class StartMinting extends connect(store)(LitElement) {
 		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
 		const findMintingAccountFromOtherUser = this.mintingAccountData.find((ma) => ma.recipientAccount === address && ma.mintingAccount !== address);
 
-		
-
-		
 		const removeMintingAccount = async (publicKey) => {
 			const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${myNode.apiKey}`;
 			return await fetch(url, {
@@ -495,8 +491,6 @@ class StartMinting extends connect(store)(LitElement) {
 						` : '' }
 					</div>
 				</div>
-					
-			 <!-- </mwc-dialog> -->
 			</div>
 					
 			` : ""}			

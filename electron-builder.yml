@@ -27,6 +27,8 @@ files:
       - "config/"
       - "scripts/"
       - "build/"
+      - "lib/*.js"
+      - "locales/*.json"
 
 # Mac OS configuration
 mac:

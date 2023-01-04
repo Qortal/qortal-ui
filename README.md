@@ -22,13 +22,14 @@ Packages required:
 Easiest way to install the lastest required packages on Linux is via nvm. 
 
 ``` sudo apt update && sudo apt install curl -y ``` <br/>
+``` sudo rm -rf ~/.nvm ``` (Only for update node version)<br/>
 ``` curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash ``` <br/>
 ``` source ~/.profile ``` (For Debian based distro) <br/>
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
-``` nvm install v16.16.0 ```  (LTS: Gallium supported by Electron) <br/>
-``` npm --location=global install yarn ``` <br/>
-``` npm --location=global install npm@8.19.2 ``` <br/>
+``` nvm install v16.17.1 ```  (LTS: Gallium supported by Electron) <br/>
+``` npm --location=global install yarn@1.22.19 ``` <br/>
+``` npm --location=global install npm@9.2.0 ``` <br/>
 
 On BSD do a ``` pkg_add node followed by npm install -g yarn ```
 

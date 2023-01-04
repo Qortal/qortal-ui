@@ -251,7 +251,7 @@ class SettingsPage extends connect(store)(LitElement) {
         const domainInput = this.shadowRoot.getElementById('domainInput').value
         const portInput = this.shadowRoot.getElementById('portInput').value
 
-        if (protocolList.length >= 4 && domainInput.length >= 3 && portInput.length >= 4) {
+        if (protocolList.length >= 4 && domainInput.length >= 3 && portInput.length >= 2) {
             const nodeObject = {
                 name: nameInput,
                 protocol: protocolList,

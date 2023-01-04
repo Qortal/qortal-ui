@@ -411,7 +411,7 @@ class NameMenu extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        const err3string = 'No regitered name'
+        const err3string = 'No registered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 
@@ -559,7 +559,7 @@ class NameMenu extends LitElement {
             const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
             hashAry.set(chatBytesHash);
 
-            const difficulty = this.balance === 0 ? 12 : 8;
+            const difficulty = this.balance < 4 ? 18 : 8;
 
             const workBufferLength = 8 * 1024 * 1024;
             const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);

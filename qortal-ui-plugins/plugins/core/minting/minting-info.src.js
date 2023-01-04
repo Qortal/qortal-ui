@@ -24,7 +24,8 @@ class MintingInfo extends LitElement {
             sampleBlock: { type: Array },
             addressInfo: { type: Array },
             addressLevel: { type: Array },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            tier4Online: { type: Number }
         }
     }
 
@@ -198,12 +199,13 @@ class MintingInfo extends LitElement {
     constructor() {
         super()
         this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-        this.adminInfo = [];
-        this.nodeInfo = [];
-        this.sampleBlock = [];
-        this.addressInfo = [];
-        this.addressLevel = [];
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
+        this.adminInfo = []
+        this.nodeInfo = []
+        this.sampleBlock = []
+        this.addressInfo = []
+        this.addressLevel = []
+        this.tier4Online = 0
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -343,12 +345,12 @@ class MintingInfo extends LitElement {
         `}
     }
 
-    firstUpdated() {
+    async firstUpdated() {
 
         this.changeTheme()
         this.changeLanguage()
 
-        this.levelsCount()
+        await this.getAddressLevel()
 
         const getAdminInfo = () => {
             parentEpml.request("apiCall", { url: `/admin/info` }).then((res) => {
@@ -423,26 +425,14 @@ class MintingInfo extends LitElement {
         parentEpml.imReady()
     }
 
-    async levelsCount() {
-        await this.getAddressLevel()
-        this.countForTier4()
-    }
-
-    getAddressLevel = async () => {
+    async getAddressLevel() {
         const callLevels = await parentEpml.request('apiCall', {
             url: `/addresses/online/levels`
         })
         this.addressLevel = callLevels
+        this.tier4Online = parseFloat(this.addressLevel[7].count) + parseFloat(this.addressLevel[8].count)
     }
 
-    countForTier4() {
-        const minterOnline = (this.addressLevel[7].count + this.addressLevel[8].count)
-        if (minterOnline < 30) {
-            return "false"
-        } else {
-            return "true"
-        }
-    }
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
@@ -616,25 +606,25 @@ class MintingInfo extends LitElement {
         } else if (this.addressInfo.level === 4) {
             return "13"
         } else if (this.addressInfo.level === 5) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 return "45"
             } else {
                 return "19"
             }
         } else if (this.addressInfo.level === 6) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 return "45"
             } else {
                 return "19"
             }
         } else if (this.addressInfo.level === 7) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 return "45"
             } else {
                 return "26"
             }
         } else if (this.addressInfo.level === 8) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 return "45"
             } else {
                 return "26"
@@ -693,7 +683,7 @@ class MintingInfo extends LitElement {
             let countTier21 = (this.addressLevel[3].count + this.addressLevel[4].count).toString()
             return "" + countTier21
         } else if (this.addressInfo.level === 5) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countTier30 = (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count).toString()
                 return "" + countTier30
             } else {
@@ -701,7 +691,7 @@ class MintingInfo extends LitElement {
                 return "" + countTier30
             }
         } else if (this.addressInfo.level === 6) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countTier31 = (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count).toString()
                 return "" + countTier31
             } else {
@@ -709,7 +699,7 @@ class MintingInfo extends LitElement {
                 return "" + countTier31
             }
         } else if (this.addressInfo.level === 7) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countTier40 = (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count).toString()
                 return "" + countTier40
             } else {
@@ -717,7 +707,7 @@ class MintingInfo extends LitElement {
                 return "" + countTier40
             }
         } else if (this.addressInfo.level === 8) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countTier40 = (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count).toString()
                 return "" + countTier40
             } else {
@@ -753,7 +743,7 @@ class MintingInfo extends LitElement {
             let countReward41 = (countReward40).toString();
             return "" + countReward41;
         } else if (this.addressInfo.level === 5) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online< 30) {
                 let countReward50 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count)).toFixed(8)
                 let countReward51 = (countReward50).toString();
                 return "" + countReward51;
@@ -763,7 +753,7 @@ class MintingInfo extends LitElement {
                 return "" + countReward51;
             }
         } else if (this.addressInfo.level === 6) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countReward60 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count)).toFixed(8)
                 let countReward61 = (countReward60).toString()
                 return "" + countReward61
@@ -773,7 +763,7 @@ class MintingInfo extends LitElement {
                     return "" + countReward61
             }
         } else if (this.addressInfo.level === 7) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countReward70 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count)).toFixed(8)
                 let countReward71 = (countReward70).toString()
                 return "" + countReward71
@@ -783,7 +773,7 @@ class MintingInfo extends LitElement {
                 return "" + countReward71
             }
         } else if (this.addressInfo.level === 8) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countReward80 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count)).toFixed(8)
                 let countReward81 = (countReward80).toString()
                 return "" + countReward81
@@ -823,7 +813,7 @@ class MintingInfo extends LitElement {
             let countRewardDay41 = (countRewardDay40).toString()
             return "" + countRewardDay41
         } else if (this.addressInfo.level === 5) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countRewardDay50 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count) * this._timeCalc()).toFixed(8)
                 let countRewardDay51 = (countRewardDay50).toString()
                 return "" + countRewardDay51
@@ -833,7 +823,7 @@ class MintingInfo extends LitElement {
                 return "" + countRewardDay51
             }
         } else if (this.addressInfo.level === 6) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countRewardDay60 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count) * this._timeCalc()).toFixed(8)
                 let countRewardDay61 = (countRewardDay60).toString()
                 return "" + countRewardDay61
@@ -843,7 +833,7 @@ class MintingInfo extends LitElement {
                 return "" + countRewardDay61
             }
         } else if (this.addressInfo.level === 7) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countRewardDay70 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count) * this._timeCalc()).toFixed(8)
                 let countRewardDay71 = (countRewardDay70).toString()
                 return "" + countRewardDay71
@@ -853,7 +843,7 @@ class MintingInfo extends LitElement {
                 return "" + countRewardDay71
             }
         } else if (this.addressInfo.level === 8) {
-            if (this.countForTier4() === "false") {
+            if (this.tier4Online < 30) {
                 let countRewardDay80 = ((this._blockReward() / 100 * this._tierPercent()) / (this.addressLevel[5].count + this.addressLevel[6].count + this.addressLevel[7].count + this.addressLevel[8].count) * this._timeCalc()).toFixed(8)
                 let countRewardDay81 = (countRewardDay80).toString()
                 return "" + countRewardDay81

@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "한국어",
+
+  "electron_translate_1": "Qortal UI 표시",
+  "electron_translate_2": "종료",
+  "electron_translate_3": "업데이트 가능",
+  "electron_translate_4": "새로운 Qortal UI 버전을 사용할 수 있습니다. 다운로드하시겠습니까?",
+  "electron_translate_5": "지금 설치",
+  "electron_translate_6": "나중에 가능",
+  "electron_translate_7": "업데이트 설치 준비 완료",
+  "electron_translate_8": "새로운 Qortal UI 버전이 다운로드되었습니다.",
+  "electron_translate_9": "업데이트를 적용하려면 지금 설치를 클릭하고 UI를 업데이트하지 않으려면 나중에 할 수도 있습니다.",
+  "electron_translate_10": "업데이트 중 오류...",
+  "electron_translate_11": "업데이트 다운로드",
+  "electron_translate_12": "백그라운드에서 ⌛️ 다운로드됩니다!"
+}
