@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "中文 (繁體)",
+
+  "electron_translate_1": "顯示 Qortal 用戶界面",
+  "electron_translate_2": "退出",
+  "electron_translate_3": "更新可用",
+  "electron_translate_4": "一個新的 Qortal UI 版本可用。你想下載它嗎？",
+  "electron_translate_5": "立即安裝",
+  "electron_translate_6": "稍後再說",
+  "electron_translate_7": "更新準備安裝",
+  "electron_translate_8": "已下載新的 Qortal UI 版本。",
+  "electron_translate_9": "點擊現在安裝應用更新，可能稍後不更新用戶界面。",
+  "electron_translate_10": "更新時出錯...",
+  "electron_translate_11": "下載更新",
+  "electron_translate_12": "它將在後台下載 ⌛️！"
+}

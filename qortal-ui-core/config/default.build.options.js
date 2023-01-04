@@ -21,7 +21,6 @@ const apiComponents = {
     }
 }
 
-
 const functionalComponents = {
     'loading-ripple': {
         file: 'functional-components/loading-ripple.js',
@@ -69,10 +68,6 @@ const elementComponents = {
                         file: 'components/show-plugin.js',
                         className: 'ShowPlugin'
                     },
-                    'sidenav-menu': {
-                        file: 'components/sidenav-menu.js',
-                        className: 'SidenavMenu'
-                    },
                     'wallet-profile': {
                         file: 'components/wallet-profile.js',
                         className: 'WalletProfile'
@@ -118,6 +113,10 @@ const elementComponents = {
                         className: 'NotificationsView'
                     }
                 }
+            },
+            'user-info-view': {
+                file: 'components/user-info-view/user-info-view.js',
+                className: 'UserInfoView'
             }
         }
     }

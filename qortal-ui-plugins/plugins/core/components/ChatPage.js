@@ -27,6 +27,7 @@ import { publishData } from '../../utils/publish-image.js';
 import { EmojiPicker } from 'emoji-picker-js';
 import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import '@polymer/paper-dialog/paper-dialog.js'
 
 // const messagesCache = localForage.createInstance({
 //     name: "messages-cache",
@@ -77,7 +78,8 @@ class ChatPage extends LitElement {
             userFound: { type: Array },
             userFoundModalOpen: { type: Boolean },
             webWorker: { type: Object },
-            webWorkerImage: { type: Object }
+            webWorkerImage: { type: Object },
+            myTrimmedMeassage: { type: String }
         }
     }
 
@@ -850,6 +852,15 @@ class ChatPage extends LitElement {
                         </div>
                 </div>    	
             </wrapper-modal>
+            <paper-dialog class="warning" id="confirmDialog" modal>
+                <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
+                <hr>
+                <br>
+                <h3 style="color: var(--black);">${translate("chatpage.cchange42")}</h3>
+                <div class="buttons">
+                    <mwc-button @click=${() => this.sendMessage(this.myTrimmedMeassage)} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
+                </div>
+            </paper-dialog>
             <wrapper-modal 
                 .onClickFunc=${() => {
                    this.openForwardOpen = false;
@@ -2030,7 +2041,14 @@ class ChatPage extends LitElement {
                 version: 1
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage);
+           
+            if (this.balance < 4) {
+                this.myTrimmedMeassage = ''
+                this.myTrimmedMeassage = stringifyMessageObject
+                this.shadowRoot.getElementById('confirmDialog').open()
+            } else {
+                this.sendMessage(stringifyMessageObject, typeMessage);
+            }
         }
     }
 
@@ -2185,8 +2203,7 @@ class ChatPage extends LitElement {
         };
 
         const _computePow = async (chatBytes, isForward) => {
-            const difficulty = this.balance === 0 ? 12 : 8;
-
+            const difficulty = this.balance < 4 ? 18 : 8;
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 
               let worker;

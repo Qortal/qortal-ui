@@ -1,0 +1,16 @@
+{
+  "__locale_name__": "Deutsch, Deutschland",
+
+  "electron_translate_1": "Qortal-UI anzeigen",
+  "electron_translate_2": "Beenden",
+  "electron_translate_3": "Update verfügbar",
+  "electron_translate_4": "Eine neue Version der Qortal-Benutzeroberfläche ist verfügbar. Möchten Sie sie herunterladen?",
+  "electron_translate_5": "JETZT INSTALLIEREN",
+  "electron_translate_6": "VIELLEICHT SPÄTER",
+  "electron_translate_7": "Update zur Installation bereit",
+  "electron_translate_8": "Eine neue Qortal-UI-Version wurde heruntergeladen.",
+  "electron_translate_9": "Klicken Sie auf JETZT INSTALLIEREN, um das Update anzuwenden, VIELLEICHT SPÄTER, um die Benutzeroberfläche nicht zu aktualisieren.",
+  "electron_translate_10": "Fehler beim Aktualisieren...",
+  "electron_translate_11": "UPDATE HERUNTERLADEN",
+  "electron_translate_12": "Das Update wird im Hintergrund heruntergeladen ⌛️!"
+}

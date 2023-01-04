@@ -53,6 +53,15 @@ parentEpml.ready().then(() => {
 			parent: false,
 		},
 		{
+			url: 'trade-bot-portal',
+			domain: 'core',
+			page: 'trade-bot/index.html',
+			title: 'Auto Buy',
+			icon: 'vaadin:calc-book',
+			menus: [],
+			parent: false,
+		},
+		{
 			url: 'reward-share',
 			domain: 'core',
 			page: 'reward-share/index.html',

@@ -6,7 +6,7 @@ const replace = require('@rollup/plugin-replace');
 const globals = require('rollup-plugin-node-globals');
 const commonjs = require('@rollup/plugin-commonjs');
 const alias = require('@rollup/plugin-alias');
-const { terser } = require('rollup-plugin-terser');
+const terser = require('@rollup/plugin-terser');
 const babel = require('@rollup/plugin-babel');
 const webWorkerLoader = require('rollup-plugin-web-worker-loader');
 
@@ -71,6 +71,10 @@ const generateForPlugins = () => {
 		{
 			in: 'plugins/core/trade-portal/trade-portal.src.js',
 			out: 'plugins/core/trade-portal/trade-portal.js',
+		},
+		{
+			in: 'plugins/core/trade-bot/trade-bot-portal.src.js',
+			out: 'plugins/core/trade-bot/trade-bot-portal.js',
 		},
 		{
 			in: 'plugins/core/wallet/wallet-app.src.js',

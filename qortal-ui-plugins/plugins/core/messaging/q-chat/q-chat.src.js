@@ -112,7 +112,6 @@ class Chat extends LitElement {
                         </div>
                     </div>
                 </div>
-
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
                         <span style="flex: 1;">${translate("chatpage.cchange4")}</span>
@@ -123,7 +122,6 @@ class Chat extends LitElement {
                         ${window.parent.location.pathname !== "/app/q-chat" || this.activeChatHeadUrl ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
                     </div>
                 </div>
-
                 <!-- Start Chatting Dialog -->
                 <wrapper-modal 
                     .onClickFunc=${() => {
@@ -241,7 +239,14 @@ class Chat extends LitElement {
                         <br>
                     </div>
                     <vaadin-grid theme="compact" id="blockedGrid" ?hidden="${this.isEmptyArray(this.blockedUserList)}" aria-label="Blocked List" .items="${this.blockedUserList}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" .renderer=${(root, column, data) => {
+                            if (data.item.name = 'No registered name') {
+                                render(html`${translate("chatpage.cchange15")}`, root);
+                            } else {
+                                render(html`${data.item.name}`, root);
+                            }
+                        }}>
+                        </vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange12")}" path="owner"></vaadin-grid-column>
                         <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderUnblockButton(data.item)}`, root);
@@ -306,7 +311,6 @@ class Chat extends LitElement {
             let splitedUrl = decodeURI(tempUrl).split('?')
             let urlData = splitedUrl[1]
             if (urlData !== undefined) {
-
                 this.chatId = urlData
             }
         }
@@ -635,7 +639,7 @@ class Chat extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const blockedAddressesUrl = `${nodeUrl}/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        const err1string = 'No regitered name'
+        const err1string = 'No registered name'
 
         localStorage.removeItem("ChatBlockedAddresses")
 
