@@ -105,6 +105,7 @@ class ChatPage extends LitElement {
         flex-direction: column;
         height: 50vh;
         overflow-y: auto;
+        overflow-x: hidden;
         width: 100%;
     }
 
@@ -287,7 +288,6 @@ class ChatPage extends LitElement {
 
   .chat-container {
       display: grid;
-      grid-template-rows: minmax(6%, 92vh) minmax(40px, auto);
       max-height: 100%;
   }
 
@@ -575,13 +575,6 @@ class ChatPage extends LitElement {
       object-fit: contain;
   }
 
-    .chat-container {
-        display: grid;
-        grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto);
-        max-height: 100%;
-        flex: 3;
-    }
-
     .chat-right-panel {
         flex: 0;
         border-left: 3px solid rgb(221, 221, 221);
@@ -845,21 +838,24 @@ class ChatPage extends LitElement {
     render() {
         return html`
             <div class="main-container">
-            <div class="chat-container">
-                ${(!this.isReceipient && +this._chatId !== 0) ? html`
+            <div 
+            class="chat-container" 
+            style=${(!this.isReceipient && +this._chatId !== 0) ? "grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;" : "grid-template-rows: minmax(6%, 92vh) minmax(40px, auto); flex: 2;"}>
+                ${(!this.isReceipient && +this._chatId !== 0) ? 
+                html`
                 <div class="group-nav-container">
-                <div @click=${this._toggle} style="height: 100%;display: flex;align-items: center;flex-grow: 1;cursor: pointer;cursor:pointer;user-select:none">
-                <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
-                </div>
-                   <div style="display:flex;height:100%;align-items:center">
-                    <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
-                    <!-- <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings> -->
-                    <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon> -->
-                    <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
-                    <!-- <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group> -->
+                    <div @click=${this._toggle} style="height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: pointer; user-select: none">
+                        <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
+                    </div>
+                    <div style="display: flex; height: 100%; align-items: center">
+                        <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
+                        <!-- <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings> -->
+                        <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon> -->
+                        <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
+                        <!-- <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group> -->
                     </div>
                 </div>
-                ` : html`<div></div>`}
+                ` : null}
                
                 <div>
                     ${this.isLoadingMessages ? 
@@ -1145,7 +1141,17 @@ class ChatPage extends LitElement {
             </wrapper-modal>
         </div>
         <div  class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
-               <chat-right-panel .getMoreMembers=${(val)=> this.getMoreMembers(val)} .toggle=${(val)=> this._toggle(val)} .selectedAddress=${this.selectedAddress} .groupMembers=${this.groupMembers} .groupAdmin=${this.groupAdmin} .leaveGroupObj=${this.groupInfo}></chat-right-panel>
+               <chat-right-panel 
+               .getMoreMembers=${(val)=> this.getMoreMembers(val)} 
+               .toggle=${(val)=> this._toggle(val)} 
+               .selectedAddress=${this.selectedAddress} 
+               .groupMembers=${this.groupMembers} 
+               .groupAdmin=${this.groupAdmin} 
+               .leaveGroupObj=${this.groupInfo}
+               .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+               .chatEditor=${this.chatEditor}
+               >
+            </chat-right-panel>
            
             </div>
             </div>

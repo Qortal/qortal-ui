@@ -44,7 +44,6 @@ class AppView extends connect(store)(LitElement) {
 
                 app-drawer {
                     box-shadow: var(--shadow-2);
-                    background: var(--sidetopbar);
                 }
 
                 app-header {
@@ -66,25 +65,32 @@ class AppView extends connect(store)(LitElement) {
                     background: var(--sidetopbar);
                 }
 
-                .sideBarMenu{
+                .sideBarMenu {
                     overflow-y: auto;
                     flex: 1 1;
                 }
 
-                #sideBar::-webkit-scrollbar {
-                    width: 7px;
-                    background-color: transparent;
+                .sideBarMenu::-webkit-scrollbar-track {
+                    background-color: whitesmoke;
+                    border-radius: 7px;
                 }
-
-                #sideBar::-webkit-scrollbar-track {
-                     background-color: transparent;
+        
+                .sideBarMenu::-webkit-scrollbar {
+                    width: 6px;
+                    border-radius: 7px;
+                    background-color: whitesmoke;
                 }
-
-                #sideBar::-webkit-scrollbar-thumb {
-                     background-color: #333;
-                     border-radius: 6px;
-                     border: 3px solid #333;
+        
+                .sideBarMenu::-webkit-scrollbar-thumb {
+                    background-color: rgb(180, 176, 176);
+                    border-radius: 7px;
+                    transition: all 0.3s ease-in-out;
                 }
+        
+                .sideBarMenu::-webkit-scrollbar-thumb:hover {
+                    background-color: rgb(148, 146, 146);
+                    cursor: pointer;
+                }     
             `
         ]
     }

@@ -565,7 +565,7 @@
       "gchange32": "Date Updated",
       "gchange33": "Joining",
       "gchange34": "Join Group",
-      "gchange35": "Leave Group Request",
+      "gchange35": "User Info",
       "gchange36": "Leaving",
       "gchange37": "Leave Group",
       "gchange38": "Manage Group Owner:",
@@ -584,7 +584,12 @@
       "gchange51": "Join",
       "gchange52": "Admin",
       "gchange53": "Member",
-      "gchange54": "Members"
+      "gchange54": "Members",
+      "gchange55": "Tip QORT to",
+      "gchange56": "SEND MESSAGE",
+      "gchange57": "TIP USER",
+      "gchange58": "Tip Amount",
+      "gchange59": "Available Balance"
    },
    "puzzlepage": {
       "pchange1": "Puzzles",
