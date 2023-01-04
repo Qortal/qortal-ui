@@ -155,7 +155,8 @@
       "continue":"Continua",
       "save":"Salva",
       "balance":"Saldo",
-      "balances":"IL TUO SALDO DEL PORTAFOGLIO"
+      "balances":"I SALDI DEL TUO PORTAFOGLIO",
+      "update":"AGGIORNA I SALDI DEL PORTAFOGLIO"
    },
    "startminting":{
       "smchange1":"Impossibile recuperare i conti di conio",

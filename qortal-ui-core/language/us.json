@@ -155,7 +155,8 @@
       "continue":"Continue",
       "save":"Save",
       "balance":"Balance",
-      "balances":"YOUR WALLET BALANCES"
+      "balances":"YOUR WALLET BALANCES",
+      "update":"UPDATE WALLET BALANCES"
    },
    "startminting":{
       "smchange1":"Cannot fetch minting accounts",

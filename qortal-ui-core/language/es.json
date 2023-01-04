@@ -155,7 +155,8 @@
       "continue":"Continuar",
       "save":"Guardar",
       "balance":"Saldo",
-      "balances":"LOS SALDOS DE TU BILLETERA"
+      "balances":"LOS SALDOS DE TU BILLETERA",
+      "update":"ACTUALIZAR SALDOS DE CARTERA"
    },
    "startminting":{
       "smchange1":"No se pueden obtener cuentas de acuñación",

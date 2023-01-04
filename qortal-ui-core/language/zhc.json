@@ -155,7 +155,8 @@
       "continue":"继续",
       "save":"保存",
       "balance":"信用",
-      "balances":"您的钱包余额"
+      "balances":"您的钱包余额",
+      "update":"更新钱包余额"
    },
    "startminting":{
       "smchange1":"无法获取铸币帐户",

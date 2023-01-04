@@ -155,7 +155,8 @@
       "continue":"Continuar",
       "save":"Salvar",
       "balance":"Saldo",
-      "balances":"SEUS SALDOS DE CARTEIRA"
+      "balances":"SEUS SALDOS DE CARTEIRA",
+      "update":"ATUALIZAR SALDOS DA CARTEIRA"
    },
    "startminting":{
       "smchange1":"Não é possível buscar contas de cunhagem",

@@ -155,7 +155,8 @@
       "continue":"계속하다",
       "save":"저장",
       "balance":"균형",
-      "balances":"지갑 잔액"
+      "balances":"지갑 잔액",
+      "update":"월렛 잔액 업데이트"
    },
    "startminting":{
       "smchange1":"발행 계정을 가져올 수 없습니다",

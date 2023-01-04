@@ -155,7 +155,8 @@
       "continue":"Fortsett",
       "save":"Lagre",
       "balance":"Saldo",
-      "balances":"DIN WALLET-SALDO"
+      "balances":"DIN WALLET-SALDO",
+      "update":"OPPDATERT WALLET-SALDOER"
    },
    "startminting":{
       "smchange1":"Kan ikke hente myntingkontoer",

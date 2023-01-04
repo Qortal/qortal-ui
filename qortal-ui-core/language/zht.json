@@ -155,7 +155,8 @@
       "continue":"繼續",
       "save":"保存",
       "balance":"信用",
-      "balances":"您的錢包餘額"
+      "balances":"您的錢包餘額",
+      "update":"更新錢包餘額"
    },
    "startminting":{
       "smchange1":"無法獲取鑄幣帳戶",

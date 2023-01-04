@@ -155,7 +155,8 @@
       "continue":"Kontynuuj",
       "save":"Zapisz",
       "balance":"Saldo",
-      "balances":"SALDO TWOJEGO PORTFELA"
+      "balances":"SALDO TWOJEGO PORTFELA",
+      "update":"AKTUALIZUJ SALDA W PORTFELU"
    },
    "startminting":{
       "smchange1":"Nie można pobrać kont menniczych",

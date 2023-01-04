@@ -155,7 +155,8 @@
       "continue":"Nastavite",
       "save":"Sačuvajte",
       "balance":"Kredit",
-      "balances":"VAŠI STANJE U NOVČANIKU"
+      "balances":"VAŠI STANJE U NOVČANIKU",
+      "update":"AŽURIRAJTE STANJE NOVČANIKA"
    },
    "startminting":{
       "smchange1":"Nije moguće preuzeti naloge za kovanje",

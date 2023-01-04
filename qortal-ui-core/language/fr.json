@@ -155,7 +155,8 @@
       "continue":"Continuer",
       "save":"Sauvegarder",
       "balance":"Solde",
-      "balances":"VOS SOLDES DE PORTEFEUILLE"
+      "balances":"VOS SOLDES DE PORTEFEUILLE",
+      "update":"METTRE À JOUR LES SOLDES DES PORTEFEUILLES"
    },
    "startminting":{
       "smchange1":"Impossible de récupérer les comptes de frappe",

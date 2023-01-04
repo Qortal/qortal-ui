@@ -155,7 +155,8 @@
       "continue":"Nastavi",
       "save":"Spremi",
       "balance":"Kreditna",
-      "balances":"VAŠ NOVČANIK JE NA SALJU"
+      "balances":"VAŠ NOVČANIK JE NA SALJU",
+      "update":"AŽURIRAJTE STANJE NOVČANIKA"
    },
    "startminting":{
       "smchange1":"Nije moguće dohvatiti račune za kovanje",

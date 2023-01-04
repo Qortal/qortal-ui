@@ -155,7 +155,8 @@
       "continue":"Continua",
       "save":"Salveza",
       "balance":"Credit",
-      "balances":"SOLDELE PORTOTELULUI DVS"
+      "balances":"SOLDELE PORTOTELULUI DVS",
+      "update":"ACTUALIZAȚI SOLDELE PORTOTELULUI"
    },
    "startminting":{
       "smchange1":"Nu se pot prelua conturile de batere",

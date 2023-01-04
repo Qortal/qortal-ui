@@ -155,7 +155,8 @@
       "continue":"Fortsetzen",
       "save":"Speichern",
       "balance":"Guthaben",
-      "balances":"IHR WALLET-GUTHABEN"
+      "balances":"IHR WALLET-GUTHABEN",
+      "update":"AKTUALISIERE WALLET-GUTHABEN"
    },
    "startminting":{
       "smchange1":"Prägekonten können nicht abgerufen werden",

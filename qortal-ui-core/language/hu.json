@@ -155,7 +155,8 @@
       "continue":"Folytatódik/folytatáshoz",
       "save":"Mentéshez",
       "balance":"Hitel",
-      "balances":"A PÉNZTÁRCSA EGYENLEGEK"
+      "balances":"A PÉNZTÁRCSA EGYENLEGEK",
+      "update":"FRISSÍTSE A PÉNZTÁRCSA-EGYENLEGEKET"
    },
    "startminting":{
       "smchange1":"Nem lehet lekérni a pénzverési számlákat",
