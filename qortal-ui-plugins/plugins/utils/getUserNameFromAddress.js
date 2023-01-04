@@ -1,4 +1,5 @@
 import { Epml } from '../../epml.js';
+import { cropAddress } from './cropAddress.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -12,7 +13,7 @@ export const getUserNameFromAddress = async (address) => {
     if (Array.isArray(getNames) && getNames.length > 0 ) {
         return getNames[0].name;
     } else {
-        return address;
+        return cropAddress(address);
     }
   } catch (error) {
       console.error(error);

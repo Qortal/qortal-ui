@@ -589,7 +589,8 @@
       "gchange56": "SEND MESSAGE",
       "gchange57": "TIP USER",
       "gchange58": "Tip Amount",
-      "gchange59": "Available Balance"
+      "gchange59": "Available Balance",
+      "gchange60": "Failed to Fetch QORT Balance. Try again!"
    },
    "puzzlepage": {
       "pchange1": "Puzzles",

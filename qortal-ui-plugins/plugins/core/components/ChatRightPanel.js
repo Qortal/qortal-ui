@@ -29,7 +29,8 @@ class ChatRightPanel extends LitElement {
             setOpenPrivateMessage: { attribute: false },
             openTipUser: { type: Boolean },
             userName: { type: String },
-            chatEditor: { type: Object }
+            chatEditor: { type: Object },
+            walletBalance: { type: Number }
 		}
 	}
 
@@ -237,9 +238,11 @@ class ChatRightPanel extends LitElement {
 
         .tip-user-body {
             display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 15px 10px;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 10px;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .tip-input {
@@ -272,6 +275,7 @@ class ChatRightPanel extends LitElement {
         this.viewElement = this.shadowRoot.getElementById('viewElement');
         this.downObserverElement = this.shadowRoot.getElementById('downObserver');
         this.elementObserver();
+        this.fetchWalletDetails();
     }
 
     async updated(changedProperties) {
@@ -538,9 +542,30 @@ class ChatRightPanel extends LitElement {
                 this.getMoreMembers(this.leaveGroupObj.groupId)
             }
         }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
+
+    async fetchWalletDetails() {
+        parentEpml.request('apiCall', {
+            url: `/addresses/balance/${this.myAddress}?apiKey=${this.getApiKey()}`,
+        })
+        .then((res) => {
+            if (isNaN(Number(res))) {
+                let snack4string = get("grouppage.gchange60")
+                parentEpml.request('showSnackBar', `${snack4string}`)
+            } else {
+                    this.walletBalance = Number(res).toFixed(8);
+            }
+        })					 
+    }
+
 	render() {
         console.log('this.groupMembers', this.groupMembers);
-        console.log(18, "Chat Right Panel Here");
+        console.log(20, "Chat Right Panel Here");
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
         <div class="container">
@@ -671,7 +696,7 @@ class ChatRightPanel extends LitElement {
                     <p class="tip-user-header-font">${translate("grouppage.gchange55")} ${this.userName}</p>
                 </div>
                 <div class="tip-user-body">
-                    <p class="tip-available">${translate("grouppage.gchange59")}</p>
+                    <p class="tip-available">${translate("grouppage.gchange59")}: ${this.walletBalance} QORT</p>
                     <input class="tip-input" type="number" placeholder="${translate("grouppage.gchange58")}" />
                 </div>
             </wrapper-modal>
