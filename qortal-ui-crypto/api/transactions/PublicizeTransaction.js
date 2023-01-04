@@ -22,7 +22,6 @@ export default class PublicizeTransaction extends ChatBase {
             this._proofOfWorkNonce,
             this._feeBytes
         )
-        console.log({params})
         return params;
     }
 }

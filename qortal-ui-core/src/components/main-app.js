@@ -12,7 +12,7 @@ import './login-view/login-view.js'
 import './app-view.js'
 
 import copyTextMenu from '../functional-components/copy-text-menu.js'
-import framePasteMenu from '../functional-components/frame-paste-menu.js';
+import framePasteMenu from '../functional-components/frame-paste-menu.js'
 
 installRouter((location) => store.dispatch(doNavigate(location)))
 
