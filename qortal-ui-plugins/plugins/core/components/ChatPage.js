@@ -361,6 +361,23 @@ class ChatPage extends LitElement {
       border-radius: 25%;
   }
 
+  paper-dialog.warning {
+            width: 50%;
+            max-width: 50vw;
+            height: 30%;
+            max-height: 30vh;
+            text-align: center;
+            background-color: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+            border-radius: 15px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+        .buttons {
+            text-align:right;
+        }
+
   .dialogCustom {
       position: fixed;
       z-index: 10000;

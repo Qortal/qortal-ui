@@ -545,7 +545,7 @@ class Chat extends LitElement {
     };
       
         const _computePow = async (chatBytes) => {
-            const difficulty = this.balance === 0 ? 12 : 8;
+            const difficulty = this.balance < 4 ? 18 : 8
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full';
             const worker = new WebWorker();
             let nonce = null;
