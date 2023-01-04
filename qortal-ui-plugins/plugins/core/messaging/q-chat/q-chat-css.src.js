@@ -316,6 +316,7 @@ export const qchatStyles = css`
     font-family: Roboto, sans-serif;
     font-size: 15px;
     color: var(--chat-bubble-msg-color);
+    box-sizing: border-box;
   }
 
   .name-input::selection {
