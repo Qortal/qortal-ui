@@ -7,6 +7,7 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import '../components/time-elements/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
@@ -21,7 +22,6 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
-import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
