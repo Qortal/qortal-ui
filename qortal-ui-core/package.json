@@ -22,7 +22,7 @@
 		"sass": "1.57.1"
 	},
 	"devDependencies": {
-		"@babel/core": "7.20.7",
+		"@babel/core": "7.20.12",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
@@ -74,7 +74,7 @@
 		"random-sentence-generator": "0.0.8",
 		"redux": "4.2.0",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.9.0",
+		"rollup": "3.9.1",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0"
