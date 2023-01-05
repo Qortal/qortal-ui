@@ -155,7 +155,8 @@
       "continue":"Continuer",
       "save":"Sauvegarder",
       "balance":"Solde",
-      "balances":"VOS SOLDES DE PORTEFEUILLE"
+      "balances":"VOS SOLDES DE PORTEFEUILLE",
+      "update":"METTRE À JOUR LES SOLDES DES PORTEFEUILLES"
    },
    "startminting":{
       "smchange1":"Impossible de récupérer les comptes de frappe",
@@ -606,7 +607,11 @@
       "gchange51":"Rejoindre",
       "gchange52":"Admin",
       "gchange53":"Membre",
-      "gchange54":"Membres"
+      "gchange54":"Membres",
+      "gchange55":"Rechercher un groupe privé",
+      "gchange56":"Nom du groupe à rechercher",
+      "gchange57":"Nom de groupe privé introuvable",
+      "gchange58":"Notez que le nom du groupe doit correspondre exactement."
    },
    "puzzlepage":{
       "pchange1":"Puzzles",

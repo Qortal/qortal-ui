@@ -155,7 +155,8 @@
       "continue":"Nastavite",
       "save":"Sačuvajte",
       "balance":"Kredit",
-      "balances":"VAŠI STANJE U NOVČANIKU"
+      "balances":"VAŠI STANJE U NOVČANIKU",
+      "update":"AŽURIRAJTE STANJE NOVČANIKA"
    },
    "startminting":{
       "smchange1":"Nije moguće preuzeti naloge za kovanje",
@@ -606,7 +607,11 @@
       "gchange51":"Uđite",
       "gchange52":"Administrator",
       "gchange53":"Član",
-      "gchange54":"Članovi"
+      "gchange54":"Članovi",
+      "gchange55":"Pretraži privatnu grupu",
+      "gchange56":"Ime grupe za pretragu",
+      "gchange57":"Ime privatne grupe nije pronađeno",
+      "gchange58":"Imajte na umu da ime grupe mora potpuno da se podudara."
    },
    "puzzlepage":{
       "pchange1":"Slagalice",

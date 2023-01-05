@@ -155,7 +155,8 @@
       "continue":"Continua",
       "save":"Salva",
       "balance":"Saldo",
-      "balances":"IL TUO SALDO DEL PORTAFOGLIO"
+      "balances":"I SALDI DEL TUO PORTAFOGLIO",
+      "update":"AGGIORNA I SALDI DEL PORTAFOGLIO"
    },
    "startminting":{
       "smchange1":"Impossibile recuperare i conti di conio",
@@ -606,7 +607,11 @@
       "gchange51":"Unisciti",
       "gchange52":"Amministratore",
       "gchange53":"Membro",
-      "gchange54":"Membri"
+      "gchange54":"Membri",
+      "gchange55":"Cerca gruppo privato",
+      "gchange56":"Nome gruppo da cercare",
+      "gchange57":"Nome gruppo privato non trovato",
+      "gchange58":"Nota che il nome del gruppo deve corrispondere esattamente."
    },
    "puzzlepage":{
       "pchange1":"Puzzle",

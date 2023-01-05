@@ -155,7 +155,8 @@
       "continue":"繼續",
       "save":"保存",
       "balance":"信用",
-      "balances":"您的錢包餘額"
+      "balances":"您的錢包餘額",
+      "update":"更新錢包餘額"
    },
    "startminting":{
       "smchange1":"無法獲取鑄幣帳戶",
@@ -606,7 +607,11 @@
       "gchange51":"加入",
       "gchange52":"管理員",
       "gchange53":"成員",
-      "gchange54":"成員數量"
+      "gchange54":"成員數量",
+      "gchange55":"搜索私人群組",
+      "gchange56":"要搜索的組名",
+      "gchange57":"未找到私人組名",
+      "gchange58":"注意組名必須完全匹配。"
    },
    "puzzlepage":{
       "pchange1":"益智游戲",

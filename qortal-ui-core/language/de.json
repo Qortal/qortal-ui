@@ -155,7 +155,8 @@
       "continue":"Fortsetzen",
       "save":"Speichern",
       "balance":"Guthaben",
-      "balances":"IHR WALLET-GUTHABEN"
+      "balances":"IHR WALLET-GUTHABEN",
+      "update":"AKTUALISIERE WALLET-GUTHABEN"
    },
    "startminting":{
       "smchange1":"Prägekonten können nicht abgerufen werden",
@@ -606,7 +607,11 @@
       "gchange51":"Beitreten",
       "gchange52":"Administrator",
       "gchange53":"Mitglied",
-      "gchange54":"Mitglieder"
+      "gchange54":"Mitglieder",
+      "gchange55":"Private Gruppe suchen",
+      "gchange56":"Zu suchender Gruppenname",
+      "gchange57":"Privater Gruppenname nicht gefunden",
+      "gchange58":"Beachten Sie, dass der Gruppenname genau übereinstimmen muss."
    },
    "puzzlepage":{
       "pchange1":"Rätsel",
