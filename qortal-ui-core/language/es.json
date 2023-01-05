@@ -799,6 +799,15 @@
       "mg49":"¡Al presionar confirmar, se enviará la solicitud de cancelación de invitación!",
       "mg50":"Próximamente...",
       "mg51":"Mínimo 3 Caracteres / Máximo 32 Caracteres",
-      "mg52":"Máximo de 128 caracteres"
+      "mg52":"Máximo de 128 caracteres",
+      "mg53":"Tus solicitudes abiertas de unión",
+      "mg54":"Sin solicitudes de unión abiertas",
+      "mg55":"¿Está seguro de aceptar la solicitud de ingreso de este miembro?",
+      "mg56":"¡Al presionar confirmar, se enviará la solicitud de aceptación de ingreso!",
+      "mg57":"Solicitud de ingreso aceptada con éxito",
+      "mg58":"ALGO SALIO MAL",
+      "mg59":"Solicitud de cancelación de unión aceptada con éxito",
+      "mg60":"¿Está seguro de cancelar la solicitud de ingreso de este miembro?",
+      "mg61":"¡Al presionar confirmar, se enviará la solicitud de cancelación de unión!"
    }
 }

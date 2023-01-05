@@ -799,6 +799,15 @@
       "mg49":"Premendo conferma, verrà inviata la richiesta di annullamento dell'invito!",
       "mg50":"Prossimamente...",
       "mg51":"Minimo 3 caratteri / Massimo 32 caratteri",
-      "mg52":"Massimo 128 caratteri"
+      "mg52":"Massimo 128 caratteri",
+      "mg53":"Le tue richieste di partecipazione aperte",
+      "mg54":"Nessuna richiesta di partecipazione aperta",
+      "mg55":"Sei sicuro di accettare la richiesta di adesione di questo membro ?",
+      "mg56":"Premendo conferma, verrà inviata la richiesta di partecipazione accettata!",
+      "mg57":"Richiesta di partecipazione accettata con successo",
+      "mg58":"QUALCOSA È ANDATO storto",
+      "mg59":"Annulla richiesta di partecipazione accettata con successo",
+      "mg60":"Sei sicuro di voler annullare la richiesta di adesione di questo membro ?",
+      "mg61":"Premendo conferma, verrà inviata la richiesta di annullamento partecipazione!"
    }
 }

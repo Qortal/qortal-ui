@@ -799,6 +799,15 @@
       "mg49":"Når du trykker på bekreftelse, vil forespørselen om kansellering av invitasjon bli sendt!",
       "mg50":"Kommer snart...",
       "mg51":"Minimum 3 tegn / maksimum 32 tegn",
-      "mg52": "Maksimalt 128 tegn"
+      "mg52":"Maksimalt 128 tegn",
+      "mg53":"Dine åpne forespørsler om bli med",
+      "mg54":"Ingen åpne forespørsler om medlemskap",
+      "mg55":"Er du sikker på å godta forespørselen fra dette medlemmet?",
+      "mg56":"Når du trykker på bekreft, vil forespørselen om å godta bli sendt bli sendt!",
+      "mg57":"Bli med forespørsel ble godtatt",
+      "mg58":"NOE GIKK FEIL",
+      "mg59":"Avbryt deltakelsesforespørsel ble godtatt",
+      "mg60":"Er du sikker på å avbryte forespørselen om å bli medlem fra dette medlemmet?",
+      "mg61":"Når du trykker på bekreft, vil forespørselen om kansellering bli sendt!"
    }
 }

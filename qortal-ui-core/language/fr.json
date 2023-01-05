@@ -799,6 +799,15 @@
       "mg49":"En appuyant sur confirmer, la demande d'annulation d'invitation sera envoyée !",
       "mg50":"Bientôt disponible...",
       "mg51":"Minimum 3 caractères / Maximum 32 caractères",
-      "mg52":"Maximum 128 caractères"
+      "mg52":"Maximum 128 caractères",
+      "mg53":"Vos demandes d'ouverture de jointure",
+      "mg54":"Aucune demande de jointure ouverte",
+      "mg55":"Êtes-vous sûr d'accepter la demande d'adhésion de ce membre ?",
+      "mg56":"En appuyant sur confirmer, la demande d'adhésion acceptée sera envoyée !",
+      "mg57":"Demande d'adhésion acceptée avec succès",
+      "mg58":"QUELQUE CHOSE S'EST TROMPÉ",
+      "mg59":"Annuler la demande d'adhésion acceptée avec succès",
+      "mg60":"Êtes-vous sûr d'annuler la demande d'adhésion de ce membre ?",
+      "mg61":"En appuyant sur confirmer, la demande d'annulation de l'adhésion sera envoyée !"
    }
 }

@@ -798,7 +798,16 @@
       "mg48":"Jeste li sigurni da želite otkazati poziv za ovog člana?",
       "mg49":"Pritiskom na potvrdu, zahtjev za pozivnicu za otkazivanje bit će poslan!",
       "mg50":"Uskoro...",
-      "mg51": "Minimalno 3 znaka / Maksimalno 32 znaka",
-      "mg52": "Maksimalno 128 znakova"
+      "mg51":"Minimalno 3 znaka / Maksimalno 32 znaka",
+      "mg52":"Maksimalno 128 znakova",
+      "mg53":"Vaši otvoreni zahtjevi za pridruživanje",
+      "mg54":"Nema otvorenih zahtjeva za pridruživanje",
+      "mg55":"Jeste li sigurni da prihvaćate zahtjev za pridruživanje ovog člana?",
+      "mg56":"Pritiskom na potvrdu, zahtjev za prihvaćanje pridruživanja bit će poslan!",
+      "mg57":"Zahtjev za pridruživanje uspješno prihvaćen",
+      "mg58":"NEŠTO JE POŠLO PO ZLOU",
+      "mg59":"Poništi zahtjev za pridruživanje uspješno prihvaćen",
+      "mg60":"Jeste li sigurni da želite otkazati zahtjev za pridruživanje ovog člana?",
+      "mg61":"Pritiskom na potvrdu, bit će poslan zahtjev za otkazivanje pridruživanja!"
    }
 }

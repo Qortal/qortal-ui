@@ -799,6 +799,15 @@
       "mg49":"Beim Drücken auf Bestätigen wird die Anfrage zum Abbrechen der Einladung gesendet!",
       "mg50":"Kommt bald...",
       "mg51":"Minimum 3 Zeichen / Maximum 32 Zeichen",
-      "mg52":"Maximal 128 Zeichen"
+      "mg52":"Maximal 128 Zeichen",
+      "mg53":"Ihre offenen Beitrittsanfragen",
+      "mg54":"Keine offenen Beitrittsanfragen",
+      "mg55":"Sind Sie sicher, dass Sie die Beitrittsanfrage von diesem Mitglied annehmen werden?",
+      "mg56":"Beim Drücken von Bestätigen wird die Beitrittsanfrage gesendet!",
+      "mg57":"Beitrittsanfrage erfolgreich angenommen",
+      "mg58":"ETWAS GING FALSCH",
+      "mg59":"Beitrittsanfrage abbrechen erfolgreich akzeptiert",
+      "mg60":"Sind Sie sicher, dass Sie die Beitrittsanfrage dieses Mitglieds abbrechen möchten?",
+      "mg61":"Beim Drücken auf Bestätigen wird die Anfrage zum Abbrechen des Beitritts gesendet!"
    }
 }

@@ -799,6 +799,15 @@
       "mg49":"Ao pressionar confirmar, a solicitação de cancelamento do convite será enviada!",
       "mg50":"Em Breve...",
       "mg51":"Mínimo de 3 caracteres / Máximo de 32 caracteres",
-      "mg52":"Máximo de 128 caracteres"
+      "mg52":"Máximo de 128 caracteres",
+      "mg53":"Suas solicitações de entrada abertas",
+      "mg54":"Nenhuma solicitação de entrada aberta",
+      "mg55":"Tem certeza que aceita a solicitação de entrada deste membro?",
+      "mg56":"Ao pressionar confirmar, o pedido de aceitação de entrada será enviado!",
+      "mg57":"Solicitação de entrada aceita com sucesso",
+      "mg58":"ALGO DEU ERRADO",
+      "mg59":"Cancelar pedido de entrada aceito com sucesso",
+      "mg60":"Tem certeza que deseja cancelar a solicitação de ingresso deste membro ?",
+      "mg61":"Ao pressionar confirmar, o pedido de cancelamento de adesão será enviado!"
    }
 }

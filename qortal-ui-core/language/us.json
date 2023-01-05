@@ -799,6 +799,15 @@
       "mg49":"On pressing confirm, the cancel invite request will be sent!",
       "mg50":"Coming Soon...",
       "mg51":"Minimum 3 Characters / Maximum 32 Characters",
-      "mg52":"Maximum 128 Characters"
+      "mg52":"Maximum 128 Characters",
+      "mg53":"Your Open Join Requests",
+      "mg54":"No Open Join Requests",
+      "mg55":"Are you sure to accept the join request from this member ?",
+      "mg56":"On pressing confirm, the accept join request will be sent!",
+      "mg57":"Join Request Successfully Accepted",
+      "mg58":"SOMETHING WENT WRONG",
+      "mg59":"Cancel Join Request Successfully Accepted",
+      "mg60":"Are you sure to cancel the join request from this member ?",
+      "mg61":"On pressing confirm, the cancel join request will be sent!"
    }
 }
