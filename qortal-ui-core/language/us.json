@@ -155,7 +155,8 @@
       "continue": "Continue",
       "save": "Save",
       "balance": "Balance",
-      "balances": "YOUR WALLET BALANCES"
+      "balances": "YOUR WALLET BALANCES",
+      "update": "UPDATE WALLET BALANCES"
    },
    "startminting": {
       "smchange1": "Cannot fetch minting accounts",
@@ -542,7 +543,21 @@
       "cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain.",
       "cchange40": "IMAGE (click to view)",
       "cchange41": "Your Balance Is Under 4.20 QORT",
-      "cchange42": "Out of the need to combat spam, accounts with under 4.20 Qort balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4.20 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4.20 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!"
+      "cchange42": "Out of the need to combat spam, accounts with under 4.20 Qort balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4.20 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4.20 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!",
+      "cchange43": "Tip QORT to",
+      "cchange44": "SEND MESSAGE",
+      "cchange45": "TIP USER",
+      "cchange46": "Tip Amount",
+      "cchange47": "Available Balance",
+      "cchange48": "Failed to Fetch QORT Balance. Try again!",
+      "cchange49": "Current static fee",
+      "cchange50": "Send",
+      "cchange51": "Insufficient Funds!",
+      "cchange52": "Invalid Amount!",
+      "cchange53": "Receiver cannot be empty!",
+      "cchange54": "Invalid Receiver!",
+      "cchange55": "Transaction Successful!",
+      "cchange56": "Transaction Failed!"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
@@ -609,7 +624,7 @@
       "gchange32": "Date Updated",
       "gchange33": "Joining",
       "gchange34": "Join Group",
-      "gchange35": "User Info",
+      "gchange35": "Leave Group Request",
       "gchange36": "Leaving",
       "gchange37": "Leave Group",
       "gchange38": "Manage Group Owner:",
@@ -629,20 +644,10 @@
       "gchange52": "Admin",
       "gchange53": "Member",
       "gchange54": "Members",
-      "gchange55": "Tip QORT to",
-      "gchange56": "SEND MESSAGE",
-      "gchange57": "TIP USER",
-      "gchange58": "Tip Amount",
-      "gchange59": "Available Balance",
-      "gchange60": "Failed to Fetch QORT Balance. Try again!",
-      "gchange61": "Current static fee",
-      "gchange62": "Send",
-      "gchange63": "Insufficient Funds!",
-      "gchange64": "Invalid Amount!",
-      "gchange65": "Receiver cannot be empty!",
-      "gchange66": "Invalid Receiver!",
-      "gchange67": "Transaction Successful!",
-      "gchange68": "Transaction Failed!"
+      "gchange55": "Search Private Group",
+      "gchange56": "Group Name To Search",
+      "gchange57": "Private Group Name Not Found",
+      "gchange58": "Note that group name must exact match."
    },
    "puzzlepage": {
       "pchange1": "Puzzles",

@@ -57,11 +57,11 @@ export class TipUser extends LitElement {
 	}
 
     renderSuccessText() {
-        return html`${translate("grouppage.gchange67")}`
+        return html`${translate("chatpage.cchange55")}`
     }
 
     renderReceiverText() {
-        return html`${translate("grouppage.gchange66")}`
+        return html`${translate("chatpage.cchange54")}`
     }
 
     getApiKey() {
@@ -76,7 +76,7 @@ export class TipUser extends LitElement {
         })
         .then((res) => {
             if (isNaN(Number(res))) {
-                let snack4string = get("grouppage.gchange60")
+                let snack4string = get("chatpage.cchange48")
                 parentEpml.request('showSnackBar', `${snack4string}`)
             } else {
                 this.walletBalance = Number(res).toFixed(8);
@@ -93,7 +93,7 @@ export class TipUser extends LitElement {
     if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.walletBalance)) {
         this.sendMoneyLoading = false;
         this.btnDisable = false;
-        let snack1string = get("grouppage.gchange63");
+        let snack1string = get("chatpage.cchange51");
         parentEpml.request('showSnackBar', `${snack1string}`);
         return false;
     }
@@ -101,7 +101,7 @@ export class TipUser extends LitElement {
     if (parseFloat(amount) <= 0) {
         this.sendMoneyLoading = false;
         this.btnDisable = false;
-        let snack2string = get("grouppage.gchange64");
+        let snack2string = get("chatpage.cchange52");
         parentEpml.request('showSnackBar', `${snack2string}`);
         return false;
     }
@@ -109,7 +109,7 @@ export class TipUser extends LitElement {
     if (recipient.length === 0) {
         this.sendMoneyLoading = false;
         this.btnDisable = false;
-        let snack3string = get("grouppage.gchange65");
+        let snack3string = get("chatpage.cchange53");
         parentEpml.request('showSnackBar', `${snack3string}`);
         return false;
     }
@@ -239,12 +239,12 @@ export class TipUser extends LitElement {
     return html`
       <div class="tip-user-header">      
         <img src="/img/qort.png" width="32" height="32">
-        <p class="tip-user-header-font">${translate("grouppage.gchange55")} ${this.userName}</p>
+        <p class="tip-user-header-font">${translate("chatpage.cchange43")} ${this.userName}</p>
       </div>
       <div class="tip-user-body">
-        <p class="tip-available">${translate("grouppage.gchange59")}: ${this.walletBalance} QORT</p>
-        <input id="amountInput" class="tip-input" type="number" placeholder="${translate("grouppage.gchange58")}" />
-        <p class="tip-available">${translate("grouppage.gchange61")}: 0.001 QORT</p>
+        <p class="tip-available">${translate("chatpage.cchange47")}: ${this.walletBalance} QORT</p>
+        <input id="amountInput" class="tip-input" type="number" placeholder="${translate("chatpage.cchange46")}" />
+        <p class="tip-available">${translate("chatpage.cchange49")}: 0.001 QORT</p>
         ${this.sendMoneyLoading ? 
             html` 
             <paper-progress indeterminate style="width: 100%; margin: 4px;">
@@ -257,7 +257,7 @@ export class TipUser extends LitElement {
                     style="width: 100%; cursor: pointer" 
                     @click=${() => this.sendQort()}>
                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
-                    ${translate("grouppage.gchange62")} QORT
+                    ${translate("chatpage.cchange50")} QORT
                 </vaadin-button>
             </div>
         `}

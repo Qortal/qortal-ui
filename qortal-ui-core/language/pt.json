@@ -155,7 +155,8 @@
       "continue":"Continuar",
       "save":"Salvar",
       "balance":"Saldo",
-      "balances":"SEUS SALDOS DE CARTEIRA"
+      "balances":"SEUS SALDOS DE CARTEIRA",
+      "update":"ATUALIZAR SALDOS DA CARTEIRA"
    },
    "startminting":{
       "smchange1":"Não é possível buscar contas de cunhagem",
@@ -606,7 +607,11 @@
       "gchange51":"Entrar",
       "gchange52":"Administrador",
       "gchange53":"Membro",
-      "gchange54":"Membros"
+      "gchange54":"Membros",
+      "gchange55":"Pesquisar Grupo Privado",
+      "gchange56":"Nome do grupo para pesquisar",
+      "gchange57":"Nome do grupo privado não encontrado",
+      "gchange58":"Observe que o nome do grupo deve corresponder exatamente."
    },
    "puzzlepage":{
       "pchange1":"Enigmas",

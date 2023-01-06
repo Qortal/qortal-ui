@@ -155,7 +155,8 @@
       "continue":"Folytatódik/folytatáshoz",
       "save":"Mentéshez",
       "balance":"Hitel",
-      "balances":"A PÉNZTÁRCSA EGYENLEGEK"
+      "balances":"A PÉNZTÁRCSA EGYENLEGEK",
+      "update":"FRISSÍTSE A PÉNZTÁRCSA-EGYENLEGEKET"
    },
    "startminting":{
       "smchange1":"Nem lehet lekérni a pénzverési számlákat",
@@ -606,7 +607,11 @@
       "gchange51":"Csatlakoz",
       "gchange52":"Kormányozo",
       "gchange53":"Tag",
-      "gchange54":"Tagok"
+      "gchange54":"Tagok",
+      "gchange55":"Keresés privát csoportban",
+      "gchange56":"A keresendő csoport neve",
+      "gchange57":"A privát csoport neve nem található",
+      "gchange58":"Ne feledje, hogy a csoport nevének pontosan meg kell egyeznie."
    },
    "puzzlepage":{
       "pchange1":"Rejtvények",

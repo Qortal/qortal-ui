@@ -155,7 +155,8 @@
       "continue":"Continua",
       "save":"Salveza",
       "balance":"Credit",
-      "balances":"SOLDELE PORTOTELULUI DVS"
+      "balances":"SOLDELE PORTOTELULUI DVS",
+      "update":"ACTUALIZAȚI SOLDELE PORTOTELULUI"
    },
    "startminting":{
       "smchange1":"Nu se pot prelua conturile de batere",
@@ -606,7 +607,11 @@
       "gchange51":"Inscriere",
       "gchange52":"Admin",
       "gchange53":"Membru",
-      "gchange54":"Membrii"
+      "gchange54":"Membrii",
+      "gchange55":"Căutați grup privat",
+      "gchange56":"Numele grupului de căutat",
+      "gchange57":"Numele grupului privat nu a fost găsit",
+      "gchange58":"Rețineți că numele grupului trebuie să se potrivească exact."
    },
    "puzzlepage":{
       "pchange1":"Puzzle-uri",

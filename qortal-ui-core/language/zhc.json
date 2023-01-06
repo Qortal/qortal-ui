@@ -155,7 +155,8 @@
       "continue":"继续",
       "save":"保存",
       "balance":"信用",
-      "balances":"您的钱包余额"
+      "balances":"您的钱包余额",
+      "update":"更新钱包余额"
    },
    "startminting":{
       "smchange1":"无法获取铸币帐户",
@@ -606,7 +607,11 @@
       "gchange51":"加入",
       "gchange52":"管理员",
       "gchange53":"成员",
-      "gchange54":"成员数量"
+      "gchange54":"成员数量",
+      "gchange55":"搜索私人群组",
+      "gchange56":"要搜索的组名",
+      "gchange57":"未找到私人组名",
+      "gchange58":"注意组名必须完全匹配。"
    },
    "puzzlepage":{
       "pchange1":"益智游戏",
