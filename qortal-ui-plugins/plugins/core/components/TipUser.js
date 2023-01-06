@@ -15,11 +15,12 @@ export class TipUser extends LitElement {
         chatEditor: { type: Object },
         walletBalance: { type: Number },
         sendMoneyLoading: { type: Boolean },
-        openUserInfo: { type: Boolean },
+        closeTipUser: { type: Boolean },
         btnDisable: { type: Boolean },
         errorMessage: { type: String },
         successMessage: { type: String },
-        setOpenTipUser: { attribute: false }
+        setOpenTipUser: { attribute: false },
+        focusChatEditor: { attribute: false }
         }
 	}
 
@@ -39,8 +40,8 @@ export class TipUser extends LitElement {
     }
 
     updated(changedProperties) {
-        if (changedProperties && changedProperties.has("openUserInfo")) {
-            if (this.openUserInfo) {
+        if (changedProperties && changedProperties.has("closeTipUser")) {
+            if (this.closeTipUser) {
                 this.shadowRoot.getElementById("amountInput").value = "";
                 this.errorMessage = "";
                 this.successMessage = "";
@@ -221,6 +222,7 @@ export class TipUser extends LitElement {
             setTimeout(() => {
                 this.setOpenTipUser(false);
                 this.chatEditor.enable();
+                this.focusChatEditor();
                 this.successMessage = "";
             }, 3000);
         } else {
@@ -234,8 +236,7 @@ export class TipUser extends LitElement {
     }
 
   render() {
-    console.log(5, "Tip User Here");
-    console.log(this.openUserInfo, "openUserInfo here");
+    console.log(7, "Tip User Here");
     return html`
       <div class="tip-user-header">      
         <img src="/img/qort.png" width="32" height="32">

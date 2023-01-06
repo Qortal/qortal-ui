@@ -587,7 +587,8 @@
       "bcchange14": "Forward",
       "bcchange15": "Message Forwarded",
       "bcchange16": "Choose Recipient or Search for One Below",
-      "bcchange17": "FORWARDED"
+      "bcchange17": "FORWARDED",
+      "bcchange18": "Tip User"
    },
    "grouppage": {
       "gchange1": "Qortal Groups",

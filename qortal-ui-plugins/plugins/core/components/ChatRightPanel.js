@@ -410,7 +410,7 @@ class ChatRightPanel extends LitElement {
             }}
              style=${this.openTipUser ? "display: block" : "display: none"}>
              <tip-user
-                .openUserInfo=${this.openUserInfo}
+                .closeTipUser=${this.openUserInfo}
                 .chatEditor=${this.chatEditor}
                 .userName=${this.userName}
                 .setOpenTipUser=${(val) => this.setOpenTipUser(val)}

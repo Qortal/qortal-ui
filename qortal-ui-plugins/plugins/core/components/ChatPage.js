@@ -1462,12 +1462,10 @@ class ChatPage extends LitElement {
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('userLanguage')) {
             const userLang = changedProperties.get('userLanguage')
-
-            if(userLang){
+            if (userLang) {
                 await new Promise(r => setTimeout(r, 100));
                 this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`;
-            }
-            
+            }       
         }
 
         if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
@@ -1479,7 +1477,6 @@ class ChatPage extends LitElement {
                 this.chatEditor.disable();
             }
         }
-        
     }
 
 async getName (recipient) {
@@ -1533,6 +1530,7 @@ async getName (recipient) {
         chatId=${this.chatId}
         .messages=${this.messagesRendered} 
         .escapeHTML=${escape} 
+        .chatEditor=${this.chatEditor}
         .getOldMessage=${this.getOldMessage}
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}

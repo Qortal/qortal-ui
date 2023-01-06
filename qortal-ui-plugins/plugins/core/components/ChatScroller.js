@@ -8,6 +8,8 @@ import { Epml } from "../../../epml";
 import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
+import './WrapperModal';
+import './TipUser'
 import '@vaadin/icons';
 import '@vaadin/icon';
 import '@material/mwc-button';
@@ -36,8 +38,11 @@ class ChatScroller extends LitElement {
             isLoadingMessages: { type: Boolean},
             setIsLoadingMessages: {attribute: false},
             chatId: { type: String },
+            chatEditor: { type: Object },
             setForwardProperties: { attribute: false },
             setOpenPrivateMessage: { attribute: false },
+            openTipUser: { type: Boolean },
+            userName: { type: String }
         }
     }
 
@@ -48,12 +53,17 @@ class ChatScroller extends LitElement {
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
+        this.setOpenTipUser = this.setOpenTipUser.bind(this)
+        this.setUserName = this.setUserName.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
+        this.openTipUser = false;
+        this.userName = "";
     }
 
-
     render() {
+        console.log(6, "chat scroller here");
+        console.log(this.openTipUser, "openTipUser here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -117,12 +127,27 @@ class ChatScroller extends LitElement {
                             .setToggledMessage=${this.setToggledMessage}
                             .setForwardProperties=${this.setForwardProperties}
                             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-                            >
+                            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                            .setUserName=${(val) => this.setUserName(val)}>
                             </message-template>`
                     )
                 })}
                 <div id='downObserver'></div>
             </ul>
+            <wrapper-modal
+            .onClickFunc=${() => {
+                this.openTipUser = false;
+                this.chatEditor.enable();
+            }}
+            style=${this.openTipUser ? "display: block;" : "display: none;"}>
+                <tip-user
+                    .closeTipUser=${!this.openTipUser}
+                    .chatEditor=${this.chatEditor}
+                    .focusChatEditor=${this.focusChatEditor}
+                    .userName=${this.userName}
+                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
+                </tip-user>
+            </wrapper-modal>
         `
     }
 
@@ -131,6 +156,9 @@ class ChatScroller extends LitElement {
             return true
         }
         if(changedProperties.has('chatId') && changedProperties.get('chatId')){
+            return true
+        }
+        if(changedProperties.has('openTipUser')){
             return true
         }
         // Only update element if prop1 changed.
@@ -146,6 +174,15 @@ class ChatScroller extends LitElement {
 
     setToggledMessage (message) {
         toggledMessage = message;
+    }
+
+    setOpenTipUser(props) {
+        this.openTipUser = props;
+        this.chatEditor.disable();
+    }
+
+    setUserName(props) {
+        this.userName = props;
     }
 
     async firstUpdated() {
@@ -240,10 +277,12 @@ class MessageTemplate extends LitElement {
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
             isLastMessageInGroup: { type: Boolean },
-            setToggledMessage: {attribute: false},
-            setForwardProperties: {attribute: false},
-            viewImage: {type: Boolean},
-            setOpenPrivateMessage : { attribute: false }
+            setToggledMessage: { attribute: false },
+            setForwardProperties: { attribute: false },
+            viewImage: { type: Boolean },
+            setOpenPrivateMessage : { attribute: false },
+            setOpenTipUser: { attribute: false },
+            setUserName: { attribute: false }
         }
     }
 
@@ -538,6 +577,8 @@ class MessageTemplate extends LitElement {
                                 .setForwardProperties=${this.setForwardProperties}
                                 ?firstMessageInChat=${this.messageObj.firstMessageInChat}
                                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+                                .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                                .setUserName=${(val) => this.setUserName(val)}
                             > 
                             </chat-menu>
                         </div>
@@ -643,7 +684,9 @@ class ChatMenu extends LitElement {
             sendMessageForward: { attribute: false },
             setForwardProperties: { attribute: false },
             firstMessageInChat: { type: Boolean },
-            setOpenPrivateMessage: { attribute: false }
+            setOpenPrivateMessage: { attribute: false },
+            setOpenTipUser: { attribute: false },
+            setUserName: { attribute: false },
         }
     }
 
@@ -786,6 +829,19 @@ class ChatMenu extends LitElement {
                     this.focusChatEditor();
                     }}>
                         <vaadin-icon icon="vaadin:pencil" slot="icon"></vaadin-icon>
+                    </div>
+                    `
+                ) : html`<div></div>`}
+                ${this.myAddress !== this.originalMessage.sender ? (
+                    html`
+                    <div 
+                    class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`}
+                    data-text="${translate("blockpage.bcchange18")}" 
+                    @click=${() => {
+                    this.setOpenTipUser(true);
+                    this.setUserName(this.originalMessage.sender);
+                    }}>
+                        <vaadin-icon icon="vaadin:dollar" slot="icon"></vaadin-icon>
                     </div>
                     `
                 ) : html`<div></div>`}
