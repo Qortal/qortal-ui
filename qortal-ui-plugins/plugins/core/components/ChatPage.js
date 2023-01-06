@@ -1171,22 +1171,20 @@ class ChatPage extends LitElement {
                     </div>    	
             </wrapper-modal>
         </div>
-        <div  class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
-               <chat-right-panel 
-               .getMoreMembers=${(val)=> this.getMoreMembers(val)} 
-               .toggle=${(val)=> this._toggle(val)} 
-               .selectedAddress=${this.selectedAddress} 
-               .groupMembers=${this.groupMembers} 
-               .groupAdmin=${this.groupAdmin} 
-               .leaveGroupObj=${this.groupInfo}
-               .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-               .chatEditor=${this.chatEditor}
-               >
+        <div class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
+            <chat-right-panel 
+            .getMoreMembers=${(val)=> this.getMoreMembers(val)} 
+            .toggle=${(val)=> this._toggle(val)} 
+            .selectedAddress=${this.selectedAddress} 
+            .groupMembers=${this.groupMembers} 
+            .groupAdmin=${this.groupAdmin} 
+            .leaveGroupObj=${this.groupInfo}
+            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+            .chatEditor=${this.chatEditor}>
             </chat-right-panel>
-           
-            </div>
-            </div>
-        `
+        </div>
+    </div>
+    `
     }
 
     async getMoreMembers(groupId){

@@ -13,7 +13,7 @@ export const getUserNameFromAddress = async (address) => {
     if (Array.isArray(getNames) && getNames.length > 0 ) {
         return getNames[0].name;
     } else {
-        return cropAddress(address);
+        return address;
     }
   } catch (error) {
       console.error(error);

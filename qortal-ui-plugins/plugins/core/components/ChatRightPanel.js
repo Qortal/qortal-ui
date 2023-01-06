@@ -1,16 +1,17 @@
-import { LitElement, html, css } from "lit"
-import { render } from "lit/html.js"
-import { get, translate } from "lit-translate"
-import { Epml } from "../../../epml"
-import { getUserNameFromAddress } from "../../utils/getUserNameFromAddress"
-import snackbar from "./snackbar.js"
-import "@material/mwc-button"
-import "@material/mwc-dialog"
-import "@polymer/paper-spinner/paper-spinner-lite.js"
-import "@material/mwc-icon"
-import "./WrapperModal"
-
-const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
+import { LitElement, html, css } from "lit";
+import { render } from "lit/html.js";
+import { get, translate } from "lit-translate";
+import { Epml } from "../../../epml";
+import { getUserNameFromAddress } from "../../utils/getUserNameFromAddress";
+import snackbar from "./snackbar.js";
+import "@material/mwc-button";
+import "@material/mwc-dialog";
+import "@polymer/paper-spinner/paper-spinner-lite.js";
+import '@polymer/paper-progress/paper-progress.js';
+import "@material/mwc-icon";
+import '@vaadin/button';
+import "./WrapperModal";
+import "./TipUser"
 
 class ChatRightPanel extends LitElement {
 	static get properties() {
@@ -30,7 +31,11 @@ class ChatRightPanel extends LitElement {
             openTipUser: { type: Boolean },
             userName: { type: String },
             chatEditor: { type: Object },
-            walletBalance: { type: Number }
+            walletBalance: { type: Number },
+            sendMoneyLoading: { type: Boolean },
+            btnDisable: { type: Boolean },
+            errorMessage: { type: String },
+            successMessage: { type: String }
 		}
 	}
 
@@ -50,7 +55,12 @@ class ChatRightPanel extends LitElement {
         this.downObserverElement = ''
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.openTipUser = false
-        this.userName = {}
+        this.userName = ""
+        this.sendMoneyLoading = false
+        this.btnDisable = false
+        this.errorMessage = ""
+        this.successMessage = ""
+        this.setOpenTipUser = this.setOpenTipUser.bind(this);
 	}
 
     static get styles() {
@@ -203,8 +213,8 @@ class ChatRightPanel extends LitElement {
         }
 
         .send-message-button:hover {
-        cursor: pointer;
-        background-color: #03a8f485;
+            cursor: pointer;
+            background-color: #03a8f485;
         }
 
         .close-icon {
@@ -220,54 +230,6 @@ class ChatRightPanel extends LitElement {
             cursor: pointer;
             color: #494c50;
         }
-
-        .tip-user-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid whitesmoke;
-            gap: 25px;
-        }
-
-        .tip-user-header-font {
-            font-family: Montserrat, sans-serif;
-            font-size: 20px;
-            color: var(--chat-bubble-msg-color);
-        }
-
-        .tip-user-body {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px 10px;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .tip-input {
-            width: 300px;
-            margin-bottom: 15px;
-            outline: 0;
-            border-width: 0 0 2px;
-            border-color: var(--mdc-theme-primary);
-            background-color: transparent;
-            padding: 10px;
-            font-family: Roboto, sans-serif;
-            font-size: 15px;
-            color: var(--chat-bubble-msg-color);
-        }
-
-        .tip-input::selection {
-            background-color: var(--mdc-theme-primary);
-            color: white;   
-        }
-
-        .tip-input::placeholder {
-            opacity: 0.9;
-            color: var(--black);
-        }
-
     `
     }
 
@@ -275,7 +237,6 @@ class ChatRightPanel extends LitElement {
         this.viewElement = this.shadowRoot.getElementById('viewElement');
         this.downObserverElement = this.shadowRoot.getElementById('downObserver');
         this.elementObserver();
-        this.fetchWalletDetails();
     }
 
     async updated(changedProperties) {
@@ -286,236 +247,6 @@ class ChatRightPanel extends LitElement {
             }
         }
     }
-
-	timeIsoString(timestamp) {
-		let myTimestamp = timestamp === undefined ? 1587560082346 : timestamp
-		let time = new Date(myTimestamp)
-		return time.toISOString()
-	}
-
-	resetDefaultSettings() {
-		this.error = false
-		this.message = ""
-		this.isLoading = false
-	}
-
-	renderErr9Text() {
-		return html`${translate("grouppage.gchange49")}`
-	}
-
-	async confirmRelationship(reference) {
-		let interval = null
-		let stop = false
-		const getAnswer = async () => {
-
-
-			if (!stop) {
-				stop = true
-				try {
-					let myRef = await parentEpml.request("apiCall", {
-                        type: "api",
-                        url: `/transactions/reference/${reference}`,
-                    })
-					if (myRef && myRef.type) {
-						clearInterval(interval)
-						this.isLoading = false
-						this.openUserInfo = false
-					}
-				} catch (error) {}
-				stop = false
-			}
-		}
-		interval = setInterval(getAnswer, 5000)
-	}
-
-	async unitFee(txType) {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-        const url = `${nodeUrl}/transactions/unitfee?txType=${txType}`;
-        let fee = null;
-
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            fee = (Number(data) / 1e8).toFixed(3);
-        } catch (error) {
-            fee = null;
-        }
-  
-      return fee;
-    }
-
-	async getLastRef() {
-		let myRef = await parentEpml.request("apiCall", {
-			type: "api",
-			url: `/addresses/lastreference/${this.selectedAddress.address}`,
-		})
-		return myRef;
-	}
-
-	getTxnRequestResponse(txnResponse, reference) {
-		if (txnResponse === true) {
-			this.message = this.renderErr9Text()
-			this.error = false
-			this.confirmRelationship(reference)
-		} else {
-			this.error = true
-			this.message = ""
-			throw new Error(txnResponse)
-		}
-	}
-
-	async convertBytesForSigning(transactionBytesBase58) {
-		let convertedBytes = await parentEpml.request("apiCall", {
-			type: "api",
-			method: "POST",
-			url: `/transactions/convert`,
-			body: `${transactionBytesBase58}`,
-		})
-		return convertedBytes
-	}
-
-    async signTx(body){
-        return  await parentEpml.request("apiCall", {
-            type: "api",
-            method: "POST",
-            url: `/transactions/sign`,
-            body: body,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-    }
-   
-    async process(body){
-        return  await parentEpml.request("apiCall", {
-            type: "api",
-            method: "POST",
-            url: `/transactions/process`,
-            body: body,
-        })
-    }
-	async _addAdmin(groupId) {
-		this.resetDefaultSettings()
-    
-        const leaveFeeInput = await this.unitFee('ADD_GROUP_ADMIN')
-        if(!leaveFeeInput){
-            throw Error()
-        }
-        this.isLoading = true
-
-        // Get Last Ref
-        const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
-        };
-
-        const validateReceiver = async () => {
-            let lastRef = await getLastRef();
-            let myTransaction = await makeTransactionRequest(lastRef)
-            getTxnRequestResponse(myTransaction)
-
-        }
-
-        // Make Transaction Request
-        const makeTransactionRequest = async (lastRef) => {
-            let groupdialog3 = get("transactions.groupdialog3")
-            let groupdialog4 = get("transactions.groupdialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 24,
-                nonce: this.selectedAddress.nonce,
-                params: {
-					_groupId: groupId,
-                    fee: leaveFeeInput,
-                    member: this.selectedHead.address,
-                    lastReference: lastRef
-                }
-            })
-            return myTxnrequest
-        }
-
-        const getTxnRequestResponse = (txnResponse) => {
-
-            if (txnResponse.success === false && txnResponse.message) {
-                this.error = true
-                this.message = txnResponse.message
-                throw new Error(txnResponse)
-            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = this.renderErr9Text()
-                this.error = false
-                this.confirmRelationship()
-            } else {
-                this.error = true
-                this.message = txnResponse.data.message
-                throw new Error(txnResponse)
-            }
-        }
-        validateReceiver()
-	}
-
-    async _removeAdmin(groupId) {
-		this.resetDefaultSettings()
-    
-        const leaveFeeInput = await this.unitFee('REMOVE_GROUP_ADMIN')
-        if(!leaveFeeInput){
-            throw Error()
-        }
-        this.isLoading = true
-
-        // Get Last Ref
-        const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
-        };
-
-        const validateReceiver = async () => {
-            let lastRef = await getLastRef();
-            let myTransaction = await makeTransactionRequest(lastRef)
-            getTxnRequestResponse(myTransaction)
-
-        }
-
-        // Make Transaction Request
-        const makeTransactionRequest = async (lastRef) => {
-            let groupdialog3 = get("transactions.groupdialog3")
-            let groupdialog4 = get("transactions.groupdialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 25,
-                nonce: this.selectedAddress.nonce,
-                params: {
-					_groupId: groupId,
-                    fee: leaveFeeInput,
-                    member: this.selectedHead.address,
-                    lastReference: lastRef
-                }
-            })
-            return myTxnrequest
-        }
-
-        const getTxnRequestResponse = (txnResponse) => {
-
-            if (txnResponse.success === false && txnResponse.message) {
-                this.error = true
-                this.message = txnResponse.message
-                throw new Error(txnResponse)
-            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = this.renderErr9Text()
-                this.error = false
-                this.confirmRelationship()
-            } else {
-                this.error = true
-                this.message = txnResponse.data.message
-                throw new Error(txnResponse)
-            }
-        }
-        validateReceiver()
-	}
 
     elementObserver() {
         const options = {
@@ -530,42 +261,27 @@ class ChatRightPanel extends LitElement {
         // call `observe()` on that MutationObserver instance,
         // passing it the element to observe, and the options object
         observer.observe(elementToObserve);
-        }
-        observerHandler(entries) {
-            if (!entries[0].isIntersecting) {
-                return
-            } else {
-                if(this.groupMembers.length < 20){
-                    return
-                }
-                console.log('this.leaveGroupObjp', this.leaveGroupObj)
-                this.getMoreMembers(this.leaveGroupObj.groupId)
-            }
-        }
-
-    getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
     }
 
-    async fetchWalletDetails() {
-        parentEpml.request('apiCall', {
-            url: `/addresses/balance/${this.myAddress}?apiKey=${this.getApiKey()}`,
-        })
-        .then((res) => {
-            if (isNaN(Number(res))) {
-                let snack4string = get("grouppage.gchange60")
-                parentEpml.request('showSnackBar', `${snack4string}`)
-            } else {
-                    this.walletBalance = Number(res).toFixed(8);
+    observerHandler(entries) {
+        if (!entries[0].isIntersecting) {
+            return
+        } else {
+            if(this.groupMembers.length < 20){
+                return
             }
-        })					 
+            console.log('this.leaveGroupObjp', this.leaveGroupObj)
+            this.getMoreMembers(this.leaveGroupObj.groupId)
+        }
+    }
+
+    setOpenTipUser(props) {
+        this.openTipUser = props
     }
 
 	render() {
         console.log('this.groupMembers', this.groupMembers);
-        console.log(20, "Chat Right Panel Here");
+        console.log(28, "Chat Right Panel Here");
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
         <div class="container">
@@ -626,7 +342,9 @@ class ChatRightPanel extends LitElement {
          <wrapper-modal 
             .onClickFunc=${() => {
                 if (this.isLoading) return
-                this.openUserInfo = false
+                this.openUserInfo = false;
+                this.userName = "";
+                this.shadowRoot.querySelector("tip-user").shadowRoot.getElementById('amountInput').value = "";
             }} 
             style=${
                 this.openUserInfo ? "display: block" : "display: none"
@@ -691,14 +409,13 @@ class ChatRightPanel extends LitElement {
                 this.chatEditor.enable();
             }}
              style=${this.openTipUser ? "display: block" : "display: none"}>
-                <div class="tip-user-header">      
-                    <img src="/img/qort.png" width="32" height="32">
-                    <p class="tip-user-header-font">${translate("grouppage.gchange55")} ${this.userName}</p>
-                </div>
-                <div class="tip-user-body">
-                    <p class="tip-available">${translate("grouppage.gchange59")}: ${this.walletBalance} QORT</p>
-                    <input class="tip-input" type="number" placeholder="${translate("grouppage.gchange58")}" />
-                </div>
+             <tip-user
+                .openUserInfo=${this.openUserInfo}
+                .chatEditor=${this.chatEditor}
+                .userName=${this.userName}
+                .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+             >
+             </tip-user>
             </wrapper-modal>
         </div>
     </div>
