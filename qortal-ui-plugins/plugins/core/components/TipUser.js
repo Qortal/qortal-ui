@@ -236,7 +236,6 @@ export class TipUser extends LitElement {
     }
 
   render() {
-    console.log(7, "Tip User Here");
     return html`
       <div class="tip-user-header">      
         <img src="/img/qort.png" width="32" height="32">

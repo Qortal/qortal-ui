@@ -28,15 +28,15 @@ class ChatScroller extends LitElement {
             escapeHTML: { attribute: false },
             messages: { type: Array },
             hideMessages: { type: Array },
-            setRepliedToMessageObj: {attribute: false},
-            setEditedMessageObj: {attribute: false},
-            focusChatEditor: {attribute: false},
-            sendMessage: {attribute: false},
-            sendMessageForward: {attribute: false},
-            showLastMessageRefScroller: { type: Function },
+            setRepliedToMessageObj: { attribute: false },
+            setEditedMessageObj: { attribute: false },
+            focusChatEditor: { attribute: false },
+            sendMessage: { attribute: false },
+            sendMessageForward: { attribute: false },
+            showLastMessageRefScroller: { attribute: false },
             emojiPicker: { attribute: false },
             isLoadingMessages: { type: Boolean},
-            setIsLoadingMessages: {attribute: false},
+            setIsLoadingMessages: { attribute: false },
             chatId: { type: String },
             chatEditor: { type: Object },
             setForwardProperties: { attribute: false },
@@ -62,8 +62,6 @@ class ChatScroller extends LitElement {
     }
 
     render() {
-        console.log(6, "chat scroller here");
-        console.log(this.openTipUser, "openTipUser here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;

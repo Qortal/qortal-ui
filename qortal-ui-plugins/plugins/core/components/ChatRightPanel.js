@@ -280,8 +280,6 @@ class ChatRightPanel extends LitElement {
     }
 
 	render() {
-        console.log('this.groupMembers', this.groupMembers);
-        console.log(28, "Chat Right Panel Here");
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
         <div class="container">
@@ -360,7 +358,7 @@ class ChatRightPanel extends LitElement {
                 ?disabled="${this.isLoading}">
                 </vaadin-icon>
                 <div class="user-info-header">
-                ${translate("grouppage.gchange35")}
+                ${translate("chatpage.cchange57")}
                 </div>
                 <div 
                     class="send-message-button" 
@@ -372,7 +370,7 @@ class ChatRightPanel extends LitElement {
                         this.openUserInfo = false
                     }   
                 }">
-                    ${translate("grouppage.gchange56")}
+                    ${translate("chatpage.cchange58")}
                 </div>
                     <div 
                     style=${"margin-top: 5px;"} 
@@ -382,7 +380,7 @@ class ChatRightPanel extends LitElement {
                         this.openUserInfo = false
                         this.chatEditor.disable();
                     }}>
-                        ${translate("grouppage.gchange57")}
+                        ${translate("chatpage.cchange59")}
                     </div>
                 <div ?hidden="${!this.isLoading || this.message === ""}" style="text-align: right; height: 36px;">
                     <span ?hidden="${!this.isLoading}">

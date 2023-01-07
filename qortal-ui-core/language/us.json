@@ -557,7 +557,10 @@
       "cchange53": "Receiver cannot be empty!",
       "cchange54": "Invalid Receiver!",
       "cchange55": "Transaction Successful!",
-      "cchange56": "Transaction Failed!"
+      "cchange56": "Transaction Failed!",
+      "cchange57": "User Info",
+      "cchange58": "SEND MESSAGE",
+      "cchange59": "TIP USER"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
