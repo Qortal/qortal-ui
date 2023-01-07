@@ -128,7 +128,11 @@
       "snack2":"UI je povezan sa čvorom",
       "snack3":"Uspešno dodat i sačuvan prilagođeni čvor",
       "snack4":"Čvorovi su uspešno sačuvani kao",
-      "snack5":"Čvorovi su uspešno uvezeni"
+      "snack5":"Čvorovi su uspešno uvezeni",
+      "exp1":"Izvezi privatni glavni ključ",
+      "exp2":"Izvezi glavni ključ",
+      "exp3":"Izvoz",
+      "exp4":"Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa."
    },
    "appinfo":{
       "blockheight":"Visina Bloka",

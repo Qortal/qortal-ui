@@ -128,7 +128,11 @@
       "snack2":"UI conectada ao nó",
       "snack3":"Nó personalizado adicionado e salvo com sucesso",
       "snack4":"Nós salvos com sucesso como",
-      "snack5":"Nós importados com sucesso"
+      "snack5":"Nós importados com sucesso",
+      "exp1":"Exportar Chave Mestra Privada",
+      "exp2":"Exportar Chave Mestra",
+      "exp3":"Exportar",
+      "exp4":"Por favor, escolha uma carteira para fazer backup da chave mestra privada."
    },
    "appinfo":{
       "blockheight":"Altura do Bloco",

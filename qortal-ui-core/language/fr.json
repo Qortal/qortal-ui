@@ -128,7 +128,11 @@
       "snack2":"Interface utilisateur connectée au noeud",
       "snack3":"Noeud personnalisé ajouté et enregistré avec succès",
       "snack4":"Les noeuds ont été enregistrés avec succès sous",
-      "snack5":"Les noeuds ont été importés avec succès"
+      "snack5":"Les noeuds ont été importés avec succès",
+      "exp1":"Exporter la clé principale privée",
+      "exp2":"Exporter la clé principale",
+      "exp3":"Exporter",
+      "exp4":"Veuillez choisir un portefeuille pour sauvegarder la clé principale privée."
    },
    "appinfo":{
       "blockheight":"Hauteur de bloc",

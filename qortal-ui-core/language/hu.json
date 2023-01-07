@@ -128,7 +128,11 @@
       "snack2":"UI csatlakozik a csomóponthoz",
       "snack3":"Az egyéni csomópont sikeresen hozzáadva és mentve",
       "snack4":"A csomópontok sikeresen mentve másként",
-      "snack5":"A csomópontok sikeresen importálva"
+      "snack5":"A csomópontok sikeresen importálva",
+      "exp1":"Privát főkulcs exportálása",
+      "exp2":"Főkulcs exportálása",
+      "exp3":"Exportálás",
+      "exp4":"Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez."
    },
    "appinfo":{
       "blockheight":"Blokk Magassága",

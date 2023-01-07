@@ -128,7 +128,11 @@
       "snack2":"UI conectada al nodo",
       "snack3":"Nodo personalizado agregado y guardado con éxito",
       "snack4":"Nodos guardados con éxito como",
-      "snack5":"Nodos importados con éxito"
+      "snack5":"Nodos importados con éxito",
+      "exp1":"Exportar clave maestra privada",
+      "exp2":"Exportar clave maestra",
+      "exp3":"Exportar",
+      "exp4":"Elija una billetera para hacer una copia de seguridad de la clave maestra privada."
    },
    "appinfo":{
       "blockheight":"Altura del Bloque",

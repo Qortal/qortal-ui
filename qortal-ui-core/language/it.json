@@ -128,7 +128,11 @@
       "snack2":"Interfaccia utente collegata al nodo",
       "snack3":"Nodo personalizzato aggiunto e salvato con successo",
       "snack4":"Nodi salvati con successo come",
-      "snack5":"Nodi importati correttamente"
+      "snack5":"Nodi importati correttamente",
+      "exp1":"Esporta chiave master privata",
+      "exp2":"Esporta chiave master",
+      "exp3":"Esporta",
+      "exp4":"Scegli un portafoglio per il backup della chiave master privata."
    },
    "appinfo":{
       "blockheight":"Altezza blocco",

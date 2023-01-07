@@ -128,7 +128,11 @@
       "snack2":"Interfata de utilizare conectata la nod",
       "snack3":"Nod personalizat adaugat si salvat cu succes",
       "snack4":"Nodurile au fost salvate cu succes ca",
-      "snack5":"Nodurile au fost importate cu succes"
+      "snack5":"Nodurile au fost importate cu succes",
+      "exp1":"Exportați cheia principală privată",
+      "exp2":"Exportați cheia principală",
+      "exp3":"Export",
+      "exp4":"Vă rugăm să alegeți un portofel pentru a face backup cheii master private."
    },
    "appinfo":{
       "blockheight":"Dimensiunea blocului",
