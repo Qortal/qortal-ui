@@ -6,8 +6,6 @@ import { doLogout } from '../../redux/app/app-actions.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@vaadin/grid'
@@ -1173,7 +1171,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog" modal>
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.boughtBTCTemplate()}
@@ -1193,7 +1191,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog" modal>
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.soldBTCTemplate()}
@@ -1213,7 +1211,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="showTxDetailsDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="showTxDetailsDialog" modal>
                 <div style="text-align: center; color: var(--black);">
                     <h1>${translate("walletpage.wchange5")}</h1>
                     <hr />
@@ -1773,7 +1771,7 @@ class UserInfoView extends connect(store)(LitElement) {
 
     openTrades() {
         this.shadowRoot.getElementById('userTrades').open()
-        this.shadowRoot.getElementById('userInfoDialog').close()
+        this.shadowRoot.getElementById('userFullInfoDialog').close()
     }
 
     async openUserBoughtDialog() {

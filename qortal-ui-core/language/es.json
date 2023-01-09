@@ -128,7 +128,11 @@
       "snack2":"UI conectada al nodo",
       "snack3":"Nodo personalizado agregado y guardado con éxito",
       "snack4":"Nodos guardados con éxito como",
-      "snack5":"Nodos importados con éxito"
+      "snack5":"Nodos importados con éxito",
+      "exp1":"Exportar clave maestra privada",
+      "exp2":"Exportar clave maestra",
+      "exp3":"Exportar",
+      "exp4":"Elija una billetera para hacer una copia de seguridad de la clave maestra privada."
    },
    "appinfo":{
       "blockheight":"Altura del Bloque",
@@ -155,7 +159,8 @@
       "continue":"Continuar",
       "save":"Guardar",
       "balance":"Saldo",
-      "balances":"LOS SALDOS DE TU BILLETERA"
+      "balances":"LOS SALDOS DE TU BILLETERA",
+      "update":"ACTUALIZAR SALDOS DE CARTERA"
    },
    "startminting":{
       "smchange1":"No se pueden obtener cuentas de acuñación",
@@ -328,7 +333,8 @@
       "tchange45":"AUTO COMPRAR CON",
       "tchange46":"COMPRA AUTOMÁTICA",
       "tchange47":"Vender por este precio",
-      "tchange48":"NO ES SUFICIENTE"
+      "tchange48":"NO ES SUFICIENTE",
+      "tchange49":"Gráfico de precios"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",
@@ -606,7 +612,11 @@
       "gchange51":"Unirse",
       "gchange52":"Aministrador",
       "gchange53":"Miembro",
-      "gchange54":"Miembros"
+      "gchange54":"Miembros",
+      "gchange55":"Buscar grupo privado",
+      "gchange56":"Nombre del grupo a buscar",
+      "gchange57":"Nombre de grupo privado no encontrado",
+      "gchange58":"Tenga en cuenta que el nombre del grupo debe coincidir exactamente."
    },
    "puzzlepage":{
       "pchange1":"Rompecabezas",
@@ -794,6 +804,15 @@
       "mg49":"¡Al presionar confirmar, se enviará la solicitud de cancelación de invitación!",
       "mg50":"Próximamente...",
       "mg51":"Mínimo 3 Caracteres / Máximo 32 Caracteres",
-      "mg52":"Máximo de 128 caracteres"
+      "mg52":"Máximo de 128 caracteres",
+      "mg53":"Tus solicitudes abiertas de unión",
+      "mg54":"Sin solicitudes de unión abiertas",
+      "mg55":"¿Está seguro de aceptar la solicitud de ingreso de este miembro?",
+      "mg56":"¡Al presionar confirmar, se enviará la solicitud de aceptación de ingreso!",
+      "mg57":"Solicitud de ingreso aceptada con éxito",
+      "mg58":"ALGO SALIO MAL",
+      "mg59":"Solicitud de cancelación de unión aceptada con éxito",
+      "mg60":"¿Está seguro de cancelar la solicitud de ingreso de este miembro?",
+      "mg61":"¡Al presionar confirmar, se enviará la solicitud de cancelación de unión!"
    }
 }

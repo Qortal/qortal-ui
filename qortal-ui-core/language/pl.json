@@ -128,7 +128,11 @@
       "snack2":"Interfejs użytkownika połączony z węzłem",
       "snack3":"Pomyślnie dodano i zapisano niestandardowy węzeł",
       "snack4":"Węzły pomyślnie zapisane jako",
-      "snack5":"Węzły pomyślnie zaimportowane"
+      "snack5":"Węzły pomyślnie zaimportowane",
+      "exp1":"Eksportuj prywatny klucz główny",
+      "exp2":"Eksportuj klucz główny",
+      "exp3":"Eksportuj",
+      "exp4":"Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego."
    },
    "appinfo":{
       "blockheight":"Wysokość bloku",
@@ -155,7 +159,8 @@
       "continue":"Kontynuuj",
       "save":"Zapisz",
       "balance":"Saldo",
-      "balances":"SALDO TWOJEGO PORTFELA"
+      "balances":"SALDO TWOJEGO PORTFELA",
+      "update":"AKTUALIZUJ SALDA W PORTFELU"
    },
    "startminting":{
       "smchange1":"Nie można pobrać kont menniczych",
@@ -328,7 +333,8 @@
       "tchange45":"AUTO KUP Z",
       "tchange46":"AUTO KUP",
       "tchange47":"Sprzedaj za tę cenę",
-      "tchange48":"NIEWYSTARCZAJĄCO"
+      "tchange48":"NIEWYSTARCZAJĄCO",
+      "tchange49":"Tabela cen"
    },
    "rewardsharepage":{
       "rchange1":"Podział nagród",
@@ -606,7 +612,11 @@
       "gchange51":"Dołącz",
       "gchange52":"Administrator",
       "gchange53":"Członek",
-      "gchange54":"Członkowie"
+      "gchange54":"Członkowie",
+      "gchange55":"Wyszukaj grupę prywatną",
+      "gchange56":"Nazwa grupy do wyszukania",
+      "gchange57":"Nie znaleziono nazwy grupy prywatnej",
+      "gchange58":"Zauważ, że nazwa grupy musi dokładnie pasować."
    },
    "puzzlepage":{
       "pchange1":"Zagadki",
@@ -793,7 +803,16 @@
       "mg48":"Czy na pewno chcesz anulować zaproszenie dla tego członka?",
       "mg49":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o anulowanie zaproszenia!",
       "mg50":"Już wkrótce...",
-      "mg51": "Minimum 3 znaki / Maksymalnie 32 znaki",
-      "mg52": "Maksymalnie 128 znaków"
+      "mg51":"Minimum 3 znaki / Maksymalnie 32 znaki",
+      "mg52":"Maksymalnie 128 znaków",
+      "mg53":"Twoje otwarte prośby o dołączenie",
+      "mg54":"Brak otwartych próśb o dołączenie",
+      "mg55":"Czy na pewno akceptujesz prośbę o dołączenie od tego członka?",
+      "mg56":"Po naciśnięciu potwierdzenia zostanie wysłana prośba o zaakceptowanie dołączenia!",
+      "mg57":"Prośba o dołączenie pomyślnie zaakceptowana",
+      "mg58":"COŚ POszło nie tak",
+      "mg59":"Anuluj prośbę o dołączenie pomyślnie zaakceptowaną",
+      "mg60":"Czy na pewno chcesz anulować prośbę o dołączenie od tego członka?",
+      "mg61":"Po naciśnięciu potwierdzenia, zostanie wysłana prośba o anulowanie dołączenia!"
    }
 }

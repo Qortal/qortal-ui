@@ -128,7 +128,11 @@
       "snack2":"UI spojen na čvor",
       "snack3":"Uspješno dodan i spremljen prilagođeni čvor",
       "snack4":"Čvorovi su uspješno spremljeni kao",
-      "snack5":"Čvorovi su uspješno uvezeni"
+      "snack5":"Čvorovi su uspješno uvezeni",
+      "exp1":"Izvezi privatni glavni ključ",
+      "exp2":"Glavni ključ izvoza",
+      "exp3":"Izvoz",
+      "exp4":"Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa."
    },
    "appinfo":{
       "blockheight":"Visina bloka",
@@ -155,7 +159,8 @@
       "continue":"Nastavi",
       "save":"Spremi",
       "balance":"Kreditna",
-      "balances":"VAŠ NOVČANIK JE NA SALJU"
+      "balances":"VAŠ NOVČANIK JE NA SALJU",
+      "update":"AŽURIRAJTE STANJE NOVČANIKA"
    },
    "startminting":{
       "smchange1":"Nije moguće dohvatiti račune za kovanje",
@@ -328,7 +333,8 @@
       "tchange45":"AUTO KUPITE SA",
       "tchange46":"AUTO OTKUP",
       "tchange47":"Prodaj za ovu cijenu",
-      "tchange48":"NEDOVOLJNO"
+      "tchange48":"NEDOVOLJNO",
+      "tchange49":"Grafikon cijena"
    },
    "rewardsharepage":{
       "rchange1":"Nagradni udio (Rewardshares)",
@@ -606,7 +612,11 @@
       "gchange51":"Pridruži",
       "gchange52":"Admin",
       "gchange53":"Član",
-      "gchange54":"Članovi"
+      "gchange54":"Članovi",
+      "gchange55":"Traži privatnu grupu",
+      "gchange56":"Naziv grupe za pretraživanje",
+      "gchange57":"Ime privatne grupe nije pronađeno",
+      "gchange58":"Imajte na umu da se naziv grupe mora točno podudarati."
    },
    "puzzlepage":{
       "pchange1":"Zagonetke",
@@ -793,7 +803,16 @@
       "mg48":"Jeste li sigurni da želite otkazati poziv za ovog člana?",
       "mg49":"Pritiskom na potvrdu, zahtjev za pozivnicu za otkazivanje bit će poslan!",
       "mg50":"Uskoro...",
-      "mg51": "Minimalno 3 znaka / Maksimalno 32 znaka",
-      "mg52": "Maksimalno 128 znakova"
+      "mg51":"Minimalno 3 znaka / Maksimalno 32 znaka",
+      "mg52":"Maksimalno 128 znakova",
+      "mg53":"Vaši otvoreni zahtjevi za pridruživanje",
+      "mg54":"Nema otvorenih zahtjeva za pridruživanje",
+      "mg55":"Jeste li sigurni da prihvaćate zahtjev za pridruživanje ovog člana?",
+      "mg56":"Pritiskom na potvrdu, zahtjev za prihvaćanje pridruživanja bit će poslan!",
+      "mg57":"Zahtjev za pridruživanje uspješno prihvaćen",
+      "mg58":"NEŠTO JE POŠLO PO ZLOU",
+      "mg59":"Poništi zahtjev za pridruživanje uspješno prihvaćen",
+      "mg60":"Jeste li sigurni da želite otkazati zahtjev za pridruživanje ovog člana?",
+      "mg61":"Pritiskom na potvrdu, bit će poslan zahtjev za otkazivanje pridruživanja!"
    }
 }

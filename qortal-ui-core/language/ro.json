@@ -128,7 +128,11 @@
       "snack2":"Interfata de utilizare conectata la nod",
       "snack3":"Nod personalizat adaugat si salvat cu succes",
       "snack4":"Nodurile au fost salvate cu succes ca",
-      "snack5":"Nodurile au fost importate cu succes"
+      "snack5":"Nodurile au fost importate cu succes",
+      "exp1":"Exportați cheia principală privată",
+      "exp2":"Exportați cheia principală",
+      "exp3":"Export",
+      "exp4":"Vă rugăm să alegeți un portofel pentru a face backup cheii master private."
    },
    "appinfo":{
       "blockheight":"Dimensiunea blocului",
@@ -155,7 +159,8 @@
       "continue":"Continua",
       "save":"Salveza",
       "balance":"Credit",
-      "balances":"SOLDELE PORTOTELULUI DVS"
+      "balances":"SOLDELE PORTOTELULUI DVS",
+      "update":"ACTUALIZAȚI SOLDELE PORTOTELULUI"
    },
    "startminting":{
       "smchange1":"Nu se pot prelua conturile de batere",
@@ -328,7 +333,8 @@
       "tchange45":"CUMPARA AUTOMATA CU",
       "tchange46":"CUMPARARE AUTOMATA",
       "tchange47":"Vinde la acest pret",
-      "tchange48":"INSUFICIENT"
+      "tchange48":"INSUFICIENT",
+      "tchange49":"Diagrama prețurilor"
    },
    "rewardsharepage":{
       "rchange1":"Cote de recompensa",
@@ -606,7 +612,11 @@
       "gchange51":"Inscriere",
       "gchange52":"Admin",
       "gchange53":"Membru",
-      "gchange54":"Membrii"
+      "gchange54":"Membrii",
+      "gchange55":"Căutați grup privat",
+      "gchange56":"Numele grupului de căutat",
+      "gchange57":"Numele grupului privat nu a fost găsit",
+      "gchange58":"Rețineți că numele grupului trebuie să se potrivească exact."
    },
    "puzzlepage":{
       "pchange1":"Puzzle-uri",
@@ -794,6 +804,15 @@
       "mg49":"La apăsarea confirmării, cererea de anulare a invitației va fi trimisă!",
       "mg50":"În curând...",
       "mg51":"Minim 3 caractere / Maxim 32 de caractere",
-      "mg52":"Maximum 128 de caractere"
+      "mg52":"Maximum 128 de caractere",
+      "mg53":"Solicitările dvs. de înscriere deschise",
+      "mg54":"Fără solicitări de aderare deschise",
+      "mg55":"Sunteți sigur că acceptați solicitarea de alăturare de la acest membru?",
+      "mg56":"La apăsarea confirmării, va fi trimisă cererea de acceptare a înscrierii!",
+      "mg57":"Solicitarea de înscriere a fost acceptată cu succes",
+      "mg58":"CEVA A MERAT GREUT",
+      "mg59":"Anularea cererii de aderare a fost acceptată cu succes",
+      "mg60":"Sigur anulați solicitarea de alăturare de la acest membru?",
+      "mg61":"La apăsarea confirmării, cererea de anulare a aderării va fi trimisă!"
    }
 }

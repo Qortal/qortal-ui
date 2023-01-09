@@ -128,7 +128,11 @@
       "snack2":"Interfaccia utente collegata al nodo",
       "snack3":"Nodo personalizzato aggiunto e salvato con successo",
       "snack4":"Nodi salvati con successo come",
-      "snack5":"Nodi importati correttamente"
+      "snack5":"Nodi importati correttamente",
+      "exp1":"Esporta chiave master privata",
+      "exp2":"Esporta chiave master",
+      "exp3":"Esporta",
+      "exp4":"Scegli un portafoglio per il backup della chiave master privata."
    },
    "appinfo":{
       "blockheight":"Altezza blocco",
@@ -155,7 +159,8 @@
       "continue":"Continua",
       "save":"Salva",
       "balance":"Saldo",
-      "balances":"IL TUO SALDO DEL PORTAFOGLIO"
+      "balances":"I SALDI DEL TUO PORTAFOGLIO",
+      "update":"AGGIORNA I SALDI DEL PORTAFOGLIO"
    },
    "startminting":{
       "smchange1":"Impossibile recuperare i conti di conio",
@@ -328,7 +333,8 @@
       "tchange45":"ACQUISTA AUTO CON",
       "tchange46":"ACQUISTO AUTO",
       "tchange47":"Vendi a questo prezzo",
-      "tchange48":"NON ABBASTANZA"
+      "tchange48":"NON ABBASTANZA",
+      "tchange49":"Tabella dei prezzi"
    },
    "rewardsharepage":{
       "rchange1":"Quote di ricompensa",
@@ -606,7 +612,11 @@
       "gchange51":"Unisciti",
       "gchange52":"Amministratore",
       "gchange53":"Membro",
-      "gchange54":"Membri"
+      "gchange54":"Membri",
+      "gchange55":"Cerca gruppo privato",
+      "gchange56":"Nome gruppo da cercare",
+      "gchange57":"Nome gruppo privato non trovato",
+      "gchange58":"Nota che il nome del gruppo deve corrispondere esattamente."
    },
    "puzzlepage":{
       "pchange1":"Puzzle",
@@ -794,6 +804,15 @@
       "mg49":"Premendo conferma, verrà inviata la richiesta di annullamento dell'invito!",
       "mg50":"Prossimamente...",
       "mg51":"Minimo 3 caratteri / Massimo 32 caratteri",
-      "mg52":"Massimo 128 caratteri"
+      "mg52":"Massimo 128 caratteri",
+      "mg53":"Le tue richieste di partecipazione aperte",
+      "mg54":"Nessuna richiesta di partecipazione aperta",
+      "mg55":"Sei sicuro di accettare la richiesta di adesione di questo membro ?",
+      "mg56":"Premendo conferma, verrà inviata la richiesta di partecipazione accettata!",
+      "mg57":"Richiesta di partecipazione accettata con successo",
+      "mg58":"QUALCOSA È ANDATO storto",
+      "mg59":"Annulla richiesta di partecipazione accettata con successo",
+      "mg60":"Sei sicuro di voler annullare la richiesta di adesione di questo membro ?",
+      "mg61":"Premendo conferma, verrà inviata la richiesta di annullamento partecipazione!"
    }
 }

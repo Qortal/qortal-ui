@@ -6,6 +6,7 @@ import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
+import '@polymer/paper-progress/paper-progress.js'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
@@ -38,6 +39,7 @@ class AppView extends connect(store)(LitElement) {
             theme: { type: String, reflect: true },
             addressInfo: { type: Object },
             searchContentString: { type: String },
+            getAllBalancesLoading: { type: Boolean },
             botQortWallet: { type: String },
             botBtcWallet: { type: String },
             botLtcWallet: { type: String },
@@ -154,6 +156,10 @@ class AppView extends connect(store)(LitElement) {
                     border-top: var(--border);
                 }
 
+                paper-progress {
+                    --paper-progress-active-color: var(--mdc-theme-primary);
+                }
+
                 .s-menu {
                     list-style: none;
                     padding: 0px 0px;
@@ -207,7 +213,7 @@ class AppView extends connect(store)(LitElement) {
                 .balanceheadertext {
                     position: absolute;
                     margin: auto;
-                    font-size: 16px;
+                    font-size: 14px;
                     font-weight: 400;
                     width: 250px;
                     display: inline;
@@ -323,11 +329,12 @@ class AppView extends connect(store)(LitElement) {
 
     constructor() {
         super()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.searchContentString = ''
         this.urls = [];
         this.nodeType = ''
         this.addressInfo = {}
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.getAllBalancesLoading = false
         this.botQortWallet = ''
         this.botBtcWallet = ''
         this.botLtcWallet = ''
@@ -414,13 +421,18 @@ class AppView extends connect(store)(LitElement) {
                             </div>
                             <div id="balanceheader">
                                 <span class="balanceheadertext">
-                                    ${translate("general.balances")}
-                                    <vaadin-button theme="icon" id="reload" @click="${() => this.getAllBalances()}">
-                                        <vaadin-icon icon="vaadin:refresh"></vaadin-icon>
-                                    </vaadin-button>
-                                    <vaadin-tooltip text="Reload Balances" for="reload" position="top"></vaadin-tooltip>
+                                    ${this.getAllBalancesLoading ? html`
+                                        ${translate("general.update")}
+                                    ` : html`
+                                        ${translate("general.balances")}
+                                        <vaadin-button theme="icon" id="reload" @click="${() => this.getAllBalances()}">
+                                             <vaadin-icon icon="vaadin:refresh"></vaadin-icon>
+                                        </vaadin-button>
+                                        <vaadin-tooltip text="${translate("general.update")}" for="reload" position="top"></vaadin-tooltip>
+                                    `}
                                 </span>
                             </div>
+                            ${this.getAllBalancesLoading ? html`<paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress>` : ''}
                             ${this.balanceTicker}
                             <app-info></app-info>
                         </div>
@@ -1505,6 +1517,7 @@ class AppView extends connect(store)(LitElement) {
     }
 
     async getAllBalances() {
+        this.getAllBalancesLoading = true
         await this.updateQortWalletBalance()
         await this.updateBtcWalletBalance()
         await this.updateLtcWalletBalance()
@@ -1513,6 +1526,7 @@ class AppView extends connect(store)(LitElement) {
         await this.updateRvnWalletBalance()
         await this.fetchArrrWalletAddress()
         await this.updateArrrWalletBalance()
+        this.getAllBalancesLoading = false
     }
 
     async renderBalances() {

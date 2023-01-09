@@ -128,7 +128,11 @@
       "snack2":"Interface utilisateur connectée au noeud",
       "snack3":"Noeud personnalisé ajouté et enregistré avec succès",
       "snack4":"Les noeuds ont été enregistrés avec succès sous",
-      "snack5":"Les noeuds ont été importés avec succès"
+      "snack5":"Les noeuds ont été importés avec succès",
+      "exp1":"Exporter la clé principale privée",
+      "exp2":"Exporter la clé principale",
+      "exp3":"Exporter",
+      "exp4":"Veuillez choisir un portefeuille pour sauvegarder la clé principale privée."
    },
    "appinfo":{
       "blockheight":"Hauteur de bloc",
@@ -155,7 +159,8 @@
       "continue":"Continuer",
       "save":"Sauvegarder",
       "balance":"Solde",
-      "balances":"VOS SOLDES DE PORTEFEUILLE"
+      "balances":"VOS SOLDES DE PORTEFEUILLE",
+      "update":"METTRE À JOUR LES SOLDES DES PORTEFEUILLES"
    },
    "startminting":{
       "smchange1":"Impossible de récupérer les comptes de frappe",
@@ -328,7 +333,8 @@
       "tchange45":"ACHAT AUTO AVEC",
       "tchange46":"ACHAT AUTOMATIQUE",
       "tchange47":"Vendre à ce prix",
-      "tchange48":"PAS ASSEZ"
+      "tchange48":"PAS ASSEZ",
+      "tchange49":"Tableau des prix"
    },
    "rewardsharepage":{
       "rchange1":"Récompenses",
@@ -606,7 +612,11 @@
       "gchange51":"Rejoindre",
       "gchange52":"Admin",
       "gchange53":"Membre",
-      "gchange54":"Membres"
+      "gchange54":"Membres",
+      "gchange55":"Rechercher un groupe privé",
+      "gchange56":"Nom du groupe à rechercher",
+      "gchange57":"Nom de groupe privé introuvable",
+      "gchange58":"Notez que le nom du groupe doit correspondre exactement."
    },
    "puzzlepage":{
       "pchange1":"Puzzles",
@@ -794,6 +804,15 @@
       "mg49":"En appuyant sur confirmer, la demande d'annulation d'invitation sera envoyée !",
       "mg50":"Bientôt disponible...",
       "mg51":"Minimum 3 caractères / Maximum 32 caractères",
-      "mg52":"Maximum 128 caractères"
+      "mg52":"Maximum 128 caractères",
+      "mg53":"Vos demandes d'ouverture de jointure",
+      "mg54":"Aucune demande de jointure ouverte",
+      "mg55":"Êtes-vous sûr d'accepter la demande d'adhésion de ce membre ?",
+      "mg56":"En appuyant sur confirmer, la demande d'adhésion acceptée sera envoyée !",
+      "mg57":"Demande d'adhésion acceptée avec succès",
+      "mg58":"QUELQUE CHOSE S'EST TROMPÉ",
+      "mg59":"Annuler la demande d'adhésion acceptée avec succès",
+      "mg60":"Êtes-vous sûr d'annuler la demande d'adhésion de ce membre ?",
+      "mg61":"En appuyant sur confirmer, la demande d'annulation de l'adhésion sera envoyée !"
    }
 }

@@ -21,6 +21,12 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
+import chartsbtc from './charts/btc-charts.js'
+import chartsltc from './charts/ltc-charts.js'
+import chartsdoge from './charts/doge-charts.js'
+import chartsdgb from './charts/dgb-charts.js'
+import chartsrvn from './charts/rvn-charts.js'
+import chartsarrr from './charts/arrr-charts.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -1160,8 +1166,11 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
-                              <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
+					<mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
+                        <div style="padding-left: 25px; padding-top: 15px;">
+                              ${this.chartShowCoin()}
+			      </div>
 			</div>
 			<div id="trade-portal">
 				<div id="first-trade-section">
@@ -1410,6 +1419,31 @@ class TradePortal extends LitElement {
 
     renderWarning() {
         return html`<span class="warning-text">NOT ENOUGH ${this.listedCoins.get(this.selectedCoin).coinCode}</span>`
+    }
+
+    chartShowCoin() {
+        switch(this.listedCoins.get(this.selectedCoin).coinCode) {
+            case "BTC":
+                return html`<mwc-button dense unelevated label="BTC ${translate("tradepage.tchange49")}" @click=${() => chartsbtc.open()}></mwc-button>`
+                break
+            case "LTC":
+                return html`<mwc-button dense unelevated label="LTC ${translate("tradepage.tchange49")}" @click=${() => chartsltc.open()}></mwc-button>`
+                break
+            case "DOGE":
+                return html`<mwc-button dense unelevated label="DOGE ${translate("tradepage.tchange49")}" @click=${() => chartsdoge.open()}></mwc-button>`
+                break
+            case "DGB":
+                return html`<mwc-button dense unelevated label="DGB ${translate("tradepage.tchange49")}" @click=${() => chartsdgb.open()}></mwc-button>`
+                break
+            case "RVN":
+                return html`<mwc-button dense unelevated label="RVN ${translate("tradepage.tchange49")}" @click=${() => chartsrvn.open()}></mwc-button>`
+                break
+            case "ARRR":
+                return html`<mwc-button dense unelevated label="ARRR ${translate("tradepage.tchange49")}" @click=${() => chartsarrr.open()}></mwc-button>`
+                break
+            default:
+                break
+        }
     }
 
     exchangeRateQort() {

@@ -10,8 +10,8 @@ registerTranslateConfig({
 import '../components/ButtonIconCopy.js'
 import '../components/QortalQrcodeGenerator.js'
 import '../components/frag-file-input.js'
+import '../components/time-elements/index.js'
 import FileSaver from 'file-saver'
-import '@github/time-elements'
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
@@ -55,7 +55,7 @@ class MultiWallet extends LitElement {
             dogeAmount: { type: Number },
             dgbRecipient: { type: String },
             dgbAmount: { type: Number },
-		rvnRecipient: { type: String },
+            rvnRecipient: { type: String },
             rvnAmount: { type: Number },
             arrrRecipient: { type: String },
             arrrAmount: { type: Number },
@@ -73,7 +73,7 @@ class MultiWallet extends LitElement {
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
             dgbFeePerByte: { type: Number },
-		rvnFeePerByte: { type: Number },
+            rvnFeePerByte: { type: Number },
             qortBook: { type: Array },
             btcBook: { type: Array },
             ltcBook: { type: Array },
@@ -472,7 +472,7 @@ class MultiWallet extends LitElement {
                 background-image: url('/img/dgb.png');
             }
 
-		.rvn .currency-image {
+            .rvn .currency-image {
                 background-image: url('/img/rvn.png');
             }
 
@@ -508,12 +508,12 @@ class MultiWallet extends LitElement {
             .btn-clear-success {
 			--mdc-icon-button-size: 32px;
 			color: red;
-		}
+            }
 
             .btn-clear-error {
 			--mdc-icon-button-size: 32px;
 			color: green;
-		}
+            }
 
             @keyframes fade-in {
                 0% {
@@ -680,7 +680,7 @@ class MultiWallet extends LitElement {
         this.isValidAmount = false
         this.btnDisable = false
         this.qortWarning = false
-	  this.balance = 0
+        this.balance = 0
         this.amount = 0
         this.btcAmount = 0
         this.ltcAmount = 0
@@ -1092,7 +1092,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-		    <mwc-dialog id="showRvnTransactionDetailsDialog" scrimClickAction="${this.showRvnTransactionDetailsLoading ? '' : 'close'}">
+                <mwc-dialog id="showRvnTransactionDetailsDialog" scrimClickAction="${this.showRvnTransactionDetailsLoading ? '' : 'close'}">
                     <div style="text-align: center;">
                         <h1>${translate("walletpage.wchange5")}</h1>
                         <hr />
@@ -1577,7 +1577,7 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
-		    <mwc-dialog id="sendRvnDialog" scrimClickAction="" escapeKeyAction="">
+                <mwc-dialog id="sendRvnDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="send-coin-dialog">
                         <div style="text-align: center;">
                             <img src="/img/rvn.png" width="32" height="32">
@@ -2759,7 +2759,7 @@ class MultiWallet extends LitElement {
             checkSelectedTextAndShowMenu()
         })
 
-	  this.shadowRoot.getElementById('rvnAmountInput').addEventListener('contextmenu', (event) => {
+        this.shadowRoot.getElementById('rvnAmountInput').addEventListener('contextmenu', (event) => {
             const getSelectedText = () => {
                 var text = ''
                 if (typeof window.getSelection != 'undefined') {
@@ -2809,7 +2809,7 @@ class MultiWallet extends LitElement {
             checkSelectedTextAndShowMenu()
         })
 
-	  this.shadowRoot.getElementById('arrrAmountInput').addEventListener('contextmenu', (event) => {
+        this.shadowRoot.getElementById('arrrAmountInput').addEventListener('contextmenu', (event) => {
             const getSelectedText = () => {
                 var text = ''
                 if (typeof window.getSelection != 'undefined') {
@@ -4499,7 +4499,7 @@ class MultiWallet extends LitElement {
             case 'ltc':
             case 'doge':
             case 'dgb':
-		case 'rvn':
+            case 'rvn':
                 this.balanceString = this.renderFetchText()
                 const walletName = `${coin}Wallet`
                 parentEpml.request('apiCall', {
@@ -4844,9 +4844,9 @@ class MultiWallet extends LitElement {
             render(this.renderDogeTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         } else if (this._selectedWallet === 'dgb') {
             render(this.renderDgbTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-	  } else if (this._selectedWallet === 'rvn') {
+        } else if (this._selectedWallet === 'rvn') {
             render(this.renderRvnTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
-	  } else if (this._selectedWallet === 'arrr') {
+        } else if (this._selectedWallet === 'arrr') {
             render(this.renderArrrTransactions(this.wallets.get(this._selectedWallet).transactions, this._selectedWallet), this.transactionsDOM)
         }
     }

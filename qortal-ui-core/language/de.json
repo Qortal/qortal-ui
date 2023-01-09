@@ -128,7 +128,11 @@
       "snack2":"UI mit Knoten verbunden",
       "snack3":"Benutzerdefinierter Knoten erfolgreich hinzugefügt und gespeichert",
       "snack4":"Knoten erfolgreich gespeichert als",
-      "snack5":"Knoten erfolgreich importiert"
+      "snack5":"Knoten erfolgreich importiert",
+      "exp1":"Privaten Hauptschlüssel exportieren",
+      "exp2":"Hauptschlüssel exportieren",
+      "exp3":"Exportieren",
+      "exp4":"Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern."
    },
    "appinfo":{
       "blockheight":"Blockhöhe",
@@ -155,7 +159,8 @@
       "continue":"Fortsetzen",
       "save":"Speichern",
       "balance":"Guthaben",
-      "balances":"IHR WALLET-GUTHABEN"
+      "balances":"IHR WALLET-GUTHABEN",
+      "update":"AKTUALISIERE WALLET-GUTHABEN"
    },
    "startminting":{
       "smchange1":"Prägekonten können nicht abgerufen werden",
@@ -328,7 +333,8 @@
       "tchange45":"AUTO KAUFEN MIT",
       "tchange46":"AUTOKAUF",
       "tchange47":"Verkaufe für diesen Preis",
-      "tchange48":"NICHT GENUG"
+      "tchange48":"NICHT GENUG",
+      "tchange49":"Preisdiagramm"
    },
    "rewardsharepage":{
       "rchange1":"Belohnungsanteile",
@@ -606,7 +612,11 @@
       "gchange51":"Beitreten",
       "gchange52":"Administrator",
       "gchange53":"Mitglied",
-      "gchange54":"Mitglieder"
+      "gchange54":"Mitglieder",
+      "gchange55":"Private Gruppe suchen",
+      "gchange56":"Zu suchender Gruppenname",
+      "gchange57":"Privater Gruppenname nicht gefunden",
+      "gchange58":"Beachten Sie, dass der Gruppenname genau übereinstimmen muss."
    },
    "puzzlepage":{
       "pchange1":"Rätsel",
@@ -794,6 +804,15 @@
       "mg49":"Beim Drücken auf Bestätigen wird die Anfrage zum Abbrechen der Einladung gesendet!",
       "mg50":"Kommt bald...",
       "mg51":"Minimum 3 Zeichen / Maximum 32 Zeichen",
-      "mg52":"Maximal 128 Zeichen"
+      "mg52":"Maximal 128 Zeichen",
+      "mg53":"Ihre offenen Beitrittsanfragen",
+      "mg54":"Keine offenen Beitrittsanfragen",
+      "mg55":"Sind Sie sicher, dass Sie die Beitrittsanfrage von diesem Mitglied annehmen werden?",
+      "mg56":"Beim Drücken von Bestätigen wird die Beitrittsanfrage gesendet!",
+      "mg57":"Beitrittsanfrage erfolgreich angenommen",
+      "mg58":"ETWAS GING FALSCH",
+      "mg59":"Beitrittsanfrage abbrechen erfolgreich akzeptiert",
+      "mg60":"Sind Sie sicher, dass Sie die Beitrittsanfrage dieses Mitglieds abbrechen möchten?",
+      "mg61":"Beim Drücken auf Bestätigen wird die Anfrage zum Abbrechen des Beitritts gesendet!"
    }
 }

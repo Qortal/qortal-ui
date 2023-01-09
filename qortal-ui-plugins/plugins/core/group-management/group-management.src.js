@@ -7,6 +7,7 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import '../components/time-elements/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
@@ -21,7 +22,6 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
-import '@github/time-elements'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -30,12 +30,15 @@ class GroupManagement extends LitElement {
         return {
             loading: { type: Boolean },
             publicGroups: { type: Array },
+            privateGroups: { type: Array },
             joinedGroups: { type: Array },
             groupInvites: { type: Array },
+            privateGroupSearch: { type: Array },
             newMembersList: { type: Array },
             newAdminsList: { type: Array },
             newBannedList: { type: Array },
             newGroupInvitesList: { type: Array },
+            newGroupJoinsList: { type: Array },
             recipientPublicKey: { type: String },
             selectedAddress: { type: Object },
             manageGroupObj: { type: Object },
@@ -77,6 +80,7 @@ class GroupManagement extends LitElement {
             toInviteMemberToGroup: { type: String },
             toCancelInviteMemberName: { type: String },
             toCancelInviteMemberAddress: { type: String },
+            searchGroupName: { type: String },
             errorMessage: { type: String },
             successMessage: { type: String }
         }
@@ -150,6 +154,11 @@ class GroupManagement extends LitElement {
             .error-icon {
                 font-size: 48px;
                 color: red;
+            }
+
+            .success-icon {
+                font-size: 48px;
+                color: #198754;
             }
 
             .close-icon {
@@ -410,6 +419,13 @@ class GroupManagement extends LitElement {
 			background: var(--white);
 			color: var(--black);
 		}
+
+            #search {
+               width: 100%;
+               display: flex;
+               margin: auto;
+               align-items: center;
+            }
         `
     }
 
@@ -418,12 +434,15 @@ class GroupManagement extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.selectedAddress = {}
         this.publicGroups = []
+        this.privateGroups = []
         this.joinedGroups = []
         this.groupInvites = []
+        this.privateGroupSearch = []
         this.newMembersList = []
         this.newAdminsList = []
         this.newBannedList = []
         this.newGroupInvitesList = []
+        this.newGroupJoinsList = []
         this.manageGroupObj = {}
         this.joinGroupObj = {}
         this.leaveGroupObj = {}
@@ -458,6 +477,7 @@ class GroupManagement extends LitElement {
         this.toInviteMemberToGroup = ''
         this.toCancelInviteMemberName = ''
         this.toCancelInviteMemberAddress = ''
+        this.searchGroupName = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.selectedView = { id: 'group-members', name: 'Group Members' }
@@ -823,6 +843,7 @@ class GroupManagement extends LitElement {
 
     groupInviteTemplate() {
         return html`
+            <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("managegroup.mg36")}</h3>
             <vaadin-grid theme="large" id="groupInvitesGrid" ?hidden="${this.isEmptyArray(this.newGroupInvitesList)}" .items="${this.newGroupInvitesList}" aria-label="Group Invites" all-rows-visible>
                 <vaadin-grid-column
                     width="6rem"
@@ -867,6 +888,54 @@ class GroupManagement extends LitElement {
             ${this.isEmptyArray(this.newGroupInvitesList) ? html`
                 <span style="color: var(--black);">${translate("managegroup.mg35")}</span>
             ` : html``}
+            <br><hr><br>
+            <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("managegroup.mg53")}</h3>
+            <vaadin-grid theme="large" id="groupJoinsGrid" ?hidden="${this.isEmptyArray(this.newGroupJoinsList)}" .items="${this.newGroupJoinsList}" aria-label="Group Join Requests" all-rows-visible>
+                <vaadin-grid-column
+                    width="6rem"
+                    flex-grow="0"
+                    header="${translate("websitespage.schange5")}"
+                    .renderer=${(root, column, data) => {
+	                  render(html`${this.renderAvatar(data.item)}`, root)
+	              }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("puzzlepage.pchange4")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.name}`, root)
+                    }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    auto-width
+                    resizable
+                    header="${translate("login.address")}"
+                    .renderer=${(root, column, data) => {
+	                  render(html`${data.item.owner}`, root)
+	              }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    width="12rem"
+                    flex-grow="0"
+                    header="${translate("websitespage.schange8")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${this.renderConfirmRequestButton(data.item)}`, root)
+                    }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    width="12rem"
+                    flex-grow="0"
+                    .renderer=${(root, column, data) => {
+                        render(html`${this.renderDeclineRequestButton(data.item)}`, root)
+                    }}
+                ></vaadin-grid-column>
+            </vaadin-grid>
+            ${this.isEmptyArray(this.newGroupJoinsList) ? html`
+                <span style="color: var(--black);">${translate("managegroup.mg54")}</span>
+            ` : html``}
+            <br>
+            <hr>
             <div style="padding-top: 20px;">
                 <vaadin-button theme="primary medium" @click=${() => this.openInviteMemberToGroupDialog()}>
                     ${translate("managegroup.mg2")}
@@ -1020,6 +1089,72 @@ class GroupManagement extends LitElement {
                 ${translate("general.close")}
                 </mwc-button>
             </mwc-dialog>
+
+            <mwc-dialog id="successJoinDialog" scrimClickAction="" escapeKeyAction="">
+                <div class="card-container">
+                    <mwc-icon class="success-icon">group_add</mwc-icon>
+                    <h2>${translate("managegroup.mg57")}</h2>
+                    <h4>${translate("walletpage.wchange43")}</h4>
+                </div>
+
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${() => this.closeSuccessJoinDialog()}
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+
+            <mwc-dialog id="errorJoinDialog" scrimClickAction="" escapeKeyAction="">
+                <div class="card-container">
+                    <mwc-icon class="error-icon">warning</mwc-icon>
+                    <h2>${translate("managegroup.mg58")}</h2>
+                    <h4>${this.errorMessage}</h4>
+                    <h4>${translate("walletpage.wchange44")}</h4>
+                </div>
+
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${() => this.closeErrorJoinDialog()}
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+
+            <mwc-dialog id="cancelSuccessJoinDialog" scrimClickAction="" escapeKeyAction="">
+                <div class="card-container">
+                    <mwc-icon class="success-icon">person_remove</mwc-icon>
+                    <h2>${translate("managegroup.mg59")}</h2>
+                    <h4>${translate("walletpage.wchange43")}</h4>
+                </div>
+
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${() => this.closeCancelSuccessJoinDialog()}
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+
+            <mwc-dialog id="cancelErrorJoinDialog" scrimClickAction="" escapeKeyAction="">
+                <div class="card-container">
+                    <mwc-icon class="error-icon">warning</mwc-icon>
+                    <h2>${translate("managegroup.mg58")}</h2>
+                    <h4>${this.errorMessage}</h4>
+                    <h4>${translate("walletpage.wchange44")}</h4>
+                </div>
+
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${() => this.closeCancelErrorJoinDialog()}
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
         `
     }
 
@@ -1137,6 +1272,45 @@ class GroupManagement extends LitElement {
                 </div>
 
                 <div class="divCard">
+                    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("grouppage.gchange55")}</h3>
+	              <div id="search">
+	                  <vaadin-text-field
+                            theme="medium"
+                            style="width: 20em"
+                            minlength="3"
+                            maxlength="32"
+                            id="searchGroupName"
+                            placeholder="${translate("grouppage.gchange56")}"
+                            value="${this.searchGroupName}"
+                            @keydown="${this.searchGroupListener}"
+                            clear-button-visible
+                         >
+	                      <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	                  </vaadin-text-field>&nbsp;&nbsp;<br>
+                        <vaadin-button theme="medium" @click="${(e) => this.doGroupSearch(e)}">
+	                      <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                      ${translate("websitespage.schange35")}
+                        </vaadin-button>
+	              </div><br />
+                    <vaadin-grid theme="large" id="priveGroupSearchGrid" ?hidden="${this.isEmptyArray(this.privateGroupSearch)}" .items="${this.privateGroupSearch}" aria-label="My Search Result" all-rows-visible>
+                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
+                            if (data.item.isOpen === true) {
+                                render(html`${translate("managegroup.mg44")}`, root)
+                            } else {
+                                render(html`${translate("managegroup.mg45")}`, root)
+                            }
+                        }}></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("grouppage.gchange51")}</mwc-button>`, root)
+                        }}></vaadin-grid-column>
+                    </vaadin-grid>
+                </div>
+
+                <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
                         <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
@@ -1150,7 +1324,9 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.joinedGroups) ? html`
-                        <span style="color: var(--black);">${translate("grouppage.gchange8")}</span>
+                        <div style="text-align: center;">
+                            <span style="color: var(--black);">${translate("grouppage.gchange8")}</span>
+                        </div>
                     `: ''}
                 </div>
 
@@ -1175,7 +1351,9 @@ class GroupManagement extends LitElement {
                         }}></vaadin-grid-column>
                     </vaadin-grid>
                     ${this.isEmptyArray(this.groupInvites) ? html`
-                        <span style="color: var(--black);">${translate("managegroup.mg35")}</span>
+                        <div style="text-align: center;">
+                            <span style="color: var(--black);">${translate("managegroup.mg35")}</span>
+                        </div>
                     `: ''}
                 </div>
 
@@ -1477,6 +1655,22 @@ class GroupManagement extends LitElement {
                     ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
+
+                <mwc-dialog id="privateGroupErrorDialog" scrimClickAction="" escapeKeyAction="">
+                    <div style="text-align: center;">
+                        <mwc-icon class="error-icon">warning</mwc-icon>
+                        <h2>${translate("grouppage.gchange57")}</h2>
+                        <h4>${translate("grouppage.gchange58")}</h4>
+                    </div>
+
+                    <mwc-button
+                        slot="primaryAction"
+                        @click=${() => this.closePrivateGroupErrorDialog()}
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
         `
     }
@@ -1502,6 +1696,14 @@ class GroupManagement extends LitElement {
             })
             let myGs = openG.filter(myG => myG.isOpen === true)
             return myGs
+        }
+
+        const getPrivateGroups = async () => {
+            let privateG = await parentEpml.request('apiCall', {
+                url: `/groups?limit=0&reverse=true`
+            })
+            let myPgs = privateG.filter(myP => myP.isOpen === false)
+            return myPgs
         }
 
         const getJoinedGroups = async () => {
@@ -1563,13 +1765,15 @@ class GroupManagement extends LitElement {
         const getOpen_JoinedGroups = async () => {
             let _joinedGroups = await getJoinedGroups()
             let _publicGroups = await getOpenPublicGroups()
+            let _privateGroups = await getPrivateGroups()
             let results = _publicGroups.filter(myOpenGroup => {
                 let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
                 return !value
             });
             this.publicGroups = results
+            this.privateGroups = _privateGroups
             this.joinedGroups = _joinedGroups
-            setTimeout(getOpen_JoinedGroups, 30000)
+            setTimeout(getOpen_JoinedGroups, 60000)
         }
 
         window.addEventListener("contextmenu", (event) => {
@@ -1720,6 +1924,36 @@ class GroupManagement extends LitElement {
                 </div>
             `
         }
+    }
+
+    searchGroupListener(e) {
+        if (e.key === 'Enter') {
+            this.doGroupSearch(e)
+        }
+    }
+
+    doGroupSearch(e) {
+        this.renderSearchResult()
+    }
+
+    renderSearchResult() {
+        this.privateGroupSearch = []
+        let searchGroupName = this.shadowRoot.getElementById('searchGroupName').value
+        if (searchGroupName.length === 0) {
+            let err1string = get("websitespage.schange34")
+            parentEpml.request('showSnackBar', `${err1string}`)
+        } else {
+            this.privateGroupSearch = this.privateGroups.filter(myS => myS.groupName === searchGroupName)
+            if (this.privateGroupSearch.length === 0) {
+                this.shadowRoot.querySelector('#privateGroupErrorDialog').show()
+            }
+        }
+    }
+
+    closePrivateGroupErrorDialog() {
+        this.shadowRoot.querySelector('#privateGroupErrorDialog').close()
+        this.shadowRoot.getElementById('searchGroupName').value = ''
+        this.privateGroupSearch = []
     }
 
     renderBanButton(groupObj) {
@@ -1874,6 +2108,38 @@ class GroupManagement extends LitElement {
         this.errorMessage = ''
     }
 
+    renderConfirmRequestButton(joinObj) {
+        return html`<mwc-button class="green" @click=${() => this.createAcceptJoinGroupMember(joinObj)}><mwc-icon>add_task</mwc-icon>&nbsp;${translate("transpage.tchange3")}</mwc-button>`
+    }
+
+    renderDeclineRequestButton(joinObj) {
+        return html`<mwc-button class="red" @click=${() => this.kickJoinGroupMember(joinObj)}><mwc-icon>cancel</mwc-icon>&nbsp;${translate("transpage.tchange2")}</mwc-button>`
+    }
+
+    closeSuccessJoinDialog() {
+        this.shadowRoot.querySelector('#successJoinDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeErrorJoinDialog() {
+        this.shadowRoot.querySelector('#errorJoinDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeCancelSuccessJoinDialog() {
+        this.shadowRoot.querySelector('#cancelSuccessJoinDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
+    closeCancelErrorJoinDialog() {
+        this.shadowRoot.querySelector('#cancelErrorJoinDialog').close()
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
+
     openMemberInfo(inviteGroupId) {
         const _inviteMemberInfo = this.shadowRoot.getElementById('toInviteMemberToGroup').value
         const _nviteMemberTime = this.shadowRoot.getElementById("inviteMemberTime").value
@@ -1939,6 +2205,7 @@ class GroupManagement extends LitElement {
     closeFieldErrorDialog() {
         this.shadowRoot.querySelector('#fieldErrorDialog').close()
     }
+
     async unitCreateFee() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -2248,6 +2515,57 @@ class GroupManagement extends LitElement {
         }
     }
 
+    async getNewGroupJoinList(theGroup) {
+        let callGroupID = theGroup
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+
+        let joinObj = []
+        this.groupJoinMembers = []
+
+        await parentEpml.request('apiCall', {
+            url: `/groups/joinrequests/${callGroupID}`
+        }).then(res => {
+            this.groupJoinMembers = res
+        })
+
+        if (this.groupJoinMembers.length === 0) {
+            return
+        } else {
+            this.groupJoinMembers.map(a => {
+                let callTheJoinMember = a.joiner
+                let callSingleJoinMemberUrl = `${nodeUrl}/names/address/${callTheJoinMember}`
+                fetch(callSingleJoinMemberUrl).then(res => {
+                    return res.json()
+                }).then(jsonRes => {
+                    if (jsonRes.length) {
+                        jsonRes.map(b => {
+                            const joinObjToAdd = {
+                                groupId: a.groupId,
+                                name: b.name,
+                                owner: b.owner,
+                                time: '86400',
+                                reason: 'NotAllowed'
+                            }
+                            joinObj.push(joinObjToAdd)
+                        })
+                    } else {
+                        const noName = 'No registered name'
+                        const noNameObj = {
+                            groupId: a.groupId,
+                            name: noName,
+                            owner: a.joiner,
+                            time: '86400',
+                            reason: 'NotAllowed'
+                        }
+                        joinObj.push(noNameObj)
+                    }
+                    this.newGroupJoinsList = joinObj
+                })
+            })
+        }
+    }
+
     closeManageGroupOwnerDialog() {
         this.resetDefaultSettings()
         this.shadowRoot.getElementById('manageGroupOwnerDialog').close()
@@ -2276,6 +2594,7 @@ class GroupManagement extends LitElement {
         await this.getNewMemberList(groupObj.groupId)
         await this.getNewBannedList(groupObj.groupId)
         await this.getNewGroupInvitesList(groupObj.groupId)
+        await this.getNewGroupJoinList(groupObj.groupId)
         await manageGroupDelay(1000)
         this.shadowRoot.getElementById('manageGroupOwnerDialog').open()
     }
@@ -2936,6 +3255,148 @@ class GroupManagement extends LitElement {
                 this.btnDisable = false
             } else {
                 this.errorMessage = txnResponse.data.message
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            }
+        }
+        validateReceiver()
+    }
+
+    async createAcceptJoinGroupMember(joinObj) {
+        const member = joinObj.owner
+        const inviteTime = joinObj.time
+        const inviteGroupMemberFeeInput = this.inviteGroupMemberFee
+        const theGroupId = joinObj.groupId
+        this.isLoading = true
+        this.btnDisable = true
+
+        const getLastRef = async () => {
+            let myRef = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.selectedAddress.address}`
+            })
+            return myRef
+        }
+
+        const validateReceiver = async () => {
+            let lastRef = await getLastRef()
+            let myTransaction = await makeTransactionRequest(lastRef)
+            getTxnRequestResponse(myTransaction)
+        }
+
+        const makeTransactionRequest = async (lastRef) => {
+            const myMember = member
+            const myLastRef = lastRef
+            const myGroupId = theGroupId
+            const myFee = inviteGroupMemberFeeInput
+            const myInviteTime = inviteTime
+            const myInviteMemberDialog1 = get("managegroup.mg55")
+            const myInviteMemberDialog2 = get("managegroup.mg56")
+
+            let myTxnrequest = await parentEpml.request('transaction', {
+                type: 29,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    fee: myFee,
+                    recipient: myMember,
+                    rGroupId: myGroupId,
+                    rInviteTime: myInviteTime,
+                    lastReference: myLastRef,
+                    inviteMemberDialog1: myInviteMemberDialog1,
+                    inviteMemberDialog2: myInviteMemberDialog2
+                }
+            })
+            return myTxnrequest
+        }
+
+        const getTxnRequestResponse = (txnResponse) => {
+            if (txnResponse.success === false && txnResponse.message) {
+                this.errorMessage = txnResponse.message
+                this.shadowRoot.querySelector('#errorJoinDialog').show()
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else if (txnResponse.success === true && !txnResponse.data.error) {
+                this.shadowRoot.querySelector('#successJoinDialog').show()
+                this.errorMessage = ''
+                this.successMessage = this.renderSuccessText()
+                this.isLoading = false
+                this.btnDisable = false
+            } else {
+                this.errorMessage = txnResponse.data.message
+                this.shadowRoot.querySelector('#errorJoinDialog').show()
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            }
+        }
+        validateReceiver()
+    }
+
+    async kickJoinGroupMember(joinObj) {
+        const member = joinObj.owner
+        const reason = joinObj.reason
+        const kickGroupMemberFeeInput = this.kickGroupMemberFee
+        const theGroupId = joinObj.groupId
+        this.isLoading = true
+        this.btnDisable = true
+
+        const getLastRef = async () => {
+            let myRef = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.selectedAddress.address}`
+            })
+            return myRef
+        }
+
+        const validateReceiver = async () => {
+            let lastRef = await getLastRef()
+            let myTransaction = await makeTransactionRequest(lastRef)
+            getTxnRequestResponse(myTransaction)
+        }
+
+        const makeTransactionRequest = async (lastRef) => {
+            const myMember = member
+            const myLastRef = lastRef
+            const myGroupId = theGroupId
+            const myFee = kickGroupMemberFeeInput
+            const myReason = reason
+            const myKickMemberDialog1 = get("managegroup.mg60")
+            const myKickMemberDialog2 = get("managegroup.mg61")
+
+            let myTxnrequest = await parentEpml.request('transaction', {
+                type: 28,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    fee: myFee,
+                    recipient: myMember,
+                    rGroupId: myGroupId,
+                    rBanReason: myReason,
+                    lastReference: myLastRef,
+                    kickMemberDialog1: myKickMemberDialog1,
+                    kickMemberDialog2: myKickMemberDialog2
+                }
+            })
+            return myTxnrequest
+        }
+
+        const getTxnRequestResponse = (txnResponse) => {
+            if (txnResponse.success === false && txnResponse.message) {
+                this.errorMessage = txnResponse.message
+                this.shadowRoot.querySelector('#cancelErrorJoinDialog').show()
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else if (txnResponse.success === true && !txnResponse.data.error) {
+                this.shadowRoot.querySelector('#cancelSuccessJoinDialog').show()
+                this.errorMessage = ''
+                this.successMessage = this.renderSuccessText()
+                this.isLoading = false
+                this.btnDisable = false
+            } else {
+                this.errorMessage = txnResponse.data.message
+                this.shadowRoot.querySelector('#cancelErrorJoinDialog').show()
                 this.isLoading = false
                 this.btnDisable = false
                 throw new Error(txnResponse)
