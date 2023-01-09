@@ -74,7 +74,7 @@ class TradePortal extends LitElement {
             displayTradeAddress: { type: String },
             displayTradeLevel: { type: String },
             displayTradeBalance: { type: String },
-		qortRatio: {type: Number}
+            qortRatio: {type: Number}
         }
     }
 
@@ -494,7 +494,7 @@ class TradePortal extends LitElement {
 		.rvn.coinName:before  {
 			background-image: url('/img/qortrvn.png');
 		}
-            .arrr.coinName:before  {
+		.arrr.coinName:before  {
 			background-image: url('/img/qortarrr.png');
 		}
 		.coinName {
@@ -655,7 +655,7 @@ class TradePortal extends LitElement {
             tradeFee: "~0.0005"
         }
 
-	  let ravencoin = {
+        let ravencoin = {
             name: "RAVENCOIN",
             balance: "0",
             coinCode: "RVN",
@@ -721,7 +721,7 @@ class TradePortal extends LitElement {
             handleStuckTradesConnectedWorker: null
         })
 
-	  workers.set("RAVENCOIN", {
+        workers.set("RAVENCOIN", {
             tradesConnectedWorker: null,
             handleStuckTradesConnectedWorker: null
         })
@@ -1160,7 +1160,7 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">QORT / DOGE</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">QORT / DGB</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
-                              <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
+					<mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
 			</div>
 			<div id="trade-portal">
@@ -1504,8 +1504,8 @@ class TradePortal extends LitElement {
             case 'DIGIBYTE':
                 _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-		    break
-		case 'RAVENCOIN':
+                break
+            case 'RAVENCOIN':
                 _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
                 _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
                 break
