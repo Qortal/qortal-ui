@@ -15,6 +15,9 @@ import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
 import { cropAddress } from "../../utils/cropAddress";
+import { generateHTML } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 let toggledMessage = {}
@@ -28,7 +31,6 @@ class ChatScroller extends LitElement {
             hideMessages: { type: Array },
             setRepliedToMessageObj: {attribute: false},
             setEditedMessageObj: {attribute: false},
-            focusChatEditor: {attribute: false},
             sendMessage: {attribute: false},
             sendMessageForward: {attribute: false},
             showLastMessageRefScroller: { type: Function },
@@ -54,6 +56,7 @@ class ChatScroller extends LitElement {
 
 
     render() {
+        console.log('this.messages', this.messages)
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -108,7 +111,6 @@ class ChatScroller extends LitElement {
                             .hideMessages=${this.hideMessages}
                             .setRepliedToMessageObj=${this.setRepliedToMessageObj}
                             .setEditedMessageObj=${this.setEditedMessageObj}
-                            .focusChatEditor=${this.focusChatEditor}
                             .sendMessage=${this.sendMessage}
                             .sendMessageForward=${this.sendMessageForward}
                             ?isFirstMessage=${indexMessage === 0}
@@ -231,7 +233,6 @@ class MessageTemplate extends LitElement {
             showBlockAddressIcon: { type: Boolean },
             setRepliedToMessageObj: { attribute: false },
             setEditedMessageObj: { attribute: false },
-            focusChatEditor: { attribute: false },
             sendMessage: { attribute: false },
             sendMessageForward: { attribute: false },
             openDialogImage: { attribute: false },
@@ -294,6 +295,7 @@ class MessageTemplate extends LitElement {
     render() {
         const hidemsg = this.hideMessages;
         let message = "";
+        let messageVersion2 = ""
         let reactions = [];
         let repliedToData = null;
         let image = null;
@@ -302,6 +304,14 @@ class MessageTemplate extends LitElement {
         let isForwarded = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
+            if(parsedMessageObj.version.toString() === '2'){
+
+                messageVersion2 = generateHTML(parsedMessageObj.messageText, [
+                    StarterKit,
+                    Underline
+                    // other extensions …
+                  ])
+            }
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
@@ -466,7 +476,12 @@ class MessageTemplate extends LitElement {
                                             ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
-                                            ${repliedToData.decodedMessage.messageText}
+                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
+                    StarterKit,
+                    Underline
+                    // other extensions …
+                  ]))}
+                                            <!-- ${repliedToData.decodedMessage.messageText} -->
                                         </p>
                                     </div>
                                     `}
@@ -501,7 +516,8 @@ class MessageTemplate extends LitElement {
                                     id="messageContent" 
                                     class="message" 
                                     style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
-                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        
+                                        ${unsafeHTML(messageVersion2)}
                                         <div class="${((this.isFirstMessage === false && 
                                             this.isSingleMessageInGroup === true && 
                                             this.isLastMessageInGroup === true) || 
@@ -527,7 +543,6 @@ class MessageTemplate extends LitElement {
                                 .originalMessage=${{...this.messageObj, message}}
                                 .setRepliedToMessageObj=${this.setRepliedToMessageObj}
                                 .setEditedMessageObj=${this.setEditedMessageObj}
-                                .focusChatEditor=${this.focusChatEditor}
                                 .myAddress=${this.myAddress}
                                 @blur=${() => this.showBlockIconFunc(false)}
                                 .sendMessage=${this.sendMessage}
@@ -634,7 +649,6 @@ class ChatMenu extends LitElement {
             originalMessage: { type: Object },
             setRepliedToMessageObj: {attribute: false},
             setEditedMessageObj: {attribute: false},
-            focusChatEditor: {attribute: false},
             myAddress: { type: Object },
             emojiPicker: { attribute: false },
             sendMessage: { attribute: false },
@@ -767,7 +781,6 @@ class ChatMenu extends LitElement {
                         return
                     }
                     this.setRepliedToMessageObj(this.originalMessage);
-                    this.focusChatEditor();
                     }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
@@ -783,7 +796,6 @@ class ChatMenu extends LitElement {
                         return
                     }
                     this.setEditedMessageObj(this.originalMessage);
-                    this.focusChatEditor();
                     }}>
                         <vaadin-icon icon="vaadin:pencil" slot="icon"></vaadin-icon>
                     </div>

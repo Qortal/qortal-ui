@@ -4,6 +4,12 @@ import {animate} from '@lit-labs/motion';
 import { Epml } from '../../../epml.js';
 import { use, get, translate, registerTranslateConfig } from 'lit-translate';
 import { chatStyles } from './ChatScroller-css.js'
+import { generateHTML } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder'
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+import { Editor, Extension } from '@tiptap/core'
 
 // import localForage from "localforage";
 registerTranslateConfig({
@@ -72,8 +78,6 @@ class ChatPage extends LitElement {
             iframeHeight: { type: Number },
             imageFile: { type: Object },
             isUploadingImage: { type: Boolean },
-            chatEditor: { type:  Object },
-            chatEditorNewChat: { type: Object },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: { type: Boolean },
@@ -91,7 +95,9 @@ class ChatPage extends LitElement {
             userFoundModalOpen: { type: Boolean },
             webWorker: { type: Object },
             webWorkerImage: { type: Object },
-            myTrimmedMeassage: { type: String }
+            myTrimmedMeassage: { type: String },
+            editor: {type: Object},
+            currentEditor: {type: String}
         }
     }
 
@@ -299,6 +305,7 @@ class ChatPage extends LitElement {
       justify-content: center;
       min-height: 60px;
       max-height: 100%;
+      overflow: hidden;
   }
 
   .chat-text-area .typing-area {
@@ -347,6 +354,10 @@ class ChatPage extends LitElement {
       flex-direction: column;
       gap: 5px;
       width: 100%;
+  }
+  .repliedTo-message p {
+    margin: 0px;
+    padding: 0px;
   }
 
   .reply-icon {
@@ -858,6 +869,7 @@ class ChatPage extends LitElement {
         }
         this.webWorker = null;
         this.webWorkerImage = null;
+        this.currentEditor = '_chatEditorDOM'
     }
 
     _toggle(value) {
@@ -922,7 +934,11 @@ class ChatPage extends LitElement {
                                         <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                            <p class="original-message">${this.repliedToMessageObj.message}</p>
+                                            ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
+                    StarterKit,
+                    Underline
+                    // other extensions …
+                  ]))}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
@@ -939,7 +955,11 @@ class ChatPage extends LitElement {
                                         <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                            <p class="original-message">${this.editedMessageObj.message}</p>
+                                            ${unsafeHTML(generateHTML(this.editedMessageObj.message, [
+                    StarterKit,
+                    Underline
+                    // other extensions …
+                  ]))}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
@@ -956,14 +976,16 @@ class ChatPage extends LitElement {
                                 iframeId="_chatEditorDOM"
                                 placeholder=${this.chatEditorPlaceholder}
                                 ._sendMessage=${this._sendMessage}
-                                .setChatEditor=${(editor)=> this.setChatEditor(editor)}
-                                .chatEditor=${this.chatEditor}
                                 .imageFile=${this.imageFile}
                                 .insertImage=${this.insertImage}
                                 .editedMessageObj=${this.editedMessageObj}
                                 ?isLoading=${this.isLoading}
                                 ?isLoadingMessages=${this.isLoadingMessages}
-                                ?isEditMessageOpen=${this.isEditMessageOpen}>                           
+                                ?isEditMessageOpen=${this.isEditMessageOpen}
+                                .editor=${this.editor}
+                                .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
+                                id="_chatEditorDOM"
+                                >                           
                             </chat-text-editor>
                     </div>
                 </div>
@@ -985,10 +1007,9 @@ class ChatPage extends LitElement {
 			`: ''}
                 <wrapper-modal 
                 .onClickFunc=${() => {
-                    this.chatEditorNewChat.resetValue();
                     this.removeImage();
                 }} 
-                style=${(this.imageFile && !this.isUploadingImage) ? "display: block" : "display: none"}>
+                style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
@@ -1000,20 +1021,20 @@ class ChatPage extends LitElement {
                                     ?hasGlobalEvents=${false}
                                     placeholder=${this.chatEditorPlaceholder}
                                     ._sendMessage=${this._sendMessage}
-                                    .setChatEditor=${(editor)=> this.setChatEditorNewChat(editor)}
-                                    .chatEditor=${this.chatEditorNewChat}
                                     .imageFile=${this.imageFile}
                                     .insertImage=${this.insertImage}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
                                     ?isLoadingMessages=${this.isLoadingMessages}
                                     id="chatTextCaption"
+                                    .editor=${this.editorImage}
+                                    .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
                                     >
                                 </chat-text-editor>
                             </div>
                             <div class="modal-button-row">
                                 <button class="modal-button-red" @click=${() => {
-                                this.chatEditorNewChat.resetValue();
+                                
                                 this.removeImage();
                                 }}>
                                     ${translate("chatpage.cchange33")}
@@ -1047,7 +1068,6 @@ class ChatPage extends LitElement {
                 .onClickFunc=${() => {
                    this.openForwardOpen = false;
                    this.forwardActiveChatHeadUrl = {};
-                   this.chatEditor.enable();
                    this.requestUpdate();
                 } } 
                 style=${this.openForwardOpen ? "display: block" : "display: none"}>
@@ -1136,7 +1156,6 @@ class ChatPage extends LitElement {
                                 <button class="modal-button-red" @click=${() => {
                                     this.openForwardOpen = false;
                                     this.forwardActiveChatHeadUrl = {};
-                                    this.chatEditor.enable();
                                     this.requestUpdate();
                                 }}>
                                     ${translate("chatpage.cchange33")}
@@ -1214,16 +1233,71 @@ class ChatPage extends LitElement {
         }
     }
 
-    connectedCallback() {
+
+
+  async  connectedCallback() {
         super.connectedCallback();
         this.webWorker = new WebWorker();
         this.webWorkerImage = new WebWorkerImage();
+        await this.getUpdateCompleteTextEditor();
+
+        const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
+        const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
+        console.log({elementChatId, elementChatImageId })
+        this.editor = new Editor({
+            element: elementChatId,
+            extensions: [
+              StarterKit,
+              Underline,
+              Placeholder.configure({
+                placeholder: 'Write something …',
+              }),
+              Extension.create({
+                addKeyboardShortcuts:()=> {
+                  return {
+                    'Enter': ()=> {
+                        const chatTextEditor = this.shadowRoot.getElementById('_chatEditorDOM')
+                        chatTextEditor.sendMessageFunc({
+                        })
+                      return true
+                    }
+                  }
+                }})
+            ]
+          })
+         
+          this.editorImage = new Editor({
+            element: elementChatImageId,
+            extensions: [
+              StarterKit,
+              Underline,
+              Placeholder.configure({
+                placeholder: 'Write something …',
+              }),
+              Extension.create({
+                addKeyboardShortcuts:()=> {
+                  return {
+                    'Enter':()=> {
+                        const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
+                        chatTextEditor.sendMessageFunc({
+                            type: 'image',
+                            imageFile:  this.imageFile,
+                        })
+                      return true
+                    }
+                  }
+                }})
+            ]
+          })
       }
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        console.log('disconnected')
         this.webWorker.terminate();
         this.webWorkerImage.terminate();
+        this.editor.destroy()
+        this.editorImage.destroy()
       }
 
     async userSearch() {
@@ -1285,18 +1359,11 @@ class ChatPage extends LitElement {
         this.lastMessageRefVisible = props;
     }
 
-    setChatEditor(editor) {
-        this.chatEditor = editor;
-    }
-
-    setChatEditorNewChat(editor) {
-        this.chatEditorNewChat = editor;
-    }
     
     insertImage(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
-            this.chatEditor.disable();
+            this.currentEditor = 'newChat'
             return;
         }       
          parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
@@ -1304,12 +1371,11 @@ class ChatPage extends LitElement {
 
     removeImage() {
         this.imageFile = null;
-        this.chatEditor.enable();
+        this.resetChatEditor()
+        this.currentEditor = '_chatEditorDOM'
     }
 
     changeMsgInput(id) {
-  
-        this.chatEditor.remove()
         this.chatMessageInput  = this.shadowRoot.getElementById(id);
         this.initChatEditor();
     }
@@ -1451,6 +1517,7 @@ class ChatPage extends LitElement {
             })
         })
         parentEpml.imReady();
+    
 
     await this.initUpdate()
     }
@@ -1472,7 +1539,6 @@ class ChatPage extends LitElement {
 
         if (changedProperties && changedProperties.has('openForwardOpen')) {
             if (this.openForwardOpen === true) {
-                this.chatEditor.disable();
             }
         }
         
@@ -1532,7 +1598,6 @@ async getName (recipient) {
         .getOldMessage=${this.getOldMessage}
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
-        .focusChatEditor=${() => this.focusChatEditor()}
         .sendMessage=${(val) => this._sendMessage(val)}
         .sendMessageForward=${(messageText, typeMessage, chatReference, isForward, forwardParams)=> this.sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams)}
         .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
@@ -1553,6 +1618,25 @@ async getName (recipient) {
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-scroller'));
         await Promise.all(marginElements.map(el => el.updateComplete));
         return true;
+    }
+
+    async getUpdateCompleteTextEditor() {
+        await super.getUpdateComplete();
+        const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-text-editor'));
+        await Promise.all(marginElements.map(el => el.updateComplete));
+        const marginElements2 = Array.from(this.shadowRoot.querySelectorAll('wrapper-modal'));
+        await Promise.all(marginElements2.map(el => el.updateComplete));
+        return true;
+    }
+
+    updatePlaceholder(editor, text){
+        editor.extensionManager.extensions.forEach((extension) => {
+            if (extension.name === "placeholder") {
+    
+              extension.options["placeholder"] = text
+              editor.commands.focus('end')
+            }
+          })
     }
 
     async getOldMessage(scrollElement) {
@@ -1685,6 +1769,7 @@ async getName (recipient) {
      // set replied to message in chat editor
 
      setRepliedToMessageObj(messageObj) {
+        this.editor.commands.focus('end')
         this.repliedToMessageObj = {...messageObj};
         this.editedMessageObj = null;
         this.requestUpdate();
@@ -1693,6 +1778,7 @@ async getName (recipient) {
     // set edited message in chat editor
 
      setEditedMessageObj(messageObj) {
+        this.editor.commands.focus('end')
         this.editedMessageObj = {...messageObj};
         this.repliedToMessageObj = null;
         this.requestUpdate();
@@ -1701,7 +1787,6 @@ async getName (recipient) {
     closeEditMessageContainer() {
         this.editedMessageObj = null;
         this.isEditMessageOpen = !this.isEditMessageOpen;
-        this.chatEditor.resetValue();
     }
  
     closeRepliedToContainer() {
@@ -1709,9 +1794,7 @@ async getName (recipient) {
         this.requestUpdate();
     }
  
-    focusChatEditor() {
-       this.chatEditor.focus();
-    }
+
 
     /**
     * New Message Template implementation, takes in a message object.
@@ -1990,7 +2073,16 @@ async getName (recipient) {
         // Add to the messages... TODO: Save messages to localstorage and fetch from it to make it persistent... 
     }
 
-   async _sendMessage(outSideMsg) {
+    resetChatEditor(){
+        if(this.currentEditor === '_chatEditorDOM'){
+            this.editor.commands.setContent('')
+        }
+        if(this.currentEditor === 'newChat'){
+            this.editorImage.commands.setContent('')
+        }
+    }
+
+   async _sendMessage(outSideMsg, msg) {
         if(this.isReceipient){
            let hasPublicKey = true
             if(!this._publicKey.hasPubKey){
@@ -2032,12 +2124,7 @@ async getName (recipient) {
         let typeMessage = 'regular';
         let workerImage;
         this.isLoading = true;
-        this.chatEditor.disable();
-        this.chatEditorNewChat.disable()
-        const messageText = this.chatEditor.mirror.value;
-        // Format and Sanitize Message
-        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
-        const trimmedMessage = sanitizedMessage.trim();
+        const trimmedMessage = msg
         
         const getName = async (recipient)=> {
             try {
@@ -2121,10 +2208,7 @@ async getName (recipient) {
                    })
                    this.isDeletingImage = false
             } catch (error) {
-                console.error(error)
                 this.isLoading = false;
-                this.chatEditor.enable();
-                this.chatEditorNewChat.enable()
                 return
             }
                 typeMessage = 'edit';
@@ -2157,8 +2241,6 @@ async getName (recipient) {
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
-                this.chatEditor.enable();
-                this.chatEditorNewChat.enable()
                 return;
             }
 
@@ -2193,8 +2275,6 @@ async getName (recipient) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange26"));
                 this.isLoading = false;
                 this.isUploadingImage = false;
-                this.chatEditor.enable();
-                this.chatEditorNewChat.enable();
                 return;
             }
                 try {
@@ -2210,21 +2290,17 @@ async getName (recipient) {
                         worker: workerImage
                     });
                 this.isUploadingImage = false;
-                this.imageFile = null;
+                this.removeImage()
                 } catch (error) {
-                    console.error(error)
                     this.isLoading = false;
                     this.isUploadingImage = false;
-                    this.chatEditor.enable();
-                    this.chatEditorNewChat.enable();
                     return;
                 }
-                const messageTextWithImage = this.chatEditorNewChat.mirror.value;
-                // Format and Sanitize Message
-                const sanitizedMessageWithImage = messageTextWithImage.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
-                const trimmedMessageWithImage = sanitizedMessageWithImage.trim();
+            
+            
+             
                 const messageObject = {
-                    messageText: trimmedMessageWithImage,
+                    messageText: trimmedMessage,
                     images: [{
                             service: "QCHAT_IMAGE",
                             name: userName,
@@ -2232,7 +2308,7 @@ async getName (recipient) {
                     }],
                     isImageDeleted: false,
                     repliedTo: '',
-                    version: 1
+                    version: 2
                 };
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
@@ -2287,8 +2363,7 @@ async getName (recipient) {
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
         } else if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
-            this.chatEditor.enable();
-            this.chatEditorNewChat.enable();
+
         } 
         else if (this.repliedToMessageObj) {
             let chatReference = this.repliedToMessageObj.reference;
@@ -2300,7 +2375,7 @@ async getName (recipient) {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: chatReference,
-                version: 1
+                version: 2
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
@@ -2332,7 +2407,7 @@ async getName (recipient) {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
-                version: 1
+                version: 2
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
            
@@ -2448,7 +2523,6 @@ async getName (recipient) {
             
             const recipientAddress = this.forwardActiveChatHeadUrl.url.split('/')[1];
             this.openForwardOpen = false;
-            this.chatEditor.enable();
             if (isRecipient === true) {
                 if(!publicKey.hasPubKey){
                     let err4string = get("chatpage.cchange39");
@@ -2532,8 +2606,7 @@ async getName (recipient) {
 
         const getSendChatResponse = (response, isForward) => {
             if (response === true) {
-                this.chatEditor.resetValue();
-                this.chatEditorNewChat.resetValue()
+                this.resetChatEditor()
                 if(isForward){
                     let successString = get("blockpage.bcchange15");
                     parentEpml.request('showSnackBar', `${successString}`);
@@ -2546,8 +2619,6 @@ async getName (recipient) {
             }
 
             this.isLoading = false;
-            this.chatEditor.enable();
-            this.chatEditorNewChat.enable()
             this.closeEditMessageContainer()
             this.closeRepliedToContainer()
             this.openForwardOpen = false

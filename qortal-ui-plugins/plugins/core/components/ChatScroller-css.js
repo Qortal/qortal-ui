@@ -190,6 +190,10 @@ export const chatStyles = css`
 		text-overflow: ellipsis;
 		max-width: 300px;
 	}
+	.replied-message p {
+		margin: 0px;
+		padding: 0px;
+	}
 
 	.message {
 		color: var(--chat-bubble-msg-color);
@@ -493,5 +497,129 @@ export const chatStyles = css`
   .modal-button:hover {
       cursor: pointer;
       background-color: #03a8f475;
+  }
+
+  #messageContent p {
+	margin: 0px;
+	padding: 0px;
+  }
+
+  #messageContent > * + * {
+    margin-top: 0.75em;
+    outline: none;
+  }
+
+  #messageContent ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  #messageContent h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  #messageContent code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  #messageContent pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+  #messageContent pre code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+
+
+  #messageContent img {
+    width: 1.7em;
+    height: 1.5em;
+    margin: 0px;
+
+  }
+
+  #messageContent blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
+
+  #messageContent hr {
+    border: none;
+    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    margin: 2rem 0;
+  }
+
+  .replied-message p {
+	margin: 0px;
+	padding: 0px;
+  }
+
+  .replied-message > * + * {
+    margin-top: 0.75em;
+    outline: none;
+  }
+
+  .replied-message ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  .replied-message h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  .replied-message code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  .replied-message pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+  .replied-message pre code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+
+
+  .replied-message img {
+    width: 1.7em;
+    height: 1.5em;
+    margin: 0px;
+
+  }
+
+  .replied-message blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
+
+  .replied-message hr {
+    border: none;
+    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    margin: 2rem 0;
   }
 `

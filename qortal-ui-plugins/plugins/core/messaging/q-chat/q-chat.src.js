@@ -22,6 +22,10 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@vaadin/grid'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder'
+import { Editor, Extension } from '@tiptap/core'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -47,7 +51,8 @@ class Chat extends LitElement {
             openPrivateMessage: { type: Boolean },
             userFound: { type: Array},
             userFoundModalOpen: { type: Boolean },
-            userSelected: { type: Object }
+            userSelected: { type: Object },
+            editor: {type: Object}
         }
     }
 
@@ -94,6 +99,66 @@ class Chat extends LitElement {
         this.activeChatHeadUrl = url
     }
 
+    resetChatEditor(){
+     
+            this.editor.commands.setContent('')
+      
+    }
+    async getUpdateCompleteTextEditor() {
+        await super.getUpdateComplete();
+        const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-text-editor'));
+        await Promise.all(marginElements.map(el => el.updateComplete));
+        const marginElements2 = Array.from(this.shadowRoot.querySelectorAll('wrapper-modal'));
+        await Promise.all(marginElements2.map(el => el.updateComplete));
+        return true;
+    }
+
+    async  connectedCallback() {
+        super.connectedCallback();
+        await this.getUpdateCompleteTextEditor();
+
+        const elementChatId = this.shadowRoot.getElementById('messageBox').shadowRoot.getElementById('privateMessage')
+        console.log({elementChatId})
+        this.editor = new Editor({
+            element: elementChatId,
+            extensions: [
+              StarterKit,
+              Underline,
+              Placeholder.configure({
+                placeholder: 'Write something …',
+              }),
+              Extension.create({
+                addKeyboardShortcuts:()=> {
+                  return {
+                    'Enter': ()=> {
+                        const chatTextEditor = this.shadowRoot.getElementById('messageBox')
+                        chatTextEditor.sendMessageFunc({
+                        })
+                      return true
+                    }
+                  }
+                }})
+            ]
+          })
+         
+      }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.editor.destroy()
+  
+      }
+
+      updatePlaceholder(editor, text){
+        editor.extensionManager.extensions.forEach((extension) => {
+            if (extension.name === "placeholder") {
+    
+              extension.options["placeholder"] = text
+              editor.commands.focus('end')
+            }
+          })
+    }
+
     render() {
         return html`
             <div class="container clearfix">
@@ -127,13 +192,13 @@ class Chat extends LitElement {
                 <!-- Start Chatting Dialog -->
                 <wrapper-modal 
                     .onClickFunc=${() => {
-                        this.chatEditor.resetValue();
+                        this.resetChatEditor();
                         this.openPrivateMessage = false;
                         this.shadowRoot.getElementById('sendTo').value = "";
                         this.userFoundModalOpen = false;
                         this.userFound = [];
                     } } 
-                    style=${this.openPrivateMessage ? "display: block" : "display: none"}>
+                    style=${this.openPrivateMessage ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100;position: relative"}>
                     <div style=${"position: relative"}>
                         <div class="dialog-container">
                             <div class="dialog-header" style="text-align: center">
@@ -177,21 +242,21 @@ class Chat extends LitElement {
                                 iframeId="privateMessage" 
                                 ?hasGlobalEvents=${false}
                                 placeholder="${translate("chatpage.cchange8")}"
-                                .setChatEditor=${(editor)=> this.setChatEditor(editor)}
-                                .chatEditor=${this.chatEditor}
                                 .imageFile=${this.imageFile}
                                 ._sendMessage=${this._sendMessage}
                                 .insertImage=${this.insertImage}
                                 ?isLoading=${this.isLoading}
                                 .isLoadingMessages=${false}
                                 id="messageBox"
+                                .editor=${this.editor}
+                                .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
                                 >
                             </chat-text-editor>
                             <div class="modal-button-row">
                                 <button 
                                     class="modal-button-red" 
                                     @click=${() => {
-                                    this.chatEditor.resetValue();
+                                    this.resetChatEditor();
                                     this.openPrivateMessage = false;
                                     }}
                                     ?disabled="${this.isLoading}"
@@ -201,8 +266,10 @@ class Chat extends LitElement {
                                 <button
                                     class="modal-button"
                                     @click=${()=> {
-                                        this.chatEditor.updateMirror()
-                                        this._sendMessage()
+                                        const chatTextEditor = this.shadowRoot.getElementById('messageBox')
+                        chatTextEditor.sendMessageFunc({
+                        })
+                                     
                                     
                                     }}
                                     ?disabled="${this.isLoading}">
@@ -439,26 +506,22 @@ class Chat extends LitElement {
         }
     }
 
-    setChatEditor(editor) {
-        this.chatEditor = editor;
-    }
 
-    async _sendMessage() { 
+
+    async _sendMessage(outSideMsg, msg) { 
         this.isLoading = true;
-        this.chatEditor.disable();
-        const messageText = this.chatEditor.mirror.value;
-        // Format and Sanitize Message
-        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
-        const trimmedMessage = sanitizedMessage.trim();
+        // this.chatEditor.disable();
+
+        const trimmedMessage = msg
         if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
-            this.chatEditor.enable();
+            // this.chatEditor.enable();
         } else {
             const messageObject = {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
-                version: 1
+                version: 2
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject);
@@ -510,7 +573,7 @@ class Chat extends LitElement {
                 _publicKey = false;
                 let err4string = get("chatpage.cchange19");
                 parentEpml.request('showSnackBar', `${err4string}`);
-                this.chatEditor.enable();
+                // this.chatEditor.enable();
                 this.isLoading = false;
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1;
@@ -519,7 +582,7 @@ class Chat extends LitElement {
             } else {
                 let err4string = get("chatpage.cchange39");
                 parentEpml.request('showSnackBar', `${err4string}`);
-                this.chatEditor.enable();
+                // this.chatEditor.enable();
                 this.isLoading = false;
             }
         };
@@ -576,7 +639,7 @@ class Chat extends LitElement {
                 this.setActiveChatHeadUrl(`direct/${recipient}`);
                 this.shadowRoot.getElementById('sendTo').value = "";
                 this.openPrivateMessage = false;
-                this.chatEditor.resetValue();
+                this.resetChatEditor();
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
@@ -585,7 +648,7 @@ class Chat extends LitElement {
             }
       
             this.isLoading = false;
-            this.chatEditor.enable();
+            // this.chatEditor.enable();
         };
       
         // Exec..
@@ -596,7 +659,7 @@ class Chat extends LitElement {
     insertImage(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
-            this.chatEditor.disable();
+            // this.chatEditor.disable();
             return;
         }       
          parentEpml.request('showSnackBar', get("chatpage.cchange28")); 

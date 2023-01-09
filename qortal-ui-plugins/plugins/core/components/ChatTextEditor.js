@@ -4,6 +4,10 @@ import { escape, unescape } from 'html-escaper';
 import { EmojiPicker } from 'emoji-picker-js';
 import { inputKeyCodes } from '../../utils/keyCodes.js';
 import { Epml } from '../../../epml.js';
+import { Editor } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline';
+import Image from '@tiptap/extension-image'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class ChatTextEditor extends LitElement {
@@ -17,12 +21,12 @@ class ChatTextEditor extends LitElement {
             insertImage: { attribute: false },
             iframeHeight: { type: Number },
             editedMessageObj: { type: Object },
-            chatEditor: { type: Object },
             setChatEditor: { attribute: false },
             iframeId: { type: String },
             hasGlobalEvents: { type: Boolean },
             chatMessageSize: { type: Number },
             isEditMessageOpen: { type: Boolean },
+            editor: {type: Object},
             theme: {
                 type: String,
                 reflect: true
@@ -39,8 +43,8 @@ class ChatTextEditor extends LitElement {
             justify-content: center;
             align-items: center;
             height: auto;
-            overflow-y: hidden;
             width: 100%;
+            overflow-y: hidden;
       }
         .chatbar-container {
             width: 100%;
@@ -63,6 +67,7 @@ class ChatTextEditor extends LitElement {
             cursor: pointer;
             max-height: 40px;
             color: var(--black);
+            margin-bottom: 5px;
         }
 
         .message-size-container {
@@ -101,6 +106,7 @@ class ChatTextEditor extends LitElement {
             position: relative;
             height: 25px;
             width: 25px;
+            margin-bottom: 10px;
         }
 
         .file-picker-input-container {
@@ -141,6 +147,129 @@ class ChatTextEditor extends LitElement {
         .checkmark-icon:hover {
            cursor: pointer;
         }
+
+        .element {
+            width: 100%;
+            max-height: 100%;
+            overflow: auto;
+            color: var(--black);
+            padding: 0px 10px;
+        }
+        .element::-webkit-scrollbar-track {
+                        background-color: whitesmoke;
+                        border-radius: 7px;
+                    }
+            
+                    .element::-webkit-scrollbar {
+                        width: 6px;
+                        border-radius: 7px;
+                        background-color: whitesmoke;
+                    }
+            
+                    .element::-webkit-scrollbar-thumb {
+                        background-color: rgb(180, 176, 176);
+                        border-radius: 7px;
+                        transition: all 0.3s ease-in-out;
+                    }
+            
+                    .element::-webkit-scrollbar-thumb:hover {
+                        background-color: rgb(148, 146, 146);
+                        cursor: pointer;
+                    } 
+        .ProseMirror:focus {
+            outline: none;
+        }
+
+        .is-active {
+            background-color: var(--white)
+        }
+
+    .ProseMirror > * + * {
+    margin-top: 0.75em;
+    outline: none;
+  }
+
+  .ProseMirror ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  .ProseMirror h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  .ProseMirror code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  .ProseMirror pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+  .ProseMirror pre code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+
+
+  .ProseMirror img {
+    width: 1.7em;
+    height: 1.5em;
+    margin: 0px;
+
+  }
+
+  .ProseMirror blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
+
+  .ProseMirror hr {
+    border: none;
+    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    margin: 2rem 0;
+  }
+  .chatbar-button-single {
+    background: var(--white);
+    outline: none;
+    border: none;
+    color: var(--black);
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 2px;
+    filter: brightness(100%);
+    transition: all 0.2s;
+  }
+  .chatbar-button-single:hover {
+    filter: brightness(120%);
+  }
+  .chatbar-buttons {
+    visibility: hidden;
+    transition: all .2s;
+  }
+  .chatbar-container:hover .chatbar-buttons {
+    visibility: visible;
+  }
+  .ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+  
 		`
 	}
 
@@ -159,21 +288,68 @@ class ChatTextEditor extends LitElement {
         this.chatMessageSize = 0
         this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0]
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.editor = null
 	}
 
 	render() {
+        console.log('this.editor', this.editor)
         let scrollHeightBool = false;
         try {
-            if (this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") {
+            console.log('this.chatMessageInput', this.chatMessageInput)
+            if (this.chatMessageInput && this.chatMessageInput.scrollHeight > 60) {
                     scrollHeightBool = true;
                 }
         } catch (error) {
             scrollHeightBool = false;
         }
 		return html`
+          
             <div 
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
-             style="${scrollHeightBool ? 'align-items: flex-end' : "align-items: center"}">
+             style="align-items: flex-end; position: relative">
+             <div 
+             class=${["chatbar-container", "chatbar-buttons"].join(" ")}
+             style="align-items: center; position:absolute; top: -20px">
+             <button
+        @click=${() => this.editor.chain().focus().toggleBold().run()}
+        ?disabled=${
+            this.editor && 
+          !this.editor.can()
+            .chain()
+            .focus()
+            .toggleBold()
+            .run()
+        }
+        class=${["chatbar-button-single",this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
+      >
+        bold
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleItalic().run()}
+        ?disabled=${ this.editor && 
+          !this.editor.can()
+            .chain()
+            .focus()
+            .toggleItalic()
+            .run()
+        }
+        class=${["chatbar-button-single",this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
+      >
+        italic
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
+        class=${["chatbar-button-single",this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+      >
+        code block
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleUnderline().run()}
+        class=${["chatbar-button-single", this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
+      >
+        underline
+      </button>
+            </div>
                 <div 
                     style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
                     class="file-picker-container" 
@@ -201,13 +377,14 @@ class ChatTextEditor extends LitElement {
                     </div>     
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                <iframe style=${(this.iframeId === "newChat" && this.iframeHeight > 42) && "height: 100%;"} id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe>
+                <!-- <iframe style=${(this.iframeId === "newChat" && this.iframeHeight > 42) && "height: 100%;"} id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe> -->
+                <div id=${this.iframeId} class="element"></div>
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
                 ${this.editedMessageObj ? (
                     html`
-                    <div>
+                    <div style="margin-bottom: 10px">
                         ${this.isLoading === false ? html`
                             <vaadin-icon
                                 class="checkmark-icon"
@@ -227,9 +404,7 @@ class ChatTextEditor extends LitElement {
                 ) : 
                     html`
                         <div 
-                        style="${scrollHeightBool 
-                        ? 'margin-bottom: 5px;' 
-                        : "margin-bottom: 0;"} 
+                        style="margin-bottom: 10px;
                         ${this.iframeId === 'newChat'
                         ? 'display: none;' 
                         : 'display: flex;'}">
@@ -271,17 +446,17 @@ class ChatTextEditor extends LitElement {
 	}
 
     initialChat(e) {
-        if (!this.chatEditor?.contentDiv.matches(':focus')) {
-            // WARNING: Deprecated methods from KeyBoard Event
-            if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-                this.chatEditor.insertText('&nbsp;');
-            } else if (inputKeyCodes.includes(e.keyCode)) {
-                this.chatEditor.insertText(e.key);
-                return this.chatEditor.focus();
-            } else {
-                return this.chatEditor.focus();
-            }
-        }
+        // if (!this.chatEditor?.contentDiv.matches(':focus')) {
+        //     // WARNING: Deprecated methods from KeyBoard Event
+        //     if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
+        //         this.chatEditor.insertText('&nbsp;');
+        //     } else if (inputKeyCodes.includes(e.keyCode)) {
+        //         this.chatEditor.insertText(e.key);
+        //         return this.chatEditor.focus();
+        //     } else {
+        //         return this.chatEditor.focus();
+        //     }
+        // }
     }
 
     addGlobalEventListener(){
@@ -294,24 +469,38 @@ class ChatTextEditor extends LitElement {
 
 	async firstUpdated() {
         if (this.hasGlobalEvents) {
-            this.addGlobalEventListener();
+            // this.addGlobalEventListener();
         }
-
+        Image.configure({
+            inline: true,
+          })
+    //    this.editor = new Editor({
+    //         element: this.shadowRoot.querySelector('.element'),
+    //         extensions: [
+    //           StarterKit,
+    //           Underline,
+    //           Image
+    //         ],
+    //         content: '<p>Hello World!</p>',
+    //       })
+          
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
-            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
+            const chatbar = this.shadowRoot.querySelector('.element')
             if (checkTheme === 'dark') {
                 this.theme = 'dark';
                 chatbar.style.cssText = "color:#ffffff;"
+               
             } else {
                 this.theme = 'light';
                 chatbar.style.cssText = "color:#080808;"
+             
             }
         })
 
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
-        this.chatMessageInput = this.shadowRoot.getElementById(this.iframeId);      
+        this.chatMessageInput = this.shadowRoot.querySelector('.element')   
         
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
@@ -327,29 +516,32 @@ class ChatTextEditor extends LitElement {
 
         this.emojiPicker.on('emoji', selection => {
             const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
-            this.chatEditor.insertEmoji(emojiHtmlString);
+            console.log('hello insert 6', selection)
+            this.editor.commands.insertContent(selection.emoji, {
+                parseOptions: {
+                    preserveWhitespace: false
+                }
+            })
         });
 
 
         this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
 
         await this.updateComplete;
-        this.initChatEditor();
+        // this.initChatEditor();
 	}
 
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('editedMessageObj')) {
             if (this.editedMessageObj) {
-                this.chatEditor.insertText(this.editedMessageObj.message);
+                this.editor.commands.setContent(this.editedMessageObj.message)
                 this.getMessageSize(this.editedMessageObj.message);
             } else {
-                this.chatEditor.insertText("");
                 this.chatMessageSize = 0;
             }
         }
         if (changedProperties && changedProperties.has('placeholder')) {
-            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
-            captionEditor.setAttribute('data-placeholder', this.placeholder);
+            this.updatePlaceholder(this.editor, this.placeholder )
         }
        
         if (changedProperties && changedProperties.has("imageFile")) {
@@ -364,13 +556,12 @@ class ChatTextEditor extends LitElement {
       }
 
     sendMessageFunc(props) {
-        if (this.chatMessageSize > 1000 ) {
-            parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-            return;
-        };
-        this.chatMessageSize = 0;
-        this.chatEditor.updateMirror();
-        this._sendMessage(props);
+        // if (this.chatMessageSize > 1000 ) {
+        //     parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+        //     return;
+        // };
+        // this.chatMessageSize = 0;
+        this._sendMessage(props, this.editor.getJSON());
     }
 
     getMessageSize(message){
@@ -442,387 +633,7 @@ class ChatTextEditor extends LitElement {
     resetIFrameHeight(height) {
         this.iframeHeight = 42;
     }
-    initChatEditor() {
-        const ChatEditor = function (editorConfig) {        
-            const ChatEditor = function () {
-                const editor = this;
-                editor.init();
-            };
-
-            ChatEditor.prototype.getValue = function () {
-                const editor = this;
-
-                if (editor.contentDiv) {
-                    return editor.contentDiv.innerHTML;
-                }
-            };
-
-            ChatEditor.prototype.setValue = function (value) {
-                const editor = this;
-
-                if (value) {
-                    editor.contentDiv.innerHTML = value;
-                    editor.updateMirror();
-                }
-
-                editor.focus();
-            };
-
-            ChatEditor.prototype.resetValue = function () {
-                const editor = this;
-                editor.contentDiv.innerHTML = '';
-                editor.updateMirror();
-                editor.focus();
-                editorConfig.resetIFrameHeight()
-            };
-
-            ChatEditor.prototype.styles = function () {
-                const editor = this;
-
-                editor.styles = document.createElement('style');
-                editor.styles.setAttribute('type', 'text/css');
-                editor.styles.innerText = `
-                    html {
-                        cursor: text;
-                    }
-                    
-                    .chatbar-body {
-                        display: flex; 
-                        align-items: center;
-                    }
-
-                    .chatbar-body::-webkit-scrollbar-track {
-                        background-color: whitesmoke;
-                        border-radius: 7px;
-                    }
-            
-                    .chatbar-body::-webkit-scrollbar {
-                        width: 6px;
-                        border-radius: 7px;
-                        background-color: whitesmoke;
-                    }
-            
-                    .chatbar-body::-webkit-scrollbar-thumb {
-                        background-color: rgb(180, 176, 176);
-                        border-radius: 7px;
-                        transition: all 0.3s ease-in-out;
-                    }
-            
-                    .chatbar-body::-webkit-scrollbar-thumb:hover {
-                        background-color: rgb(148, 146, 146);
-                        cursor: pointer;
-                    }            
-                    
-                    div {
-                        font-size: 1rem;
-                        line-height: 1.38rem;
-                        font-weight: 400;
-                        font-family: "Open Sans", helvetica, sans-serif;
-                        padding-right: 3px;
-                        text-align: left;
-                        white-space: break-spaces;
-                        word-break: break-word;
-                        outline: none;
-                        min-height: 20px;
-                        width: 100%;
-                    }
-
-                    div[contentEditable=true]:empty:before {
-                        content: attr(data-placeholder);
-                        display: block;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        user-select: none;
-                        white-space: nowrap;
-                        opacity: 0.7;
-                   }
-
-                   div[contentEditable=false]{
-                        background: rgba(0,0,0,0.1);
-                        width: 100%;
-                   }
-
-                   img.emoji {
-                        width: 1.7em;
-                        height: 1.5em;
-                       margin-bottom: -2px;
-                       vertical-align: bottom;
-                   }
-               `;
-                editor.content.head.appendChild(editor.styles);
-            };
-
-            ChatEditor.prototype.enable = function () {
-                const editor = this;
-
-                editor.contentDiv.setAttribute('contenteditable', 'true');
-                editor.focus();
-            };
-
-            ChatEditor.prototype.getMirrorElement = function (){
-                return editor.mirror
-            }
-
-            ChatEditor.prototype.disable = function () {
-                const editor = this;
-
-                editor.contentDiv.setAttribute('contenteditable', 'false');
-            };
-
-            ChatEditor.prototype.state = function () {
-                const editor = this;
-
-                return editor.contentDiv.getAttribute('contenteditable');
-            };
-
-            ChatEditor.prototype.focus = function () {
-                const editor = this;
-
-                editor.contentDiv.focus();
-            };
-
-            ChatEditor.prototype.clearSelection = function () {
-                const editor = this;
-
-                let selection = editor.content.getSelection().toString();
-                if (!/^\s*$/.test(selection)) editor.content.getSelection().removeAllRanges();
-            };
-
-            ChatEditor.prototype.insertEmoji = function (emojiImg) {
-                const editor = this;
-
-                const doInsert = () => {
-
-                    if (editor.content.queryCommandSupported("InsertHTML")) {
-                        editor.content.execCommand("insertHTML", false, emojiImg);
-                        editor.updateMirror();
-                    }
-                };
-
-                editor.focus();
-                return doInsert();
-            };
-
-            ChatEditor.prototype.insertText = function (text) {
-                const editor = this;
-
-                const parsedText = editorConfig.emojiPicker.parse(text);
-                const doPaste = () => {
-
-                    if (editor.content.queryCommandSupported("InsertHTML")) {
-                        editor.content.execCommand("insertHTML", false, parsedText);
-                        editor.updateMirror();
-                    }
-                };
-
-                editor.focus();
-                return doPaste();
-            };
-
-            ChatEditor.prototype.updateMirror = function () {
-                const editor = this;
-
-                const chatInputValue = editor.getValue();
-                const filteredValue = chatInputValue.replace(/<img.*?alt=".*?/g, '').replace(/".?src=.*?>/g, '');
-
-                let unescapedValue = editorConfig.unescape(filteredValue);
-                editor.mirror.value = unescapedValue;
-            };
-
-            ChatEditor.prototype.listenChanges =  function () {
-                
-                const editor = this;
-
-                const events = ['drop', 'contextmenu', 'mouseup', 'click', 'touchend', 'keydown', 'blur', 'paste']
-
-                for (let i = 0; i < events.length; i++) {
-                    const event = events[i]
-                    editor.content.body.addEventListener(event, async function (e) {
-
-                        if (e.type === 'click') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-
-                        if (e.type === 'paste') {
-                            e.preventDefault();
-                            const item_list = await navigator.clipboard.read();
-                            let image_type; // we will feed this later
-                            const item = item_list.find( item => // choose the one item holding our image
-                                item.types.some( type => { 
-                                if (type.startsWith( 'image/')) {
-                                    image_type = type; 
-                                    return true;
-                                }
-                            })
-                            );
-                            if(item){
-                                const blob = item && await item.getType( image_type );
-                            var file = new File([blob], "name", {
-                            type: image_type
-                            });
-
-                            editorConfig.insertImage(file)
-                            } else {
-                                navigator.clipboard.readText()
-                                .then(clipboardText => {
-                                    let escapedText = editorConfig.escape(clipboardText);
-                                    editor.insertText(escapedText);
-                                })
-                                .then(() => {
-                                    editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
-                                })
-                                .catch(err => {
-                                    // Fallback if everything fails...
-                                    let textData = (e.originalEvent || e).clipboardData.getData('text/plain');
-                                    editor.insertText(textData);
-                                })
-                            }
-                            
-                           
-                            return false;
-                        }
-
-                        if (e.type === 'contextmenu') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-
-                        if (e.type === 'keydown') {
-                            await new Promise((res, rej) => {
-                                setTimeout(() => {
-                                    editorConfig.calculateIFrameHeight(editorConfig.editableElement.contentDocument.body.scrollHeight);
-                                    editorConfig.getMessageSize(editorConfig.editableElement.contentDocument.body.querySelector("#chatbarId").innerHTML);
-                                }, 0);
-                                res();
-                            })
-
-                             // Handle Enter
-                            if (e.keyCode === 13 && !e.shiftKey) {
-
-
-                                if (editor.state() === 'false') return false;
-                                if (editorConfig.iframeId === 'newChat') {
-                                    editorConfig.sendFunc(
-                                        {
-                                            type: 'image',
-                                            imageFile:  editorConfig.imageFile,
-                                        }
-                                    );
-                                } else {
-                                    editorConfig.sendFunc();
-                                }
-
-                                e.preventDefault();
-                                return false;
-                            }
-
-                            // Handle Commands with CTR or CMD
-                            if (e.ctrlKey || e.metaKey) {
-                                switch (e.keyCode) {
-                                    case 66:
-                                    case 98: e.preventDefault();
-                                        return false;
-                                    case 73:
-                                    case 105: e.preventDefault();
-                                        return false;
-                                    case 85:
-                                    case 117: e.preventDefault();
-                                        return false;
-                                }
-
-                                return false;
-                            }
-                        }
-
-                        if (e.type === 'blur') {
-                            editor.clearSelection();
-                        }
-
-                        if (e.type === 'drop') {
-                            e.preventDefault();
-
-                            let droppedText = e.dataTransfer.getData('text/plain')
-                            let escapedText = editorConfig.escape(droppedText)
-
-                            editor.insertText(escapedText);
-                            return false;
-                        }
-
-                        editor.updateMirror();
-                    });
-                  }
-
-                editor.content.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    editor.focus();
-                });
-            };
-
-            ChatEditor.prototype.remove = function () {
-                const editor = this;
-                var old_element = editor.content.body;
-                var new_element = old_element.cloneNode(true);
-                editor.content.body.parentNode.replaceChild(new_element, old_element);
-                while (editor.content.body.firstChild) {
-                    editor.content.body.removeChild(editor.content.body.lastChild);
-                  }
-
-            };
-
-            ChatEditor.prototype.init = function () {
-                const editor = this;
-
-                editor.frame = editorConfig.editableElement;
-                editor.mirror = editorConfig.mirrorElement;
-
-                editor.content = (editor.frame.contentDocument || editor.frame.document);
-                editor.content.body.classList.add("chatbar-body");
-                
-                let elemDiv = document.createElement('div');
-                elemDiv.setAttribute('contenteditable', 'true');
-                elemDiv.setAttribute('spellcheck', 'false');
-                elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
-                elemDiv.style.cssText = `width:100%; ${editorConfig.theme === "dark" ? "color:#ffffff;" : "color: #080808"}`;
-                elemDiv.id = 'chatbarId';
-                editor.content.body.appendChild(elemDiv);
-                editor.contentDiv =  editor.frame.contentDocument.body.firstChild;
-                editor.styles();
-                editor.listenChanges();
-                
-            };
-
-
-            function doInit() {
-                return new ChatEditor();
-            }
-            return doInit();
-        };
-
-        const editorConfig = {
-            getMessageSize: this.getMessageSize,
-            calculateIFrameHeight: this.calculateIFrameHeight,
-            mirrorElement: this.mirrorChatInput,
-            editableElement: this.chatMessageInput,
-            sendFunc: this.sendMessageFunc,
-            emojiPicker: this.emojiPicker,
-            escape: escape,
-            unescape: unescape,
-            placeholder: this.placeholder,
-            imageFile: this.imageFile,
-            requestUpdate: this.requestUpdate,
-            insertImage: this.insertImage,
-            chatMessageSize: this.chatMessageSize,
-            addGlobalEventListener: this.addGlobalEventListener,
-            removeGlobalEventListener: this.removeGlobalEventListener,
-            iframeId: this.iframeId,
-            theme: this.theme,
-            resetIFrameHeight: this.resetIFrameHeight
-        };
-        const newChat = new ChatEditor(editorConfig);
-        this.setChatEditor(newChat);
-    }
+   
 }
 
 window.customElements.define("chat-text-editor", ChatTextEditor)
