@@ -333,7 +333,8 @@
       "tchange45":"AUTO BUY WITH",
       "tchange46":"AUTO BUY",
       "tchange47":"Sell for this price",
-      "tchange48":"NOT ENOUGH"
+      "tchange48":"NOT ENOUGH",
+      "tchange49":"Price Chart"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",

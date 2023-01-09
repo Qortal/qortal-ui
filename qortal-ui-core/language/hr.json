@@ -333,7 +333,8 @@
       "tchange45":"AUTO KUPITE SA",
       "tchange46":"AUTO OTKUP",
       "tchange47":"Prodaj za ovu cijenu",
-      "tchange48":"NEDOVOLJNO"
+      "tchange48":"NEDOVOLJNO",
+      "tchange49":"Grafikon cijena"
    },
    "rewardsharepage":{
       "rchange1":"Nagradni udio (Rewardshares)",

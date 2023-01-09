@@ -333,7 +333,8 @@
       "tchange45":"AUTO COMPRAR CON",
       "tchange46":"COMPRA AUTOMÁTICA",
       "tchange47":"Vender por este precio",
-      "tchange48":"NO ES SUFICIENTE"
+      "tchange48":"NO ES SUFICIENTE",
+      "tchange49":"Gráfico de precios"
    },
    "rewardsharepage":{
       "rchange1":"Rewardshares",
