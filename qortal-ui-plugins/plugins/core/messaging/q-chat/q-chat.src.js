@@ -122,7 +122,7 @@ class Chat extends LitElement {
                 box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
             }
             .people-list ul {
-                padding: 0;
+                padding: 0px 0px 60px 0px;
                 height: 85vh;
                 overflow-y: auto;
                 overflow-x: hidden;     
