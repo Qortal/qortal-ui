@@ -93,7 +93,6 @@ class ChatSideNavHeads extends LitElement {
         }
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
-            this.requestUpdate();
         }
         imageHTMLRes.onerror = () => {   
             if (this.imageFetches < 4) {
@@ -105,14 +104,10 @@ class ChatSideNavHeads extends LitElement {
                this.isImageLoaded = false
             }
         };
-        console.log(imageHTMLRes, "here8")
         return imageHTMLRes;
       }
 
     render() {
-        console.log(9, 'chat side nav head');
-        console.log(this.isImageLoaded, 'Is image loaded');
-        console.log(this.chatInfo, 'Chat Info Here');
         let avatarImg = ""
         if (this.chatInfo.name) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
@@ -181,15 +176,7 @@ class ChatSideNavHeads extends LitElement {
                 this.config = JSON.parse(c)
             })
         })
-        parentEpml.imReady()
-
-        
-    }
-
-    updated(changedProperties) {
-        if (changedProperties && changedProperties.has("avatarImg")) {
-            console.log(this.avatarImg, "avatarImg");
-        }
+        parentEpml.imReady();     
     }
 
     shouldUpdate(changedProperties) {

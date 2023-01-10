@@ -63,12 +63,19 @@ export const chatStyles = css`
 		margin-bottom: 5px;
 	}
 
+	.forwarded-text {
+		user-select: none;
+		color: #03a9f4;
+		margin-bottom: 5px;
+	}
+
 	.message-data-forward {
 		user-select: none;
 		color: var(--mainmenutext);
 		margin-bottom: 5px;
 		font-size: 12px;
 	}
+
 	.message-data-my-name {
 		color: #cf21e8;
 		text-shadow: 0 0 3px #cf21e8;

@@ -12,15 +12,14 @@ import "@material/mwc-icon";
 import '@vaadin/button';
 import "./WrapperModal";
 import "./TipUser"
+import "./UserInfo/UserInfo";
 
 class ChatRightPanel extends LitElement {
 	static get properties() {
 		return {
-			isLoading: { type: Boolean },
 			openUserInfo: { type: Boolean },
 			leaveGroupObj: { type: Object },
 			error: { type: Boolean },
-			message: { type: String },
 			chatHeads: { type: Array },
 			groupAdmin: { attribute: false },
 			groupMembers: { attribute: false },
@@ -41,12 +40,10 @@ class ChatRightPanel extends LitElement {
 
 	constructor() {
 		super()
-		this.isLoading = false
 		this.openUserInfo = false
 		this.leaveGroupObj = {}
 		this.leaveFee = 0.001
 		this.error = false
-		this.message = ""
 		this.chatHeads = []
 		this.groupAdmin = []
 		this.groupMembers = []
@@ -61,6 +58,7 @@ class ChatRightPanel extends LitElement {
         this.errorMessage = ""
         this.successMessage = ""
         this.setOpenTipUser = this.setOpenTipUser.bind(this);
+        this.setOpenUserInfo = this.setOpenUserInfo.bind(this);
 	}
 
     static get styles() {
@@ -190,46 +188,6 @@ class ChatRightPanel extends LitElement {
             font-size: 14px;
             color: var(--chat-bubble-msg-color);
         }
-        
-        .user-info-header {
-            font-family: Montserrat, sans-serif;
-            text-align: center;
-            font-size: 25px;
-            color: var(--chat-bubble-msg-color);
-            margin-bottom: 10px;
-            padding: 10px 0;
-            user-select: none;
-        }
-
-        .send-message-button {
-            font-family: Roboto, sans-serif;
-            letter-spacing: 0.3px;
-            font-weight: 300;
-            padding: 8px 5px;
-            border-radius: 3px;
-            text-align: center;
-            color: var(--mdc-theme-primary);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .send-message-button:hover {
-            cursor: pointer;
-            background-color: #03a8f485;
-        }
-
-        .close-icon {
-            position: absolute;
-            top: 3px;
-            right: 5px;
-            color: #676b71;
-            width: 14px;
-            transition: all 0.1s ease-in-out;
-        }
-
-        .close-icon:hover {
-            cursor: pointer;
-            color: #494c50;
-        }
     `
     }
 
@@ -279,6 +237,10 @@ class ChatRightPanel extends LitElement {
         this.openTipUser = props
     }
 
+    setOpenUserInfo(props) {
+        this.openUserInfo = props
+    }
+
 	render() {
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
@@ -291,7 +253,7 @@ class ChatRightPanel extends LitElement {
                 <div class="group-info">
                     <p class="group-description">${this.leaveGroupObj && this.leaveGroupObj.description}</p>
                     <p class="group-subheader">Members: <span class="group-data">${this.leaveGroupObj && this.leaveGroupObj.memberCount}</span></p>
-        
+
                     <p class="group-subheader">Date created : <span class="group-data">${new Date(this.leaveGroupObj.created).toLocaleDateString("en-US")}</span></p>
                 </div>
                 <br />
@@ -337,9 +299,8 @@ class ChatRightPanel extends LitElement {
                 <div id='downObserver'></div>
             </div>
 
-         <wrapper-modal 
+            <wrapper-modal 
             .onClickFunc=${() => {
-                if (this.isLoading) return
                 this.openUserInfo = false;
                 this.userName = "";
                 this.shadowRoot.querySelector("tip-user").shadowRoot.getElementById('amountInput').value = "";
@@ -347,59 +308,14 @@ class ChatRightPanel extends LitElement {
             style=${
                 this.openUserInfo ? "display: block" : "display: none"
             }>
-            <div style=${"position: relative;"}>
-                <vaadin-icon
-                class="close-icon"
-                icon="vaadin:close-big"
-                slot="icon"
-                @click=${() => {
-                    this.openUserInfo = false
-                }}
-                ?disabled="${this.isLoading}">
-                </vaadin-icon>
-                <div class="user-info-header">
-                ${translate("chatpage.cchange57")}
-                </div>
-                <div 
-                    class="send-message-button" 
-                    @click="${() => {
-                        this.setOpenPrivateMessage({
-                            name: this.userName,
-                            open: true   
-                        })
-                        this.openUserInfo = false
-                    }   
-                }">
-                    ${translate("chatpage.cchange58")}
-                </div>
-                    <div 
-                    style=${"margin-top: 5px;"} 
-                    class="send-message-button" 
-                    @click=${() => {
-                        this.openTipUser = true
-                        this.openUserInfo = false
-                        this.chatEditor.disable();
-                    }}>
-                        ${translate("chatpage.cchange59")}
-                    </div>
-                <div ?hidden="${!this.isLoading || this.message === ""}" style="text-align: right; height: 36px;">
-                    <span ?hidden="${!this.isLoading}">
-                        <!-- loading message -->
-                        ${translate("grouppage.gchange36")} &nbsp;
-                        <paper-spinner-lite
-                            style="margin-top:12px;"
-                            ?active="${this.isLoading}"
-                            alt="Leaving"
-                        >
-                        </paper-spinner-lite>
-                    </span>
-                    <span 
-                    ?hidden=${this.message === ""} 
-                    style="${this.error ? "color:red;" : ""}">
-                        ${this.message}
-                    </span>
-                </div>
-            </div>
+                <user-info
+                    .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                    .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+                    .chatEditor=${this.chatEditor}
+                    .userName=${this.userName}
+                    .selectedHead=${this.selectedHead} 
+                ></user-info>
             </wrapper-modal>
             <wrapper-modal
             .onClickFunc=${() => {

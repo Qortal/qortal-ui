@@ -5,18 +5,19 @@ import { translate, get } from 'lit-translate';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js'
 import { Epml } from "../../../epml";
+import { EmojiPicker } from 'emoji-picker-js';
+import { cropAddress } from "../../utils/cropAddress";
 import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
 import './WrapperModal';
 import './TipUser'
+import "./UserInfo/UserInfo";
 import '@vaadin/icons';
 import '@vaadin/icon';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
-import { EmojiPicker } from 'emoji-picker-js';
-import { cropAddress } from "../../utils/cropAddress";
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 let toggledMessage = {}
@@ -42,7 +43,9 @@ class ChatScroller extends LitElement {
             setForwardProperties: { attribute: false },
             setOpenPrivateMessage: { attribute: false },
             openTipUser: { type: Boolean },
-            userName: { type: String }
+            openUserInfo: { type: Boolean },
+            userName: { type: String },
+            selectedHead: { type: Object }
         }
     }
 
@@ -54,14 +57,17 @@ class ChatScroller extends LitElement {
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.setOpenTipUser = this.setOpenTipUser.bind(this)
+        this.setOpenUserInfo = this.setOpenUserInfo.bind(this)
         this.setUserName = this.setUserName.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
         this.openTipUser = false;
+        this.openUserInfo = false;
         this.userName = "";
     }
 
     render() {
+        console.log(9, "chat scroller here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -126,6 +132,7 @@ class ChatScroller extends LitElement {
                             .setForwardProperties=${this.setForwardProperties}
                             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                             .setUserName=${(val) => this.setUserName(val)}>
                             </message-template>`
                     )
@@ -146,6 +153,25 @@ class ChatScroller extends LitElement {
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
                 </tip-user>
             </wrapper-modal>
+            <wrapper-modal 
+            .onClickFunc=${() => {
+                this.openUserInfo = false;
+                this.chatEditor.enable();
+                this.userName = "";
+                this.selectedHead = {};
+            }} 
+            style=${
+                this.openUserInfo ? "display: block" : "display: none"
+            }>
+                <user-info
+                    .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                    .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+                    .chatEditor=${this.chatEditor}
+                    .userName=${this.userName}
+                    .selectedHead=${this.selectedHead} 
+                ></user-info>
+            </wrapper-modal>
         `
     }
 
@@ -157,6 +183,9 @@ class ChatScroller extends LitElement {
             return true
         }
         if(changedProperties.has('openTipUser')){
+            return true
+        }
+        if(changedProperties.has('openUserInfo')){
             return true
         }
         // Only update element if prop1 changed.
@@ -179,8 +208,18 @@ class ChatScroller extends LitElement {
         this.chatEditor.disable();
     }
 
+    setOpenUserInfo(props) {
+        this.openUserInfo = props;
+        this.chatEditor.disable();
+    }
+
     setUserName(props) {
-        this.userName = props;
+        this.userName = props.senderName ? props.senderName : props.sender;
+        this.selectedHead = {
+            ...this.selectedHead,
+            address: props.sender,
+            name: props.senderName,
+        };
     }
 
     async firstUpdated() {
@@ -280,6 +319,7 @@ class MessageTemplate extends LitElement {
             viewImage: { type: Boolean },
             setOpenPrivateMessage : { attribute: false },
             setOpenTipUser: { attribute: false },
+            setOpenUserInfo: { attribute: false },
             setUserName: { attribute: false }
         }
     }
@@ -450,7 +490,13 @@ class MessageTemplate extends LitElement {
                             (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) 
                             ? (
                                 html`
-                                    <div class="message-data-avatar">
+                                    <div 
+                                    style=${this.myAddress === this.messageObj.sender ? "cursor: auto;" : "cursor: pointer;"}
+                                    @click=${() => {
+                                        if (this.myAddress === this.messageObj.sender) return;
+                                        this.setOpenUserInfo(true);
+                                        this.setUserName(this.messageObj);
+                                    }} class="message-data-avatar">
                                         ${avatarImg}
                                     </div>
                                 `
@@ -477,7 +523,14 @@ class MessageTemplate extends LitElement {
                             <div class="message-user-info">
                                 ${this.isFirstMessage ? 
                                     html`
-                                        <span class="message-data-name">
+                                        <span 
+                                        style=${this.myAddress === this.messageObj.sender ? "cursor: auto;" : "cursor: pointer;"}
+                                        @click=${() => {
+                                            if (this.myAddress === this.messageObj.sender) return;
+                                            this.setOpenUserInfo(true);
+                                            this.setUserName(this.messageObj);
+                                        }}
+                                        class="message-data-name">
                                             ${nameMenu}
                                         </span>
                                         `
@@ -485,7 +538,7 @@ class MessageTemplate extends LitElement {
                                 }
                                 ${isForwarded ? 
                                     html`
-                                        <span class="message-data-name">
+                                        <span class="forwarded-text">
                                             ${forwarded}
                                         </span>
                                         `
@@ -499,8 +552,15 @@ class MessageTemplate extends LitElement {
                             </div>
                                 ${repliedToData && html`
                                     <div class="original-message">
-                                        <p class="original-message-sender">
-                                            ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
+                                        <p 
+                                        style=${this.myAddress === repliedToData.sender ? "cursor: auto;" : "cursor: pointer;"}
+                                        @click=${() => {
+                                            if (this.myAddress === repliedToData.sender) return;
+                                            this.setOpenUserInfo(true);
+                                            this.setUserName(repliedToData)
+                                        }} 
+                                            class="original-message-sender">
+                                             ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
                                             ${repliedToData.decodedMessage.messageText}
@@ -837,7 +897,7 @@ class ChatMenu extends LitElement {
                     data-text="${translate("blockpage.bcchange18")}" 
                     @click=${() => {
                     this.setOpenTipUser(true);
-                    this.setUserName(this.originalMessage.sender);
+                    this.setUserName(this.originalMessage);
                     }}>
                         <vaadin-icon icon="vaadin:dollar" slot="icon"></vaadin-icon>
                     </div>
