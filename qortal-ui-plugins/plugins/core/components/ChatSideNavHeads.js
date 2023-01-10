@@ -101,36 +101,63 @@ class ChatSideNavHeads extends LitElement {
                     imageHTMLRes.src = imageUrl;
                 }, 500);
             } else {
-               
-
-                this.isImageLoaded = false
+               this.isImageLoaded = false
             }
         };
         return imageHTMLRes;
       }
 
     render() {
-        let avatarImg = '';
-        let backupAvatarImg = ''
-        if(this.chatInfo.name){
+        let avatarImg = ""
+        if (this.chatInfo.name) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg= this.createImage(avatarUrl)
-          
+           avatarImg = this.createImage(avatarUrl)
         }
 
         return html`
             <li @click=${() => this.getUrl(this.chatInfo)} class="clearfix">
-                ${this.isImageLoaded ? html`${avatarImg}` : html`` }
-                ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
-                ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
-                ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
-                <div>
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> </div>
-                </div>
-            </li>
-        `
+      ${this.isImageLoaded ? html`${avatarImg}` : html``}
+      ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName
+        ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>`
+        : html``}
+      ${!this.isImageLoaded && this.chatInfo.name
+        ? html`<div
+            style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url
+              ? "var(--chatHeadBgActive)"
+              : "var(--chatHeadBg)"}; color: ${this.activeChatHeadUrl ===
+            this.chatInfo.url
+              ? "var(--chatHeadTextActive)"
+              : "var(--chatHeadText)"}; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize"
+          >
+            ${this.chatInfo.name.charAt(0)}
+          </div>`
+        : ""}
+      ${!this.isImageLoaded && this.chatInfo.groupName
+        ? html`<div
+            style="width:30px; height:30px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url
+              ? "var(--chatHeadBgActive)"
+              : "var(--chatHeadBg)"}; color: ${this.activeChatHeadUrl === this.chatInfo.url
+              ? "var(--chatHeadTextActive)"
+              : "var(--chatHeadText)"}; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize"
+          >
+            ${this.chatInfo.groupName.charAt(0)}
+          </div>`
+        : ""}
+      <div>
+        <div class="name">
+          <span style="float:left; padding-left: 8px; color: var(--chat-group);">
+            ${this.chatInfo.groupName
+              ? this.chatInfo.groupName
+              : this.chatInfo.name !== undefined
+              ? this.chatInfo.name
+              : this.chatInfo.address.substr(0, 15)}
+          </span>
+        </div>
+      </div>
+    </li>
+    `
     }
 
     firstUpdated() {
@@ -149,9 +176,7 @@ class ChatSideNavHeads extends LitElement {
                 this.config = JSON.parse(c)
             })
         })
-        parentEpml.imReady()
-
-        
+        parentEpml.imReady();     
     }
 
     shouldUpdate(changedProperties) {
@@ -159,6 +184,9 @@ class ChatSideNavHeads extends LitElement {
             return true
         }
         if(changedProperties.has('chatInfo')){
+            return true
+        }
+        if(changedProperties.has('isImageLoaded')){
             return true
         }
         
