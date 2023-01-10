@@ -128,7 +128,11 @@
       "snack2":"UI je povezan sa čvorom",
       "snack3":"Uspešno dodat i sačuvan prilagođeni čvor",
       "snack4":"Čvorovi su uspešno sačuvani kao",
-      "snack5":"Čvorovi su uspešno uvezeni"
+      "snack5":"Čvorovi su uspešno uvezeni",
+      "exp1":"Izvezi privatni glavni ključ",
+      "exp2":"Izvezi glavni ključ",
+      "exp3":"Izvoz",
+      "exp4":"Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa."
    },
    "appinfo":{
       "blockheight":"Visina Bloka",
@@ -329,7 +333,8 @@
       "tchange45":"AUTO KUPI SA",
       "tchange46":"AUTO BUI",
       "tchange47":"Prodaj za ovu cenu",
-      "tchange48":"NEDOVOLJNO"
+      "tchange48":"NEDOVOLJNO",
+      "tchange49":"Grafik cena"
    },
    "rewardsharepage":{
       "rchange1":"Udeo nagrade",
@@ -799,6 +804,15 @@
       "mg49":"Pritiskom na potvrdi, zahtev za otkazivanje pozivnice će biti poslat!",
       "mg50":"Uskoro...",
       "mg51":"Najmanje 3 znaka / maksimalno 32 znaka",
-      "mg52":"Maksimalno 128 znakova"
+      "mg52":"Maksimalno 128 znakova",
+      "mg53":"Vaši zahtevi za otvoreno pridruživanje",
+      "mg54":"Nema otvorenih zahteva za pridruživanje",
+      "mg55":"Da li ste sigurni da prihvatate zahtev za pridruživanje ovog člana?",
+      "mg56":"Pritiskom na potvrdi, biće poslat zahtev za prihvatanje pridruživanja!",
+      "mg57":"Zahtev za pridruživanje je uspešno prihvaćen",
+      "mg58":"NEŠTO JE POŠLO NA ZLO",
+      "mg59":"Zahtev za otkazivanje pridruživanja je uspešno prihvaćen",
+      "mg60":"Da li ste sigurni da otkažete zahtev za pridruživanje ovog člana?",
+      "mg61":"Pritiskom na potvrdu, zahtev za otkazivanje pridruživanja će biti poslat!"
    }
 }

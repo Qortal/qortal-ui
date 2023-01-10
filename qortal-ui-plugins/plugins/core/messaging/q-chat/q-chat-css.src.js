@@ -94,7 +94,7 @@ export const qchatStyles = css`
   }
 
   .people-list ul {
-      padding: 0;
+      padding: 0px 0px 60px 0px;
       height: 85vh;
       overflow-y: auto;
       overflow-x: hidden;     

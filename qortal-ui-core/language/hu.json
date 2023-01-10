@@ -128,7 +128,11 @@
       "snack2":"UI csatlakozik a csomóponthoz",
       "snack3":"Az egyéni csomópont sikeresen hozzáadva és mentve",
       "snack4":"A csomópontok sikeresen mentve másként",
-      "snack5":"A csomópontok sikeresen importálva"
+      "snack5":"A csomópontok sikeresen importálva",
+      "exp1":"Privát főkulcs exportálása",
+      "exp2":"Főkulcs exportálása",
+      "exp3":"Exportálás",
+      "exp4":"Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez."
    },
    "appinfo":{
       "blockheight":"Blokk Magassága",
@@ -329,7 +333,8 @@
       "tchange45":"AUTOMATIKUS VÁSÁRLÁS",
       "tchange46":"AUTOMATIKUS VÁSÁRLÁS",
       "tchange47":"Eladni ezen az áron",
-      "tchange48":"NEM ELÉG"
+      "tchange48":"NEM ELÉG",
+      "tchange49":"Árdiagram"
    },
    "rewardsharepage":{
       "rchange1":"Jutalommegosztások",
@@ -799,6 +804,15 @@
       "mg49":"A megerősítés megnyomására a rendszer elküldi a meghívó visszavonási kérelmét!",
       "mg50":"Hamarosan...",
       "mg51":"Minimum 3 karakter / legfeljebb 32 karakter",
-      "mg52":"Legfeljebb 128 karakter"
+      "mg52":"Legfeljebb 128 karakter",
+      "mg53":"Az Ön nyitott csatlakozási kérelmei",
+      "mg54":"Nincsenek nyitott csatlakozási kérelmek",
+      "mg55":"Biztosan elfogadja ennek a tagnak a csatlakozási kérelmét?",
+      "mg56":"A megerősítés megnyomására a rendszer elküldi az elfogadási csatlakozási kérelmet!",
+      "mg57":"Csatlakozási kérelem sikeresen elfogadva",
+      "mg58":"VALAMI RÁMADT",
+      "mg59":"Csatlakozási kérelem visszavonása sikeresen elfogadva",
+      "mg60":"Biztosan visszavonja ennek a tagnak a csatlakozási kérelmét?",
+      "mg61":"A megerősítés megnyomására a csatlakozás megszakítási kérelme elküldésre kerül!"
    }
 }

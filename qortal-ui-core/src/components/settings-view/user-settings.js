@@ -10,6 +10,7 @@ import './account-view.js'
 import './security-view.js'
 import './notifications-view.js'
 import './qr-login-view.js'
+import './export-keys.js'
 
 import { doLogout } from '../../redux/app/app-actions.js'
 
@@ -156,6 +157,7 @@ class UserSettings extends connect(store)(LitElement) {
                 font-size: 16px;
                 text-align: center;
                 min-height: 460px;
+                height: 60vh;
             }
 
             @media(max-width:700px) {
@@ -226,6 +228,7 @@ class UserSettings extends connect(store)(LitElement) {
                             <ul>
                                 <li @click=${ () => this.setSettingsView('info')} ><a class=${this.selectedView.id === 'info' ? 'active' : ''} href="javascript:void(0)">${translate("settings.account")}</a></li>
                                 <li @click=${ () => this.setSettingsView('security')} ><a class=${this.selectedView.id === 'security' ? 'active' : ''} href="javascript:void(0)">${translate("settings.security")}</a></li>
+                                <li @click=${ () => this.setSettingsView('export')} ><a class=${this.selectedView.id === 'export' ? 'active' : ''} href="javascript:void(0)">${translate("settings.exp1") }</a></li>
                                 <li @click=${ () => this.setSettingsView('qr-login')} ><a class=${this.selectedView.id === 'qr-login' ? 'active' : ''} href="javascript:void(0)">${translate("settings.qr_login_menu_item") }</a></li>
                                 <li @click=${ () => this.setSettingsView('notification')} ><a class=${this.selectedView.id === 'notification' ? 'active' : ''} href="javascript:void(0)">${translate("settings.notifications")}</a></li>
                             </ul>
@@ -247,25 +250,29 @@ class UserSettings extends connect(store)(LitElement) {
 
     renderSettingViews(selectedView) {
         if (selectedView.id === 'info') {
-            return html`<account-view></account-view>`;
+            return html`<account-view></account-view>`
         } else if (selectedView.id === 'security') {
-            return html`<security-view></security-view>`;
+            return html`<security-view></security-view>`
+        } else if (selectedView.id === 'export') {
+            return html`<export-keys></export-keys>`
         } else if (selectedView.id === 'notification') {
-            return html`<notifications-view></notifications-view>`;
+            return html`<notifications-view></notifications-view>`
         } else if (selectedView.id === 'qr-login') {
-            return html`<qr-login-view></qr-login-view>`;
+            return html`<qr-login-view></qr-login-view>`
         }
     }
 
     renderHeaderViews() {
         if (this.selectedView.id === 'info') {
-            return html`${translate("settings.generalinfo")}`;
+            return html`${translate("settings.generalinfo")}`
         } else if (this.selectedView.id === 'security') {
-            return html`${translate("settings.accountsecurity")}`;
+            return html`${translate("settings.accountsecurity")}`
+        } else if (this.selectedView.id === 'export') {
+            return html`${translate("settings.exp1")}`
         } else if (this.selectedView.id === 'notification') {
-            return html`UI ${translate("settings.notifications")}`;
+            return html`UI ${translate("settings.notifications")}`
         } else if (this.selectedView.id === 'qr-login') {
-            return html`${translate("settings.qr_login_menu_item")}`;
+            return html`${translate("settings.qr_login_menu_item")}`
         }
     }
 
@@ -274,6 +281,8 @@ class UserSettings extends connect(store)(LitElement) {
             return this.selectedView = { id: 'info', name: 'General Account Info' }
         } else if (pageId === 'security') {
             return this.selectedView = { id: 'security', name: 'Account Security' }
+        } else if (pageId === 'export') {
+            return this.selectedView = { id: 'export', name: 'Export Master Keys' }
         } else if (pageId === 'notification') {
             return this.selectedView = { id: 'notification', name: 'UI Notifications' }
         } else if (pageId === 'qr-login') {
