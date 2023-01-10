@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit'
 
-import '@github/time-elements'
+import './time-elements/index.js'
 
 class TimeAgo extends LitElement {
     static get properties() {

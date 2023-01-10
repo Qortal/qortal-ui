@@ -128,7 +128,11 @@
       "snack2":"UI conectada ao nó",
       "snack3":"Nó personalizado adicionado e salvo com sucesso",
       "snack4":"Nós salvos com sucesso como",
-      "snack5":"Nós importados com sucesso"
+      "snack5":"Nós importados com sucesso",
+      "exp1":"Exportar Chave Mestra Privada",
+      "exp2":"Exportar Chave Mestra",
+      "exp3":"Exportar",
+      "exp4":"Por favor, escolha uma carteira para fazer backup da chave mestra privada."
    },
    "appinfo":{
       "blockheight":"Altura do Bloco",
@@ -329,7 +333,8 @@
       "tchange45":"COMPRA AUTOMÁTICA COM",
       "tchange46":"COMPRA AUTOMÁTICA",
       "tchange47":"Vendo por este preço",
-      "tchange48":"INSUFICIENTE"
+      "tchange48":"INSUFICIENTE",
+      "tchange49":"Tabela de preços"
    },
    "rewardsharepage":{
       "rchange1":"Ações de recompensa",
@@ -799,6 +804,15 @@
       "mg49":"Ao pressionar confirmar, a solicitação de cancelamento do convite será enviada!",
       "mg50":"Em Breve...",
       "mg51":"Mínimo de 3 caracteres / Máximo de 32 caracteres",
-      "mg52":"Máximo de 128 caracteres"
+      "mg52":"Máximo de 128 caracteres",
+      "mg53":"Suas solicitações de entrada abertas",
+      "mg54":"Nenhuma solicitação de entrada aberta",
+      "mg55":"Tem certeza que aceita a solicitação de entrada deste membro?",
+      "mg56":"Ao pressionar confirmar, o pedido de aceitação de entrada será enviado!",
+      "mg57":"Solicitação de entrada aceita com sucesso",
+      "mg58":"ALGO DEU ERRADO",
+      "mg59":"Cancelar pedido de entrada aceito com sucesso",
+      "mg60":"Tem certeza que deseja cancelar a solicitação de ingresso deste membro ?",
+      "mg61":"Ao pressionar confirmar, o pedido de cancelamento de adesão será enviado!"
    }
 }

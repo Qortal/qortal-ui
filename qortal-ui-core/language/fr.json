@@ -128,7 +128,11 @@
       "snack2":"Interface utilisateur connectée au noeud",
       "snack3":"Noeud personnalisé ajouté et enregistré avec succès",
       "snack4":"Les noeuds ont été enregistrés avec succès sous",
-      "snack5":"Les noeuds ont été importés avec succès"
+      "snack5":"Les noeuds ont été importés avec succès",
+      "exp1":"Exporter la clé principale privée",
+      "exp2":"Exporter la clé principale",
+      "exp3":"Exporter",
+      "exp4":"Veuillez choisir un portefeuille pour sauvegarder la clé principale privée."
    },
    "appinfo":{
       "blockheight":"Hauteur de bloc",
@@ -329,7 +333,8 @@
       "tchange45":"ACHAT AUTO AVEC",
       "tchange46":"ACHAT AUTOMATIQUE",
       "tchange47":"Vendre à ce prix",
-      "tchange48":"PAS ASSEZ"
+      "tchange48":"PAS ASSEZ",
+      "tchange49":"Tableau des prix"
    },
    "rewardsharepage":{
       "rchange1":"Récompenses",
@@ -799,6 +804,15 @@
       "mg49":"En appuyant sur confirmer, la demande d'annulation d'invitation sera envoyée !",
       "mg50":"Bientôt disponible...",
       "mg51":"Minimum 3 caractères / Maximum 32 caractères",
-      "mg52":"Maximum 128 caractères"
+      "mg52":"Maximum 128 caractères",
+      "mg53":"Vos demandes d'ouverture de jointure",
+      "mg54":"Aucune demande de jointure ouverte",
+      "mg55":"Êtes-vous sûr d'accepter la demande d'adhésion de ce membre ?",
+      "mg56":"En appuyant sur confirmer, la demande d'adhésion acceptée sera envoyée !",
+      "mg57":"Demande d'adhésion acceptée avec succès",
+      "mg58":"QUELQUE CHOSE S'EST TROMPÉ",
+      "mg59":"Annuler la demande d'adhésion acceptée avec succès",
+      "mg60":"Êtes-vous sûr d'annuler la demande d'adhésion de ce membre ?",
+      "mg61":"En appuyant sur confirmer, la demande d'annulation de l'adhésion sera envoyée !"
    }
 }
