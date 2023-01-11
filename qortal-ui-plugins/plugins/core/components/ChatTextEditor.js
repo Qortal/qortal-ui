@@ -56,7 +56,9 @@ class ChatTextEditor extends LitElement {
         .chatbar-caption {
             border-bottom: 2px solid var(--mdc-theme-primary);
         }
-
+        .privateMessageMargin {
+            margin-bottom: 12px;
+        }
         .emoji-button {
             width: 45px;
             height: 40px;
@@ -154,6 +156,9 @@ class ChatTextEditor extends LitElement {
             overflow: auto;
             color: var(--black);
             padding: 0px 10px;
+            height: 100%;
+    display: flex;
+    align-items: center;
         }
         .element::-webkit-scrollbar-track {
                         background-color: whitesmoke;
@@ -214,6 +219,7 @@ class ChatTextEditor extends LitElement {
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
+    white-space: pre-wrap;
   }
   .ProseMirror pre code {
       color: inherit;
@@ -268,6 +274,16 @@ class ChatTextEditor extends LitElement {
   float: left;
   height: 0;
   pointer-events: none;
+}
+.ProseMirror p {
+    font-size: 18px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+}
+
+.ProseMirror {
+    width: 100%;
+    box-sizing: border-box;
 }
   
 		`
@@ -378,7 +394,9 @@ class ChatTextEditor extends LitElement {
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
                 <!-- <iframe style=${(this.iframeId === "newChat" && this.iframeHeight > 42) && "height: 100%;"} id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe> -->
-                <div id=${this.iframeId} class="element"></div>
+                <div id=${this.iframeId}
+                class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
+                ></div>
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
@@ -540,7 +558,7 @@ class ChatTextEditor extends LitElement {
                 this.chatMessageSize = 0;
             }
         }
-        if (changedProperties && changedProperties.has('placeholder')) {
+        if (changedProperties && changedProperties.has('placeholder') && this.updatePlaceholder && this.editor) {
             this.updatePlaceholder(this.editor, this.placeholder )
         }
        

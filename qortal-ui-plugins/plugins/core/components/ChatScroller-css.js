@@ -541,6 +541,7 @@ export const chatStyles = css`
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
+	white-space: pre-wrap;
   }
   #messageContent pre code {
       color: inherit;
@@ -603,6 +604,7 @@ export const chatStyles = css`
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
+	white-space: pre-wrap;
   }
   .replied-message pre code {
       color: inherit;

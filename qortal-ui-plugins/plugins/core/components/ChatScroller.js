@@ -5,7 +5,6 @@ import { translate, get } from 'lit-translate';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js'
 import { Epml } from "../../../epml";
-import { EmojiPicker } from 'emoji-picker-js';
 import { cropAddress } from "../../utils/cropAddress";
 import './LevelFounder.js';
 import './NameMenu.js';
@@ -19,7 +18,6 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
-import { cropAddress } from "../../utils/cropAddress";
 import { generateHTML } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';

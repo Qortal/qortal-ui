@@ -14,7 +14,6 @@ import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
 import '../../components/WrapperModal.js';
 import '../../components/ChatSeachResults.js';
-import '../../components/ChatGroupsManagement.js'
 import snackbar from '../../components/snackbar.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
@@ -168,7 +167,6 @@ class Chat extends LitElement {
                             this.openPrivateMessage = true;
                             }}>${translate("chatpage.cchange1")}
                         </div>
-                        <chat-groups-management></chat-groups-management>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
@@ -213,7 +211,7 @@ class Chat extends LitElement {
                                     ?disabled=${this.isLoading} 
                                     id="sendTo" 
                                     placeholder="${translate("chatpage.cchange7")}" 
-                                    value=${this.userSelected.name}
+                                    value=${this.userSelected.name ? this.userSelected.name: ''}
                                     @keypress=${() => {
                                         this.userSelected = {};
                                         this.requestUpdate();
