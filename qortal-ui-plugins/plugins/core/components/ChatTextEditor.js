@@ -46,12 +46,14 @@ class ChatTextEditor extends LitElement {
             align-items: center;
             height: auto;
             width: 100%;
+            overflow: hidden;
 
       }
         .chatbar-container {
             width: 100%;
             display: flex;
             height: auto;
+            overflow: hidden;
         }
 
         .chatbar-caption {
@@ -265,6 +267,11 @@ class ChatTextEditor extends LitElement {
    
   }
 
+  .chatbar-buttons {
+    margin-bottom: 5px;
+    flex-shrink: 0;
+  }
+
   .show-chatbar-buttons {
     display: flex;
     align-items: center;
@@ -293,6 +300,8 @@ class ChatTextEditor extends LitElement {
 .ProseMirror {
     width: 100%;
     box-sizing: border-box;
+    word-break: break-all;
+    display: flex;
 }
 
 .ProseMirror mark {
@@ -322,7 +331,7 @@ class ChatTextEditor extends LitElement {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
+  font-size: 18px;  /* Preferred icon size */
   display: inline-block;
   line-height: 1;
   text-transform: none;

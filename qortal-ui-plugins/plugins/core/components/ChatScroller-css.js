@@ -519,7 +519,6 @@ export const chatStyles = css`
   }
 
   #messageContent > * + * {
-    margin-top: 0.75em;
     outline: none;
   }
 

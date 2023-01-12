@@ -576,12 +576,20 @@ class MessageTemplate extends LitElement {
                                              ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
+
+                                        
+                                        ${version.toString() === '1' ? html`
+                                        ${repliedToData.decodedMessage.messageText}
+                                        ` : ''}
+                                        ${version.toString() === '2' ? html`
                                         ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
                     StarterKit,
                     Underline,
                     Highlight
                     // other extensions …
                   ]))}
+                                        ` : ''}
+                                        
                                             <!-- ${repliedToData.decodedMessage.messageText} -->
                                         </p>
                                     </div>
@@ -617,8 +625,12 @@ class MessageTemplate extends LitElement {
                                     id="messageContent" 
                                     class="message" 
                                     style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
-                                        
+                                        ${version.toString() === '2' ? html`
                                         ${unsafeHTML(messageVersion2)}
+                                        ` : ''}
+                                        ${version.toString() === '1' ? html`
+                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        ` : ''}
                                         <div class="${((this.isFirstMessage === false && 
                                             this.isSingleMessageInGroup === true && 
                                             this.isLastMessageInGroup === true) || 

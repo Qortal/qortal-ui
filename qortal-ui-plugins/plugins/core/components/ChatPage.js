@@ -162,6 +162,7 @@ class ChatPage extends LitElement {
         align-items: center;
         height: auto;
         padding: 5px 5px 5px 7px;
+        overflow: hidden;
     }
 
     .chat-text-area .typing-area .emoji-button {
@@ -353,10 +354,18 @@ class ChatPage extends LitElement {
       flex-direction: column;
       gap: 5px;
       width: 100%;
+      word-break: break-all;
+      text-overflow: ellipsis;
+    overflow: hidden;
+    max-height: 60px;
   }
   .repliedTo-message p {
     margin: 0px;
     padding: 0px;
+  }
+
+  .repliedTo-message pre {
+    white-space: pre-wrap;
   }
 
   .repliedTo-message p mark {
@@ -937,12 +946,17 @@ class ChatPage extends LitElement {
                                         <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                            ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
+                                            ${this.repliedToMessageObj.toString() === '1' ? html`
+                                        ${this.repliedToMessageObj.message}
+                                        ` : ''}
+                                        ${this.repliedToMessageObj.toString() === '2' ? html`
+                                        ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
                     StarterKit,
                     Underline,
                     Highlight
                     // other extensions …
-                  ]))}
+                  ]))}    ` : ''}
+                                            
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
