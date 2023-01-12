@@ -21,6 +21,7 @@ import { EmojiPicker } from 'emoji-picker-js';
 import { generateHTML } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 let toggledMessage = {}
@@ -386,7 +387,8 @@ class MessageTemplate extends LitElement {
 
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
                     StarterKit,
-                    Underline
+                    Underline,
+                    Highlight
                     // other extensions …
                   ])
             }
@@ -576,7 +578,8 @@ class MessageTemplate extends LitElement {
                                         <p class="replied-message">
                                         ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
                     StarterKit,
-                    Underline
+                    Underline,
+                    Highlight
                     // other extensions …
                   ]))}
                                             <!-- ${repliedToData.decodedMessage.messageText} -->

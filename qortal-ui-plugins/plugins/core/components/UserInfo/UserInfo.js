@@ -52,13 +52,6 @@ export class UserInfo extends LitElement {
     return imageHTMLRes;
   }
 
-   updated(changedProperties) {
-    if (changedProperties && changedProperties.has('selectedHead')) {
-      if (this.selectedHead) {
-        console.log(this.selectedHead, "selected head")
-      }
-      }
-    }
 
   render() {
     let avatarImg = "";

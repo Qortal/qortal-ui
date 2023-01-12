@@ -511,6 +511,13 @@ export const chatStyles = css`
 	padding: 0px;
   }
 
+  #messageContent p mark {
+	background-color: #ffe066;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+  padding: 0.125em 0;
+  }
+
   #messageContent > * + * {
     margin-top: 0.75em;
     outline: none;

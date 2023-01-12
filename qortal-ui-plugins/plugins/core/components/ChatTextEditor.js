@@ -44,13 +44,12 @@ class ChatTextEditor extends LitElement {
             align-items: center;
             height: auto;
             width: 100%;
-            overflow-y: hidden;
+
       }
         .chatbar-container {
             width: 100%;
             display: flex;
             height: auto;
-            overflow: hidden;
         }
 
         .chatbar-caption {
@@ -263,7 +262,7 @@ class ChatTextEditor extends LitElement {
   }
   .chatbar-buttons {
     visibility: hidden;
-    transition: all .2s;
+    transition: all 0.2s;
   }
   .chatbar-container:hover .chatbar-buttons {
     visibility: visible;
@@ -279,11 +278,35 @@ class ChatTextEditor extends LitElement {
     font-size: 18px;
     margin-block-start: 0px;
     margin-block-end: 0px;
+    overflow-wrap: anywhere;
 }
 
 .ProseMirror {
     width: 100%;
     box-sizing: border-box;
+}
+
+.ProseMirror mark {
+  background-color: #ffe066;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+  padding: 0.125em 0;
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
 }
   
 		`
@@ -308,7 +331,7 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
-        console.log('this.editor', this.editor)
+        console.log('this.editor', this.chatMessageSize)
         let scrollHeightBool = false;
         try {
             console.log('this.chatMessageInput', this.chatMessageInput)
@@ -319,13 +342,14 @@ class ChatTextEditor extends LitElement {
             scrollHeightBool = false;
         }
 		return html`
-          
+            
             <div 
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
              style="align-items: flex-end; position: relative">
              <div 
              class=${["chatbar-container", "chatbar-buttons"].join(" ")}
              style="align-items: center; position:absolute; top: -20px">
+            
              <button
         @click=${() => this.editor.chain().focus().toggleBold().run()}
         ?disabled=${
@@ -338,7 +362,7 @@ class ChatTextEditor extends LitElement {
         }
         class=${["chatbar-button-single",this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
       >
-        bold
+      <span class="material-icons">&#xe238;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleItalic().run()}
@@ -351,19 +375,25 @@ class ChatTextEditor extends LitElement {
         }
         class=${["chatbar-button-single",this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
       >
-        italic
+      <span class="material-icons">&#xe23f;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
         class=${["chatbar-button-single",this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
-        code block
+      <span class="material-icons">&#xf84d;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleUnderline().run()}
         class=${["chatbar-button-single", this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
       >
-        underline
+      <span class="material-icons">&#xe249;</span>
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleHighlight().run()}
+        class=${["chatbar-button-single", this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-icons">&#xf82b;</span>
       </button>
             </div>
                 <div 
@@ -460,7 +490,7 @@ class ChatTextEditor extends LitElement {
             if (!this.userName) {
                 e.preventDefault();
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
-           };
+           }
 	}
 
     initialChat(e) {
@@ -574,20 +604,21 @@ class ChatTextEditor extends LitElement {
       }
 
     sendMessageFunc(props) {
-        // if (this.chatMessageSize > 1000 ) {
-        //     parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-        //     return;
-        // };
-        // this.chatMessageSize = 0;
+        if(this.editor.isEmpty) return
+        this.getMessageSize(this.editor.getJSON())
+        if (this.chatMessageSize > 1000 ) {
+            parentEpml.request('showSnackBar', get("chatpage.cchange29"));
+            return;
+        }
+        this.chatMessageSize = 0;
         this._sendMessage(props, this.editor.getJSON());
     }
 
     getMessageSize(message){
+        console.log({message})
         try {
-         const messageText = message;
-        // Format and Sanitize Message
-        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
-        const trimmedMessage = sanitizedMessage.trim();
+
+        const trimmedMessage = message
             let messageObject = {};
 
             if (this.repliedToMessageObj) {
@@ -599,7 +630,7 @@ class ChatTextEditor extends LitElement {
                     messageText: trimmedMessage,
                     images: [''],
                     repliedTo: chatReference,
-                    version: 1
+                    version: 2
                 }
             } else if (this.editedMessageObj) {
                 let message = "";
@@ -622,14 +653,14 @@ class ChatTextEditor extends LitElement {
                         identifier: '123456'
                 }],
                     repliedTo: '',
-                    version: 1
+                    version: 2
                 };
             } else {
                 messageObject = {
                       messageText: trimmedMessage,
                       images: [''],
                       repliedTo: '',
-                      version: 1
+                      version: 2
                   };
               }
 

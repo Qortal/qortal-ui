@@ -8,6 +8,7 @@ import { generateHTML } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder'
+import Highlight from '@tiptap/extension-highlight'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
 
@@ -161,7 +162,6 @@ class ChatPage extends LitElement {
         align-items: center;
         height: auto;
         padding: 5px 5px 5px 7px;
-        overflow-y: hidden;
     }
 
     .chat-text-area .typing-area .emoji-button {
@@ -305,7 +305,6 @@ class ChatPage extends LitElement {
       justify-content: center;
       min-height: 60px;
       max-height: 100%;
-      overflow: hidden;
   }
 
   .chat-text-area .typing-area {
@@ -358,6 +357,13 @@ class ChatPage extends LitElement {
   .repliedTo-message p {
     margin: 0px;
     padding: 0px;
+  }
+
+  .repliedTo-message p mark {
+	background-color: #ffe066;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+  padding: 0.125em 0;
   }
 
   .reply-icon {
@@ -863,6 +869,7 @@ class ChatPage extends LitElement {
         this.webWorker = null;
         this.webWorkerImage = null;
         this.currentEditor = '_chatEditorDOM'
+        this.initialChat = this.initialChat.bind(this)
     }
 
     _toggle(value) {
@@ -932,7 +939,8 @@ class ChatPage extends LitElement {
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
                                             ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
                     StarterKit,
-                    Underline
+                    Underline,
+                    Highlight
                     // other extensions …
                   ]))}
                                         </div>
@@ -953,7 +961,8 @@ class ChatPage extends LitElement {
                                             <p class="senderName">${translate("chatpage.cchange25")}</p>
                                             ${unsafeHTML(generateHTML(this.editedMessageObj.message, [
                     StarterKit,
-                    Underline
+                    Underline,
+                    Highlight
                     // other extensions …
                   ]))}
                                         </div>
@@ -1249,10 +1258,14 @@ class ChatPage extends LitElement {
         const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
         console.log({elementChatId, elementChatImageId })
         this.editor = new Editor({
+              onUpdate: ()=> {
+                this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
+              },
             element: elementChatId,
             extensions: [
               StarterKit,
               Underline,
+              Highlight,
               Placeholder.configure({
                 placeholder: 'Write something …',
               }),
@@ -1271,10 +1284,14 @@ class ChatPage extends LitElement {
           })
          
           this.editorImage = new Editor({
+            onUpdate: ()=> {
+                this.shadowRoot.getElementById('chatTextCaption').getMessageSize(this.editorImage.getJSON())
+              },
             element: elementChatImageId,
             extensions: [
               StarterKit,
               Underline,
+              Highlight,
               Placeholder.configure({
                 placeholder: 'Write something …',
               }),
@@ -1293,6 +1310,7 @@ class ChatPage extends LitElement {
                 }})
             ]
           })
+          document.addEventListener('keydown', this.initialChat);
       }
 
     disconnectedCallback() {
@@ -1302,7 +1320,28 @@ class ChatPage extends LitElement {
         this.webWorkerImage.terminate();
         this.editor.destroy()
         this.editorImage.destroy()
+        document.removeEventListener('keydown', this.initialChat);
       }
+
+      initialChat(e) {
+        console.log('hello1', this.editor)
+        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM') {
+            console.log('hello2')
+            // WARNING: Deprecated methods from KeyBoard Event
+            if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
+                // this.chatEditor.insertText('&nbsp;');
+            } else if (inputKeyCodes.includes(e.keyCode)) {
+                console.log('hello3')
+                this.editor.commands.insertContent(e.key)
+                // this.chatEditor.insertText(e.key);
+                this.editor.commands.focus('end')
+            } else {
+               this.editor.commands.focus('end')
+            }
+        }
+
+        
+    }
 
     async userSearch() {
         const nameValue = this.shadowRoot.getElementById('sendTo').value;
@@ -1543,6 +1582,15 @@ class ChatPage extends LitElement {
             if (this.openForwardOpen === true) {
             }
         }
+        if (changedProperties && changedProperties.has('isLoading')) {
+            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM') {
+                this.editor.setEditable(false)
+            }
+            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM') {
+                this.editor.setEditable(true)
+            }
+        }
+        
     }
 
 async getName (recipient) {

@@ -119,10 +119,15 @@ class Chat extends LitElement {
         const elementChatId = this.shadowRoot.getElementById('messageBox').shadowRoot.getElementById('privateMessage')
         console.log({elementChatId})
         this.editor = new Editor({
+            onUpdate: ()=> {
+                console.log('q-chat editor', this.editor)
+                this.shadowRoot.getElementById('messageBox').getMessageSize(this.editor.getJSON())
+              },
             element: elementChatId,
             extensions: [
               StarterKit,
               Underline,
+              Highlight,
               Placeholder.configure({
                 placeholder: 'Write something …',
               }),

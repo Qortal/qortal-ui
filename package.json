@@ -37,10 +37,12 @@
     "os-locale": "3.0.0"
   },
   "devDependencies": {
+    "@electron/notarize": "1.2.3",
     "electron": "22.0.0",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
-    "@electron/notarize": "1.2.3",
+    "eslint-plugin-lit": "1.8.0",
+    "eslint-plugin-wc": "1.4.0",
     "shelljs": "0.8.5"
   },
   "engines": {
