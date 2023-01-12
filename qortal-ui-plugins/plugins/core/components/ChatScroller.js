@@ -71,8 +71,6 @@ class ChatScroller extends LitElement {
     }
 
     render() {
-        console.log('this.messages', this.messages)
-        console.log(9, "chat scroller here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -850,7 +848,6 @@ class ChatMenu extends LitElement {
     }
 
     render() {
-        console.log(this.messages, 'this.messages')
         return html` 
             <div class="container">
             <div 

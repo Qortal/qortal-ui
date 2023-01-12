@@ -1,9 +1,7 @@
 import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
 import {animate} from '@lit-labs/motion';
 import { Epml } from '../../../epml.js';
 import { use, get, translate, registerTranslateConfig } from 'lit-translate';
-import { chatStyles } from './ChatScroller-css.js'
 import { generateHTML } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
@@ -18,7 +16,7 @@ registerTranslateConfig({
 });
 import ShortUniqueId from 'short-unique-id';
 import Compressor from 'compressorjs';
-import { escape, unescape } from 'html-escaper';
+import { escape } from 'html-escaper';
 import { inputKeyCodes } from '../../utils/keyCodes.js';
 import './ChatScroller.js';
 import './LevelFounder.js';
@@ -882,7 +880,6 @@ class ChatPage extends LitElement {
     }
 
     _toggle(value) {
-        console.log('toggel', value, this.shifted)
         this.shifted = value === (false || true) ? value : !this.shifted;
         this.requestUpdate()
       }
@@ -901,10 +898,6 @@ class ChatPage extends LitElement {
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
                         <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
-                        <!-- <chat-group-settings .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-group-settings> -->
-                        <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:search" slot="icon"></vaadin-icon> -->
-                        <!-- <vaadin-icon class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
-                        <!-- <chat-leave-group .chatHeads=${this.chatHeads} .selectedAddress=${this.selectedAddress} .leaveGroupObj=${this.groupInfo} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}></chat-leave-group> -->
                     </div>
                 </div>
                 ` : null}
@@ -1232,7 +1225,6 @@ class ChatPage extends LitElement {
     }
 
     async getMoreMembers(groupId){
-        console.log('getMoreMembers', groupId)
         try {
             const getMembers = await parentEpml.request("apiCall", {
                 type: "api",
@@ -1257,7 +1249,7 @@ class ChatPage extends LitElement {
             this.groupMembers = membersWithName
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
-          
+          console.error(error)
         }
     }
 
@@ -1271,7 +1263,6 @@ class ChatPage extends LitElement {
 
         const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
         const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
-        console.log({elementChatId, elementChatImageId })
         this.editor = new Editor({
               onUpdate: ()=> {
                 this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
@@ -1330,7 +1321,6 @@ class ChatPage extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        console.log('disconnected')
         this.webWorker.terminate();
         this.webWorkerImage.terminate();
         this.editor.destroy()
@@ -1339,14 +1329,11 @@ class ChatPage extends LitElement {
       }
 
       initialChat(e) {
-        console.log('hello1', this.editor)
         if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM') {
-            console.log('hello2')
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
                 // this.chatEditor.insertText('&nbsp;');
             } else if (inputKeyCodes.includes(e.keyCode)) {
-                console.log('hello3')
                 this.editor.commands.insertContent(e.key)
                 // this.chatEditor.insertText(e.key);
                 this.editor.commands.focus('end')
@@ -1564,15 +1551,7 @@ class ChatPage extends LitElement {
             }).then(res => {
                 this.balance = res
             })
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
-
-                res = JSON.parse(res)
-                if (res.isOpen === false && this.isPasteMenuOpen === true) {
-
-                    this.pasteToTextBox(textarea)
-                    this.isPasteMenuOpen = false
-                }
-            })
+           
         })
         parentEpml.imReady();
     
@@ -1593,10 +1572,7 @@ class ChatPage extends LitElement {
            await this.initUpdate()
         }
 
-        if (changedProperties && changedProperties.has('openForwardOpen')) {
-            if (this.openForwardOpen === true) {
-            }
-        }
+     
         if (changedProperties && changedProperties.has('isLoading')) {
             if (this.isLoading === true && this.currentEditor === '_chatEditorDOM') {
                 this.editor.setEditable(false)
@@ -1979,12 +1955,7 @@ async getName (recipient) {
             // Message Event
             this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
-                    const isReceipient = this.chatId.includes('direct')
-
-                    // commented out code= localstorage persistance
-                    // const chatReference1 = isReceipient ? 'direct' : 'group';
-                    // const chatReference2 = this.chatId.split('/')[1];
-                    // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+                    
                     const cachedData = null
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2021,7 +1992,7 @@ async getName (recipient) {
             }
 
             // Error Event
-            this.webSocket.onerror = (e) => {
+            this.webSocket.onerror = () => {
                 clearTimeout(directSocketTimeout)
             }
 
@@ -2066,11 +2037,7 @@ async getName (recipient) {
             this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
-                    const isGroup = this.chatId.includes('group')
-                    const chatReference1 = isGroup ? 'group' : 'direct';
-                    const chatReference2 = this.chatId.split('/')[1];
-
-                    // const cachedData = await messagesCache.getItem(`${chatReference1}-${chatReference2}`);
+                    
                     const cachedData = null;
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2110,7 +2077,7 @@ async getName (recipient) {
             }
 
             // Error Event
-            this.webSocket.onerror = (e) => {
+            this.webSocket.onerror = () => {
                 clearTimeout(groupSocketTimeout)
             }
 
@@ -2652,7 +2619,7 @@ async getName (recipient) {
 
             let chatBytesArray = null;
 
-              await new Promise((res, rej) => {
+              await new Promise((res) => {
                 worker.postMessage({chatBytes, path, difficulty});
                 worker.onmessage = e => {
                   chatBytesArray = e.data.chatBytesArray;

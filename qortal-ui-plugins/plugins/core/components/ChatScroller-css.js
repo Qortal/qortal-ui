@@ -196,6 +196,7 @@ export const chatStyles = css`
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: 300px;
+		max-height: 40px;
 	}
 	.replied-message p {
 		margin: 0px;

@@ -1,13 +1,8 @@
 import { LitElement, html, css } from "lit";
 import { get } from 'lit-translate';
-import { escape, unescape } from 'html-escaper';
+
 import { EmojiPicker } from 'emoji-picker-js';
-import { inputKeyCodes } from '../../utils/keyCodes.js';
 import { Epml } from '../../../epml.js';
-import { Editor } from '@tiptap/core'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline';
-import Image from '@tiptap/extension-image'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -340,6 +335,9 @@ class ChatTextEditor extends LitElement {
   white-space: nowrap;
   direction: ltr;
 }
+.hide-styling {
+    display: none;
+}
   
 		`
 	}
@@ -349,12 +347,7 @@ class ChatTextEditor extends LitElement {
 		this.isLoadingMessages = true
         this.isLoading = false
         this.getMessageSize = this.getMessageSize.bind(this)
-        this.calculateIFrameHeight = this.calculateIFrameHeight.bind(this)
-        this.resetIFrameHeight = this.resetIFrameHeight.bind(this)
-        this.addGlobalEventListener = this.addGlobalEventListener.bind(this)
         this.sendMessageFunc = this.sendMessageFunc.bind(this)
-        this.removeGlobalEventListener = this.removeGlobalEventListener.bind(this)
-        this.initialChat = this.initialChat.bind(this)
         this.iframeHeight = 42
         this.chatMessageSize = 0
         this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0]
@@ -363,19 +356,10 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
-        console.log('this.editor', this.chatMessageSize)
-        let scrollHeightBool = false;
-        try {
-            console.log('this.chatMessageInput', this.chatMessageInput)
-            if (this.chatMessageInput && this.chatMessageInput.scrollHeight > 60) {
-                    scrollHeightBool = true;
-                }
-        } catch (error) {
-            scrollHeightBool = false;
-        }
+   
 		return html`
             <div 
-             class=${["chatbar-container", "chatbar-buttons"].join(" ")}
+             class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
              style="align-items: center;">
             
              <button
@@ -460,7 +444,6 @@ class ChatTextEditor extends LitElement {
                     </div>     
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-                <!-- <iframe style=${(this.iframeId === "newChat" && this.iframeHeight > 42) && "height: 100%;"} id=${this.iframeId}  class="chat-editor"  tabindex="-1" height=${this.iframeHeight}></iframe> -->
                 <div id=${this.iframeId}
                 class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
                 ></div>
@@ -530,44 +513,13 @@ class ChatTextEditor extends LitElement {
            }
 	}
 
-    initialChat(e) {
-        // if (!this.chatEditor?.contentDiv.matches(':focus')) {
-        //     // WARNING: Deprecated methods from KeyBoard Event
-        //     if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-        //         this.chatEditor.insertText('&nbsp;');
-        //     } else if (inputKeyCodes.includes(e.keyCode)) {
-        //         this.chatEditor.insertText(e.key);
-        //         return this.chatEditor.focus();
-        //     } else {
-        //         return this.chatEditor.focus();
-        //     }
-        // }
-    }
+  
 
-    addGlobalEventListener(){
-        document.addEventListener('keydown', this.initialChat);
-    }
-
-    removeGlobalEventListener(){
-        document.removeEventListener('keydown', this.initialChat);
-    }
+ 
 
 	async firstUpdated() {
-        if (this.hasGlobalEvents) {
-            // this.addGlobalEventListener();
-        }
-        Image.configure({
-            inline: true,
-          })
-    //    this.editor = new Editor({
-    //         element: this.shadowRoot.querySelector('.element'),
-    //         extensions: [
-    //           StarterKit,
-    //           Underline,
-    //           Image
-    //         ],
-    //         content: '<p>Hello World!</p>',
-    //       })
+     
+   
           
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
@@ -600,8 +552,7 @@ class ChatTextEditor extends LitElement {
         });
 
         this.emojiPicker.on('emoji', selection => {
-            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
-            console.log('hello insert 6', selection)
+         
             this.editor.commands.insertContent(selection.emoji, {
                 parseOptions: {
                     preserveWhitespace: false
@@ -652,7 +603,6 @@ class ChatTextEditor extends LitElement {
     }
 
     getMessageSize(message){
-        console.log({message})
         try {
 
         const trimmedMessage = message
@@ -710,15 +660,6 @@ class ChatTextEditor extends LitElement {
         
     }
 
-    calculateIFrameHeight(height) {
-        setTimeout(()=> {
-            const editorTest = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId').scrollHeight;
-            this.iframeHeight = editorTest + 20;
-        }, 50)
-    }
-    resetIFrameHeight(height) {
-        this.iframeHeight = 42;
-    }
    
 }
 
