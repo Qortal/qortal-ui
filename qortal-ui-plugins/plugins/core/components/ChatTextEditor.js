@@ -8,6 +8,7 @@ import { Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Image from '@tiptap/extension-image'
+import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class ChatTextEditor extends LitElement {
@@ -21,6 +22,7 @@ class ChatTextEditor extends LitElement {
             insertImage: { attribute: false },
             iframeHeight: { type: Number },
             editedMessageObj: { type: Object },
+            repliedToMessageObj: {type: Object},
             setChatEditor: { attribute: false },
             iframeId: { type: String },
             hasGlobalEvents: { type: Boolean },
@@ -250,22 +252,29 @@ class ChatTextEditor extends LitElement {
     outline: none;
     border: none;
     color: var(--black);
-    padding: 4px 8px;
+    padding: 4px;
     border-radius: 5px;
     cursor: pointer;
     margin-right: 2px;
     filter: brightness(100%);
     transition: all 0.2s;
+    display: none;
   }
   .chatbar-button-single:hover {
     filter: brightness(120%);
+   
   }
-  .chatbar-buttons {
-    visibility: hidden;
-    transition: all 0.2s;
+
+  .show-chatbar-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .chatbar-container:hover .chatbar-buttons {
-    visibility: visible;
+  :host(:hover) .chatbar-button-single {
+   
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .ProseMirror p.is-editor-empty:first-child::before {
   color: #adb5bd;
@@ -308,6 +317,20 @@ class ChatTextEditor extends LitElement {
   direction: ltr;
 
 }
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
   
 		`
 	}
@@ -342,13 +365,9 @@ class ChatTextEditor extends LitElement {
             scrollHeightBool = false;
         }
 		return html`
-            
             <div 
-             class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
-             style="align-items: flex-end; position: relative">
-             <div 
              class=${["chatbar-container", "chatbar-buttons"].join(" ")}
-             style="align-items: center; position:absolute; top: -20px">
+             style="align-items: center;">
             
              <button
         @click=${() => this.editor.chain().focus().toggleBold().run()}
@@ -360,9 +379,10 @@ class ChatTextEditor extends LitElement {
             .toggleBold()
             .run()
         }
-        class=${["chatbar-button-single",this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
       >
-      <span class="material-icons">&#xe238;</span>
+      <!-- <mwc-icon >format_bold</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xe238;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleItalic().run()}
@@ -373,29 +393,37 @@ class ChatTextEditor extends LitElement {
             .toggleItalic()
             .run()
         }
-        class=${["chatbar-button-single",this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-icons">&#xe23f;</span>
+      <!-- <mwc-icon>format_italic</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xe23f;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
-        class=${["chatbar-button-single",this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-icons">&#xf84d;</span>
+      <!-- <mwc-icon>code_blocks</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xf84d;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleUnderline().run()}
-        class=${["chatbar-button-single", this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-icons">&#xe249;</span>
+      <!-- <mwc-icon>format_underlined</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xe249;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleHighlight().run()}
-        class=${["chatbar-button-single", this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-icons">&#xf82b;</span>
+      <!-- <mwc-icon>format_ink_highlighter</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xf82b;</span>
       </button>
             </div>
+            <div 
+             class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
+             style="align-items: flex-end; position: relative">
+             
                 <div 
                     style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
                     class="file-picker-container" 

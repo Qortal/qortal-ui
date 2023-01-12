@@ -990,6 +990,7 @@ class ChatPage extends LitElement {
                                 .editor=${this.editor}
                                 .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
                                 id="_chatEditorDOM"
+                                .repliedToMessageObj=${this.repliedToMessageObj}
                                 >                           
                             </chat-text-editor>
                     </div>
@@ -1837,6 +1838,7 @@ async getName (recipient) {
     closeEditMessageContainer() {
         this.editedMessageObj = null;
         this.isEditMessageOpen = !this.isEditMessageOpen;
+        this.editor.commands.setContent('')
     }
  
     closeRepliedToContainer() {
