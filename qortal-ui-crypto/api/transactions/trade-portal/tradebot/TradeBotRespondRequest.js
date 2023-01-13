@@ -5,41 +5,35 @@
  */
 
 export default class TradeBotRespondRequest {
-    constructor() {
-        // ...
-    }
+	constructor() {
+		// ...
+	}
 
-    createTransaction(txnReq) {
+	createTransaction(txnReq) {
+		this.atAddress(txnReq.atAddress)
+		this.foreignKey(txnReq.foreignKey)
+		this.receivingAddress(txnReq.receivingAddress)
 
-        this.atAddress(txnReq.atAddress)
+		return this.txnRequest()
+	}
 
-        this.foreignKey(txnReq.foreignKey)
+	atAddress(atAddress) {
+		this._atAddress = atAddress
+	}
 
-        this.receivingAddress(txnReq.receivingAddress)
+	foreignKey(foreignKey) {
+		this._foreignKey = foreignKey
+	}
 
-        return this.txnRequest()
-    }
+	receivingAddress(receivingAddress) {
+		this._receivingAddress = receivingAddress
+	}
 
-    atAddress(atAddress) {
-
-        this._atAddress = atAddress
-    }
-
-    foreignKey(foreignKey) {
-        this._foreignKey = foreignKey
-    }
-
-    receivingAddress(receivingAddress) {
-
-        this._receivingAddress = receivingAddress
-    }
-
-    txnRequest() {
-
-        return {
-            atAddress: this._atAddress,
-            foreignKey: this._foreignKey,
-            receivingAddress: this._receivingAddress
-        }
-    }
+	txnRequest() {
+		return {
+			atAddress: this._atAddress,
+			foreignKey: this._foreignKey,
+			receivingAddress: this._receivingAddress
+		}
+	}
 }
