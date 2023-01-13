@@ -96,7 +96,8 @@ class ChatPage extends LitElement {
             webWorkerImage: { type: Object },
             myTrimmedMeassage: { type: String },
             editor: {type: Object},
-            currentEditor: {type: String}
+            currentEditor: {type: String},
+            isEnabledChatEnter: {type: Boolean}
         }
     }
 
@@ -824,6 +825,7 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
+        this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.selectedAddress = {}
         this.chatId = ''
@@ -877,12 +879,18 @@ class ChatPage extends LitElement {
         this.webWorkerImage = null;
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
+        this.isEnabledChatEnter = true
     }
 
     _toggle(value) {
         this.shifted = value === (false || true) ? value : !this.shifted;
         this.requestUpdate()
       }
+
+    toggleEnableChatEnter(){
+        localStorage.setItem('isEnabledChatEnter', !this.isEnabledChatEnter ) 
+        this.isEnabledChatEnter = !this.isEnabledChatEnter
+    }
     
     render() {
         return html`
@@ -998,6 +1006,8 @@ class ChatPage extends LitElement {
                                 .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
                                 id="_chatEditorDOM"
                                 .repliedToMessageObj=${this.repliedToMessageObj}
+                                .toggleEnableChatEnter=${this.toggleEnableChatEnter}
+                                ?isEnabledChatEnter=${this.isEnabledChatEnter}
                                 >                           
                             </chat-text-editor>
                     </div>
@@ -1277,18 +1287,27 @@ class ChatPage extends LitElement {
                 placeholder: 'Write something …',
               }),
               Extension.create({
+                name: 'shortcuts',
                 addKeyboardShortcuts:()=> {
                   return {
                     'Enter': ()=> {
-                        const chatTextEditor = this.shadowRoot.getElementById('_chatEditorDOM')
-                        chatTextEditor.sendMessageFunc({
-                        })
-                      return true
+                        if(this.isEnabledChatEnter){
+                            const chatTextEditor = this.shadowRoot.getElementById('_chatEditorDOM')
+                            chatTextEditor.sendMessageFunc({
+                            })
+                          return true
+                        }
+                   
                     },
-                    "Shift-Enter": () =>
-                    this.editor.commands.first(() => [
-                        this.editor.commands.newlineInCode()
-                    ]),
+                    "Shift-Enter": () => {
+                        if(this.isEnabledChatEnter){
+                            this.editor.commands.first(() => [
+                                this.editor.commands.newlineInCode()
+                            ])
+                        }
+                       
+                    }
+                    
               
                   }
                 }})
@@ -1561,7 +1580,11 @@ class ChatPage extends LitElement {
         })
         parentEpml.imReady();
     
+    const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter') 
 
+        if(isEnabledChatEnter){
+            this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true 
+        }
     await this.initUpdate()
     }
 

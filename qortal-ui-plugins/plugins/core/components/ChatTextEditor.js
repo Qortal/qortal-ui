@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { get } from 'lit-translate';
+import { get, translate } from 'lit-translate';
 
 import { EmojiPicker } from 'emoji-picker-js';
 import { Epml } from '../../../epml.js';
@@ -27,7 +27,9 @@ class ChatTextEditor extends LitElement {
             theme: {
                 type: String,
                 reflect: true
-              }
+              },
+            toggleEnableChatEnter: {attribute: false},
+            isEnabledChatEnter: {type: Boolean}
 		}
 	}
 
@@ -387,30 +389,40 @@ class ChatTextEditor extends LitElement {
         }
         class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
       >
-      <!-- <mwc-icon>format_italic</mwc-icon> -->
       <span class="material-symbols-outlined">&#xe23f;</span>
       </button>
-      <button
-        @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
-        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
-      >
-      <!-- <mwc-icon>code_blocks</mwc-icon> -->
-      <span class="material-symbols-outlined">&#xf84d;</span>
-      </button>
+    
       <button
         @click=${() => this.editor.chain().focus().toggleUnderline().run()}
         class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
       >
-      <!-- <mwc-icon>format_underlined</mwc-icon> -->
       <span class="material-symbols-outlined">&#xe249;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleHighlight().run()}
         class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
       >
-      <!-- <mwc-icon>format_ink_highlighter</mwc-icon> -->
       <span class="material-symbols-outlined">&#xf82b;</span>
       </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-symbols-outlined">&#xf84d;</span>
+      </button>
+      <button
+      @click=${()=> this.toggleEnableChatEnter() }
+      style="height: 26px; box-sizing: border-box;"
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+      >
+      ${this.isEnabledChatEnter ? html`
+      ${translate("chatpage.cchange60")}
+      ` : html`
+      ${translate("chatpage.cchange61")}
+      `}
+  
+      </button>
+     
             </div>
             <div 
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}

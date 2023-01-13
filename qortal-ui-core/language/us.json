@@ -565,7 +565,9 @@
       "cchange56": "Transaction Failed!",
       "cchange57": "User Info",
       "cchange58": "SEND MESSAGE",
-      "cchange59": "TIP USER"
+      "cchange59": "TIP USER",
+      "cchange60": "Enter Enabled",
+      "cchange61": "Enter Disabled"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
