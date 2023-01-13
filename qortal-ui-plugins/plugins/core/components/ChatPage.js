@@ -1267,6 +1267,7 @@ class ChatPage extends LitElement {
               onUpdate: ()=> {
                 this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
               },
+          
             element: elementChatId,
             extensions: [
               StarterKit,
@@ -1283,7 +1284,12 @@ class ChatPage extends LitElement {
                         chatTextEditor.sendMessageFunc({
                         })
                       return true
-                    }
+                    },
+                    "Shift-Enter": () =>
+                    this.editor.commands.first(() => [
+                        this.editor.commands.newlineInCode()
+                    ]),
+              
                   }
                 }})
             ]
