@@ -6,33 +6,33 @@ import signArbitrary from './transactions/arbitrary/signArbitrary.js'
 
 
 export const createTransaction = (type, keyPair, params) => {
-    const tx = new transactions[type]()
-    tx.keyPair = keyPair
-    Object.keys(params).forEach(param => {
-        tx[param] = params[param]
-    })
+	const tx = new transactions[type]()
+	tx.keyPair = keyPair
+	Object.keys(params).forEach(param => {
+		tx[param] = params[param]
+	})
 
-    return tx
+	return tx
 }
 
 // Compute Chat Nonce
 export const computeChatNonce = bytes => request('/chat/compute', {
-    method: 'POST',
-    body: Base58.encode(bytes)
+	method: 'POST',
+	body: Base58.encode(bytes)
 })
 
 // Sign Chat Transactions
 export const signChatTransaction = (chatBytes, nonce, keyPair) => {
-    return signChat(chatBytes, nonce, keyPair)
+	return signChat(chatBytes, nonce, keyPair)
 }
 
 // Sign Arbitrary Transactions
 export const signArbitraryTransaction = (arbitraryBytesBase58, arbitraryBytesForSigningBase58, nonce, keyPair) => {
-    return signArbitrary(arbitraryBytesBase58, arbitraryBytesForSigningBase58, nonce, keyPair)
+	return signArbitrary(arbitraryBytesBase58, arbitraryBytesForSigningBase58, nonce, keyPair)
 }
 
 // Process Transactions
 export const processTransaction = bytes => request('/transactions/process', {
-    method: 'POST',
-    body: Base58.encode(bytes)
+	method: 'POST',
+	body: Base58.encode(bytes)
 })
