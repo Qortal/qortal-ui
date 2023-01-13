@@ -62,7 +62,7 @@ export class UserInfo extends LitElement {
 
   render() {
     let avatarImg = "";
-    if (this.selectedHead.name) {
+    if (this.selectedHead && this.selectedHead.name) {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.selectedHead.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
@@ -85,7 +85,7 @@ export class UserInfo extends LitElement {
               ${avatarImg}
             </div>` : 
           html``}
-          ${!this.isImageLoaded && this.selectedHead.name ? 
+          ${!this.isImageLoaded && this.selectedHead && this.selectedHead.name ? 
             html`
             <div class="avatar-container">
               <div class="user-info-no-avatar">
@@ -94,16 +94,14 @@ export class UserInfo extends LitElement {
             </div>
             `
             : ""}
-          ${!this.isImageLoaded && !this.selectedHead.name ? 
+          ${!this.isImageLoaded && this.selectedHead && !this.selectedHead.name ? 
             html`
-              <div
-                class="avatar-container"
-              >
+              <div class="avatar-container">
                 <img src="/img/qortal-chat-logo.png" alt="avatar" />
               </div>`
             : ""}
         <div class="user-info-header">
-          ${this.selectedHead.name ? this.selectedHead.name : cropAddress(this.selectedHead.address)}
+          ${this.selectedHead && this.selectedHead.name ? this.selectedHead.name : this.selectedHead ? cropAddress(this.selectedHead.address) : null}
         </div>
         <div 
             class="send-message-button" 

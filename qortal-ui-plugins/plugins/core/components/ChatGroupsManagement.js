@@ -229,9 +229,9 @@ class ChatGroupsManagement extends LitElement {
 
   render() {
     return html`
-         <vaadin-icon @click=${()=> {
+         <!-- <vaadin-icon @click=${()=> {
             this.isOpenLeaveModal = true
-         }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon>
+         }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
          <!-- Leave Group Dialog -->
          <wrapper-modal 
                 .removeImage=${() => {

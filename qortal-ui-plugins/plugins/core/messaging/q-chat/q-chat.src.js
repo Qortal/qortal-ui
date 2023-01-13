@@ -47,7 +47,8 @@ class Chat extends LitElement {
             openPrivateMessage: { type: Boolean },
             userFound: { type: Array},
             userFoundModalOpen: { type: Boolean },
-            userSelected: { type: Object }
+            userSelected: { type: Object },
+            groupInvites: { type: Array }
         }
     }
 
@@ -86,13 +87,14 @@ class Chat extends LitElement {
         this.userFound = []
         this.userFoundModalOpen = false
         this.userSelected = {}
+        this.groupInvites = []
     }
 
   async setActiveChatHeadUrl(url) {
         this.activeChatHeadUrl = ''
         await this.updateComplete;
         this.activeChatHeadUrl = url
-    }
+    }   
 
     render() {
         return html`
@@ -109,9 +111,30 @@ class Chat extends LitElement {
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
                     <div class="blockedusers">
-                        <div class="center">
-                            <mwc-button raised label="${translate("chatpage.cchange3")}" icon="person_off" @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}></mwc-button>
+                        <div class="groups-button-container">
+                            <a href="/app/group-management">
+                                <button class="groups-button">
+                                    <mwc-icon>groups</mwc-icon>
+                                    ${translate("sidemenu.groupmanagement")}
+                                </button>
+                            </a>
+                            ${this.groupInvites.length > 0 ? (
+                                html`                                
+                                <div class="groups-button-notif">
+                                   ${this.groupInvites.length} 
+                                </div>
+                                <div class="groups-button-notif-number">
+                                    ${this.groupInvites.length} ${translate("chatpage.cchange60")}
+                                </div>
+                                `
+                            ) : null} 
                         </div>
+                        <mwc-button 
+                            raised 
+                            label="${translate("chatpage.cchange3")}" 
+                            icon="person_off" 
+                            @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}>
+                        </mwc-button>
                     </div>
                 </div>
                 <div class="chat">
@@ -271,11 +294,12 @@ class Chat extends LitElement {
         `
     }
 
-    firstUpdated() {
-        this.changeLanguage()
-        this.changeTheme()
-        this.getChatBlockedList()
-        this.getLocalBlockedList()
+   async firstUpdated() {
+        this.changeLanguage();
+        this.changeTheme();
+        this.getChatBlockedList();
+        this.getLocalBlockedList();
+       await this.getPendingGroupInvites();
 
         const getBlockedUsers = async () => {
             let blockedUsers = await parentEpml.request('apiCall', {
@@ -670,6 +694,20 @@ class Chat extends LitElement {
                 })
             })
         })
+    }
+
+   async getPendingGroupInvites() {
+      const myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        try {
+            let pendingGroupInvites = await parentEpml.request('apiCall', {
+                url: `/groups/invites/${myAddress}`
+            })
+            this.groupInvites = pendingGroupInvites;
+        } catch (error) {
+            console.error(error);
+            let err4string = get("chatpage.cchange61");
+            parentEpml.request('showSnackBar', `${err4string}`)
+        }
     }
 
     async unblockUser(websiteObj) {
