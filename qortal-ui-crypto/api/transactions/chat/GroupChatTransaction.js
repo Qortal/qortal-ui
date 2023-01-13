@@ -1,5 +1,6 @@
 'use strict'
 import ChatBase from "./ChatBase.js"
+import { CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP } from '../../constants.js'
 
 export default class GroupChatTransaction extends ChatBase {
 	constructor() {
@@ -43,7 +44,7 @@ export default class GroupChatTransaction extends ChatBase {
 	}
 
 	get params() {
-		const params = super.params;
+		const params = super.params
 		params.push(
 			this._proofOfWorkNonce,
 			this._hasReceipient,

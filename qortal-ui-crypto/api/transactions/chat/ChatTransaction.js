@@ -67,7 +67,7 @@ export default class ChatTransaction extends ChatBase {
 	}
 
 	get params() {
-		const params = super.params;
+		const params = super.params
 		params.push(
 			this._proofOfWorkNonce,
 			this._hasReceipient,

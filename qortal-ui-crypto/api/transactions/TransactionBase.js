@@ -19,6 +19,53 @@ export default class TransactionBase {
 		this.fee = 0
 		this.groupID = 0
 		this.timestamp = Date.now()
+		this.tests = [
+			() => {
+				if (!(this._type >= 1 && this._type in TX_TYPES)) {
+					return 'Invalid type: ' + this.type
+				}
+				return true
+			},
+			() => {
+				if (this._fee < 0) {
+					return 'Invalid fee: ' + this._fee / QORT_DECIMALS
+				}
+				return true
+			},
+			() => {
+				if (this._groupID < 0 || !Number.isInteger(this._groupID)) {
+					return 'Invalid groupID: ' + this._groupID
+				}
+				return true
+			},
+			() => {
+				if (!(new Date(this._timestamp)).getTime() > 0) {
+					return 'Invalid timestamp: ' + this._timestamp
+				}
+				return true
+			},
+			() => {
+				if (!(this._lastReference instanceof Uint8Array && this._lastReference.byteLength == 64)) {
+					if (this._lastReference == 0) {
+						return 'Invalid last reference. Please ensure that you have at least 0.001 QORT for the transaction fee.'
+					}
+					return 'Invalid last reference: ' + this._lastReference
+				}
+				return true
+			},
+			() => {
+				if (!(this._keyPair)) {
+					return 'keyPair must be specified'
+				}
+				if (!(this._keyPair.publicKey instanceof Uint8Array && this._keyPair.publicKey.byteLength === 32)) {
+					return 'Invalid publicKey'
+				}
+				if (!(this._keyPair.privateKey instanceof Uint8Array && this._keyPair.privateKey.byteLength === 64)) {
+					return 'Invalid privateKey'
+				}
+				return true
+			}
+		]
 	}
 
 	render(html) {
