@@ -234,6 +234,104 @@ class WebBrowser extends LitElement {
                 parentEpml.request('closeCopyTextMenu', null)
             }
         }
+
+        window.addEventListener("message", (event) => {
+            if (event == null || event.data == null || event.data.length == 0 || event.data.action == null) {
+                return;
+            }
+
+            let response = "{\"error\": \"Request could not be fulfilled\"}";
+            let data = event.data;
+            console.log("UI received event: " + JSON.stringify(data));
+
+            switch (data.action) {
+                case "GET_ACCOUNT_ADDRESS":
+                    // For now, we will return this without prompting the user, but we may need to add a prompt later
+                    response = this.selectedAddress.address;
+                    break;
+
+                case "GET_ACCOUNT_PUBLIC_KEY":
+                    // For now, we will return this without prompting the user, but we may need to add a prompt later
+                    response = this.selectedAddress.base58PublicKey;
+                    break;
+
+                case "PUBLISH_QDN_RESOURCE":
+                    // Use "default" if user hasn't specified an identifer
+                    if (data.identifier == null) {
+                        data.identifier = "default";
+                    }
+
+                    // Params: data.service, data.name, data.identifier, data.data64, 
+                    // TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                case "SEND_CHAT_MESSAGE":
+                    // Params: data.groupId, data.destinationAddress, data.message
+                    // TODO: prompt user to send chat message. If they confirm, sign+process a CHAT transaction
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                case "JOIN_GROUP":
+                    // Params: data.groupId
+                    // TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                case "DEPLOY_AT":
+                    // Params: data.creationBytes, data.name, data.description, data.type, data.tags, data.amount, data.assetId, data.fee
+                    // TODO: prompt user to deploy an AT. If they confirm, sign+process a DEPLOY_AT transaction
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                case "GET_WALLET_BALANCE":
+                    // Params: data.coin (QORT / LTC / DOGE / DGB / RVN / ARRR)
+                    // TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                case "SEND_COIN":
+                    // Params: data.coin, data.destinationAddress, data.amount, data.fee
+                    // TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
+                    // then set the response string from the core to the `response` variable (defined above)
+                    // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+                    break;
+
+                default:
+                    console.log("Unhandled message: " + JSON.stringify(data));
+                    return;
+            }
+
+
+            // Parse response
+            let responseObj;
+            try {
+                responseObj = JSON.parse(response);
+            } catch (e) {
+                // Not all responses will be JSON
+                responseObj = response;
+            }
+
+            // Respond to app
+            if (responseObj.error != null) {
+                event.ports[0].postMessage({
+                    result: null,
+                    error: responseObj
+                });
+            }
+            else {
+                event.ports[0].postMessage({
+                    result: responseObj,
+                    error: null
+                });
+            }
+
+        });
     }
 
     changeTheme() {
