@@ -29,7 +29,7 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
 ``` nvm install v16.17.1 ```  (LTS: Gallium supported by Electron) <br/>
 ``` npm --location=global install yarn@1.22.19 ``` <br/>
-``` npm --location=global install npm@9.2.0 ``` <br/>
+``` npm --location=global install npm@9.3.0 ``` <br/>
 
 On BSD do a ``` pkg_add node followed by npm install -g yarn ```
 
