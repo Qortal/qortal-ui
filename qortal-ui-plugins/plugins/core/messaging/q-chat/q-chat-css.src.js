@@ -54,10 +54,103 @@ export const qchatStyles = css`
       position: absolute;
       bottom: 0;
       width: 20vw;
-      height: 60px;
       background: var(--white);
       border-top: 1px solid var(--border);
       border-right: 3px #ddd solid;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      flex-direction: column;
+      padding: 5px 30px 0 30px;
+  }
+
+  .groups-button-container {
+    position: relative;
+  }
+
+  .groups-button {
+    width: 100%;
+    background-color: rgb(116, 69, 240);
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-family: 'Roboto';
+    letter-spacing: 0.8px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    gap: 10px;
+    padding: 5px 8px;
+    transition: all 0.1s ease-in-out;
+  }
+
+  .groups-button-notif {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    width: 25px;
+    border-radius: 50%;
+    height: 25px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    background-color: rgb(51, 213, 0);
+    user-select: none;
+    transition: all 0.3s ease-in-out 0s;
+  }
+
+  .groups-button-notif:hover {
+    cursor: auto;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+
+  .groups-button-notif:hover + .groups-button-notif-number {
+    display: block;
+    opacity: 1;
+    animation: fadeIn 0.6s;
+}       
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        top: -10px;
+    }
+    
+    to {
+        opacity: 1;
+        top: -60px;
+    }
+}
+
+  .groups-button-notif-number {
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
+    width: 150px;
+    text-align: center;
+    border-radius: 3px;
+    padding: 5px 10px;
+    background-color: white;
+    color: black;
+    font-family: Roboto, sans-serif;
+    letter-spacing: 0.3px;
+    font-weight: 300;
+    display: none;
+    opacity: 0;
+    top: -60px;
+    box-shadow: rgb(216 216 216 / 25%) 0px 6px 12px -2px, rgb(0 0 0 / 30%) 0px 3px 7px -3px;
+  }
+
+  .groups-button:hover {
+    cursor: pointer;
+    filter: brightness(120%);
   }
 
   .people-list .search {
