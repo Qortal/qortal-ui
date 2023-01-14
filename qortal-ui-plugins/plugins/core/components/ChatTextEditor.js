@@ -416,9 +416,9 @@ class ChatTextEditor extends LitElement {
         class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
       ${this.isEnabledChatEnter ? html`
-      ${translate("chatpage.cchange60")}
+      ${translate("chatpage.cchange63")}
       ` : html`
-      ${translate("chatpage.cchange61")}
+      ${translate("chatpage.cchange64")}
       `}
   
       </button>
