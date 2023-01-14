@@ -548,7 +548,9 @@
       "cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain.",
       "cchange40": "IMAGE (click to view)",
       "cchange41":"Your Balance Is Under 4.20 QORT",
-      "cchange42":"Out of the need to combat spam, accounts with under 4.20 Qort balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4.20 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4.20 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!"
+      "cchange42":"Out of the need to combat spam, accounts with under 4.20 Qort balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4.20 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4.20 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!",
+      "cchange62": "Wrong Username and Address Inputted! Please try again!",
+      "cchange63": "Please enter a recipient"
 
    },
    "welcomepage": {

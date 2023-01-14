@@ -159,7 +159,7 @@ const ADDRESS_VERSION = 58
 const PROXY_URL = "/proxy/"
 
 // Chat reference timestamp
-const CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP = 1674316800000
+const CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP = 0
 
 // Used as a salt for all qora addresses. Salts used for storing your private keys in local storage will be randomly generated
 const STATIC_SALT = new Uint8Array([54, 190, 201, 206, 65, 29, 123, 129, 147, 231, 180, 166, 171, 45, 95, 165, 78, 200, 208, 194, 44, 207, 221, 146, 45, 238, 68, 68, 69, 102, 62, 6])

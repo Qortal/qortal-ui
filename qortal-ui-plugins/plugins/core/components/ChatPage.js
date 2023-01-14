@@ -900,8 +900,10 @@ class ChatPage extends LitElement {
                                     id="sendTo" 
                                     placeholder="${translate("chatpage.cchange7")}" 
                                     @keydown=${() => {
-                                        this.forwardActiveChatHeadUrl = {};
-                                        this.requestUpdate();
+                                        if (this.forwardActiveChatHeadUrl.selected) {
+                                            this.forwardActiveChatHeadUrl = {};
+                                            this.requestUpdate();
+                                            } 
                                         }
                                     }
                                 />
@@ -977,7 +979,6 @@ class ChatPage extends LitElement {
                                     ${translate("chatpage.cchange33")}
                                 </button>
                                 <button
-                                    ?disabled=${!this.forwardActiveChatHeadUrl}
                                     class="modal-button"
                                     @click=${()=> {
                                        this.sendForwardMessage()
@@ -1030,7 +1031,8 @@ class ChatPage extends LitElement {
         const nameValue = this.shadowRoot.getElementById('sendTo').value;
             if (!nameValue) {
                 this.userFound = [];
-                this.userFoundModalOpen = true;
+                this.userFoundModalOpen = false;
+                this.loading = false;
                 return;
             }
             try {
@@ -1039,6 +1041,7 @@ class ChatPage extends LitElement {
                     url: `/names/${nameValue}`
                 })
                 if (result.error === 401) {
+                    this.loading = false;
                     this.userFound = [];
                 } else {
                     this.userFound = [
@@ -1048,6 +1051,7 @@ class ChatPage extends LitElement {
                 }
                 this.userFoundModalOpen = true;
             } catch (error) {
+                this.loading = false;
                 console.error(error);
                 let err4string = get("chatpage.cchange35");
                 parentEpml.request('showSnackBar', `${err4string}`)
@@ -2118,15 +2122,22 @@ class ChatPage extends LitElement {
         };
 
         const sendForwardRequest = async () => {
+
+            const userInput = this.shadowRoot.getElementById("sendTo").value.trim();
+                if(!userInput && !this.forwardActiveChatHeadUrl.url) {
+                    let err4string = get("chatpage.cchange63");
+                    getSendChatResponse(false, true, err4string );
+                    return
+                } 
             let publicKey = {
                 hasPubKey: false,
                 key: ''
             };
 
             if (this.forwardActiveChatHeadUrl.url) { 
-                const activeChatHeadAddress = this.forwardActiveChatHeadUrl.url.split('/')[1]           
+                const activeChatHeadAddress = this.forwardActiveChatHeadUrl.url.split('/')[1];        
                 try {
-                    const res =   await parentEpml.request('apiCall', {
+                    const res = await parentEpml.request('apiCall', {
                         type: 'api',
                         url: `/addresses/publickey/${activeChatHeadAddress}`
                     })
@@ -2146,21 +2157,71 @@ class ChatPage extends LitElement {
                }
             }
     
-            if (!this.forwardActiveChatHeadUrl && this.shadowRoot.getElementById("sendTo").value !== "") {
+            if (!this.forwardActiveChatHeadUrl.selected && this.shadowRoot.getElementById("sendTo").value !== "") {
+                
                 try {
-                    const res =   await parentEpml.request('apiCall', {
+                    let userPubkey = "";
+                    const validatedAddress = await parentEpml.request('apiCall', {
                         type: 'api',
-                        url: `/addresses/publickey/${this.shadowRoot.getElementById("sendTo").value}`
-                    })
-                    if (res.error === 102) {
-                        publicKey.key = ''
-                        publicKey.hasPubKey = false
-                    } else if (res !== false) {
-                        publicKey.key = res
-                        publicKey.hasPubKey = true
+                        url: `/addresses/validate/${userInput}`
+                    });
+
+                    const validatedUsername = await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/names/${userInput}`
+                    });
+                        console.log({validatedAddress, validatedUsername })
+                    
+                        if (validatedAddress && validatedUsername.name) {
+                            userPubkey = await parentEpml.request('apiCall', {
+                                type: 'api',
+                                url: `/addresses/publickey/${validatedUsername.owner}`
+                            });
+                            this.forwardActiveChatHeadUrl = {
+                                ...this.forwardActiveChatHeadUrl,
+                                url: `direct/${validatedUsername.owner}`,
+                                name: validatedUsername.name,
+                                selected: true
+                            };
+                        } else
+                    if (!validatedAddress && (validatedUsername && !validatedUsername.error)) {
+                        userPubkey = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/addresses/publickey/${validatedUsername.owner}`
+                        });
+                        this.forwardActiveChatHeadUrl = {
+                            ...this.forwardActiveChatHeadUrl,
+                            url: `direct/${validatedUsername.owner}`,
+                            name: validatedUsername.name,
+                            selected: true
+                        };
+                    } else if (validatedAddress && !validatedUsername.name) {
+                        userPubkey = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/addresses/publickey/${userInput}`
+                        });
+                        this.forwardActiveChatHeadUrl = {
+                            ...this.forwardActiveChatHeadUrl,
+                            url: `direct/${userInput}`,
+                            name: "",
+                            selected: true
+                        };
+                    } else if (!validatedAddress && !validatedUsername.name) {
+                        let err4string = get("chatpage.cchange62");
+                        // parentEpml.request('showSnackBar', `${err4string}`);
+                        getSendChatResponse(false, true, err4string);
+                        return;
+                    }
+
+                    if (userPubkey.error === 102) {
+                        publicKey.key = '';
+                        publicKey.hasPubKey = false;
+                    } else if (userPubkey !== false) {
+                        publicKey.key = userPubkey;
+                        publicKey.hasPubKey = true;
                     } else {
-                        publicKey.key = ''
-                        publicKey.hasPubKey = false
+                        publicKey.key = '';
+                        publicKey.hasPubKey = false;
                     }
                 } catch (error) {
                     console.error(error);
@@ -2175,9 +2236,9 @@ class ChatPage extends LitElement {
             if (isRecipient === true) {
                 if(!publicKey.hasPubKey){
                     let err4string = get("chatpage.cchange39");
-                    parentEpml.request('showSnackBar', `${err4string}`)
-                    getSendChatResponse(false)
-                    return
+                    parentEpml.request('showSnackBar', `${err4string}`);
+                    getSendChatResponse(false);
+                    return;
                 }
                 let chatResponse = await parentEpml.request('chat', {
                     type: 18,
@@ -2253,7 +2314,7 @@ class ChatPage extends LitElement {
             getSendChatResponse(_response, isForward);
         };
 
-        const getSendChatResponse = (response, isForward) => {
+        const getSendChatResponse = (response, isForward, customErrorMessage) => {
             if (response === true) {
                 this.chatEditor.resetValue();
                 this.chatEditorNewChat.resetValue()
@@ -2265,16 +2326,23 @@ class ChatPage extends LitElement {
                 parentEpml.request('showSnackBar', response.message);
             } else {
                 let err2string = get("chatpage.cchange21");
-                parentEpml.request('showSnackBar', `${err2string}`);
+                parentEpml.request('showSnackBar', `${customErrorMessage || err2string}`);
             }
-
+            if(isForward && response !== true){
+                this.isLoading = false;
+                return
+            }
             this.isLoading = false;
             this.chatEditor.enable();
             this.chatEditorNewChat.enable()
             this.closeEditMessageContainer()
             this.closeRepliedToContainer()
             this.openForwardOpen = false
-            this.forwardActiveChatHeadUrl = ""
+            this.forwardActiveChatHeadUrl = {
+                url: "",
+                name: "",
+                selected: false
+            }
         };
 
         if (isForward) {
