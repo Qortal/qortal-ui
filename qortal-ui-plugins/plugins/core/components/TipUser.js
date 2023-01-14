@@ -12,7 +12,6 @@ export class TipUser extends LitElement {
   static get properties() {
 		return {
         userName: { type: String },
-        chatEditor: { type: Object },
         walletBalance: { type: Number },
         sendMoneyLoading: { type: Boolean },
         closeTipUser: { type: Boolean },
@@ -20,7 +19,6 @@ export class TipUser extends LitElement {
         errorMessage: { type: String },
         successMessage: { type: String },
         setOpenTipUser: { attribute: false },
-        focusChatEditor: { attribute: false }
         }
 	}
 
@@ -221,8 +219,6 @@ export class TipUser extends LitElement {
             this.btnDisable = false;
             setTimeout(() => {
                 this.setOpenTipUser(false);
-                this.chatEditor.enable();
-                this.focusChatEditor();
                 this.successMessage = "";
             }, 3000);
         } else {

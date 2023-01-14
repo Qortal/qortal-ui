@@ -35,7 +35,6 @@ class ChatScroller extends LitElement {
             hideMessages: { type: Array },
             setRepliedToMessageObj: { attribute: false },
             setEditedMessageObj: { attribute: false },
-            focusChatEditor: { attribute: false },
             sendMessage: { attribute: false },
             sendMessageForward: { attribute: false },
             showLastMessageRefScroller: { attribute: false },
@@ -43,7 +42,6 @@ class ChatScroller extends LitElement {
             isLoadingMessages: { type: Boolean},
             setIsLoadingMessages: { attribute: false },
             chatId: { type: String },
-            chatEditor: { type: Object },
             setForwardProperties: { attribute: false },
             setOpenPrivateMessage: { attribute: false },
             openTipUser: { type: Boolean },
@@ -60,7 +58,6 @@ class ChatScroller extends LitElement {
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
-        this.setOpenTipUser = this.setOpenTipUser.bind(this)
         this.setOpenUserInfo = this.setOpenUserInfo.bind(this)
         this.setUserName = this.setUserName.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -143,14 +140,13 @@ class ChatScroller extends LitElement {
             </ul>
             <wrapper-modal
             .onClickFunc=${() => {
-                this.openTipUser = false;
-                this.chatEditor.enable();
+                this.setOpenTipUser(false);
             }}
+               zIndex=${55}
             style=${this.openTipUser ? "display: block;" : "display: none;"}>
                 <tip-user
+                 
                     .closeTipUser=${!this.openTipUser}
-                    .chatEditor=${this.chatEditor}
-                    .focusChatEditor=${this.focusChatEditor}
                     .userName=${this.userName}
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
                 </tip-user>
@@ -158,7 +154,6 @@ class ChatScroller extends LitElement {
             <wrapper-modal 
             .onClickFunc=${() => {
                 this.openUserInfo = false;
-                this.chatEditor.enable();
                 this.userName = "";
                 this.selectedHead = {};
             }} 
@@ -169,7 +164,6 @@ class ChatScroller extends LitElement {
                     .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                     .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-                    .chatEditor=${this.chatEditor}
                     .userName=${this.userName}
                     .selectedHead=${this.selectedHead} 
                 ></user-info>
@@ -190,6 +184,9 @@ class ChatScroller extends LitElement {
         if(changedProperties.has('openUserInfo')){
             return true
         }
+        if(changedProperties.has('userName')){
+            return true
+        }
         // Only update element if prop1 changed.
         return changedProperties.has('messages');
       }
@@ -205,17 +202,14 @@ class ChatScroller extends LitElement {
         toggledMessage = message;
     }
 
-    setOpenTipUser(props) {
-        this.openTipUser = props;
-        this.chatEditor.disable();
-    }
+
 
     setOpenUserInfo(props) {
         this.openUserInfo = props;
-        this.chatEditor.disable();
     }
 
     setUserName(props) {
+        console.log({props})
         this.userName = props.senderName ? props.senderName : props.sender;
         this.selectedHead = {
             ...this.selectedHead,
@@ -321,7 +315,8 @@ class MessageTemplate extends LitElement {
             setOpenPrivateMessage : { attribute: false },
             setOpenTipUser: { attribute: false },
             setOpenUserInfo: { attribute: false },
-            setUserName: { attribute: false }
+            setUserName: { attribute: false },
+            openTipUser:{type: Boolean}
         }
     }
 
@@ -370,6 +365,7 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
+        console.log('this.userName', this.userName)
         const hidemsg = this.hideMessages;
         let message = "";
         let messageVersion2 = ""

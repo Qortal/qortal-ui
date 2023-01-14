@@ -44,7 +44,6 @@ class Chat extends LitElement {
             blockedUsers: { type: Array },
             blockedUserList: { type: Array },
             privateMessagePlaceholder: { type: String},
-            chatEditor: { type:  Object },
             imageFile: { type: Object },
             activeChatHeadUrl: { type: String },
             openPrivateMessage: { type: Boolean },
@@ -537,12 +536,10 @@ class Chat extends LitElement {
 
     async _sendMessage(outSideMsg, msg) { 
         this.isLoading = true;
-        // this.chatEditor.disable();
 
         const trimmedMessage = msg
         if (/^\s*$/.test(trimmedMessage)) {
             this.isLoading = false;
-            // this.chatEditor.enable();
         } else {
             const messageObject = {
                 messageText: trimmedMessage,
@@ -600,7 +597,6 @@ class Chat extends LitElement {
                 _publicKey = false;
                 let err4string = get("chatpage.cchange19");
                 parentEpml.request('showSnackBar', `${err4string}`);
-                // this.chatEditor.enable();
                 this.isLoading = false;
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1;
@@ -609,7 +605,6 @@ class Chat extends LitElement {
             } else {
                 let err4string = get("chatpage.cchange39");
                 parentEpml.request('showSnackBar', `${err4string}`);
-                // this.chatEditor.enable();
                 this.isLoading = false;
             }
         };
@@ -675,7 +670,6 @@ class Chat extends LitElement {
             }
       
             this.isLoading = false;
-            // this.chatEditor.enable();
         };
       
         // Exec..
@@ -686,7 +680,6 @@ class Chat extends LitElement {
     insertImage(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
-            // this.chatEditor.disable();
             return;
         }       
          parentEpml.request('showSnackBar', get("chatpage.cchange28")); 

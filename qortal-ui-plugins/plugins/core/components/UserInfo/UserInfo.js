@@ -15,7 +15,6 @@ export class UserInfo extends LitElement {
         setOpenUserInfo: { attribute: false },
         setOpenTipUser: { attribute: false },
         setOpenPrivateMessage: { attribute: false },
-        chatEditor: { type: Object },
         userName: { type: String },
         selectedHead: { type: Object },
         isImageLoaded: { type: Boolean }
@@ -69,7 +68,6 @@ export class UserInfo extends LitElement {
           slot="icon"
           @click=${() => {
               this.setOpenUserInfo(false)
-              this.chatEditor.enable();
           }}>
         </vaadin-icon>
           ${this.isImageLoaded ? 
@@ -114,7 +112,6 @@ export class UserInfo extends LitElement {
             @click=${() => {
                 this.setOpenTipUser(true);
                 this.setOpenUserInfo(false);
-                this.chatEditor.disable();
             }}>
                 ${translate("chatpage.cchange59")}
             </div>

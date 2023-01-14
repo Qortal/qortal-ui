@@ -97,7 +97,9 @@ class ChatPage extends LitElement {
             myTrimmedMeassage: { type: String },
             editor: {type: Object},
             currentEditor: {type: String},
-            isEnabledChatEnter: {type: Boolean}
+            isEnabledChatEnter: {type: Boolean},
+            openTipUser: { type: Boolean },
+            setOpenTipUser: {attribute: false}
         }
     }
 
@@ -887,6 +889,10 @@ class ChatPage extends LitElement {
         this.requestUpdate()
       }
 
+      setOpenTipUser(props) {
+        this.openTipUser = props;
+    }
+
     toggleEnableChatEnter(){
         localStorage.setItem('isEnabledChatEnter', !this.isEnabledChatEnter ) 
         this.isEnabledChatEnter = !this.isEnabledChatEnter
@@ -1229,7 +1235,9 @@ class ChatPage extends LitElement {
             .groupAdmin=${this.groupAdmin} 
             .leaveGroupObj=${this.groupInfo}
             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-            .chatEditor=${this.chatEditor}>
+            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+        ?openTipUser=${this.openTipUser}
+            >
             </chat-right-panel>
         </div>
     </div>
@@ -1356,13 +1364,11 @@ class ChatPage extends LitElement {
       }
 
       initialChat(e) {
-        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen) {
+        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-                // this.chatEditor.insertText('&nbsp;');
             } else if (inputKeyCodes.includes(e.keyCode)) {
                 this.editor.commands.insertContent(e.key)
-                // this.chatEditor.insertText(e.key);
                 this.editor.commands.focus('end')
             } else {
                this.editor.commands.focus('end')
@@ -1664,12 +1670,12 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller() {
+        console.log('renderChatScroller')
         return html`
         <chat-scroller 
         chatId=${this.chatId}
         .messages=${this.messagesRendered} 
         .escapeHTML=${escape} 
-        .chatEditor=${this.chatEditor}
         .getOldMessage=${this.getOldMessage}
         .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
         .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
@@ -1681,6 +1687,8 @@ class ChatPage extends LitElement {
         .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
         .setForwardProperties=${(forwardedMessage)=> this.setForwardProperties(forwardedMessage)}
         .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+        .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+        ?openTipUser=${this.openTipUser}
         >
         </chat-scroller>
         `

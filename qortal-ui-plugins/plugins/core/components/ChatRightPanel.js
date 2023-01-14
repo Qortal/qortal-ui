@@ -29,12 +29,12 @@ class ChatRightPanel extends LitElement {
             setOpenPrivateMessage: { attribute: false },
             openTipUser: { type: Boolean },
             userName: { type: String },
-            chatEditor: { type: Object },
             walletBalance: { type: Number },
             sendMoneyLoading: { type: Boolean },
             btnDisable: { type: Boolean },
             errorMessage: { type: String },
-            successMessage: { type: String }
+            successMessage: { type: String },
+            setOpenTipUser: { attribute: false },
 		}
 	}
 
@@ -57,7 +57,6 @@ class ChatRightPanel extends LitElement {
         this.btnDisable = false
         this.errorMessage = ""
         this.successMessage = ""
-        this.setOpenTipUser = this.setOpenTipUser.bind(this);
         this.setOpenUserInfo = this.setOpenUserInfo.bind(this);
 	}
 
@@ -233,9 +232,7 @@ class ChatRightPanel extends LitElement {
         }
     }
 
-    setOpenTipUser(props) {
-        this.openTipUser = props
-    }
+   
 
     setOpenUserInfo(props) {
         this.openUserInfo = props
@@ -312,20 +309,18 @@ class ChatRightPanel extends LitElement {
                     .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                     .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-                    .chatEditor=${this.chatEditor}
                     .userName=${this.userName}
                     .selectedHead=${this.selectedHead} 
                 ></user-info>
             </wrapper-modal>
             <wrapper-modal
+            zIndex=${55}
             .onClickFunc=${() => {
-                this.openTipUser = false;
-                this.chatEditor.enable();
+                this.setOpenTipUser(false);
             }}
              style=${this.openTipUser ? "display: block" : "display: none"}>
              <tip-user
                 .closeTipUser=${this.openUserInfo}
-                .chatEditor=${this.chatEditor}
                 .userName=${this.userName}
                 .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
              >
