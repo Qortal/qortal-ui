@@ -1354,7 +1354,7 @@ class ChatPage extends LitElement {
       }
 
       initialChat(e) {
-        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM') {
+        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen) {
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
                 // this.chatEditor.insertText('&nbsp;');
