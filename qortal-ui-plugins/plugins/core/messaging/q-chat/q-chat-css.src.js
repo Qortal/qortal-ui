@@ -193,6 +193,23 @@ export const qchatStyles = css`
       overflow-x: hidden;     
   }
 
+    .people-list ul::-webkit-scrollbar-track {
+        background-color: whitesmoke;
+        border-radius: 7px;
+    }
+
+    .people-list ul::-webkit-scrollbar {
+        width: 6px;
+        border-radius: 7px;
+        background-color: whitesmoke;
+    }
+
+    .people-list ul::-webkit-scrollbar-thumb {
+        background-color: rgb(180, 176, 176);
+        border-radius: 7px;
+        transition: all 0.3s ease-in-out;
+    }
+    
   .chat {
       width: 80vw;
       height: 100vh;

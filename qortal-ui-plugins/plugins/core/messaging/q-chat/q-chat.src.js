@@ -97,6 +97,8 @@ class Chat extends LitElement {
     }   
 
     render() {
+        console.log(12, "q-chat here");
+        console.log(window.location.href);
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -112,12 +114,14 @@ class Chat extends LitElement {
                     </ul>
                     <div class="blockedusers">
                         <div class="groups-button-container">
-                            <a href="/app/group-management">
-                                <button class="groups-button">
+                                <button 
+                                    @click=${() => {
+                                        this.redirectToGroups();
+                                        }}
+                                    class="groups-button">
                                     <mwc-icon>groups</mwc-icon>
                                     ${translate("sidemenu.groupmanagement")}
                                 </button>
-                            </a>
                             ${this.groupInvites.length > 0 ? (
                                 html`                                
                                 <div class="groups-button-notif">
@@ -461,6 +465,10 @@ class Chat extends LitElement {
             let err4string = get("chatpage.cchange35");
             parentEpml.request('showSnackBar', `${err4string}`)
         }
+    }
+
+    redirectToGroups() {
+        window.location.href = `../../group-management/index.html`
     }
 
     setChatEditor(editor) {
