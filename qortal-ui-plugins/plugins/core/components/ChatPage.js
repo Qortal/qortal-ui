@@ -24,6 +24,7 @@ import './NameMenu.js';
 import './TimeAgo.js';
 import './ChatTextEditor.js';
 import './WrapperModal.js';
+import './TipUser'
 import './ChatSelect.js'
 import './ChatSideNavHeads.js'
 import './ChatLeaveGroup.js'
@@ -99,7 +100,9 @@ class ChatPage extends LitElement {
             currentEditor: {type: String},
             isEnabledChatEnter: {type: Boolean},
             openTipUser: { type: Boolean },
-            setOpenTipUser: {attribute: false}
+            openUserInfo: { type: Boolean },
+            selectedHead: { type: Object },
+            userName: { type: String }
         }
     }
 
@@ -829,7 +832,12 @@ class ChatPage extends LitElement {
         this.insertImage = this.insertImage.bind(this)
         this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
+        this.setOpenTipUser = this.setOpenTipUser.bind(this)
+        this.setOpenUserInfo = this.setOpenUserInfo.bind(this)
+        this.setUserName = this.setUserName.bind(this)
+        this.setSelectedHead = this.setSelectedHead.bind(this)
         this.selectedAddress = {}
+        this.userName = ""
         this.chatId = ''
         this.myAddress = ''
         this.messages = []
@@ -889,9 +897,27 @@ class ChatPage extends LitElement {
         this.requestUpdate()
       }
 
-      setOpenTipUser(props) {
+    setOpenTipUser(props) {
         this.openTipUser = props;
     }
+
+    setOpenUserInfo(props) {
+        this.openUserInfo = props;
+    }
+
+    setUserName(props) {
+        console.log({props})
+        this.userName = props.senderName ? props.senderName : props.sender;
+        this.setSelectedHead(props);
+    }
+
+    setSelectedHead(props) {
+        this.selectedHead = {
+            ...this.selectedHead,
+            address: props.sender,
+            name: props.senderName,
+            };
+        }
 
     toggleEnableChatEnter(){
         localStorage.setItem('isEnabledChatEnter', !this.isEnabledChatEnter ) 
@@ -899,6 +925,7 @@ class ChatPage extends LitElement {
     }
     
     render() {
+        console.log(this.userName, "username here");
         return html`
             <div class="main-container">
             <div 
@@ -1225,6 +1252,35 @@ class ChatPage extends LitElement {
                         </div>
                     </div>    	
             </wrapper-modal>
+            <wrapper-modal
+                .onClickFunc=${() => {
+                    this.setOpenTipUser(false);
+                }}
+                zIndex=${55}
+                style=${this.openTipUser ? "display: block;" : "display: none;"}>
+                <tip-user
+                    .closeTipUser=${!this.openTipUser}
+                    .userName=${this.userName}
+                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
+                </tip-user>
+            </wrapper-modal>
+            <wrapper-modal 
+            .onClickFunc=${() => {
+                this.setOpenUserInfo(false);
+                this.setUserName("");
+                this.setSelectedHead({});
+            }} 
+            style=${
+                this.openUserInfo ? "display: block" : "display: none"
+            }>
+                <user-info
+                    .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                    .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+                    .userName=${this.userName}
+                    .selectedHead=${this.selectedHead} 
+                ></user-info>
+            </wrapper-modal>
         </div>
         <div class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
             <chat-right-panel 
@@ -1236,7 +1292,8 @@ class ChatPage extends LitElement {
             .leaveGroupObj=${this.groupInfo}
             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
-        ?openTipUser=${this.openTipUser}
+            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+            .setUserName=${(val) => this.setUserName(val)}
             >
             </chat-right-panel>
         </div>
@@ -1670,27 +1727,30 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller() {
-        console.log('renderChatScroller')
         return html`
-        <chat-scroller 
-        chatId=${this.chatId}
-        .messages=${this.messagesRendered} 
-        .escapeHTML=${escape} 
-        .getOldMessage=${this.getOldMessage}
-        .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
-        .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
-        .sendMessage=${(val) => this._sendMessage(val)}
-        .sendMessageForward=${(messageText, typeMessage, chatReference, isForward, forwardParams)=> this.sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams)}
-        .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
-        .emojiPicker=${this.emojiPicker} 
-        ?isLoadingMessages=${this.isLoadingOldMessages}
-        .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
-        .setForwardProperties=${(forwardedMessage)=> this.setForwardProperties(forwardedMessage)}
-        .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-        .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
-        ?openTipUser=${this.openTipUser}
-        >
-        </chat-scroller>
+            <chat-scroller 
+            chatId=${this.chatId}
+            .messages=${this.messagesRendered} 
+            .escapeHTML=${escape} 
+            .getOldMessage=${this.getOldMessage}
+            .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
+            .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
+            .sendMessage=${(val) => this._sendMessage(val)}
+            .sendMessageForward=${(messageText, typeMessage, chatReference, isForward, forwardParams)=> this.sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams)}
+            .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
+            .emojiPicker=${this.emojiPicker} 
+            ?isLoadingMessages=${this.isLoadingOldMessages}
+            .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
+            .setForwardProperties=${(forwardedMessage)=> this.setForwardProperties(forwardedMessage)}
+            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+            .setUserName=${(val) => this.setUserName(val)}
+            .setSelectedHead=${(val) => this.setSelectedHead(val)}
+            ?openTipUser=${this.openTipUser}
+            .selectedHead=${this.selectedHead}
+            >
+            </chat-scroller>
         `
     }
     setIsLoadingMessages(val){

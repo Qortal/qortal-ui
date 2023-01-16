@@ -16,9 +16,13 @@ export class WrapperModal extends LitElement {
   render() {
     return html`
       <div>
-        <div style="z-index: ${this.zIndex || 50}" class="backdrop" @click=${() => {
-            this.onClickFunc();
-        }}></div>
+        <div 
+          style="z-index: ${this.zIndex || 50}" 
+          class="backdrop" 
+          @click=${() => {
+              this.onClickFunc();
+          }}>
+        </div>
           <div class="modal-body" style=${this.customStyle ? this.customStyle : ""}>
             <slot></slot>
           </div>

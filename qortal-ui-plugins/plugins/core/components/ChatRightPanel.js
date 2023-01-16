@@ -17,7 +17,6 @@ import "./UserInfo/UserInfo";
 class ChatRightPanel extends LitElement {
 	static get properties() {
 		return {
-			openUserInfo: { type: Boolean },
 			leaveGroupObj: { type: Object },
 			error: { type: Boolean },
 			chatHeads: { type: Array },
@@ -27,7 +26,6 @@ class ChatRightPanel extends LitElement {
             toggle: { attribute: false },
             getMoreMembers:{ attribute: false },
             setOpenPrivateMessage: { attribute: false },
-            openTipUser: { type: Boolean },
             userName: { type: String },
             walletBalance: { type: Number },
             sendMoneyLoading: { type: Boolean },
@@ -35,12 +33,13 @@ class ChatRightPanel extends LitElement {
             errorMessage: { type: String },
             successMessage: { type: String },
             setOpenTipUser: { attribute: false },
+            setOpenUserInfo: { attribute: false },
+            setUserName: { attribute: false },
 		}
 	}
 
 	constructor() {
 		super()
-		this.openUserInfo = false
 		this.leaveGroupObj = {}
 		this.leaveFee = 0.001
 		this.error = false
@@ -51,13 +50,10 @@ class ChatRightPanel extends LitElement {
         this.viewElement = ''
         this.downObserverElement = ''
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-        this.openTipUser = false
-        this.userName = ""
         this.sendMoneyLoading = false
         this.btnDisable = false
         this.errorMessage = ""
         this.successMessage = ""
-        this.setOpenUserInfo = this.setOpenUserInfo.bind(this);
 	}
 
     static get styles() {
@@ -232,12 +228,6 @@ class ChatRightPanel extends LitElement {
         }
     }
 
-   
-
-    setOpenUserInfo(props) {
-        this.openUserInfo = props
-    }
-
 	render() {
         const owner = this.groupAdmin.filter((admin)=> admin.address === this.leaveGroupObj.owner)
 		return html`
@@ -262,7 +252,11 @@ class ChatRightPanel extends LitElement {
                             if (val.address === this.myAddress) return;
                             console.log({ val });
                             this.selectedHead = val;
-                            this.openUserInfo = true;
+                            this.setOpenUserInfo(true);
+                            this.setUserName({
+                                sender: val.address,
+                                senderName: val.name ? val.name : ""
+                            });
                         }}
                         chatInfo=${JSON.stringify(item)}
                     ></chat-side-nav-heads>`
@@ -275,7 +269,11 @@ class ChatRightPanel extends LitElement {
                             if (val.address === this.myAddress) return;
                             console.log({ val });
                             this.selectedHead = val;
-                            this.openUserInfo = true;
+                            this.setOpenUserInfo(true);
+                            this.setUserName({
+                                sender: val.address,
+                                senderName: val.name ? val.name : ""
+                            });
                         }}
                         chatInfo=${JSON.stringify(item)}
                     ></chat-side-nav-heads>`
@@ -288,44 +286,17 @@ class ChatRightPanel extends LitElement {
                             if (val.address === this.myAddress) return;
                             console.log({ val });
                             this.selectedHead = val;
-                            this.openUserInfo = true;
+                            this.setOpenUserInfo(true);
+                            this.setUserName({
+                                sender: val.address,
+                                senderName: val.name ? val.name : ""
+                            });
                         }}
                         chatInfo=${JSON.stringify(item)}
                     ></chat-side-nav-heads>`
                 })}
                 <div id='downObserver'></div>
             </div>
-
-            <wrapper-modal 
-            .onClickFunc=${() => {
-                this.openUserInfo = false;
-                this.userName = "";
-                this.shadowRoot.querySelector("tip-user").shadowRoot.getElementById('amountInput').value = "";
-            }} 
-            style=${
-                this.openUserInfo ? "display: block" : "display: none"
-            }>
-                <user-info
-                    .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
-                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
-                    .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-                    .userName=${this.userName}
-                    .selectedHead=${this.selectedHead} 
-                ></user-info>
-            </wrapper-modal>
-            <wrapper-modal
-            zIndex=${55}
-            .onClickFunc=${() => {
-                this.setOpenTipUser(false);
-            }}
-             style=${this.openTipUser ? "display: block" : "display: none"}>
-             <tip-user
-                .closeTipUser=${this.openUserInfo}
-                .userName=${this.userName}
-                .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
-             >
-             </tip-user>
-            </wrapper-modal>
         </div>
     </div>
     `
