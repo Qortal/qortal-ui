@@ -7,8 +7,6 @@ import '@vaadin/button';
 import '@polymer/paper-progress/paper-progress.js';
 import { cropAddress } from '../../../utils/cropAddress.js';
 
-// const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
-
 export class UserInfo extends LitElement {
   static get properties() {
 		return {
@@ -34,7 +32,6 @@ export class UserInfo extends LitElement {
     const imageHTMLRes = new Image();
     imageHTMLRes.src = imageUrl;
     imageHTMLRes.classList.add("user-info-avatar");
-    // imageHTMLRes.style= "width:30px; height:30px; float: left; border-radius:50%; font-size:14px";
     imageHTMLRes.onload = () => {
         this.isImageLoaded = true;
     }
