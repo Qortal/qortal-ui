@@ -87,8 +87,7 @@ export const chatStyles = css`
 		user-select: none;
 		float: right;
     padding-left: 15px;
-		padding-bottom: 3px;
-    transform: translateY(10px);
+    text-align: right;
 	}
 
 	.message-data-time-hidden {
@@ -100,7 +99,7 @@ export const chatStyles = css`
 		float: right;
     padding-left: 15px;
 		padding-bottom: 3px;
-    transform: translateY(10px);
+		text-align: right;
 	}
 
 	.message-user-info {
@@ -134,7 +133,7 @@ export const chatStyles = css`
     align-items: flex-start;
     justify-content: center;
     border-radius: 5px;
-    padding: 12px 15px;
+    padding: 12px 15px 4px 15px;
 		width: fit-content;
     min-width: 150px;
 	}
@@ -204,6 +203,8 @@ export const chatStyles = css`
 	}
 
 	.message {
+		display: flex;
+		flex-direction: column;
 		color: var(--chat-bubble-msg-color);
 		line-height: 19px;
 		overflow-wrap: anywhere;

@@ -10,7 +10,6 @@ import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
 import './WrapperModal';
-import './TipUser'
 import "./UserInfo/UserInfo";
 import '@vaadin/icons';
 import '@vaadin/icon';
@@ -44,6 +43,10 @@ class ChatScroller extends LitElement {
             chatId: { type: String },
             setForwardProperties: { attribute: false },
             setOpenPrivateMessage: { attribute: false },
+            setOpenUserInfo: { attribute: false },
+            setOpenTipUser: { attribute: false },
+            setUserName: { attribute: false },
+            setSelectedHead: { attribute: false },
             openTipUser: { type: Boolean },
             openUserInfo: { type: Boolean },
             userName: { type: String },
@@ -58,13 +61,10 @@ class ChatScroller extends LitElement {
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
-        this.setOpenUserInfo = this.setOpenUserInfo.bind(this)
-        this.setUserName = this.setUserName.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
         this.openTipUser = false;
         this.openUserInfo = false;
-        this.userName = "";
     }
 
     render() {
@@ -138,36 +138,6 @@ class ChatScroller extends LitElement {
                 })}
                 <div id='downObserver'></div>
             </ul>
-            <wrapper-modal
-            .onClickFunc=${() => {
-                this.setOpenTipUser(false);
-            }}
-               zIndex=${55}
-            style=${this.openTipUser ? "display: block;" : "display: none;"}>
-                <tip-user
-                 
-                    .closeTipUser=${!this.openTipUser}
-                    .userName=${this.userName}
-                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
-                </tip-user>
-            </wrapper-modal>
-            <wrapper-modal 
-            .onClickFunc=${() => {
-                this.openUserInfo = false;
-                this.userName = "";
-                this.selectedHead = {};
-            }} 
-            style=${
-                this.openUserInfo ? "display: block" : "display: none"
-            }>
-                <user-info
-                    .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
-                    .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
-                    .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
-                    .userName=${this.userName}
-                    .selectedHead=${this.selectedHead} 
-                ></user-info>
-            </wrapper-modal>
         `
     }
 
@@ -198,24 +168,8 @@ class ChatScroller extends LitElement {
         return true;
     }
 
-    setToggledMessage (message) {
+    setToggledMessage(message) {
         toggledMessage = message;
-    }
-
-
-
-    setOpenUserInfo(props) {
-        this.openUserInfo = props;
-    }
-
-    setUserName(props) {
-        console.log({props})
-        this.userName = props.senderName ? props.senderName : props.sender;
-        this.selectedHead = {
-            ...this.selectedHead,
-            address: props.sender,
-            name: props.senderName,
-        };
     }
 
     async firstUpdated() {
@@ -316,7 +270,7 @@ class MessageTemplate extends LitElement {
             setOpenTipUser: { attribute: false },
             setOpenUserInfo: { attribute: false },
             setUserName: { attribute: false },
-            openTipUser:{type: Boolean}
+            openTipUser:{ type: Boolean }
         }
     }
 
@@ -365,7 +319,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        console.log('this.userName', this.userName)
         const hidemsg = this.hideMessages;
         let message = "";
         let messageVersion2 = ""
@@ -873,10 +826,13 @@ class ChatMenu extends LitElement {
                     }}">
                     <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
                 </div>                
-                <div class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} data-text="${translate("blockpage.bcchange9")}" @click="${() => this.setOpenPrivateMessage({
-                    name: this.originalMessage.senderName ? this.originalMessage.senderName : this.originalMessage.sender,
-                    open: true   
-                })}">   
+                <div 
+                    class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
+                    data-text="${translate("blockpage.bcchange9")}" 
+                    @click="${() => this.setOpenPrivateMessage({
+                        name: this.originalMessage.senderName ? this.originalMessage.senderName : this.originalMessage.sender,
+                        open: true   
+                    })}">   
                     <vaadin-icon icon="vaadin:paperplane" slot="icon"></vaadin-icon>
                 </div>
                 <div class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} data-text="${translate("blockpage.bcchange8")}" @click="${() => this.copyToClipboard(this.toblockaddress)}">
@@ -916,9 +872,10 @@ class ChatMenu extends LitElement {
                     <div 
                     class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`}
                     data-text="${translate("blockpage.bcchange18")}" 
-                    @click=${() => {
-                    this.setOpenTipUser(true);
+                    @click=${(e) => {
+                    e.preventDefault();
                     this.setUserName(this.originalMessage);
+                    this.setOpenTipUser(true);
                     }}>
                         <vaadin-icon icon="vaadin:dollar" slot="icon"></vaadin-icon>
                     </div>

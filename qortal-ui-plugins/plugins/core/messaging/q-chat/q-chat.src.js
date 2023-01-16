@@ -113,15 +113,13 @@ class Chat extends LitElement {
         return true;
     }
 
-    async  connectedCallback() {
+    async connectedCallback() {
         super.connectedCallback();
         await this.getUpdateCompleteTextEditor();
 
         const elementChatId = this.shadowRoot.getElementById('messageBox').shadowRoot.getElementById('privateMessage')
-        console.log({elementChatId})
         this.editor = new Editor({
             onUpdate: ()=> {
-                console.log('q-chat editor', this.editor)
                 this.shadowRoot.getElementById('messageBox').getMessageSize(this.editor.getJSON())
               },
             element: elementChatId,
