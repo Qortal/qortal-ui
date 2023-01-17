@@ -78,9 +78,9 @@
 		"file-saver": "2.0.5",
 		"highcharts": "10.3.2",
 		"html-escaper": "3.0.3",
-		"lit": "2.6.0",
+		"lit": "2.6.1",
 		"lit-translate": "2.0.1",
-		"rollup": "3.9.1",
+		"rollup": "3.10.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-web-worker-loader": "1.6.1"

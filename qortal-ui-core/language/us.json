@@ -570,7 +570,9 @@
       "cchange61": "Error when fetching group invites. Please try again!",
       "cchange62": "Wrong Username and Address Inputted! Please try again!",
       "cchange63": "Enter Enabled",
-      "cchange64": "Enter Disabled"
+      "cchange64": "Enter Disabled",
+      "cchange65": "Please enter a recipient"
+
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

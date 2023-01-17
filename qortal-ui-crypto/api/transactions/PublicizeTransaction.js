@@ -3,11 +3,11 @@ import ChatBase from "./chat/ChatBase.js"
 import { QORT_DECIMALS } from "../constants.js"
 
 export default class PublicizeTransaction extends ChatBase {
-    constructor() {
-        super();
-        this.type = 19
-        this.fee = 0
-    }
+	constructor() {
+		super()
+		this.type = 19
+		this.fee = 0
+	}
 
     set proofOfWorkNonce(proofOfWorkNonce) {
         this._proofOfWorkNonce = this.constructor.utils.int32ToBytes(proofOfWorkNonce)
