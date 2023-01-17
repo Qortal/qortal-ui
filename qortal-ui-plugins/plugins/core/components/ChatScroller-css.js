@@ -613,6 +613,7 @@ export const chatStyles = css`
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
 	white-space: pre-wrap;
+	margin: 0px;
   }
   .replied-message pre code {
       color: inherit;
