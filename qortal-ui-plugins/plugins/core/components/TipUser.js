@@ -212,7 +212,6 @@ export class TipUser extends LitElement {
             throw new Error(txnResponse);
         } else if (txnResponse.success === true && !txnResponse.data.error) {
             this.shadowRoot.getElementById('amountInput').value = '';
-            this.userName = '';
             this.errorMessage = '';
             this.successMessage = this.renderSuccessText();
             this.sendMoneyLoading = false;
