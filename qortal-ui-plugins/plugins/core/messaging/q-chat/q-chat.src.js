@@ -178,7 +178,7 @@ class Chat extends LitElement {
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
                     <div class="blockedusers">
-                        <div class="groups-button-container">
+                        <!-- <div class="groups-button-container">
                                 <button 
                                     @click=${() => {
                                         this.redirectToGroups();
@@ -197,7 +197,7 @@ class Chat extends LitElement {
                                 </div>
                                 `
                             ) : null} 
-                        </div>
+                        </div> -->
                         <mwc-button 
                             raised 
                             label="${translate("chatpage.cchange3")}" 
@@ -370,7 +370,7 @@ class Chat extends LitElement {
         this.changeTheme();
         this.getChatBlockedList();
         this.getLocalBlockedList();
-       await this.getPendingGroupInvites();
+    //    await this.getPendingGroupInvites();
 
         const getBlockedUsers = async () => {
             let blockedUsers = await parentEpml.request('apiCall', {
