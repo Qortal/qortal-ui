@@ -5,35 +5,29 @@
  */
 
 export default class DeleteTradeOffer {
-    constructor() {
-        // ...
-    }
+	constructor() {
+		// ...
+	}
 
-    createTransaction(txnReq) {
+	createTransaction(txnReq) {
+		this.creatorPublicKey(txnReq.creatorPublicKey)
+		this.atAddress(txnReq.atAddress)
 
-        this.creatorPublicKey(txnReq.creatorPublicKey)
+		return this.txnRequest()
+	}
 
-        this.atAddress(txnReq.atAddress)
+	creatorPublicKey(creatorPublicKey) {
+		this._creatorPublicKey = creatorPublicKey
+	}
 
-        return this.txnRequest()
-    }
+	atAddress(atAddress) {
+		this._atAddress = atAddress
+	}
 
-    creatorPublicKey(creatorPublicKey) {
-
-        this._creatorPublicKey = creatorPublicKey
-
-    }
-
-    atAddress(atAddress) {
-
-        this._atAddress = atAddress
-    }
-
-    txnRequest() {
-
-        return {
-            creatorPublicKey: this._creatorPublicKey,
-            atAddress: this._atAddress
-        }
-    }
+	txnRequest() {
+		return {
+			creatorPublicKey: this._creatorPublicKey,
+			atAddress: this._atAddress
+		}
+	}
 }

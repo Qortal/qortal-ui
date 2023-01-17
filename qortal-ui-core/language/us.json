@@ -568,7 +568,9 @@
       "cchange59": "TIP USER",
       "cchange60": "Group Invites Pending",
       "cchange61": "Error when fetching group invites. Please try again!",
-      "cchange62": "Wrong Username and Address Inputted! Please try again!"
+      "cchange62": "Wrong Username and Address Inputted! Please try again!",
+      "cchange63": "Please enter a recipient"
+
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

@@ -4,11 +4,13 @@ import { store } from '../../store.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
-import FileSaver from 'file-saver'
 import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet } from '../../redux/user/user-actions.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
+import FileSaver from 'file-saver'
+import ripple from '../../functional-components/loading-ripple.js'
 import snackbar from '../../functional-components/snackbar.js'
+import '../../functional-components/random-sentence-generator.js'
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-textfield'
@@ -22,8 +24,6 @@ import '@polymer/paper-input/paper-input.js'
 import '@polymer/paper-tooltip/paper-tooltip.js'
 import '@vaadin/text-field/vaadin-text-field.js'
 import '@vaadin/password-field/vaadin-password-field.js'
-import 'random-sentence-generator'
-import ripple from '../../functional-components/loading-ripple.js'
 
 let lastPassword = ''
 
@@ -393,17 +393,17 @@ class CreateAccountSection extends connect(store)(LitElement) {
                                         </random-sentence-generator>
                                     </div>
                                     <!--
-                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        --- --- --- --- --- --- --- --- --- --- --- --- --- -
                                         Calculations
-                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        --- --- --- --- --- --- --- --- --- --- --- --- --- -
                                         403 adjectives
                                         60 interjections
                                         243 adverbs
                                         2353 nouns
                                         3387 verbs
-                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        --- --- --- --- --- --- --- --- --- --- --- --- --- -
                                         sooo 243*3387*403*2353*3387*403*2353*403*2353 ~ 2^92
-                                        --- --- --- --- --- --- --- --- --- --- --- -
+                                        --- --- --- --- --- --- --- --- --- --- --- --- --- -
                                     -->
                                 </div><br>
                                 <div class="horizontal-center">

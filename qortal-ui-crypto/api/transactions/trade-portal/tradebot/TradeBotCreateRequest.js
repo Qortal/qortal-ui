@@ -5,75 +5,59 @@
  */
 
 export default class TradeBotCreateRequest {
-    constructor() {
-        // ...
-    }
+	constructor() {
+		// ...
+	}
 
-    createTransaction(txnReq) {
+	createTransaction(txnReq) {
+		this.creatorPublicKey(txnReq.creatorPublicKey)
+		this.qortAmount(txnReq.qortAmount)
+		this.fundingQortAmount(txnReq.fundingQortAmount)
+		this.foreignBlockchain(txnReq.foreignBlockchain)
+		this.foreignAmount(txnReq.foreignAmount)
+		this.tradeTimeout(txnReq.tradeTimeout)
+		this.receivingAddress(txnReq.receivingAddress)
 
-        this.creatorPublicKey(txnReq.creatorPublicKey);
+		return this.txnRequest()
+	}
 
-        this.qortAmount(txnReq.qortAmount);
+	creatorPublicKey(creatorPublicKey) {
+		this._creatorPublicKey = creatorPublicKey
+	}
 
-        this.fundingQortAmount(txnReq.fundingQortAmount);
+	qortAmount(qortAmount) {
+		this._qortAmount = qortAmount
+	}
 
-        this.foreignBlockchain(txnReq.foreignBlockchain);
+	fundingQortAmount(fundingQortAmount) {
+		this._fundingQortAmount = fundingQortAmount
+	}
 
-        this.foreignAmount(txnReq.foreignAmount);
+	foreignBlockchain(foreignBlockchain) {
+		this._foreignBlockchain = foreignBlockchain
+	}
 
-        this.tradeTimeout(txnReq.tradeTimeout);
+	foreignAmount(foreignAmount) {
+		this._foreignAmount = foreignAmount
+	}
 
-        this.receivingAddress(txnReq.receivingAddress);
+	tradeTimeout(tradeTimeout) {
+		this._tradeTimeout = tradeTimeout
+	}
 
-        return this.txnRequest();
-    }
+	receivingAddress(receivingAddress) {
+		this._receivingAddress = receivingAddress
+	}
 
-    creatorPublicKey(creatorPublicKey) {
-
-        this._creatorPublicKey = creatorPublicKey;
-
-    }
-
-    qortAmount(qortAmount) {
-        this._qortAmount = qortAmount;
-    }
-
-
-    fundingQortAmount(fundingQortAmount) {
-
-        this._fundingQortAmount = fundingQortAmount;
-    }
-
-    foreignBlockchain(foreignBlockchain) {
-
-        this._foreignBlockchain = foreignBlockchain;
-    }
-
-    foreignAmount(foreignAmount) {
-
-        this._foreignAmount = foreignAmount;
-    }
-
-    tradeTimeout(tradeTimeout) {
-
-        this._tradeTimeout = tradeTimeout;
-    }
-
-    receivingAddress(receivingAddress) {
-
-        this._receivingAddress = receivingAddress;
-    }
-
-    txnRequest() {
-
-        return {
-            creatorPublicKey: this._creatorPublicKey,
-            qortAmount: this._qortAmount,
-            fundingQortAmount: this._fundingQortAmount,
-            foreignBlockchain: this._foreignBlockchain,
-            foreignAmount: this._foreignAmount,
-            tradeTimeout: this._tradeTimeout,
-            receivingAddress: this._receivingAddress
-        }
-    }
+	txnRequest() {
+		return {
+			creatorPublicKey: this._creatorPublicKey,
+			qortAmount: this._qortAmount,
+			fundingQortAmount: this._fundingQortAmount,
+			foreignBlockchain: this._foreignBlockchain,
+			foreignAmount: this._foreignAmount,
+			tradeTimeout: this._tradeTimeout,
+			receivingAddress: this._receivingAddress
+		}
+	}
 }
