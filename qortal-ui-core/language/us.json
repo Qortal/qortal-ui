@@ -571,7 +571,8 @@
       "cchange62": "Wrong Username and Address Inputted! Please try again!",
       "cchange63": "Enter Enabled",
       "cchange64": "Enter Disabled",
-      "cchange65": "Please enter a recipient"
+      "cchange65": "Please enter a recipient",
+      "cchange66": "Cannot fetch replied-to message. Message is too old."
 
    },
    "welcomepage": {

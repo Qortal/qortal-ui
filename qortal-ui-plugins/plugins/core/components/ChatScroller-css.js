@@ -172,6 +172,7 @@ export const chatStyles = css`
     border-radius: 5px;
     padding: 8px 5px 8px 25px;
 		margin-bottom: 10px;
+		cursor: pointer;
 	}
 
 	.original-message:before {
@@ -187,6 +188,7 @@ export const chatStyles = css`
 	.original-message-sender {
 		margin: 0 0 5px 0;
 		color: var(--mdc-theme-primary);
+		cursor: pointer;
 	}
 
 	.replied-message {
@@ -640,4 +642,14 @@ export const chatStyles = css`
     border-top: 2px solid rgba(#0D0D0D, 0.1);
     margin: 2rem 0;
   }
+
+  .blink-bg{
+	border-radius: 8px;
+		animation: blinkingBackground 3s;
+	}
+	@keyframes blinkingBackground{
+		0%		{ background-color: rgba(var(--menuactivergb), 1)}
+
+		100%	        { background-color:rgba(var(--menuactivergb), 0)}
+	}
 `

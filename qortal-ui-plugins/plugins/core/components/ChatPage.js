@@ -102,7 +102,8 @@ class ChatPage extends LitElement {
             openTipUser: { type: Boolean },
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
-            userName: { type: String }
+            userName: { type: String },
+            goToRepliedMessage: {attribute: false}
         }
     }
 
@@ -906,7 +907,6 @@ class ChatPage extends LitElement {
     }
 
     setUserName(props) {
-        console.log({props})
         this.userName = props.senderName ? props.senderName : props.sender;
         this.setSelectedHead(props);
     }
@@ -925,7 +925,6 @@ class ChatPage extends LitElement {
     }
     
     render() {
-        console.log(this.userName, "username here");
         return html`
             <div class="main-container">
             <div 
@@ -1434,6 +1433,49 @@ class ChatPage extends LitElement {
         
     }
 
+   async goToRepliedMessage(message){
+    const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    if(findMessage){
+        findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        const findElement = findMessage.shadowRoot.querySelector('.message-parent')
+        if(findElement){
+            findElement.classList.add('blink-bg')
+            setTimeout(()=> {
+                findElement.classList.remove('blink-bg')
+            }, 2000)
+        }
+  
+        return
+    }
+    if((message.timestamp -  this.messagesRendered[0].timestamp)  > 86400000){
+        let errorMsg = get("chatpage.cchange66")
+        parentEpml.request('showSnackBar', `${errorMsg}`)
+        return
+    } 
+
+    if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
+       await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
+       const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    if(findMessage){
+        findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        const findElement = findMessage.shadowRoot.querySelector('.message-parent')
+        if(findElement){
+            findElement.classList.add('blink-bg')
+            setTimeout(()=> {
+                findElement.classList.remove('blink-bg')
+            }, 2000)
+        }
+  
+        return
+    }
+
+    let errorMsg = get("chatpage.cchange66")
+    parentEpml.request('showSnackBar', `${errorMsg}`)
+    
+    }
+
+   }
+
     async userSearch() {
         const nameValue = this.shadowRoot.getElementById('sendTo').value;
             if (!nameValue) {
@@ -1616,7 +1658,6 @@ class ChatPage extends LitElement {
                 this.groupAdmin = membersAdminsWithName
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
-                console.log({membersAdminsWithName})
             } catch (error) {
                 console.error(error)
             }
@@ -1749,6 +1790,8 @@ class ChatPage extends LitElement {
             .setSelectedHead=${(val) => this.setSelectedHead(val)}
             ?openTipUser=${this.openTipUser}
             .selectedHead=${this.selectedHead}
+            .goToRepliedMessage=${(val)=> this.goToRepliedMessage(val)}
+            .getOldMessageAfter=${(val)=> this.getOldMessageAfter(val)}
             >
             </chat-scroller>
         `
@@ -1781,6 +1824,81 @@ class ChatPage extends LitElement {
             }
           })
     }
+
+    async getOldMessageDynamic(limit, before, after) {
+
+        if (this.isReceipient) {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false`,
+            });
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+            
+         
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
+            })
+            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete();
+            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
+
+            if(viewElement){
+                viewElement.scrollTop = 200
+            }
+                
+
+            
+           
+        
+        } else {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false`,
+            });
+
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
+            })
+          
+            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete();
+            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement');
+
+            if(viewElement){
+                viewElement.scrollTop = 200
+            }
+       
+                
+          
+         
+
+        }
+    }
+
 
     async getOldMessage(scrollElement) {
  
@@ -1837,6 +1955,77 @@ class ChatPage extends LitElement {
             })
           
             this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete();
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
+         
+
+        }
+    }
+
+    async getOldMessageAfter(scrollElement) {
+ 
+        if (this.isReceipient) {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&afer=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+            });
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+            
+         
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
+            })
+            this.messagesRendered = [...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete();
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
+
+            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+          
+            if(findElement){
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }
+           
+        
+        } else {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+            });
+
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+
+            const replacedMessages = await replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+	            parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey
+            })
+          
+            this.messagesRendered = [ ...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2002,7 +2191,6 @@ class ChatPage extends LitElement {
         let decodedMessageObj = {};
 
         if (isReceipientVar === true) {
-            console.log('encoded', encodedMessageObj.isEncrypted, _publicKeyVar.hasPubKey,encodedMessageObj.data)
             // direct chat
             if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
                 let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);
@@ -2653,7 +2841,6 @@ class ChatPage extends LitElement {
                         type: 'api',
                         url: `/names/${userInput}`
                     });
-                        console.log({validatedAddress, validatedUsername })
                     
                         if (validatedAddress && validatedUsername.name) {
                             userPubkey = await parentEpml.request('apiCall', {

@@ -50,7 +50,9 @@ class ChatScroller extends LitElement {
             openTipUser: { type: Boolean },
             openUserInfo: { type: Boolean },
             userName: { type: String },
-            selectedHead: { type: Object }
+            selectedHead: { type: Object },
+            goToRepliedMessage: { attribute: false },
+            getOldMessageAfter: {attribute: false}
         }
     }
 
@@ -101,6 +103,7 @@ class ChatScroller extends LitElement {
             }
             return messageArray;
         }, [])
+
         
         return html`
               ${this.isLoadingMessages ?  html`
@@ -132,7 +135,10 @@ class ChatScroller extends LitElement {
                             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                             .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
-                            .setUserName=${(val) => this.setUserName(val)}>
+                            .setUserName=${(val) => this.setUserName(val)}
+                            id=${message.reference}
+                            .goToRepliedMessage=${this.goToRepliedMessage}
+                            >
                             </message-template>`
                     )
                 })}
@@ -195,6 +201,10 @@ class ChatScroller extends LitElement {
         this.getOldMessage(_scrollElement)
     }
 
+    _getOldMessageAfter(_scrollElement) {
+        this.getOldMessageAfter(_scrollElement)
+    }
+
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
             if(this.messages.length < 20){
@@ -208,6 +218,8 @@ class ChatScroller extends LitElement {
 
     _downObserverHandler(entries) {
         if (!entries[0].isIntersecting) {
+            let _scrollElement = entries[0].target.previousElementSibling;
+            // this._getOldMessageAfter(_scrollElement);
             this.showLastMessageRefScroller(true);
         } else {
             this.showLastMessageRefScroller(false);
@@ -270,7 +282,8 @@ class MessageTemplate extends LitElement {
             setOpenTipUser: { attribute: false },
             setOpenUserInfo: { attribute: false },
             setUserName: { attribute: false },
-            openTipUser:{ type: Boolean }
+            openTipUser:{ type: Boolean },
+            goToRepliedMessage: { attribute: false },
         }
     }
 
@@ -511,14 +524,13 @@ class MessageTemplate extends LitElement {
                                 ) : null}
                             </div>
                                 ${repliedToData && html`
-                                    <div class="original-message">
+                                    <div class="original-message" 
+                                    @click=${()=> {
+                                        this.goToRepliedMessage(repliedToData)
+                                    }}>
                                         <p 
-                                        style=${this.myAddress === repliedToData.sender ? "cursor: auto;" : "cursor: pointer;"}
-                                        @click=${() => {
-                                            if (this.myAddress === repliedToData.sender) return;
-                                            this.setOpenUserInfo(true);
-                                            this.setUserName(repliedToData)
-                                        }} 
+                                        
+                                      
                                             class="original-message-sender">
                                              ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>

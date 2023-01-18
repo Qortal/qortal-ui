@@ -28,6 +28,7 @@ html {
   --relaynodetxt: #646464;
   --menuhover: #eeeeee;
   --menuactive: #ebebeb;
+  --menuactivergb: 235, 235, 235;
   --mainmenutext: #080808;
   --mainmenutexthover: #080808;
   --switchbackground: #666666;
@@ -82,6 +83,7 @@ html[theme="dark"] {
   --relaynodetxt: #d4d4d4;
   --menuhover: #008fd5;
   --menuactive: #008fd5;
+  --menuactivergb: 0, 143, 213;
   --mainmenutext: #008fd5;
   --mainmenutexthover: #0f1a2e;
   --switchbackground: #eeeeee;
