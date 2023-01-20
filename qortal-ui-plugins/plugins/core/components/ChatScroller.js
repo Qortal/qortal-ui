@@ -6,6 +6,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js'
 import { Epml } from "../../../epml";
 import { cropAddress } from "../../utils/cropAddress";
+import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js';
 import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
@@ -17,7 +18,9 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
-import { generateHTML } from '@tiptap/core'
+import { generateHTML } from '@tiptap/core';
+import { saveAs } from 'file-saver';
+import axios from "axios";
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight'
@@ -50,7 +53,7 @@ class ChatScroller extends LitElement {
             openTipUser: { type: Boolean },
             openUserInfo: { type: Boolean },
             userName: { type: String },
-            selectedHead: { type: Object }
+            selectedHead: { type: Object },
         }
     }
 
@@ -270,7 +273,7 @@ class MessageTemplate extends LitElement {
             setOpenTipUser: { attribute: false },
             setOpenUserInfo: { attribute: false },
             setUserName: { attribute: false },
-            openTipUser:{ type: Boolean }
+            openTipUser:{ type: Boolean },
         }
     }
 
@@ -318,6 +321,22 @@ class MessageTemplate extends LitElement {
         }
     }
 
+    async downloadAttachment(attachment) {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        try{
+            const res = await axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}`, { responseType: 'blob' })
+            .then(response =>{              
+                let filename = attachment.attachmentName;
+                console.log({response: response.data});
+                let blob = new Blob([response.data], { type:"application/octet-stream" });
+                saveAs(blob , filename);
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     render() {
         const hidemsg = this.hideMessages;
         let message = "";
@@ -328,8 +347,10 @@ class MessageTemplate extends LitElement {
         let isImageDeleted = false;
         let version = 0;
         let isForwarded = false
+        let attachment = null;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
+            console.log({parsedMessageObj});
             if(parsedMessageObj.version.toString() === '2'){
 
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
@@ -345,6 +366,10 @@ class MessageTemplate extends LitElement {
             reactions = parsedMessageObj.reactions || [];
             version = parsedMessageObj.version
             isForwarded = parsedMessageObj.type === 'forward'
+           if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
+                attachment = parsedMessageObj.attachments[0];
+            }
+            console.log({parsedMessageObj});
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
@@ -403,12 +428,11 @@ class MessageTemplate extends LitElement {
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`;
             
-            if(this.viewImage || this.myAddress === this.messageObj.sender){
+            if (this.viewImage || this.myAddress === this.messageObj.sender) {
                 imageHTML = createImage(imageUrl);
                 imageHTMLDialog = createImage(imageUrl) 
                 imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
             }
-           
         }
 
         nameMenu = html`
@@ -529,12 +553,12 @@ class MessageTemplate extends LitElement {
                                         ${repliedToData.decodedMessage.messageText}
                                         ` : ''}
                                         ${version.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}
+                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, 
+                                        [StarterKit,
+                                        Underline,
+                                        Highlight
+                                        // other extensions …
+                                        ]))}
                                         ` : ''}
                                         
                                             <!-- ${repliedToData.decodedMessage.messageText} -->
@@ -548,10 +572,9 @@ class MessageTemplate extends LitElement {
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
-                                        ${translate("chatpage.cchange40")}
-                                        </div>
-                                           
+                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                                ${translate("chatpage.cchange40")}
+                                            </div>
                                         </div>
                                     ` : html``}
                                     ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
@@ -561,13 +584,37 @@ class MessageTemplate extends LitElement {
                                             ${imageHTML}<vaadin-icon
                                             @click=${() => {
                                                 this.openDeleteImage = true;
-                                                this.chatE
                                                 }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                         </div>
                                     ` : image && isImageDeleted ? html`
                                         <p class="image-deleted-msg">This image has been deleted</p>
                                     ` : html``}
+                                    ${attachment ? 
+                                        html`
+                                        <div @click=${async () => await this.downloadAttachment(attachment)} class="attachment-container">
+                                            <div class="attachment-icon-container">
+                                                <img 
+                                                    src="/img/attachment-icon.png" 
+                                                    alt="attachment-icon" 
+                                                    class="attachment-icon" />
+                                            </div>
+                                            <div class="attachment-info">
+                                                <p class="attachment-name">
+                                                    ${attachment && attachment.attachmentName}
+                                                </p>
+                                                <p class="attachment-size">
+                                                    ${roundToNearestDecimal(attachment.attachmentSize)} mb
+                                                </p>
+                                            </div>
+                                            <vaadin-icon 
+                                            icon="vaadin:download-alt" 
+                                            slot="icon" 
+                                            class="download-icon">
+                                            </vaadin-icon>
+                                        </div>
+                                        ` 
+                                    : html``}
                                     <div 
                                     id="messageContent" 
                                     class="message" 

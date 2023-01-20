@@ -570,7 +570,10 @@
       "cchange61": "Error when fetching group invites. Please try again!",
       "cchange62": "Wrong Username and Address Inputted! Please try again!",
       "cchange63": "Enter Enabled",
-      "cchange64": "Enter Disabled"
+      "cchange64": "Enter Disabled",
+      "cchange65": "Uploading attachment. This may take up to one minute.",
+      "cchange66": "Deleting attachment. This may take up to one minute.",
+      "cchange67": "Attachment size exceeds 1 MB"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

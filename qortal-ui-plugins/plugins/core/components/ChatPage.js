@@ -39,7 +39,7 @@ import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
 import { EmojiPicker } from 'emoji-picker-js';
 import WebWorker from 'web-worker:./computePowWorker.js';
-import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import WebWorkerFile from 'web-worker:./computePowWorkerFile.js';
 import '@polymer/paper-dialog/paper-dialog.js'
 
 // const messagesCache = localForage.createInstance({
@@ -77,7 +77,9 @@ class ChatPage extends LitElement {
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
             imageFile: { type: Object },
+            attachment: { type: Object },
             isUploadingImage: { type: Boolean },
+            isUploadingAttachment: { type: Boolean },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: { type: Boolean },
@@ -94,7 +96,7 @@ class ChatPage extends LitElement {
             userFound: { type: Array },
             userFoundModalOpen: { type: Boolean },
             webWorker: { type: Object },
-            webWorkerImage: { type: Object },
+            webWorkerFile: { type: Object },
             myTrimmedMeassage: { type: String },
             editor: {type: Object},
             currentEditor: {type: String},
@@ -822,6 +824,30 @@ class ChatPage extends LitElement {
       cursor: pointer;
       color: #4e5054;
   }
+
+  .attachment-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--mdc-theme-primary);
+  }
+
+  .attachment-icon {
+    width: 70%;
+  }
+  
+  .attachment-name {
+    font-family: Work Sans, sans-serif;
+    font-size: 20px;
+    color: var(--chat-bubble-msg-color);
+    margin: 0px;
+    letter-spacing: 1px;
+    padding: 5px 0px;
+  }
 `
 }
 
@@ -829,7 +855,7 @@ class ChatPage extends LitElement {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
-        this.insertImage = this.insertImage.bind(this)
+        this.insertFile = this.insertFile.bind(this)
         this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.setOpenTipUser = this.setOpenTipUser.bind(this)
@@ -859,6 +885,7 @@ class ChatPage extends LitElement {
         this.editedMessageObj = null
         this.iframeHeight = 42
         this.imageFile = null
+        this.attachment = null
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
         this.lastMessageRefVisible = false
@@ -886,7 +913,7 @@ class ChatPage extends LitElement {
             selected: false
         }
         this.webWorker = null;
-        this.webWorkerImage = null;
+        this.webWorkerFile = null;
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.isEnabledChatEnter = true
@@ -906,7 +933,6 @@ class ChatPage extends LitElement {
     }
 
     setUserName(props) {
-        console.log({props})
         this.userName = props.senderName ? props.senderName : props.sender;
         this.setSelectedHead(props);
     }
@@ -925,7 +951,6 @@ class ChatPage extends LitElement {
     }
     
     render() {
-        console.log(this.userName, "username here");
         return html`
             <div class="main-container">
             <div 
@@ -985,11 +1010,11 @@ class ChatPage extends LitElement {
                                         ` : ''}
                                         ${this.repliedToMessageObj.toString() === '2' ? html`
                                         ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}    ` : ''}
+                                            StarterKit,
+                                            Underline,
+                                            Highlight
+                                            // other extensions …
+                                        ]))}    ` : ''}
                                             
                                         </div>
                                         <vaadin-icon
@@ -1006,20 +1031,22 @@ class ChatPage extends LitElement {
                                     <div class="repliedTo-subcontainer">
                                         <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
-                                            <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                            ${unsafeHTML(generateHTML(this.editedMessageObj.message, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}
+                                            <p class="senderName">
+                                                ${translate("chatpage.cchange25")}
+                                            </p>
+                                                ${unsafeHTML(generateHTML(this.editedMessageObj.message, 
+                                                [StarterKit,
+                                                Underline,
+                                                Highlight
+                                                // other extensions …
+                                                ]))}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
                                             icon="vaadin:close-big"
                                             slot="icon"
-                                            @click=${() => this.closeEditMessageContainer()}
-                                            ></vaadin-icon>
+                                            @click=${() => this.closeEditMessageContainer()}>
+                                        </vaadin-icon>
                                     </div>
                                 </div>
                             `}
@@ -1030,7 +1057,7 @@ class ChatPage extends LitElement {
                                 placeholder=${this.chatEditorPlaceholder}
                                 ._sendMessage=${this._sendMessage}
                                 .imageFile=${this.imageFile}
-                                .insertImage=${this.insertImage}
+                                .insertFile=${this.insertFile}
                                 .editedMessageObj=${this.editedMessageObj}
                                 ?isLoading=${this.isLoading}
                                 ?isLoadingMessages=${this.isLoadingMessages}
@@ -1047,25 +1074,38 @@ class ChatPage extends LitElement {
                 </div>
             </div>
           
-            ${(this.isUploadingImage || this.isDeletingImage) ? html`
+                ${(this.isUploadingImage || this.isDeletingImage) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
                             <div class="dialog-container-loader">
                                 <div class=${`smallLoading marginLoader`}></div>
-                                <p>
-                                ${this.isDeletingImage ?
-                                    translate("chatpage.cchange31") : translate("chatpage.cchange30")}
-                                </p>
-                            </div>			
-                        </div>                        
-			        </div>
-            </div>
-			`: ''}
+                                    <p>
+                                    ${this.isDeletingImage ?
+                                        translate("chatpage.cchange31") : translate("chatpage.cchange30")}
+                                    </p>
+                                </div>			
+                            </div>                        
+			            </div>
+                    </div>
+			    `: ''}
+                ${(this.isUploadingAttachment) ? html`
+					<div class="dialogCustom">
+                        <div class="dialogCustomInner">
+                            <div class="dialog-container-loader">
+                                <div class=${`smallLoading marginLoader`}></div>
+                                    <p>
+                                        ${translate("chatpage.cchange65")}
+                                    </p>
+                                </div>			
+                            </div>                        
+			            </div>
+                    </div>
+                `: ''}
                 <wrapper-modal 
                 .onClickFunc=${() => {
                     this.removeImage();
                 }} 
-                style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
+                style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible; z-index:50" : "visibility: hidden;z-index:-100"}>
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
@@ -1078,7 +1118,7 @@ class ChatPage extends LitElement {
                                     placeholder=${this.chatEditorPlaceholder}
                                     ._sendMessage=${this._sendMessage}
                                     .imageFile=${this.imageFile}
-                                    .insertImage=${this.insertImage}
+                                    .insertFile=${this.insertFile}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
                                     ?isLoadingMessages=${this.isLoadingMessages}
@@ -1101,7 +1141,6 @@ class ChatPage extends LitElement {
                                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                                         chatTextEditor.sendMessageFunc({
                                             type: 'image',
-                                            imageFile:  this.imageFile,
                                         })
                                     }}
                                 >
@@ -1110,6 +1149,58 @@ class ChatPage extends LitElement {
                             </div>
                         </div>
                 </div>    	
+            </wrapper-modal>
+            <wrapper-modal 
+            .onClickFunc=${() => {
+                this.removeAttachment();
+            }} 
+            style=${this.attachment && !this.isUploadingAttachment ? "visibility: visible; z-index: 50" : "visibility: hidden; z-index: -100"}>
+                <div>
+                    <div class="dialog-container">
+                        ${this.attachment && html`
+                        <div class="attachment-icon-container">
+                            <img src="/img/attachment-icon.png" alt="attachment-icon" class="attachment-icon" />
+                        </div>
+                        `}
+                        <p class="attachment-name">${this.attachment && this.attachment.name}</p>
+                        <div class="caption-container">
+                            <chat-text-editor
+                                iframeId="newAttachmentChat"
+                                ?hasGlobalEvents=${false}
+                                placeholder=${this.chatEditorPlaceholder}
+                                ._sendMessage=${this._sendMessage}
+                                .imageFile=${this.imageFile}
+                                .attachment=${this.attachment}
+                                .insertFile=${this.insertFile}
+                                .editedMessageObj=${this.editedMessageObj}
+                                ?isLoading=${this.isLoading}
+                                ?isLoadingMessages=${this.isLoadingMessages}
+                                id="chatAttachmentId"
+                                .editor=${this.editorAttachment}
+                                .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
+                                >
+                            </chat-text-editor>
+                        </div>
+                        <div class="modal-button-row">
+                            <button class="modal-button-red" @click=${() => {
+                            this.removeAttachment();
+                            }}>
+                                ${translate("chatpage.cchange33")}
+                            </button>
+                            <button
+                                class="modal-button"
+                                @click=${() => {
+                                    const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId');
+                                    chatTextEditor.sendMessageFunc({
+                                        type: 'attachment',
+                                    })
+                                }}
+                            >
+                                ${translate("chatpage.cchange9")}
+                            </button>
+                        </div>
+                    </div>
+            </div>    	
             </wrapper-modal>
             <paper-dialog class="warning" id="confirmDialog" modal>
                 <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
@@ -1332,14 +1423,15 @@ class ChatPage extends LitElement {
 
 
 
-  async  connectedCallback() {
+    async connectedCallback() {
         super.connectedCallback();
         this.webWorker = new WebWorker();
-        this.webWorkerImage = new WebWorkerImage();
+        this.webWorkerFile = new WebWorkerFile();
         await this.getUpdateCompleteTextEditor();
 
-        const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
-        const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
+        const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM');
+        const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat');
+        const elementChatAttachmentId = this.shadowRoot.getElementById('chatAttachmentId').shadowRoot.getElementById('newAttachmentChat');
         this.editor = new Editor({
               onUpdate: ()=> {
                 this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
@@ -1396,11 +1488,37 @@ class ChatPage extends LitElement {
               Extension.create({
                 addKeyboardShortcuts:()=> {
                   return {
-                    'Enter':()=> {
+                    'Enter':() => {
                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                         chatTextEditor.sendMessageFunc({
-                            type: 'image',
-                            imageFile:  this.imageFile,
+                            type: 'image'
+                        })
+                      return true
+                    }
+                  }
+                }})
+            ]
+          })
+
+          this.editorAttachment = new Editor({
+            onUpdate: () => {
+                this.shadowRoot.getElementById('chatAttachmentId').getMessageSize(this.editorAttachment.getJSON())
+              },
+            element: elementChatAttachmentId,
+            extensions: [
+              StarterKit,
+              Underline,
+              Highlight,
+              Placeholder.configure({
+                placeholder: 'Write something …',
+              }),
+              Extension.create({
+                addKeyboardShortcuts:()=> {
+                  return {
+                    'Enter':()=> {
+                        const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
+                        chatTextEditor.sendMessageFunc({
+                            type: 'attachment'
                         })
                       return true
                     }
@@ -1411,17 +1529,18 @@ class ChatPage extends LitElement {
           document.addEventListener('keydown', this.initialChat);
       }
 
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.webWorker.terminate();
-        this.webWorkerImage.terminate();
-        this.editor.destroy()
-        this.editorImage.destroy()
-        document.removeEventListener('keydown', this.initialChat);
-      }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            this.webWorker.terminate();
+            this.webWorkerFile.terminate();
+            this.editor.destroy();
+            this.editorImage.destroy();
+            this.editorAttachment.destroy();
+            document.removeEventListener('keydown', this.initialChat);
+    }
 
       initialChat(e) {
-        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
+        if (this.editor && !this.editor.isFocused && this.currentEditor  === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
             } else if (inputKeyCodes.includes(e.keyCode)) {
@@ -1431,8 +1550,6 @@ class ChatPage extends LitElement {
                this.editor.commands.focus('end')
             }
         }
-
-        
     }
 
     async userSearch() {
@@ -1498,19 +1615,29 @@ class ChatPage extends LitElement {
     }
 
     
-    insertImage(file) {
+    insertFile(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
-            this.currentEditor = 'newChat'
+            this.currentEditor = 'newChat';
             return;
-        }       
-         parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
+        } else {
+            this.attachment = file;
+            this.currentEditor = "newAttachmentChat";
+            return;
+        }     
+        //  parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
     }
 
     removeImage() {
         this.imageFile = null;
-        this.resetChatEditor()
-        this.currentEditor = '_chatEditorDOM'
+        this.resetChatEditor();
+        this.currentEditor = '_chatEditorDOM';
+    }
+
+    removeAttachment() {
+        this.attachment = null;
+        this.resetChatEditor();
+        this.currentEditor = '_chatEditorDOM';
     }
 
     changeMsgInput(id) {
@@ -1616,7 +1743,6 @@ class ChatPage extends LitElement {
                 this.groupAdmin = membersAdminsWithName
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
-                console.log({membersAdminsWithName})
             } catch (error) {
                 console.error(error)
             }
@@ -1678,7 +1804,6 @@ class ChatPage extends LitElement {
                 this.editor.setEditable(true)
             }
         }
-        
     }
 
     async getName (recipient) {
@@ -2002,8 +2127,6 @@ class ChatPage extends LitElement {
         let decodedMessageObj = {};
 
         if (isReceipientVar === true) {
-            console.log('encoded', encodedMessageObj.isEncrypted, _publicKeyVar.hasPubKey,encodedMessageObj.data)
-            // direct chat
             if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
                 let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage };
@@ -2215,6 +2338,9 @@ class ChatPage extends LitElement {
         if(this.currentEditor === 'newChat'){
             this.editorImage.commands.setContent('')
         }
+        if(this.currentEditor === 'newAttachmentChat'){
+            this.editorAttachment.commands.setContent('')
+        }
     }
 
    async _sendMessage(outSideMsg, msg) {
@@ -2258,6 +2384,7 @@ class ChatPage extends LitElement {
         // find specific object property in local
         let typeMessage = 'regular';
         let workerImage;
+        let workerAttachment;
         this.isLoading = true;
         const trimmedMessage = msg
         
@@ -2286,10 +2413,10 @@ class ChatPage extends LitElement {
             let compressedFile = ''
             var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
 
-            if (this.webWorkerImage) {
-                workerImage = this.webWorkerImage;
+            if (this.webWorkerFile) {
+                workerImage = this.webWorkerFile;
             } else {
-                this.webWorkerImage = new WebWorkerImage();
+                this.webWorkerFile = new WebWorkerFile();
             }
    
         const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
@@ -2367,7 +2494,6 @@ class ChatPage extends LitElement {
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
-           
 
         }
         else if (outSideMsg && outSideMsg.type === 'image') {
@@ -2379,10 +2505,10 @@ class ChatPage extends LitElement {
                 return;
             }
 
-            if (this.webWorkerImage) {
-                workerImage = this.webWorkerImage;
+            if (this.webWorkerFile) {
+                workerImage = this.webWorkerFile;
             } else {
-                this.webWorkerImage = new WebWorkerImage();
+                this.webWorkerFile = new WebWorkerFile();
             }
 
             const image = this.imageFile
@@ -2412,41 +2538,101 @@ class ChatPage extends LitElement {
                 this.isUploadingImage = false;
                 return;
             }
-                try {
-                    await publishData({
-                        registeredName: userName,
-                        file : compressedFile,
-                        service: 'QCHAT_IMAGE',
-                        identifier : identifier,
-                        parentEpml,
-                        metaData: undefined,
-                        uploadType: 'file',
-                        selectedAddress: this.selectedAddress,
-                        worker: workerImage
-                    });
+            try {
+                await publishData({
+                    registeredName: userName,
+                    file : compressedFile,
+                    service: 'QCHAT_IMAGE',
+                    identifier : identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: workerImage
+                });
+            this.isUploadingImage = false;
+            this.removeImage();
+            } catch (error) {
+                console.error(error);
+                this.isLoading = false;
                 this.isUploadingImage = false;
-                this.removeImage()
-                } catch (error) {
-                    this.isLoading = false;
-                    this.isUploadingImage = false;
-                    return;
-                }
+                return;
+            }
             
-            
-             
-                const messageObject = {
-                    messageText: trimmedMessage,
-                    images: [{
-                            service: "QCHAT_IMAGE",
-                            name: userName,
-                            identifier: identifier
-                    }],
-                    isImageDeleted: false,
-                    repliedTo: '',
-                    version: 2
-                };
-                const stringifyMessageObject = JSON.stringify(messageObject);
-                this.sendMessage(stringifyMessageObject, typeMessage);
+            const messageObject = {
+                messageText: trimmedMessage,
+                images: [{
+                        service: "QCHAT_IMAGE",
+                        name: userName,
+                        identifier: identifier
+                }],
+                isImageDeleted: false,
+                repliedTo: '',
+                version: 2
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
+        }
+        else if (outSideMsg && outSideMsg.type === 'attachment') {
+            this.isUploadingAttachment = true;
+            const userName = await getName(this.selectedAddress.address);
+            if (!userName) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+                this.isLoading = false;
+                return;
+            }
+
+            if (this.webWorkerFile) {
+                workerAttachment = this.webWorkerFile;
+            } else {
+                this.webWorkerFile = new WebWorkerFile();
+            }
+
+            const attachment = this.attachment;
+            const id = this.uid();
+            const identifier = `qchat_${id}`;
+            const fileSize = attachment.size;
+            if (fileSize > 1000000) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange67"));
+                this.isLoading = false;
+                this.isUploadingAttachment = false;
+                return;
+            }
+            try {
+                await publishData({
+                    registeredName: userName,
+                    file : attachment,
+                    service: 'QCHAT_ATTACHMENT',
+                    identifier : identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: workerAttachment
+                });
+            this.isUploadingAttachment = false;
+            this.removeAttachment();
+            } catch (error) {
+                console.error(error);
+                this.isLoading = false;
+                this.isUploadingAttachment = false;
+                return;
+            }
+            const messageObject = {
+                messageText: trimmedMessage,
+                attachments: [{
+                        service: 'QCHAT_ATTACHMENT',
+                        name: userName,
+                        identifier: identifier,
+                        attachmentName: attachment.name,
+                        attachmentSize: attachment.size
+                }],
+                isAttachmentDeleted: false,
+                repliedTo: '',
+                version: 2
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if (outSideMsg && outSideMsg.type === 'reaction') {
             typeMessage = 'edit';
             let chatReference = outSideMsg.editedMessageObj.reference;

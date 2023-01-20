@@ -612,8 +612,9 @@ export const chatStyles = css`
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-	white-space: pre-wrap;
+		white-space: pre-wrap;
   }
+
   .replied-message pre code {
       color: inherit;
       padding: 0;
@@ -621,12 +622,10 @@ export const chatStyles = css`
       font-size: 0.8rem;
     }
 
-
   .replied-message img {
     width: 1.7em;
     height: 1.5em;
     margin: 0px;
-
   }
 
   .replied-message blockquote {
@@ -639,4 +638,77 @@ export const chatStyles = css`
     border-top: 2px solid rgba(#0D0D0D, 0.1);
     margin: 2rem 0;
   }
+
+	.attachment-container {
+		display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 5px 0 10px 0;
+    gap: 20px;
+		cursor: pointer;
+	}
+
+	.attachment-container:hover .download-icon::before {
+    background-color: rgb(161 158 158 / 41%);
+	}
+
+
+
+	.attachment-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--mdc-theme-primary);
+  }
+
+  .attachment-icon {
+    width: 70%;
+  }
+
+	.attachment-info {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+  
+  .attachment-name {
+    font-family: Work Sans, sans-serif;
+    font-size: 16px;
+    color: var(--chat-bubble-msg-color);
+    margin: 0;
+    letter-spacing: 0.4px;
+    padding: 5px 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+  }
+
+	.attachment-size {
+		font-family: Roboto, sans-serif;
+		font-size: 16px;
+		color: var(--chat-bubble-msg-color);
+		margin: 0;
+		letter-spacing: 0.3px;
+		font-weight: 300;
+	}
+	
+	.download-icon {
+		position: relative;
+		color: var(--chat-bubble-msg-color);
+    width: 19px;
+		background-color: transparent;
+	}
+
+	.download-icon::before {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+		padding: 18px;
+		background-color: transparent;
+		transition: all 0.3s ease-in-out;
+	}
 `
