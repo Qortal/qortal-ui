@@ -507,8 +507,8 @@ class ChatTextEditor extends LitElement {
                     ${this.chatMessageSize >= 750 ? 
                         html`
                         <div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
-                            <div class="message-size" style="${this.chatMessageSize > 1000 && 'color: #bd1515'}">
-                                ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
+                            <div class="message-size" style="${this.chatMessageSize > 4000 && 'color: #bd1515'}">
+                                ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 4000`}
                             </div>
                         </div>
                         ` : 
@@ -605,7 +605,7 @@ class ChatTextEditor extends LitElement {
     sendMessageFunc(props) {
         if(this.editor.isEmpty) return
         this.getMessageSize(this.editor.getJSON())
-        if (this.chatMessageSize > 1000 ) {
+        if (this.chatMessageSize > 4000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
             return;
         }
