@@ -603,7 +603,7 @@ class ChatTextEditor extends LitElement {
       }
 
     sendMessageFunc(props) {
-        if(this.editor.isEmpty) return
+        if(this.editor.isEmpty && this.iframeId !== 'newChat') return
         this.getMessageSize(this.editor.getJSON())
         if (this.chatMessageSize > 4000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
