@@ -9,6 +9,8 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
+import * as zip from "@zip.js/zip.js";
+import { saveAs } from 'file-saver';
 
 // import localForage from "localforage";
 registerTranslateConfig({
@@ -103,7 +105,8 @@ class ChatPage extends LitElement {
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
             userName: { type: String },
-            goToRepliedMessage: {attribute: false}
+            goToRepliedMessage: {attribute: false},
+            gifsToBeAdded: { type: Array}
         }
     }
 
@@ -891,6 +894,7 @@ class ChatPage extends LitElement {
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.isEnabledChatEnter = true
+        this.gifsToBeAdded = []
     }
 
     _toggle(value) {
@@ -922,6 +926,66 @@ class ChatPage extends LitElement {
     toggleEnableChatEnter(){
         localStorage.setItem('isEnabledChatEnter', !this.isEnabledChatEnter ) 
         this.isEnabledChatEnter = !this.isEnabledChatEnter
+    }
+
+    addGifs(gifs){
+        console.log('gifs', gifs)
+        this.gifsToBeAdded = [...this.gifsToBeAdded, ...gifs]
+        console.log('this.gifsToBeAdded', this.gifsToBeAdded)
+    }
+
+    async uploadGifCollection(){
+        try {
+            function blobToBase64(blob) {
+                return new Promise((resolve, _) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result);
+                  reader.readAsDataURL(blob);
+                });
+              }
+            const zipFileWriter = new zip.BlobWriter("application/zip");
+// Creates a TextReader object storing the text of the entry to add in the zip
+// (i.e. "Hello world!").
+const helloWorldReader = new zip.TextReader("Hello world!");
+
+// Creates a ZipWriter object writing data via `zipFileWriter`, adds the entry
+// "hello.txt" containing the text "Hello world!" via `helloWorldReader`, and
+// closes the writer.
+const file = this.gifsToBeAdded[0]
+const file2 = this.gifsToBeAdded[1]
+const zipWriter = new zip.ZipWriter(zipFileWriter, { bufferedWrite: true });
+await zipWriter.add(file.name, new zip.BlobReader(file));
+await zipWriter.add(file2.name, new zip.BlobReader(file2));
+
+await zipWriter.close();
+const zipFileBlob = await zipFileWriter.getData()
+const blobTobase = await blobToBase64(zipFileBlob)
+console.log({blobTobase})
+const userName = await this.getName(this.selectedAddress.address);
+            if (!userName) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+                this.isLoading = false;
+                return;
+            }
+            const id = this.uid();
+            const identifier = `gif_${id}`;
+await publishData({
+    registeredName: userName,
+    file : blobTobase.split(',')[1],
+    service: 'GIF_REPOSITORY',
+    identifier: identifier,
+    parentEpml,
+    metaData: undefined,
+    uploadType: 'zip',
+    selectedAddress: this.selectedAddress,
+    worker: this.webWorkerImage,
+    isBase64: true
+   })
+saveAs(zipFileBlob, 'zipfile');
+console.log({zipFileBlob})
+        } catch (error) {
+            console.log(error)
+        }
     }
     
     render() {
@@ -1107,6 +1171,34 @@ class ChatPage extends LitElement {
                                     ${translate("chatpage.cchange9")}
                                 </button>
                             </div>
+                        </div>
+                </div>    	
+            </wrapper-modal>
+            <!-- gif modal -->
+            <wrapper-modal 
+                .onClickFunc=${() => {
+                    // this.removeImage();
+                }} 
+                style=${true ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
+                    <div>
+                        <div class="dialog-container">
+                            
+                        <input 
+                            @change="${e => {
+                                this.addGifs(e.target.files);
+                                const filePickerInput = this.shadowRoot.getElementById('file-picker-gif') 
+                                if(filePickerInput){
+                                    filePickerInput.value = ""
+                                }
+                                    }
+                                }"
+                            id="file-picker-gif"
+                            ?multiple=${true}
+                            class="file-picker-input-gif" type="file" name="myGif" accept="image/gif" />
+
+                                <button @click=${()=> {
+                                    this.uploadGifCollection()
+                                }}>Upload Collection</button>
                         </div>
                 </div>    	
             </wrapper-modal>
