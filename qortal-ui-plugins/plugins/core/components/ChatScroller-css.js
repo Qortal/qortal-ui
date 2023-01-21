@@ -85,9 +85,9 @@ export const chatStyles = css`
 		color: #888888;
 		font-size: 13px;
 		user-select: none;
-		float: right;
-    padding-left: 15px;
-    text-align: right;
+		display: flex;
+		width: 100%;	
+		padding-top: 2px;
 	}
 
 	.message-data-time-hidden {
@@ -96,10 +96,9 @@ export const chatStyles = css`
 		color: #888888;
 		font-size: 13px;
 		user-select: none;
-		float: right;
-    padding-left: 15px;
-		padding-bottom: 3px;
-		text-align: right;
+		display: flex;
+		width: 100%;
+		padding-top: 2px;
 	}
 
 	.message-user-info {
@@ -643,6 +642,13 @@ export const chatStyles = css`
     margin: 2rem 0;
   }
 
+	.edited-message-style {
+		font-family: "Work Sans", sans-serif;
+    font-style: italic;
+    font-size: 13px;
+    visibility: visible;
+	}
+
   .blink-bg{
 	border-radius: 8px;
 		animation: blinkingBackground 3s;
@@ -652,4 +658,6 @@ export const chatStyles = css`
 
 		100%	        { background-color:rgba(var(--menuactivergb), 0)}
 	}
+
+
 `
