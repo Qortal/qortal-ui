@@ -147,7 +147,6 @@ class ChatPage extends LitElement {
         width: 800px;
     }
 
-
     .close-icon {
         color: #676b71;
         width: 18px;
@@ -375,9 +374,9 @@ class ChatPage extends LitElement {
 
   .repliedTo-message p mark {
 	background-color: #ffe066;
-  border-radius: 0.25em;
-  box-decoration-break: clone;
-  padding: 0.125em 0;
+    border-radius: 0.25em;
+    box-decoration-break: clone;
+    padding: 0.125em 0;
   }
 
   .reply-icon {
@@ -979,17 +978,20 @@ class ChatPage extends LitElement {
                                         <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                            ${this.repliedToMessageObj.toString() === '1' ? html`
-                                        ${this.repliedToMessageObj.message}
-                                        ` : ''}
-                                        ${this.repliedToMessageObj.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}    ` : ''}
-                                            
+                                            ${this.repliedToMessageObj.version.toString() === '1' ? html`
+                                            ${this.repliedToMessageObj.message}
+                                            ` : ''}
+                                            ${this.repliedToMessageObj.version.toString() === '2' 
+                                            ? html`
+                                                ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, 
+                                                [
+                                                    StarterKit,
+                                                    Underline,
+                                                    Highlight
+                                                    // other extensions …
+                                                ]))}
+                                            ` 
+                                            : ''}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
@@ -1006,12 +1008,13 @@ class ChatPage extends LitElement {
                                         <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                            ${unsafeHTML(generateHTML(this.editedMessageObj.message, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}
+                                                ${unsafeHTML(generateHTML(this.editedMessageObj.message, 
+                                                [
+                                                    StarterKit,
+                                                    Underline,
+                                                    Highlight
+                                                    // other extensions …
+                                                ]))}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
