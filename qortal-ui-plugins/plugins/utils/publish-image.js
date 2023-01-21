@@ -17,7 +17,8 @@ export const publishData = async ({
 	uploadType,
 	selectedAddress,
 	worker,
-	isBase64
+	isBase64,
+	metaData
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -131,7 +132,13 @@ export const publishData = async ({
 			let uploadDataUrl = `/arbitrary/${service}/${registeredName}${urlSuffix}?apiKey=${getApiKey()}`
 			if (identifier != null && identifier.trim().length > 0) {
 				uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?apiKey=${getApiKey()}`
+
+				if(metaData){
+					uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?${metaData}&apiKey=${getApiKey()}`
+					
+				}
 			}
+			
 			let uploadDataRes = await parentEpml.request("apiCall", {
 				type: "api",
 				method: "POST",

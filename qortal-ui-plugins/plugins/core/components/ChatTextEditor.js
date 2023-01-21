@@ -29,7 +29,8 @@ class ChatTextEditor extends LitElement {
                 reflect: true
               },
             toggleEnableChatEnter: {attribute: false},
-            isEnabledChatEnter: {type: Boolean}
+            isEnabledChatEnter: {type: Boolean},
+            setOpenGifModal: {attribute: false}
 		}
 	}
 
@@ -461,6 +462,13 @@ class ChatTextEditor extends LitElement {
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
+                ${this.setOpenGifModal ?
+                    html`
+                     <button  class="emoji-button" @click=${()=> this.setOpenGifModal(true)}>
+                     <span style="font-size: 30px" class="material-symbols-outlined">&#xe7a3;</span>
+                    </button>
+                    `
+                    : ''}
                 ${this.editedMessageObj ? (
                     html`
                     <div style="margin-bottom: 10px">

@@ -11,7 +11,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
 import * as zip from "@zip.js/zip.js";
 import { saveAs } from 'file-saver';
-
+import './ChatGifs'
 // import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -106,7 +106,7 @@ class ChatPage extends LitElement {
             selectedHead: { type: Object },
             userName: { type: String },
             goToRepliedMessage: {attribute: false},
-            gifsToBeAdded: { type: Array}
+            openGifModal: {type: Boolean}
         }
     }
 
@@ -894,7 +894,12 @@ class ChatPage extends LitElement {
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.isEnabledChatEnter = true
-        this.gifsToBeAdded = []
+        this.openGifModal = false
+    }
+
+    setOpenGifModal(value){
+        console.log({value})
+        this.openGifModal = value
     }
 
     _toggle(value) {
@@ -1104,6 +1109,7 @@ console.log({zipFileBlob})
                                 .repliedToMessageObj=${this.repliedToMessageObj}
                                 .toggleEnableChatEnter=${this.toggleEnableChatEnter}
                                 ?isEnabledChatEnter=${this.isEnabledChatEnter}
+                                .setOpenGifModal=${(val)=> this.setOpenGifModal(val)}
                                 >                           
                             </chat-text-editor>
                     </div>
@@ -1124,6 +1130,15 @@ console.log({zipFileBlob})
 			        </div>
             </div>
 			`: ''}
+                 <!-- gif modal -->
+            <wrapper-modal 
+                .onClickFunc=${() => {
+                    this.setOpenGifModal(false)
+                    // this.removeImage();
+                }} 
+                style=${this.openGifModal ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
+                    <chat-gifs .webWorkerImage=${this.webWorkerImage} ></chat-gifs>
+            </wrapper-modal>
                 <wrapper-modal 
                 .onClickFunc=${() => {
                     this.removeImage();
@@ -1174,34 +1189,7 @@ console.log({zipFileBlob})
                         </div>
                 </div>    	
             </wrapper-modal>
-            <!-- gif modal -->
-            <wrapper-modal 
-                .onClickFunc=${() => {
-                    // this.removeImage();
-                }} 
-                style=${true ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
-                    <div>
-                        <div class="dialog-container">
-                            
-                        <input 
-                            @change="${e => {
-                                this.addGifs(e.target.files);
-                                const filePickerInput = this.shadowRoot.getElementById('file-picker-gif') 
-                                if(filePickerInput){
-                                    filePickerInput.value = ""
-                                }
-                                    }
-                                }"
-                            id="file-picker-gif"
-                            ?multiple=${true}
-                            class="file-picker-input-gif" type="file" name="myGif" accept="image/gif" />
-
-                                <button @click=${()=> {
-                                    this.uploadGifCollection()
-                                }}>Upload Collection</button>
-                        </div>
-                </div>    	
-            </wrapper-modal>
+           
             <paper-dialog class="warning" id="confirmDialog" modal>
                 <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
                 <hr>
@@ -1511,7 +1499,7 @@ console.log({zipFileBlob})
       }
 
       initialChat(e) {
-        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
+        if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser &&!this.openGifModal) {
             // WARNING: Deprecated methods from KeyBoard Event
             if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
             } else if (inputKeyCodes.includes(e.keyCode)) {
