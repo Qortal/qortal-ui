@@ -25,7 +25,8 @@ class ChatWelcomePage extends LitElement {
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
             balance: { type: Number },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            setOpenPrivateMessage: { attribute: false }
         }
     }
 
@@ -212,7 +213,14 @@ class ChatWelcomePage extends LitElement {
                     <div class="center-box">
                         <mwc-icon class="img-icon">chat</mwc-icon><br>
                         <span style="font-size: 20px; color: var(--black);">${this.myAddress.address}</span>
-                        <div class="start-chat" @click=${() => this.shadowRoot.querySelector('#startSecondChatDialog').show()}>${translate("welcomepage.wcchange2")}</div>
+                        <div 
+                            class="start-chat" 
+                            @click="${() => this.setOpenPrivateMessage({
+                            name: "",
+                            open: true   
+                            })}">
+                            ${translate("welcomepage.wcchange2")}
+                        </div>
                     </div>
                 </div>
 
@@ -230,7 +238,11 @@ class ChatWelcomePage extends LitElement {
                         <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
                     </p>
                     
-                    <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${this._sendMessage}>${translate("welcomepage.wcchange6")}</mwc-button>
+                    <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${() => {
+                        this._sendMessage();
+                        }
+                    }>
+                    ${translate("welcomepage.wcchange6")}</mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="secondaryAction"
@@ -319,90 +331,90 @@ class ChatWelcomePage extends LitElement {
     }
 
     _sendMessage() {
-        this.isLoading = true
-
-        const recipient = this.shadowRoot.getElementById('sendTo').value
-        const messageBox = this.shadowRoot.getElementById('messageBox')
-        const messageText = messageBox.value
+        this.isLoading = true;
+        const recipient = this.shadowRoot.getElementById('sendTo').value;
+        const messageBox = this.shadowRoot.getElementById('messageBox');
+        const messageText = messageBox.value;
 
         if (recipient.length === 0) {
-            this.isLoading = false
+            this.isLoading = false;
         } else if (messageText.length === 0) {
-            this.isLoading = false
+            this.isLoading = false;
         } else {
-            this.sendMessage()
+            this.sendMessage();
         }
-    }
+    };
 
-    async sendMessage(e) {
-        this.isLoading = true
-
-        const _recipient = this.shadowRoot.getElementById('sendTo').value
-        const messageBox = this.shadowRoot.getElementById('messageBox')
-        const messageText = messageBox.value
-        let recipient
+    async sendMessage() {
+        this.isLoading = true;
+        const _recipient = this.shadowRoot.getElementById('sendTo').value;
+        const messageBox = this.shadowRoot.getElementById('messageBox');
+        const messageText = messageBox.value;
+        let recipient;
 
         const validateName = async (receiverName) => {
-            let myRes
+            let myRes;
             let myNameRes = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/names/${receiverName}`
-            })
-
+            });
             if (myNameRes.error === 401) {
-                myRes = false
+                myRes = false;
             } else {
-                myRes = myNameRes
-            }
+                myRes = myNameRes;
+            };
+            return myRes;
+        };
 
-            return myRes
-        }
+        const myNameRes = await validateName(_recipient);
 
-        const myNameRes = await validateName(_recipient)
         if (!myNameRes) {
-
-            recipient = _recipient
+            recipient = _recipient;
         } else {
-
-            recipient = myNameRes.owner
-        }
+            recipient = myNameRes.owner;
+        };
 
         let _reference = new Uint8Array(64);
         window.crypto.getRandomValues(_reference);
 
-        let sendTimestamp = Date.now()
+        let sendTimestamp = Date.now();
 
-        let reference = window.parent.Base58.encode(_reference)
+        let reference = window.parent.Base58.encode(_reference);
 
         const getAddressPublicKey = async () => {
-            let isEncrypted
-            let _publicKey
+            let isEncrypted;
+            let _publicKey;
 
             let addressPublicKey = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/addresses/publickey/${recipient}`
             })
 
-
             if (addressPublicKey.error === 102) {
-                _publicKey = false
+                _publicKey = false;
                 // Do something here...
-                let err1string = get("welcomepage.wcchange7")
-                parentEpml.request('showSnackBar', `${err1string}`)
-                this.isLoading = false
+                let err1string = get("welcomepage.wcchange7");
+                parentEpml.request('showSnackBar', `${err1string}`);
+                this.isLoading = false;
             } else if (addressPublicKey !== false) {
-                isEncrypted = 1
-                _publicKey = addressPublicKey
-                sendMessageRequest(isEncrypted, _publicKey)
+                isEncrypted = 1;
+                _publicKey = addressPublicKey;
+                sendMessageRequest(isEncrypted, _publicKey);
             } else {
-                isEncrypted = 0
-                _publicKey = this.selectedAddress.address
-                sendMessageRequest(isEncrypted, _publicKey)
-            }
+                isEncrypted = 0;
+                _publicKey = this.selectedAddress.address;
+                sendMessageRequest(isEncrypted, _publicKey);
+            };
         };
 
         const sendMessageRequest = async (isEncrypted, _publicKey) => {
-
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
             let chatResponse = await parentEpml.request('chat', {
                 type: 18,
                 nonce: this.selectedAddress.nonce,
@@ -411,14 +423,13 @@ class ChatWelcomePage extends LitElement {
                     recipient: recipient,
                     recipientPublicKey: _publicKey,
                     hasChatReference: 0,
-                    message: messageText,
+                    message: stringifyMessageObject,
                     lastReference: reference,
                     proofOfWorkNonce: 0,
                     isEncrypted: isEncrypted,
                     isText: 1
                 }
             })
-
             _computePow(chatResponse)
         }
 

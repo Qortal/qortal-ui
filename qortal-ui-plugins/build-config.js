@@ -8,6 +8,8 @@ const commonjs = require('@rollup/plugin-commonjs');
 const alias = require('@rollup/plugin-alias');
 const terser = require('@rollup/plugin-terser');
 const babel = require('@rollup/plugin-babel');
+const webWorkerLoader = require('rollup-plugin-web-worker-loader');
+
 
 const aliases = {};
 
@@ -40,6 +42,7 @@ const generateRollupConfig = (inputFile, outputFile) => {
 				commonjs(),
 				globals(),
 				progress(),
+				webWorkerLoader(),
 				babel.babel({
 					babelHelpers: 'bundled',
 					exclude: 'node_modules/**',

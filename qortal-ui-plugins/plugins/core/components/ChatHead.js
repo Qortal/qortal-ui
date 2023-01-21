@@ -13,14 +13,18 @@ class ChatHead extends LitElement {
             config: { type: Object },
             chatInfo: { type: Object },
             iconName: { type: String },
-            activeChatHeadUrl: { type: String }
+            activeChatHeadUrl: { type: String },
+            isImageLoaded: { type: Boolean },
+            setActiveChatHeadUrl: {attribute: false}
         }
     }
 
     static get styles() {
         return css`
             li {
-                padding: 10px 2px 20px 5px;
+           
+                width: 100%;
+                padding: 7px 5px 7px 5px;
                 cursor: pointer;
                 width: 100%;
             }
@@ -37,7 +41,7 @@ class ChatHead extends LitElement {
             .img-icon {
                 float: left;
                 font-size:40px;
-                color: var(--black);
+                color: var(--chat-group);
             }
 
             .about {
@@ -76,14 +80,54 @@ class ChatHead extends LitElement {
         this.chatInfo = {}
         this.iconName = ''
         this.activeChatHeadUrl = ''
+        this.isImageLoaded = false
+        this.imageFetches = 0
     }
 
+    createImage(imageUrl)  {
+        const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "width:40px; height:40px; float: left; border-radius:50%";
+        imageHTMLRes.onclick= () => {
+            this.openDialogImage = true;
+        }
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
+        }
+        imageHTMLRes.onerror = () => {   
+            if (this.imageFetches < 4) {
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 500);
+            } else {
+               
+
+                this.isImageLoaded = false
+            }
+        };
+        return imageHTMLRes;
+      }
+
     render() {
+        let avatarImg = '';
+        let backupAvatarImg = ''
+        if(this.chatInfo.name){
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+            avatarImg= this.createImage(avatarUrl)
+          
+        }
+
         return html`
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
-                <mwc-icon class="img-icon">account_circle</mwc-icon>
+                ${this.isImageLoaded ? html`${avatarImg}` : html`` }
+                ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
+                ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
+                ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
                 <div class="about">
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--black);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--black);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
+                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="float:right; padding: 0 1rem; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
                 </div>
             </li>
         `
@@ -108,8 +152,19 @@ class ChatHead extends LitElement {
         parentEpml.imReady()
     }
 
+    shouldUpdate(changedProperties) {
+        if(changedProperties.has('activeChatHeadUrl')){
+            return true
+        }
+        if(changedProperties.has('chatInfo')){
+            return true
+        }
+        
+        return false
+      }
+   
     getUrl(chatUrl) {
-        this.onPageNavigation(`/app/q-chat/${chatUrl}`)
+        this.setActiveChatHeadUrl(chatUrl)
     }
 
     onPageNavigation(pageUrl) {

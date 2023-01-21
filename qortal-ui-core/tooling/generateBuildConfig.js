@@ -7,6 +7,8 @@ const commonjs = require('@rollup/plugin-commonjs')
 const alias = require('@rollup/plugin-alias')
 const terser = require('@rollup/plugin-terser');
 const scss = require('rollup-plugin-scss')
+const webWorkerLoader = require('rollup-plugin-web-worker-loader');
+
 const generateES5BuildConfig = require('./generateES5BuildConfig')
 
 
@@ -61,6 +63,7 @@ const generateBuildConfig = ({ elementComponents, functionalComponents, otherOut
                 commonjs(),
                 globals(),
                 progress(),
+                webWorkerLoader(),
                 scss({
                     output: options.sassOutputDir
                 }),

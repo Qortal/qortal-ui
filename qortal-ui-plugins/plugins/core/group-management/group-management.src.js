@@ -1820,6 +1820,7 @@ class GroupManagement extends LitElement {
                     setTimeout(getGroupInvites, 1)
                     configLoaded = true
                 }
+                console.log('parse', JSON.parse(c))
                 this.config = JSON.parse(c)
             })
             parentEpml.subscribe('copy_menu_switch', async value => {

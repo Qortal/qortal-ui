@@ -232,7 +232,11 @@ class NameMenu extends LitElement {
                 <p style="margin-bottom:0;">
                     <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
                 </p>
-                <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${this._sendMessage}>${translate("welcomepage.wcchange6")}</mwc-button>
+                <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${() => {
+                    this._sendMessage();
+                    }
+                }>
+                ${translate("welcomepage.wcchange6")}</mwc-button>
                 <mwc-button
                     ?disabled="${this.isLoading}"
                     slot="secondaryAction"
@@ -246,15 +250,15 @@ class NameMenu extends LitElement {
     }
 
     firstUpdated() {
-        this.getChatBlockedAdresses()
+        this.getChatBlockedAdresses();
 
 	  setInterval(() => {
 	      this.getChatBlockedAdresses();
 	  }, 60000)
 
         window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
-            use(checkLanguage)
+            const checkLanguage = localStorage.getItem('qortalLanguage');
+            use(checkLanguage);
         })
 
         window.onclick = function(event) {
@@ -521,7 +525,13 @@ class NameMenu extends LitElement {
         };
 
         const sendMessageRequest = async (isEncrypted, _publicKey) => {
-
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
+            }
+            const stringifyMessageObject = JSON.stringify(messageObject)
             let chatResponse = await parentEpml.request('chat', {
                 type: 18,
                 nonce: this.selectedAddress.nonce,
@@ -530,7 +540,7 @@ class NameMenu extends LitElement {
                     recipient: recipient,
                     recipientPublicKey: _publicKey,
                     hasChatReference: 0,
-                    message: messageText,
+                    message: stringifyMessageObject,
                     lastReference: reference,
                     proofOfWorkNonce: 0,
                     isEncrypted: isEncrypted,
