@@ -243,7 +243,7 @@ class Websites extends LitElement {
                     <mwc-tab label="${translate("websitespage.schange2")}" icon="desktop_windows" @click="${(e) => this.displayTabContent('followed')}"></mwc-tab>
                     <mwc-tab label="${translate("websitespage.schange3")}" icon="block" @click="${(e) => this.displayTabContent('blocked')}"></mwc-tab>
                 </mwc-tab-bar>
-                <z id="tabs-1-content">
+                <div id="tabs-1-content">
                     <div id="tab-browse-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
         	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("websitespage.schange1")}</h2>
@@ -703,7 +703,7 @@ class Websites extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}"><img src="${url}" onerror="this.src='/img/qortal-chat-logo.png';"></a>`
+        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}"><img src="${url}" onerror="this.src='/img/incognito.png';"></a>`
     }
 
     renderRelayModeText() {

@@ -272,7 +272,7 @@ class NameRegistration extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`;
-        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';">`
+        return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
     renderAvatarButton(nameObj) {

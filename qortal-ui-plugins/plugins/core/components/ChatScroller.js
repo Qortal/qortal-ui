@@ -52,7 +52,8 @@ class ChatScroller extends LitElement {
             userName: { type: String },
             selectedHead: { type: Object },
             goToRepliedMessage: { attribute: false },
-            getOldMessageAfter: {attribute: false}
+            getOldMessageAfter: {attribute: false},
+            listSeenMessages: {type: Array}
         }
     }
 
@@ -67,6 +68,11 @@ class ChatScroller extends LitElement {
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
         this.openTipUser = false;
         this.openUserInfo = false;
+        this.listSeenMessages= []
+    }
+
+    addSeenMessage(val){
+        this.listSeenMessages.push(val)
     }
 
     render() {
@@ -138,6 +144,8 @@ class ChatScroller extends LitElement {
                             .setUserName=${(val) => this.setUserName(val)}
                             id=${message.reference}
                             .goToRepliedMessage=${this.goToRepliedMessage}
+                            .addSeenMessage=${(val)=> this.addSeenMessage(val)}
+                            .listSeenMessages=${this.listSeenMessages}
                             >
                             </message-template>`
                     )
@@ -284,6 +292,9 @@ class MessageTemplate extends LitElement {
             setUserName: { attribute: false },
             openTipUser:{ type: Boolean },
             goToRepliedMessage: { attribute: false },
+            listSeenMessages: {type: Array},
+            addSeenMessage: {attribute: false},
+            
         }
     }
 
@@ -300,7 +311,7 @@ class MessageTemplate extends LitElement {
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
-        this.viewImage = false
+        this.viewImage =  false
     }
 
     static styles = [chatStyles]
@@ -328,6 +339,12 @@ class MessageTemplate extends LitElement {
             this.showBlockAddressIcon = true;
         } else {
             this.showBlockAddressIcon = false;
+        }
+    }
+
+    firstUpdated(){
+        if(this.listSeenMessages.includes(this.messageObj.reference)){
+            this.viewImage =  true
         }
     }
 
@@ -381,9 +398,9 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
         } else {
-            avatarImg = html`<img src='/img/qortal-chat-logo.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
      const createImage = (imageUrl) => {
@@ -455,7 +472,6 @@ class MessageTemplate extends LitElement {
         }
         const escapedMessage = this.escapeHTML(message)
         const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
-
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
             class="clearfix message-parent" 
@@ -558,14 +574,14 @@ class MessageTemplate extends LitElement {
                   ]))}
                                         ` : ''}
                                         
-                                            <!-- ${repliedToData.decodedMessage.messageText} -->
-                                        </p>
+                                            </p>
                                     </div>
                                     `}
                                     ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
+                                            this.addSeenMessage(this.messageObj.reference)
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
@@ -597,6 +613,9 @@ class MessageTemplate extends LitElement {
                                         ${unsafeHTML(messageVersion2)}
                                         ` : ''}
                                         ${version.toString() === '1' ? html`
+                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        ` : ''}
+                                        ${version.toString() === '0' ? html`
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         ` : ''}
                                         <div 

@@ -158,12 +158,12 @@ class LevelFounder extends LitElement {
 
     renderLevel() {
         let adresslevel = this.memberInfo.level;
-        return html `
+        return adresslevel ? html `
             <img id="level-img" src=${`/img/badges/level-${adresslevel}.png`} alt=${`badge-${adresslevel}`} class="message-data-level" />
             <paper-tooltip class="level-img-tooltip" for="level-img" position="top" >
             ${translate("mintingpage.mchange27")} ${adresslevel}
             </paper-tooltip>
-        `
+        ` : ''
     }
 
     _textMenu(event) {

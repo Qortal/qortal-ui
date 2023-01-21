@@ -77,8 +77,8 @@ export const chatStyles = css`
 	}
 
 	.message-data-my-name {
-		color: #cf21e8;
-		text-shadow: 0 0 3px #cf21e8;
+		color: var(--mdc-theme-primary);
+		text-shadow: 0 0 3px var(--mdc-theme-primary);
 	}
 
 	.message-data-time {

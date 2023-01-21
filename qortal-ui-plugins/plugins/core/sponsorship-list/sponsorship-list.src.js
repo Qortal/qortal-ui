@@ -534,7 +534,7 @@ class SponsorshipList extends LitElement {
 										${sponsorship?.name ? html`
 											<img  src=${sponsorship.url}
 												class="avatar-img"
-												onerror="this.src='/img/qortal-chat-logo.png'"
+												onerror="this.src='/img/incognito.png'"
 											/>
 										` : ''}		
 										${sponsorship?.name || sponsorship.address}
