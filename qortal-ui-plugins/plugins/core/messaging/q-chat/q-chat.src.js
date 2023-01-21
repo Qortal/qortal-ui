@@ -163,8 +163,6 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log(12, "q-chat here");
-        console.log(window.location.href);
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">

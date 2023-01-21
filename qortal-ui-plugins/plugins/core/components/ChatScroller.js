@@ -71,12 +71,12 @@ class ChatScroller extends LitElement {
     }
 
     render() {
+        console.log(4, "here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
             let sender;
             let repliedToData;
-            
             let firstMessageInChat;
 
             if (index === 0) {
@@ -328,7 +328,6 @@ class MessageTemplate extends LitElement {
             const res = await axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}`, { responseType: 'blob' })
             .then(response =>{              
                 let filename = attachment.attachmentName;
-                console.log({response: response.data});
                 let blob = new Blob([response.data], { type:"application/octet-stream" });
                 saveAs(blob , filename);
             })
@@ -338,6 +337,7 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
+        console.log(this.messageObj, "message object here");
         const hidemsg = this.hideMessages;
         let message = "";
         let messageVersion2 = ""
@@ -347,10 +347,10 @@ class MessageTemplate extends LitElement {
         let isImageDeleted = false;
         let version = 0;
         let isForwarded = false
+        let isEdited = false
         let attachment = null;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-            console.log({parsedMessageObj});
             if(parsedMessageObj.version.toString() === '2'){
 
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
@@ -366,10 +366,10 @@ class MessageTemplate extends LitElement {
             reactions = parsedMessageObj.reactions || [];
             version = parsedMessageObj.version
             isForwarded = parsedMessageObj.type === 'forward'
+            isEdited = this.messageObj.editedTimestamp && true
            if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
                 attachment = parsedMessageObj.attachments[0];
             }
-            console.log({parsedMessageObj});
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
@@ -384,6 +384,7 @@ class MessageTemplate extends LitElement {
         let levelFounder = '';
         let hideit = hidemsg.includes(this.messageObj.sender);
         let forwarded = ''
+        let edited = ''
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
         if (this.messageObj.senderName) {
@@ -443,6 +444,12 @@ class MessageTemplate extends LitElement {
         forwarded = html`
         <span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">
             ${translate("blockpage.bcchange17")}
+        </span>
+        `;
+
+        edited = html`
+        <span class="edited-message-style">
+            ${translate("chatpage.cchange68")}
         </span>
         `;
 
@@ -634,6 +641,14 @@ class MessageTemplate extends LitElement {
                                             ? 'message-data-time'
                                             : 'message-data-time-hidden'
                                         }">
+                                            ${isEdited ? 
+                                                html`
+                                                    <span>
+                                                        ${edited}
+                                                    </span>
+                                                    `
+                                                : null
+                                            }
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
                                         </div>
                                     </div>
