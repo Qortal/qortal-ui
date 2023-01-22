@@ -40,8 +40,6 @@
     "electron": "22.0.3",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
-    "eslint-plugin-lit": "1.8.0",
-    "eslint-plugin-wc": "1.4.0",
     "shelljs": "0.8.5"
   },
   "engines": {
