@@ -2724,7 +2724,7 @@ class ChatPage extends LitElement {
             const messageObject = {
                 ...message,
                 messageText: trimmedMessage,
-                
+                isEdited: true
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
