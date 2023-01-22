@@ -2993,6 +2993,15 @@ class ChatPage extends LitElement {
                     let successString = get("blockpage.bcchange15");
                     parentEpml.request('showSnackBar', `${successString}`);
                 }
+
+                this.closeEditMessageContainer()
+                this.closeRepliedToContainer()
+                this.openForwardOpen = false
+                this.forwardActiveChatHeadUrl = {
+                url: "",
+                name: "",
+                selected: false
+                }
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
@@ -3004,14 +3013,7 @@ class ChatPage extends LitElement {
                 return
             }
             this.isLoading = false;
-            this.closeEditMessageContainer()
-            this.closeRepliedToContainer()
-            this.openForwardOpen = false
-            this.forwardActiveChatHeadUrl = {
-                url: "",
-                name: "",
-                selected: false
-            }
+            
         };
 
         if (isForward) {

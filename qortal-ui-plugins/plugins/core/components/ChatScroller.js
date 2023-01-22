@@ -874,6 +874,10 @@ class ChatMenu extends LitElement {
                 class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange14")}" 
                 @click="${() => {
+                    if (this.version === '0') {
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.messageForwardFunc()
                     }}">
                     <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
