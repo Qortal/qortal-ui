@@ -849,7 +849,7 @@ class MultiWallet extends LitElement {
                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div style="display: inline;">
-                            ${this.renderSQB()}
+                            ${this.selectedTransaction.type === 'DEPLOY_AT' ? html`${this.renderCAB()}` : html`${this.renderSQB()}`}
                         </div>
                         <br />
                         ${!this.selectedTransaction.amount ? '' : html`
@@ -3843,6 +3843,23 @@ class MultiWallet extends LitElement {
         }
     }
 
+    renderCAB() {
+        return html`
+            <span>${this.selectedTransaction.aTAddress}</span>
+            <button-icon-copy 
+                title="${translate("blockpage.bcchange8")}"
+                onSuccessMessage="${translate("walletpage.wchange4")}"
+                onErrorMessage="${translate("walletpage.wchange39")}"
+                textToCopy=${this.selectedTransaction.aTAddress}
+                buttonSize="24px"
+                iconSize="16px"
+                color="var(--copybutton)"
+                offsetLeft="4px"
+            >
+            </button-icon-copy>
+        `
+    }
+
     renderFetchText() {
         return html`${translate("walletpage.wchange1")}`
     }
@@ -4897,7 +4914,12 @@ class MultiWallet extends LitElement {
                     path="creatorAddress"
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}" path="recipient"></vaadin-grid-column>
+                <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.type === 'DEPLOY_AT' ? html`${data.item.aTAddress}` : html`${data.item.recipient}`}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
                 <vaadin-grid-column auto-width header="${translate("walletpage.wchange36")}" path="fee"></vaadin-grid-column>
                 <vaadin-grid-column auto-width header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
                 <vaadin-grid-column auto-width

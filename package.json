@@ -37,7 +37,7 @@
     "os-locale": "3.0.0"
   },
   "devDependencies": {
-    "electron": "22.0.2",
+    "electron": "22.0.3",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
     "eslint-plugin-lit": "1.8.0",
