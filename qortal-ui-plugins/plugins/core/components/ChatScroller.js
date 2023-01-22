@@ -150,7 +150,7 @@ class ChatScroller extends LitElement {
                             </message-template>`
                     )
                 })}
-                <div id='downObserver'></div>
+                <div style=${"height: 1px;"} id='downObserver'></div>
             </ul>
         `
     }
@@ -374,9 +374,9 @@ class MessageTemplate extends LitElement {
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
-            version = parsedMessageObj.version
-            isForwarded = parsedMessageObj.type === 'forward'
-            isEdited = this.messageObj.editedTimestamp && true
+            version = parsedMessageObj.version;
+            isForwarded = parsedMessageObj.type === 'forward';
+            isEdited = parsedMessageObj.isEdited && true;
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
