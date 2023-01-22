@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import '@material/mwc-icon'
 import ShortUniqueId from 'short-unique-id';
 import { publishData } from '../../utils/publish-image.js';
-
+import './ChatGifsExplore'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChatGifs extends LitElement {
@@ -14,6 +14,7 @@ class ChatGifs extends LitElement {
         return {
             selectedAddress: { type: Object },
             myGifCollections: { type: Array },
+            exploreCollections: { type: Array },
             gifsToBeAdded: { type: Array},
             webWorkerImage: {type: Object},
             mode: {type: String},
@@ -32,19 +33,172 @@ class ChatGifs extends LitElement {
         this.uid = new ShortUniqueId()
         this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.myGifCollections = []
+        this.exploreCollections = []
         this.myAccountName = ''
         this.gifsToBeAdded = []
         // mode can be 'myCollection', 'newCollection', 'explore', 'subscribedCollection'
         this.mode = "myCollection"
         this.currentCollection = null
+        this.pageNumber = 1
+        this.downObserverElement = ''
+        this.viewElement = ''
+    }
+
+   async structureCollections(gifCollections){
+    try {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const getMetaDataGifs = (gifCollections || []).map(async (collection) => {
+            let collectionObj = collection
+            try {
+              const metaData =  await parentEpml.request('apiCall', {
+                    url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`
+                })
+
+                collectionObj = {
+                    ...collection,
+                    gifUrls: []
+                }
+                if(metaData.description){
+                    const metaDataArray = metaData.description.split(';').map((data)=> {
+                        return `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`
+                    })
+                
+                    
+                   collectionObj = {
+                        ...collection,
+                        gifUrls: metaDataArray
+                    }
+                   
+                }   
+
+               
+                
+            } catch (error) {
+                console.log(error)
+            }
+    
+            return collectionObj
+        })
+        return  await Promise.all(getMetaDataGifs)
+    } catch (error) {
+        
+    }
+    }
+
+    elementObserver() {
+        const options = {
+            root: this.viewElement,
+            rootMargin: '0px',
+            threshold: 1
+        }
+        // identify an element to observe
+        const elementToObserve = this.downObserverElement;
+        // passing it a callback function
+        const observer = new IntersectionObserver(this.observerHandler, options);
+        // call `observe()` on that MutationObserver instance,
+        // passing it the element to observe, and the options object
+        observer.observe(elementToObserve);
+    }
+
+    observerHandler(entries) {
+        if (!entries[0].isIntersecting) {
+            return
+        } else {
+            if(this.exploreCollections.length < 20){
+                return
+            }
+ 
+            this.getMoreExploreGifs()
+        }
+    }
+
+    async getMoreExploreGifs(){
+        try {
+      
+            const getAllGifCollections = await parentEpml.request("apiCall", {
+                type: "api",
+                url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${this.pageNumber * 20}`,
+            });
+
+            const gifCollectionWithMetaData = await this.structureCollections(getAllGifCollections)
+            this.exploreCollections = [...this.exploreCollections, ...gifCollectionWithMetaData]
+
+            this.pageNumber = this.pageNumber + 1
+        } catch (error) {
+          console.error(error)
+        }
+    }
+
+    async getCollectionList(){
+        try {
+            await parentEpml.request("apiCall", {
+                type: "api",
+                url: `/lists/gifSubscribedRepos`,
+            });
+           
+        } catch (error) {
+            
+        }
+    }
+
+    async addCollectionToList(collection){
+        try {
+      
+            const body = {
+				
+                "items": [
+                    collection
+                ]
+              
+        }
+        const bodyToString = JSON.stringify(body)
+          await parentEpml.request("apiCall", {
+            type: "api",
+            method: "POST",
+            url: `/lists/gifSubscribedRepos`,
+            body: bodyToString,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        } catch (error) {
+            
+        }
+    }
+
+    async removeCollectionFromList(collection){
+        try {
+      
+            const body = {
+				
+                "items": [
+                    collection
+                ]
+              
+        }
+        const bodyToString = JSON.stringify(body)
+          await parentEpml.request("apiCall", {
+            type: "api",
+            method: 'DELETE',
+            url: `/lists/gifSubscribedRepos`,
+            body: bodyToString,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        } catch (error) {
+            
+        }
     }
 
     async firstUpdated() {
-       
+        this.viewElement = this.shadowRoot.getElementById('viewElement');
+        this.downObserverElement = this.shadowRoot.getElementById('downObserver');
+        this.elementObserver();
 
         try {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+          
             const userName = await this.getName(this.selectedAddress.address);
             this.myAccountName = userName
             if(this.myAccountName){
@@ -52,44 +206,43 @@ class ChatGifs extends LitElement {
                     url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}`
                 })
 
-            
-                const getMetaDataGifs = (getMyGifColloctions || []).map(async (collection) => {
-                    let collectionObj = collection
-                    try {
-                      const metaData =  await parentEpml.request('apiCall', {
-                            url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`
-                        })
-
-                        collectionObj = {
-                            ...collection,
-                            gifUrls: []
-                        }
-                        if(metaData.description){
-                            const metaDataArray = metaData.description.split(';').map((data)=> {
-                                return `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`
-                            })
-                            const listOfGifs = [`${nodeUrl}/arbitrary/GIF_REPOSITORY/Phil/gif_pmBEwm?filepath=giphy (1).gif`, `${nodeUrl}/arbitrary/GIF_REPOSITORY/Phil/gif_pmBEwm?filepath=giphy (3).gif`]
-                            
-                           collectionObj = {
-                                ...collection,
-                                gifUrls: metaDataArray
-                            }
-                           
-                        }   
-
-                       
-                        
-                    } catch (error) {
-                        console.log(error)
-                    }
-            
-                    return collectionObj
-                })
-                const gifCollectionWithMetaData =  await Promise.all(getMetaDataGifs)
+                const gifCollectionWithMetaData = await this.structureCollections(getMyGifColloctions)
+                
                 console.log({gifCollectionWithMetaData})
                 this.myGifCollections = gifCollectionWithMetaData
             }
-            
+            // for the explore section
+            const getAllGifCollections = await parentEpml.request("apiCall", {
+                type: "api",
+                url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${this.pageNumber * 20}`,
+            });
+            console.log({getAllGifCollections})
+            const gifCollectionWithMetaData = await this.structureCollections(getAllGifCollections)
+            this.exploreCollections = gifCollectionWithMetaData
+            this.pageNumber = this.pageNumber + 1
+
+            const getCollectionList = await this.getCollectionList()
+
+            let savedCollections = []
+
+            const getSavedGifRepos = (!Array.isArray(getCollectionList) || []).map(async (collection) => {
+                let collectionObj = collection
+                try {
+                  const data =  await parentEpml.request('apiCall', {
+                        url: `/arbitrary/GIF_REPOSITORY/collection`
+                    })
+                    savedCollections.push(data)
+
+                } catch (error) {
+                    console.log(error)
+                }
+        
+                return collectionObj
+            })
+          await Promise.all(getSavedGifRepos)
+
+            console.log({savedCollections})
+
         } catch (error) {
             
         }
@@ -184,6 +337,10 @@ console.log({zipFileBlob})
         }
     }
 
+    setCurrentCollection(val){
+        this.currentCollection = val
+    }
+
     render() {
 
         return html`
@@ -201,7 +358,7 @@ console.log({zipFileBlob})
                             <button @click=${()=> {
                                 this.mode = "explore"
                             }}>Explore collections</button>
-                           
+                         
 
 ${this.mode === "myCollection" && !this.currentCollection ? html`
                         ${this.myGifCollections.map((collection)=> {
@@ -215,10 +372,33 @@ ${this.mode === "myCollection" && !this.currentCollection ? html`
                                 `
                             })}
                         ` : ''}
-                        ${this.currentCollection ? html`
+                        ${this.mode === "explore" && !this.currentCollection ? html`
+                        <chat-gifs-explore currentCollection=${this.currentCollection} .getMoreExploreGifs=${(val)=> this.getMoreExploreGifs(val)} .exploreCollections=${this.exploreCollections}
+                        .setCurrentCollection=${(val)=> this.setCurrentCollection(val)}
+                        ></chat-gifs-explore>
+                        
+                        ` : ''}
+                        ${this.currentCollection && this.mode === "myCollection" ? html`
                         <button @click=${()=> {
                                     this.currentCollection = null
                                 }}>Back</button>
+                        ${this.currentCollection.gifUrls.map((gif)=> {
+                                    console.log({gif})
+
+                                  return html`
+                                    <img onerror=${(e)=> {
+                                        e.target.src = gif
+                                    }} src=${gif} style="width: 50px; height: 50px" />
+                                   `
+                                })}
+                        ` : ''}
+                        ${this.currentCollection && this.mode === "explore" ? html`
+                        <button @click=${()=> {
+                                    this.currentCollection = null
+                                }}>Back</button>
+                          <button @click=${()=> {
+                                    this.currentCollection = null
+                                }}>Subscribe to this collection</button>
                         ${this.currentCollection.gifUrls.map((gif)=> {
                                     console.log({gif})
 
