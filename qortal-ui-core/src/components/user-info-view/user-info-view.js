@@ -1171,7 +1171,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog" modal>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="userBoughtDialog">
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.boughtBTCTemplate()}
@@ -1191,7 +1191,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
 
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog" modal>
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px; overflow: auto;" id="userSoldDialog">
                 <div class="card-explorer-container">
                     <div id="first-explorer-section">
                         ${this.soldBTCTemplate()}
