@@ -1613,7 +1613,7 @@ class ChatPage extends LitElement {
 
         const isRecipient = this.chatId.includes('direct') === true ? true : false;
         const groupId = this.chatId.split('/')[1];
-        if(!isRecipient && groupId !== 0){
+        if(!isRecipient && groupId.toString() !== '0'){
 
             try {
                 const getMembers = await parentEpml.request("apiCall", {
