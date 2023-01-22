@@ -532,8 +532,23 @@
       "cchange22":"Üzenetek Betöltése...",
       "cchange23":"Az Üzenet Nem Visszafejthető!",
       "cchange24":"Üzenetenkénti maximális karakterszám 255",
-      "cchange25":"Az Ön egyenlege 4,20 QORT alatt van",
-      "cchange26":"A spam elleni küzdelem szükségessége miatt a 4,20 alatti Qort-egyenleggel rendelkező fiókoknál sokáig tart az üzenetek KÜLDÉSE a Q-Chat szolgáltatásban. Ha azonnal meg szeretné növelni a Q-Chat üzenetek küldési sebességét, szerezzen be 4,20 feletti QORT az Ön címére. Ezt megteheti a Kereskedelmi Portálon végzett kereskedésekkel, vagy egy másik QORT-al, amely megadja a QORT-t. Ha 4,20 QORT felett van a fiókjában, a Q-Chat üzenetek azonnal megjelennek, és ez a párbeszédpanel többé nem Köszönjük, hogy megértette ezt a szükséges spammegelőzési módszert, és reméljük, hogy élvezni fogja a Qortalt!"
+      "cchange25":"Üzenet szerkesztése",
+      "cchange26":"A fájl mérete meghaladja a 0,5 MB-ot",
+      "cchange27":"A képek küldéséhez regisztrált név szükséges",
+      "cchange28":"Ez a fájl nem kép",
+      "cchange29":"Az üzenet maximális mérete 1000 bájt",
+      "cchange30":"Kép feltöltése. Ez akár egy percig is eltarthat.",
+      "cchange31":"Kép törlése. Ez akár egy percig is eltarthat."
+      "cchange33":"Mégse",
+      "cchange34":"Ez a csevegőüzenet egy régebbi üzenetverziót használ, és nem tudja használni ezt a funkciót."",
+      "cchange35":"Hiba történt a felhasználó nevének lekérésekor. Kérjük, próbálja újra!",
+      "cchange36":"Keresési eredmények",
+      "cchange37":"Nincs eredmény",
+      "cchange38":"Felhasználó ellenőrizve",
+      "cchange39":"Ennek a felhasználónak nem lehet titkosított üzenetet küldeni, mivel nincs nyilvános kulcsa a láncban.",
+      "cchange40":"IMAGE (kattintson a megtekintéséhez)",
+      "cchange41":"Az Ön egyenlege 4,20 QORT alatt van",
+      "cchange42":"A spam elleni küzdelem szükségessége miatt a 4,20 alatti Qort-egyenleggel rendelkező fiókoknál sokáig tart az üzenetek KÜLDÉSE a Q-Chat szolgáltatásban. Ha azonnal meg szeretné növelni a Q-Chat üzenetek küldési sebességét, szerezzen be 4,20 feletti QORT az Ön címére. Ezt megteheti a Kereskedelmi Portálon végzett kereskedésekkel, vagy egy másik QORT-al, amely megadja a QORT-t. Ha 4,20 QORT felett van a fiókjában, a Q-Chat üzenetek azonnal megjelennek, és ez a párbeszédpanel többé nem Köszönjük, hogy megértette ezt a szükséges spammegelőzési módszert, és reméljük, hogy élvezni fogja a Qortalt!"
    },
    "welcomepage":{
       "wcchange1":"Üdvözöljük a Q-Chathoz",
