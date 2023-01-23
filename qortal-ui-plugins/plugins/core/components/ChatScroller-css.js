@@ -649,11 +649,6 @@ export const chatStyles = css`
 		cursor: pointer;
 	}
 
-	.attachment-container:hover .download-icon::before {
-    background-color: rgb(161 158 158 / 41%);
-	}
-
-
 
 	.attachment-icon-container {
     display: flex;
@@ -703,6 +698,11 @@ export const chatStyles = css`
     width: 19px;
 		background-color: transparent;
 	}
+
+	.download-icon:hover::before {
+    background-color: rgb(161 158 158 / 41%);
+	}
+
 
 	.download-icon::before {
 		content: "";

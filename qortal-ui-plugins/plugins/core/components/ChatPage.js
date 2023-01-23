@@ -79,7 +79,9 @@ class ChatPage extends LitElement {
             imageFile: { type: Object },
             attachment: { type: Object },
             isUploadingImage: { type: Boolean },
+            isDeletingImage: { type: Boolean },
             isUploadingAttachment: { type: Boolean },
+            isDeletingAttachment: { type: Boolean },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: { type: Boolean },
@@ -1088,13 +1090,14 @@ class ChatPage extends LitElement {
 			            </div>
                     </div>
 			    `: ''}
-                ${(this.isUploadingAttachment) ? html`
+                ${(this.isUploadingAttachment || this.isDeletingAttachment) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
                             <div class="dialog-container-loader">
                                 <div class=${`smallLoading marginLoader`}></div>
                                     <p>
-                                        ${translate("chatpage.cchange65")}
+                                    ${this.isDeletingAttachment ?
+                                        translate("chatpage.cchange66") : translate("chatpage.cchange65")}
                                     </p>
                                 </div>			
                             </div>                        
@@ -2419,56 +2422,146 @@ class ChatPage extends LitElement {
                 this.webWorkerFile = new WebWorkerFile();
             }
    
-        const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
-            const byteCharacters = atob(b64Data);
-            const byteArrays = [];
-            
-            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                const slice = byteCharacters.slice(offset, offset + sliceSize);
-            
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
+            const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+                
+                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    const slice = byteCharacters.slice(offset, offset + sliceSize);
+                
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                
+                const blob = new Blob(byteArrays, {type: contentType});
+                return blob;
+            }
+            const blob = b64toBlob(str, 'image/png');
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            });
+                        
+                            compressedFile = file;
+                            resolve();
+                        },
+                        error(err) {
+                            console.log(err.message);
+                        },
+                    })
+                })
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file : compressedFile,
+                        service: 'QCHAT_IMAGE',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: workerImage
+                    })
+                    this.isDeletingImage = false
+                } catch (error) {
+                    this.isLoading = false;
+                    return
+                }
+                    typeMessage = 'edit';
+                    let chatReference = outSideMsg.editedMessageObj.reference;
+
+                if(outSideMsg.editedMessageObj.chatReference){
+                    chatReference = outSideMsg.editedMessageObj.chatReference;
                 }
             
-                const byteArray = new Uint8Array(byteNumbers);
-                byteArrays.push(byteArray);
+                let message = "";
+            try {
+                const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
+                message = parsedMessageObj;
+                
+            } catch (error) {
+                message = outSideMsg.editedMessageObj.decodedMessage;
             }
-            
-            const blob = new Blob(byteArrays, {type: contentType});
-            return blob;
-        }
-      const blob = b64toBlob(str, 'image/png');
-            await new Promise(resolve => {
-                new Compressor(blob, {
-                    quality: 0.6,
-                    maxWidth: 500,
-                    success(result) {
-                        const file = new File([result], "name", {
-                            type: 'image/png'
-                        });
-                       
-                        compressedFile = file;
-                        resolve();
-                    },
-                    error(err) {
-                        console.log(err.message);
-                      },
+                const messageObject = {
+                    ...message,
+                    isImageDeleted: true
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject);
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
+        } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
+            this.isDeletingAttachment = true;
+            let compressedFile = ''
+            var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
+            const userName = outSideMsg.name;
+            const identifier = outSideMsg.identifier;
+
+            if (this.webWorkerFile) {
+                workerAttachment = this.webWorkerFile;
+            } else {
+                this.webWorkerFile = new WebWorkerFile();
+            }
+
+            const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+                
+                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    const slice = byteCharacters.slice(offset, offset + sliceSize);
+                
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                
+                const blob = new Blob(byteArrays, {type: contentType});
+                return blob;
+            }
+
+            const blob = b64toBlob(str, 'image/png');
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            });
+                        
+                            compressedFile = file;
+                            resolve();
+                        },
+                        error(err) {
+                            console.log(err.message);
+                        },
+                    })
                 })
-            })
+
             try {
                 await publishData({
                     registeredName: userName,
-                    file : compressedFile,
-                    service: 'QCHAT_IMAGE',
+                    file: compressedFile,
+                    service: 'QCHAT_ATTACHMENT',
                     identifier: identifier,
                     parentEpml,
                     metaData: undefined,
                     uploadType: 'file',
                     selectedAddress: this.selectedAddress,
-                    worker: workerImage
-                   })
-                   this.isDeletingImage = false
+                    worker: workerAttachment
+                })
+                this.isDeletingAttachment = false
             } catch (error) {
                 this.isLoading = false;
                 return
@@ -2479,7 +2572,7 @@ class ChatPage extends LitElement {
             if(outSideMsg.editedMessageObj.chatReference){
                 chatReference = outSideMsg.editedMessageObj.chatReference;
             }
-           
+        
             let message = "";
         try {
             const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
@@ -2490,13 +2583,11 @@ class ChatPage extends LitElement {
         }
             const messageObject = {
                 ...message,
-                isImageDeleted: true
+                isAttachmentDeleted: true
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
-
-        }
-        else if (outSideMsg && outSideMsg.type === 'image') {
+        } else if (outSideMsg && outSideMsg.type === 'image') {
             this.isUploadingImage = true;
             const userName = await getName(this.selectedAddress.address);
             if (!userName) {
