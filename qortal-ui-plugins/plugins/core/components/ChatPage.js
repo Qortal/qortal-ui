@@ -1043,6 +1043,7 @@ class ChatPage extends LitElement {
                                 .repliedToMessageObj=${this.repliedToMessageObj}
                                 .toggleEnableChatEnter=${this.toggleEnableChatEnter}
                                 ?isEnabledChatEnter=${this.isEnabledChatEnter}
+                                chatId=${this.chatId}
                                 >                           
                             </chat-text-editor>
                     </div>

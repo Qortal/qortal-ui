@@ -1,5 +1,5 @@
 // Core App Actions here...
-import { UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, CHAT_HEADS, ACCOUNT_INFO, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH } from '../app-action-types.js'
+import { UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, CHAT_HEADS, ACCOUNT_INFO, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT } from '../app-action-types.js'
 
 export const doUpdateBlockInfo = (blockObj) => {
     return (dispatch, getState) => {
@@ -105,3 +105,18 @@ const framePasteMenuSwitch = (payload) => {
         payload
     }
 }
+
+export const addAutoLoadImageChat = (payload) => {
+    return {
+        type: ADD_AUTO_LOAD_IMAGES_CHAT,
+        payload
+    }
+}
+
+export const removeAutoLoadImageChat = (payload) => {
+    return {
+        type: REMOVE_AUTO_LOAD_IMAGES_CHAT,
+        payload
+    }
+}
+

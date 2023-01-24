@@ -146,6 +146,7 @@ class ChatScroller extends LitElement {
                             .goToRepliedMessage=${this.goToRepliedMessage}
                             .addSeenMessage=${(val)=> this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
+                            chatId=${this.chatId}
                             >
                             </message-template>`
                     )
@@ -294,6 +295,7 @@ class MessageTemplate extends LitElement {
             goToRepliedMessage: { attribute: false },
             listSeenMessages: {type: Array},
             addSeenMessage: {attribute: false},
+            chatId: {type: String}
             
         }
     }
@@ -343,7 +345,8 @@ class MessageTemplate extends LitElement {
     }
 
     firstUpdated(){
-        if(this.listSeenMessages.includes(this.messageObj.reference)){
+        const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
+        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
             this.viewImage =  true
         }
     }
