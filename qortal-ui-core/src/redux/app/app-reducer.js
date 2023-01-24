@@ -1,5 +1,6 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH } from './app-action-types.js'
+import { saveStateToLocalStorage } from '../../localStorageHelpers.js'
+import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT } from './app-action-types.js'
 import { initWorkersReducer } from './reducers/init-workers.js'
 import { loginReducer } from './reducers/login-reducer.js'
 import { setNode, addNode } from './reducers/manage-node.js'
@@ -42,7 +43,8 @@ const INITIAL_STATE = {
     framePasteMenuSwitch: {
         isOpen: false,
         elementId: ''
-    }
+    },
+    autoLoadImageChats: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -146,6 +148,28 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 framePasteMenuSwitch: action.payload
             }
+        case ADD_AUTO_LOAD_IMAGES_CHAT: {
+            const findChat = state.autoLoadImageChats.findIndex((chat)=> chat === action.payload)
+            console.log({findChat})
+            if(findChat !== -1) return state
+            const updatedState = [...state.autoLoadImageChats, action.payload]
+
+            saveStateToLocalStorage('autoLoadImageChats', updatedState) 
+            return {
+                ...state,
+                autoLoadImageChats: updatedState
+            }
+        }
+           
+        case REMOVE_AUTO_LOAD_IMAGES_CHAT: {
+            const updatedState = state.autoLoadImageChats.filter((chat)=> chat !== action.payload)
+            saveStateToLocalStorage('autoLoadImageChats', updatedState) 
+            return {
+                ...state,
+                autoLoadImageChats: updatedState
+         }
+        }
+                
         default:
             return state
     }

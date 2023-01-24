@@ -4,6 +4,8 @@ import { get, translate } from 'lit-translate';
 import { EmojiPicker } from 'emoji-picker-js';
 import { Epml } from '../../../epml.js';
 import '@material/mwc-icon'
+import '@material/mwc-checkbox'
+// import { addAutoLoadImageChat } from "../../../../qortal-ui-core/src/redux/app/app-actions.js";
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class ChatTextEditor extends LitElement {
@@ -29,7 +31,8 @@ class ChatTextEditor extends LitElement {
                 reflect: true
               },
             toggleEnableChatEnter: {attribute: false},
-            isEnabledChatEnter: {type: Boolean}
+            isEnabledChatEnter: {type: Boolean},
+            chatId: {type: String}
 		}
 	}
 
@@ -46,6 +49,11 @@ class ChatTextEditor extends LitElement {
             overflow: hidden;
 
       }
+      * {
+		 
+                    --mdc-checkbox-unchecked-color: var(--black);
+                    
+                }
         .chatbar-container {
             width: 100%;
             display: flex;
@@ -259,6 +267,13 @@ class ChatTextEditor extends LitElement {
     transition: all 0.2s;
     display: none;
   }
+  .removeBg {
+    background: none;
+  }
+
+  .chatbar-button-single label {
+    font-size: 13px;
+  }
   .chatbar-button-single:hover {
     filter: brightness(120%);
    
@@ -339,7 +354,10 @@ class ChatTextEditor extends LitElement {
 .hide-styling {
     display: none;
 }
-  
+mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
+                background-color:var(--mdc-theme-primary)
+            }
+            --mdc-checkbox-unchecked-color
 		`
 	}
 
@@ -357,12 +375,12 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
-   
+        console.log('this.chatId2', this.chatId)
 		return html`
             <div 
              class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
-             style="align-items: center;">
-            
+             style="align-items: center;justify-content:space-between">
+            <div style="display: flex;align-items: center">
              <button
         @click=${() => this.editor.chain().focus().toggleBold().run()}
         ?disabled=${
@@ -422,6 +440,28 @@ class ChatTextEditor extends LitElement {
       `}
   
       </button>
+    </div>
+        ${this.iframeId === "_chatEditorDOM" ? html`
+        <div
+      style="height: 26px; box-sizing: border-box"
+        class=${["chatbar-button-single", "removeBg"].join(' ')}
+      >
+      <label
+                                for="qChatShowAutoMsg"
+                                @click=${() => this.shadowRoot.getElementById('qChatShowAutoMsg').click()}
+                                >${translate('chatpage.cchange69')}</label>
+        
+        <mwc-checkbox style="margin-right: -15px;"  id="qChatShowAutoMsg" @click=${e => {
+        console.log(e.target.checked)
+        if(e.target.checked){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.removeAutoLoadImageChat(this.chatId))
+            return
+        }
+        window.parent.reduxStore.dispatch( window.parent.reduxAction.addAutoLoadImageChat(this.chatId))
+        
+      }} ?checked=${(window.parent.reduxStore.getState().app?.autoLoadImageChats || []).includes(this.chatId)}></mwc-checkbox>
+    </div>            
+        ` : ''}
      
             </div>
             <div 
