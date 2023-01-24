@@ -77,8 +77,8 @@ export const chatStyles = css`
 	}
 
 	.message-data-my-name {
-		color: var(--mdc-theme-primary);
-		text-shadow: 0 0 3px var(--mdc-theme-primary);
+		color: #05be0e;
+		font-weight: bold;
 	}
 
 	.message-data-time {
@@ -137,6 +137,11 @@ export const chatStyles = css`
     min-width: 150px;
 	}
 
+	
+	.message-myBg {
+		background-color: var(--chat-bubble-myBg) !important;
+	}
+
 	.message-triangle {
 		position: relative;
 	}
@@ -151,6 +156,22 @@ export const chatStyles = css`
 		border-style: solid;
 		border-width: 0px 0px 7px 9px;
 		border-color: transparent transparent var(--chat-bubble-bg) transparent;
+	}
+
+	.message-myTriangle {
+		position: relative;
+	}
+
+	.message-myTriangle:after {
+		content: "";
+		position: absolute;
+		bottom: 0px;
+    left: -9px;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-width: 0px 0px 7px 9px;
+		border-color: transparent transparent var(--chat-bubble-myBg) transparent;
 	}
 
 	.message-reactions {
@@ -185,9 +206,7 @@ export const chatStyles = css`
 	}
 
 	.original-message-sender {
-		margin: 0 0 5px 0;
 		color: var(--mdc-theme-primary);
-		cursor: pointer;
 	}
 
 	.replied-message {
@@ -198,6 +217,7 @@ export const chatStyles = css`
 		max-width: 300px;
 		max-height: 40px;
 	}
+	
 	.replied-message p {
 		margin: 0px;
 		padding: 0px;
@@ -412,7 +432,7 @@ export const chatStyles = css`
 
 	.message-data-level  {
 		height: 21px;
-		width: 21px;
+		width: auto;
 		overflow: hidden;
 	}
 

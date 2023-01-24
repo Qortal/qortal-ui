@@ -63,6 +63,7 @@ class LevelFounder extends LitElement {
             .message-data {
                 display: flex;
                 justify-content: center;
+                align-items: center;
                 gap: 5px;
             }
 
