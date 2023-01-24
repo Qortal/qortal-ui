@@ -596,7 +596,15 @@
 		"bcchange7": "菜單",
 		"bcchange8": "複製地址",
 		"bcchange9": "私人信息",
-		"bcchange10": "更多"
+		"bcchange10": "更多",
+		"bcchange11": "回覆",
+		"bcchange12": "修改",
+		"bcchange13": "表情反應",
+		"bcchange14": "轉發",
+		"bcchange15": "信息已轉發",
+		"bcchange16": "選擇收件人或在下方搜尋收件人",
+		"bcchange17": "已轉發",
+		"bcchange18": "打賞"
 	},
 	"grouppage": {
 		"gchange1": "Qortal 群組",
@@ -654,9 +662,9 @@
 		"gchange53": "成員",
 		"gchange54": "成員數量",
 		"gchange55": "搜索私人群組",
-		"gchange56": "要搜索的組名",
-		"gchange57": "未找到私人組名",
-		"gchange58": "注意組名必須完全匹配。"
+		"gchange56": "要搜索的群組名",
+		"gchange57": "未找到私人群組名",
+		"gchange58": "注意群組名必須完全匹配。"
 	},
 	"puzzlepage": {
 		"pchange1": "益智游戲",
@@ -799,7 +807,7 @@
 		"mg4": "更新群信息",
 		"mg5": "關閉管理組",
 		"mg6": "禁止",
-		"mg7": "踢",
+		"mg7": "踢出",
 		"mg8": "群組代號",
 		"mg9": "已加入",
 		"mg10": "添加群組管理員",
