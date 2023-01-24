@@ -297,7 +297,7 @@ class ChatTextEditor extends LitElement {
 .ProseMirror {
     width: 100%;
     box-sizing: border-box;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .ProseMirror mark {
