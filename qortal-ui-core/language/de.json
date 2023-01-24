@@ -573,7 +573,8 @@
 		"cchange64": "Eingabe deaktiviert",
 		"cchange65": "Bitte geben Sie einen Empfänger ein",
 		"cchange66": "Beantwortete Nachricht kann nicht abgerufen werden. Nachricht ist zu alt.",
-		"cchange68": "bearbeitet"
+		"cchange68": "bearbeitet",
+		"cchange69": "Zeige Bilder automatisch"
 	},
 	"welcomepage": {
 		"wcchange1": "Willkommen zu Q-Chat",

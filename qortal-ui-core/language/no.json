@@ -573,7 +573,8 @@
 		"cchange64": "Enter deaktivert",
 		"cchange65": "Vennligst skriv inn en mottaker",
 		"cchange66": "Kan ikke hente besvart melding. Meldingen er for gammel.",
-		"cchange68": "redigert"
+		"cchange68": "redigert",
+		"cchange69": "Vis bilder automatisk"
 	},
 	"welcomepage": {
 		"wcchange1": "Velkommen til Q-Chat",
