@@ -418,15 +418,12 @@ class MessageTemplate extends LitElement {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
-                }, 500);
+                }, 2000);
             } else {
-                imageHTMLRes.src = '/img/chain.png';
-                imageHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
-                imageHTMLRes.onclick= () => {
-                    
-                }
-
-                this.isImageLoaded = true
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 6000);
             }
         };
         return imageHTMLRes;
@@ -472,6 +469,7 @@ class MessageTemplate extends LitElement {
         }
         const escapedMessage = this.escapeHTML(message)
         const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
+       
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
             class="clearfix message-parent" 
@@ -577,7 +575,7 @@ class MessageTemplate extends LitElement {
                                             </p>
                                     </div>
                                     `}
-                                    ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
+                                    ${image  && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
@@ -591,16 +589,26 @@ class MessageTemplate extends LitElement {
                                            
                                         </div>
                                     ` : html``}
+                                    ${!this.isImageLoaded && image && this.viewImage ? html`
+                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;position:absolute">
+                                        <div class=${`smallLoading`}></div>
+                                        </div>
+                                        
+                                    `: ''}
                                     ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
                                         <div 
-                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '', !this.isImageLoaded ? 'hideImg': ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                            ${imageHTML}<vaadin-icon
+                                            ${imageHTML}
+                                            ${this.myAddress === this.messageObj.sender ? html`
+                                            <vaadin-icon
                                             @click=${() => {
                                                 this.openDeleteImage = true;
                                                 this.chatE
                                                 }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                                            ` : ''}
+                                           
                                         </div>
                                     ` : image && isImageDeleted ? html`
                                         <p class="image-deleted-msg">This image has been deleted</p>
@@ -637,7 +645,7 @@ class MessageTemplate extends LitElement {
                                                         ${edited}
                                                     </span>
                                                     `
-                                                : null
+                                                : ''
                                             }
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
                                         </div>
@@ -847,7 +855,6 @@ class ChatMenu extends LitElement {
             console.log({error})
         }
     }
-
     render() {
         return html` 
             <div class="container">

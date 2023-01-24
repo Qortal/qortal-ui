@@ -421,6 +421,10 @@ export const chatStyles = css`
 		height: 40vh;
 	}
 
+	.hideImg {
+		visibility: hidden;
+	}
+
 	.image-deleted-msg {
 		font-family: Roboto, sans-serif;
 		font-size: 14px;
@@ -659,5 +663,46 @@ export const chatStyles = css`
 		100%	        { background-color:rgba(var(--menuactivergb), 0)}
 	}
 
+	.smallLoading,
+  .smallLoading:after {
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+  }
+
+  .smallLoading {
+      border-width: 0.8em;
+      border-style: solid;
+      border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+      rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+      font-size: 30px;
+      position: relative;
+      text-indent: -9999em;
+      transform: translateZ(0px);
+      animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+  }
+
+  @-webkit-keyframes loadingAnimation {
+      0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+      }
+      100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+      }
+  }
+
+  @keyframes loadingAnimation {
+      0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+      }
+      100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+      }
+  }
+  
 
 `
