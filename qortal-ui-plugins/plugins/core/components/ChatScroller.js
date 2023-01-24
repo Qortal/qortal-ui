@@ -505,9 +505,12 @@ class MessageTemplate extends LitElement {
                             `}
                             <div 
                             class="${`message-subcontainer2 
-                            ${((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
-                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && 
-                            'message-triangle'}`}" 
+                            ${this.myAddress === this.messageObj.sender && "message-myBg" }
+                            ${(((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress !== this.messageObj.sender)  
+                            ? 'message-triangle' 
+                            : (((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress === this.messageObj.sender) ? "message-myTriangle" : null}`}" 
                             style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) ? 'margin-bottom: 0;' : null}
                             ${(this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
                             ? 'border-radius: 8px 25px 25px 8px;'
@@ -554,28 +557,27 @@ class MessageTemplate extends LitElement {
                                     @click=${()=> {
                                         this.goToRepliedMessage(repliedToData)
                                     }}>
-                                        <p 
-                                        
-                                      
-                                            class="original-message-sender">
+                                        <p  
+                                            style=${"cursor: pointer; margin: 0 0 5px 0;"} 
+                                            class=${this.myAddress !== repliedToData.sender
+                                            ? "original-message-sender" 
+                                            : "message-data-my-name"}>
                                              ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
-
-                                        
-                                        ${version.toString() === '1' ? html`
-                                        ${repliedToData.decodedMessage.messageText}
-                                        ` : ''}
-                                        ${version.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}
-                                        ` : ''}
-                                        
-                                            </p>
+                                            ${version.toString() === '1' ? html`
+                                            ${repliedToData.decodedMessage.messageText}
+                                            ` : ''}
+                                            ${version.toString() === '2' ? html`
+                                            ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
+                                                StarterKit,
+                                                Underline,
+                                                Highlight
+                                                // other extensions …
+                                            ]))}
+                                            ` 
+                                        : ''}
+                                        </p>
                                     </div>
                                     `}
                                     ${image  && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
@@ -607,7 +609,6 @@ class MessageTemplate extends LitElement {
                                             <vaadin-icon
                                             @click=${() => {
                                                 this.openDeleteImage = true;
-                                                this.chatE
                                                 }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                             ` : ''}
