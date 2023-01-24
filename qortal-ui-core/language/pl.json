@@ -573,7 +573,8 @@
 		"cchange64": "Wprowadź wyłączone",
 		"cchange65": "Wprowadź odbiorcę",
 		"cchange66": "Nie można pobrać wiadomości, na którą udzielono odpowiedzi. Wiadomość jest za stara.",
-		"cchange68": "edytowano"
+		"cchange68": "edytowano",
+		"cchange69": "Automatyczne wyświetlanie obrazów"
 	},
 	"welcomepage": {
 		"wcchange1": "Witamy w Q-Chat",

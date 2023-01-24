@@ -573,7 +573,8 @@
 		"cchange64": "비활성화 입력",
 		"cchange65": "받는 사람을 입력하세요",
 		"cchange66": "답장한 메시지를 가져올 수 없습니다. 메시지가 너무 오래되었습니다.",
-		"cchange68": "편집됨"
+		"cchange68": "편집됨",
+		"cchange69": "이미지 자동 표시"
 	},
 	"welcomepage": {
 		"wcchange1": "Q-Chat에 오신 것을 환영합니다.",

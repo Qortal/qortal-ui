@@ -573,7 +573,8 @@
 		"cchange64": "Introducere dezactivată",
 		"cchange65": "Vă rugăm să introduceți un destinatar",
 		"cchange66": "Nu se poate prelua mesajul la care sa răspuns. Mesajul este prea vechi.",
-		"cchange68": "editat"
+		"cchange68": "editat",
+		"cchange69": "Afișează automat imaginile"
 	},
 	"welcomepage": {
 		"wcchange1": "Bine ai venit la Q-Chat",

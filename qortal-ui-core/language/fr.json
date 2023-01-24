@@ -573,7 +573,8 @@
 		"cchange64": "Entrée désactivée",
 		"cchange65": "Veuillez saisir un destinataire",
 		"cchange66": "Impossible de récupérer le message auquel vous avez répondu. Le message est trop ancien.",
-		"cchange68": "modifié"
+		"cchange68": "modifié",
+		"cchange69": "Afficher automatiquement les images"
 	},
 	"welcomepage": {
 		"wcchange1": "Bienvenue dans Q-Chat",

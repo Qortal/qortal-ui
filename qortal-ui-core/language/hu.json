@@ -573,7 +573,8 @@
 		"cchange64": "Enter Disabled",
 		"cchange65": "Kérjük, adjon meg egy címzettet",
 		"cchange66": "Nem sikerült lekérni a válaszolt üzenetet. Az üzenet túl régi.",
-		"cchange68": "szerkesztve"
+		"cchange68": "szerkesztve",
+		"cchange69": "Képek automatikus megjelenítése"
 	},
 	"welcomepage": {
 		"wcchange1": "Üdvözöljük a Q-Chathoz",

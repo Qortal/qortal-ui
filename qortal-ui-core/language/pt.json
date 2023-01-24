@@ -573,7 +573,8 @@
 		"cchange64": "Enter desativado",
 		"cchange65": "Insira um destinatário",
 		"cchange66": "Não foi possível buscar a mensagem respondida. A mensagem é muito antiga.",
-		"cchange68": "editado"
+		"cchange68": "editado",
+		"cchange69": "Mostrar imagens automaticamente"
 	},
 	"welcomepage": {
 		"wcchange1": "Bem-vindo ao Q-Chat",
