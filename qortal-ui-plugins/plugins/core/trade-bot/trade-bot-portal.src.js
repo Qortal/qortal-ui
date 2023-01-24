@@ -580,7 +580,7 @@ class TradeBotPortal extends LitElement {
 				row-gap: 0.4em;
 				justify-items: stretch;
 				align-items: stretch;
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 			}
 			#first-trade-section {
 				display: grid;
