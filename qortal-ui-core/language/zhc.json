@@ -597,7 +597,15 @@
 		"bcchange7": "菜单",
 		"bcchange8": "复制地址",
 		"bcchange9": "私人信息",
-		"bcchange10": "更多的"
+		"bcchange10": "更多的",
+		"bcchange11": "回復",
+		"bcchange12": "修改",
+		"bcchange13": "表情反应",
+		"bcchange14": "转发",
+		"bcchange15": "信息已转发",
+		"bcchange16": "选择收件人或在下方搜寻收件人",
+		"bcchange17": "已转发",
+		"bcchange18": "打赏"
 	},
 	"grouppage": {
 		"gchange1": "Qortal 群组",
