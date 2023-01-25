@@ -52,33 +52,47 @@ export const replaceMessagesEdited = async ({
 				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
 			if (parsedMessageObj.repliedTo) {
+				const originalReply = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+				})
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
 				})
+				
 				if (
+					originalReply &&
+					Array.isArray(originalReply) &&
+					originalReply.length !== 0 &&
 					response &&
 					Array.isArray(response) &&
 					response.length !== 0
 				) {
+					const decodeOriginalReply = decodeMessageFunc(originalReply[0], isReceipient, _publicKey)
+
+					const decodeUpdatedReply = decodeMessageFunc(response[0], isReceipient, _publicKey)
+					const formattedRepliedToData = {
+						...decodeUpdatedReply,
+						senderName: decodeOriginalReply.senderName,
+						sender: decodeOriginalReply.sender,
+					}
 					msgItem = {
 						...msg,
-						repliedToData: decodeMessageFunc(response[0], isReceipient, _publicKey),
+						repliedToData: formattedRepliedToData,
 					}
 				} else {
-					const response2 = await parentEpml.request("apiCall", {
-						type: "api",
-						url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-					})
+					
 
 					if (
-						response2 &&
-						Array.isArray(response2) &&
-						response2.length !== 0
+						originalReply &&
+						Array.isArray(originalReply) &&
+						originalReply.length !== 0
 					) {
+						
 						msgItem = {
 							...msg,
-							repliedToData: decodeMessageFunc(response2[0], isReceipient, _publicKey),
+							repliedToData: decodeMessageFunc(originalReply[0], isReceipient, _publicKey),
 						}
 					}
 				}
