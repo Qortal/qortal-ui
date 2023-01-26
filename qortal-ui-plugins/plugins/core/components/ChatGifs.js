@@ -6,7 +6,8 @@ import { saveAs } from 'file-saver';
 import '@material/mwc-icon'
 import ShortUniqueId from 'short-unique-id';
 import { publishData } from '../../utils/publish-image.js';
-import './ChatGifsExplore'
+import './ChatGifsExplore.js'
+// import isAlphanumeric from 'validator/lib/isAlphanumeric'/
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChatGifs extends LitElement {
@@ -14,11 +15,14 @@ class ChatGifs extends LitElement {
         return {
             selectedAddress: { type: Object },
             myGifCollections: { type: Array },
+            mySubscribedCollections: {type: Array},
             exploreCollections: { type: Array },
             gifsToBeAdded: { type: Array},
             webWorkerImage: {type: Object},
             mode: {type: String},
-            currentCollection: {type: String}
+            currentCollection: {type: String},
+            isLoading: {type: String},
+            newCollectionName: {type: String}
         }
     }
 
@@ -33,15 +37,16 @@ class ChatGifs extends LitElement {
         this.uid = new ShortUniqueId()
         this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.myGifCollections = []
+        this.mySubscribedCollections = []
         this.exploreCollections = []
         this.myAccountName = ''
         this.gifsToBeAdded = []
         // mode can be 'myCollection', 'newCollection', 'explore', 'subscribedCollection'
         this.mode = "myCollection"
         this.currentCollection = null
-        this.pageNumber = 1
-        this.downObserverElement = ''
-        this.viewElement = ''
+        this.pageNumber = 0
+        this.isLoading = false
+        this.newCollectionName = ""
     }
 
    async structureCollections(gifCollections){
@@ -86,32 +91,8 @@ class ChatGifs extends LitElement {
     }
     }
 
-    elementObserver() {
-        const options = {
-            root: this.viewElement,
-            rootMargin: '0px',
-            threshold: 1
-        }
-        // identify an element to observe
-        const elementToObserve = this.downObserverElement;
-        // passing it a callback function
-        const observer = new IntersectionObserver(this.observerHandler, options);
-        // call `observe()` on that MutationObserver instance,
-        // passing it the element to observe, and the options object
-        observer.observe(elementToObserve);
-    }
 
-    observerHandler(entries) {
-        if (!entries[0].isIntersecting) {
-            return
-        } else {
-            if(this.exploreCollections.length < 20){
-                return
-            }
- 
-            this.getMoreExploreGifs()
-        }
-    }
+
 
     async getMoreExploreGifs(){
         try {
@@ -132,7 +113,7 @@ class ChatGifs extends LitElement {
 
     async getCollectionList(){
         try {
-            await parentEpml.request("apiCall", {
+         return   await parentEpml.request("apiCall", {
                 type: "api",
                 url: `/lists/gifSubscribedRepos`,
             });
@@ -192,61 +173,125 @@ class ChatGifs extends LitElement {
         }
     }
 
-    async firstUpdated() {
-        this.viewElement = this.shadowRoot.getElementById('viewElement');
-        this.downObserverElement = this.shadowRoot.getElementById('downObserver');
-        this.elementObserver();
-
-        try {
-          
-            const userName = await this.getName(this.selectedAddress.address);
-            this.myAccountName = userName
-            if(this.myAccountName){
-                const getMyGifColloctions =  await parentEpml.request('apiCall', {
-                    url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}`
-                })
-
-                const gifCollectionWithMetaData = await this.structureCollections(getMyGifColloctions)
-                
-                console.log({gifCollectionWithMetaData})
-                this.myGifCollections = gifCollectionWithMetaData
-            }
-            // for the explore section
-            const getAllGifCollections = await parentEpml.request("apiCall", {
-                type: "api",
-                url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${this.pageNumber * 20}`,
-            });
-            console.log({getAllGifCollections})
-            const gifCollectionWithMetaData = await this.structureCollections(getAllGifCollections)
-            this.exploreCollections = gifCollectionWithMetaData
-            this.pageNumber = this.pageNumber + 1
-
-            const getCollectionList = await this.getCollectionList()
-
-            let savedCollections = []
-
-            const getSavedGifRepos = (!Array.isArray(getCollectionList) || []).map(async (collection) => {
-                let collectionObj = collection
-                try {
-                  const data =  await parentEpml.request('apiCall', {
-                        url: `/arbitrary/GIF_REPOSITORY/collection`
-                    })
-                    savedCollections.push(data)
-
-                } catch (error) {
-                    console.log(error)
-                }
-        
-                return collectionObj
+    async getMyGifCollections(){
+        const userName = await this.getName(this.selectedAddress.address);
+        this.myAccountName = userName
+        if(this.myAccountName){
+            const getMyGifColloctions =  await parentEpml.request('apiCall', {
+                url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}`
             })
-          await Promise.all(getSavedGifRepos)
 
-            console.log({savedCollections})
-
-        } catch (error) {
+            const gifCollectionWithMetaData = await this.structureCollections(getMyGifColloctions)
             
+            console.log({gifCollectionWithMetaData})
+            this.myGifCollections = gifCollectionWithMetaData
         }
     }
+    async getAllCollections(){
+        this.pageNumber = 0
+       // for the explore section
+       const getAllGifCollections = await parentEpml.request("apiCall", {
+        type: "api",
+        url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${this.pageNumber * 20}`,
+    });
+    const gifCollectionWithMetaData = await this.structureCollections(getAllGifCollections)
+    this.exploreCollections = gifCollectionWithMetaData
+    this.pageNumber = this.pageNumber + 1
+    }
+
+    async getSavedCollections(){
+        const getCollectionList = await this.getCollectionList()
+
+        let savedCollections = []
+        const getSavedGifRepos = (getCollectionList || []).map(async (collection) => {
+            let splitCollection = collection.split('/')
+            const name = splitCollection[0]
+            const identifier = splitCollection[1]
+            try {
+                console.log({collection})
+              const data =  await parentEpml.request('apiCall', {
+                    url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${name}&identifier=${identifier}`
+                })
+                if(data.length > 0){
+                    savedCollections.push(data[0])
+                }
+           
+               
+
+            } catch (error) {
+                console.log(error)
+            }
+    
+            return collection
+        })
+      await Promise.all(getSavedGifRepos)
+      const savedCollectionsWithMetaData = await this.structureCollections(savedCollections)
+      this.mySubscribedCollections = savedCollectionsWithMetaData
+     }
+ 
+
+    async firstUpdated() {
+     
+
+        try {
+            this.isLoading = true
+           await this.getMyGifCollections()
+            await this.getAllCollections()
+           await this.getSavedCollections()
+           this.isLoading = false
+         
+
+        } catch (error) {
+            this.isLoading = false
+            console.error(error)
+        }
+    }
+
+    async updated(changedProperties) {
+        console.log({changedProperties})
+        if (changedProperties && changedProperties.has('mode')) {
+            const mode = this.mode
+            console.log({mode})
+            if (mode === 'myCollection') {
+                try {
+                   this.isLoading = true
+
+                   await this.getMyGifCollections()
+                   this.isLoading = false
+                } catch (error) {
+                    this.isLoading = false
+                }
+                
+            } 
+            if (mode === 'explore') {
+                try {
+                    this.isLoading = true
+ 
+                    await this.getAllCollections()
+                    this.isLoading = false
+                 } catch (error) {
+                     this.isLoading = false
+                 }
+                
+            }   
+            if (mode === 'subscribedCollection') {
+                try {
+                    this.isLoading = true
+ 
+                    await this.getSavedCollections()
+                    this.isLoading = false
+                 } catch (error) {
+                     this.isLoading = false
+                 }
+                
+            }         
+        }
+
+       
+        
+    }
+
+
 
     async getName (recipient) {
         try {
@@ -280,7 +325,25 @@ class ChatGifs extends LitElement {
     }
 
     async uploadGifCollection(){
+        if(!this.newCollectionName){
+            parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+            return
+        } 
+
+        // if(!isAlphanumeric(this.newCollectionName)){
+        //     parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+        //     return
+        // }
         try {
+            const userName = await this.getName(this.selectedAddress.address);
+            const doesNameExist = await parentEpml.request('apiCall', {
+                url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`
+            })
+
+            if(doesNameExist.length !== 0){
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+                return
+            }
             function blobToBase64(blob) {
                 return new Promise((resolve, _) => {
                   const reader = new FileReader();
@@ -309,7 +372,7 @@ await zipWriter.close();
 const zipFileBlob = await zipFileWriter.getData()
 const blobTobase = await blobToBase64(zipFileBlob)
 console.log({blobTobase})
-const userName = await this.getName(this.selectedAddress.address);
+
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
@@ -321,7 +384,7 @@ await publishData({
     registeredName: userName,
     file : blobTobase.split(',')[1],
     service: 'GIF_REPOSITORY',
-    identifier: identifier,
+    identifier: this.newCollectionName,
     parentEpml,
     metaData: undefined,
     uploadType: 'zip',
@@ -329,6 +392,29 @@ await publishData({
     worker: this.webWorkerImage,
     isBase64: true,
     metaData: `description=${this.gifsToBeAdded.map((gif)=> gif.name).join(';')}`
+   })
+
+  await new Promise((res)=> {
+    let interval = null
+		let stop = false
+		const getAnswer = async () => {
+
+
+			if (!stop) {
+				stop = true
+				try {
+					let myCollection = await parentEpml.request('apiCall', {
+                        url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`
+                    })
+					if (myCollection.length > 0) {
+						clearInterval(interval)
+						res()
+					}
+				} catch (error) {}
+				stop = false
+			}
+		}
+		interval = setInterval(getAnswer, 5000)
    })
 saveAs(zipFileBlob, 'zipfile');
 console.log({zipFileBlob})
@@ -342,25 +428,32 @@ console.log({zipFileBlob})
     }
 
     render() {
-
+        console.log('this.currentCollection', this.currentCollection)
         return html`
              <div>
                         <div class="dialog-container">
                             <button @click=${()=> {
+                                if(this.isLoading) return
                                 this.mode = "newCollection"
                             }}>Create Collection</button>
                             <button @click=${()=> {
+                                  if(this.isLoading) return
                                 this.mode = "myCollection"
                             }}>My collections</button>
                             <button @click=${()=> {
+                                if(this.isLoading) return
                                 this.mode = "subscribedCollection"
-                            }}>Subscribed to collections</button>
+                            }}>Subscribed colloctions</button>
                             <button @click=${()=> {
+                                if(this.isLoading) return
                                 this.mode = "explore"
                             }}>Explore collections</button>
                          
 
 ${this.mode === "myCollection" && !this.currentCollection ? html`
+                        ${this.isLoading === true ? html`
+                            <p>Loading...</p>
+                        ` : ''}
                         ${this.myGifCollections.map((collection)=> {
                                 return html`
                                 <div>
@@ -372,7 +465,25 @@ ${this.mode === "myCollection" && !this.currentCollection ? html`
                                 `
                             })}
                         ` : ''}
+                        ${this.mode === "subscribedCollection" && !this.currentCollection ? html`
+                        ${this.isLoading === true ? html`
+                            <p>Loading...</p>
+                        ` : ''}
+                        ${this.mySubscribedCollections.map((collection)=> {
+                                return html`
+                                <div>
+                                <p @click=${()=> {
+                                    this.currentCollection = collection
+                                }}>${collection.identifier}</p>
+                                
+                                </div>
+                                `
+                            })}
+                        ` : ''}
                         ${this.mode === "explore" && !this.currentCollection ? html`
+                        ${this.isLoading === true ? html`
+                            <p>Loading...</p>
+                        ` : ''}
                         <chat-gifs-explore currentCollection=${this.currentCollection} .getMoreExploreGifs=${(val)=> this.getMoreExploreGifs(val)} .exploreCollections=${this.exploreCollections}
                         .setCurrentCollection=${(val)=> this.setCurrentCollection(val)}
                         ></chat-gifs-explore>
@@ -392,12 +503,26 @@ ${this.mode === "myCollection" && !this.currentCollection ? html`
                                    `
                                 })}
                         ` : ''}
+                        ${this.currentCollection && this.mode === "subscribedCollection" ? html`
+                        <button @click=${()=> {
+                                    this.currentCollection = null
+                                }}>Back</button>
+                        ${this.currentCollection.gifUrls.map((gif)=> {
+                                    console.log({gif})
+
+                                  return html`
+                                    <img onerror=${(e)=> {
+                                        e.target.src = gif
+                                    }} src=${gif} style="width: 50px; height: 50px" />
+                                   `
+                                })}
+                        ` : ''}
                         ${this.currentCollection && this.mode === "explore" ? html`
                         <button @click=${()=> {
                                     this.currentCollection = null
                                 }}>Back</button>
                           <button @click=${()=> {
-                                    this.currentCollection = null
+                                    this.addCollectionToList(`${this.currentCollection.name}/${this.currentCollection.identifier}`)
                                 }}>Subscribe to this collection</button>
                         ${this.currentCollection.gifUrls.map((gif)=> {
                                     console.log({gif})
@@ -426,6 +551,9 @@ ${this.mode === "myCollection" && !this.currentCollection ? html`
                                 <button @click=${()=> {
                                     this.uploadGifCollection()
                                 }}>Upload Collection</button>
+                            <input .value=${this.newCollectionName} @change=${(e=> {
+                                    this.newCollectionName = e.target.value
+                                })} />
                             <div style="display: flex; flex-direction: column">
                             ${this.gifsToBeAdded.map((gif, i)=> {
                                 console.log({gif})
