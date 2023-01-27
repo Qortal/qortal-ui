@@ -2693,6 +2693,7 @@ class ChatPage extends LitElement {
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+            const userName = await getName(this.selectedAddress.address);
             typeMessage = 'edit';
             let chatReference = outSideMsg.editedMessageObj.reference;
 
@@ -2714,11 +2715,14 @@ class ChatPage extends LitElement {
             const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
             if(findEmojiIndex !== -1){
                 let users =  reactions[findEmojiIndex].users || []
-                const findUserIndex = users.findIndex((user)=> user === this.selectedAddress.address )
+                const findUserIndex = users.findIndex((user)=> user.address === this.selectedAddress.address )
                 if(findUserIndex !== -1){
                   users.splice(findUserIndex, 1)
                 } else {
-                    users.push(this.selectedAddress.address)
+                    users.push({ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    })
                 }
                 reactions[findEmojiIndex] = {
                     ...reactions[findEmojiIndex],
@@ -2732,7 +2736,10 @@ class ChatPage extends LitElement {
                 reactions = [...reactions, {
                     type: outSideMsg.reaction,
                     qty: 1,
-                    users: [this.selectedAddress.address]
+                    users: [{ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    }]
                 }]
             }
             const messageObject = {
