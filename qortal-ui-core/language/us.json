@@ -574,7 +574,11 @@
 		"cchange65": "Please enter a recipient",
 		"cchange66": "Cannot fetch replied-to message. Message is too old.",
 		"cchange68": "edited",
-		"cchange69": "Auto-show images"
+		"cchange69": "Auto-show images",
+		"cchange71": "and",
+		"cchange72": "other",
+		"cchange73": "s",
+		"cchange74": "reacted with"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
