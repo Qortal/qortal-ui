@@ -466,7 +466,6 @@ class MessageTemplate extends LitElement {
                 const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
                 repliedToData.decodedMessage = parsedMsg;
             } catch (error) {
-                console.error(error);
             }
             
         }
@@ -856,7 +855,6 @@ class ChatMenu extends LitElement {
             this.setForwardProperties(stringifyMessageObject)
            
         } catch (error) {
-            console.log({error})
         }
     }
     render() {
@@ -874,7 +872,6 @@ class ChatMenu extends LitElement {
                         this.setToggledMessage(this.originalMessage)
                         this.emojiPicker.togglePicker(e.target)
                     } catch (error) {
-                        console.log({error})
                     }
                     
                     }}

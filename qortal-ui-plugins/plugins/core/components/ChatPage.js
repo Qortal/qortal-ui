@@ -1319,7 +1319,6 @@ class ChatPage extends LitElement {
                     name: name ? name : undefined
                   }
                 } catch (error) {
-                    console.log(error)
                 }
         
                 return memberItem
@@ -1328,7 +1327,6 @@ class ChatPage extends LitElement {
             this.groupMembers = membersWithName
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
-          console.error(error)
         }
     }
 
@@ -1506,7 +1504,6 @@ class ChatPage extends LitElement {
                 this.userFoundModalOpen = true;
             } catch (error) {
                 this.loading = false;
-                console.error(error);
                 let err4string = get("chatpage.cchange35");
                 parentEpml.request('showSnackBar', `${err4string}`)
             }
@@ -1535,7 +1532,6 @@ class ChatPage extends LitElement {
             const stringifyMessageObject = JSON.stringify(message);
             this.sendMessage(stringifyMessageObject, undefined, '', true)
         } catch (error) {
-            console.log({error});
         }
     }
 
@@ -1638,7 +1634,6 @@ class ChatPage extends LitElement {
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1653,7 +1648,6 @@ class ChatPage extends LitElement {
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1663,7 +1657,6 @@ class ChatPage extends LitElement {
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
             } catch (error) {
-                console.error(error)
             }
         }
         
@@ -1716,10 +1709,10 @@ class ChatPage extends LitElement {
 
      
         if (changedProperties && changedProperties.has('isLoading')) {
-            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM' && this.editor && this.editor.setEditable) {
                 this.editor.setEditable(false)
             }
-            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM' && this.editor &&  this.editor.setEditable) {
                 this.editor.setEditable(true)
             }
         }
@@ -2432,7 +2425,6 @@ class ChatPage extends LitElement {
                         this._publicKey.hasPubKey = false
                     }
                 } catch (error) {
-                    console.error(error);
                 }
 
                 if(!hasPublicKey || !this._publicKey.hasPubKey){

@@ -1,5 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { render } from 'lit/html.js';
+import { passiveSupport } from 'passive-events-support/src/utils'
+passiveSupport({
+    events: ['touchstart']
+  })
 import { Epml } from '../../../../epml.js';
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate';
 import { qchatStyles } from './q-chat-css.src.js'
@@ -163,6 +167,7 @@ class Chat extends LitElement {
     }
 
     render() {
+        console.log('q-chat update')
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -389,26 +394,7 @@ class Chat extends LitElement {
 
         this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
 
-        // let typingTimer;                
-        // let doneTypingInterval = 3000;  
-
-        // //on keyup, start the countdown
-        // nameInput.addEventListener('keyup', () => {
-        //     clearTimeout(typingTimer);
-        //     if (nameInput.value) {
-        //         console.log("typing started!");
-        //         typingTimer = setTimeout(this.userSearch, doneTypingInterval);
-        //     }
-        // });
-
-        const getDataFromURL = () => {
-            let tempUrl = document.location.href
-            let splitedUrl = decodeURI(tempUrl).split('?')
-            let urlData = splitedUrl[1]
-            if (urlData !== undefined) {
-                this.chatId = urlData
-            }
-        }
+     
 
         const runFunctionsAfterPageLoad = () => {
             // Functions to exec after render while waiting for page info...
@@ -526,7 +512,6 @@ class Chat extends LitElement {
             }
             this.userFoundModalOpen = true;
         } catch (error) {
-            console.error(error);
             let err4string = get("chatpage.cchange35");
             parentEpml.request('showSnackBar', `${err4string}`)
         }
@@ -767,7 +752,6 @@ class Chat extends LitElement {
             })
             this.groupInvites = pendingGroupInvites;
         } catch (error) {
-            console.error(error);
             let err4string = get("chatpage.cchange61");
             parentEpml.request('showSnackBar', `${err4string}`)
         }
@@ -876,9 +860,10 @@ class Chat extends LitElement {
     }
 
     setChatHeads(chatObj) {
-
-        let groupList = chatObj.groups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
-        let directList = chatObj.direct.map(dc => {
+        const chatObjGroups = Array.isArray(chatObj.groups) ? chatObj.groups  : [];
+        const chatObjDirect = Array.isArray(chatObj.direct) ? chatObj.direct : [];
+        let groupList = chatObjGroups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
+        let directList = chatObjDirect.map(dc => {
             return { ...dc, url: `direct/${dc.address}` }
         })
         const compareNames = (a, b) => {
