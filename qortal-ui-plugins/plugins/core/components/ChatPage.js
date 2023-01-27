@@ -830,6 +830,7 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
+        this.pasteImage = this.pasteImage.bind(this)
         this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.setOpenTipUser = this.setOpenTipUser.bind(this)
@@ -1334,7 +1335,7 @@ class ChatPage extends LitElement {
 
 
 
-  async  connectedCallback() {
+    async connectedCallback() {
         super.connectedCallback();
         this.webWorker = new WebWorker();
         this.webWorkerImage = new WebWorkerImage();
@@ -1411,7 +1412,8 @@ class ChatPage extends LitElement {
             ]
           })
           document.addEventListener('keydown', this.initialChat);
-      }
+          document.addEventListener('paste', this.pasteImage);
+    }
 
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -1420,7 +1422,8 @@ class ChatPage extends LitElement {
         this.editor.destroy()
         this.editorImage.destroy()
         document.removeEventListener('keydown', this.initialChat);
-      }
+        document.removeEventListener('paste', this.pasteImage);
+    }
 
       initialChat(e) {
         if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
@@ -1433,8 +1436,55 @@ class ChatPage extends LitElement {
                this.editor.commands.focus('end')
             }
         }
+    }
 
-        
+
+    async pasteImage (e) { 
+        const event = e;
+        const handleTransferIntoURL = (dataTransfer) => {
+            try {
+                const [firstItem] = dataTransfer.items;
+                console.log({firstItem});
+                const blob = firstItem.getAsFile();
+                console.log({blob});
+                return blob;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (event.clipboardData) {
+            const blobFound = handleTransferIntoURL(event.clipboardData)
+            if (blobFound) {
+                this.insertImage(blobFound);
+                return;
+            } else {
+                const item_list = await navigator.clipboard.read();
+                let image_type; 
+                const item = item_list.find(item => 
+                    item.types.some( type => { 
+                    if (type.startsWith( 'image/')) {
+                        image_type = type; 
+                        return true;
+                    }
+                })
+                );
+                if (item) {
+                    try {                        
+                        const blob = item && await item.getType(image_type);
+                        let file = new File([blob], "name", {
+                        type: image_type
+                        });
+                        this.insertImage(file);
+                    } catch (error) {
+                        console.error(error);
+                        let errorMsg = get("chatpage.cchange70")
+                        parentEpml.request('showSnackBar', `${errorMsg}`)
+                    }
+                } else {
+                    return
+                }
+            }
+        }   
     }
 
    async goToRepliedMessage(message){
@@ -2569,6 +2619,8 @@ class ChatPage extends LitElement {
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
+                this.isUploadingImage = false;
+                this.imageFile = null;
                 return;
             }
 
