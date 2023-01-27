@@ -6,6 +6,8 @@ import { saveAs } from 'file-saver';
 import '@material/mwc-icon'
 import ShortUniqueId from 'short-unique-id';
 import { publishData } from '../../utils/publish-image.js';
+import { get } from 'lit-translate';
+
 import './ChatGifsExplore.js'
 // import isAlphanumeric from 'validator/lib/isAlphanumeric'/
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -64,8 +66,8 @@ class ChatGifs extends LitElement {
                     ...collection,
                     gifUrls: []
                 }
-                if(metaData.description){
-                    const metaDataArray = metaData.description.split(';').map((data)=> {
+                if(metaData.files){
+                    const metaDataArray = metaData.files.split(';').map((data)=> {
                         return `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`
                     })
                 
@@ -390,8 +392,7 @@ await publishData({
     uploadType: 'zip',
     selectedAddress: this.selectedAddress,
     worker: this.webWorkerImage,
-    isBase64: true,
-    metaData: `description=${this.gifsToBeAdded.map((gif)=> gif.name).join(';')}`
+    isBase64: true
    })
 
   await new Promise((res)=> {
