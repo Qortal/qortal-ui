@@ -720,7 +720,7 @@ class MessageTemplate extends LitElement {
                                         ${reaction.users[2].name 
                                         ? reaction.users[2].name 
                                         : cropAddress(reaction.users[2].address)}
-                                        and ${reaction.users.length - 3} other${(reaction.users.length - 3) > 1 ? "s" : ""} reacted with ${reaction.type}`
+                                        ${get("chatpage.cchange71")} ${reaction.users.length - 3} ${get("chatpage.cchange72")}${(reaction.users.length - 3) > 1 ? html`${get("chatpage.cchange73")}` : ""} ${get("chatpage.cchange74")} ${reaction.type}`
                                         ) : reaction.users.length === 3 ?
                                         (
                                         `${reaction.users[0].name 
@@ -729,24 +729,24 @@ class MessageTemplate extends LitElement {
                                         ${reaction.users[1].name 
                                         ? reaction.users[1].name 
                                         : cropAddress(reaction.users[1].address)} 
-                                        and 
+                                        ${get("chatpage.cchange71")} 
                                         ${reaction.users[2].name 
                                         ? reaction.users[2].name 
-                                        : cropAddress(reaction.users[2].address)} reacted with ${reaction.type}`
+                                        : cropAddress(reaction.users[2].address)} ${get("chatpage.cchange74")} ${reaction.type}`
                                         ) : reaction.users.length === 2 ?
                                         (
                                         `${reaction.users[0].name 
                                         ? reaction.users[0].name 
                                         : cropAddress(reaction.users[0].address)}
-                                        and 
+                                        ${get("chatpage.cchange71")} 
                                         ${reaction.users[1].name 
                                         ? reaction.users[1].name 
-                                        : cropAddress(reaction.users[1].address)} reacted with ${reaction.type}`
+                                        : cropAddress(reaction.users[1].address)} ${get("chatpage.cchange74")} ${reaction.type}`
                                         ) : reaction.users.length === 1 ?
                                         (
                                         `${reaction.users[0].name 
                                         ? reaction.users[0].name 
-                                        : cropAddress(reaction.users[0].address)} reacted with ${reaction.type}`
+                                        : cropAddress(reaction.users[0].address)} ${get("chatpage.cchange74")} ${reaction.type}`
                                         ) 
                                         : "" }>
                                     </vaadin-tooltip> 
