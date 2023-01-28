@@ -167,7 +167,6 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log('q-chat update')
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
