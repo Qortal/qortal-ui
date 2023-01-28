@@ -574,7 +574,12 @@
 		"cchange65": "请输入收件人",
 		"cchange66": "无法获取回覆消息。消息太旧了。",
 		"cchange68": "编辑",
-		"cchange69": "自动显示图像"
+		"cchange69": "自动显示图像",
+		"cchange70": "不支援此类型图像",
+		"cchange71": "和",
+		"cchange72": "其他",
+		"cchange73": "的",
+		"cchange74": "心情回应"
 	},
 	"welcomepage": {
 		"wcchange1": "欢迎来到Q-Chat",
