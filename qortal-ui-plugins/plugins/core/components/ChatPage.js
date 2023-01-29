@@ -831,6 +831,7 @@ class ChatPage extends LitElement {
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertImage = this.insertImage.bind(this)
+        this.pasteImage = this.pasteImage.bind(this)
         this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.setOpenTipUser = this.setOpenTipUser.bind(this)
@@ -1341,7 +1342,7 @@ class ChatPage extends LitElement {
 
 
 
-  async  connectedCallback() {
+    async connectedCallback() {
         super.connectedCallback();
         await this.initUpdate()
         this.webWorker = new WebWorker();
@@ -1419,7 +1420,8 @@ class ChatPage extends LitElement {
             ]
           })
           document.addEventListener('keydown', this.initialChat);
-      }
+          document.addEventListener('paste', this.pasteImage);
+    }
 
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -1441,7 +1443,8 @@ class ChatPage extends LitElement {
         }
         
         document.removeEventListener('keydown', this.initialChat);
-      }
+        document.removeEventListener('paste', this.pasteImage);
+    }
 
       initialChat(e) {
         if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser) {
@@ -1454,8 +1457,56 @@ class ChatPage extends LitElement {
                this.editor.commands.focus('end')
             }
         }
+    }
 
-    
+
+    async pasteImage (e) { 
+        const event = e;
+        const handleTransferIntoURL = (dataTransfer) => {
+            try {
+                const [firstItem] = dataTransfer.items;
+                console.log({firstItem});
+                const blob = firstItem.getAsFile();
+                console.log({blob});
+                return blob;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (event.clipboardData) {
+            const blobFound = handleTransferIntoURL(event.clipboardData)
+            if (blobFound) {
+                this.insertImage(blobFound);
+                return;
+            } else {
+                const item_list = await navigator.clipboard.read();
+                let image_type; 
+                const item = item_list.find(item => 
+                    item.types.some( type => { 
+                    if (type.startsWith( 'image/')) {
+                        image_type = type; 
+                        return true;
+                    }
+                })
+                );
+                if (item) {
+                    try {                        
+                        const blob = item && await item.getType(image_type);
+                        let file = new File([blob], "name", {
+                        type: image_type
+                        });
+                        this.insertImage(file);
+                    } catch (error) {
+                        console.error(error);
+                        let errorMsg = get("chatpage.cchange70")
+                        parentEpml.request('showSnackBar', `${errorMsg}`)
+                    }
+                } else {
+                    return
+                }
+            }
+        }   
+
     }
 
    async goToRepliedMessage(message, clickedOnMessage){
@@ -2611,6 +2662,8 @@ class ChatPage extends LitElement {
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
+                this.isUploadingImage = false;
+                this.imageFile = null;
                 return;
             }
 
@@ -2683,6 +2736,7 @@ class ChatPage extends LitElement {
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+            const userName = await getName(this.selectedAddress.address);
             typeMessage = 'edit';
             let chatReference = outSideMsg.editedMessageObj.reference;
 
@@ -2704,11 +2758,14 @@ class ChatPage extends LitElement {
             const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
             if(findEmojiIndex !== -1){
                 let users =  reactions[findEmojiIndex].users || []
-                const findUserIndex = users.findIndex((user)=> user === this.selectedAddress.address )
+                const findUserIndex = users.findIndex((user)=> user.address === this.selectedAddress.address )
                 if(findUserIndex !== -1){
                   users.splice(findUserIndex, 1)
                 } else {
-                    users.push(this.selectedAddress.address)
+                    users.push({ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    })
                 }
                 reactions[findEmojiIndex] = {
                     ...reactions[findEmojiIndex],
@@ -2722,7 +2779,10 @@ class ChatPage extends LitElement {
                 reactions = [...reactions, {
                     type: outSideMsg.reaction,
                     qty: 1,
-                    users: [this.selectedAddress.address]
+                    users: [{ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    }]
                 }]
             }
             const messageObject = {

@@ -13,6 +13,7 @@ import './WrapperModal';
 import "./UserInfo/UserInfo";
 import '@vaadin/icons';
 import '@vaadin/icon';
+import '@vaadin/tooltip';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
@@ -293,10 +294,9 @@ class MessageTemplate extends LitElement {
             setUserName: { attribute: false },
             openTipUser:{ type: Boolean },
             goToRepliedMessage: { attribute: false },
-            listSeenMessages: {type: Array},
-            addSeenMessage: {attribute: false},
-            chatId: {type: String}
-            
+            listSeenMessages: { type: Array },
+            addSeenMessage: { attribute: false },
+            chatId: { type: String },
         }
     }
 
@@ -349,6 +349,13 @@ class MessageTemplate extends LitElement {
         if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
             this.viewImage =  true
         }
+
+        const tooltips = this.shadowRoot.querySelectorAll('vaadin-tooltip');
+        tooltips.forEach(tooltip => {
+        const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay');
+        overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
+        overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
+        });
     }
 
     render() {
@@ -377,6 +384,7 @@ class MessageTemplate extends LitElement {
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
+            console.log(reactions, 'reactions here');
             version = parsedMessageObj.version;
             isForwarded = parsedMessageObj.type === 'forward';
             isEdited = parsedMessageObj.isEdited && true;
@@ -683,17 +691,66 @@ class MessageTemplate extends LitElement {
                         </div>
                         <div class="message-reactions" style="${reactions.length > 0 && 
                             'margin-top: 10px; margin-bottom: 5px;'}">
-                                ${reactions.map((reaction)=> {
+                                ${reactions.map((reaction, index)=> {
                                     return html`
                                     <span 
-                                    @click=${() => this.sendMessage({
+                                        @click=${() => this.sendMessage({
                                         type: 'reaction',
                                         editedMessageObj: this.messageObj,
                                         reaction:  reaction.type,
                                         })} 
-                                    class="reactions-bg">
-                                    ${reaction.type} ${reaction.qty}
-                                    </span>`
+                                        id=${`reactions-${index}`}
+                                        class="reactions-bg">
+                                        ${reaction.type} 
+                                        ${reaction.qty}
+                                        <vaadin-tooltip 
+                                        for=${`reactions-${index}`} 
+                                        position="top"
+                                        hover-delay=${400}
+                                        hide-delay=${1}
+                                        text=${reaction.users.length > 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)},
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)}
+                                        ${get("chatpage.cchange71")} ${reaction.users.length - 3} ${get("chatpage.cchange72")}${(reaction.users.length - 3) > 1 ? html`${get("chatpage.cchange73")}` : ""} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} 
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 2 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 1 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) 
+                                        : "" }>
+                                    </vaadin-tooltip> 
+                                    </span>
+                                    `
                                 })}
                         </div>
                     </div>

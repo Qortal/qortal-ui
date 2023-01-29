@@ -175,9 +175,13 @@ export const chatStyles = css`
 	}
 
 	.message-reactions {
-		background-color: transparent;
-		width: calc(100% - 54px);
-		margin-left: 54px;
+    background-color: transparent;
+    width: calc(100% - 54px);
+    margin-left: 54px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    gap: 8px;
 	}
 
 	.original-message {
@@ -412,11 +416,11 @@ export const chatStyles = css`
 	}
 
 	.reactions-bg {
+		position: relative;
 		background-color: #d5d5d5;
 		border-radius: 10px;
 		padding: 5px;
 		color: black;
-		margin-right: 10px;
 		transition: all 0.1s ease-in-out;
 		border: 0.5px solid transparent;
 		cursor: pointer;
@@ -723,6 +727,5 @@ export const chatStyles = css`
           transform: rotate(360deg);
       }
   }
-  
 
 `
