@@ -2366,7 +2366,7 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(groupSocketTimeout)
                 if(e.reason === 'switch chat') return
                 restartGroupWebSocket()
