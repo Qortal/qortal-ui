@@ -1535,7 +1535,6 @@ class ChatPage extends LitElement {
     
     if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
         const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.reference)
-    console.log({clickedOnMessage, findOriginalMessage})
     if(findOriginalMessage){
         const messageClientRect = findOriginalMessage.getBoundingClientRect()
         this.isLoadingGoToRepliedMessage = {
