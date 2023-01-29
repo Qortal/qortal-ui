@@ -245,14 +245,12 @@ class WebBrowser extends LitElement {
             console.log("UI received event: " + JSON.stringify(data));
 
             switch (data.action) {
-                case "GET_ACCOUNT_ADDRESS":
+                case "GET_USER_ACCOUNT":
                     // For now, we will return this without prompting the user, but we may need to add a prompt later
-                    response = this.selectedAddress.address;
-                    break;
-
-                case "GET_ACCOUNT_PUBLIC_KEY":
-                    // For now, we will return this without prompting the user, but we may need to add a prompt later
-                    response = this.selectedAddress.base58PublicKey;
+                    let account = {};
+                    account["address"] = this.selectedAddress.address;
+                    account["publicKey"] = this.selectedAddress.base58PublicKey;
+                    response = JSON.stringify(account);
                     break;
 
                 case "PUBLISH_QDN_RESOURCE":
