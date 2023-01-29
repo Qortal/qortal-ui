@@ -21,7 +21,7 @@ export const replaceMessagesEdited = async ({
 				let responseItem = { ...response[0] }
                 const decodeResponseItem = decodeMessageFunc(responseItem, isReceipient, _publicKey)
 				delete decodeResponseItem.timestamp
-				console.log({msg})
+		
 				msgItem = {
 					...msg,
 					...decodeResponseItem,

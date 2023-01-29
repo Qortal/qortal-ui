@@ -940,7 +940,6 @@ class ChatPage extends LitElement {
                     </div>
                 </div>
                 ` : null}
-               
                 <div>
                     ${this.isLoadingMessages ? 
                         html`
@@ -1334,6 +1333,7 @@ class ChatPage extends LitElement {
 
   async  connectedCallback() {
         super.connectedCallback();
+        await this.initUpdate()
         this.webWorker = new WebWorker();
         this.webWorkerImage = new WebWorkerImage();
         await this.getUpdateCompleteTextEditor();
@@ -1413,6 +1413,10 @@ class ChatPage extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        if(this.webSocket){
+            this.webSocket.close(1000, 'switch chat')
+            this.webSocket= ''
+        }
         this.webWorker.terminate();
         this.webWorkerImage.terminate();
         this.editor.destroy()
@@ -1561,10 +1565,6 @@ class ChatPage extends LitElement {
     }
 
     async initUpdate(){
-        if(this.webSocket){
-            this.webSocket.close()
-            this.webSocket= ''
-        }
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -1691,7 +1691,7 @@ class ChatPage extends LitElement {
         if(isEnabledChatEnter){
             this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true 
         }
-    await this.initUpdate()
+    
     }
 
     async updated(changedProperties) {
@@ -1703,9 +1703,6 @@ class ChatPage extends LitElement {
             }       
         }
 
-        if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
-           await this.initUpdate()
-        }
 
      
         if (changedProperties && changedProperties.has('isLoading')) {
@@ -2213,7 +2210,7 @@ class ChatPage extends LitElement {
 
     async fetchChatMessages(chatId) {
 
-        const initDirect = async (cid) => {
+        const initDirect = async (cid, noInitial) => {
             let initial = 0
 
             let directSocketTimeout
@@ -2233,17 +2230,15 @@ class ChatPage extends LitElement {
             }
 
             this.webSocket  = new WebSocket(directSocketLink);
-
             // Open Connection
             this.webSocket.onopen = () => {
-
                 setTimeout(pingDirectSocket, 50)
             }
 
             // Message Event
             this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2275,8 +2270,10 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartDirectWebSocket()
             }
 
             // Error Event
@@ -2291,8 +2288,17 @@ class ChatPage extends LitElement {
             }
 
         };
+        const restartDirectWebSocket = () => {
+            const noInitial = true
+            setTimeout(() => initDirect(chatId, noInitial), 50)
+        }
+        const restartGroupWebSocket = () => {
+            const noInitial = true
+            let groupChatId = Number(chatId)
+            setTimeout(() => initGroup(groupChatId, noInitial), 50)
+        }
 
-        const initGroup = (gId) => {
+        const initGroup = (gId, noInitial) => {
             let groupId = Number(gId)
 
             let initial = 0
@@ -2325,7 +2331,7 @@ class ChatPage extends LitElement {
             this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null;
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2362,6 +2368,8 @@ class ChatPage extends LitElement {
             // Closed Event
             this.webSocket.onclose = () => {
                 clearTimeout(groupSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartGroupWebSocket()
             }
 
             // Error Event

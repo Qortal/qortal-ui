@@ -375,7 +375,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 	}
 
 	render() {
-        console.log('this.chatId2', this.chatId)
 		return html`
             <div 
              class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
