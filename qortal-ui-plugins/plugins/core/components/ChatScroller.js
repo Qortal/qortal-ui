@@ -384,7 +384,6 @@ class MessageTemplate extends LitElement {
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
-            console.log(reactions, 'reactions here');
             version = parsedMessageObj.version;
             isForwarded = parsedMessageObj.type === 'forward';
             isEdited = parsedMessageObj.isEdited && true;
