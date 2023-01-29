@@ -103,7 +103,8 @@ class ChatPage extends LitElement {
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
             userName: { type: String },
-            goToRepliedMessage: {attribute: false}
+            goToRepliedMessage: {attribute: false},
+            isLoadingGoToRepliedMessage: {type: Object}
         }
     }
 
@@ -890,6 +891,12 @@ class ChatPage extends LitElement {
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.isEnabledChatEnter = true
+        this.isLoadingGoToRepliedMessage = {
+            isLoading: false,
+            top: 0,
+            left: 0,
+            offsetHeight: 0
+        }
     }
 
     _toggle(value) {
@@ -957,6 +964,9 @@ class ChatPage extends LitElement {
                         ` : 
                         this.renderChatScroller()}
                 </div>
+                ${this.isLoadingGoToRepliedMessage && this.isLoadingGoToRepliedMessage.loading ? html`
+                <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
+                ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
             
                     <div 
@@ -1417,10 +1427,19 @@ class ChatPage extends LitElement {
             this.webSocket.close(1000, 'switch chat')
             this.webSocket= ''
         }
-        this.webWorker.terminate();
-        this.webWorkerImage.terminate();
-        this.editor.destroy()
-        this.editorImage.destroy()
+        if(this.webWorker){
+            this.webWorker.terminate();
+        }
+        if(this.webWorkerImage){
+            this.webWorkerImage.terminate();
+        }
+        if(this.editor){
+            this.editor.destroy()
+        }
+        if(this.editorImage){
+            this.editorImage.destroy()
+        }
+        
         document.removeEventListener('keydown', this.initialChat);
       }
 
@@ -1436,11 +1455,12 @@ class ChatPage extends LitElement {
             }
         }
 
-        
+    
     }
 
-   async goToRepliedMessage(message){
+   async goToRepliedMessage(message, clickedOnMessage){
     const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    
     if(findMessage){
         findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
@@ -1459,11 +1479,30 @@ class ChatPage extends LitElement {
         return
     } 
 
+  
+
+    
     if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
+        const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.reference)
+    console.log({clickedOnMessage, findOriginalMessage})
+    if(findOriginalMessage){
+        const messageClientRect = findOriginalMessage.getBoundingClientRect()
+        this.isLoadingGoToRepliedMessage = {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: true,
+            left: messageClientRect.left,
+            top: messageClientRect.top,
+            offsetHeight: findOriginalMessage.offsetHeight
+        }
+    }
        await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
        const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
     if(findMessage){
-        findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        this.isLoadingGoToRepliedMessage =   {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: false
+        }
+        findMessage.scrollIntoView({block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
         if(findElement){
             findElement.classList.add('blink-bg')
@@ -1471,10 +1510,13 @@ class ChatPage extends LitElement {
                 findElement.classList.remove('blink-bg')
             }, 2000)
         }
-  
+        
         return
     }
-
+    this.isLoadingGoToRepliedMessage = {
+        ...this.isLoadingGoToRepliedMessage,
+        loading: false
+    }
     let errorMsg = get("chatpage.cchange66")
     parentEpml.request('showSnackBar', `${errorMsg}`)
     
@@ -1784,7 +1826,7 @@ class ChatPage extends LitElement {
             .setSelectedHead=${(val) => this.setSelectedHead(val)}
             ?openTipUser=${this.openTipUser}
             .selectedHead=${this.selectedHead}
-            .goToRepliedMessage=${(val)=> this.goToRepliedMessage(val)}
+            .goToRepliedMessage=${(val, val2)=> this.goToRepliedMessage(val, val2)}
             .getOldMessageAfter=${(val)=> this.getOldMessageAfter(val)}
             >
             </chat-scroller>

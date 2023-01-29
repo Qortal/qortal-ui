@@ -554,7 +554,7 @@ class MessageTemplate extends LitElement {
                                 ${repliedToData && html`
                                     <div class="original-message" 
                                     @click=${()=> {
-                                        this.goToRepliedMessage(repliedToData)
+                                        this.goToRepliedMessage(repliedToData, this.messageObj)
                                     }}>
                                         <p  
                                             style=${"cursor: pointer; margin: 0 0 5px 0;"} 
