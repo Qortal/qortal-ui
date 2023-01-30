@@ -103,7 +103,8 @@ class ChatPage extends LitElement {
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
             userName: { type: String },
-            goToRepliedMessage: {attribute: false}
+            goToRepliedMessage: {attribute: false},
+            isLoadingGoToRepliedMessage: {type: Object}
         }
     }
 
@@ -891,6 +892,12 @@ class ChatPage extends LitElement {
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.isEnabledChatEnter = true
+        this.isLoadingGoToRepliedMessage = {
+            isLoading: false,
+            top: 0,
+            left: 0,
+            offsetHeight: 0
+        }
     }
 
     _toggle(value) {
@@ -941,7 +948,6 @@ class ChatPage extends LitElement {
                     </div>
                 </div>
                 ` : null}
-               
                 <div>
                     ${this.isLoadingMessages ? 
                         html`
@@ -959,6 +965,9 @@ class ChatPage extends LitElement {
                         ` : 
                         this.renderChatScroller()}
                 </div>
+                ${this.isLoadingGoToRepliedMessage && this.isLoadingGoToRepliedMessage.loading ? html`
+                <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
+                ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
             
                     <div 
@@ -1320,7 +1329,6 @@ class ChatPage extends LitElement {
                     name: name ? name : undefined
                   }
                 } catch (error) {
-                    console.log(error)
                 }
         
                 return memberItem
@@ -1329,7 +1337,6 @@ class ChatPage extends LitElement {
             this.groupMembers = membersWithName
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
-          console.error(error)
         }
     }
 
@@ -1337,6 +1344,7 @@ class ChatPage extends LitElement {
 
     async connectedCallback() {
         super.connectedCallback();
+        await this.initUpdate()
         this.webWorker = new WebWorker();
         this.webWorkerImage = new WebWorkerImage();
         await this.getUpdateCompleteTextEditor();
@@ -1417,10 +1425,23 @@ class ChatPage extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.webWorker.terminate();
-        this.webWorkerImage.terminate();
-        this.editor.destroy()
-        this.editorImage.destroy()
+        if(this.webSocket){
+            this.webSocket.close(1000, 'switch chat')
+            this.webSocket= ''
+        }
+        if(this.webWorker){
+            this.webWorker.terminate();
+        }
+        if(this.webWorkerImage){
+            this.webWorkerImage.terminate();
+        }
+        if(this.editor){
+            this.editor.destroy()
+        }
+        if(this.editorImage){
+            this.editorImage.destroy()
+        }
+        
         document.removeEventListener('keydown', this.initialChat);
         document.removeEventListener('paste', this.pasteImage);
     }
@@ -1485,10 +1506,12 @@ class ChatPage extends LitElement {
                 }
             }
         }   
+
     }
 
-   async goToRepliedMessage(message){
+   async goToRepliedMessage(message, clickedOnMessage){
     const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    
     if(findMessage){
         findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
@@ -1507,11 +1530,29 @@ class ChatPage extends LitElement {
         return
     } 
 
+  
+
+    
     if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
+        const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.reference)
+    if(findOriginalMessage){
+        const messageClientRect = findOriginalMessage.getBoundingClientRect()
+        this.isLoadingGoToRepliedMessage = {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: true,
+            left: messageClientRect.left,
+            top: messageClientRect.top,
+            offsetHeight: findOriginalMessage.offsetHeight
+        }
+    }
        await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
        const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
     if(findMessage){
-        findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        this.isLoadingGoToRepliedMessage =   {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: false
+        }
+        findMessage.scrollIntoView({block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
         if(findElement){
             findElement.classList.add('blink-bg')
@@ -1519,10 +1560,13 @@ class ChatPage extends LitElement {
                 findElement.classList.remove('blink-bg')
             }, 2000)
         }
-  
+        
         return
     }
-
+    this.isLoadingGoToRepliedMessage = {
+        ...this.isLoadingGoToRepliedMessage,
+        loading: false
+    }
     let errorMsg = get("chatpage.cchange66")
     parentEpml.request('showSnackBar', `${errorMsg}`)
     
@@ -1556,7 +1600,6 @@ class ChatPage extends LitElement {
                 this.userFoundModalOpen = true;
             } catch (error) {
                 this.loading = false;
-                console.error(error);
                 let err4string = get("chatpage.cchange35");
                 parentEpml.request('showSnackBar', `${err4string}`)
             }
@@ -1585,7 +1628,6 @@ class ChatPage extends LitElement {
             const stringifyMessageObject = JSON.stringify(message);
             this.sendMessage(stringifyMessageObject, undefined, '', true)
         } catch (error) {
-            console.log({error});
         }
     }
 
@@ -1615,10 +1657,6 @@ class ChatPage extends LitElement {
     }
 
     async initUpdate(){
-        if(this.webSocket){
-            this.webSocket.close()
-            this.webSocket= ''
-        }
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -1688,7 +1726,6 @@ class ChatPage extends LitElement {
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1703,7 +1740,6 @@ class ChatPage extends LitElement {
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1713,7 +1749,6 @@ class ChatPage extends LitElement {
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
             } catch (error) {
-                console.error(error)
             }
         }
         
@@ -1748,7 +1783,7 @@ class ChatPage extends LitElement {
         if(isEnabledChatEnter){
             this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true 
         }
-    await this.initUpdate()
+    
     }
 
     async updated(changedProperties) {
@@ -1760,16 +1795,13 @@ class ChatPage extends LitElement {
             }       
         }
 
-        if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
-           await this.initUpdate()
-        }
 
      
         if (changedProperties && changedProperties.has('isLoading')) {
-            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM' && this.editor && this.editor.setEditable) {
                 this.editor.setEditable(false)
             }
-            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM' && this.editor &&  this.editor.setEditable) {
                 this.editor.setEditable(true)
             }
         }
@@ -1844,7 +1876,7 @@ class ChatPage extends LitElement {
             .setSelectedHead=${(val) => this.setSelectedHead(val)}
             ?openTipUser=${this.openTipUser}
             .selectedHead=${this.selectedHead}
-            .goToRepliedMessage=${(val)=> this.goToRepliedMessage(val)}
+            .goToRepliedMessage=${(val, val2)=> this.goToRepliedMessage(val, val2)}
             .getOldMessageAfter=${(val)=> this.getOldMessageAfter(val)}
             >
             </chat-scroller>
@@ -2270,7 +2302,7 @@ class ChatPage extends LitElement {
 
     async fetchChatMessages(chatId) {
 
-        const initDirect = async (cid) => {
+        const initDirect = async (cid, noInitial) => {
             let initial = 0
 
             let directSocketTimeout
@@ -2290,17 +2322,15 @@ class ChatPage extends LitElement {
             }
 
             this.webSocket  = new WebSocket(directSocketLink);
-
             // Open Connection
             this.webSocket.onopen = () => {
-
                 setTimeout(pingDirectSocket, 50)
             }
 
             // Message Event
             this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2332,8 +2362,10 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartDirectWebSocket()
             }
 
             // Error Event
@@ -2348,8 +2380,17 @@ class ChatPage extends LitElement {
             }
 
         };
+        const restartDirectWebSocket = () => {
+            const noInitial = true
+            setTimeout(() => initDirect(chatId, noInitial), 50)
+        }
+        const restartGroupWebSocket = () => {
+            const noInitial = true
+            let groupChatId = Number(chatId)
+            setTimeout(() => initGroup(groupChatId, noInitial), 50)
+        }
 
-        const initGroup = (gId) => {
+        const initGroup = (gId, noInitial) => {
             let groupId = Number(gId)
 
             let initial = 0
@@ -2382,7 +2423,7 @@ class ChatPage extends LitElement {
             this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null;
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2417,8 +2458,10 @@ class ChatPage extends LitElement {
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(groupSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartGroupWebSocket()
             }
 
             // Error Event
@@ -2482,7 +2525,6 @@ class ChatPage extends LitElement {
                         this._publicKey.hasPubKey = false
                     }
                 } catch (error) {
-                    console.error(error);
                 }
 
                 if(!hasPublicKey || !this._publicKey.hasPubKey){

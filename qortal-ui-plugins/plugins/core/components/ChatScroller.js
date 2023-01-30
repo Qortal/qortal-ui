@@ -384,7 +384,6 @@ class MessageTemplate extends LitElement {
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             reactions = parsedMessageObj.reactions || [];
-            console.log(reactions, 'reactions here');
             version = parsedMessageObj.version;
             isForwarded = parsedMessageObj.type === 'forward';
             isEdited = parsedMessageObj.isEdited && true;
@@ -474,7 +473,6 @@ class MessageTemplate extends LitElement {
                 const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
                 repliedToData.decodedMessage = parsedMsg;
             } catch (error) {
-                console.error(error);
             }
             
         }
@@ -563,7 +561,7 @@ class MessageTemplate extends LitElement {
                                 ${repliedToData && html`
                                     <div class="original-message" 
                                     @click=${()=> {
-                                        this.goToRepliedMessage(repliedToData)
+                                        this.goToRepliedMessage(repliedToData, this.messageObj)
                                     }}>
                                         <p  
                                             style=${"cursor: pointer; margin: 0 0 5px 0;"} 
@@ -913,7 +911,6 @@ class ChatMenu extends LitElement {
             this.setForwardProperties(stringifyMessageObject)
            
         } catch (error) {
-            console.log({error})
         }
     }
     render() {
@@ -931,7 +928,6 @@ class ChatMenu extends LitElement {
                         this.setToggledMessage(this.originalMessage)
                         this.emojiPicker.togglePicker(e.target)
                     } catch (error) {
-                        console.log({error})
                     }
                     
                     }}

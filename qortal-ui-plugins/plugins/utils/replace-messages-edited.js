@@ -21,7 +21,7 @@ export const replaceMessagesEdited = async ({
 				let responseItem = { ...response[0] }
                 const decodeResponseItem = decodeMessageFunc(responseItem, isReceipient, _publicKey)
 				delete decodeResponseItem.timestamp
-				console.log({msg})
+		
 				msgItem = {
 					...msg,
 					...decodeResponseItem,
@@ -31,7 +31,6 @@ export const replaceMessagesEdited = async ({
 				}
 			}
 		} catch (error) {
-			console.log(error)
 		}
 
 		return msgItem
@@ -42,7 +41,6 @@ export const replaceMessagesEdited = async ({
 		try {
 			parsedMessageObj = JSON.parse(msg.decodedMessage)
 		} catch (error) {
-            console.log('error')
 			return msg
 		}
 		let msgItem = msg
@@ -98,7 +96,6 @@ export const replaceMessagesEdited = async ({
 				}
 			}
 		} catch (error) {
-			console.log(error)
 		}
 
 		return msgItem
