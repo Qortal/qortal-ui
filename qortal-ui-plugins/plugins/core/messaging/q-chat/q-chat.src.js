@@ -28,6 +28,8 @@ import '@vaadin/grid'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder'
+import Highlight from '@tiptap/extension-highlight'
+
 import { Editor, Extension } from '@tiptap/core'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
