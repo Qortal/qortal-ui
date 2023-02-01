@@ -572,8 +572,9 @@
       "cchange63": "Enter Enabled",
       "cchange64": "Enter Disabled",
       "cchange65": "Please enter a recipient",
-      "cchange66": "Cannot fetch replied-to message. Message is too old."
-
+      "cchange66": "Cannot fetch replied-to message. Message is too old.",
+      "cchange80": "Gif Explorer",
+      "cchange81": "Explore Collections"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

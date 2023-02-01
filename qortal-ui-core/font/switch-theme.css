@@ -51,6 +51,7 @@ html {
   --lightChatHeadHover: #1e1f201a;
   --group-header: #929292;
   --group-drop-shadow: rgb(17 17 26 / 10%) 0px 1px 0px;
+  --gifs-drop-shadow: #32326926 0px 2px 5px 0px, #0000000d 0px 1px 1px 0px;
 }
 
 html[theme="dark"] {
@@ -105,5 +106,6 @@ html[theme="dark"] {
   --chatHeadTextActive: #ffffff;
   --lightChatHeadHover: #e0e1e31a;
   --group-header: #c8c8c8;
-  --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px
+  --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px;
+  --gifs-drop-shadow: 0px 2px 2px 0px hsla(0, 0%, 0%, 0.14), 0px 3px 1px -2px hsla(0, 0%, 0%, 0.12), 0px 1px 5px 0px hsla(0, 0%, 0%, 0.2);
 }

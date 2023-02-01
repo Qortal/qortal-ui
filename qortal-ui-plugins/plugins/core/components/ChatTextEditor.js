@@ -30,6 +30,7 @@ class ChatTextEditor extends LitElement {
               },
             toggleEnableChatEnter: {attribute: false},
             isEnabledChatEnter: {type: Boolean},
+            openGifModal: { type: Boolean },
             setOpenGifModal: {attribute: false}
 		}
 	}
@@ -361,69 +362,63 @@ class ChatTextEditor extends LitElement {
    
 		return html`
             <div 
-             class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
-             style="align-items: center;">
-            
+                class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
+                style="align-items: center;">
              <button
-        @click=${() => this.editor.chain().focus().toggleBold().run()}
-        ?disabled=${
-            this.editor && 
-          !this.editor.can()
-            .chain()
-            .focus()
-            .toggleBold()
-            .run()
-        }
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
-      >
-      <!-- <mwc-icon >format_bold</mwc-icon> -->
-      <span class="material-symbols-outlined">&#xe238;</span>
-      </button>
-      <button
-        @click=${() => this.editor.chain().focus().toggleItalic().run()}
-        ?disabled=${ this.editor && 
-          !this.editor.can()
-            .chain()
-            .focus()
-            .toggleItalic()
-            .run()
-        }
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
-      >
-      <span class="material-symbols-outlined">&#xe23f;</span>
-      </button>
-    
-      <button
-        @click=${() => this.editor.chain().focus().toggleUnderline().run()}
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
-      >
-      <span class="material-symbols-outlined">&#xe249;</span>
-      </button>
-      <button
-        @click=${() => this.editor.chain().focus().toggleHighlight().run()}
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
-      >
-      <span class="material-symbols-outlined">&#xf82b;</span>
-      </button>
-      <button
-        @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
-        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
-      >
-      <span class="material-symbols-outlined">&#xf84d;</span>
-      </button>
-      <button
-      @click=${()=> this.toggleEnableChatEnter() }
-      style="height: 26px; box-sizing: border-box;"
-        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
-      >
-      ${this.isEnabledChatEnter ? html`
-      ${translate("chatpage.cchange63")}
-      ` : html`
-      ${translate("chatpage.cchange64")}
-      `}
-  
-      </button>
-     
+                @click=${() => this.editor.chain().focus().toggleBold().run()}
+                ?disabled=${
+                    this.editor && 
+                !this.editor.can()
+                    .chain()
+                    .focus()
+                    .toggleBold()
+                    .run()
+                }
+                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}>
+                <span class="material-symbols-outlined">&#xe238;</span>
+            </button>
+            <button
+                @click=${() => this.editor.chain().focus().toggleItalic().run()}
+                ?disabled=${ this.editor && 
+                !this.editor.can()
+                    .chain()
+                    .focus()
+                    .toggleItalic()
+                    .run()
+                }
+                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj  || this.openGifModal) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
+            >
+                <span class="material-symbols-outlined">&#xe23f;</span>
+            </button>
+            <button
+                @click=${() => this.editor.chain().focus().toggleUnderline().run()}
+                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj  || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
+            >
+                <span class="material-symbols-outlined">&#xe249;</span>
+            </button>
+            <button
+                @click=${() => this.editor.chain().focus().toggleHighlight().run()}
+                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj  || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
+            >
+            <span class="material-symbols-outlined">&#xf82b;</span>
+            </button>
+            <button
+                @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
+                class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj  || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+            >
+            <span class="material-symbols-outlined">&#xf84d;</span>
+            </button>
+            <button
+            @click=${()=> this.toggleEnableChatEnter() }
+            style="height: 26px; box-sizing: border-box;"
+                class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj  || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+            >
+            ${this.isEnabledChatEnter ? html`
+            ${translate("chatpage.cchange63")}
+            ` : html`
+            ${translate("chatpage.cchange64")}
+            `}
+            </button>
             </div>
             <div 
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}

@@ -1,11 +1,11 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import { Epml } from '../../../../epml.js'
 import * as zip from "@zip.js/zip.js";
 import { saveAs } from 'file-saver';
 import '@material/mwc-icon'
 import ShortUniqueId from 'short-unique-id';
-import { publishData } from '../../utils/publish-image.js';
+import { publishData } from '../../../utils/publish-image.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

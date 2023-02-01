@@ -14,15 +14,22 @@
 @font-face {
   font-family: 'Material Symbols Outlined';
   font-style: normal;
-  src:  local('MaterialSymbolsOutlined'), 
-        url(MaterialSymbolsOutlined.ttf) format('truetype'),
-        url(MaterialSymbolsOutlined.woff2) format('woff2')
+  src: local('MaterialSymbolsOutlined'),
+    url(MaterialSymbolsOutlined.ttf) format('truetype'),
+    url(MaterialSymbolsOutlined.woff2) format('woff2')
 }
 
 @font-face {
   font-family: 'Montserrat';
   src: local('Montserrat'),
     local('Montserrat'),
+    url(Montserrat.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'MavenPro';
+  src: local('MavenPro'),
+    local('MavenPro'),
     url(Montserrat.ttf) format('truetype');
 }
 
@@ -77,7 +84,8 @@
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
+  font-size: 24px;
+  /* Preferred icon size */
   display: inline-block;
   line-height: 1;
   text-transform: none;
