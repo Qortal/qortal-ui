@@ -96,6 +96,12 @@ class MultiWallet extends LitElement {
             rvnBookAddress: { type: String },
             arrrBookAddress: { type: String },
             myElementId: { type: String }
+            btcBlockHeight: { type: Number },
+            ltcBlockHeight: { type: Number },
+            dogeBlockHeight: { type: Number },
+            dgbBlockHeight: { type: Number },
+            rvnBlockHeight: { type: Number },
+            arrrBlockHeight: { type: Number },
         }
     }
 
@@ -676,6 +682,12 @@ class MultiWallet extends LitElement {
         this.errorMessage = ''
         this.successMessage = ''
         this.myElementId = ''
+        this.btcBlockHeight = 0
+        this.ltcBlockHeight = 0
+        this.dogeBlockHeight = 0
+        this.dgbBlockHeight = 0
+        this.rvnBlockHeight = 0
+        this.arrrBlockHeight = 0
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
@@ -796,7 +808,7 @@ class MultiWallet extends LitElement {
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
-                        ${translate("walletpage.wchange2")}
+                        ${translate("walletpage.wchange2")}${this.renderBlockHeight()}
                         <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy 
@@ -2477,6 +2489,13 @@ class MultiWallet extends LitElement {
 
         this.showWallet()
 
+        this.getbtcBlockHeight()
+        this.getltcBlockHeight()
+        this.getdogeBlockHeight()
+        this.getdgbBlockHeight()
+        this.getrvnBlockHeight()
+        this.getarrrBlockHeight()
+	
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
             this.isTextMenuOpen = true
@@ -4718,6 +4737,24 @@ class MultiWallet extends LitElement {
         }
     }
 
+    renderBlockHeight() {
+        if ( this._selectedWallet === "btc" ) {
+            return html` | Bitcoin Blockheight: ${this.btcBlockHeight}`
+        } else if ( this._selectedWallet === "ltc" ) {
+            return html` | Litecoin Blockheight: ${this.ltcBlockHeight}`
+        } else if ( this._selectedWallet === "doge" ) {
+            return html` | Dogecoin Blockheight: ${this.dogeBlockHeight}`
+        } else if ( this._selectedWallet === "dgb" ) {
+            return html` | Digibyte Blockheight: ${this.dgbBlockHeight}`
+        } else if ( this._selectedWallet === "rvn" ) {
+            return html` | Ravencoin Blockheight: ${this.rvnBlockHeight}`
+        } else if ( this._selectedWallet === "arrr" ) {
+            return html` | Pirate Chain Blockheight: ${this.arrrBlockHeight}`
+        } else {
+            return html``
+        }
+    }
+
     openSendQort() {
         this.shadowRoot.querySelector("#sendQortDialog").show();
     }
@@ -4777,6 +4814,48 @@ class MultiWallet extends LitElement {
                 // Use locally derived address
                 return this.wallets.get(this._selectedWallet).wallet.address
         }
+    }
+
+    async getbtcBlockHeight() {
+        const btcChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/btc/height`
+        })
+        this.btcBlockHeight = btcChainHeight
+    }
+
+    async getltcBlockHeight() {
+        const ltcChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/ltc/height`
+        })
+        this.ltcBlockHeight = ltcChainHeight
+    }
+
+    async getdogeBlockHeight() {
+        const dogeChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/doge/height`
+        })
+        this.dogeBlockHeight = dogeChainHeight
+    }
+
+    async getdgbBlockHeight() {
+        const dgbChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/dgb/height`
+        })
+        this.dgbBlockHeight = dgbChainHeight
+    }
+
+    async getrvnBlockHeight() {
+        const rvnChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/rvn/height`
+        })
+        this.rvnBlockHeight = rvnChainHeight
+    }
+
+    async getarrrBlockHeight() {
+        const arrrChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/arrr/height`
+        })
+        this.arrrBlockHeight = arrrChainHeight
     }
 
     async getTransactionGrid(coin) {
