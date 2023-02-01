@@ -4739,17 +4739,17 @@ class MultiWallet extends LitElement {
 
     renderBlockHeight() {
         if ( this._selectedWallet === "btc" ) {
-            return html` | Bitcoin Blockheight: ${this.btcBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.btcBlockHeight}`
         } else if ( this._selectedWallet === "ltc" ) {
-            return html` | Litecoin Blockheight: ${this.ltcBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.ltcBlockHeight}`
         } else if ( this._selectedWallet === "doge" ) {
-            return html` | Dogecoin Blockheight: ${this.dogeBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.dogeBlockHeight}`
         } else if ( this._selectedWallet === "dgb" ) {
-            return html` | Digibyte Blockheight: ${this.dgbBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.dgbBlockHeight}`
         } else if ( this._selectedWallet === "rvn" ) {
-            return html` | Ravencoin Blockheight: ${this.rvnBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.rvnBlockHeight}`
         } else if ( this._selectedWallet === "arrr" ) {
-            return html` | Pirate Chain Blockheight: ${this.arrrBlockHeight}`
+            return html`&nbsp;&nbsp;|&nbsp;&nbsp;Height: ${this.arrrBlockHeight}`
         } else {
             return html``
         }
