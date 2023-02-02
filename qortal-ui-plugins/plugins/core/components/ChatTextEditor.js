@@ -659,7 +659,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             let messageObject = {};
 
             if (this.repliedToMessageObj) {
-                let chatReference = this.repliedToMessageObj.reference;
+                let chatReference = this.repliedToMessageObj.signature;
                 if (this.repliedToMessageObj.chatReference) {
                     chatReference = this.repliedToMessageObj.chatReference;
                 }

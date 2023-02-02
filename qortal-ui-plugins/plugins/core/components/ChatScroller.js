@@ -123,7 +123,7 @@ class ChatScroller extends LitElement {
                 ${formattedMessages.map((formattedMessage) => {
                     return repeat(
                             formattedMessage.messages,
-                            (message) => message.reference,
+                            (message) => message.signature,
                             (message, indexMessage) => html`
                             <message-template 
                             .emojiPicker=${this.emojiPicker} 
@@ -143,7 +143,7 @@ class ChatScroller extends LitElement {
                             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                             .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                             .setUserName=${(val) => this.setUserName(val)}
-                            id=${message.reference}
+                            id=${message.signature}
                             .goToRepliedMessage=${this.goToRepliedMessage}
                             .addSeenMessage=${(val)=> this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
@@ -346,7 +346,7 @@ class MessageTemplate extends LitElement {
 
     firstUpdated(){
         const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
-        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
+        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.signature)){
             this.viewImage =  true
         }
 
@@ -590,7 +590,7 @@ class MessageTemplate extends LitElement {
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
-                                            this.addSeenMessage(this.messageObj.reference)
+                                            this.addSeenMessage(this.messageObj.signature)
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>

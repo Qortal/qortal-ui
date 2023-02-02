@@ -14,7 +14,7 @@ export const replaceMessagesEdited = async ({
 			}
 			const response = await parentEpml.request("apiCall", {
 				type: "api",
-				url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
+				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}`,
 			})
 
 			if (response && Array.isArray(response) && response.length !== 0) {
@@ -52,7 +52,7 @@ export const replaceMessagesEdited = async ({
 			if (parsedMessageObj.repliedTo) {
 				const originalReply = await parentEpml.request("apiCall", {
 					type: "api",
-					url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+					url: `/chat/messages?signature=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
 				})
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
