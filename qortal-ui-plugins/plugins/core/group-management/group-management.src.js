@@ -22,6 +22,8 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
+import '@vaadin/grid/vaadin-grid-sort-column.js'
+import '@vaadin/text-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -33,6 +35,7 @@ class GroupManagement extends LitElement {
             privateGroups: { type: Array },
             joinedGroups: { type: Array },
             groupInvites: { type: Array },
+            filteredItems: { type: Array },
             privateGroupSearch: { type: Array },
             newMembersList: { type: Array },
             newAdminsList: { type: Array },
@@ -111,6 +114,9 @@ class GroupManagement extends LitElement {
                 --_lumo-grid-secondary-border-color: var(--border2);
             }
 
+[part="input-field"] {
+    background-color: #fff;
+}
             #group-management-page {
                 background: var(--white);
                 padding: 12px 24px;
@@ -437,6 +443,7 @@ class GroupManagement extends LitElement {
         this.privateGroups = []
         this.joinedGroups = []
         this.groupInvites = []
+        this.filteredItems = []
         this.privateGroupSearch = []
         this.newMembersList = []
         this.newAdminsList = []
@@ -1314,8 +1321,8 @@ class GroupManagement extends LitElement {
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
                         <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
-                        <vaadin-grid-filter-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-filter-column>
-                        <vaadin-grid-filter-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-filter-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderRole(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -1359,11 +1366,25 @@ class GroupManagement extends LitElement {
 
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange9")}</h3>
-                    <vaadin-grid theme="large" id="publicGroupsGrid" ?hidden="${this.isEmptyArray(this.publicGroups)}" .items="${this.publicGroups}" aria-label="Public Open Groups" all-rows-visible>
-                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
-                        <vaadin-grid-filter-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-filter-column>
-                        <vaadin-grid-filter-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-filter-column>
-                        <vaadin-grid-filter-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-filter-column>
+                    <vaadin-text-field
+                        placeholder="${translate("datapage.dchange4")}"
+                        style="width: 25%; margin-bottom: 20px;"
+                        clear-button-visible
+                        @value-changed="${(e) => {
+                            this.filteredItems = []
+                            const searchTerm = (e.target.value || '').trim()
+                            const keys = ['groupName', 'description', 'owner']
+                            const filtered = this.publicGroups.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
+                            this.filteredItems = filtered
+                        }}"
+                    >
+                    <vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
+                    </vaadin-text-field><br>
+                    <vaadin-grid theme="large" id="publicGroupsGrid" .items="${this.filteredItems}" aria-label="Public Open Groups" all-rows-visible>
+                        <vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
                             render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("grouppage.gchange51")}</mwc-button>`, root)
                         }}></vaadin-grid-column>
@@ -1773,7 +1794,8 @@ class GroupManagement extends LitElement {
             this.publicGroups = results
             this.privateGroups = _privateGroups
             this.joinedGroups = _joinedGroups
-            setTimeout(getOpen_JoinedGroups, 60000)
+            this.filteredItems = this.publicGroups
+            setTimeout(getOpen_JoinedGroups, 600000)
         }
 
         window.addEventListener("contextmenu", (event) => {
