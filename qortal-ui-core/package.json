@@ -77,7 +77,8 @@
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
-		"rollup-plugin-web-worker-loader": "1.6.1"
+		"rollup-plugin-web-worker-loader": "1.6.1",
+		"localforage": "1.10.0"
 	},
 	"engines": {
 		"node": ">=16.17.1"

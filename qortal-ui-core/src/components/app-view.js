@@ -4,6 +4,11 @@ import { store } from '../store.js'
 import { Epml } from '../epml.js'
 import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import localForage from "localforage";
+
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+});
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-progress/paper-progress.js'
@@ -27,6 +32,7 @@ import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
 import './start-minting.js'
+import { setChatLastSeen } from '../redux/app/app-actions.js'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent})
 
@@ -1386,6 +1392,17 @@ class AppView extends connect(store)(LitElement) {
             }
         }
 
+       const getChatLastSeen=async() => {
+            let items = [];
+          
+            await chatLastSeen.iterate(function(value, key, iterationNumber) {
+               
+                items.push({key, timestamp: value});
+              })
+              store.dispatch(setChatLastSeen(items))
+            return items;
+          }
+
         await getOpenTradesBTC()
         await appDelay(1000)
         await getOpenTradesLTC()
@@ -1397,6 +1414,7 @@ class AppView extends connect(store)(LitElement) {
         await getOpenTradesRVN()
         await appDelay(1000)
         await getOpenTradesARRR()
+        await getChatLastSeen()
     }
 
     async getNodeType() {
