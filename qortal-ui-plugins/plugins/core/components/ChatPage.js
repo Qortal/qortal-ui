@@ -823,29 +823,29 @@ class ChatPage extends LitElement {
           color: #4e5054;
       }
 
-    .gifs-backdrop {
-        height: 100vh;
-        width: 100vw;
-        background: transparent;
-        position: fixed;
-    }
+      .chat-gifs {
+          position: relative;
+          justify-self: flex-end;
+          width: fit-content;
+          height: auto;
+          transform: translateY(30%);
+          animation: smooth-appear 0.5s ease forwards;
+          z-index: 5;
+      }
 
-    .gifs-container {
-        position: relative;
-        display: flex;
-        padding: 10px 15px;
-        border-radius: 12px;
-        box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
-        background-color: var(--chat-menu-bg);
-        align-items: center;
-        justify-content: flex-end;
-        width: fit-content;
-        justify-self: flex-end;
-        margin-bottom: 8px;
-        margin-right: 5px;
-        box-shadow: var(--gifs-drop-shadow);
-        z-index: 5;
-    }
+        @keyframes smooth-appear {
+            to {
+                transform: translateY(0);
+            }
+        }   
+
+        .gifs-backdrop {
+            top: 0;
+            height: 100vh;
+            width: 100vw;
+            background: transparent;
+            position: fixed;
+        }
     `
     }
 
@@ -913,6 +913,7 @@ class ChatPage extends LitElement {
         this.webWorkerImage = null;
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
+        this.setOpenGifModal = this.setOpenGifModal.bind(this)
         this.isEnabledChatEnter = true
         this.openGifModal = false
     }
@@ -1050,18 +1051,20 @@ console.log({zipFileBlob})
                         this.renderChatScroller()}
                 </div>
                  <!-- gif div -->
-                 <div class="gifs-backdrop" @click=${() => {
-                     this.editor.commands.focus("end");
-                    this.setOpenGifModal(false);
-                    }} style=${this.openGifModal ? "visibility: visible; z-index: 4" : "visibility: hidden; z-index: -100"}>
-                </div>
-                <div 
-                    class="gifs-container"
-                    style=${this.openGifModal ? "visibility: visible;" : "visibility: hidden;"}>
+                 <div 
+                    class="gifs-backdrop" 
+                    @click=${() => {
+                        this.setOpenGifModal(false);
+                        this.editor.commands.focus("end");
+                        this.shadowRoot.querySelector("chat-gifs").clearGifSelections();
+                    }} 
+                    style=${this.openGifModal ? "visibility: visible; z-index: 4" : "visibility: hidden; z-index: -100"}>
+                    </div>
                     <chat-gifs 
-                    .webWorkerImage=${this.webWorkerImage}>
+                        class="chat-gifs"
+                        style=${this.openGifModal ? "display: flex;" : "display: none;"}
+                        .webWorkerImage=${this.webWorkerImage}>
                     </chat-gifs>
-                </div>
                 <!-- main chat bar -->
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                     <div 

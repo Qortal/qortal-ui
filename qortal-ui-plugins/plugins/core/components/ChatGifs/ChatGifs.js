@@ -18,14 +18,15 @@ class ChatGifs extends LitElement {
         return {
             selectedAddress: { type: Object },
             myGifCollections: { type: Array },
-            mySubscribedCollections: {type: Array},
+            mySubscribedCollections: { type: Array },
             exploreCollections: { type: Array },
-            gifsToBeAdded: { type: Array},
-            webWorkerImage: {type: Object},
-            mode: {type: String},
-            currentCollection: {type: String},
-            isLoading: {type: String},
-            newCollectionName: {type: String}
+            gifsToBeAdded: { type: Array },
+            webWorkerImage: { type: Object },
+            mode: { type: String },
+            currentCollection: { type: String },
+            isLoading: { type: String },
+            newCollectionName: { type: String },
+            editor: { type: Object },
         }
     }
 
@@ -219,8 +220,8 @@ class ChatGifs extends LitElement {
     async firstUpdated() {
         const tooltip = this.shadowRoot.querySelector('vaadin-tooltip');
         const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay');
-        overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
-        overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
+        overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; border-radius: 10px; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
+        overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--gif-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
 
         try {
             this.isLoading = true
@@ -398,31 +399,47 @@ class ChatGifs extends LitElement {
                 }
             }
             interval = setInterval(getAnswer, 5000)
-    })
-
-    saveAs(zipFileBlob, 'zipfile');
-    console.log({zipFileBlob})
-            } catch (error) {
-                console.log(error)
-            }
+        })
+        saveAs(zipFileBlob, 'zipfile');
+        console.log({zipFileBlob})
+        } catch (error) {
+            console.log(error)
         }
+    }
 
     setCurrentCollection(val){
         this.currentCollection = val
     }
 
+    clearGifSelections() {
+        this.mode = "myCollection";
+        this.gifsToBeAdded = [];
+    }
+
     render() {
         console.log('this.currentCollection', this.currentCollection)
-        console.log(3, "chat gifs here")
+        console.log(9, "chat gifs here")
         return html`
-             <div class="gif-explorer-container">
+                <div class="gifs-container">
+                <div class="gif-explorer-container">
+                    <vaadin-icon 
+                        id="create-collection-button"
+                        class="create-collections-icon" 
+                        @click=${() => {
+                        if (this.isLoading) return;
+                        this.mode = "newCollection";
+                        }} 
+                        icon="vaadin:plus" 
+                        slot="icon">
+                    </vaadin-icon>  
                 <div class="title-row">
                     <p class="gif-explorer-title">${translate("chatpage.cchange80")}</p>
                     <vaadin-icon 
+                        style=${this.mode === "newCollection" ? "display: none" : "display: block"}
                         id="explore-collections-icon"
                         class="explore-collections-icon" 
-                        @click=${() => {
-                            if(this.isLoading) return;
+                        @click=${()=> {
+                            if (this.isLoading) return;
                             this.mode = "explore";
                         }} 
                         icon="vaadin:search" 
@@ -436,30 +453,43 @@ class ChatGifs extends LitElement {
                         text=${get("chatpage.cchange81")}>
                     </vaadin-tooltip>
                 </div>
-                <div>
-                    <button 
-                    id="create-collection-button" 
-                    @click=${()=> {
-                        if(this.isLoading) return
-                        this.mode = "newCollection"
-                    }}>
-                        Create Collection
-                    </button>
-                    <button 
-                    id="my-collections-button" 
-                    @click=${()=> {
-                            if(this.isLoading) return
-                        this.mode = "myCollection"
-                    }}>
-                        My Collections
-                    </button>
-                    <button id="subscribed-collections-button" 
-                    @click=${()=> {
-                        if(this.isLoading) return
-                        this.mode = "subscribedCollection"
-                    }}>
-                        Subscribed Collections
-                    </button>
+                <div class="collections-button-row" style=${this.mode === "newCollection" ? "display: none" : "display: block"}>
+                    <div class="collections-button-innerrow">
+                <div
+                    id="my-collections-button"
+                  class=${[
+                    "my-collections-button",
+                    this.mode === "myCollection" 
+                      ? "collections-button-active"
+                      : null,
+                  ].join(" ")}
+                  @click=${() => {
+                    if (this.isLoading) return;
+                    if (this.mode === "myCollection") return;
+                    this.mode = "myCollection";
+                  }}
+                >
+                  ${translate("chatpage.cchange82")}
+                </div>
+                <div
+                id="subscribed-collections-button"
+                  class=${[
+                    "subscribed-collections-button",
+                    this.mode === "subscribedCollection"
+                      ? "collections-button-active"
+                      : null,
+                  ].join(" ")}
+                  @click=${() => {
+                    if(this.isLoading) return;
+                    if (this.mode === "subscribedCollection") return;
+                    this.mode = "subscribedCollection";
+                  }}
+                >
+                    ${translate("chatpage.cchange83")}
+                </div>
+              </div>
+            </div>
+            <div>
             ${this.mode === "myCollection" && !this.currentCollection ? html`
                 ${this.isLoading === true ? html`
                     <p>Loading...</p>
@@ -545,25 +575,40 @@ class ChatGifs extends LitElement {
                         })}
                 ` : ''}
                 ${this.mode === "newCollection" ? html`
+                <div class="new-collection-row">
+                    <div class="new-collection-subrow">
+                        <p class="new-collection-title">
+                            ${translate("chatpage.cchange84")}
+                        </p>
+                        <p class="new-collection-subtitle">
+                            ${translate("chatpage.cchange85")}
+                        </p>
+                    </div>      
                 <input 
                     @change="${e => {
                         this.addGifs(Array.from(e.target.files));
                         const filePickerInput = this.shadowRoot.getElementById('file-picker-gif') 
-                        if(filePickerInput){
-                            filePickerInput.value = ""
-                        }
+                        if (filePickerInput) {
+                                filePickerInput.value = ""
                             }
-                        }"
+                        }
+                    }"
                     id="file-picker-gif"
                     ?multiple=${true}
-                    class="file-picker-input-gif" type="file" name="myGif" accept="image/gif" />
-
-                        <button @click=${()=> {
-                            this.uploadGifCollection()
-                        }}>Upload Collection</button>
-                    <input .value=${this.newCollectionName} @change=${(e=> {
+                    class="file-picker-input-gif" type="file" name="myGif" accept="image/gif"
+                     />
+                    <button @click=${()=> {
+                        this.uploadGifCollection()
+                    }}>
+                        Upload Collection
+                    </button>
+                    <input 
+                        .value=${this.newCollectionName} 
+                        @change=${(e=> {
                             this.newCollectionName = e.target.value
-                        })} />
+                        })} 
+                    />
+                    </div>
                     <div style="display: flex; flex-direction: column">
                     ${this.gifsToBeAdded.map((gif, i)=> {
                         console.log({gif})
@@ -576,19 +621,16 @@ class ChatGifs extends LitElement {
                                 name: e.target.value
                             } 
                         })} />
-                        </div>
-                        
+                        </div>   
                         `
                     })}
                     </div>
                 ` : ''}
-                
                 </div>
-        </div>  
+            </div>  
+        </div>
         `
     }
-
-    
 }
 
 window.customElements.define('chat-gifs', ChatGifs)

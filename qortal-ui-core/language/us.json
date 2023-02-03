@@ -574,7 +574,11 @@
       "cchange65": "Please enter a recipient",
       "cchange66": "Cannot fetch replied-to message. Message is too old.",
       "cchange80": "Gif Explorer",
-      "cchange81": "Explore Collections"
+      "cchange81": "Explore Collections",
+      "cchange82": "My Collections",
+      "cchange83": "Subscribed Collections",
+      "cchange84": "Upload your gif files",
+      "cchange85": "File should be .Gif"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
