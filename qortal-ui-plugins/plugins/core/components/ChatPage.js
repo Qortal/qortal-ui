@@ -824,7 +824,9 @@ class ChatPage extends LitElement {
       }
 
       .chat-gifs {
-          position: relative;
+          position: absolute;
+          right: 15px;
+            bottom: 100px;
           justify-self: flex-end;
           width: fit-content;
           height: auto;
@@ -1050,26 +1052,26 @@ console.log({zipFileBlob})
                         ` : 
                         this.renderChatScroller()}
                 </div>
-                 <!-- gif div -->
-                 <div 
-                    class="gifs-backdrop" 
-                    @click=${() => {
-                        this.setOpenGifModal(false);
-                        this.editor.commands.focus("end");
-                        this.shadowRoot.querySelector("chat-gifs").clearGifSelections();
-                    }} 
+                <div 
+                class="gifs-backdrop" 
+                @click=${() => {
+                    this.setOpenGifModal(false);
+                    this.editor.commands.focus("end");
+                    this.shadowRoot.querySelector("chat-gifs").clearGifSelections();
+                }} 
                     style=${this.openGifModal ? "visibility: visible; z-index: 4" : "visibility: hidden; z-index: -100"}>
-                    </div>
-                    <chat-gifs 
-                        class="chat-gifs"
-                        style=${this.openGifModal ? "display: flex;" : "display: none;"}
-                        .webWorkerImage=${this.webWorkerImage}>
-                    </chat-gifs>
+                </div>
                 <!-- main chat bar -->
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
+                <!-- gif div -->
+                <chat-gifs 
+                    class="chat-gifs"
+                    style=${this.openGifModal ? "display: flex;" : "display: none;"}
+                    .webWorkerImage=${this.webWorkerImage}>
+                </chat-gifs>
                     <div 
                     class='last-message-ref' 
-                    style=${(this.lastMessageRefVisible && !this.imageFile) ? 'opacity: 1;' : 'opacity: 0;'}>
+                    style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
                         <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
                             this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
                             .scrollIntoView({
