@@ -95,7 +95,13 @@ class MultiWallet extends LitElement {
             dgbBookAddress: { type: String },
             rvnBookAddress: { type: String },
             arrrBookAddress: { type: String },
-            myElementId: { type: String }
+            myElementId: { type: String },
+            btcBlockHeight: { type: Number },
+            ltcBlockHeight: { type: Number },
+            dogeBlockHeight: { type: Number },
+            dgbBlockHeight: { type: Number },
+            rvnBlockHeight: { type: Number },
+            arrrBlockHeight: { type: Number }
         }
     }
 
@@ -676,6 +682,12 @@ class MultiWallet extends LitElement {
         this.errorMessage = ''
         this.successMessage = ''
         this.myElementId = ''
+        this.btcBlockHeight = 0
+        this.ltcBlockHeight = 0
+        this.dogeBlockHeight= 0
+        this.dgbBlockHeight = 0
+        this.rvnBlockHeight = 0
+        this.arrrBlockHeight = 0
         this.sendMoneyLoading = false
         this.isValidAmount = false
         this.btnDisable = false
@@ -796,7 +808,7 @@ class MultiWallet extends LitElement {
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
-                        ${translate("walletpage.wchange2")}
+                        ${translate("walletpage.wchange2")}${this.renderBlockHeightsForeign()}
                         <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy 
@@ -2476,6 +2488,8 @@ class MultiWallet extends LitElement {
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
 
         this.showWallet()
+		
+        this.renderBlockHeightsForeign()
 
         window.addEventListener('contextmenu', (event) => {
             event.preventDefault()
@@ -4636,6 +4650,100 @@ class MultiWallet extends LitElement {
                 // Not used for other coins yet
                 break
         }
+    }
+	
+    renderBlockHeightsForeign() {
+        switch( this._selectedWallet ) {
+            case "btc":
+                this.getbtcBlockHeight()
+                this.foreignBlockheight = html` Bitcoin&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.btcBlockHeight}`
+                setInterval(() => {
+                    this.getbtcBlockHeight()
+                }, 600000);
+                break
+            case "ltc":
+                this.getltcBlockHeight()
+                this.foreignBlockheight = html` Litecoin&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.ltcBlockHeight}`
+                setInterval(() => {
+                    this.getltcBlockHeight()
+                }, 130000);
+                break
+            case "doge":
+                this.getdogeBlockHeight()
+                this.foreignBlockheight = html` Dogecoin&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.dogeBlockHeight}`
+                setInterval(() => {
+                    this.getdogeBlockHeight()
+                }, 120000); // Block time of 1 minute, but increased refresh rate to two minutes, less core stress
+                break
+            case "dgb":
+                this.getdgbBlockHeight()
+                this.foreignBlockheight = html` Digibyte&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.dgbBlockHeight}`
+                setInterval(() => {
+                    this.getdgbBlockHeight()
+                }, 120000); // Block time of 15 seconds, but increased refresh rate to two minutes, less core stress
+                break
+            case "rvn":
+                this.getrvnBlockHeight()
+                this.foreignBlockheight = html` Ravencoin&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.rvnBlockHeight}`
+                setInterval(() => {
+                    this.getrvnBlockHeight()
+                }, 120000); // Block time of 1 minute, but increased refresh rate to two minutes, less core stress
+                break
+            case "arrr":
+                this.getarrrBlockHeight()
+                this.foreignBlockheight = html` Pirate Chain&nbsp;&nbsp;|&nbsp;&nbsp;${translate("appinfo.blockheight")}: ${this.arrrBlockHeight}`
+                setInterval(() => {
+                    this.getarrrBlockHeight()
+                }, 120000); // Block time of 1 minute, but increased refresh rate to two minutes, less core stress
+                break
+            case "qort":
+                this.foreignBlockheight = html`` //This is here because there was a bug, if you click on a foreign coin wallet, and click back to qortal wallet, it still shows the foreign coin's blockheight
+            default:
+                break
+        }
+        return html`${this.foreignBlockheight}`
+    }
+	
+    async getbtcBlockHeight() {
+        const btcChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/btc/height`
+        })
+        this.btcBlockHeight = btcChainHeight
+    }
+
+    async getltcBlockHeight() {
+        const ltcChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/ltc/height`
+        })
+        this.ltcBlockHeight = ltcChainHeight
+    }
+
+    async getdogeBlockHeight() {
+        const dogeChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/doge/height`
+        })
+        this.dogeBlockHeight = dogeChainHeight
+    }
+
+    async getdgbBlockHeight() {
+        const dgbChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/dgb/height`
+        })
+        this.dgbBlockHeight = dgbChainHeight
+    }
+
+    async getrvnBlockHeight() {
+        const rvnChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/rvn/height`
+        })
+        this.rvnBlockHeight = rvnChainHeight
+    }
+
+    async getarrrBlockHeight() {
+        const arrrChainHeight = await parentEpml.request('apiCall', {
+            url: `/crosschain/arrr/height`
+        })
+        this.arrrBlockHeight = arrrChainHeight
     }
 
     renderSendButton() {
