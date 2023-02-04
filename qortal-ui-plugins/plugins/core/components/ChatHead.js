@@ -108,9 +108,10 @@ class ChatHead extends LitElement {
         this.isImageLoaded = false
         this.imageFetches = 0
         this.lastReadMessageTimestamp =  0
+        this.loggedInAddress = window.parent.reduxStore.getState().app.selectedAddress.address
     }
 
-    createImage(imageUrl)  {
+     createImage(imageUrl)  {
         const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "width:40px; height:40px; float: left; border-radius:50%";
@@ -125,7 +126,7 @@ class ChatHead extends LitElement {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
-                }, 500);
+                }, 750);
             } else {
                
 
@@ -134,9 +135,9 @@ class ChatHead extends LitElement {
         };
         return imageHTMLRes;
       }
-      updated(){
 
-      }
+      
+    
     render() {
         let avatarImg = '';
         let backupAvatarImg = ''
@@ -158,7 +159,10 @@ class ChatHead extends LitElement {
         if(this.activeChatHeadUrl === this.chatInfo.url){
             isUnread = false
         }
-        
+
+        if(this.chatInfo.sender === this.loggedInAddress){
+            isUnread = false
+        }
         return html`
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 ${this.isImageLoaded ? html`${avatarImg}` : html`` }
@@ -221,6 +225,14 @@ class ChatHead extends LitElement {
             return true
         }
         if(changedProperties.has('chatInfo')){
+    
+            const prevChatInfo = changedProperties.get('chatInfo')
+
+            if(prevChatInfo.address !== this.chatInfo.address){
+    
+                this.isImageLoaded = false
+                this.requestUpdate()
+            }
             return true
         }
         

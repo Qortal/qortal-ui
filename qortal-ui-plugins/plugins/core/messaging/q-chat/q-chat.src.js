@@ -8,6 +8,7 @@ import { Epml } from '../../../../epml.js';
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate';
 import { qchatStyles } from './q-chat-css.src.js'
 import WebWorker from 'web-worker:./computePowWorker.src.js';
+import {repeat} from 'lit/directives/repeat.js';
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -856,14 +857,11 @@ class Chat extends LitElement {
     }
 
     renderChatHead(chatHeadArr) {
-
-        let tempUrl = document.location.href
-        let splitedUrl = decodeURI(tempUrl).split('?')
-        // let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
-
+      
         return chatHeadArr.map(eachChatHead => {
             return html`<chat-head activeChatHeadUrl=${this.activeChatHeadUrl} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
         })
+      
     }
 
     renderChatPage() {
