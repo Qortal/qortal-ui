@@ -10,7 +10,7 @@ import Highlight from '@tiptap/extension-highlight'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
 
-// import localForage from "localforage";
+import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 });
@@ -42,9 +42,9 @@ import WebWorker from 'web-worker:./computePowWorker.js';
 import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
 import '@polymer/paper-dialog/paper-dialog.js'
 
-// const messagesCache = localForage.createInstance({
-//     name: "messages-cache",
-// });
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+});
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -1444,6 +1444,14 @@ class ChatPage extends LitElement {
         
         document.removeEventListener('keydown', this.initialChat);
         document.removeEventListener('paste', this.pasteImage);
+        if(this.messagesRendered.length !== 0){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+           
+        }
+       
     }
 
       initialChat(e) {
@@ -1465,9 +1473,7 @@ class ChatPage extends LitElement {
         const handleTransferIntoURL = (dataTransfer) => {
             try {
                 const [firstItem] = dataTransfer.items;
-                console.log({firstItem});
                 const blob = firstItem.getAsFile();
-                console.log({blob});
                 return blob;
             } catch (error) {
                 console.log(error);

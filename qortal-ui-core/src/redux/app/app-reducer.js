@@ -1,9 +1,14 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
 import { loadStateFromLocalStorage, saveStateToLocalStorage } from '../../localStorageHelpers.js'
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT } from './app-action-types.js'
+import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN } from './app-action-types.js'
 import { initWorkersReducer } from './reducers/init-workers.js'
 import { loginReducer } from './reducers/login-reducer.js'
 import { setNode, addNode } from './reducers/manage-node.js'
+import localForage from "localforage";
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+});
+
 
 const INITIAL_STATE = {
     loggedIn: false,
@@ -44,7 +49,8 @@ const INITIAL_STATE = {
         isOpen: false,
         elementId: ''
     },
-    autoLoadImageChats: loadStateFromLocalStorage('autoLoadImageChats') || []
+    autoLoadImageChats: loadStateFromLocalStorage('autoLoadImageChats') || [],
+    chatLastSeen: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -167,6 +173,38 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 autoLoadImageChats: updatedState
+         }
+        }
+        case SET_CHAT_LAST_SEEN: {
+            return {
+                ...state,
+                chatLastSeen: action.payload
+         }
+        }
+        case ADD_CHAT_LAST_SEEN: {
+            const chatId = action.payload.key
+            const timestamp = action.payload.timestamp
+            if(!chatId || !timestamp) return state
+            let newChatLastSeen = [...state.chatLastSeen]
+            const findChatIndex = state.chatLastSeen.findIndex((chat)=> chat.key === chatId)
+            if(findChatIndex !== -1){
+               
+                newChatLastSeen[findChatIndex] = {
+                    key: chatId,
+                    timestamp,
+                }
+            }
+            if(findChatIndex === -1){
+               
+                newChatLastSeen = [...newChatLastSeen, {
+                    key: chatId,
+                    timestamp,
+                }]
+            }
+            chatLastSeen.setItem(chatId, timestamp)
+            return {
+                ...state,
+                chatLastSeen: newChatLastSeen
          }
         }
                 
