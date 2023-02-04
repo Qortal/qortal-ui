@@ -207,7 +207,7 @@ class AppView extends connect(store)(LitElement) {
 
                 #balanceheader {
                     flex: 0 0 24px;
-                    padding: 12px 12px 20px 12px;
+                    padding: 12px 12px 45px 12px;
                     border-bottom: 1px solid var(--border);
                     background: var(--sidetopbar);
                 }
@@ -329,7 +329,16 @@ class AppView extends connect(store)(LitElement) {
                 .sideBarMenu::-webkit-scrollbar-thumb:hover {
                     background-color: rgb(148, 146, 146);
                     cursor: pointer;
-                }     
+                }
+
+                .balanceButton {
+                    background-color: #03a9f4;
+                    color: #ffffff;
+                    margin-left: 12px;
+                    margin-right: 12px;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                }
             `
         ]
     }
@@ -426,6 +435,8 @@ class AppView extends connect(store)(LitElement) {
                                     </side-menu>
                                 </div>
                             </div>
+                            <button class="balanceButton" @click="${() => this.shBalanceTicker()}">${translate("grouppage.gchange59")}</button>
+                            <div id="theTicker" style="display: none; margin-bottom: 20px;">
                             <div id="balanceheader">
                                 <span class="balanceheadertext">
                                     ${this.getAllBalancesLoading ? html`
@@ -441,6 +452,7 @@ class AppView extends connect(store)(LitElement) {
                             </div>
                             ${this.getAllBalancesLoading ? html`<paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress>` : ''}
                             ${this.balanceTicker}
+                            </div>
                             <app-info></app-info>
                         </div>
                     </app-header-layout>
@@ -1397,6 +1409,15 @@ class AppView extends connect(store)(LitElement) {
         await getOpenTradesRVN()
         await appDelay(1000)
         await getOpenTradesARRR()
+    }
+
+    shBalanceTicker() {
+        const targetDiv = this.shadowRoot.getElementById("theTicker")
+        if (targetDiv.style.display !== "none") {
+            targetDiv.style.display = "none";
+        } else {
+            targetDiv.style.display = "inline";
+        }
     }
 
     async getNodeType() {

@@ -657,7 +657,8 @@
 		"gchange55": "Rechercher un groupe privé",
 		"gchange56": "Nom du groupe à rechercher",
 		"gchange57": "Nom de groupe privé introuvable",
-		"gchange58": "Notez que le nom du groupe doit correspondre exactement."
+		"gchange58": "Notez que le nom du groupe doit correspondre exactement.",
+		"gchange59": "Afficher / Masquer le téléscripteur"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

@@ -657,7 +657,8 @@
 		"gchange55": "Pesquisar Grupo Privado",
 		"gchange56": "Nome do grupo para pesquisar",
 		"gchange57": "Nome do grupo privado não encontrado",
-		"gchange58": "Observe que o nome do grupo deve corresponder exatamente."
+		"gchange58": "Observe que o nome do grupo deve corresponder exatamente.",
+		"gchange59": "Mostrar / Ocultar Ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Enigmas",

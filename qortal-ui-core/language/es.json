@@ -657,7 +657,8 @@
 		"gchange55": "Buscar grupo privado",
 		"gchange56": "Nombre del grupo a buscar",
 		"gchange57": "Nombre de grupo privado no encontrado",
-		"gchange58": "Tenga en cuenta que el nombre del grupo debe coincidir exactamente."
+		"gchange58": "Tenga en cuenta que el nombre del grupo debe coincidir exactamente.",
+		"gchange59": "Mostrar/ocultar teletipo"
 	},
 	"puzzlepage": {
 		"pchange1": "Rompecabezas",

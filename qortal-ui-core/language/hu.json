@@ -657,7 +657,8 @@
 		"gchange55": "Keresés privát csoportban",
 		"gchange56": "A keresendő csoport neve",
 		"gchange57": "A privát csoport neve nem található",
-		"gchange58": "Ne feledje, hogy a csoport nevének pontosan meg kell egyeznie."
+		"gchange58": "Ne feledje, hogy a csoport nevének pontosan meg kell egyeznie.",
+		"gchange59": "Ticker megjelenítése / elrejtése"
 	},
 	"puzzlepage": {
 		"pchange1": "Rejtvények",

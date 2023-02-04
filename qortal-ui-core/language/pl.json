@@ -657,7 +657,8 @@
 		"gchange55": "Wyszukaj grupę prywatną",
 		"gchange56": "Nazwa grupy do wyszukania",
 		"gchange57": "Nie znaleziono nazwy grupy prywatnej",
-		"gchange58": "Zauważ, że nazwa grupy musi dokładnie pasować."
+		"gchange58": "Zauważ, że nazwa grupy musi dokładnie pasować.",
+		"gchange59": "Pokaż / Ukryj Znacznik"
 	},
 	"puzzlepage": {
 		"pchange1": "Zagadki",
@@ -868,7 +869,7 @@
 		"inf9": "„Automatyczne kupowanie” to funkcja umożliwiająca składanie „zleceń kupna” w portalu handlowym. Te „zlecenia kupna” są widoczne tylko dla osoby, która je składa. Nie są to „publiczne” zlecenia kupna, jak np. „sprzedaże z otwartego rynku” są i NIE są przechowywane w łańcuchu blokowym Qortal. Auto Buy to funkcja interfejsu użytkownika i jako taka wymaga, aby interfejs użytkownika URUCHAMIAŁ.",
 		"inf10": "Aby złożyć zamówienie automatycznego zakupu, kliknij przycisk „Dodaj zamówienie automatycznego zakupu” i wypełnij pole, które się pojawi. Wprowadź KWOTĘ KWARTOŚCI, którą chcesz KUPIĆ, oraz CENĘ, do której chcesz KUPIĆ. Raz zamówienie jest aktywne, Auto Buy kupi dla ciebie DO tej kwoty QORT, po MAKSYMALNIE ustalonej cenie (zaczynając od najniższego zamówienia i przesuwając się w górę).",
 		"inf11": "Po prostu ZOSTAW DZIAŁAJĄCY UI, a Auto Buy zrobi resztę automatycznie!",
-		"inf12": "MOŻESZ przeglądać inne wtyczki w interfejsie użytkownika (Q-Chat, portfele itp.), ale NIE MOŻESZ ZAMKNĄĆ interfejsu użytkownika, jeśli chcesz, aby zakup automatyczny został zakończony. Pozostawienie interfejsu użytkownika „zminimalizowanego” na „pasku zadań” lub „panel” jest w porządku, o ile interfejs użytkownika pozostaje OTWARTY, Auto Buy będzie działać."
+		"inf12": "MOŻESZ przeglądać inne wtyczki w interfejsie użytkownika (Q-Chat, portfele itp.), ale NIE MOŻESZ ZAMKNĄĆ interfejsu użytkownika, jeśli chcesz, aby zakup automatyczny został zakończony. Pozostawienie interfejsu użytkownika „zminimalizowanego” na „pasku zadań” lub „panel” jest w porządku, o ile interfejs użytkownika pozostaje OTWARTY, Auto Buy będzie działać.",
 		"inf13": "Kup automatycznie",
 		"inf14": "z",
 		"inf15": "Aktywne automatyczne zamówienia zakupu",
