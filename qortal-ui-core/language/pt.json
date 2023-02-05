@@ -574,7 +574,12 @@
 		"cchange65": "Insira um destinatário",
 		"cchange66": "Não foi possível buscar a mensagem respondida. A mensagem é muito antiga.",
 		"cchange68": "editado",
-		"cchange69": "Mostrar imagens automaticamente"
+		"cchange69": "Mostrar imagens automaticamente",
+		"cchange70": "Este tipo de imagem não é suportado",
+		"cchange71": "e",
+		"cchange72": "outro",
+		"cchange73": "s",
+		"cchange74": "reagiu com"
 	},
 	"welcomepage": {
 		"wcchange1": "Bem-vindo ao Q-Chat",
@@ -597,7 +602,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Copiar Endereço",
 		"bcchange9": "Mensagem Privada",
-		"bcchange10": "Mais"
+		"bcchange10": "Mais",
+		"bcchange11": "Responder",
+		"bcchange12": "Editar",
+		"bcchange13": "Reação",
+		"bcchange14": "Avançar",
+		"bcchange15": "Mensagem encaminhada",
+		"bcchange16": "Escolha o destinatário ou procure um abaixo",
+		"bcchange17": "ENCAMINHADO",
+		"bcchange18": "Dica de usuário"
 	},
 	"grouppage": {
 		"gchange1": "Grupos Qortal",

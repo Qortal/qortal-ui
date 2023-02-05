@@ -574,7 +574,12 @@
 		"cchange65": "Kérjük, adjon meg egy címzettet",
 		"cchange66": "Nem sikerült lekérni a válaszolt üzenetet. Az üzenet túl régi.",
 		"cchange68": "szerkesztve",
-		"cchange69": "Képek automatikus megjelenítése"
+		"cchange69": "Képek automatikus megjelenítése",
+		"cchange70": "Ez a képtípus nem támogatott",
+		"cchange71": "és",
+		"cchange72": "egyéb",
+		"cchange73": "s",
+		"cchange74": "reagált:"
 	},
 	"welcomepage": {
 		"wcchange1": "Üdvözöljük a Q-Chathoz",
@@ -597,7 +602,15 @@
 		"bcchange7": "MENÜ",
 		"bcchange8": "Cím Másolása",
 		"bcchange9": "Privát Üzenet",
-		"bcchange10": "Több"
+		"bcchange10": "Több",
+		"bcchange11": "Válasz",
+		"bcchange12": "Szerkesztés",
+		"bcchange13": "Reakció",
+		"bcchange14": "Tovább",
+		"bcchange15": "Üzenet továbbítva",
+		"bcchange16": "Válasszon címzettet vagy keressen egyet lent",
+		"bcchange17": "TOVÁLTVA",
+		"bcchange18": "Tipp felhasználó"
 	},
 	"grouppage": {
 		"gchange1": "Qortal Csoportok",

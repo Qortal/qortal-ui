@@ -574,7 +574,12 @@
 		"cchange65": "Wprowadź odbiorcę",
 		"cchange66": "Nie można pobrać wiadomości, na którą udzielono odpowiedzi. Wiadomość jest za stara.",
 		"cchange68": "edytowano",
-		"cchange69": "Automatyczne wyświetlanie obrazów"
+		"cchange69": "Automatyczne wyświetlanie obrazów",
+		"cchange70": "Ten typ obrazu nie jest obsługiwany",
+		"cchange71": "i",
+		"cchange72": "inne",
+		"cchange73": "s",
+		"cchange74": "zareagował z"
 	},
 	"welcomepage": {
 		"wcchange1": "Witamy w Q-Chat",
@@ -597,7 +602,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Kopiuj Adres",
 		"bcchange9": "Prywatna Wiadomość",
-		"bcchange10": "Więcej"
+		"bcchange10": "Więcej",
+		"bcchange11": "Odpowiedz",
+		"bcchange12": "Edytuj",
+		"bcchange13": "Reakcja",
+		"bcchange14": "Przekaż",
+		"bcchange15": "Wiadomość przekazana",
+		"bcchange16": "Wybierz odbiorcę lub wyszukaj poniżej",
+		"bcchange17": "PRZEKAZANA",
+		"bcchange18": "Użytkownik napiwku"
 	},
 	"grouppage": {
 		"gchange1": "Grupy Qortal",

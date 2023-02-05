@@ -574,7 +574,12 @@
 		"cchange65": "Molimo unesite primatelja",
 		"cchange66": "Ne mogu dohvatiti poruku s odgovorom. Poruka je prestara.",
 		"cchange68": "uređeno",
-		"cchange69": "Automatsko prikazivanje slika"
+		"cchange69": "Automatsko prikazivanje slika",
+		"cchange70": "Ova vrsta slike nije podržana",
+		"cchange71": "i",
+		"cchange72": "ostalo",
+		"cchange73": "s",
+		"cchange74": "reagirao sa"
 	},
 	"welcomepage": {
 		"wcchange1": "Dobrodošli u Q-Čavrljanje",
@@ -597,7 +602,15 @@
 		"bcchange7": "MENI",
 		"bcchange8": "Kopiraj Adresu",
 		"bcchange9": "Privatna Poruka",
-		"bcchange10": "Više"
+		"bcchange10": "Više",
+		"bcchange11": "Odgovori",
+		"bcchange12": "Uredi",
+		"bcchange13": "Reakcija",
+		"bcchange14": "Naprijed",
+		"bcchange15": "Poruka proslijeđena",
+		"bcchange16": "Odaberite primatelja ili potražite jednog ispod",
+		"bcchange17": "PROSLJEĐENO",
+		"bcchange18": "Savjet korisniku"
 	},
 	"grouppage": {
 		"gchange1": "Qortal Grupe",

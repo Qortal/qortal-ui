@@ -574,7 +574,12 @@
 		"cchange65": "Veuillez saisir un destinataire",
 		"cchange66": "Impossible de récupérer le message auquel vous avez répondu. Le message est trop ancien.",
 		"cchange68": "modifié",
-		"cchange69": "Afficher automatiquement les images"
+		"cchange69": "Afficher automatiquement les images",
+		"cchange70": "Ce type d'image n'est pas pris en charge",
+		"cchange71": "et",
+		"cchange72": "autre",
+		"cchange73": "s",
+		"cchange74": "a réagi avec"
 	},
 	"welcomepage": {
 		"wcchange1": "Bienvenue dans Q-Chat",
@@ -597,7 +602,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Copier l'Adresse",
 		"bcchange9": "Message Privé",
-		"bcchange10": "Suite"
+		"bcchange10": "Suite",
+		"bcchange11": "Répondre",
+		"bcchange12": "Modifier",
+		"bcchange13": "Réaction",
+		"bcchange14": "En avant",
+		"bcchange15": "Message transféré",
+		"bcchange16": "Choisissez le destinataire ou recherchez-en un ci-dessous",
+		"bcchange17": "TRANSMIS",
+		"bcchange18": "Astuce à l'utilisateur"
 	},
 	"grouppage": {
 		"gchange1": "Groupes Qortal",
