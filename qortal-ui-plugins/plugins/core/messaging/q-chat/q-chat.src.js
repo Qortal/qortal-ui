@@ -32,7 +32,6 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 
 import { Editor, Extension } from '@tiptap/core'
-import Highlight from '@tiptap/extension-highlight'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class Chat extends LitElement {
