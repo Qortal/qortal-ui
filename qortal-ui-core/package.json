@@ -17,9 +17,9 @@
 	"author": "QORTAL <admin@qortal.org>",
 	"license": "GPL-3.0",
 	"dependencies": {
-		"@hapi/hapi": "21.2.0",
+		"@hapi/hapi": "21.2.1",
 		"@hapi/inert": "7.0.0",
-		"sass": "1.57.1"
+		"sass": "1.58.0"
 	},
 	"devDependencies": {
 		"@babel/core": "7.20.12",
@@ -58,27 +58,27 @@
 		"@rollup/plugin-commonjs": "24.0.1",
 		"@rollup/plugin-node-resolve": "15.0.1",
 		"@rollup/plugin-replace": "5.0.2",
-		"@rollup/plugin-terser": "0.3.0",
-		"@vaadin/button": "23.3.5",
-		"@vaadin/grid": "23.3.5",
-		"@vaadin/icons": "23.3.5",
-		"@vaadin/password-field": "23.3.5",
-		"@vaadin/tooltip": "23.3.5",
+		"@rollup/plugin-terser": "0.4.0",
+		"@vaadin/button": "23.3.6",
+		"@vaadin/grid": "23.3.6",
+		"@vaadin/icons": "23.3.6",
+		"@vaadin/password-field": "23.3.6",
+		"@vaadin/tooltip": "23.3.6",
 		"asmcrypto.js": "2.3.2",
 		"bcryptjs": "2.4.3",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
 		"lit": "2.6.1",
 		"lit-translate": "2.0.1",
+		"localforage": "1.10.0",
 		"pwa-helpers": "0.9.1",
-		"redux": "4.2.0",
+		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.10.1",
+		"rollup": "3.14.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
-		"rollup-plugin-web-worker-loader": "1.6.1",
-		"localforage": "1.10.0"
+		"rollup-plugin-web-worker-loader": "1.6.1"
 	},
 	"engines": {
 		"node": ">=16.17.1"
