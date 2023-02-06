@@ -1421,6 +1421,12 @@ class ChatPage extends LitElement {
           })
           document.addEventListener('keydown', this.initialChat);
           document.addEventListener('paste', this.pasteImage);
+          if(this.chatId){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+        }
     }
 
     disconnectedCallback() {
@@ -1444,7 +1450,7 @@ class ChatPage extends LitElement {
         
         document.removeEventListener('keydown', this.initialChat);
         document.removeEventListener('paste', this.pasteImage);
-        if(this.messagesRendered.length !== 0){
+        if(this.chatId){
             window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
                 key: this.chatId,
                 timestamp: Date.now()
@@ -2181,7 +2187,13 @@ class ChatPage extends LitElement {
               await  this.renderNewMessage(msg)
             })
           await Promise.all(renderEachMessage)
-
+          if(this.chatId){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+           
+        }
             // this.newMessages = this.newMessages.concat(_newMessages)
             this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
