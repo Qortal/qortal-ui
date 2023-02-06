@@ -887,7 +887,7 @@ class Chat extends LitElement {
     setChatHeads(chatObj) {
         const chatObjGroups = Array.isArray(chatObj.groups) ? chatObj.groups  : [];
         const chatObjDirect = Array.isArray(chatObj.direct) ? chatObj.direct : [];
-        let groupList = chatObjGroups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
+        let groupList = chatObjGroups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp, sender: group.sender } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
         let directList = chatObjDirect.map(dc => {
             return { ...dc, url: `direct/${dc.address}` }
         })
