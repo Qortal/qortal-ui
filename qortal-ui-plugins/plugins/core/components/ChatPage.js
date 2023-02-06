@@ -101,8 +101,9 @@ class ChatPage extends LitElement {
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
             userName: { type: String },
-            goToRepliedMessage: {attribute: false},
-            openGifModal: {type: Boolean}
+            goToRepliedMessage: { attribute: false },
+            openGifModal: { type: Boolean },
+            gifsLoading: { type: Boolean },
         }
     }
 
@@ -862,6 +863,7 @@ class ChatPage extends LitElement {
         this.setOpenUserInfo = this.setOpenUserInfo.bind(this)
         this.setUserName = this.setUserName.bind(this)
         this.setSelectedHead = this.setSelectedHead.bind(this)
+        this.setGifsLoading = this.setGifsLoading.bind(this)
         this.selectedAddress = {}
         this.userName = ""
         this.chatId = ''
@@ -962,6 +964,10 @@ class ChatPage extends LitElement {
         console.log('this.gifsToBeAdded', this.gifsToBeAdded)
     }
 
+    setGifsLoading(props) {
+        this.gifsLoading = props;
+    }
+
     async uploadGifCollection(){
         try {
             function blobToBase64(blob) {
@@ -1055,6 +1061,7 @@ console.log({zipFileBlob})
                 <div 
                 class="gifs-backdrop" 
                 @click=${() => {
+                    if (this.gifsLoading) return;
                     this.setOpenGifModal(false);
                     this.editor.commands.focus("end");
                     this.shadowRoot.querySelector("chat-gifs").clearGifSelections();
@@ -1067,7 +1074,8 @@ console.log({zipFileBlob})
                 <chat-gifs 
                     class="chat-gifs"
                     style=${this.openGifModal ? "display: flex;" : "display: none;"}
-                    .webWorkerImage=${this.webWorkerImage}>
+                    .webWorkerImage=${this.webWorkerImage}
+                    .setGifsLoading=${(val) => this.setGifsLoading(val)}>
                 </chat-gifs>
                     <div 
                     class='last-message-ref' 

@@ -66,6 +66,8 @@ editor: {type: Object},
     						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`,
     					});
 
+							console.log({metaData});
+
     					collectionObj = {
     						...collection,
     						gifUrls: [],
@@ -164,11 +166,11 @@ editor: {type: Object},
     	const userName = await this.getName(this.selectedAddress.address);
     	this.myAccountName = userName;
     	if (this.myAccountName) {
-    		const getMyGifColloctions = await parentEpml.request('apiCall', {
+    		const getMyGifCollections = await parentEpml.request('apiCall', {
     			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}`,
     		});
     		const gifCollectionWithMetaData = await this.structureCollections(
-    			getMyGifColloctions
+    			getMyGifCollections
     		);
 
     		console.log({gifCollectionWithMetaData});
@@ -313,22 +315,21 @@ editor: {type: Object},
 
     async uploadGifCollection() {
     	if (!this.newCollectionName) {
-    		parentEpml.request('showSnackBar', get('chatpage.cchange27'));
+    		parentEpml.request('showSnackBar', get('chatpage.cchange87'));
     		return;
     	}
-
-    	// if(!isAlphanumeric(this.newCollectionName)){
-    	//     parentEpml.request('showSnackBar', get("chatpage.cchange27"));
-    	//     return
-    	// }
     	try {
+    			this.setGifsLoading(true);
+    			this.isLoading = true;
     		const userName = await this.getName(this.selectedAddress.address);
     		const doesNameExist = await parentEpml.request('apiCall', {
     			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`,
     		});
 
     		if (doesNameExist.length !== 0) {
-    			parentEpml.request('showSnackBar', get('chatpage.cchange27'));
+    			parentEpml.request('showSnackBar', get('chatpage.cchange87'));
+    				this.isLoading = false;
+    				this.setGifsLoading(false);
     			return;
     		}
     		function blobToBase64(blob) {
@@ -365,6 +366,7 @@ editor: {type: Object},
 
     		if (!userName) {
     			parentEpml.request('showSnackBar', get('chatpage.cchange27'));
+    				this.setGifsLoading(false);
     			this.isLoading = false;
     			return;
     		}
@@ -376,7 +378,7 @@ editor: {type: Object},
     			service: 'GIF_REPOSITORY',
     			identifier: this.newCollectionName,
     			parentEpml,
-    			metaData: undefined,
+    			metaData: `title=${this.newCollectionName}`,
     			uploadType: 'zip',
     			selectedAddress: this.selectedAddress,
     			worker: this.webWorkerImage,
@@ -406,7 +408,13 @@ editor: {type: Object},
     			};
     			interval = setInterval(getAnswer, 5000);
     		});
-    		saveAs(zipFileBlob, 'zipfile');
+    		// saveAs(zipFileBlob, 'zipfile');
+    			this.isLoading = false;
+    			this.setGifsLoading(false);
+					this.mode = 'myCollection';
+					this.gifsToBeAdded = [];
+					this.newCollectionName = '';
+    			parentEpml.request('showSnackBar', get('chatpage.cchange89'));
     		console.log({zipFileBlob});
     	} catch (error) {
     		console.log(error);
@@ -424,7 +432,7 @@ editor: {type: Object},
 
     render() {
     	console.log('this.currentCollection', this.currentCollection);
-    	console.log(12, 'chat gifs here');
+    	console.log(13, 'chat gifs here');
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
@@ -514,19 +522,15 @@ editor: {type: Object},
             ${this.mode === 'myCollection' && !this.currentCollection
     				? html`
     						${this.isLoading === true
-    							? html` <p>Loading...</p> `
+    							? html`<div class="lds-circle"><div></div></div>`
     							: ''}
     						${this.myGifCollections.map((collection) => {
     							return html`
-    								<div>
-    									<p
-    										@click=${() => {
+    								<div @click=${() => {
     											this.currentCollection =
     												collection;
-    										}}
-    									>
+    										}} class='collection-card'>
     										${collection.identifier}
-    									</p>
     								</div>
     							`;
     						})}
@@ -577,13 +581,15 @@ editor: {type: Object},
     			}
                 ${this.currentCollection && this.mode === 'myCollection'
     					? html`
-    							<button
+    							<div
+										class='collection-back-button'
     								@click=${() => {
     									this.currentCollection = null;
     								}}
     							>
-    								Back
-    							</button>
+									<vaadin-icon icon='vaadin:arrow-left' slot='icon'></vaadin-icon>
+    								${translate('general.back')}
+    							</div>
     							${this.currentCollection.gifUrls.map((gif) => {
     								console.log({gif});
 
@@ -660,9 +666,9 @@ editor: {type: Object},
     					  `
     					: ''
     			}
-    						${this.mode === 'newCollection'
+    						${this.mode === 'newCollection' && this.isLoading === false
     					? html`
-    							<div class="new-collection-row" style=${this.gifsToBeAdded.length === 0 ? "flex: 0;" : "flex: 1"}>
+    							<div class="new-collection-row" style=${this.gifsToBeAdded.length === 0 ? "" : "flex: 1;"}>
     								<div class="new-collection-subrow">
     									<p class="new-collection-title">
     										${translate('chatpage.cchange84')}
@@ -679,7 +685,7 @@ editor: {type: Object},
     											)
     											.click()}
     									class="new-collection-container"
-											style=${this.gifsToBeAdded.length > 0 ? "padding: 10px 0;" : "padding: 60px 0;"}
+    										style=${this.gifsToBeAdded.length > 0 ? "padding: 10px 0;" : "padding: 60px 0;"}
     								>
     									<vaadin-icon
     										id="new-collection-icon"
@@ -711,7 +717,9 @@ editor: {type: Object},
     								</div>
 
     								<input
+    											class="upload-collection-name"
     										style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: block;"}
+    											placeholder=${get("chatpage.cchange88")}
     									.value=${this.newCollectionName}
     									@change=${(e) => {
     										this.newCollectionName =
@@ -720,21 +728,20 @@ editor: {type: Object},
     								/>
     								<div
     									class="gifs-added-col"
-											style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: flex;"}
+    										
     								>
-										<div class="gifs-added-row">
+    									<div class="gifs-added-row">
     									${this.gifsToBeAdded.map((gif, i) => {
-    										console.log({gif});
     										return html`
     											<div class="gif-input">
     												<img
-															class="gif-input-img"
+    														class="gif-input-img"
     													src=${URL.createObjectURL(
     														gif.file
     													)}
     												/>
     												<input
-															class="gif-input-field"
+    														class="gif-input-field"
     													.value=${gif.name}
     													@change=${(e) => {
     														this.gifsToBeAdded[i] = {
@@ -747,7 +754,7 @@ editor: {type: Object},
     											</div>
     										`;
     									})}
-										</div>
+    									</div>
     								<div class="upload-collection-row">
     									<button
     										class="upload-back-button"
@@ -759,6 +766,7 @@ editor: {type: Object},
     										${translate('general.back')}
     									</button>
     									<button
+												style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: block;"}
     										class="upload-button"
     										@click=${() => {
     											this.uploadGifCollection();
@@ -770,7 +778,15 @@ editor: {type: Object},
     								</div>
     							</div>
     					  `
-    					: ''
+    					: this.mode === 'newCollection' && this.isLoading === true ? (
+    							html`
+    								<div>
+    									<p class='gifs-loading-message'>${translate("chatpage.cchange90")}</p>
+    								<div class="lds-circle"><div></div></div>
+    								</div>
+    								`
+    						)
+    						: ''
     			}
                 </div>
             </div>

@@ -579,7 +579,11 @@
       "cchange83": "Subscribed Collections",
       "cchange84": "Upload your gif files",
       "cchange85": "File should be .Gif",
-      "cchange86": "Upload Collection"
+      "cchange86": "Upload Collection",
+      "cchange87": "A collection name is required!",
+      "cchange88": "Collection Name",
+      "cchange89": "Gif Collection Uploaded Successfully!",
+      "cchange90": "Gifs uploading, please wait..."
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",
