@@ -9,6 +9,7 @@ import {publishData} from '../../../utils/publish-image.js';
 import {translate, get} from 'lit-translate';
 import {gifExplorerStyles} from './ChatGifs-css.js';
 import './ChatGifsExplore.js';
+import '../ImageComponent.js';
 import '@vaadin/tooltip';
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
@@ -66,7 +67,7 @@ editor: {type: Object},
     						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`,
     					});
 
-							console.log({metaData});
+    						console.log({metaData});
 
     					collectionObj = {
     						...collection,
@@ -173,10 +174,12 @@ editor: {type: Object},
     			getMyGifCollections
     		);
 
-    		console.log({gifCollectionWithMetaData});
-    		this.myGifCollections = gifCollectionWithMetaData;
-    	}
+    		return gifCollectionWithMetaData;
+    	} else {
+				return [];
+			}
     }
+
     async getAllCollections() {
     	this.pageNumber = 0;
     	// for the explore section
@@ -202,7 +205,6 @@ editor: {type: Object},
     			const name = splitCollection[0];
     			const identifier = splitCollection[1];
     			try {
-    				console.log({collection});
     				const data = await parentEpml.request('apiCall', {
     					url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${name}&identifier=${identifier}`,
     				});
@@ -219,7 +221,7 @@ editor: {type: Object},
     	const savedCollectionsWithMetaData = await this.structureCollections(
     		savedCollections
     	);
-    	this.mySubscribedCollections = savedCollectionsWithMetaData;
+    	return savedCollectionsWithMetaData;
     }
 
     async firstUpdated() {
@@ -233,10 +235,23 @@ editor: {type: Object},
     		'background-color: var(--gif-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;';
 
     	try {
-    		this.isLoading = true;
-    		await this.getMyGifCollections();
+					this.isLoading = true;
+					const myCollections = await this.getMyGifCollections();
+					const savedCollections = await this.getSavedCollections();
+
+    			if (!Array.isArray(myCollections) && !Array.isArray(savedCollections)) {
+    				parentEpml.request('showSnackBar', get('chatpage.cchange91'));
+    				return;
+    			}
+
+    			await new Promise((res) => {
+    				setTimeout(() => {
+    					res();
+    				}, 1000)
+    			});
+    			this.myGifCollections = myCollections;
+    			this.mySubscribedCollections = savedCollections;
     		await this.getAllCollections();
-    		await this.getSavedCollections();
     		this.isLoading = false;
     	} catch (error) {
     		this.isLoading = false;
@@ -245,16 +260,20 @@ editor: {type: Object},
     }
 
     async updated(changedProperties) {
-    	console.log({changedProperties});
     	if (changedProperties && changedProperties.has('mode')) {
     		const mode = this.mode;
-    		console.log({mode});
     		if (mode === 'myCollection') {
     			try {
+    				this.myGifCollections = [];
     				this.isLoading = true;
-
-    				await this.getMyGifCollections();
-    				this.isLoading = false;
+    					const collections = await this.getMyGifCollections();
+    					await new Promise((res) => {
+    						setTimeout(() => {
+    							res();
+    						}, 1000)
+    					});
+    					this.myGifCollections = collections;
+    					this.isLoading = false;
     			} catch (error) {
     				this.isLoading = false;
     			}
@@ -272,10 +291,16 @@ editor: {type: Object},
     		}
     		if (mode === 'subscribedCollection') {
     			try {
+    					this.mySubscribedCollections = [];
     				this.isLoading = true;
-
-    				await this.getSavedCollections();
-    				this.isLoading = false;
+    					const savedCollections = await this.getSavedCollections();
+    					await new Promise((res) => {
+    						setTimeout(() => {
+    							res();
+    						}, 1000)
+    					});
+    					this.mySubscribedCollections = savedCollections;
+    					this.isLoading = false;
     			} catch (error) {
     				this.isLoading = false;
     			}
@@ -301,16 +326,13 @@ editor: {type: Object},
     }
 
     addGifs(gifs) {
-    	console.log('gifs', gifs);
     	const mapGifs = gifs.map((file) => {
     		return {
     			file,
     			name: file.name,
     		};
     	});
-    	console.log({mapGifs});
     	this.gifsToBeAdded = [...this.gifsToBeAdded, ...mapGifs];
-    	console.log('this.gifsToBeAdded', this.gifsToBeAdded);
     }
 
     async uploadGifCollection() {
@@ -362,7 +384,6 @@ editor: {type: Object},
     		await zipWriter.close();
     		const zipFileBlob = await zipFileWriter.getData();
     		const blobTobase = await blobToBase64(zipFileBlob);
-    		console.log({blobTobase});
 
     		if (!userName) {
     			parentEpml.request('showSnackBar', get('chatpage.cchange27'));
@@ -411,12 +432,11 @@ editor: {type: Object},
     		// saveAs(zipFileBlob, 'zipfile');
     			this.isLoading = false;
     			this.setGifsLoading(false);
-					this.mode = 'myCollection';
-					this.gifsToBeAdded = [];
-					this.newCollectionName = '';
+    				this.mode = 'myCollection';
+    				this.gifsToBeAdded = [];
+    				this.newCollectionName = '';
     			parentEpml.request('showSnackBar', get('chatpage.cchange89'));
-    		console.log({zipFileBlob});
-    	} catch (error) {
+				} catch (error) {
     		console.log(error);
     	}
     }
@@ -432,7 +452,7 @@ editor: {type: Object},
 
     render() {
     	console.log('this.currentCollection', this.currentCollection);
-    	console.log(13, 'chat gifs here');
+    	console.log(27, 'chat gifs here');
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
@@ -464,9 +484,9 @@ editor: {type: Object},
                         id="explore-collections-icon"
                         class="explore-collections-icon"
                         @click=${() => {
-    						if (this.isLoading) return;
-    						this.mode = 'explore';
-    					}}
+												if (this.isLoading) return;
+												this.mode = 'explore';
+											}}
                         icon="vaadin:search"
                         slot="icon">
                     </vaadin-icon>
@@ -496,6 +516,7 @@ editor: {type: Object},
     					if (this.isLoading) return;
     					if (this.mode === 'myCollection') return;
     					this.mode = 'myCollection';
+    						this.currentCollection = null;
     				}}
                 >
                   ${translate('chatpage.cchange82')}
@@ -512,6 +533,7 @@ editor: {type: Object},
     					if (this.isLoading) return;
     					if (this.mode === 'subscribedCollection') return;
     					this.mode = 'subscribedCollection';
+    						this.currentCollection = null;
     				}}
                 >
                     ${translate('chatpage.cchange83')}
@@ -524,48 +546,60 @@ editor: {type: Object},
     						${this.isLoading === true
     							? html`<div class="lds-circle"><div></div></div>`
     							: ''}
-    						${this.myGifCollections.map((collection) => {
-    							return html`
-    								<div @click=${() => {
-    											this.currentCollection =
-    												collection;
-    										}} class='collection-card'>
-    										${collection.identifier}
-    								</div>
-    							`;
-    						})}
+    							${(this.myGifCollections.length === 0 && !this.isLoading) ? (
+    								html`
+    								<div class='no-collections'>${translate('chatpage.cchange92')}</div>
+    								`
+    							) : (
+    								html`
+    								${(this.myGifCollections || []).map((collection) => {
+    									return html`
+    										<div @click=${() => {
+    													this.currentCollection =
+    														collection;
+    												}} class='collection-card'>
+    												${collection.identifier}
+    										</div>
+    									`;
+    								})}
+    								`
+    							)}
     				  `
     				: ''
     		}
-    					${this.mode === 'subscribedCollection' &&
+    				${this.mode === 'subscribedCollection' &&
     				!this.currentCollection
     					? html`
     							${this.isLoading === true
-    								? html` <p>Loading...</p> `
+    								? html`<div class="lds-circle"><div></div></div>`
     								: ''}
-    							${this.mySubscribedCollections.map(
-    								(collection) => {
-    									return html`
-    										<div>
-    											<p
-    												@click=${() => {
+    								  ${(this.mySubscribedCollections.length === 0 && !this.isLoading) ? (
+    								html`
+    								<div class='no-collections'>${translate('chatpage.cchange93')}</div>
+    								`
+    							) : (
+    									html`
+    									${this.mySubscribedCollections.map(
+    										(collection) => {
+    											return html`
+    													<div @click=${() => {
     													this.currentCollection =
     														collection;
-    												}}
-    											>
-    												${collection.identifier}
-    											</p>
-    										</div>
-    									`;
-    								}
-    							)}
+    												}} class='collection-card'>
+    													${collection.identifier}
+    												</div>
+    											`;
+    										}
+    									)}
+    									`
+    								)}
     					  `
     					: ''
     			}
                 ${this.mode === 'explore' && !this.currentCollection
-    					? html`
+    						? html`
     							${this.isLoading === true
-    								? html` <p>Loading...</p> `
+    								? html`<div class="lds-circle"><div></div></div>`
     								: ''}
     							<chat-gifs-explore
     								currentCollection=${this.currentCollection}
@@ -582,53 +616,63 @@ editor: {type: Object},
                 ${this.currentCollection && this.mode === 'myCollection'
     					? html`
     							<div
-										class='collection-back-button'
+    									class='collection-back-button'
     								@click=${() => {
     									this.currentCollection = null;
     								}}
     							>
-									<vaadin-icon icon='vaadin:arrow-left' slot='icon'></vaadin-icon>
+    								<vaadin-icon class='collection-back-button-arrow' icon='vaadin:arrow-left' slot='icon'></vaadin-icon>
     								${translate('general.back')}
     							</div>
-    							${this.currentCollection.gifUrls.map((gif) => {
-    								console.log({gif});
-
-    								return html`
-    									<img
-    										onerror=${(e) => {
-    											e.target.src = gif;
-    										}}
-    										src=${gif}
-    										style="width: 50px; height: 50px"
-    									/>
-    								`;
-    							})}
+    								<div class='collection-gifs'>
+											${this.currentCollection.gifUrls.map((gif) => {
+												console.log({gif});
+												return html`
+													<image-component
+														style='border-radius: 15px;
+														background-color: transparent;
+														cursor: pointer;
+														width: 100%;
+														height: 150px;
+														object-fit: cover;
+														border: 1px solid transparent;
+														transition: all 0.2s cubic-bezier(0, 0.55, 0.45, 1);
+														box-shadow: rgb(50 50 93 / 25%) 0px 6px 12px -2px, rgb(0 0 0 / 30%) 0px 3px 7px -3px;'
+														.url=${gif}
+														.alt=${'gif-image'}>
+														</image-component>
+												`;
+											})}
+    								</div>
     					  `
     					: ''
     			}
     			${this.currentCollection &&
     				this.mode === 'subscribedCollection'
     					? html`
-    							<button
+    							<div
+    									class='collection-back-button'
     								@click=${() => {
     									this.currentCollection = null;
     								}}
     							>
-    								Back
-    							</button>
+    								<vaadin-icon class='collection-back-button-arrow' icon='vaadin:arrow-left' slot='icon'>
+    								</vaadin-icon>
+    								${translate('general.back')}
+    							</div>
+    								<div class='collection-gifs'>
     							${this.currentCollection.gifUrls.map((gif) => {
-    								console.log({gif});
-
     								return html`
     									<img
+    										class='collection-gif'
     										onerror=${(e) => {
     											e.target.src = gif;
     										}}
     										src=${gif}
-    										style="width: 50px; height: 50px"
     									/>
     								`;
     							})}
+    								</div>
     					  `
     					: ''
     			}
@@ -651,7 +695,6 @@ editor: {type: Object},
     								Subscribe to this collection
     							</button>
     							${this.currentCollection.gifUrls.map((gif) => {
-    								console.log({gif});
 
     								return html`
     									<img
@@ -728,7 +771,7 @@ editor: {type: Object},
     								/>
     								<div
     									class="gifs-added-col"
-    										
+
     								>
     									<div class="gifs-added-row">
     									${this.gifsToBeAdded.map((gif, i) => {
@@ -766,7 +809,7 @@ editor: {type: Object},
     										${translate('general.back')}
     									</button>
     									<button
-												style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: block;"}
+    											style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: block;"}
     										class="upload-button"
     										@click=${() => {
     											this.uploadGifCollection();

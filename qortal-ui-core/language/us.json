@@ -583,7 +583,12 @@
       "cchange87": "A collection name is required!",
       "cchange88": "Collection Name",
       "cchange89": "Gif Collection Uploaded Successfully!",
-      "cchange90": "Gifs uploading, please wait..."
+      "cchange90": "Gifs uploading, please wait...",
+      "cchange91": "Something went wrong! Please try changing tabs and coming back.",
+      "cchange92": "You currently have no collections.",
+      "cchange93": "You currently have no subscribed collections.",
+      "cchange94": "Error fetching image. Retrying...",
+      "cchange95": "Failed to fetch image! Please visit another collection and try again!"
    },
    "welcomepage": {
       "wcchange1": "Welcome to Q-Chat",

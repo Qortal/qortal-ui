@@ -12,8 +12,9 @@ width: fit-content;
 justify-self: flex-end;
 place-self: end flex-end;
 min-height: 400px;
-max-height: 95vh;
+max-height: calc(95vh - 90px);
 min-width: 370px;
+max-width: 370px;
 box-shadow: var(--gifs-drop-shadow);
 }
 
@@ -137,6 +138,49 @@ display: flex;
 flex-direction: column;
 width: 100%;
 height: 100%;
+overflow: hidden;
+}
+
+.collection-gifs {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+grid-gap: 10px;
+margin-top: 10px;
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+.collection-gifs::-webkit-scrollbar-track {
+background-color: whitesmoke;
+border-radius: 7px;
+}
+
+.collection-gifs::-webkit-scrollbar {
+width: 6px;
+border-radius: 7px;
+background-color: whitesmoke;
+}
+
+.collection-gifs::-webkit-scrollbar-thumb {
+background-color: rgb(180, 176, 176);
+border-radius: 7px;
+transition: all 0.3s ease-in-out;
+}
+
+.collection-gif {
+border-radius: 15px;
+background-color: transparent;
+cursor: pointer;
+width: 100%;
+height: 150px;
+object-fit: cover;
+border: 1px solid transparent;
+transition: all 0.2s cubic-bezier(0, 0.55, 0.45, 1);
+box-shadow: rgb(50 50 93 / 25%) 0px 6px 12px -2px, rgb(0 0 0 / 30%) 0px 3px 7px -3px;
+}
+
+.collection-gif:hover {
+border: 1px solid var(--mdc-theme-primary );
 }
 
 .new-collection-row {
@@ -295,21 +339,39 @@ color: var(--chat-bubble-msg-color);
 	font-weight: 300;
 	letter-spacing: 0.3px;
 	font-size: 16px;
+  width: fit-content;
+  gap: 10px;
 	color: var(--chat-bubble-msg-color);
 	flex-direction: row;
   align-items: center;
   transition: box-shadow 0.2s ease-in-out;
-	background-color: rgb(111, 116, 129);
+	background-color: var(--gif-button-row-bg);
 	border-radius: 10px;
-  box-shadow: rgb(0 0 0 / 15%) 1.95px 1.95px 2.6px;
-  padding: 8px 15px;
+  box-shadow: rgb(0 0 0 / 20%) 0px 0px 0px;
+  padding: 8px 10px;
   cursor: pointer;
 }
 
 .collection-back-button:hover {
   border: none;
   box-sizing: border-box;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px, rgb(0 0 0 / 20%) 0px 2px 4px -1px;
+}
+
+.collection-back-button-arrow {
+  font-size: 10px;
+}
+
+.no-collections {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--chat-bubble-msg-color);
+  font-size: 20px;
+  font-family: Paytone One, sans-serif;
+  margin-top: 20px;
+  user-select: none;
 }
 
 .collection-card {
@@ -405,6 +467,7 @@ background-color: #03a8f475;
 	color: var(--chat-bubble-msg-color);
 	margin: 0 0 10px 0;
 	text-align: center;
+  user-select: none;
 }
 
 `;

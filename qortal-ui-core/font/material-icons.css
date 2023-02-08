@@ -54,12 +54,19 @@
     url(Livvic.ttf) format('truetype');
 }
 
+@font-face {
+  font-family: 'Paytone One', sans-serif;
+  src: local('PaytoneOne'),
+  local('PaytoneOne'),
+  url(PaytoneOne.ttf) format('truetype');
+}
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
-  /* Preferred icon size */
+  /* Preferred icon size */ 
   display: inline-block;
   line-height: 1;
   text-transform: none;
