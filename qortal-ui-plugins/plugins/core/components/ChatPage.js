@@ -1110,7 +1110,7 @@ class ChatPage extends LitElement {
                                 <div class=${`smallLoading marginLoader`}></div>
                                     <p>
                                     ${this.isDeletingAttachment ?
-                                        translate("chatpage.cchange66") : translate("chatpage.cchange65")}
+                                        translate("chatpage.cchange76") : translate("chatpage.cchange75")}
                                     </p>
                                 </div>			
                             </div>                        
@@ -1631,7 +1631,7 @@ class ChatPage extends LitElement {
                         this.insertImage(file);
                     } catch (error) {
                         console.error(error);
-                        let errorMsg = get("chatpage.cchange70")
+                        let errorMsg = get("chatpage.cchange81")
                         parentEpml.request('showSnackBar', `${errorMsg}`)
                     }
                 } else {
@@ -2993,7 +2993,7 @@ class ChatPage extends LitElement {
             const identifier = `qchat_${id}`;
             const fileSize = attachment.size;
             if (fileSize > 1000000) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange67"));
+                parentEpml.request('showSnackBar', get("chatpage.cchange77"));
                 this.isLoading = false;
                 this.isUploadingAttachment = false;
                 return;

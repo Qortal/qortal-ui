@@ -642,7 +642,7 @@ class MessageTemplate extends LitElement {
                                            
                                         </div>
                                     ` : image && isImageDeleted ? html`
-                                        <p class="image-deleted-msg">${translate("chatpage.cchange71")}</p>
+                                        <p class="image-deleted-msg">${translate("chatpage.cchange80")}</p>
                                     ` : html``}
                                     ${attachment && !isAttachmentDeleted ? 
                                         html`
@@ -683,7 +683,7 @@ class MessageTemplate extends LitElement {
                                         <div class="attachment-container">
                                             <div class="attachment-info">
                                                 <p style=${"font-style: italic;"} class="attachment-name">
-                                                ${translate("chatpage.cchange72")}
+                                                ${translate("chatpage.cchange82")}
                                                 </p>
                                             </div>
                                         </div>
@@ -860,7 +860,7 @@ class MessageTemplate extends LitElement {
                     this.openDeleteImage = false;
                 }}>
                 <div class="delete-image-msg">
-                    <p>${translate("chatpage.cchange69")}</p>
+                    <p>${translate("chatpage.cchange78")}</p>
                 </div>
                 <div class="modal-button-row" @click=${() => this.openDeleteImage = false}>
                     <button class="modal-button-red">
@@ -885,7 +885,7 @@ class MessageTemplate extends LitElement {
                     this.openDeleteAttachment = false;
                 }}>
                 <div class="delete-image-msg">
-                <p>${translate("chatpage.cchange70")}</p>
+                <p>${translate("chatpage.cchange79")}</p>
                 </div>
                 <div class="modal-button-row" @click=${() => this.openDeleteAttachment = false}>
                     <button class="modal-button-red">
