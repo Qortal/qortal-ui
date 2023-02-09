@@ -12,11 +12,13 @@ import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@material/mwc-icon-button'
 import '@material/mwc-dialog'
+import '@material/mwc-fab'
 import '@material/mwc-tab-bar'
 import '@material/mwc-tab'
 import '@material/mwc-list/mwc-list-item'
 import '@material/mwc-select'
 import '@polymer/iron-icons/iron-icons.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
@@ -542,22 +544,47 @@ class TradeBotPortal extends LitElement {
 				opacity: 0;
 			}
 		}
+            paper-dialog.info {
+                width: 75%;
+                max-width: 75vw;
+                height: 50%;
+                max-height: 50vh;
+                background-color: var(--white);
+                color: var(--black);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                line-height: 1.6;
+                overflow-y: auto;
+            }
+            .actions {
+                display:flex;
+                justify-content: space-between;
+                padding: 0 1em;
+                margin: 12px 0 -6px 0;
+            }
+            .close-icon {
+                font-size: 36px;
+            }
+            .close-icon:hover {
+                cursor: pointer;
+                opacity: .6;
+            }
 		@media (min-width: 701px) {
 			* {
 			}
 			#trade-bot-portal {
 				display: grid;
-				grid-template-columns:3fr 4fr 3fr;
+				grid-template-columns: 2fr 4fr 2fr;
 				grid-auto-rows: max(80px);
 				column-gap: 0.5em;
 				row-gap: 0.4em;
 				justify-items: stretch;
 				align-items: stretch;
-				margin-bottom: 10px;
+				margin-bottom: 20px;
 			}
 			#first-trade-section {
 				display: grid;
-				grid-template-columns:1fr 4fr 1fr;
+				grid-template-columns: 1fr 4fr 1fr;
 				grid-auto-rows: max(250px);
 				column-gap: 0.5em;
 				row-gap: 0.4em;
@@ -567,7 +594,7 @@ class TradeBotPortal extends LitElement {
 			}
 			#second-trade-section {
 				display: grid;
-				grid-template-columns:1fr 4fr 1fr;
+				grid-template-columns: 1fr 4fr 1fr;
 				grid-auto-rows: max(250px);
 				column-gap: 0.5em;
 				row-gap: 0.4em;
@@ -860,7 +887,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="my-open-orders">
 			<div class="box">
-				<header><span>${translate("tradepage.tchange36")}</span></header>
+				<header><span>${translate("info.inf15")}</span></header>
 				<div class="border-wrapper">
 					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingMyOpenOrders ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
 					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="myOrdersGrid" aria-label="My Orders" .items="${this.listedCoins.get(this.selectedCoin).myOrders}">
@@ -1037,7 +1064,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotBTCGrid" aria-label="Auto Buy BTC" ?hidden="${this.isEmptyArray(this.tradeBotBtcBook)}" .items="${this.tradeBotBtcBook}">
 						<vaadin-grid-column
@@ -1103,7 +1130,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotLTCGrid" aria-label="Auto Buy LTC" ?hidden="${this.isEmptyArray(this.tradeBotLtcBook)}" .items="${this.tradeBotLtcBook}">
 						<vaadin-grid-column
@@ -1169,7 +1196,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotDOGEGrid" aria-label="Auto Buy DOGE" ?hidden="${this.isEmptyArray(this.tradeBotDogeBook)}" .items="${this.tradeBotDogeBook}">
 						<vaadin-grid-column
@@ -1235,7 +1262,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotDGBGrid" aria-label="Auto Buy DGB" ?hidden="${this.isEmptyArray(this.tradeBotDgbBook)}" .items="${this.tradeBotDgbBook}">
 						<vaadin-grid-column
@@ -1301,7 +1328,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotRVNGrid" aria-label="Auto Buy RVN" ?hidden="${this.isEmptyArray(this.tradeBotRvnBook)}" .items="${this.tradeBotRvnBook}">
 						<vaadin-grid-column
@@ -1367,7 +1394,7 @@ class TradeBotPortal extends LitElement {
         return html`
 		<div class="trade-bot-container">
 			<div class="box-bot">
-				<header><span>${translate("tradepage.tchange39")} ${this.listedCoins.get(this.selectedCoin).coinCode} ==> QORT</span></header>
+				<header><span>${translate("info.inf16")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode}</span></header>
 				<div class="border-wrapper">
 					<vaadin-grid theme="compact column-borders row-stripes wrap-cell-content" id="tradeBotARRRGrid" aria-label="Auto Buy ARRR" ?hidden="${this.isEmptyArray(this.tradeBotArrrBook)}" .items="${this.tradeBotArrrBook}">
 						<vaadin-grid-column
@@ -1435,7 +1462,7 @@ class TradeBotPortal extends LitElement {
 			<div id="trade-bot-portal">
 			<div></div>
 			<div style="min-height: 50px; display: flex; padding-bottom: 10px; padding-top: 10px; margin: auto;">
-				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">${translate("tradepage.tchange39")} - &nbsp;</h2>
+				<h2 style="margin: 0 0 15px 0; line-height: 50px; display: inline;">${translate("info.inf13")} QORT ${translate("info.inf14")} ${this.listedCoins.get(this.selectedCoin).coinCode} - &nbsp;</h2>
 				<mwc-select outlined id="coinSelectionMenu" label="${translate("tradepage.tchange2")}">
 					<mwc-list-item value="BITCOIN"><span class="coinName btc" style="color: var(--black);">BTC / QORT</span></mwc-list-item>
 					<mwc-list-item value="LITECOIN" selected><span class="coinName ltc" style="color: var(--black);">LTC / QORT</span></mwc-list-item>
@@ -1444,6 +1471,9 @@ class TradeBotPortal extends LitElement {
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">RVN / QORT</span></mwc-list-item>
                               <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">ARRR / QORT</span></mwc-list-item>
 				</mwc-select>
+                        <div style="padding-left: 20px; padding-top: 5px;">
+					<mwc-fab mini icon="info" title="${translate("info.inf7")}" @click=${() => this.shadowRoot.getElementById('buyInfoDialog').open()}></mwc-fab>
+			      </div>
 			</div>
 			<div></div>
 			</div>
@@ -1924,6 +1954,20 @@ class TradeBotPortal extends LitElement {
 			</div>
 			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
+
+            <paper-dialog id="buyInfoDialog" class="info" modal>
+                <div class="actions">
+                    <h3></h3>
+                    <mwc-icon class="close-icon" @click=${() => this.shadowRoot.getElementById('buyInfoDialog').close()} title="${translate("info.inf8")}">highlight_off</mwc-icon>
+                </div>
+                <div class="container">
+                    <h1 style="color: #03a9f4;">${translate("info.inf7")}</h1>
+                    <h2>${translate("info.inf9")}</h2>
+                    <h2>${translate("info.inf10")}</h2>
+                    <h2>${translate("info.inf11")}</h2>
+                    <h2>${translate("info.inf12")}</h2>
+                </div>
+            </paper-dialog>
         `
     }
 

@@ -14,6 +14,7 @@ import './WrapperModal';
 import "./UserInfo/UserInfo";
 import '@vaadin/icons';
 import '@vaadin/icon';
+import '@vaadin/tooltip';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
@@ -54,6 +55,9 @@ class ChatScroller extends LitElement {
             openUserInfo: { type: Boolean },
             userName: { type: String },
             selectedHead: { type: Object },
+            goToRepliedMessage: { attribute: false },
+            getOldMessageAfter: {attribute: false},
+            listSeenMessages: {type: Array}
         }
     }
 
@@ -68,6 +72,11 @@ class ChatScroller extends LitElement {
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
         this.openTipUser = false;
         this.openUserInfo = false;
+        this.listSeenMessages= []
+    }
+
+    addSeenMessage(val){
+        this.listSeenMessages.push(val)
     }
 
     render() {
@@ -103,6 +112,7 @@ class ChatScroller extends LitElement {
             }
             return messageArray;
         }, [])
+
         
         return html`
               ${this.isLoadingMessages ?  html`
@@ -134,11 +144,17 @@ class ChatScroller extends LitElement {
                             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                             .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
-                            .setUserName=${(val) => this.setUserName(val)}>
+                            .setUserName=${(val) => this.setUserName(val)}
+                            id=${message.reference}
+                            .goToRepliedMessage=${this.goToRepliedMessage}
+                            .addSeenMessage=${(val)=> this.addSeenMessage(val)}
+                            .listSeenMessages=${this.listSeenMessages}
+                            chatId=${this.chatId}
+                            >
                             </message-template>`
                     )
                 })}
-                <div id='downObserver'></div>
+                <div style=${"height: 1px;"} id='downObserver'></div>
             </ul>
         `
     }
@@ -197,6 +213,10 @@ class ChatScroller extends LitElement {
         this.getOldMessage(_scrollElement)
     }
 
+    _getOldMessageAfter(_scrollElement) {
+        this.getOldMessageAfter(_scrollElement)
+    }
+
     _upObserverhandler(entries) {
         if (entries[0].isIntersecting) {
             if(this.messages.length < 20){
@@ -210,6 +230,8 @@ class ChatScroller extends LitElement {
 
     _downObserverHandler(entries) {
         if (!entries[0].isIntersecting) {
+            let _scrollElement = entries[0].target.previousElementSibling;
+            // this._getOldMessageAfter(_scrollElement);
             this.showLastMessageRefScroller(true);
         } else {
             this.showLastMessageRefScroller(false);
@@ -274,6 +296,10 @@ class MessageTemplate extends LitElement {
             setOpenUserInfo: { attribute: false },
             setUserName: { attribute: false },
             openTipUser:{ type: Boolean },
+            goToRepliedMessage: { attribute: false },
+            listSeenMessages: { type: Array },
+            addSeenMessage: { attribute: false },
+            chatId: { type: String },
         }
     }
 
@@ -290,7 +316,7 @@ class MessageTemplate extends LitElement {
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
-        this.viewImage = false
+        this.viewImage =  false
     }
 
     static styles = [chatStyles]
@@ -335,6 +361,19 @@ class MessageTemplate extends LitElement {
             console.error(error);
         }
     }
+    firstUpdated(){
+        const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
+        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
+            this.viewImage =  true
+        }
+
+        const tooltips = this.shadowRoot.querySelectorAll('vaadin-tooltip');
+        tooltips.forEach(tooltip => {
+        const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay');
+        overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
+        overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
+        });
+    }
 
     render() {
         const hidemsg = this.hideMessages;
@@ -365,10 +404,10 @@ class MessageTemplate extends LitElement {
             isImageDeleted = parsedMessageObj.isImageDeleted;
             isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted;
             reactions = parsedMessageObj.reactions || [];
-            version = parsedMessageObj.version
-            isForwarded = parsedMessageObj.type === 'forward'
-            isEdited = this.messageObj.editedTimestamp && true
-           if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
+            version = parsedMessageObj.version;
+            isForwarded = parsedMessageObj.type === 'forward';
+            isEdited = parsedMessageObj.isEdited && true;
+            if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
                 attachment = parsedMessageObj.attachments[0];
             }
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
@@ -392,9 +431,9 @@ class MessageTemplate extends LitElement {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
         } else {
-            avatarImg = html`<img src='/img/qortal-chat-logo.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
      const createImage = (imageUrl) => {
@@ -412,15 +451,12 @@ class MessageTemplate extends LitElement {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
-                }, 500);
+                }, 2000);
             } else {
-                imageHTMLRes.src = '/img/chain.png';
-                imageHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
-                imageHTMLRes.onclick= () => {
-                    
-                }
-
-                this.isImageLoaded = true
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 6000);
             }
         };
         return imageHTMLRes;
@@ -459,13 +495,12 @@ class MessageTemplate extends LitElement {
                 const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
                 repliedToData.decodedMessage = parsedMsg;
             } catch (error) {
-                console.error(error);
             }
             
         }
         const escapedMessage = this.escapeHTML(message)
         const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
-
+       
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
             class="clearfix message-parent" 
@@ -498,9 +533,12 @@ class MessageTemplate extends LitElement {
                             `}
                             <div 
                             class="${`message-subcontainer2 
-                            ${((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
-                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && 
-                            'message-triangle'}`}" 
+                            ${this.myAddress === this.messageObj.sender && "message-myBg" }
+                            ${(((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress !== this.messageObj.sender)  
+                            ? 'message-triangle' 
+                            : (((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress === this.messageObj.sender) ? "message-myTriangle" : null}`}" 
                             style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) ? 'margin-bottom: 0;' : null}
                             ${(this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
                             ? 'border-radius: 8px 25px 25px 8px;'
@@ -543,40 +581,38 @@ class MessageTemplate extends LitElement {
                                 ) : null}
                             </div>
                                 ${repliedToData && html`
-                                    <div class="original-message">
-                                        <p 
-                                        style=${this.myAddress === repliedToData.sender ? "cursor: auto;" : "cursor: pointer;"}
-                                        @click=${() => {
-                                            if (this.myAddress === repliedToData.sender) return;
-                                            this.setOpenUserInfo(true);
-                                            this.setUserName(repliedToData)
-                                        }} 
-                                            class="original-message-sender">
+                                    <div class="original-message" 
+                                    @click=${()=> {
+                                        this.goToRepliedMessage(repliedToData, this.messageObj)
+                                    }}>
+                                        <p  
+                                            style=${"cursor: pointer; margin: 0 0 5px 0;"} 
+                                            class=${this.myAddress !== repliedToData.sender
+                                            ? "original-message-sender" 
+                                            : "message-data-my-name"}>
                                              ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
-
-                                        
-                                        ${version.toString() === '1' ? html`
-                                        ${repliedToData.decodedMessage.messageText}
-                                        ` : ''}
-                                        ${version.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, 
-                                        [StarterKit,
-                                        Underline,
-                                        Highlight
-                                        // other extensions …
-                                        ]))}
-                                        ` : ''}
-                                        
-                                            <!-- ${repliedToData.decodedMessage.messageText} -->
+                                            ${version.toString() === '1' ? html`
+                                            ${repliedToData.decodedMessage.messageText}
+                                            ` : ''}
+                                            ${version.toString() === '2' ? html`
+                                            ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
+                                                StarterKit,
+                                                Underline,
+                                                Highlight
+                                                // other extensions …
+                                            ]))}
+                                            ` 
+                                        : ''}
                                         </p>
                                     </div>
                                     `}
-                                    ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
+                                    ${image  && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
+                                            this.addSeenMessage(this.messageObj.reference)
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
@@ -585,17 +621,25 @@ class MessageTemplate extends LitElement {
                                             </div>
                                         </div>
                                     ` : html``}
+                                    ${!this.isImageLoaded && image && this.viewImage ? html`
+                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;position:absolute">
+                                        <div class=${`smallLoading`}></div>
+                                        </div>
+                                        
+                                    `: ''}
                                     ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
                                         <div 
-                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '', !this.isImageLoaded ? 'hideImg': ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
                                             ${imageHTML}
+                                            ${this.myAddress === this.messageObj.sender ? html`
                                             <vaadin-icon
-                                                @click=${() => {
-                                                    this.openDeleteImage = true;
-                                                    }}
-                                                class="image-delete-icon"  icon="vaadin:close" slot="icon">
-                                            </vaadin-icon>
+                                            @click=${() => {
+                                                this.openDeleteImage = true;
+                                                }}
+                                            class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                                            ` : ''}
+                                           
                                         </div>
                                     ` : image && isImageDeleted ? html`
                                         <p class="image-deleted-msg">${translate("chatpage.cchange71")}</p>
@@ -655,7 +699,14 @@ class MessageTemplate extends LitElement {
                                         ${version.toString() === '1' ? html`
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         ` : ''}
-                                        <div class="${((this.isFirstMessage === false && 
+                                        ${version.toString() === '0' ? html`
+                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        ` : ''}
+                                        <div 
+                                            style=${isEdited 
+                                            ? "justify-content: space-between;" 
+                                            : "justify-content: flex-end;"}
+                                            class="${((this.isFirstMessage === false && 
                                             this.isSingleMessageInGroup === true && 
                                             this.isLastMessageInGroup === true) || 
                                             (this.isFirstMessage === true && 
@@ -670,7 +721,7 @@ class MessageTemplate extends LitElement {
                                                         ${edited}
                                                     </span>
                                                     `
-                                                : null
+                                                : ''
                                             }
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
                                         </div>
@@ -705,17 +756,66 @@ class MessageTemplate extends LitElement {
                         </div>
                         <div class="message-reactions" style="${reactions.length > 0 && 
                             'margin-top: 10px; margin-bottom: 5px;'}">
-                                ${reactions.map((reaction)=> {
+                                ${reactions.map((reaction, index)=> {
                                     return html`
                                     <span 
-                                    @click=${() => this.sendMessage({
+                                        @click=${() => this.sendMessage({
                                         type: 'reaction',
                                         editedMessageObj: this.messageObj,
                                         reaction:  reaction.type,
                                         })} 
-                                    class="reactions-bg">
-                                    ${reaction.type} ${reaction.qty}
-                                    </span>`
+                                        id=${`reactions-${index}`}
+                                        class="reactions-bg">
+                                        ${reaction.type} 
+                                        ${reaction.qty}
+                                        <vaadin-tooltip 
+                                        for=${`reactions-${index}`} 
+                                        position="top"
+                                        hover-delay=${400}
+                                        hide-delay=${1}
+                                        text=${reaction.users.length > 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)},
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)}
+                                        ${get("chatpage.cchange71")} ${reaction.users.length - 3} ${get("chatpage.cchange72")}${(reaction.users.length - 3) > 1 ? html`${get("chatpage.cchange73")}` : ""} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} 
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 2 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 1 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) 
+                                        : "" }>
+                                    </vaadin-tooltip> 
+                                    </span>
+                                    `
                                 })}
                         </div>
                     </div>
@@ -905,10 +1005,8 @@ class ChatMenu extends LitElement {
             this.setForwardProperties(stringifyMessageObject)
            
         } catch (error) {
-            console.log({error})
         }
     }
-
     render() {
         return html` 
             <div class="container">
@@ -924,7 +1022,6 @@ class ChatMenu extends LitElement {
                         this.setToggledMessage(this.originalMessage)
                         this.emojiPicker.togglePicker(e.target)
                     } catch (error) {
-                        console.log({error})
                     }
                     
                     }}
@@ -935,6 +1032,10 @@ class ChatMenu extends LitElement {
                 class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange14")}" 
                 @click="${() => {
+                    if (this.version === '0') {
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.messageForwardFunc()
                     }}">
                     <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
@@ -959,7 +1060,7 @@ class ChatMenu extends LitElement {
                         this.versionErrorSnack()
                         return
                     }
-                    this.setRepliedToMessageObj(this.originalMessage);
+                    this.setRepliedToMessageObj({...this.originalMessage, version: this.version});
                     }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>

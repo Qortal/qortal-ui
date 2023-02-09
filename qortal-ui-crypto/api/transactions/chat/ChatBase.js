@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import { TX_TYPES, QORT_DECIMALS } from '../../constants.js'
 import nacl from '../../deps/nacl-fast.js'
 import Base58 from '../../deps/Base58.js'
@@ -67,28 +67,33 @@ export default class ChatBase {
     set keyPair(keyPair) {
         this._keyPair = keyPair
     }
+
     set type(type) {
         this.typeText = TX_TYPES[type]
         this._type = type
         this._typeBytes = this.constructor.utils.int32ToBytes(this._type)
     }
+
     set groupID(groupID) {
         this._groupID = groupID
         this._groupIDBytes = this.constructor.utils.int32ToBytes(this._groupID)
     }
+
     set timestamp(timestamp) {
         this._timestamp = timestamp
         this._timestampBytes = this.constructor.utils.int64ToBytes(this._timestamp)
     }
+
     set fee(fee) {
         this._fee = fee * QORT_DECIMALS
         this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
     }
+
     set lastReference(lastReference) {
         this._lastReference = lastReference instanceof Uint8Array ? lastReference : this.constructor.Base58.decode(lastReference)
     }
-    get params() {
 
+    get params() {
         return [
             this._typeBytes,
             this._timestampBytes,
@@ -99,7 +104,6 @@ export default class ChatBase {
     }
 
     get chatBytes() {
-
         const isValid = this.validParams()
         if (!isValid.valid) {
             throw new Error(isValid.message)

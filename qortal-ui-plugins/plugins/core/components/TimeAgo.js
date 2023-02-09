@@ -19,7 +19,7 @@ class TimeAgo extends LitElement {
 
     updated(changedProps) {
         changedProps.forEach((OldProp, name) => {
-            if (name === 'timeIso') {
+            if (name === 'timeIso' || name === 'timestamp') {
                 this.renderTime(this.timestamp)
             }
         });
@@ -35,7 +35,6 @@ class TimeAgo extends LitElement {
     }
 
     render() {
-
         return html`
             <time-ago datetime=${this.timeIso} format=${this.format}> </time-ago>
         `

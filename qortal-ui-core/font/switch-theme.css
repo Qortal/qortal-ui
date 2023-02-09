@@ -9,7 +9,8 @@ html {
   --copybutton: #707584;
   --chat-group: #080808;
   --chat-bubble: #9f9f9f0a;
-  --chat-bubble-bg: #f3f3f3;
+  --chat-bubble-bg: #e6e6e6;
+  --chat-bubble-myBg: #d1ddf2;
   --chat-bubble-msg-color: #080808;
   --reaction-bubble-outline: #6b6969;
   --chat-menu-bg: #ffffff;
@@ -28,6 +29,7 @@ html {
   --relaynodetxt: #646464;
   --menuhover: #eeeeee;
   --menuactive: #ebebeb;
+  --menuactivergb: 235, 235, 235;
   --mainmenutext: #080808;
   --mainmenutexthover: #080808;
   --switchbackground: #666666;
@@ -50,6 +52,7 @@ html {
   --lightChatHeadHover: #1e1f201a;
   --group-header: #929292;
   --group-drop-shadow: rgb(17 17 26 / 10%) 0px 1px 0px;
+  --reactions-tooltip-bg: #ffffff;
 }
 
 html[theme="dark"] {
@@ -64,6 +67,7 @@ html[theme="dark"] {
   --chat-group: #ffffff;
   --chat-bubble: #9694941a;
   --chat-bubble-bg: #2d3749;
+  --chat-bubble-myBg: #40444d;
   --chat-bubble-msg-color: #ffffff;
   --reaction-bubble-outline: #ffffff;
   --chat-menu-bg: #32394c;
@@ -82,6 +86,7 @@ html[theme="dark"] {
   --relaynodetxt: #d4d4d4;
   --menuhover: #008fd5;
   --menuactive: #008fd5;
+  --menuactivergb: 0, 143, 213;
   --mainmenutext: #008fd5;
   --mainmenutexthover: #0f1a2e;
   --switchbackground: #eeeeee;
@@ -103,5 +108,6 @@ html[theme="dark"] {
   --chatHeadTextActive: #ffffff;
   --lightChatHeadHover: #e0e1e31a;
   --group-header: #c8c8c8;
-  --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px
+  --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px;
+  --reactions-tooltip-bg: #161515;
 }

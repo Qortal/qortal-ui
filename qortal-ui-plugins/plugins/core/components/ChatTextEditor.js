@@ -4,6 +4,8 @@ import { get, translate } from 'lit-translate';
 import { EmojiPicker } from 'emoji-picker-js';
 import { Epml } from '../../../epml.js';
 import '@material/mwc-icon'
+import '@material/mwc-checkbox'
+// import { addAutoLoadImageChat } from "../../../../qortal-ui-core/src/redux/app/app-actions.js";
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class ChatTextEditor extends LitElement {
@@ -30,7 +32,8 @@ class ChatTextEditor extends LitElement {
                 reflect: true
               },
             toggleEnableChatEnter: {attribute: false},
-            isEnabledChatEnter: {type: Boolean}
+            isEnabledChatEnter: {type: Boolean},
+            chatId: {type: String}
 		}
 	}
 
@@ -47,6 +50,11 @@ class ChatTextEditor extends LitElement {
             overflow: hidden;
 
       }
+      * {
+		 
+                    --mdc-checkbox-unchecked-color: var(--black);
+                    
+                }
         .chatbar-container {
             width: 100%;
             display: flex;
@@ -232,40 +240,48 @@ class ChatTextEditor extends LitElement {
         }
 
 
-    .ProseMirror img {
-        width: 1.7em;
-        height: 1.5em;
-        margin: 0px;
+  .ProseMirror hr {
+    border: none;
+    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    margin: 2rem 0;
+  }
+  .chatbar-button-single {
+    background: var(--white);
+    outline: none;
+    border: none;
+    color: var(--black);
+    padding: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 2px;
+    filter: brightness(100%);
+    transition: all 0.2s;
+    display: none;
+  }
+  .removeBg {
+    background: none;
+  }
 
-    }
+  .chatbar-button-single label {
+    font-size: 13px;
+  }
+  .chatbar-button-single:hover {
+    filter: brightness(120%);
+   
+  }
+
+    
 
     .ProseMirror blockquote {
         padding-left: 1rem;
         border-left: 2px solid rgba(#0D0D0D, 0.1);
     }
 
-    .ProseMirror hr {
-        border: none;
-        border-top: 2px solid rgba(#0D0D0D, 0.1);
-        margin: 2rem 0;
-    }
-    .chatbar-button-single {
-        background: var(--white);
-        outline: none;
-        border: none;
-        color: var(--black);
-        padding: 4px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-right: 2px;
-        filter: brightness(100%);
-        transition: all 0.2s;
-        display: none;
-    }
-    .chatbar-button-single:hover {
-        filter: brightness(120%);
-    
-    }
+.ProseMirror {
+    width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+}
 
     .chatbar-buttons {
         margin-bottom: 5px;
@@ -326,24 +342,27 @@ class ChatTextEditor extends LitElement {
 
     }
 
-    .material-symbols-outlined {
-    font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 18px;  /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-    }
-
-    .hide-styling {
-        display: none;
-    }
-    `
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+.hide-styling {
+    display: none;
+}
+mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
+                background-color:var(--mdc-theme-primary)
+            }
+            --mdc-checkbox-unchecked-color
+		`
 	}
 
 	constructor() {
@@ -363,81 +382,109 @@ class ChatTextEditor extends LitElement {
 		return html`
             <div 
              class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
-             style="align-items: center;">
+             style="align-items: center;justify-content:space-between">
+            <div style="display: flex;align-items: center">
              <button
-                @click=${() => this.editor.chain().focus().toggleBold().run()}
-                ?disabled=${
-                this.editor && 
-                !this.editor.can()
-                .chain()
-                .focus()
-                .toggleBold()
-                .run()}
-                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}>
-            <!-- <mwc-icon >format_bold</mwc-icon> -->
-                <span class="material-symbols-outlined">&#xe238;</span>
-            </button>
-            <button
-                @click=${() => this.editor.chain().focus().toggleItalic().run()}
-                ?disabled=${ this.editor && 
-                !this.editor.can()
-                    .chain()
-                    .focus()
-                    .toggleItalic()
-                    .run()
-                }
-                class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
-            >
-            <span class="material-symbols-outlined">&#xe23f;</span>
-        </button>
-        <button
-            @click=${() => this.editor.chain().focus().toggleUnderline().run()}
-            class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
-            >
-            <span class="material-symbols-outlined">&#xe249;</span>
-        </button>
-        <button
-            @click=${() => this.editor.chain().focus().toggleHighlight().run()}
-            class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
-            >
-            <span class="material-symbols-outlined">&#xf82b;</span>
-        </button>
-        <button
-            @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
-            class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
-            >
-            <span class="material-symbols-outlined">&#xf84d;</span>
-        </button>
-        <button
-            @click=${()=> this.toggleEnableChatEnter() }
-            style="height: 26px; box-sizing: border-box;"
-            class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
-            >
-            ${this.isEnabledChatEnter ? html`
-        ${translate("chatpage.cchange63")}
-        ` : html`
-        ${translate("chatpage.cchange64")}
-        `}
-        </button>
-        </div>
-        <div 
-            class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "newAttachmentChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
-            style="align-items: flex-end; position: relative">
-            
+        @click=${() => this.editor.chain().focus().toggleBold().run()}
+        ?disabled=${
+            this.editor && 
+          !this.editor.can()
+            .chain()
+            .focus()
+            .toggleBold()
+            .run()
+        }
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
+      >
+      <!-- <mwc-icon >format_bold</mwc-icon> -->
+      <span class="material-symbols-outlined">&#xe238;</span>
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleItalic().run()}
+        ?disabled=${ this.editor && 
+          !this.editor.can()
+            .chain()
+            .focus()
+            .toggleItalic()
+            .run()
+        }
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-symbols-outlined">&#xe23f;</span>
+      </button>
+    
+      <button
+        @click=${() => this.editor.chain().focus().toggleUnderline().run()}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-symbols-outlined">&#xe249;</span>
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleHighlight().run()}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-symbols-outlined">&#xf82b;</span>
+      </button>
+      <button
+        @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+      >
+      <span class="material-symbols-outlined">&#xf84d;</span>
+      </button>
+      <button
+      @click=${()=> this.toggleEnableChatEnter() }
+      style="height: 26px; box-sizing: border-box;"
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+      >
+      ${this.isEnabledChatEnter ? html`
+      ${translate("chatpage.cchange63")}
+      ` : html`
+      ${translate("chatpage.cchange64")}
+      `}
+  
+      </button>
+    </div>
+        ${this.iframeId === "_chatEditorDOM" ? html`
+        <div
+      style="height: 26px; box-sizing: border-box"
+        class=${["chatbar-button-single", "removeBg"].join(' ')}
+      >
+      <label
+                                for="qChatShowAutoMsg"
+                                @click=${() => this.shadowRoot.getElementById('qChatShowAutoMsg').click()}
+                                >${translate('chatpage.cchange69')}</label>
+        
+        <mwc-checkbox style="margin-right: -15px;"  id="qChatShowAutoMsg" @click=${e => {
+        console.log(e.target.checked)
+        if(e.target.checked){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.removeAutoLoadImageChat(this.chatId))
+            return
+        }
+        window.parent.reduxStore.dispatch( window.parent.reduxAction.addAutoLoadImageChat(this.chatId))
+        
+      }} ?checked=${(window.parent.reduxStore.getState().app?.autoLoadImageChats || []).includes(this.chatId)}></mwc-checkbox>
+    </div>            
+        ` : ''}
+     
+            </div>
             <div 
-                style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
-                class="file-picker-container" 
-                @click=${(e) => {
-                    this.preventUserSendingImage(e)
-                }}>
-                <vaadin-icon
-                    class="paperclip-icon"
-                    icon="vaadin:paperclip"
-                    slot="icon"
-                >
-                </vaadin-icon>     
-                <div class="file-picker-input-container">
-                <input 
+             class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
+             style="align-items: flex-end; position: relative">
+             
+                <div 
+                    style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
+                    class="file-picker-container" 
+                    @click=${(e) => {
+                        this.preventUserSendingImage(e)
+                    }}>
+                    <vaadin-icon
+                        class="paperclip-icon"
+                        icon="vaadin:paperclip"
+                        slot="icon"
+                    >
+                    </vaadin-icon>     
+                    <div class="file-picker-input-container">
+                    <input 
                         @change="${e => {
                             this.insertFile(e.target.files[0]);
                             const filePickerInput = this.shadowRoot.getElementById('file-picker');
@@ -451,7 +498,67 @@ class ChatTextEditor extends LitElement {
                         type="file" 
                         name="myImage" 
                         accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" />
-                </div>     
+                    </div>     
+                </div>
+                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                <div id=${this.iframeId}
+                class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
+                ></div>
+                <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
+                    ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
+                </button>
+                ${this.editedMessageObj ? (
+                    html`
+                    <div style="margin-bottom: 10px">
+                        ${this.isLoading === false ? html`
+                            <vaadin-icon
+                                class="checkmark-icon"
+                                icon="vaadin:check"
+                                slot="icon"
+                                @click=${() => {
+                                    this.sendMessageFunc();
+                                }}
+                                >
+                            </vaadin-icon>
+                            ` :
+                            html`
+                            <paper-spinner-lite active></paper-spinner-lite>
+                        `}
+                    </div>
+                        `
+                ) : 
+                    html`
+                        <div 
+                        style="margin-bottom: 10px;
+                        ${this.iframeId === 'newChat'
+                        ? 'display: none;' 
+                        : 'display: flex;'}">
+                            ${this.isLoading === false ? html`
+                                <img 
+                                src="/img/qchat-send-message-icon.svg" 
+                                alt="send-icon" 
+                                class="send-icon" 
+                                @click=${() => {
+                                    this.sendMessageFunc();
+                                }} 
+                                />
+                            ` : 
+                            html`
+                                <paper-spinner-lite active></paper-spinner-lite>
+                        `}
+                        </div>
+                        `
+                    }
+                </div>
+                    ${this.chatMessageSize >= 750 ? 
+                        html`
+                        <div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
+                            <div class="message-size" style="${this.chatMessageSize > 4000 && 'color: #bd1515'}">
+                                ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 4000`}
+                            </div>
+                        </div>
+                        ` : 
+                    html``}
             </div>
             <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
             <div id=${this.iframeId}
@@ -590,9 +697,9 @@ class ChatTextEditor extends LitElement {
       }
 
     sendMessageFunc(props) {
-        if(this.editor.isEmpty && (!this.imageFile || !this.attachment)) return
+        if(this.editor.isEmpty && this.iframeId !== 'newChat') return
         this.getMessageSize(this.editor.getJSON())
-        if (this.chatMessageSize > 1000 ) {
+        if (this.chatMessageSize > 4000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
             return;
         }

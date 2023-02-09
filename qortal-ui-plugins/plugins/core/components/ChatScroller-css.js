@@ -77,8 +77,8 @@ export const chatStyles = css`
 	}
 
 	.message-data-my-name {
-		color: #cf21e8;
-		text-shadow: 0 0 3px #cf21e8;
+		color: #05be0e;
+		font-weight: bold;
 	}
 
 	.message-data-time {
@@ -139,6 +139,11 @@ export const chatStyles = css`
     min-width: 150px;
 	}
 
+	
+	.message-myBg {
+		background-color: var(--chat-bubble-myBg) !important;
+	}
+
 	.message-triangle {
 		position: relative;
 	}
@@ -155,10 +160,30 @@ export const chatStyles = css`
 		border-color: transparent transparent var(--chat-bubble-bg) transparent;
 	}
 
+	.message-myTriangle {
+		position: relative;
+	}
+
+	.message-myTriangle:after {
+		content: "";
+		position: absolute;
+		bottom: 0px;
+    left: -9px;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-width: 0px 0px 7px 9px;
+		border-color: transparent transparent var(--chat-bubble-myBg) transparent;
+	}
+
 	.message-reactions {
-		background-color: transparent;
-		width: calc(100% - 54px);
-		margin-left: 54px;
+    background-color: transparent;
+    width: calc(100% - 54px);
+    margin-left: 54px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    gap: 8px;
 	}
 
 	.original-message {
@@ -173,6 +198,7 @@ export const chatStyles = css`
     border-radius: 5px;
     padding: 8px 5px 8px 25px;
 		margin-bottom: 10px;
+		cursor: pointer;
 	}
 
 	.original-message:before {
@@ -186,7 +212,6 @@ export const chatStyles = css`
 	}
 
 	.original-message-sender {
-		margin: 0 0 5px 0;
 		color: var(--mdc-theme-primary);
 	}
 
@@ -198,6 +223,7 @@ export const chatStyles = css`
 		max-width: 300px;
 		max-height: 40px;
 	}
+	
 	.replied-message p {
 		margin: 0px;
 		padding: 0px;
@@ -392,11 +418,11 @@ export const chatStyles = css`
 	}
 
 	.reactions-bg {
+		position: relative;
 		background-color: #d5d5d5;
 		border-radius: 10px;
 		padding: 5px;
 		color: black;
-		margin-right: 10px;
 		transition: all 0.1s ease-in-out;
 		border: 0.5px solid transparent;
 		cursor: pointer;
@@ -412,13 +438,17 @@ export const chatStyles = css`
 
 	.message-data-level  {
 		height: 21px;
-		width: 21px;
+		width: auto;
 		overflow: hidden;
 	}
 
 	.defaultSize {
 		width: 45vh; 
 		height: 40vh;
+	}
+
+	.hideImg {
+		visibility: hidden;
 	}
 
 	.image-deleted-msg {
@@ -613,7 +643,8 @@ export const chatStyles = css`
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-		white-space: pre-wrap;
+	white-space: pre-wrap;
+	margin: 0px;
   }
 
   .replied-message pre code {
@@ -719,4 +750,56 @@ export const chatStyles = css`
     font-size: 13px;
     visibility: visible;
 	}
+
+  .blink-bg{
+	border-radius: 8px;
+		animation: blinkingBackground 3s;
+	}
+	@keyframes blinkingBackground{
+		0%		{ background-color: rgba(var(--menuactivergb), 1)}
+
+		100%	        { background-color:rgba(var(--menuactivergb), 0)}
+	}
+
+	.smallLoading,
+  .smallLoading:after {
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+  }
+
+  .smallLoading {
+      border-width: 0.8em;
+      border-style: solid;
+      border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
+      rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
+      font-size: 30px;
+      position: relative;
+      text-indent: -9999em;
+      transform: translateZ(0px);
+      animation: 1.1s linear 0s infinite normal none running loadingAnimation;
+  }
+
+  @-webkit-keyframes loadingAnimation {
+      0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+      }
+      100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+      }
+  }
+
+  @keyframes loadingAnimation {
+      0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+      }
+      100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+      }
+  }
+
 `

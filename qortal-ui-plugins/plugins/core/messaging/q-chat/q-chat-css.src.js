@@ -51,11 +51,11 @@ export const qchatStyles = css`
   }
 
   .people-list .blockedusers {
+      z-index: 1;
       position: absolute;
       bottom: 0;
       width: 20vw;
       background: var(--white);
-      border-top: 1px solid var(--border);
       border-right: 3px #ddd solid;
       display: flex;
       justify-content: space-between;

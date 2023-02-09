@@ -849,7 +849,7 @@ class MultiWallet extends LitElement {
                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div style="display: inline;">
-                            ${this.renderSQB()}
+                            ${this.selectedTransaction.type === 'DEPLOY_AT' ? html`${this.renderCAB()}` : html`${this.renderSQB()}`}
                         </div>
                         <br />
                         ${!this.selectedTransaction.amount ? '' : html`
@@ -3843,6 +3843,23 @@ class MultiWallet extends LitElement {
         }
     }
 
+    renderCAB() {
+        return html`
+            <span>${this.selectedTransaction.aTAddress}</span>
+            <button-icon-copy 
+                title="${translate("blockpage.bcchange8")}"
+                onSuccessMessage="${translate("walletpage.wchange4")}"
+                onErrorMessage="${translate("walletpage.wchange39")}"
+                textToCopy=${this.selectedTransaction.aTAddress}
+                buttonSize="24px"
+                iconSize="16px"
+                color="var(--copybutton)"
+                offsetLeft="4px"
+            >
+            </button-icon-copy>
+        `
+    }
+
     renderFetchText() {
         return html`${translate("walletpage.wchange1")}`
     }
@@ -4486,10 +4503,10 @@ class MultiWallet extends LitElement {
                     }
                 })					
                 const txsQort = await parentEpml.request('apiCall', {
-                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true`,
+                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=PUBLICIZE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
                 })		
                 const pendingTxsQort = await parentEpml.request('apiCall', {
-                    url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=PUBLICIZE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
+                    url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=PUBLICIZE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
                 })
                 if (this._selectedWallet == coin) {
                     this.wallets.get(coin).transactions = pendingTxsQort.concat(txsQort)
@@ -4897,7 +4914,12 @@ class MultiWallet extends LitElement {
                     path="creatorAddress"
                 >
                 </vaadin-grid-column>
-                <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}" path="recipient"></vaadin-grid-column>
+                <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.type === 'DEPLOY_AT' ? html`${data.item.aTAddress}` : html`${data.item.recipient}`}`, root)
+                    }}
+                >
+                </vaadin-grid-column>
                 <vaadin-grid-column auto-width header="${translate("walletpage.wchange36")}" path="fee"></vaadin-grid-column>
                 <vaadin-grid-column auto-width header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
                 <vaadin-grid-column auto-width

@@ -85,7 +85,7 @@ export class UserInfo extends LitElement {
           ${!this.isImageLoaded && this.selectedHead && !this.selectedHead.name ? 
             html`
               <div class="avatar-container">
-                <img src="/img/qortal-chat-logo.png" alt="avatar" />
+                <img src="/img/incognito.png" alt="avatar" />
               </div>`
             : ""}
         <div class="user-info-header">

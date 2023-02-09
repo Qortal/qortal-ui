@@ -2,7 +2,6 @@ import { store } from '../../store.js'
 import { doPageUrl } from '../../redux/app/app-actions.js'
 
 export const newMessage = (data) => {
-
     const alert = playSound(data.sound)
 
     // Should I show notification ?
@@ -18,7 +17,7 @@ export const newMessage = (data) => {
             }
 
             notify.onclick = (e) => {
-                const pageUrl = `/app/q-chat/${data.req.url}`
+                const pageUrl = `/app/q-chat/?chat=${data.req.url}`
                 store.dispatch(doPageUrl(pageUrl))
             }
         } else {
@@ -26,7 +25,7 @@ export const newMessage = (data) => {
             const notify = new Notification(data.title, data.options)
 
             notify.onclick = (e) => {
-                const pageUrl = `/app/q-chat/${data.req.url}`
+                const pageUrl = `/app/q-chat/?chat=${data.req.url}`
                 store.dispatch(doPageUrl(pageUrl))
             }
         }

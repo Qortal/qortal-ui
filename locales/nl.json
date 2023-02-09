@@ -10,7 +10,7 @@
   "electron_translate_7": "Update klaar om te installeren",
   "electron_translate_8": "Er is een nieuwe Qortal UI-versie gedownload.",
   "electron_translate_9": "Klik op NU INSTALLEREN om de update toe te passen, MISSCHIEN LATER om de gebruikersinterface niet bij te werken.",
-  "electron_translate_10": "Fout tijdens updaten...",
+  "electron_translate_10": "Tijdelijke update mislukt, zal het later opnieuw proberen",
   "electron_translate_11": "UPDATE DOWNLOADEN",
   "electron_translate_12": "Het wordt ⌛️ op de achtergrond gedownload!"
 }
