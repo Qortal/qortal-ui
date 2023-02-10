@@ -55,6 +55,7 @@ html {
   --gif-search-icon: #ffffff;
   --gif-button-row-bg: #eaeaef;
   --gif-button-row-color: #464040;
+  --gif-collection-hover-bg: #eaeaefa3;
 }
 
 html[theme="dark"] {
@@ -114,4 +115,5 @@ html[theme="dark"] {
   --gif-search-icon: #586b8d;
   --gif-button-row-bg: #82899c;
   --gif-button-row-color: #151212;
+  --gif-collection-hover-bg: #ffffff26;
 }

@@ -67,8 +67,6 @@ editor: {type: Object},
     						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`,
     					});
 
-    						console.log({metaData});
-
     					collectionObj = {
     						...collection,
     						gifUrls: [],
@@ -429,7 +427,7 @@ editor: {type: Object},
     			};
     			interval = setInterval(getAnswer, 5000);
     		});
-    		// saveAs(zipFileBlob, 'zipfile');
+    		saveAs(zipFileBlob, 'zipfile');
     			this.isLoading = false;
     			this.setGifsLoading(false);
     				this.mode = 'myCollection';
@@ -452,7 +450,7 @@ editor: {type: Object},
 
     render() {
     	console.log('this.currentCollection', this.currentCollection);
-    	console.log(27, 'chat gifs here');
+    	console.log(31, 'chat gifs here');
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
@@ -472,12 +470,31 @@ editor: {type: Object},
                         slot="icon">
                     </vaadin-icon>
                 <div class="title-row">
-                    <p class="gif-explorer-title">${translate(
-    					'chatpage.cchange80'
-    				)}</p>
+									<div
+											style=${((this.currentCollection && (this.mode === 'myCollection' || this.mode === 'subscribedCollection')) || this.mode === 'explore') ? "visibility: visible;" : "visibility: hidden;"}
+    									class='collection-back-button'
+    								@click=${() => {
+											if (this.mode === 'explore' && !this.currentCollection) {
+												this.mode = 'myCollection';
+												this.currentCollection = null;
+											} else if (this.mode === 'explore' && this.currentCollection) {
+												this.mode = 'explore';
+												this.currentCollection = null;
+											} else {
+												this.currentCollection = null;
+											}
+    								}}
+    							>
+    								<vaadin-icon class='collection-back-button-arrow' icon='vaadin:arrow-left' slot='icon'></vaadin-icon>
+    							</div>
+                    <p class="gif-explorer-title">
+											${translate(
+												'chatpage.cchange80'
+											)}
+										</p>
                     <vaadin-icon
                         style=${
-    						this.mode === 'newCollection'
+    						(this.mode === 'newCollection' || this.mode === 'explore')
     							? 'display: none'
     							: 'display: block'
     					}
@@ -498,27 +515,25 @@ editor: {type: Object},
                         text=${get('chatpage.cchange81')}>
                     </vaadin-tooltip>
                 </div>
-                <div class="collections-button-row" style=${
-    				this.mode === 'newCollection'
-    					? 'display: none'
-    					: 'display: block'
-    			}>
-                    <div class="collections-button-innerrow">
+                <div 
+								class="collections-button-row" 
+								style=${(this.mode === 'newCollection' || this.mode === 'explore') 
+								? 'display: none' : 'display: block'}>
+								<div class="collections-button-innerrow">
                 <div
-                    id="my-collections-button"
+									id="my-collections-button"
                   class=${[
     					'my-collections-button',
     					this.mode === 'myCollection'
     						? 'collections-button-active'
     						: null,
     				].join(' ')}
-                  @click=${() => {
+								@click=${() => {
     					if (this.isLoading) return;
     					if (this.mode === 'myCollection') return;
     					this.mode = 'myCollection';
     						this.currentCollection = null;
-    				}}
-                >
+							}}>
                   ${translate('chatpage.cchange82')}
                 </div>
                 <div
@@ -615,29 +630,11 @@ editor: {type: Object},
     			}
                 ${this.currentCollection && this.mode === 'myCollection'
     					? html`
-    							<div
-    									class='collection-back-button'
-    								@click=${() => {
-    									this.currentCollection = null;
-    								}}
-    							>
-    								<vaadin-icon class='collection-back-button-arrow' icon='vaadin:arrow-left' slot='icon'></vaadin-icon>
-    								${translate('general.back')}
-    							</div>
     								<div class='collection-gifs'>
 											${this.currentCollection.gifUrls.map((gif) => {
-												console.log({gif});
 												return html`
 													<image-component
-														style='border-radius: 15px;
-														background-color: transparent;
-														cursor: pointer;
-														width: 100%;
-														height: 150px;
-														object-fit: cover;
-														border: 1px solid transparent;
-														transition: all 0.2s cubic-bezier(0, 0.55, 0.45, 1);
-														box-shadow: rgb(50 50 93 / 25%) 0px 6px 12px -2px, rgb(0 0 0 / 30%) 0px 3px 7px -3px;'
+														.class=${'gif-image'}
 														.url=${gif}
 														.alt=${'gif-image'}>
 														</image-component>
@@ -650,26 +647,14 @@ editor: {type: Object},
     			${this.currentCollection &&
     				this.mode === 'subscribedCollection'
     					? html`
-    							<div
-    									class='collection-back-button'
-    								@click=${() => {
-    									this.currentCollection = null;
-    								}}
-    							>
-    								<vaadin-icon class='collection-back-button-arrow' icon='vaadin:arrow-left' slot='icon'>
-    								</vaadin-icon>
-    								${translate('general.back')}
-    							</div>
     								<div class='collection-gifs'>
     							${this.currentCollection.gifUrls.map((gif) => {
     								return html`
-    									<img
-    										class='collection-gif'
-    										onerror=${(e) => {
-    											e.target.src = gif;
-    										}}
-    										src=${gif}
-    									/>
+												<image-component
+													.class=${'gif-image'}
+													.url=${gif}
+													.alt=${'gif-image'}>
+													</image-component>
     								`;
     							})}
     								</div>
@@ -678,13 +663,6 @@ editor: {type: Object},
     			}
     						${this.currentCollection && this.mode === 'explore'
     					? html`
-    							<button
-    								@click=${() => {
-    									this.currentCollection = null;
-    								}}
-    							>
-    								Back
-    							</button>
     							<button
     								@click=${() => {
     									this.addCollectionToList(

@@ -126,8 +126,6 @@ export const publishData = async ({
 				}
 				
 			}
-
-			console.log({postBody})
 		
 			let uploadDataUrl = `/arbitrary/${service}/${registeredName}${urlSuffix}?apiKey=${getApiKey()}`
 			if (identifier != null && identifier.trim().length > 0) {

@@ -47,7 +47,6 @@ user-select: none;
 }
 
 .explore-collections-icon {
-margin-left: auto;
 text-align: right;
 font-size: 20px;
 color: var(--chat-group);
@@ -346,7 +345,7 @@ color: var(--chat-bubble-msg-color);
   align-items: center;
   transition: box-shadow 0.2s ease-in-out;
 	background-color: var(--gif-button-row-bg);
-	border-radius: 10px;
+	border-radius: 3px;
   box-shadow: rgb(0 0 0 / 20%) 0px 0px 0px;
   padding: 8px 10px;
   cursor: pointer;
@@ -383,7 +382,7 @@ color: var(--chat-bubble-msg-color);
 	color: var(--chat-bubble-msg-color);
   flex-direction: row;
   align-items: center;
-  transition: box-shadow 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
   box-shadow: none;
   padding: 10px;
   cursor: pointer;
@@ -391,9 +390,8 @@ color: var(--chat-bubble-msg-color);
 
 .collection-card:hover {
   border: none;
-  border-radius: 4px;
-  box-sizing: border-box;
-  box-shadow: rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px, rgb(0 0 0 / 20%) 0px 2px 4px -1px;
+  border-radius: 5px;
+  background-color: var(--gif-collection-hover-bg);
 }
 
 .upload-button {
@@ -404,7 +402,7 @@ background-color: transparent;
 padding: 8px 10px;
 border-radius: 5px;
 border: none;
-transition: all 0.3s ease-in-out;
+transition: all 0.4s ease-in-out;
 }
 
 .upload-back-button {
