@@ -62,6 +62,7 @@ class MultiWallet extends LitElement {
             arrrMemo: { type: String },
             errorMessage: { type: String },
             arrrWalletAddress: { type: String },
+            unusedWalletAddress: { type: String },
             successMessage: { type: String },
             sendMoneyLoading: { type: Boolean },
             btnDisable: { type: Boolean },
@@ -357,8 +358,8 @@ class MultiWallet extends LitElement {
             .wallet-address {
                 display: flex;
                 align-items: center;
-                font-size: 18px; 
-                color: var(--black); 
+                font-size: 18px;
+                color: var(--black);
                 margin: 4px 0 20px;
             }
 
@@ -366,7 +367,7 @@ class MultiWallet extends LitElement {
                 display: inline-block;
                 font-weight: 600;
                 font-size: 32px;
-                color: var(--black); 
+                color: var(--black);
             }
 
             #transactions {
@@ -505,6 +506,13 @@ class MultiWallet extends LitElement {
                 position: relative;
             }
 
+            .unused-address-dialog {
+                min-height: 300px;
+                min-width: 300px;
+                box-sizing: border-box;
+                position: relative;
+            }
+
             .btn-clear-success {
 			--mdc-icon-button-size: 32px;
 			color: red;
@@ -559,6 +567,12 @@ class MultiWallet extends LitElement {
                 margin-top: -44px;
                 margin-left: 215px;
                 width: 185px;
+            }
+
+            .unused-pos {
+                margin-top: -44px;
+                margin-left: 410px;
+                width: 250px;
             }
 
             @media (max-width: 863px) {
@@ -673,6 +687,7 @@ class MultiWallet extends LitElement {
         this.arrrRecipient = ''
         this.arrrMemo = ''
         this.arrrWalletAddress = ''
+        this.unusedWalletAddress = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.myElementId = ''
@@ -799,7 +814,7 @@ class MultiWallet extends LitElement {
                         ${translate("walletpage.wchange2")}
                         <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
-                            <button-icon-copy 
+                            <button-icon-copy
                                 title="${translate("walletpage.wchange3")}"
                                 onSuccessMessage="${translate("walletpage.wchange4")}"
                                 onErrorMessage="${translate("walletpage.wchange39")}"
@@ -821,6 +836,9 @@ class MultiWallet extends LitElement {
                     </div>
                     <div class="book-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         ${this.renderAddressbookButton()}
+                    </div>
+                    <div class="unused-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
+                        ${this.renderUnusedAddressButton()}
                     </div>
                     <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
@@ -1965,6 +1983,106 @@ class MultiWallet extends LitElement {
                          @click=${() => this.openAddToArrrAddressbook()}
                     >
                     ${translate("rewardsharepage.rchange14")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="btcUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="unused-address-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/btc.png" width="32" height="32">
+                            <h2>Unused BTC Address</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                        </p>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="ltcUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="unused-address-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/ltc.png" width="32" height="32">
+                            <h2>Unused LTC Address</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                        </p>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="dogeUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="unused-address-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/doge.png" width="32" height="32">
+                            <h2>Unused DOGE Address</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                        </p>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="dgbUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="unused-address-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/dgb.png" width="32" height="32">
+                            <h2>Unused DGB Address</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                        </p>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="rvnUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="unused-address-dialog">
+                        <div style="text-align: center;">
+                            <img src="/img/rvn.png" width="32" height="32">
+                            <h2>Unused RVN Address</h2>
+                            <hr />
+                        </div>
+                        <p>
+                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                        </p>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                    >
+                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -3846,7 +3964,7 @@ class MultiWallet extends LitElement {
     renderCAB() {
         return html`
             <span>${this.selectedTransaction.aTAddress}</span>
-            <button-icon-copy 
+            <button-icon-copy
                 title="${translate("blockpage.bcchange8")}"
                 onSuccessMessage="${translate("walletpage.wchange4")}"
                 onErrorMessage="${translate("walletpage.wchange39")}"
@@ -4115,7 +4233,7 @@ class MultiWallet extends LitElement {
 
         const getName = async (recipient)=> {
             try {
-                
+
                 const getNames = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/names/address/${recipient}`,
@@ -4501,10 +4619,10 @@ class MultiWallet extends LitElement {
                             this.balance = this.wallets.get(this._selectedWallet).balance
                         }
                     }
-                })					
+                })
                 const txsQort = await parentEpml.request('apiCall', {
                     url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=PUBLICIZE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
-                })		
+                })
                 const pendingTxsQort = await parentEpml.request('apiCall', {
                     url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=PUBLICIZE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
                 })
@@ -4638,6 +4756,70 @@ class MultiWallet extends LitElement {
         }
     }
 
+    async getUnusedAddress(coin) {
+        this.wallets.get(this._selectedWallet).unusedWalletAddress = 'Loading...'
+        let _url = ``
+        let _body = null
+
+        switch (coin) {
+            case 'qort':
+            case 'arrr':
+                _url = ``
+                _body = null
+                break
+            case 'btc':
+            case 'ltc':
+            case 'doge':
+            case 'dgb':
+            case 'rvn':
+                const walletName = `${coin}Wallet`
+                _url = `/crosschain/${coin}/unusedaddress?apiKey=${this.getApiKey()}`
+                _body = `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`
+                break
+            default:
+                break
+        }
+
+        if (_body === null) {
+            this.unusedAddressString = ""
+        } else {
+            await parentEpml.request('apiCall', {
+                url: _url,
+                method: 'POST',
+                body: _body,
+            }).then((res) => {
+                this.wallets.get(this._selectedWallet).unusedWalletAddress = res
+                this.unusedAddressString = this.wallets.get(this._selectedWallet).unusedWalletAddress
+                this.openUnusedAddressDialog(coin)
+            })
+        }
+    }
+
+    openUnusedAddressDialog(coin) {
+        switch (coin) {
+            case 'qort':
+            case 'arrr':
+                break
+            case 'btc':
+                this.shadowRoot.querySelector("#btcUnusedAddressDialog").show();
+                break
+            case 'ltc':
+                this.shadowRoot.querySelector("#ltcUnusedAddressDialog").show();
+                break
+            case 'doge':
+                this.shadowRoot.querySelector("#dogeUnusedAddressDialog").show();
+                break
+            case 'dgb':
+                this.shadowRoot.querySelector("#dgbUnusedAddressDialog").show();
+                break
+            case 'rvn':
+                this.shadowRoot.querySelector("#rvnUnusedAddressDialog").show();
+                break
+            default:
+                break
+        }
+    }
+
     renderSendButton() {
         if ( this._selectedWallet === "qort" ) {
             return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
@@ -4674,6 +4856,22 @@ class MultiWallet extends LitElement {
         } else if ( this._selectedWallet === "arrr" ) {
             return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openArrrAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
         } else {
+            return html``
+        }
+    }
+
+    renderUnusedAddressButton() {
+        switch (this._selectedWallet) {
+        case "qort":
+        case "arrr":
+            return html`<vaadin-button disabled theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>Get Unused Address</vaadin-button>`
+        case "btc":
+        case "ltc":
+        case "doge":
+        case "dgb":
+        case "rvn":
+            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>Get Unused Address</vaadin-button>`
+        default:
             return html``
         }
     }
