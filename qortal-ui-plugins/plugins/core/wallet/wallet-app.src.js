@@ -507,8 +507,8 @@ class MultiWallet extends LitElement {
             }
 
             .unused-address-dialog {
-                min-height: 300px;
-                min-width: 300px;
+                min-height: 150px;
+                min-width: 550px;
                 box-sizing: border-box;
                 position: relative;
             }
@@ -572,7 +572,7 @@ class MultiWallet extends LitElement {
             .unused-pos {
                 margin-top: -44px;
                 margin-left: 410px;
-                width: 250px;
+                width: 185px;
             }
 
             @media (max-width: 863px) {
@@ -1990,11 +1990,24 @@ class MultiWallet extends LitElement {
                     <div class="unused-address-dialog">
                         <div style="text-align: center;">
                             <img src="/img/btc.png" width="32" height="32">
-                            <h2>Unused BTC Address</h2>
+                            <h2>BTC</h2>
                             <hr />
                         </div>
                         <p>
                             <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                            <button-icon-copy
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
+                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
+                                buttonSize="24px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy>
+                            <br />
+                            <span>${translate("walletpage.wchange38")}</span>
                         </p>
                     </div>
                     <mwc-button
@@ -2010,11 +2023,24 @@ class MultiWallet extends LitElement {
                     <div class="unused-address-dialog">
                         <div style="text-align: center;">
                             <img src="/img/ltc.png" width="32" height="32">
-                            <h2>Unused LTC Address</h2>
+                            <h2>LTC</h2>
                             <hr />
                         </div>
                         <p>
                             <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                            <button-icon-copy
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
+                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
+                                buttonSize="24px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy>
+                            <br />
+                            <span>${translate("walletpage.wchange38")}</span>
                         </p>
                     </div>
                     <mwc-button
@@ -2030,11 +2056,24 @@ class MultiWallet extends LitElement {
                     <div class="unused-address-dialog">
                         <div style="text-align: center;">
                             <img src="/img/doge.png" width="32" height="32">
-                            <h2>Unused DOGE Address</h2>
+                            <h2>DOGE</h2>
                             <hr />
                         </div>
                         <p>
                             <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                            <button-icon-copy
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
+                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
+                                buttonSize="24px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy>
+                            <br />
+                            <span>${translate("walletpage.wchange38")}</span>
                         </p>
                     </div>
                     <mwc-button
@@ -2050,11 +2089,24 @@ class MultiWallet extends LitElement {
                     <div class="unused-address-dialog">
                         <div style="text-align: center;">
                             <img src="/img/dgb.png" width="32" height="32">
-                            <h2>Unused DGB Address</h2>
+                            <h2>DGB</h2>
                             <hr />
                         </div>
                         <p>
                             <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                            <button-icon-copy
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
+                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
+                                buttonSize="24px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy>
+                            <br />
+                            <span>${translate("walletpage.wchange38")}</span>
                         </p>
                     </div>
                     <mwc-button
@@ -2070,11 +2122,24 @@ class MultiWallet extends LitElement {
                     <div class="unused-address-dialog">
                         <div style="text-align: center;">
                             <img src="/img/rvn.png" width="32" height="32">
-                            <h2>Unused RVN Address</h2>
+                            <h2>RVN</h2>
                             <hr />
                         </div>
                         <p>
                             <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
+                            <button-icon-copy
+                                title="${translate("walletpage.wchange3")}"
+                                onSuccessMessage="${translate("walletpage.wchange4")}"
+                                onErrorMessage="${translate("walletpage.wchange39")}"
+                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
+                                buttonSize="24px"
+                                iconSize="16px"
+                                color="var(--copybutton)"
+                                offsetLeft="4px"
+                            >
+                            </button-icon-copy>
+                            <br />
+                            <span>${translate("walletpage.wchange38")}</span>
                         </p>
                     </div>
                     <mwc-button
@@ -4757,7 +4822,7 @@ class MultiWallet extends LitElement {
     }
 
     async getUnusedAddress(coin) {
-        this.wallets.get(this._selectedWallet).unusedWalletAddress = 'Loading...'
+        this.wallets.get(this._selectedWallet).unusedWalletAddress = ''
         let _url = ``
         let _body = null
 
@@ -4864,13 +4929,13 @@ class MultiWallet extends LitElement {
         switch (this._selectedWallet) {
         case "qort":
         case "arrr":
-            return html`<vaadin-button disabled theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>Get Unused Address</vaadin-button>`
+            return html`<vaadin-button disabled theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange58")}</vaadin-button>`
         case "btc":
         case "ltc":
         case "doge":
         case "dgb":
         case "rvn":
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>Get Unused Address</vaadin-button>`
+            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange58")}</vaadin-button>`
         default:
             return html``
         }
