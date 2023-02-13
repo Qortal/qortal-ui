@@ -15,9 +15,10 @@ class ChatTextEditor extends LitElement {
             isLoadingMessages: { type: Boolean },
             _sendMessage: { attribute: false },
             placeholder: { type: String },
-            imageFile: { type: Object },
             attachment: { type: Object },
             insertFile: { attribute: false },
+            imageFile: { type: Object },
+            insertImage: { attribute: false },
             iframeHeight: { type: Number },
             editedMessageObj: { type: Object },
             repliedToMessageObj: {type: Object},
@@ -166,32 +167,30 @@ class ChatTextEditor extends LitElement {
             color: var(--black);
             padding: 0px 10px;
             height: 100%;
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
         }
-        
         .element::-webkit-scrollbar-track {
-            background-color: whitesmoke;
-            border-radius: 7px;
-        }
-
-        .element::-webkit-scrollbar {
-            width: 6px;
-            border-radius: 7px;
-            background-color: whitesmoke;
-        }
-
-        .element::-webkit-scrollbar-thumb {
-            background-color: rgb(180, 176, 176);
-            border-radius: 7px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .element::-webkit-scrollbar-thumb:hover {
-            background-color: rgb(148, 146, 146);
-            cursor: pointer;
-        } 
-
+                        background-color: whitesmoke;
+                        border-radius: 7px;
+                    }
+            
+                    .element::-webkit-scrollbar {
+                        width: 6px;
+                        border-radius: 7px;
+                        background-color: whitesmoke;
+                    }
+            
+                    .element::-webkit-scrollbar-thumb {
+                        background-color: rgb(180, 176, 176);
+                        border-radius: 7px;
+                        transition: all 0.3s ease-in-out;
+                    }
+            
+                    .element::-webkit-scrollbar-thumb:hover {
+                        background-color: rgb(148, 146, 146);
+                        cursor: pointer;
+                    } 
         .ProseMirror:focus {
             outline: none;
         }
@@ -200,45 +199,57 @@ class ChatTextEditor extends LitElement {
             background-color: var(--white)
         }
 
-        .ProseMirror > * + * {
-        margin-top: 0.75em;
-        outline: none;
+    .ProseMirror > * + * {
+    margin-top: 0.75em;
+    outline: none;
   }
 
-    .ProseMirror ul,
-    ol {
-        padding: 0 1rem;
+  .ProseMirror ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  .ProseMirror h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  .ProseMirror code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  .ProseMirror pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    white-space: pre-wrap;
+  }
+  .ProseMirror pre code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
     }
 
-    .ProseMirror h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        line-height: 1.1;
-    }
 
-    .ProseMirror code {
-        background-color: rgba(#616161, 0.1);
-        color: #616161;
-    }
+  .ProseMirror img {
+    width: 1.7em;
+    height: 1.5em;
+    margin: 0px;
 
-    .ProseMirror pre {
-        background: #0D0D0D;
-        color: #FFF;
-        font-family: 'JetBrainsMono', monospace;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        white-space: pre-wrap;
-    }
-    .ProseMirror pre code {
-        color: inherit;
-        padding: 0;
-        background: none;
-        font-size: 0.8rem;
-        }
+  }
 
+  .ProseMirror blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
 
   .ProseMirror hr {
     border: none;
@@ -270,12 +281,35 @@ class ChatTextEditor extends LitElement {
    
   }
 
-    
+  .chatbar-buttons {
+    margin-bottom: 5px;
+    flex-shrink: 0;
+  }
 
-    .ProseMirror blockquote {
-        padding-left: 1rem;
-        border-left: 2px solid rgba(#0D0D0D, 0.1);
-    }
+  .show-chatbar-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  :host(:hover) .chatbar-button-single {
+   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.ProseMirror p {
+    font-size: 18px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    overflow-wrap: anywhere;
+}
 
 .ProseMirror {
     width: 100%;
@@ -283,64 +317,28 @@ class ChatTextEditor extends LitElement {
     word-break: break-word;
 }
 
-    .chatbar-buttons {
-        margin-bottom: 5px;
-        flex-shrink: 0;
-    }
+.ProseMirror mark {
+  background-color: #ffe066;
+  border-radius: 0.25em;
+  box-decoration-break: clone;
+  padding: 0.125em 0;
+}
 
-    .show-chatbar-buttons {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    :host(:hover) .chatbar-button-single {
-    
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-        .ProseMirror p.is-editor-empty:first-child::before {
-        color: #adb5bd;
-        content: attr(data-placeholder);
-        float: left;
-        height: 0;
-        pointer-events: none;
-        }
-    .ProseMirror p {
-        font-size: 18px;
-        margin-block-start: 0px;
-        margin-block-end: 0px;
-        overflow-wrap: anywhere;
-    }
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 
-    .ProseMirror {
-        width: 100%;
-        box-sizing: border-box;
-        word-break: break-all;
-    }
-
-    .ProseMirror mark {
-    background-color: #ffe066;
-    border-radius: 0.25em;
-    box-decoration-break: clone;
-    padding: 0.125em 0;
-    }
-
-    .material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    }
+}
 
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
@@ -530,7 +528,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     html`
                         <div 
                         style="margin-bottom: 10px;
-                        ${this.iframeId === 'newChat'
+                        ${(this.iframeId === 'newChat'  || this.iframeId === "newAttachmentChat")
                         ? 'display: none;' 
                         : 'display: flex;'}">
                             ${this.isLoading === false ? html`
@@ -560,66 +558,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         ` : 
                     html``}
             </div>
-            <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
-            <div id=${this.iframeId}
-            class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
-            ></div>
-            <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-                ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
-            </button>
-            ${this.editedMessageObj ? (
-                html`
-                <div style="margin-bottom: 10px">
-                    ${this.isLoading === false ? html`
-                        <vaadin-icon
-                            class="checkmark-icon"
-                            icon="vaadin:check"
-                            slot="icon"
-                            @click=${() => {
-                                this.sendMessageFunc();
-                            }}
-                            >
-                        </vaadin-icon>
-                        ` :
-                        html`
-                        <paper-spinner-lite active></paper-spinner-lite>
-                    `}
-                </div>
-                    `
-            ) : 
-                html`
-                    <div 
-                    style="margin-bottom: 10px;
-                    ${this.iframeId === 'newChat' || this.iframeId === "newAttachmentChat"
-                    ? 'display: none;' 
-                    : 'display: flex;'}">
-                        ${this.isLoading === false ? html`
-                            <img 
-                            src="/img/qchat-send-message-icon.svg" 
-                            alt="send-icon" 
-                            class="send-icon" 
-                            @click=${() => {
-                                this.sendMessageFunc();
-                            }} 
-                            />
-                        ` : 
-                        html`
-                            <paper-spinner-lite active></paper-spinner-lite>
-                    `}
-                    </div>
-                    `
-                }
-            </div>
-                ${this.chatMessageSize >= 750 ? 
-                    html`
-                    <div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
-                        <div class="message-size" style="${this.chatMessageSize > 1000 && 'color: #bd1515'}">
-                            ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 1000`}
-                        </div>
-                    </div>
-                    ` : 
-                html``}
-        </div>
 		`
 	}
 
@@ -630,7 +568,14 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
            }
 	}
 
+  
+
+ 
+
 	async firstUpdated() {
+     
+   
+          
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
             const chatbar = this.shadowRoot.querySelector('.element')
@@ -647,6 +592,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
+        this.chatMessageInput = this.shadowRoot.querySelector('.element')   
         
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
@@ -688,6 +634,10 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         if (changedProperties && changedProperties.has('placeholder') && this.updatePlaceholder && this.editor) {
             this.updatePlaceholder(this.editor, this.placeholder )
         }
+       
+        if (changedProperties && changedProperties.has("imageFile")) {
+            this.chatMessageInput = "newChat";
+        }
     }
 
     shouldUpdate(changedProperties) {
@@ -709,7 +659,8 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 
     getMessageSize(message){
         try {
-            const trimmedMessage = message;
+
+        const trimmedMessage = message
             let messageObject = {};
 
             if (this.repliedToMessageObj) {
@@ -729,37 +680,37 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage);
                     message = parsedMessageObj;
                  } catch (error) {
-                    message = this.messageObj.decodedMessage;
+                    message = this.messageObj.decodedMessage
                 }
                 messageObject = {
                     ...message,
                     messageText: trimmedMessage,
                 }
-            } else if (this.imageFile && this.iframeId === 'newChat') {
+            } else if(this.imageFile && this.iframeId === 'newChat') {
               messageObject = {
                     messageText: trimmedMessage,
                     images: [{
                         service: "QCHAT_IMAGE",
                         name: '123456789123456789123456789',
                         identifier: '123456'
-                    }],
+                }],
                     repliedTo: '',
                     version: 2
                 };
             } else if (this.attachment && this.iframeId === 'newAttachmentChat') {
-              messageObject = {
-                    messageText: trimmedMessage,
-                    attachments: [{
-                        service: "QCHAT_ATTACHMENT",
-                        name: '123456789123456789123456789',
-                        identifier: '123456',
-                        attachmentName: "123456789123456789123456789",
-                        attachmentSize: "123456"
-                    }],
-                    repliedTo: '',
-                    version: 2
-                };
-            } else {
+                messageObject = {
+                      messageText: trimmedMessage,
+                      attachments: [{
+                          service: "QCHAT_ATTACHMENT",
+                          name: '123456789123456789123456789',
+                          identifier: '123456',
+                          attachmentName: "123456789123456789123456789",
+                          attachmentSize: "123456"
+                      }],
+                      repliedTo: '',
+                      version: 2
+                  };
+              } else {
                 messageObject = {
                       messageText: trimmedMessage,
                       images: [''],
@@ -767,6 +718,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                       version: 2
                   };
               }
+
             const stringified = JSON.stringify(messageObject);
             const size =  new Blob([stringified]).size;
             this.chatMessageSize = size;
@@ -775,6 +727,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         }
         
     }
+
    
 }
 

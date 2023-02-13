@@ -348,10 +348,12 @@ class MessageTemplate extends LitElement {
     }
 
     async downloadAttachment(attachment) {
+        
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+       
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
         try{
-            const res = await axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}`, { responseType: 'blob' })
+           axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}?apiKey=${myNode.apiKey}`, { responseType: 'blob'})
             .then(response =>{              
                 let filename = attachment.attachmentName;
                 let blob = new Blob([response.data], { type:"application/octet-stream" });
