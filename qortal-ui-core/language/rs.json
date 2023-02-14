@@ -283,7 +283,8 @@
 		"wchange54": "Izvezi adresar",
 		"wchange55": "Vaš postojeći adresar će biti obrisan, a iz rezervne kopije biće kreiran novi.",
 		"wchange56": "UPOZORENJE!",
-		"wchange57": "Beleška"
+		"wchange57": "Beleška",
+		"wchange58": "Nova Adresa"
 	},
 	"tradepage": {
 		"tchange1": "Trgovinski prozor",
@@ -574,7 +575,13 @@
 		"cchange65": "Unesite primaoca",
 		"cchange66": "Ne mogu preuzeti odgovor na poruku. Poruka je prestara.",
 		"cchange68": "uređeno",
-		"cchange69": "Automatski prikaži slike"
+		"cchange69": "Automatski prikaži slike",
+		"cchange70": "Ovaj tip slike nije podržan",
+		"cchange71": "i",
+		"cchange72": "drugo",
+		"cchange73": "s",
+		"cchange74": "reagovao sa",
+		"cchange90": "Nema poruka"
 	},
 	"welcomepage": {
 		"wcchange1": "Dobrodošli na Q-Chat",
@@ -597,7 +604,15 @@
 		"bcchange7": "MENI",
 		"bcchange8": "Kopiraj Adresu",
 		"bcchange9": "Privatna Poruka",
-		"bcchange10": "Više"
+		"bcchange10": "Više",
+		"bcchange11": "Odgovori",
+		"bcchange12": "Izmeni",
+		"bcchange13": "Reakcija",
+		"bcchange14": "Napred",
+		"bcchange15": "Poruka je prosleđena",
+		"bcchange16": "Izaberite primaoca ili potražite jednog ispod",
+		"bcchange17": "PROSLEĐEN",
+		"bcchange18": "Korisnik saveta"
 	},
 	"grouppage": {
 		"gchange1": "Qortal Grupe",
@@ -657,7 +672,8 @@
 		"gchange55": "Pretraži privatnu grupu",
 		"gchange56": "Ime grupe za pretragu",
 		"gchange57": "Ime privatne grupe nije pronađeno",
-		"gchange58": "Imajte na umu da ime grupe mora potpuno da se podudara."
+		"gchange58": "Imajte na umu da ime grupe mora potpuno da se podudara.",
+		"gchange59": "Prikaži / Sakrij Oznaku"
 	},
 	"puzzlepage": {
 		"pchange1": "Slagalice",

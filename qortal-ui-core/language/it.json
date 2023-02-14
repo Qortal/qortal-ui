@@ -283,7 +283,8 @@
 		"wchange54": "Esporta rubrica",
 		"wchange55": "La tua rubrica esistente verrà eliminata e dal backup verrà creata una nuova.",
 		"wchange56": "AVVERTIMENTO!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "Nuovo Indirizzo"
 	},
 	"tradepage": {
 		"tchange1": "Portale commerciale",
@@ -574,7 +575,13 @@
 		"cchange65": "Inserisci un destinatario",
 		"cchange66": "Impossibile recuperare il messaggio di risposta. Il messaggio è troppo vecchio.",
 		"cchange68": "modificato",
-		"cchange69": "Mostra automaticamente le immagini"
+		"cchange69": "Mostra automaticamente le immagini",
+		"cchange70": "Questo tipo di immagine non è supportato",
+		"cchange71": "e",
+		"cchange72": "altro",
+		"cchange73": "s",
+		"cchange74": "ha reagito con",
+		"cchange90": "Nessun messaggio"
 	},
 	"welcomepage": {
 		"wcchange1": "Benvenuto in Q-Chat",
@@ -597,7 +604,15 @@
 		"bcchange7": "MENÙ",
 		"bcchange8": "Copia Indirizzo",
 		"bcchange9": "Messaggio Privato",
-		"bcchange10": "Di più"
+		"bcchange10": "Di più",
+		"bcchange11": "Rispondi",
+		"bcchange12": "Modifica",
+		"bcchange13": "Reazione",
+		"bcchange14": "Avanti",
+		"bcchange15": "Messaggio inoltrato",
+		"bcchange16": "Scegli il destinatario o cercane uno qui sotto",
+		"bcchange17": "INOLTRATO",
+		"bcchange18": "Suggerimento utente"
 	},
 	"grouppage": {
 		"gchange1": "Gruppi Qortal",
@@ -657,7 +672,8 @@
 		"gchange55": "Cerca gruppo privato",
 		"gchange56": "Nome gruppo da cercare",
 		"gchange57": "Nome gruppo privato non trovato",
-		"gchange58": "Nota che il nome del gruppo deve corrispondere esattamente."
+		"gchange58": "Nota che il nome del gruppo deve corrispondere esattamente.",
+		"gchange59": "Mostra / Nascondi ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzle",

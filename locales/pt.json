@@ -10,7 +10,7 @@
   "electron_translate_7": "Atualização pronta para instalar",
   "electron_translate_8": "Uma nova versão Qortal UI foi baixada.",
   "electron_translate_9": "Clique em INSTALAR AGORA para aplicar a atualização, TALVEZ MAIS TARDE para não atualizar a UI.",
-  "electron_translate_10": "Erro ao atualizar...",
+  "electron_translate_10": "Falha de atualização temporária, tentará novamente mais tarde",
   "electron_translate_11": "BAIXAR ATUALIZAÇÃO",
   "electron_translate_12": "Será baixado ⌛️ em segundo plano!"
 }

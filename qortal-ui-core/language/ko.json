@@ -283,7 +283,8 @@
 		"wchange54": "주소록 내보내기",
 		"wchange55": "기존 주소록이 삭제되고 백업에서 새로 생성됩니다.",
 		"wchange56": "경고!",
-		"wchange57": "메모"
+		"wchange57": "메모",
+		"wchange58": "새 주소"
 	},
 	"tradepage": {
 		"tchange1": "무역 포털",
@@ -574,7 +575,13 @@
 		"cchange65": "받는 사람을 입력하세요",
 		"cchange66": "답장한 메시지를 가져올 수 없습니다. 메시지가 너무 오래되었습니다.",
 		"cchange68": "편집됨",
-		"cchange69": "이미지 자동 표시"
+		"cchange69": "이미지 자동 표시",
+		"cchange70": "이 이미지 유형은 지원되지 않습니다",
+		"cchange71": "그리고",
+		"cchange72": "기타",
+		"cchange73": "들",
+		"cchange74": "반응",
+		"cchange90": "메시지 없음"
 	},
 	"welcomepage": {
 		"wcchange1": "Q-Chat에 오신 것을 환영합니다.",
@@ -597,7 +604,15 @@
 		"bcchange7": "메뉴",
 		"bcchange8": "주소 복사",
 		"bcchange9": "개인 메시지",
-		"bcchange10": "더"
+		"bcchange10": "더",
+		"bcchange11": "답장",
+		"bcchange12": "편집",
+		"bcchange13": "반응",
+		"bcchange14": "앞으로",
+		"bcchange15": "전달된 메시지",
+		"bcchange16": "받는 사람을 선택하거나 아래에서 검색하십시오",
+		"bcchange17": "전달됨",
+		"bcchange18": "팁 사용자"
 	},
 	"grouppage": {
 		"gchange1": "Qortal 그룹",
@@ -657,7 +672,8 @@
 		"gchange55": "비공개 그룹 검색",
 		"gchange56": "검색할 그룹 이름",
 		"gchange57": "비공개 그룹 이름을 찾을 수 없음",
-		"gchange58": "그룹 이름이 정확히 일치해야 합니다."
+		"gchange58": "그룹 이름이 정확히 일치해야 합니다.",
+		"gchange59": "티커 표시/숨기기"
 	},
 	"puzzlepage": {
 		"pchange1": "퍼즐",

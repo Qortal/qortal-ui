@@ -283,7 +283,8 @@
 		"wchange54": "Exportati agenda de adrese",
 		"wchange55": "Agenda dvs. existenta va fi stearsa si din backup va fi creata o noua.",
 		"wchange56": "AVERTIZARE!",
-		"wchange57": "Nota"
+		"wchange57": "Nota",
+		"wchange58": "Adresa noua"
 	},
 	"tradepage": {
 		"tchange1": "Portal de Tranzactionare",
@@ -574,7 +575,13 @@
 		"cchange65": "Vă rugăm să introduceți un destinatar",
 		"cchange66": "Nu se poate prelua mesajul la care sa răspuns. Mesajul este prea vechi.",
 		"cchange68": "editat",
-		"cchange69": "Afișează automat imaginile"
+		"cchange69": "Afișează automat imaginile",
+		"cchange70": "Acest tip de imagine nu este acceptat",
+		"cchange71": "și",
+		"cchange72": "altul",
+		"cchange73": "s",
+		"cchange74": "a reacționat cu",
+		"cchange90": "Fără mesaje"
 	},
 	"welcomepage": {
 		"wcchange1": "Bine ai venit la Q-Chat",
@@ -597,7 +604,15 @@
 		"bcchange7": "MENIU",
 		"bcchange8": "Copiati adresa",
 		"bcchange9": "Mesaj privat",
-		"bcchange10": "Mai mult"
+		"bcchange10": "Mai mult",
+		"bcchange11": "Răspuns",
+		"bcchange12": "Editați",
+		"bcchange13": "Reacție",
+		"bcchange14": "Înainte",
+		"bcchange15": "Mesajul redirecționat",
+		"bcchange16": "Alegeți destinatarul sau căutați unul mai jos",
+		"bcchange17": "REMISE",
+		"bcchange18": "Sfat utilizator"
 	},
 	"grouppage": {
 		"gchange1": "Grupuri Qortal Groups",
@@ -657,7 +672,8 @@
 		"gchange55": "Căutați grup privat",
 		"gchange56": "Numele grupului de căutat",
 		"gchange57": "Numele grupului privat nu a fost găsit",
-		"gchange58": "Rețineți că numele grupului trebuie să se potrivească exact."
+		"gchange58": "Rețineți că numele grupului trebuie să se potrivească exact.",
+		"gchange59": "Afișează / Ascunde Ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzle-uri",

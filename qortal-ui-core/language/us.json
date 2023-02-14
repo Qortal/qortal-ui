@@ -283,7 +283,8 @@
 		"wchange54": "Export Address Book",
 		"wchange55": "Your existing address book will be deleted and from backup new created.",
 		"wchange56": "WARNING!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "New Address"
 	},
 	"tradepage": {
 		"tchange1": "Trade Portal",
@@ -579,7 +580,8 @@
 		"cchange71": "and",
 		"cchange72": "other",
 		"cchange73": "s",
-		"cchange74": "reacted with"
+		"cchange74": "reacted with",
+		"cchange90": "No messages"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
@@ -670,7 +672,8 @@
 		"gchange55": "Search Private Group",
 		"gchange56": "Group Name To Search",
 		"gchange57": "Private Group Name Not Found",
-		"gchange58": "Note that group name must exact match."
+		"gchange58": "Note that group name must exact match.",
+		"gchange59": "Show / Hide Ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

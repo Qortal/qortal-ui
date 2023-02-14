@@ -283,7 +283,8 @@
 		"wchange54": "Exporter le carnet d'adresses",
 		"wchange55": "Votre carnet d'adresses existant sera supprimé et une nouvelle sauvegarde sera créée.",
 		"wchange56": "ATTENTION!",
-		"wchange57": "Mémo"
+		"wchange57": "Mémo",
+		"wchange58": "Nouvelle Adresse"
 	},
 	"tradepage": {
 		"tchange1": "Portail de commerce",
@@ -574,7 +575,13 @@
 		"cchange65": "Veuillez saisir un destinataire",
 		"cchange66": "Impossible de récupérer le message auquel vous avez répondu. Le message est trop ancien.",
 		"cchange68": "modifié",
-		"cchange69": "Afficher automatiquement les images"
+		"cchange69": "Afficher automatiquement les images",
+		"cchange70": "Ce type d'image n'est pas pris en charge",
+		"cchange71": "et",
+		"cchange72": "autre",
+		"cchange73": "s",
+		"cchange74": "a réagi avec",
+		"cchange90": "Aucun message"
 	},
 	"welcomepage": {
 		"wcchange1": "Bienvenue dans Q-Chat",
@@ -597,7 +604,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Copier l'Adresse",
 		"bcchange9": "Message Privé",
-		"bcchange10": "Suite"
+		"bcchange10": "Suite",
+		"bcchange11": "Répondre",
+		"bcchange12": "Modifier",
+		"bcchange13": "Réaction",
+		"bcchange14": "En avant",
+		"bcchange15": "Message transféré",
+		"bcchange16": "Choisissez le destinataire ou recherchez-en un ci-dessous",
+		"bcchange17": "TRANSMIS",
+		"bcchange18": "Astuce à l'utilisateur"
 	},
 	"grouppage": {
 		"gchange1": "Groupes Qortal",
@@ -657,7 +672,8 @@
 		"gchange55": "Rechercher un groupe privé",
 		"gchange56": "Nom du groupe à rechercher",
 		"gchange57": "Nom de groupe privé introuvable",
-		"gchange58": "Notez que le nom du groupe doit correspondre exactement."
+		"gchange58": "Notez que le nom du groupe doit correspondre exactement.",
+		"gchange59": "Afficher / Masquer le téléscripteur"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

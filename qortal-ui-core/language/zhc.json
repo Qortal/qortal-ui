@@ -283,7 +283,8 @@
 		"wchange54": "导出通讯录",
 		"wchange55": "您现有的通讯簿将被删除并从新创建的备份中。",
 		"wchange56": "警告！",
-		"wchange57": "备忘录"
+		"wchange57": "备忘录",
+		"wchange58": "新的钱包地址"
 	},
 	"tradepage": {
 		"tchange1": "交易门户",
@@ -579,7 +580,8 @@
 		"cchange71": "和",
 		"cchange72": "其他",
 		"cchange73": "的",
-		"cchange74": "心情回应"
+		"cchange74": "心情回应",
+		"cchange90": "没有消息"
 	},
 	"welcomepage": {
 		"wcchange1": "欢迎来到Q-Chat",
@@ -670,7 +672,8 @@
 		"gchange55": "搜索私人群组",
 		"gchange56": "要搜索的群组名称",
 		"gchange57": "未找到私人群组名称",
-		"gchange58": "注意群组名称必须完全匹配。"
+		"gchange58": "注意群组名称必须完全匹配。",
+		"gchange59": "显示/隐藏代码"
 	},
 	"puzzlepage": {
 		"pchange1": "益智游戏",
