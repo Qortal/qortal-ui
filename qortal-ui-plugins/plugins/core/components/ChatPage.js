@@ -2918,7 +2918,7 @@ class ChatPage extends LitElement {
             await new Promise(resolve => {
                 new Compressor( image, {
                     quality: .6,
-                    maxWidth: 500,
+                    maxWidth: 1200,
                     success(result){
                         const file = new File([result], "name", {
                             type: image.type

@@ -95,12 +95,12 @@ class AccountView extends connect(store)(LitElement) {
     getAvatar() {
         let numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment);
         if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
-            return html`<img src="/img/noavatar.png" style="width:150px; height:150px;">`
+            return html`<img src="/img/noavatar.png" style="width:150px; height:150px; border-radius: 50%;">`
         } else {
             const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
             const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
             const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-            return html`<img src="${url}" style="width:150px; height:150px;" onerror="this.src='/img/noavatar.png';">`
+            return html`<img src="${url}" style="width:150px; height:150px; border-radius: 50%;" onerror="this.src='/img/noavatar.png';">`
         }
     }
 
