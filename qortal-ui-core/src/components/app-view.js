@@ -336,15 +336,6 @@ class AppView extends connect(store)(LitElement) {
                     background-color: rgb(148, 146, 146);
                     cursor: pointer;
                 }
-
-                .balanceButton {
-                    background-color: #03a9f4;
-                    color: #ffffff;
-                    margin-left: 12px;
-                    margin-right: 12px;
-                    padding-top: 5px;
-                    padding-bottom: 5px;
-                }
             `
         ]
     }
@@ -441,7 +432,7 @@ class AppView extends connect(store)(LitElement) {
                                     </side-menu>
                                 </div>
                             </div>
-                            <button class="balanceButton" @click="${() => this.shBalanceTicker()}">${translate("grouppage.gchange59")}</button>
+                            <vaadin-button theme="primary medium" style="width: 100%" @click=${() => this.shBalanceTicker()}><vaadin-icon icon="vaadin:eye" slot="prefix"></vaadin-icon>${translate("grouppage.gchange59")}</vaadin-button>
                             <div id="theTicker" style="display: none; margin-bottom: 20px;">
                             <div id="balanceheader">
                                 <span class="balanceheadertext">
