@@ -44,16 +44,13 @@ class WalletProfile extends connect(store)(LitElement) {
                     background: var(--sidetopbar);
                     color: var(--black);
                 }
-
                 #profileInMenu:hover {
                 }
-
                 #accountIcon {
                     font-size:48px;
                     color: var(--mdc-theme-primary);
                     display: inline-block;
                 }
-
                 #accountName {
                     margin: 0;
                     font-size: 18px;
@@ -62,14 +59,12 @@ class WalletProfile extends connect(store)(LitElement) {
                     padding-bottom:8px;
                     display: flex;
                 }
-
                 #blocksMinted {
                     margin:0;
                     margin-top: 0;
-                    font-size: 11px;
+                    font-size: 12px;
                     color: #03a9f4;
                 }
-
                 #address {
                     white-space: nowrap;
                     overflow: hidden;
@@ -78,26 +73,21 @@ class WalletProfile extends connect(store)(LitElement) {
                     margin-top:8px;
                     font-size:11px;
                 }
-
                 .round-fullinfo {
                     position: relative;
-                    width: 69px;
-                    height: 69px;
+                    width: 68px;
+                    height: 68px;
                     border-radius: 50%;
                 }
-
                 .full-info-logo {
-                    width: 69px;
-                    height: 69px;
+                    width: 68px;
+                    height: 68px;
                     border-radius: 50%;
                 }
-
                 .inline-block-child {
                     flex: 1;
                 }
             </style>
-
-
             <div id="profileInMenu">
                 <div style="padding: 8px 0;">
                     <div id="accountName">
@@ -134,15 +124,10 @@ class WalletProfile extends connect(store)(LitElement) {
     }
 
     getAvatar() {
-        let numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment);
-        if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
-            return html`<img class="round-fullinfo" src="/img/incognito.png">`
-        } else {
-            const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-            const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-            return html`<img class="round-fullinfo" src="${url}" onerror="this.src='/img/incognito.png';" />`
-        }
+        const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+        const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+        return html`<img class="round-fullinfo" src="${url}" onerror="this.src='/img/incognito.png';" />`
     }
 
     getApiKey() {
