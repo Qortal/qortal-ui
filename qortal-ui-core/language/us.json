@@ -581,6 +581,14 @@
 		"cchange72": "other",
 		"cchange73": "s",
 		"cchange74": "reacted with",
+		"cchange75": "Uploading attachment. This may take up to one minute.",
+      	"cchange76": "Deleting attachment. This may take up to one minute.",
+      	"cchange77": "Attachment size exceeds 1 MB",
+      	"cchange78": "Are you sure you want to delete this image?",
+      	"cchange79": "Are you sure you want to delete this attachment?",
+      	"cchange80": "This image has been deleted",
+        "cchange81": "This image type is not supported",
+      	"cchange82": "This attachment has been deleted",
 		"cchange90": "No messages"
 	},
 	"welcomepage": {
