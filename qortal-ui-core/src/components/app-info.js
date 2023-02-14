@@ -18,6 +18,7 @@ class AppInfo extends connect(store)(LitElement) {
             coreInfo: { type: Array },
             nodeConfig: { type: Object },
             pageUrl: { type: String },
+            publicizeAddress: { type: String },
             theme: { type: String, reflect: true }
         }
     }
@@ -95,6 +96,7 @@ class AppInfo extends connect(store)(LitElement) {
         this.coreInfo = []
         this.nodeStatus = {}
         this.pageUrl = ''
+        this.publicizeAddress = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.publicKeyisOnChainConfirmation = false
         this.interval
@@ -112,24 +114,46 @@ class AppInfo extends connect(store)(LitElement) {
         `
     }
 
+    firstUpdated() {
+        this.publicizeAddress = store.getState().app.selectedAddress.address + '_publicize'
+        this.setStorage()
+        this.getNodeInfo()
+        this.getCoreInfo()
+        try {
+            this.confirmPublicKeyOnChain(store.getState().app.selectedAddress.address)
+        } catch (error) {
+            console.error(error)
+        }
+       
+        setInterval(() => {
+            this.getNodeInfo()
+            this.getCoreInfo()
+        }, 30000)
+    }
+
+    setStorage() {
+        if (localStorage.getItem(this.publicizeAddress) === null) {
+            localStorage.setItem(this.publicizeAddress, 'false')
+        }
+    }
+
     async confirmPublicKeyOnChain(address) {
         const _computePow2 = async (chatBytes) => {
-            const difficulty = 14;
+            const difficulty = 14
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
             const worker = new WebWorker();
             let nonce = null
             let chatBytesArray = null
-              await new Promise((res, rej) => {
-                worker.postMessage({chatBytes, path, difficulty});
-            
+            await new Promise((res, rej) => {
+                worker.postMessage({chatBytes, path, difficulty})
+
                 worker.onmessage = e => {
-                  worker.terminate()
-                  chatBytesArray = e.data.chatBytesArray
+                    worker.terminate()
+                    chatBytesArray = e.data.chatBytesArray
                     nonce = e.data.nonce
                     res()
-                 
                 }
-              })
+            })
 
             let _response = await routes.sign_chat({
                 data: {
@@ -137,93 +161,74 @@ class AppInfo extends connect(store)(LitElement) {
                     chatBytesArray: chatBytesArray,
                     chatNonce: nonce
                 },
-             
-            });
-        return _response
-        };
+            })
+            return _response
+        }
 
-	
-		let stop = false
-		const checkPublicKey = async () => {
-			if (!stop) {
-				stop = true;
-				try {
-                if(this.publicKeyisOnChainConfirmation){
-                    clearInterval(this.interval)
-                    return
-                }
-            const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
-		    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const url = `${nodeUrl}/addresses/publickey/${address}`;
-			const res = await fetch(url)
-                let data = ''
+        let stop = false
+        const checkPublicKey = async () => {
+            if (!stop) {
+                stop = true
                 try {
-                    data =   await res.text();
-                 } catch (error) {
-                    data = {
-                        error: 'error'
+                    if(localStorage.getItem(this.publicizeAddress) === 'true') {
+                        clearInterval(this.interval)
+                        return
                     }
-                 }
-                    if(data === 'false' && this.nodeInfo.isSynchronizing !== true){
-                    let _reference = new Uint8Array(64);
-                    window.crypto.getRandomValues(_reference);
-                    let reference = window.parent.Base58.encode(_reference);
-                      const chatRes =  await routes.chat({
-                        data: {
-                            type: 19,
-                            nonce: store.getState().app.selectedAddress.nonce,
-                            params: {
-                                lastReference: reference,
-                                proofOfWorkNonce: 0,
-                                fee: 0,
-                                timestamp: Date.now(),
-                                
+                    const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+                    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+                    const url = `${nodeUrl}/addresses/publickey/${address}`
+                    const res = await fetch(url)
+                    let data = ''
+                    try {
+                        data = await res.text()
+                    } catch (error) {
+                        data = {
+                            error: 'error'
+                        }
+                    }
+                    if(data === 'false' && this.nodeInfo.isSynchronizing !== true) {
+                        let _reference = new Uint8Array(64)
+                        window.crypto.getRandomValues(_reference)
+                        let reference = window.parent.Base58.encode(_reference)
+                        const chatRes = await routes.chat({
+                            data: {
+                                type: 19,
+                                nonce: store.getState().app.selectedAddress.nonce,
+                                params: {
+                                    lastReference: reference,
+                                    proofOfWorkNonce: 0,
+                                    fee: 0,
+                                    timestamp: Date.now(), 
+                                },
+                                disableModal: true
                             },
-                            disableModal: true
-                        },
-                        disableModal: true,
-                    });
+                            disableModal: true,
+                        });
                       
                         try {
-                         const powRes =   await _computePow2(chatRes)
-                            if(powRes === true){
+                            const powRes = await _computePow2(chatRes)
+                            if(powRes === true) {
                                 clearInterval(this.interval)
-				
-                        this.publicKeyisOnChainConfirmation = true
+                                localStorage.removeItem(this.publicizeAddress)
+                                localStorage.setItem(this.publicizeAddress, 'true')
                             }
                         } catch (error) {
                             console.error(error)
                         }
                     }
                   
-					if (!data.error && data !== 'false' && data) {
-						clearInterval(this.interval)
-				
-                        this.publicKeyisOnChainConfirmation = true
-					}
+                    if (!data.error && data !== 'false' && data) {
+                        clearInterval(this.interval)
+                        localStorage.removeItem(this.publicizeAddress)
+                        localStorage.setItem(this.publicizeAddress, 'true')
+                    }
 
-				} catch (error) {
-				}
-				stop = false
-			}
-		};
-		this.interval = setInterval(checkPublicKey, 5000);
-	}
-
-    firstUpdated() {
-        this.getNodeInfo()
-        this.getCoreInfo()
-       try {
-        this.confirmPublicKeyOnChain(store.getState().app.selectedAddress.address)
-       } catch (error) {
-        console.error(error)
-       }
-       
-        
-        setInterval(() => {
-            this.getNodeInfo()
-            this.getCoreInfo()
-        }, 30000)
+                } catch (error) {
+                }
+                stop = false
+            }
+        }
+        this.interval = setInterval(checkPublicKey, 5000);
     }
 
     async getNodeInfo() {
