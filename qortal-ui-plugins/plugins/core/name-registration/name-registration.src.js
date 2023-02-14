@@ -19,6 +19,8 @@ import '@vaadin/button'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
+import '@vaadin/grid/vaadin-grid-filter-column.js'
+import '@vaadin/grid/vaadin-grid-sort-column.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -30,6 +32,7 @@ class NameRegistration extends LitElement {
             loading: { type: Boolean },
             names: { type: Array },
             marketSellNames: { type: Array },
+            filteredItems: { type: Array },
             recipientPublicKey: { type: String },
             selectedAddress: { type: Object },
             btnDisable: { type: Boolean },
@@ -189,6 +192,7 @@ class NameRegistration extends LitElement {
         this.selectedAddress = {}
         this.names = []
         this.marketSellNames = []
+        this.filteredItems = []
         this.recipientPublicKey = ''
         this.btnDisable = false
         this.isLoading = false
@@ -241,10 +245,24 @@ class NameRegistration extends LitElement {
                 <br><br>
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("registernamepage.nchange22")}</h3>
-                    <vaadin-grid theme="large" id="marketSellNames" ?hidden="${this.isEmptyArray(this.marketSellNames)}" aria-label="Names" .items="${this.marketSellNames}" all-rows-visible>
+                    <vaadin-text-field
+                        placeholder="${translate("datapage.dchange4")}"
+                        style="width: 25%; margin-bottom: 20px;"
+                        clear-button-visible
+                        @value-changed="${(e) => {
+                            this.filteredItems = []
+                            const searchTerm = (e.target.value || '').trim()
+                            const keys = ['name', 'owner']
+                            const filtered = this.marketSellNames.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
+                            this.filteredItems = filtered
+                        }}"
+                    >
+                    <vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
+                    </vaadin-text-field><br>
+                    <vaadin-grid theme="large" id="marketSellNames" ?hidden="${this.isEmptyArray(this.marketSellNames)}" aria-label="Names" .items="${this.filteredItems}" all-rows-visible>
                         <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column header="${translate("registernamepage.nchange6")}" path="owner"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("registernamepage.nchange23")} (QORT)" path="salePrice"></vaadin-grid-column>
+                        <vaadin-grid-sort-column header="${translate("registernamepage.nchange23")} (QORT)" path="salePrice" direction="asc"></vaadin-grid-sort-column>
                         <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
                             if (data.item.owner === this.selectedAddress.address) {
                                 render(html`${this.renderCancelSellNameButton(data.item)}`, root)
@@ -523,8 +541,9 @@ class NameRegistration extends LitElement {
                 url: `/names/forsale?limit=0&reverse=true`
             }).then(res => {
                 this.marketSellNames = res
+                this.filteredItems = this.marketSellNames
             })
-            setTimeout(fetchMarketSellNames, 60000)
+            setTimeout(fetchMarketSellNames, 120000)
         }
 
         window.addEventListener("contextmenu", (event) => {
