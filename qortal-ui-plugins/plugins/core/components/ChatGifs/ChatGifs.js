@@ -28,6 +28,10 @@ currentCollection: {type: String},
 isLoading: {type: String},
 newCollectionName: {type: String},
 editor: {type: Object},
+isSubscribed: { type: Boolean },
+setGifsLoading: { attribute: false },
+sendMessage: { attribute: false },
+setOpenGifModal: { attribute: false }
 };
 }
 
@@ -36,22 +40,133 @@ editor: {type: Object},
     constructor() {
     	super();
     	this.uid = new ShortUniqueId();
-    	this.selectedAddress =
-    		window.parent.reduxStore.getState().app.selectedAddress;
+    	this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress;
     	this.myGifCollections = [];
     	this.mySubscribedCollections = [];
     	this.exploreCollections = [];
     	this.myAccountName = '';
     	this.gifsToBeAdded = [];
-    	// mode can be 'myCollection', 'newCollection', 'explore', 'subscribedCollection'
     	this.mode = 'myCollection';
     	this.currentCollection = null;
     	this.pageNumber = 0;
     	this.isLoading = false;
+    	this.isSubscribed = false;
     	this.newCollectionName = '';
+			this.getAllCollections = this.getAllCollections.bind(this);
     }
 
+		async firstUpdated() {
+			const tooltip = this.shadowRoot.querySelector('vaadin-tooltip');
+			const overlay = tooltip.shadowRoot.querySelector(
+				'vaadin-tooltip-overlay'
+			);
+			overlay.shadowRoot.getElementById('overlay').style.cssText =
+				'background-color: transparent; border-radius: 10px; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px';
+			overlay.shadowRoot.getElementById('content').style.cssText =
+				'background-color: var(--gif-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;';
+
+			try {
+					this.isLoading = true;
+					const myCollections = await this.getMyGifCollections();
+					const savedCollections = await this.getSavedCollections();
+					const allCollections = await this.getAllCollections();
+
+					if (!Array.isArray(myCollections) && !Array.isArray(savedCollections)) {
+						parentEpml.request('showSnackBar', get('gifs.gchange12'));
+						return;
+					}
+
+					await new Promise((res) => {
+						setTimeout(() => {
+							res();
+						}, 1000)
+					});
+					this.myGifCollections = myCollections;
+					this.mySubscribedCollections = savedCollections;
+					this.exploreCollections = allCollections;
+			} catch (error) {
+				console.error(error);
+			} finally {
+				this.isLoading = false;
+			}
+		}
+
+		async updated(changedProperties) {
+			if (changedProperties && changedProperties.has('mode')) {
+				const mode = this.mode;
+				if (mode === 'myCollection') {
+					try {
+						this.myGifCollections = [];
+						this.isLoading = true;
+							const collections = await this.getMyGifCollections();
+							await new Promise((res) => {
+								setTimeout(() => {
+									res();
+								}, 1000)
+							});
+							this.myGifCollections = collections;
+					} catch (error) {
+						console.error(error);
+					} finally {
+						this.isLoading = false;
+					}
+				}
+
+				if (mode === 'explore') {
+					try {
+						this.exploreCollections = [];
+						this.isLoading = true;
+						const allCollections = await this.getAllCollections();
+						await new Promise((res) => {
+							setTimeout(() => {
+								res();
+							}, 1000)
+						});
+						this.exploreCollections = allCollections;
+					} catch (error) {
+						console.error(error);
+					} finally {
+						this.isLoading = false;
+					}
+				}
+				if (mode === 'subscribedCollection') {
+					try {
+							this.mySubscribedCollections = [];
+							this.isLoading = true;
+							const savedCollections = await this.getSavedCollections();
+							await new Promise((res) => {
+								setTimeout(() => {
+									res();
+								}, 1000)
+							});
+							this.mySubscribedCollections = savedCollections;
+					} catch (error) {
+						console.error(error);
+					} finally {
+						this.isLoading = false;
+					}
+				}
+			}
+
+			if (changedProperties && changedProperties.has('currentCollection')) {
+				if (this.mode === 'explore') {
+					console.log(this.mySubscribedCollections, "subbed collections here");
+					const subbedCollection = this.mySubscribedCollections.find((collection) => ((collection.name === this.currentCollection.name) && (collection.identifier === this.currentCollection.identifier)));
+					console.log({subbedCollection});
+					if (subbedCollection) {
+						this.isSubscribed = true;
+					} else {
+						this.isSubscribed = false;
+					}
+				}
+			}
+		}
+
     async structureCollections(gifCollections) {
+			const userName = await this.getName(this.selectedAddress.address);
+			if (!userName) {
+				return;
+			}
     	try {
     		const myNode =
     			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
@@ -73,7 +188,12 @@ editor: {type: Object},
     					};
     					if (metaData.files) {
     						const metaDataArray = metaData.files.map((data) => {
-    							return `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`;
+    							return {
+									url: `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`,
+									filePath: data,
+									identifier: collection.identifier,
+									name: this.myAccountName
+								};
     						});
 
     						collectionObj = {
@@ -190,8 +310,8 @@ editor: {type: Object},
     	const gifCollectionWithMetaData = await this.structureCollections(
     		getAllGifCollections
     	);
-    	this.exploreCollections = gifCollectionWithMetaData;
     	this.pageNumber = this.pageNumber + 1;
+    	return gifCollectionWithMetaData;
     }
 
     async getSavedCollections() {
@@ -222,90 +342,6 @@ editor: {type: Object},
     	return savedCollectionsWithMetaData;
     }
 
-    async firstUpdated() {
-    	const tooltip = this.shadowRoot.querySelector('vaadin-tooltip');
-    	const overlay = tooltip.shadowRoot.querySelector(
-    		'vaadin-tooltip-overlay'
-    	);
-    	overlay.shadowRoot.getElementById('overlay').style.cssText =
-    		'background-color: transparent; border-radius: 10px; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px';
-    	overlay.shadowRoot.getElementById('content').style.cssText =
-    		'background-color: var(--gif-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;';
-
-    	try {
-					this.isLoading = true;
-					const myCollections = await this.getMyGifCollections();
-					const savedCollections = await this.getSavedCollections();
-
-    			if (!Array.isArray(myCollections) && !Array.isArray(savedCollections)) {
-    				parentEpml.request('showSnackBar', get('chatpage.cchange91'));
-    				return;
-    			}
-
-    			await new Promise((res) => {
-    				setTimeout(() => {
-    					res();
-    				}, 1000)
-    			});
-    			this.myGifCollections = myCollections;
-    			this.mySubscribedCollections = savedCollections;
-    		await this.getAllCollections();
-    		this.isLoading = false;
-    	} catch (error) {
-    		this.isLoading = false;
-    		console.error(error);
-    	}
-    }
-
-    async updated(changedProperties) {
-    	if (changedProperties && changedProperties.has('mode')) {
-    		const mode = this.mode;
-    		if (mode === 'myCollection') {
-    			try {
-    				this.myGifCollections = [];
-    				this.isLoading = true;
-    					const collections = await this.getMyGifCollections();
-    					await new Promise((res) => {
-    						setTimeout(() => {
-    							res();
-    						}, 1000)
-    					});
-    					this.myGifCollections = collections;
-    					this.isLoading = false;
-    			} catch (error) {
-    				this.isLoading = false;
-    			}
-    		}
-
-    		if (mode === 'explore') {
-    			try {
-    				this.isLoading = true;
-
-    				await this.getAllCollections();
-    				this.isLoading = false;
-    			} catch (error) {
-    				this.isLoading = false;
-    			}
-    		}
-    		if (mode === 'subscribedCollection') {
-    			try {
-    					this.mySubscribedCollections = [];
-    				this.isLoading = true;
-    					const savedCollections = await this.getSavedCollections();
-    					await new Promise((res) => {
-    						setTimeout(() => {
-    							res();
-    						}, 1000)
-    					});
-    					this.mySubscribedCollections = savedCollections;
-    					this.isLoading = false;
-    			} catch (error) {
-    				this.isLoading = false;
-    			}
-    		}
-    	}
-    }
-
     async getName(recipient) {
     	try {
     		const getNames = await parentEpml.request('apiCall', {
@@ -323,6 +359,26 @@ editor: {type: Object},
     	}
     }
 
+		removeDotGIF(arr) {
+			return arr.map(obj => {
+				const newObj = { ...obj };
+				if (newObj.hasOwnProperty('name') && newObj.name.endsWith('.gif')) {
+					newObj.name = newObj.name.slice(0, -4);
+				}
+				return newObj;
+			});
+		}
+
+		addDotGIF(arr) {
+			return arr.map(obj => {
+				const newObj = { ...obj };
+				if (newObj.hasOwnProperty('name') && !newObj.name.endsWith('.gif')) {
+					newObj.name += '.gif';
+				}
+				return newObj;
+			});
+		}
+
     addGifs(gifs) {
     	const mapGifs = gifs.map((file) => {
     		return {
@@ -330,28 +386,59 @@ editor: {type: Object},
     			name: file.name,
     		};
     	});
-    	this.gifsToBeAdded = [...this.gifsToBeAdded, ...mapGifs];
+			const removedExtensions = this.removeDotGIF(mapGifs);
+    	this.gifsToBeAdded = [...this.gifsToBeAdded, ...removedExtensions];
     }
 
     async uploadGifCollection() {
     	if (!this.newCollectionName) {
-    		parentEpml.request('showSnackBar', get('chatpage.cchange87'));
+    		parentEpml.request('showSnackBar', get('gifs.gchange8'));
     		return;
     	}
     	try {
     			this.setGifsLoading(true);
     			this.isLoading = true;
-    		const userName = await this.getName(this.selectedAddress.address);
-    		const doesNameExist = await parentEpml.request('apiCall', {
+					const userName = await this.getName(this.selectedAddress.address);
+					const doesNameExist = await parentEpml.request('apiCall', {
     			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`,
     		});
 
-    		if (doesNameExist.length !== 0) {
-    			parentEpml.request('showSnackBar', get('chatpage.cchange87'));
-    				this.isLoading = false;
-    				this.setGifsLoading(false);
+				if (!userName) {
+    			parentEpml.request('showSnackBar', get('chatpage.cchange27'));
+					this.setGifsLoading(false);
+    			this.isLoading = false;
     			return;
     		}
+
+    		if (doesNameExist.length !== 0) {
+    			parentEpml.request('showSnackBar', get('gifs.gchange24'));
+					this.isLoading = false;
+					this.setGifsLoading(false);
+    			return;
+    		}
+
+				function validateDuplicateGifNames(arr) {
+					let names = [];
+					for (let i = 0; i < arr.length; i++) {
+							if (names.includes(arr[i].name)) {
+									return false;
+							}
+							names.push(arr[i].name);
+					}
+					return true;
+			}
+
+			let result = validateDuplicateGifNames(this.gifsToBeAdded);
+
+			if (!result) {
+				parentEpml.request('showSnackBar', get('gifs.gchange23'));
+				this.isLoading = false;
+				this.setGifsLoading(false);
+				return;
+			}
+
+			const addedGifExtensionsArr = this.addDotGIF(this.gifsToBeAdded);
+
     		function blobToBase64(blob) {
     			return new Promise((resolve, _) => {
     				const reader = new FileReader();
@@ -360,37 +447,24 @@ editor: {type: Object},
     			});
     		}
     		const zipFileWriter = new zip.BlobWriter('application/zip');
-    		// Creates a TextReader object storing the text of the entry to add in the zip
-    		// (i.e. "Hello world!").
-    		const helloWorldReader = new zip.TextReader('Hello world!');
-
-    		// Creates a ZipWriter object writing data via `zipFileWriter`, adds the entry
-    		// "hello.txt" containing the text "Hello world!" via `helloWorldReader`, and
-    		// closes the writer.
 
     		const zipWriter = new zip.ZipWriter(zipFileWriter, {
     			bufferedWrite: true,
     		});
 
-    		for (let i = 0; i < this.gifsToBeAdded.length; i++) {
+    		for (let i = 0; i < addedGifExtensionsArr.length; i++) {
     			await zipWriter.add(
-    				this.gifsToBeAdded[i].name,
-    				new zip.BlobReader(this.gifsToBeAdded[i].file)
+    				addedGifExtensionsArr[i].name,
+    				new zip.BlobReader(addedGifExtensionsArr[i].file)
     			);
     		}
 
     		await zipWriter.close();
+
     		const zipFileBlob = await zipFileWriter.getData();
+
     		const blobTobase = await blobToBase64(zipFileBlob);
 
-    		if (!userName) {
-    			parentEpml.request('showSnackBar', get('chatpage.cchange27'));
-    				this.setGifsLoading(false);
-    			this.isLoading = false;
-    			return;
-    		}
-    		const id = this.uid();
-    		const identifier = `gif_${id}`;
     		await publishData({
     			registeredName: userName,
     			file: blobTobase.split(',')[1],
@@ -421,21 +495,30 @@ editor: {type: Object},
     							clearInterval(interval);
     							res();
     						}
-    					} catch (error) {}
+    					} catch (error) {
+								console.error(error);
+								this.isLoading = false;
+								this.setGifsLoading(false);
+								this.mode = 'myCollection';
+								this.gifsToBeAdded = [];
+								this.newCollectionName = '';
+								parentEpml.request('showSnackBar', get('gifs.gchange12'));
+							} 
     					stop = false;
     				}
     			};
     			interval = setInterval(getAnswer, 5000);
     		});
     		saveAs(zipFileBlob, 'zipfile');
-    			this.isLoading = false;
-    			this.setGifsLoading(false);
-    				this.mode = 'myCollection';
-    				this.gifsToBeAdded = [];
-    				this.newCollectionName = '';
-    			parentEpml.request('showSnackBar', get('chatpage.cchange89'));
+				this.isLoading = false;
+				this.setGifsLoading(false);
+				this.mode = 'myCollection';
+				this.gifsToBeAdded = [];
+				this.newCollectionName = '';
+				parentEpml.request('showSnackBar', get('gifs.gchange10'));
 				} catch (error) {
     		console.log(error);
+				parentEpml.request('showSnackBar', get('gifs.gchange12'));
     	}
     }
 
@@ -448,15 +531,36 @@ editor: {type: Object},
     	this.gifsToBeAdded = [];
     }
 
+		async subscribeToCollection() {
+			await this.addCollectionToList(
+				`${this.currentCollection.name}/${this.currentCollection.identifier}`
+			);
+			parentEpml.request('showSnackBar', get('gifs.gchange20'));
+			this.isSubscribed = true;
+			const savedCollections = await this.getSavedCollections();
+			this.mySubscribedCollections = savedCollections;
+		}
+
+		async unsubscribeToCollection() {
+			await this.removeCollectionFromList(
+				`${this.currentCollection.name}/${this.currentCollection.identifier}`
+			);
+			parentEpml.request('showSnackBar', get('gifs.gchange21'));
+			this.isSubscribed = false;
+			const savedCollections = await this.getSavedCollections();
+			this.mySubscribedCollections = savedCollections;
+		}
+
     render() {
+			console.log(8, "chat gifs here");
     	console.log('this.currentCollection', this.currentCollection);
-    	console.log(31, 'chat gifs here');
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
                     <vaadin-icon
                         style=${
-    											this.mode === 'newCollection'
+    											(this.mode === 'newCollection' || 
+													(this.mode === 'explore' && this.currentCollection))
     												? 'display: none;'
     												: 'display: block;'
     										}
@@ -480,6 +584,7 @@ editor: {type: Object},
 											} else if (this.mode === 'explore' && this.currentCollection) {
 												this.mode = 'explore';
 												this.currentCollection = null;
+												this.isSubscribed = false;
 											} else {
 												this.currentCollection = null;
 											}
@@ -489,7 +594,7 @@ editor: {type: Object},
     							</div>
                     <p class="gif-explorer-title">
 											${translate(
-												'chatpage.cchange80'
+												'gifs.gchange1'
 											)}
 										</p>
                     <vaadin-icon
@@ -512,7 +617,7 @@ editor: {type: Object},
                         position="top"
                         hover-delay=${400}
                         hide-delay=${1}
-                        text=${get('chatpage.cchange81')}>
+                        text=${get('gifs.gchange2')}>
                     </vaadin-tooltip>
                 </div>
                 <div 
@@ -534,7 +639,7 @@ editor: {type: Object},
     					this.mode = 'myCollection';
     						this.currentCollection = null;
 							}}>
-                  ${translate('chatpage.cchange82')}
+                  ${translate('gifs.gchange3')}
                 </div>
                 <div
                 id="subscribed-collections-button"
@@ -551,7 +656,7 @@ editor: {type: Object},
     						this.currentCollection = null;
     				}}
                 >
-                    ${translate('chatpage.cchange83')}
+                    ${translate('gifs.gchange4')}
                 </div>
               </div>
             </div>
@@ -563,7 +668,7 @@ editor: {type: Object},
     							: ''}
     							${(this.myGifCollections.length === 0 && !this.isLoading) ? (
     								html`
-    								<div class='no-collections'>${translate('chatpage.cchange92')}</div>
+    								<div class='no-collections'>${translate('gifs.gchange13')}</div>
     								`
     							) : (
     								html`
@@ -590,7 +695,7 @@ editor: {type: Object},
     								: ''}
     								  ${(this.mySubscribedCollections.length === 0 && !this.isLoading) ? (
     								html`
-    								<div class='no-collections'>${translate('chatpage.cchange93')}</div>
+    								<div class='no-collections'>${translate('gifs.gchange14')}</div>
     								`
     							) : (
     									html`
@@ -614,10 +719,14 @@ editor: {type: Object},
                 ${this.mode === 'explore' && !this.currentCollection
     						? html`
     							${this.isLoading === true
-    								? html`<div class="lds-circle"><div></div></div>`
-    								: ''}
-    							<chat-gifs-explore
+    								? html`
+										<div class="lds-circle"><div></div></div>
+										`
+    								: html`
+										<chat-gifs-explore
     								currentCollection=${this.currentCollection}
+    								.getAllCollections=${(val) =>
+    									this.getAllCollections(val)}
     								.getMoreExploreGifs=${(val) =>
     									this.getMoreExploreGifs(val)}
     								.exploreCollections=${this
@@ -625,6 +734,8 @@ editor: {type: Object},
     								.setCurrentCollection=${(val) =>
     									this.setCurrentCollection(val)}
     							></chat-gifs-explore>
+									`
+								}
     					  `
     					: ''
     			}
@@ -634,8 +745,10 @@ editor: {type: Object},
 											${this.currentCollection.gifUrls.map((gif) => {
 												return html`
 													<image-component
+														.sendMessage=${(val) => this.sendMessage(val)}
+														.setOpenGifModal=${(val) => this.setOpenGifModal(val)}
 														.class=${'gif-image'}
-														.url=${gif}
+														.gif=${gif}
 														.alt=${'gif-image'}>
 														</image-component>
 												`;
@@ -651,8 +764,10 @@ editor: {type: Object},
     							${this.currentCollection.gifUrls.map((gif) => {
     								return html`
 												<image-component
+													.sendMessage=${(val) => this.sendMessage(val)}
+													.setOpenGifModal=${(val) => this.setOpenGifModal(val)}
 													.class=${'gif-image'}
-													.url=${gif}
+													.gif=${gif}
 													.alt=${'gif-image'}>
 													</image-component>
     								`;
@@ -662,28 +777,38 @@ editor: {type: Object},
     					: ''
     			}
     						${this.currentCollection && this.mode === 'explore'
-    					? html`
-    							<button
-    								@click=${() => {
-    									this.addCollectionToList(
-    										`${this.currentCollection.name}/${this.currentCollection.identifier}`
-    									);
-    								}}
-    							>
-    								Subscribe to this collection
-    							</button>
+    						? html`
+									<div class="collection-gifs">
     							${this.currentCollection.gifUrls.map((gif) => {
-
     								return html`
-    									<img
-    										onerror=${(e) => {
-    											e.target.src = gif;
-    										}}
-    										src=${gif}
-    										style="width: 50px; height: 50px"
-    									/>
+											<image-component
+												.sendMessage=${(val) => this.sendMessage(val)}
+												.setOpenGifModal=${(val) => this.setOpenGifModal(val)}
+												.class=${'gif-image'}
+												.gif=${gif}
+												.alt=${'gif-image'}>
+												</image-component>
     								`;
     							})}
+									</div>
+									${this.isSubscribed ? (
+										html`
+										<button
+											class='unsubscribe-button'
+											@click=${this.unsubscribeToCollection}>
+											${translate('gifs.gchange22')}
+    							</button>
+										`
+									) : (
+										html`
+										<button
+											class='subscribe-button'
+											@click=${this.subscribeToCollection}
+										>
+											${translate('gifs.gchange17')}
+										</button>
+										`
+									)}
     					  `
     					: ''
     			}
@@ -692,10 +817,10 @@ editor: {type: Object},
     							<div class="new-collection-row" style=${this.gifsToBeAdded.length === 0 ? "" : "flex: 1;"}>
     								<div class="new-collection-subrow">
     									<p class="new-collection-title">
-    										${translate('chatpage.cchange84')}
+    										${translate('gifs.gchange5')}
     									</p>
     									<p class="new-collection-subtitle">
-    										${translate('chatpage.cchange85')}
+    										${translate('gifs.gchange6')}
     									</p>
     								</div>
     								<div
@@ -740,7 +865,7 @@ editor: {type: Object},
     								<input
     											class="upload-collection-name"
     										style=${this.gifsToBeAdded.length === 0 ? "display: none;" : "display: block;"}
-    											placeholder=${get("chatpage.cchange88")}
+    											placeholder=${get("gifs.gchange9")}
     									.value=${this.newCollectionName}
     									@change=${(e) => {
     										this.newCollectionName =
@@ -793,7 +918,7 @@ editor: {type: Object},
     											this.uploadGifCollection();
     										}}
     									>
-    										${translate('chatpage.cchange86')}
+    										${translate('gifs.gchange7')}
     									</button>
     								</div>
     								</div>
@@ -802,7 +927,7 @@ editor: {type: Object},
     					: this.mode === 'newCollection' && this.isLoading === true ? (
     							html`
     								<div>
-    									<p class='gifs-loading-message'>${translate("chatpage.cchange90")}</p>
+    									<p class='gifs-loading-message'>${translate("gifs.gchange11")}</p>
     								<div class="lds-circle"><div></div></div>
     								</div>
     								`

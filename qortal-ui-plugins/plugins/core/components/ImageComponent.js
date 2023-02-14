@@ -7,11 +7,13 @@ export class ImageComponent extends LitElement {
 static get properties() {
 return {
 class: { type: String },
-url: { type: String },
+gif: { type: Object },
 alt: { type: String },
 attempts: { type: Number },
 maxAttempts: { type: Number },
-error: { type: Boolean }
+error: { type: Boolean },
+sendMessage: { attribute: false },
+setOpenGifModal: { attribute: false }
 }
 }
 
@@ -54,14 +56,21 @@ constructor() {
 async _fetchImage() {
   this.attempts++;
   if (this.attempts > this.maxAttempts) return;
-
+  await new Promise((res) => {
+    setTimeout(() => {
+      res();
+    }, 1000)
+  });
   try {
-    const response = await fetch(this.url);
+    const response = await fetch(this.gif.url);
     const data = await response.json();
     console.log({data});
     if (data.ok) {
     this.error = false;
-    this.url = data.src;
+    this.gif = {
+      ...this.gif,
+      url: data.src
+    };
     this.requestUpdate();
     } else if (!data.ok || data.error) {
       this.error = true;
@@ -76,27 +85,35 @@ async _fetchImage() {
 }
 
 render() {
-console.log(5, "Image Component here");
-console.log(this.url)
 if (this.error && this.attempts <= this.maxAttempts) {
   setTimeout(() => {
     this._fetchImage();
   }, 1000);
 }
 return html`
-${this.url && !this.error 
+${this.gif && !this.error 
   ? html`
 <img
 class=${this.class}
-src=${this.url}
+src=${this.gif.url}
 alt=${this.alt} 
+@click=${() => {
+  this.sendMessage({
+    type: 'gif',
+    identifier: this.gif.identifier,
+    name: this.gif.name,
+    filePath: this.gif.filePath,
+    service: "GIF_REPOSITORY"
+  })
+  this.setOpenGifModal(false);
+}}
 @error=${this._fetchImage}
 />`
   : this.error && this.attempts <= this.maxAttempts ? html`
-<p class='gif-error-msg'>${translate('chatpage.cchange94')}</p>
+<p class='gif-error-msg'>${translate('gifs.gchange15')}</p>
 `
   : html`
-  <p class='gif-error-msg'>${translate('chatpage.cchange95')}</p>
+  <p class='gif-error-msg'>${translate('gifs.gchange16')}</p>
   `
 }`
 }

@@ -61,4 +61,77 @@ opacity: 0.6;
 color: var(--chat-bubble-msg-color);
 }
 
+.search-collection-wrapper {
+display: flex;
+justify-content: center;
+align-items: center;
+width: 100%;
+position: relative;
+}
+
+.explore-collections-icon {
+position: absolute;
+right: 20px;
+font-size: 13px;
+color: var(--chat-group);
+cursor: pointer;
+}
+
+.clear-search-icon {
+position: absolute;
+right: 15px;
+font-size: 16px;
+color: var(--chat-group);
+padding: 1px;
+border-radius: 50%;
+background-color: transparent;
+transition: all 0.3s ease-in-out;
+}
+
+.clear-search-icon:hover {
+cursor: pointer;
+background-color: #e4e3e389
+}
+
+.gifs-loading-message {
+font-family: Montserrat, sans-serif;
+font-size: 20px;
+font-weight: 600;
+color: var(--chat-bubble-msg-color);
+margin: 0 0 10px 0;
+text-align: center;
+user-select: none;
+}
+
+.lds-circle {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.lds-circle > div {
+display: inline-block;
+width: 80px;
+height: 80px;
+margin: 8px;
+border-radius: 50%;
+background: var(--mdc-theme-primary);
+animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes lds-circle {
+0%, 100% {
+  animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+}
+0% {
+  transform: rotateY(0deg);
+}
+50% {
+  transform: rotateY(1800deg);
+  animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+}
+100% {
+  transform: rotateY(3600deg);
+}
+}
 `

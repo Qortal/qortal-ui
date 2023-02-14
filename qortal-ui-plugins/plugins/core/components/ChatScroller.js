@@ -70,6 +70,7 @@ class ChatScroller extends LitElement {
     }
 
     render() {
+        console.log(4, "chat scroller here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -269,9 +270,11 @@ class MessageTemplate extends LitElement {
             setEditedMessageObj: { attribute: false },
             sendMessage: { attribute: false },
             sendMessageForward: { attribute: false },
-            openDialogImage: { attribute: false },
+            openDialogImage: { type: Boolean },
+            openDialogGif: { type: Boolean },
             openDeleteImage: { type: Boolean },
             isImageLoaded: { type: Boolean },
+            isGifLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
             isSingleMessageInGroup: { type: Boolean },
             isLastMessageInGroup: { type: Boolean },
@@ -295,8 +298,11 @@ class MessageTemplate extends LitElement {
         this.showBlockAddressIcon = false
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.imageFetches = 0
+        this.gifFetches = 0
         this.openDialogImage = false
+        this.openDialogGif = false
         this.isImageLoaded = false
+        this.isGifLoaded = false
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
@@ -338,19 +344,23 @@ class MessageTemplate extends LitElement {
         let reactions = [];
         let repliedToData = null;
         let image = null;
+        let gif = null;
         let isImageDeleted = false;
         let version = 0;
         let isForwarded = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-            if(parsedMessageObj.version.toString() === '2'){
-
-                messageVersion2 = generateHTML(parsedMessageObj.messageText, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ])
+            if (parsedMessageObj.version.toString() === '2' && parsedMessageObj.messageText) {
+                try {                    
+                    messageVersion2 = generateHTML(parsedMessageObj.messageText, [
+                        StarterKit,
+                        Underline,
+                        Highlight
+                        // other extensions …
+                      ])
+                } catch (error) {
+                    console.error(error);
+                }
             }
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
@@ -361,13 +371,20 @@ class MessageTemplate extends LitElement {
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
+           if (parsedMessageObj.gifs && Array.isArray(parsedMessageObj.gifs) && parsedMessageObj.gifs.length > 0) {
+                gif = parsedMessageObj.gifs[0];
+            }
         } catch (error) {
+            console.error(error);
             message = this.messageObj.decodedMessage;
         }
         let avatarImg = '';
         let imageHTML = '';
         let imageHTMLDialog = '';
         let imageUrl = '';
+        let gifHTML = '';
+        let gifHTMLDialog = '';
+        let gifUrl = '';
         let nameMenu = '';
         let levelFounder = '';
         let hideit = hidemsg.includes(this.messageObj.sender);
@@ -411,6 +428,33 @@ class MessageTemplate extends LitElement {
         };
         return imageHTMLRes;
       }
+
+      const createGif = (gif) => {
+        const gifHTMLRes = new Image();
+        gifHTMLRes.src = gif;
+        gifHTMLRes.style= "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
+        gifHTMLRes.onclick= () => {
+            this.openDialogGif = true;
+        }
+        gifHTMLRes.onload = () => {
+            this.isGifLoaded = true;
+        }
+        gifHTMLRes.onerror = () => {   
+            if (this.gifFetches < 4) {
+                setTimeout(() => {
+                    this.gifFetches = this.gifFetches + 1;
+                    gifHTMLRes.src = gif;
+                }, 500);
+            } else {
+                gifHTMLRes.src = '/img/chain.png';
+                gifHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
+                gifHTMLRes.onclick= () => {}
+                this.isGifLoaded = true
+            }
+        };
+        return gifHTMLRes;
+      }
+
         if (image) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
@@ -421,7 +465,17 @@ class MessageTemplate extends LitElement {
                 imageHTMLDialog = createImage(imageUrl) 
                 imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
             }
-           
+        }
+
+        if (gif) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?filepath=${gif.filePath}&apiKey=${myNode.apiKey}`;
+            if (this.viewImage || this.myAddress === this.messageObj.sender){
+                gifHTML = createGif(gifUrl);
+                gifHTMLDialog = createGif(gifUrl) 
+                gifHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
+            }
         }
 
         nameMenu = html`
@@ -560,10 +614,9 @@ class MessageTemplate extends LitElement {
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
-                                        ${translate("chatpage.cchange40")}
-                                        </div>
-                                           
+                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                            ${translate("chatpage.cchange40")}
+                                            </div>
                                         </div>
                                     ` : html``}
                                     ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
@@ -579,6 +632,25 @@ class MessageTemplate extends LitElement {
                                         </div>
                                     ` : image && isImageDeleted ? html`
                                         <p class="image-deleted-msg">This image has been deleted</p>
+                                    ` : html``}
+                                    ${gif && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
+                                        <div 
+                                        @click=${()=> {
+                                            this.viewImage = true
+                                        }}
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        style=${this.isFirstMessage && "margin-top: 10px;"}>
+                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                            ${translate("gifs.gchange25")}
+                                            </div>
+                                        </div>
+                                    ` : html``}
+                                    ${gif && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
+                                        <div 
+                                        class=${[`image-container`, !this.isGifLoaded ? 'defaultSize' : ''].join(' ')}
+                                        style=${this.isFirstMessage && "margin-top: 10px;"}>
+                                            ${gifHTML}
+                                        </div>  
                                     ` : html``}
                                     <div 
                                     id="messageContent" 
@@ -675,6 +747,28 @@ class MessageTemplate extends LitElement {
 						@click=${()=>{
 							
 						this.openDialogImage = false
+						}}
+					>
+					    ${translate("general.close")}
+					</mwc-button>
+				</mwc-dialog>
+            <mwc-dialog 
+                id="showDialogPublicKey" 
+                ?open=${this.openDialogGif} 
+                @closed=${()=> {
+                    this.openDialogGif = false
+                }}>
+					<div class="dialog-header"></div>
+					<div class="dialog-container imageContainer">
+					    ${gifHTMLDialog}
+					</div>
+					<mwc-button
+						slot="primaryAction"
+						dialogAction="cancel"
+						class="red"
+						@click=${()=>{
+							
+						this.openDialogGif = false
 						}}
 					>
 					    ${translate("general.close")}

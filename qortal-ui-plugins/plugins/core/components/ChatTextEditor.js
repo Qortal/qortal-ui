@@ -31,7 +31,7 @@ class ChatTextEditor extends LitElement {
             toggleEnableChatEnter: {attribute: false},
             isEnabledChatEnter: {type: Boolean},
             openGifModal: { type: Boolean },
-            setOpenGifModal: {attribute: false}
+            setOpenGifModal: { attribute: false }
 		}
 	}
 
@@ -459,7 +459,15 @@ class ChatTextEditor extends LitElement {
                 </button>
                 ${this.setOpenGifModal ?
                     html`
-                     <button  class="emoji-button" @click=${()=> this.setOpenGifModal(true)}>
+                     <button 
+                     class="emoji-button" 
+                     @click=${()=> {
+                        if (!this.userName) {
+                            parentEpml.request('showSnackBar', get("gifs.gchange26"));
+                            return;
+                        }
+                        this.setOpenGifModal(true)
+                        }}>
                      <span style="font-size: 30px" class="material-symbols-outlined">&#xe7a3;</span>
                     </button>
                     `
@@ -527,14 +535,7 @@ class ChatTextEditor extends LitElement {
            }
 	}
 
-  
-
- 
-
-	async firstUpdated() {
-     
-   
-          
+	async firstUpdated() {      
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
             const chatbar = this.shadowRoot.querySelector('.element')

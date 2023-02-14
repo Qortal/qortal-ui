@@ -462,10 +462,54 @@ background-color: #03a8f475;
 .gifs-loading-message {
 	font-family: Montserrat, sans-serif;
 	font-size: 20px;
+  font-weight: 600;
 	color: var(--chat-bubble-msg-color);
 	margin: 0 0 10px 0;
 	text-align: center;
   user-select: none;
+}
+
+.subscribe-button {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: Raleway, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  background-color: var(--mdc-theme-primary);
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  padding: 5px 10px;
+  transition: all 0.3s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.subscribe-button:hover {
+  cursor: pointer;
+  box-shadow:		0px 3px 4px 0px hsla(0,0%,0%,0.14), 0px 3px 3px -2px hsla(0,0%,0%,0.12), 0px 1px 8px 0px hsla(0,0%,0%,0.2);
+}
+
+.unsubscribe-button {
+  position: absolute;
+  width: max-content;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: Raleway, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  background-color: #f44336;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  padding: 5px 10px;
+  transition: all 0.3s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.unsubscribe-button:hover {
+  cursor: pointer;
+  box-shadow:		0px 3px 4px 0px hsla(0,0%,0%,0.14), 0px 3px 3px -2px hsla(0,0%,0%,0.12), 0px 1px 8px 0px hsla(0,0%,0%,0.2);
 }
 
 `;

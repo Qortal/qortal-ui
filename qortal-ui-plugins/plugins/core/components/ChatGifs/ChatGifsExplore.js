@@ -7,15 +7,18 @@ import '@material/mwc-icon';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class ChatGifsExplore extends LitElement {
-static get properties() {
-return {
-currentCollection: { type: String },
-searchCollectionName: {type: String},
-getMoreExploreGifs: { attribute: false },
-exploreCollections: { type: Array },
-setCurrentCollection: { attribute: false },
-};
-}
+		static get properties() {
+		return {
+			currentCollection: { type: String },
+			searchCollectionName: {type: String},
+			getMoreExploreGifs: { attribute: false },
+			exploreCollections: { type: Array },
+			setCurrentCollection: { attribute: false },
+			isLoading: { type: Boolean },
+			isSearched: { type: Boolean },
+			getAllCollections: { attribute: false }
+		};
+	}
 
     static styles = [chatGifsExploreStyles];
 
@@ -25,6 +28,8 @@ setCurrentCollection: { attribute: false },
     	this.downObserverElement = '';
     	this.viewElement = '';
     	this.exploreCollections = [];
+			this.isLoading = false;
+			this.isSearched = false;
     }
 
     elementObserver() {
@@ -64,21 +69,87 @@ setCurrentCollection: { attribute: false },
     	this.elementObserver();
     }
 
+		async searchCollections() {
+			this.isSearched = true;
+			try {
+				this.exploreCollections = [];
+				this.isLoading = true;
+				const response = await parentEpml.request('apiCall', {
+					url: `/arbitrary/resources/search?service=GIF_REPOSITORY&query=${this.searchCollectionName}&limit=0
+					`,
+				});
+				await new Promise((res) => {
+					setTimeout(() => {
+						res();
+					}, 1000)
+				});
+				this.exploreCollections = response;
+			} catch (error) {
+				console.error(error);
+			} finally {
+				this.isLoading = false;
+			}
+		}
+
     render() {
-    	console.log(6, "chat-gifs-explore-here");
+    	console.log(18, "chat-gifs-explore-here");
+			console.log(this.searchCollectionName, "search collection name");
     	return html`
-    		<div id="viewElement" class="container-body">
-    		<input
-    		class="search-collection-name"
-    		placeholder=${get("chatpage.cchange88")}
-    		.value=${this.searchCollectionName}
-    		@change=${(e) => {
-    			this.searchCollectionName =
-    				e.target.value;
-    		}}
-    	/>
-			<div class='collection-wrapper'>
-    			${this.exploreCollections.map((collection) => {
+    		<div id='viewElement' class='container-body'>
+    			<div class='search-collection-wrapper'>
+    				<input
+    				class='search-collection-name'
+    				placeholder=${get('gifs.gchange9')}
+    				.value=${this.searchCollectionName}
+    				@change=${(e) => {
+    					this.searchCollectionName =
+    						e.target.value;
+    				}}
+    				@keyup=${async (e) => {
+    					console.log(e.key);
+    					if (e.key === 'Enter' && this.searchCollectionName) {
+    						await this.searchCollections()
+    					}
+    				}}
+    			/>
+					${this.isSearched ? (
+						html`
+						<vaadin-icon
+							class='clear-search-icon'
+							@click=${async () => {
+								if (this.isLoading) return;
+								const latestCollections = await this.getAllCollections();
+								this.exploreCollections = latestCollections;
+								this.searchCollectionName = '';
+								this.isSearched = false;
+								}}
+							icon='vaadin:close-small'
+							slot='icon'>
+						</vaadin-icon>
+						`
+					) : html`
+						<vaadin-icon
+							class='explore-collections-icon'
+							@click=${async () => {
+								if (this.isLoading || !this.searchCollectionName) return;
+									await this.searchCollections();
+								}}
+							icon='vaadin:search'
+							slot='icon'>
+						</vaadin-icon>
+					`}
+    		</div>
+    		<div class='collection-wrapper'>
+					${this.isLoading ? html`
+						<div style=${'margin-top: 10px;'}>
+						<p class='gifs-loading-message'>${translate('gifs.gchange18')}
+						</p>
+						<div class='lds-circle'><div></div></div> 
+					</div>`
+					: this.isSearched && this.exploreCollections.length === 0 ? (
+						html`<p style=${'margin-top: 10px;'} class='gifs-loading-message'>${translate('gifs.gchange19')}</p>`
+					) : (
+    			html`${this.exploreCollections.map((collection) => {
     			return html`
     					<div class='collection-card' @click=${() => {
     								this.setCurrentCollection(collection);
@@ -86,9 +157,10 @@ setCurrentCollection: { attribute: false },
     							${collection.identifier}
     					</div>
     				`;
-    	})}
-			</div>
-    			<div id="downObserver"></div>
+    			})}`
+					)}
+    		</div>
+    			<div id='downObserver'></div>
     		</div>
     	`;
     }

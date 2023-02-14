@@ -1023,7 +1023,6 @@ console.log({zipFileBlob})
     }
     
     render() {
-        console.log(23, "chat page here");
         return html`
             <div class="main-container">
             <div 
@@ -1075,7 +1074,9 @@ console.log({zipFileBlob})
                     class="chat-gifs"
                     style=${this.openGifModal ? "display: flex;" : "display: none;"}
                     .webWorkerImage=${this.webWorkerImage}
-                    .setGifsLoading=${(val) => this.setGifsLoading(val)}>
+                    .setGifsLoading=${(val) => this.setGifsLoading(val)}
+                    .sendMessage=${(val) => this._sendMessage(val)}
+                    .setOpenGifModal=${(val)=> this.setOpenGifModal(val)}>
                 </chat-gifs>
                     <div 
                     class='last-message-ref' 
@@ -2737,9 +2738,6 @@ console.log({zipFileBlob})
                     this.isUploadingImage = false;
                     return;
                 }
-            
-            
-             
                 const messageObject = {
                     messageText: trimmedMessage,
                     images: [{
@@ -2753,7 +2751,29 @@ console.log({zipFileBlob})
                 };
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
-        }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+        }  else if (outSideMsg && outSideMsg.type === 'gif') {
+            console.log(outSideMsg, "gif received here");
+            const userName = await getName(this.selectedAddress.address);
+            if (!userName) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+                this.isLoading = false;
+                return;
+            }
+
+            const messageObject = {
+                messageText: '',
+                gifs: [{
+                        service: outSideMsg.service,
+                        name: outSideMsg.name,
+                        identifier: outSideMsg.identifier,
+                        filePath: outSideMsg.filePath
+                }],
+                repliedTo: '',
+                version: 2
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
+        } else if (outSideMsg && outSideMsg.type === 'reaction') {
             typeMessage = 'edit';
             let chatReference = outSideMsg.editedMessageObj.reference;
 
