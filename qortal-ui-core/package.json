@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-core",
-	"version": "3.0.0",
+	"version": "3.1.0",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -17,9 +17,9 @@
 	"author": "QORTAL <admin@qortal.org>",
 	"license": "GPL-3.0",
 	"dependencies": {
-		"@hapi/hapi": "21.2.1",
-		"@hapi/inert": "7.0.0",
-		"sass": "1.58.0"
+		"@hapi/hapi": "21.3.0",
+		"@hapi/inert": "7.0.1",
+		"sass": "1.58.1"
 	},
 	"devDependencies": {
 		"@babel/core": "7.20.12",
@@ -81,6 +81,6 @@
 		"rollup-plugin-web-worker-loader": "1.6.1"
 	},
 	"engines": {
-		"node": ">=16.17.1"
+		"node": ">=18.12.1"
 	}
 }
