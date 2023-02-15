@@ -70,7 +70,7 @@ class ChatScroller extends LitElement {
     }
 
     render() {
-        console.log(4, "chat scroller here");
+        console.log(5, "chat scroller here");
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
             const lastGroupedMessage = messageArray[messageArray.length - 1];
             let timestamp;
@@ -699,6 +699,7 @@ class MessageTemplate extends LitElement {
                                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                                 .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                                 .setUserName=${(val) => this.setUserName(val)}
+                                .gif=${!!gif}
                             > 
                             </chat-menu>
                         </div>
@@ -828,6 +829,7 @@ class ChatMenu extends LitElement {
             setOpenPrivateMessage: { attribute: false },
             setOpenTipUser: { attribute: false },
             setUserName: { attribute: false },
+            gif: { type: Boolean },
         }
     }
 
@@ -957,13 +959,14 @@ class ChatMenu extends LitElement {
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
                 
-                ${this.myAddress === this.originalMessage.sender ? (
+                ${((this.myAddress === this.originalMessage.sender) && (
+                !this.gif)) ? (
                     html`
                     <div 
                     class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`}
                     data-text="${translate("blockpage.bcchange12")}" 
                     @click=${() => {
-                    if(this.version === '0'){
+                    if (this.version === '0'){
                         this.versionErrorSnack()
                         return
                     }
