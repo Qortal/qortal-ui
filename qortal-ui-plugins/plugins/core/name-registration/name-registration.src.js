@@ -19,8 +19,7 @@ import '@vaadin/button'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
-import '@vaadin/grid/vaadin-grid-filter-column.js'
-import '@vaadin/grid/vaadin-grid-sort-column.js'
+import '@vaadin/text-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -33,6 +32,7 @@ class NameRegistration extends LitElement {
             names: { type: Array },
             marketSellNames: { type: Array },
             filteredItems: { type: Array },
+            searchSellNames: { type: Array },
             recipientPublicKey: { type: String },
             selectedAddress: { type: Object },
             btnDisable: { type: Boolean },
@@ -130,6 +130,43 @@ class NameRegistration extends LitElement {
                 text-align: right;
             }
 
+            #pages {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px 5px 5px 5px;
+                margin: 0px 20px 20px 20px;
+            }
+
+            #pages > button {
+                user-select: none;
+                padding: 5px;
+                margin: 0 5px;
+                border-radius: 10%;
+                border: 0;
+                background: transparent;
+                font: inherit;
+                outline: none;
+                cursor: pointer;
+                color: var(--black);
+            }
+
+            #pages > button:not([disabled]):hover,
+            #pages > button:focus {
+                color: #ccc;
+                background-color: #eee;
+            }
+
+            #pages > button[selected] {
+                font-weight: bold;
+                color: var(--white);
+                background-color: #ccc;
+            }
+
+            #pages > button[disabled] {
+                opacity: 0.5;
+                cursor: default;
+            }
+
             .card-container {
                 background-color: var(--white);
                 border-radius: 5px;
@@ -193,6 +230,7 @@ class NameRegistration extends LitElement {
         this.names = []
         this.marketSellNames = []
         this.filteredItems = []
+        this.searchSellNames = []
         this.recipientPublicKey = ''
         this.btnDisable = false
         this.isLoading = false
@@ -250,19 +288,24 @@ class NameRegistration extends LitElement {
                         style="width: 25%; margin-bottom: 20px;"
                         clear-button-visible
                         @value-changed="${(e) => {
-                            this.filteredItems = []
+                            this.searchSellNames = []
                             const searchTerm = (e.target.value || '').trim()
-                            const keys = ['name', 'owner']
+                            const keys = ['name', 'owner', 'salePrice']
                             const filtered = this.marketSellNames.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
-                            this.filteredItems = filtered
+                            if (!e.target.value) {
+                                this.updatePageSize()
+                            } else {
+                                this.searchSellNames = filtered
+                                this.updatePageSizeSearch()
+                            }
                         }}"
                     >
                     <vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
                     </vaadin-text-field><br>
-                    <vaadin-grid theme="large" id="marketSellNames" ?hidden="${this.isEmptyArray(this.marketSellNames)}" aria-label="Names" .items="${this.filteredItems}" all-rows-visible>
+                    <vaadin-grid theme="large" id="marketSellNames" ?hidden="${this.isEmptyArray(this.marketSellNames)}" aria-label="Names" page-size="15" all-rows-visible>
                         <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column header="${translate("registernamepage.nchange6")}" path="owner"></vaadin-grid-column>
-                        <vaadin-grid-sort-column header="${translate("registernamepage.nchange23")} (QORT)" path="salePrice" direction="asc"></vaadin-grid-sort-column>
+                        <vaadin-grid-column header="${translate("registernamepage.nchange23")} (QORT)" path="salePrice"></vaadin-grid-column>
                         <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
                             if (data.item.owner === this.selectedAddress.address) {
                                 render(html`${this.renderCancelSellNameButton(data.item)}`, root)
@@ -271,6 +314,7 @@ class NameRegistration extends LitElement {
                             }
                         }}></vaadin-grid-column>
                     </vaadin-grid>
+                    <div id="pages"></div>
                     ${this.isEmptyArray(this.marketSellNames) ? html`
                         <span style="color: var(--black);">${translate("registernamepage.nchange24")}</span>
                     `: ''}
@@ -541,9 +585,9 @@ class NameRegistration extends LitElement {
                 url: `/names/forsale?limit=0&reverse=true`
             }).then(res => {
                 this.marketSellNames = res
-                this.filteredItems = this.marketSellNames
             })
-            setTimeout(fetchMarketSellNames, 120000)
+            this.updatePageSize()
+            setTimeout(fetchMarketSellNames, 180000)
         }
 
         window.addEventListener("contextmenu", (event) => {
@@ -620,6 +664,103 @@ class NameRegistration extends LitElement {
         } else {
             use(checkLanguage)
         }
+    }
+
+    async updatePageSize() {
+        this.filteredItems = []
+        this.marketSellNames.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice))
+        this.filteredItems = this.marketSellNames
+        await this.setPages()
+        await this.updateItemsFromPage(1, true)
+    }
+
+    async setPages() {
+        this.namesGrid = this.shadowRoot.querySelector(`#marketSellNames`)
+        this.pagesControl = this.shadowRoot.querySelector('#pages')
+        this.pages = undefined
+    }
+
+    async updatePageSizeSearch() {
+        this.filteredItems = []
+        this.searchSellNames.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice))
+        this.filteredItems = this.searchSellNames
+        await this.setPagesSearch()
+        await this.updateItemsFromPage(1, true)
+    }
+
+    async setPagesSearch() {
+        this.namesGrid = this.shadowRoot.querySelector(`#marketSellNames`)
+        this.pagesControl = this.shadowRoot.querySelector('#pages')
+        this.pages = undefined
+    }
+
+    async updateItemsFromPage(page, changeNames = false) {
+        if (page === undefined) {
+            return
+        }
+
+        changeNames === true ? (this.pagesControl.innerHTML = '') : null
+
+        if (!this.pages) {
+            this.pages = Array.apply(null, { length: Math.ceil(this.filteredItems.length / this.namesGrid.pageSize) }).map((item, index) => {
+                return index + 1
+            })
+
+            const prevBtn = document.createElement('button')
+            prevBtn.textContent = '<'
+            prevBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage - 1)
+            })
+            this.pagesControl.appendChild(prevBtn)
+
+            this.pages.forEach((pageNumber) => {
+                const pageBtn = document.createElement('button')
+                pageBtn.textContent = pageNumber
+                pageBtn.addEventListener('click', (e) => {
+                    this.updateItemsFromPage(parseInt(e.target.textContent))
+                })
+                if (pageNumber === page) {
+                    pageBtn.setAttribute('selected', true)
+                }
+                this.pagesControl.appendChild(pageBtn)
+            })
+
+            const nextBtn = window.document.createElement('button')
+            nextBtn.textContent = '>'
+            nextBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage + 1)
+            })
+            this.pagesControl.appendChild(nextBtn)
+        }
+
+        const buttons = Array.from(this.pagesControl.children)
+        buttons.forEach((btn, index) => {
+            if (parseInt(btn.textContent) === page) {
+                btn.setAttribute('selected', true)
+            } else {
+                btn.removeAttribute('selected')
+            }
+            if (index === 0) {
+                if (page === 1) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+            if (index === buttons.length - 1) {
+                if (page === this.pages.length) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+        })
+        let start = (page - 1) * this.namesGrid.pageSize
+        let end = page * this.namesGrid.pageSize
+
+        this.namesGrid.items = this.filteredItems.slice(start, end)
     }
 
     async updateQortWalletBalance() {
