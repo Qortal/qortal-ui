@@ -2784,7 +2784,7 @@ class ChatPage extends LitElement {
                     return
                 }
                     typeMessage = 'edit';
-                    let chatReference = outSideMsg.editedMessageObj.reference;
+                    let chatReference = outSideMsg.editedMessageObj.signature;
 
                 if(outSideMsg.editedMessageObj.chatReference){
                     chatReference = outSideMsg.editedMessageObj.chatReference;
