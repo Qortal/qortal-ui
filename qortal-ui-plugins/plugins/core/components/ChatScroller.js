@@ -392,7 +392,6 @@ class MessageTemplate extends LitElement {
         let attachment = null;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-            console.log({parsedMessageObj}, +parsedMessageObj.version, +parsedMessageObj.version > 1)
             if(+parsedMessageObj.version > 1){
 
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
