@@ -12,11 +12,13 @@ import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@material/mwc-icon-button'
 import '@material/mwc-dialog'
+import '@material/mwc-fab'
 import '@material/mwc-tab-bar'
 import '@material/mwc-tab'
 import '@material/mwc-list/mwc-list-item'
 import '@material/mwc-select'
 import '@polymer/iron-icons/iron-icons.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
@@ -549,6 +551,31 @@ class TradePortal extends LitElement {
 				opacity: 0;
 			}
 		}
+            paper-dialog.info {
+                width: 75%;
+                max-width: 75vw;
+                height: 35%;
+                max-height: 35vh;
+                background-color: var(--white);
+                color: var(--black);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                line-height: 1.6;
+                overflow-y: auto;
+            }
+            .actions {
+                display: flex;
+                justify-content: space-between;
+                padding: 0 1em;
+                margin: 12px 0 -6px 0;
+            }
+            .close-icon {
+                font-size: 36px;
+            }
+            .close-icon:hover {
+                cursor: pointer;
+                opacity: .6;
+            }
 		@media (min-width: 701px) {
 			* {
 			}
@@ -887,8 +914,8 @@ class TradePortal extends LitElement {
 		<div class="open-market-container">
 			<div class="box">
 				<mwc-tab-bar id="tabs-1" activeIndex="0">
-					<mwc-tab id="tab-buy" label="${translate("tradepage.tchange18")}" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
-					<mwc-tab id="tab-sell" label="${translate("tradepage.tchange19")}" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
+					<mwc-tab id="tab-buy" label="${translate("tradepage.tchange18")} QORT" @click="${(e) => this.displayTabContent('buy')}"></mwc-tab>
+					<mwc-tab id="tab-sell" label="${translate("tradepage.tchange19")} QORT" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
 				</mwc-tab-bar>
 				<z id="tabs-1-content">
 					<div id="tab-buy-content">
@@ -1168,9 +1195,13 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
 					<mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
-                        <div style="padding-left: 25px; padding-top: 15px;">
+                        <div style="padding-left: 20px; padding-top: 5px;">
+					<mwc-fab mini icon="info" title="${translate("info.inf1")}" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').open()}></mwc-fab>
+			      </div>
+                        <div style="padding-left: 20px; padding-top: 15px;">
                               ${this.chartShowCoin()}
 			      </div>
+
 			</div>
 			<div id="trade-portal">
 				<div id="first-trade-section">
@@ -1221,6 +1252,19 @@ class TradePortal extends LitElement {
 			</div>
 			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
+
+            <paper-dialog id="tradeInfoDialog" class="info" modal>
+                <div class="actions">
+                    <h3></h3>
+                    <mwc-icon class="close-icon" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').close()} title="${translate("info.inf2")}">highlight_off</mwc-icon>
+                </div>
+                <div class="container">
+                    <h1 style="color: #03a9f4; text-align: center;">${translate("info.inf1")}</h1>
+                    <h1 style="text-align: center;">${translate("info.inf3")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("info.inf4")}</h1>
+                    <h1 style="text-align: center;">${translate("info.inf5")} ${this.listedCoins.get(this.selectedCoin).coinCode}</h1>
+                    <h1 style="text-align: center;">${translate("info.inf6")}</h1>
+                </div>
+            </paper-dialog>
         `
     }
 

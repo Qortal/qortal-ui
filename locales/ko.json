@@ -10,7 +10,7 @@
   "electron_translate_7": "업데이트 설치 준비 완료",
   "electron_translate_8": "새로운 Qortal UI 버전이 다운로드되었습니다.",
   "electron_translate_9": "업데이트를 적용하려면 지금 설치를 클릭하고 UI를 업데이트하지 않으려면 나중에 할 수도 있습니다.",
-  "electron_translate_10": "업데이트 중 오류...",
+  "electron_translate_10": "임시 업데이트 실패, 나중에 다시 시도합니다.",
   "electron_translate_11": "업데이트 다운로드",
   "electron_translate_12": "백그라운드에서 ⌛️ 다운로드됩니다!"
 }

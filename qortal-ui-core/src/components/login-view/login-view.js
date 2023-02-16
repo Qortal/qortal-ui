@@ -14,8 +14,15 @@ import './login-section.js'
 import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
+import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen } from '../../redux/app/app-actions.js'
 
 window.reduxStore = store
+window.reduxAction = {
+    addAutoLoadImageChat: addAutoLoadImageChat,
+    removeAutoLoadImageChat: removeAutoLoadImageChat,
+    addChatLastSeen: addChatLastSeen
+
+}
 
 const animationDuration = 0.7 // Seconds
 

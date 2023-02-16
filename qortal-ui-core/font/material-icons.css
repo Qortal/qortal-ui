@@ -32,6 +32,12 @@
     local('MavenPro'),
     url(Montserrat.ttf) format('truetype');
 }
+@font-face {
+  font-family: 'WorkSans';
+  src: local('WorkSans'),
+    local('WorkSans'),
+    url(WorkSans.ttf) format('truetype');
+}
 
 @font-face {
   font-family: 'Raleway';

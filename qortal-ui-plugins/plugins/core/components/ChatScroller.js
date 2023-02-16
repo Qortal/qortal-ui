@@ -6,6 +6,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js'
 import { Epml } from "../../../epml";
 import { cropAddress } from "../../utils/cropAddress";
+import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js';
 import './LevelFounder.js';
 import './NameMenu.js';
 import './ChatModals.js';
@@ -13,11 +14,14 @@ import './WrapperModal';
 import "./UserInfo/UserInfo";
 import '@vaadin/icons';
 import '@vaadin/icon';
+import '@vaadin/tooltip';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
-import { generateHTML } from '@tiptap/core'
+import { generateHTML } from '@tiptap/core';
+import { saveAs } from 'file-saver';
+import axios from "axios";
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight'
@@ -52,7 +56,8 @@ class ChatScroller extends LitElement {
             userName: { type: String },
             selectedHead: { type: Object },
             goToRepliedMessage: { attribute: false },
-            getOldMessageAfter: {attribute: false}
+            getOldMessageAfter: {attribute: false},
+            listSeenMessages: {type: Array}
         }
     }
 
@@ -67,6 +72,11 @@ class ChatScroller extends LitElement {
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")   
         this.openTipUser = false;
         this.openUserInfo = false;
+        this.listSeenMessages= []
+    }
+
+    addSeenMessage(val){
+        this.listSeenMessages.push(val)
     }
 
     render() {
@@ -76,7 +86,6 @@ class ChatScroller extends LitElement {
             let timestamp;
             let sender;
             let repliedToData;
-            
             let firstMessageInChat;
 
             if (index === 0) {
@@ -139,11 +148,14 @@ class ChatScroller extends LitElement {
                             .setUserName=${(val) => this.setUserName(val)}
                             id=${message.reference}
                             .goToRepliedMessage=${this.goToRepliedMessage}
+                            .addSeenMessage=${(val)=> this.addSeenMessage(val)}
+                            .listSeenMessages=${this.listSeenMessages}
+                            chatId=${this.chatId}
                             >
                             </message-template>`
                     )
                 })}
-                <div id='downObserver'></div>
+                <div style=${"height: 1px;"} id='downObserver'></div>
             </ul>
         `
     }
@@ -273,6 +285,7 @@ class MessageTemplate extends LitElement {
             openDialogImage: { type: Boolean },
             openDialogGif: { type: Boolean },
             openDeleteImage: { type: Boolean },
+            openDeleteAttachment: { type: Boolean },
             isImageLoaded: { type: Boolean },
             isGifLoaded: { type: Boolean },
             isFirstMessage: { type: Boolean },
@@ -287,6 +300,9 @@ class MessageTemplate extends LitElement {
             setUserName: { attribute: false },
             openTipUser:{ type: Boolean },
             goToRepliedMessage: { attribute: false },
+            listSeenMessages: { type: Array },
+            addSeenMessage: { attribute: false },
+            chatId: { type: String },
         }
     }
 
@@ -306,7 +322,7 @@ class MessageTemplate extends LitElement {
         this.isFirstMessage = false
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
-        this.viewImage = false
+        this.viewImage =  false
     }
 
     static styles = [chatStyles]
@@ -337,6 +353,36 @@ class MessageTemplate extends LitElement {
         }
     }
 
+    async downloadAttachment(attachment) {
+        
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+       
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        try{
+           axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}?apiKey=${myNode.apiKey}`, { responseType: 'blob'})
+            .then(response =>{              
+                let filename = attachment.attachmentName;
+                let blob = new Blob([response.data], { type:"application/octet-stream" });
+                saveAs(blob , filename);
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    firstUpdated(){
+        const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
+        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
+            this.viewImage =  true
+        }
+
+        const tooltips = this.shadowRoot.querySelectorAll('vaadin-tooltip');
+        tooltips.forEach(tooltip => {
+        const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay');
+        overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
+        overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
+        });
+    }
+
     render() {
         const hidemsg = this.hideMessages;
         let message = "";
@@ -346,8 +392,11 @@ class MessageTemplate extends LitElement {
         let image = null;
         let gif = null;
         let isImageDeleted = false;
+        let isAttachmentDeleted = false;
         let version = 0;
         let isForwarded = false
+        let isEdited = false
+        let attachment = null;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
             if (parsedMessageObj.version.toString() === '2' && parsedMessageObj.messageText) {
@@ -365,9 +414,14 @@ class MessageTemplate extends LitElement {
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
+            isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted;
             reactions = parsedMessageObj.reactions || [];
-            version = parsedMessageObj.version
-            isForwarded = parsedMessageObj.type === 'forward'
+            version = parsedMessageObj.version;
+            isForwarded = parsedMessageObj.type === 'forward';
+            isEdited = parsedMessageObj.isEdited && true;
+            if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
+                attachment = parsedMessageObj.attachments[0];
+            }
            if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
                 image = parsedMessageObj.images[0];
             }
@@ -389,15 +443,16 @@ class MessageTemplate extends LitElement {
         let levelFounder = '';
         let hideit = hidemsg.includes(this.messageObj.sender);
         let forwarded = ''
+        let edited = ''
 
         levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
         if (this.messageObj.senderName) {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/qortal-chat-logo.png';" />`;
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
         } else {
-            avatarImg = html`<img src='/img/qortal-chat-logo.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+            avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
   
      const createImage = (imageUrl) => {
@@ -415,15 +470,12 @@ class MessageTemplate extends LitElement {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
-                }, 500);
+                }, 2000);
             } else {
-                imageHTMLRes.src = '/img/chain.png';
-                imageHTMLRes.style= "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
-                imageHTMLRes.onclick= () => {
-                    
-                }
-
-                this.isImageLoaded = true
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 6000);
             }
         };
         return imageHTMLRes;
@@ -460,7 +512,7 @@ class MessageTemplate extends LitElement {
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`;
             
-            if(this.viewImage || this.myAddress === this.messageObj.sender){
+            if (this.viewImage || this.myAddress === this.messageObj.sender) {
                 imageHTML = createImage(imageUrl);
                 imageHTMLDialog = createImage(imageUrl) 
                 imageHTMLDialog.style= "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
@@ -489,18 +541,23 @@ class MessageTemplate extends LitElement {
         </span>
         `;
 
+        edited = html`
+        <span class="edited-message-style">
+            ${translate("chatpage.cchange68")}
+        </span>
+        `;
+
         if (repliedToData) {
             try {
                 const parsedMsg =  JSON.parse(repliedToData.decodedMessage);
                 repliedToData.decodedMessage = parsedMsg;
             } catch (error) {
-                console.error(error);
             }
             
         }
         const escapedMessage = this.escapeHTML(message)
         const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
-
+       
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
             class="clearfix message-parent" 
@@ -533,9 +590,12 @@ class MessageTemplate extends LitElement {
                             `}
                             <div 
                             class="${`message-subcontainer2 
-                            ${((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
-                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && 
-                            'message-triangle'}`}" 
+                            ${this.myAddress === this.messageObj.sender && "message-myBg" }
+                            ${(((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress !== this.messageObj.sender)  
+                            ? 'message-triangle' 
+                            : (((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || 
+                            (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress === this.messageObj.sender) ? "message-myTriangle" : null}`}" 
                             style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) ? 'margin-bottom: 0;' : null}
                             ${(this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false)
                             ? 'border-radius: 8px 25px 25px 8px;'
@@ -580,58 +640,66 @@ class MessageTemplate extends LitElement {
                                 ${repliedToData && html`
                                     <div class="original-message" 
                                     @click=${()=> {
-                                        this.goToRepliedMessage(repliedToData)
+                                        this.goToRepliedMessage(repliedToData, this.messageObj)
                                     }}>
-                                        <p 
-                                        
-                                      
-                                            class="original-message-sender">
+                                        <p  
+                                            style=${"cursor: pointer; margin: 0 0 5px 0;"} 
+                                            class=${this.myAddress !== repliedToData.sender
+                                            ? "original-message-sender" 
+                                            : "message-data-my-name"}>
                                              ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
                                         </p>
                                         <p class="replied-message">
-
-                                        
-                                        ${version.toString() === '1' ? html`
-                                        ${repliedToData.decodedMessage.messageText}
-                                        ` : ''}
-                                        ${version.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
-                    StarterKit,
-                    Underline,
-                    Highlight
-                    // other extensions …
-                  ]))}
-                                        ` : ''}
-                                        
-                                            <!-- ${repliedToData.decodedMessage.messageText} -->
+                                            ${version.toString() === '1' ? html`
+                                            ${repliedToData.decodedMessage.messageText}
+                                            ` : ''}
+                                            ${version.toString() === '2' ? html`
+                                            ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
+                                                StarterKit,
+                                                Underline,
+                                                Highlight
+                                                // other extensions …
+                                            ]))}
+                                            ` 
+                                        : ''}
                                         </p>
                                     </div>
                                     `}
-                                    ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
+                                    ${image  && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
+                                            this.addSeenMessage(this.messageObj.reference)
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
                                             <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
-                                            ${translate("chatpage.cchange40")}
+                                                ${translate("chatpage.cchange40")}
                                             </div>
                                         </div>
                                     ` : html``}
+                                    ${!this.isImageLoaded && image && this.viewImage ? html`
+                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;position:absolute">
+                                        <div class=${`smallLoading`}></div>
+                                        </div>
+                                        
+                                    `: ''}
                                     ${image && !isImageDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ? html`
                                         <div 
-                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
+                                        class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '', !this.isImageLoaded ? 'hideImg': ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                            ${imageHTML}<vaadin-icon
+                                            ${imageHTML}
+                                            ${this.myAddress === this.messageObj.sender ? html`
+                                            <vaadin-icon
                                             @click=${() => {
                                                 this.openDeleteImage = true;
-                                                this.chatE
                                                 }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
+                                            ` : ''}
+                                           
                                         </div>
                                     ` : image && isImageDeleted ? html`
-                                        <p class="image-deleted-msg">This image has been deleted</p>
+                                        <p class="image-deleted-msg">${translate("chatpage.cchange80")}</p>
                                     ` : html``}
                                     ${gif && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
@@ -652,6 +720,51 @@ class MessageTemplate extends LitElement {
                                             ${gifHTML}
                                         </div>  
                                     ` : html``}
+                                    ${attachment && !isAttachmentDeleted ? 
+                                        html`
+                                        <div @click=${async () => await this.downloadAttachment(attachment)} class="attachment-container">
+                                            <div class="attachment-icon-container">
+                                                <img 
+                                                    src="/img/attachment-icon.png" 
+                                                    alt="attachment-icon" 
+                                                    class="attachment-icon" />
+                                            </div>
+                                            <div class="attachment-info">
+                                                <p class="attachment-name">
+                                                    ${attachment && attachment.attachmentName}
+                                                </p>
+                                                <p class="attachment-size">
+                                                    ${roundToNearestDecimal(attachment.attachmentSize)} mb
+                                                </p>
+                                            </div>
+                                            <vaadin-icon 
+                                            icon="vaadin:download-alt" 
+                                            slot="icon" 
+                                            class="download-icon">
+                                            </vaadin-icon>
+                                            ${this.myAddress === this.messageObj.sender 
+                                            ? html`
+                                                <vaadin-icon
+                                                    @click=${(e) => {
+                                                        e.stopPropagation();
+                                                        this.openDeleteAttachment = true;
+                                                        }}
+                                                    class="image-delete-icon"  icon="vaadin:close" slot="icon">
+                                                </vaadin-icon>
+                                            ` : html``}
+                                        </div>
+                                        ` 
+                                    : attachment && isAttachmentDeleted ?
+                                      html`
+                                        <div class="attachment-container">
+                                            <div class="attachment-info">
+                                                <p style=${"font-style: italic;"} class="attachment-name">
+                                                ${translate("chatpage.cchange82")}
+                                                </p>
+                                            </div>
+                                        </div>
+                                      `                  
+                                    : html``}
                                     <div 
                                     id="messageContent" 
                                     class="message" 
@@ -662,7 +775,14 @@ class MessageTemplate extends LitElement {
                                         ${version.toString() === '1' ? html`
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         ` : ''}
-                                        <div class="${((this.isFirstMessage === false && 
+                                        ${version.toString() === '0' ? html`
+                                        ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+                                        ` : ''}
+                                        <div 
+                                            style=${isEdited 
+                                            ? "justify-content: space-between;" 
+                                            : "justify-content: flex-end;"}
+                                            class="${((this.isFirstMessage === false && 
                                             this.isSingleMessageInGroup === true && 
                                             this.isLastMessageInGroup === true) || 
                                             (this.isFirstMessage === true && 
@@ -671,6 +791,14 @@ class MessageTemplate extends LitElement {
                                             ? 'message-data-time'
                                             : 'message-data-time-hidden'
                                         }">
+                                            ${isEdited ? 
+                                                html`
+                                                    <span>
+                                                        ${edited}
+                                                    </span>
+                                                    `
+                                                : ''
+                                            }
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
                                         </div>
                                     </div>
@@ -705,17 +833,66 @@ class MessageTemplate extends LitElement {
                         </div>
                         <div class="message-reactions" style="${reactions.length > 0 && 
                             'margin-top: 10px; margin-bottom: 5px;'}">
-                                ${reactions.map((reaction)=> {
+                                ${reactions.map((reaction, index)=> {
                                     return html`
                                     <span 
-                                    @click=${() => this.sendMessage({
+                                        @click=${() => this.sendMessage({
                                         type: 'reaction',
                                         editedMessageObj: this.messageObj,
                                         reaction:  reaction.type,
                                         })} 
-                                    class="reactions-bg">
-                                    ${reaction.type} ${reaction.qty}
-                                    </span>`
+                                        id=${`reactions-${index}`}
+                                        class="reactions-bg">
+                                        ${reaction.type} 
+                                        ${reaction.qty}
+                                        <vaadin-tooltip 
+                                        for=${`reactions-${index}`} 
+                                        position="top"
+                                        hover-delay=${400}
+                                        hide-delay=${1}
+                                        text=${reaction.users.length > 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)},
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)}
+                                        ${get("chatpage.cchange71")} ${reaction.users.length - 3} ${get("chatpage.cchange72")}${(reaction.users.length - 3) > 1 ? html`${get("chatpage.cchange73")}` : ""} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 3 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}, 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} 
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[2].name 
+                                        ? reaction.users[2].name 
+                                        : cropAddress(reaction.users[2].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 2 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)}
+                                        ${get("chatpage.cchange71")} 
+                                        ${reaction.users[1].name 
+                                        ? reaction.users[1].name 
+                                        : cropAddress(reaction.users[1].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) : reaction.users.length === 1 ?
+                                        (
+                                        `${reaction.users[0].name 
+                                        ? reaction.users[0].name 
+                                        : cropAddress(reaction.users[0].address)} ${get("chatpage.cchange74")} ${reaction.type}`
+                                        ) 
+                                        : "" }>
+                                    </vaadin-tooltip> 
+                                    </span>
+                                    `
                                 })}
                         </div>
                     </div>
@@ -782,7 +959,7 @@ class MessageTemplate extends LitElement {
                     this.openDeleteImage = false;
                 }}>
                 <div class="delete-image-msg">
-                    <p>Are you sure you want to delete this image?</p>
+                    <p>${translate("chatpage.cchange78")}</p>
                 </div>
                 <div class="modal-button-row" @click=${() => this.openDeleteImage = false}>
                     <button class="modal-button-red">
@@ -796,6 +973,34 @@ class MessageTemplate extends LitElement {
                                 identifier: image.identifier,
                                 editedMessageObj: this.messageObj,
                             })}>
+                        Yes
+                    </button>
+                </div>
+                </mwc-dialog>
+                <mwc-dialog
+                hideActions
+                ?open=${this.openDeleteAttachment} 
+                @closed=${()=> {
+                    this.openDeleteAttachment = false;
+                }}>
+                <div class="delete-image-msg">
+                <p>${translate("chatpage.cchange79")}</p>
+                </div>
+                <div class="modal-button-row" @click=${() => this.openDeleteAttachment = false}>
+                    <button class="modal-button-red">
+                       Cancel 
+                    </button>
+                    <button
+                    class="modal-button" 
+                    @click=${() => {
+                        this.sendMessage({
+                            type: 'deleteAttachment',
+                            attachment: attachment,
+                            name: attachment.name,
+                            identifier: attachment.identifier,
+                            editedMessageObj: this.messageObj,
+                        })}
+                    }>
                         Yes
                     </button>
                 </div>
@@ -900,10 +1105,8 @@ class ChatMenu extends LitElement {
             this.setForwardProperties(stringifyMessageObject)
            
         } catch (error) {
-            console.log({error})
         }
     }
-
     render() {
         return html` 
             <div class="container">
@@ -919,7 +1122,6 @@ class ChatMenu extends LitElement {
                         this.setToggledMessage(this.originalMessage)
                         this.emojiPicker.togglePicker(e.target)
                     } catch (error) {
-                        console.log({error})
                     }
                     
                     }}
@@ -930,6 +1132,10 @@ class ChatMenu extends LitElement {
                 class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange14")}" 
                 @click="${() => {
+                    if (this.version === '0') {
+                        this.versionErrorSnack()
+                        return
+                    }
                     this.messageForwardFunc()
                     }}">
                     <vaadin-icon icon="vaadin:arrow-forward" slot="icon"></vaadin-icon>
@@ -954,7 +1160,7 @@ class ChatMenu extends LitElement {
                         this.versionErrorSnack()
                         return
                     }
-                    this.setRepliedToMessageObj(this.originalMessage);
+                    this.setRepliedToMessageObj({...this.originalMessage, version: this.version});
                     }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>

@@ -1,5 +1,6 @@
 import PaymentTransaction from './PaymentTransaction.js'
 import RegisterNameTransaction from './names/RegisterNameTransaction.js'
+import UpdateNameTransaction from './names/UpdateNameTransaction.js'
 import SellNameTransacion from './names/SellNameTransacion.js'
 import CancelSellNameTransacion from './names/CancelSellNameTransacion.js'
 import BuyNameTransacion from './names/BuyNameTransacion.js'
@@ -25,6 +26,7 @@ import TransferPrivsTransaction from './TransferPrivsTransaction.js'
 export const transactionTypes = {
 	2: PaymentTransaction,
 	3: RegisterNameTransaction,
+	4: UpdateNameTransaction,
 	5: SellNameTransacion,
 	6: CancelSellNameTransacion,
 	7: BuyNameTransacion,

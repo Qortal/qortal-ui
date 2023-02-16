@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-crypto",
-	"version": "2.2.5",
+	"version": "3.1.0",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -23,6 +23,6 @@
 		"lodash": "4.17.21"
 	},
 	"engines": {
-		"node": ">=16.17.1"
+		"node": ">=18.12.1"
 	}
 }

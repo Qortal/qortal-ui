@@ -9,6 +9,7 @@ const CHAT_HEADS_STREAM_NAME = 'chat_heads'
 const NODE_CONFIG_STREAM_NAME = 'node_config'
 const COPY_MENU_SWITCH = 'copy_menu_switch'
 const FRAME_PASTE_MENU_SWITCH = 'frame_paste_menu_switch'
+const CHAT_LAST_SEEN = 'chat_last_seen'
 
 export const loggedInStream = new EpmlStream(LOGIN_STREAM_NAME, () => store.getState().app.loggedIn)
 export const configStream = new EpmlStream(CONFIG_STREAM_NAME, () => store.getState().config)
@@ -18,6 +19,7 @@ export const chatHeadsStateStream = new EpmlStream(CHAT_HEADS_STREAM_NAME, () =>
 export const nodeConfigStream = new EpmlStream(NODE_CONFIG_STREAM_NAME, () => store.getState().app.nodeConfig)
 export const copyMenuSwitchStream = new EpmlStream(COPY_MENU_SWITCH, () => store.getState().app.copyMenuSwitch)
 export const framePasteMenuSwitchStream = new EpmlStream(FRAME_PASTE_MENU_SWITCH, () => store.getState().app.framePasteMenuSwitch)
+export const chatLastSeenStream = new EpmlStream(CHAT_LAST_SEEN, () => store.getState().app.chatLastSeen)
 
 
 let oldState = {
@@ -45,6 +47,9 @@ store.subscribe(() => {
 
     if (oldState.app.framePasteMenuSwitch !== state.app.framePasteMenuSwitch) {
         framePasteMenuSwitchStream.emit(state.app.framePasteMenuSwitch)
+    }
+    if (oldState.app.chatLastSeen !== state.app.chatLastSeen) {
+        chatLastSeenStream.emit(state.app.chatLastSeen)
     }
 
     if (oldState.app.selectedAddress !== state.app.selectedAddress) {

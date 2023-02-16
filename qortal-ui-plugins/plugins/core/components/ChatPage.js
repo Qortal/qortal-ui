@@ -12,7 +12,8 @@ import { Editor, Extension } from '@tiptap/core'
 import * as zip from "@zip.js/zip.js";
 import { saveAs } from 'file-saver';
 import './ChatGifs/ChatGifs.js';
-// import localForage from "localforage";
+
+import localForage from "localforage";
 registerTranslateConfig({
     loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 });
@@ -41,8 +42,12 @@ import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js';
 import { publishData } from '../../utils/publish-image.js';
 import { EmojiPicker } from 'emoji-picker-js';
 import WebWorker from 'web-worker:./computePowWorker.js';
-import WebWorkerImage from 'web-worker:./computePowWorkerImage.js';
+import WebWorkerFile from 'web-worker:./computePowWorkerFile.js';
 import '@polymer/paper-dialog/paper-dialog.js'
+
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+});
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -75,7 +80,11 @@ class ChatPage extends LitElement {
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
             imageFile: { type: Object },
+            attachment: { type: Object },
             isUploadingImage: { type: Boolean },
+            isDeletingImage: { type: Boolean },
+            isUploadingAttachment: { type: Boolean },
+            isDeletingAttachment: { type: Boolean },
             userLanguage: { type: String },
             lastMessageRefVisible: { type: Boolean },
             isLoadingOldMessages: { type: Boolean },
@@ -92,7 +101,7 @@ class ChatPage extends LitElement {
             userFound: { type: Array },
             userFoundModalOpen: { type: Boolean },
             webWorker: { type: Object },
-            webWorkerImage: { type: Object },
+            webWorkerFile: { type: Object },
             myTrimmedMeassage: { type: String },
             editor: {type: Object},
             currentEditor: {type: String},
@@ -101,23 +110,407 @@ class ChatPage extends LitElement {
             openUserInfo: { type: Boolean },
             selectedHead: { type: Object },
             userName: { type: String },
-            goToRepliedMessage: { attribute: false },
             openGifModal: { type: Boolean },
             gifsLoading: { type: Boolean },
+            goToRepliedMessage: {attribute: false},
+            isLoadingGoToRepliedMessage: {type: Object}
         }
     }
 
     static get styles() {
-        return css`
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        .chat-head-container {
-            display: flex;
-            justify-content: flex-start;
-            flex-direction: column;
-            height: 50vh;
+    return css`
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    .chat-head-container {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        height: 50vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .repliedTo-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 10px 8px 10px;
+    }
+
+    .senderName {
+        margin: 0;
+        color: var(--mdc-theme-primary);
+        font-weight: bold;
+        user-select: none;
+    }
+
+    .original-message {
+        color: var(--chat-bubble-msg-color);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        margin: 0;
+        width: 800px;
+    }
+
+    .close-icon {
+        color: #676b71;
+        width: 18px;
+        transition: all 0.1s ease-in-out;
+    }
+
+    .close-icon:hover {
+        cursor: pointer;
+        color: #494c50;
+    }
+    
+    .chat-text-area .typing-area .chatbar {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        padding: 5px 5px 5px 7px;
+        overflow: hidden;
+    }
+
+    .chat-text-area .typing-area .emoji-button {
+        width: 45px;
+        height: 40px;
+        padding-top: 4px;
+        border: none;
+        outline: none;
+        background: transparent;
+        cursor: pointer;
+        max-height: 40px;
+        color: var(--black);
+    }
+
+    .emoji-button-caption {
+        width: 45px;
+        height: 40px;
+        padding-top: 4px;
+        border: none;
+        outline: none;
+        background: transparent;
+        cursor: pointer;
+        max-height: 40px;
+        color: var(--black);
+    }
+
+    .caption-container {
+        width: 100%;
+        display: flex;
+        height: auto;
+        overflow: hidden;
+        justify-content: center;
+        background-color: var(--white);
+        padding: 5px;
+        border-radius: 1px;
+    }
+
+    .chatbar-caption {
+        font-family: Roboto, sans-serif;
+        width: 70%;
+        margin-right: 10px;
+        outline: none;
+        align-items: center;
+        font-size: 18px;
+        resize: none;
+        border-top: 0;
+        border-right: 0;
+        border-left: 0;
+        border-bottom: 1px solid #cac8c8;
+        padding: 3px;
+    }
+
+    .message-size-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .message-size {
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        color: black;
+    }
+
+    .lds-grid {
+        width: 120px;
+        height: 120px;
+        position: absolute;
+        left: 50%;
+        top: 40%;
+    }
+
+    img {
+        border-radius: 25%;
+    }
+
+    .dialogCustom {
+        position: fixed;
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        top: 10px;
+        right: 20px;
+        user-select: none;
+    }
+
+    .dialogCustomInner {
+        min-width: 300px;
+        height: 40px;
+        background-color: var(--white);
+        box-shadow: rgb(119 119 119 / 32%) 0px 4px 12px;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .dialogCustomInner ul {
+        padding-left: 0px
+    }
+    
+    .dialogCustomInner li {
+        margin-bottom: 10px;
+    }
+
+    .marginLoader {
+        margin-right: 8px;
+    }
+
+    .last-message-ref {
+        position: absolute;
+        font-size: 18px;
+        top: -40px;
+        right: 30px;
+        width: 50;
+        height: 50;
+        z-index: 5;
+        color: black;
+        background-color: white;
+        border-radius: 50%;
+        transition: all 0.1s ease-in-out;
+    }
+
+    .last-message-ref:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+    }
+
+    .arrow-down-icon {
+        transform: scale(1.15);
+    }
+
+  .chat-container {
+      display: grid;
+      max-height: 100%;
+  }
+
+  .chat-text-area {
+      display: flex;
+      position: relative;
+      justify-content: center;
+      min-height: 60px;
+      max-height: 100%;
+  }
+
+  .chat-text-area .typing-area {
+      display: flex;
+      flex-direction: column;
+      width: 98%;
+      box-sizing: border-box;
+      margin-bottom: 8px;
+      border: 1px solid var(--chat-bubble-bg);
+      border-radius: 10px;
+      background: var(--chat-bubble-bg);
+  }
+
+  .chat-text-area .typing-area textarea {
+      display: none;
+  }
+
+  .chat-text-area .typing-area .chat-editor {
+      display: flex;
+      max-height: -webkit-fill-available;
+      width: 100%;
+      border-color: transparent;
+      margin: 0;
+      padding: 0;
+      border: none;
+  }
+
+  .repliedTo-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 10px 8px 10px;
+  }
+  
+  .repliedTo-subcontainer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+  }
+
+  .repliedTo-message {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: 100%;
+      word-break: break-all;
+      text-overflow: ellipsis;
+    overflow: hidden;
+    max-height: 60px;
+  }
+  .repliedTo-message p {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .repliedTo-message pre {
+    white-space: pre-wrap;
+  }
+
+  .repliedTo-message p mark {
+	background-color: #ffe066;
+    border-radius: 0.25em;
+    box-decoration-break: clone;
+    padding: 0.125em 0;
+  }
+
+  .reply-icon {
+      width: 20px;
+      color: var(--mdc-theme-primary);
+  }
+
+  .close-icon {
+      color: #676b71;
+      width: 18px;
+      transition: all 0.1s ease-in-out;
+  }
+
+  .close-icon:hover {
+      cursor: pointer;
+      color: #494c50;
+  }
+  
+  .chatbar-container {
+      width: 100%;
+      display: flex;
+      height: auto;
+      overflow: hidden;
+  }
+
+  .lds-grid {
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      left: 50%;
+      top: 40%;
+  }
+
+  .lds-grid div {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #03a9f4;
+      animation: lds-grid 1.2s linear infinite;
+  }
+
+  .lds-grid div:nth-child(1) {
+      top: 4px;
+      left: 4px;
+      animation-delay: 0s;
+      }
+
+  .lds-grid div:nth-child(2) {
+      top: 4px;
+      left: 48px;
+      animation-delay: -0.4s;
+  }
+
+  .lds-grid div:nth-child(3) {
+      top: 4px;
+      left: 90px;
+      animation-delay: -0.8s;
+  }
+
+  .lds-grid div:nth-child(4) {
+      top: 50px;
+      left: 4px;
+      animation-delay: -0.4s;
+  }
+
+  .lds-grid div:nth-child(5) {
+      top: 50px;
+      left: 48px;
+      animation-delay: -0.8s;
+  }
+
+  .lds-grid div:nth-child(6) {
+      top: 50px;
+      left: 90px;
+      animation-delay: -1.2s;
+  }
+
+  .lds-grid div:nth-child(7) {
+      top: 95px;
+      left: 4px;
+      animation-delay: -0.8s;
+  }
+
+  .lds-grid div:nth-child(8) {
+      top: 95px;
+      left: 48px;
+      animation-delay: -1.2s;
+  }
+  
+  .lds-grid div:nth-child(9) {
+      top: 95px;
+      left: 90px;
+      animation-delay: -1.6s;
+  }
+
+  @keyframes lds-grid {
+      0%, 100% {
+      opacity: 1;
+      }
+      50% {
+      opacity: 0.5;
+      }
+}   
+
+  .float-left {
+      float: left;
+  }
+
+  img {
+      border-radius: 25%;
+  }
+
+  paper-dialog.warning {
+            width: 50%;
+            max-width: 50vw;
+            height: 30%;
+            max-height: 30vh;
+            text-align: center;
+            background-color: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+            border-radius: 15px;
+            line-height: 1.6;
             overflow-y: auto;
             overflow-x: hidden;
             width: 100%;
@@ -681,12 +1074,6 @@ class ChatPage extends LitElement {
             padding:0px;
         }
     
-      .modal-button-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-      }
     
       .modal-button {
           font-family: Roboto, sans-serif;
@@ -849,14 +1236,47 @@ class ChatPage extends LitElement {
             background: transparent;
             position: fixed;
         }
-    `
-    }
+
+  .modal-button-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+  }
+
+
+  .attachment-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--mdc-theme-primary);
+  }
+
+  .attachment-icon {
+    width: 70%;
+  }
+  
+  .attachment-name {
+    font-family: Work Sans, sans-serif;
+    font-size: 20px;
+    color: var(--chat-bubble-msg-color);
+    margin: 0px;
+    letter-spacing: 1px;
+    padding: 5px 0px;
+  }
+`
+}
 
     constructor() {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
-        this.insertImage = this.insertImage.bind(this)
+        this.insertFile = this.insertFile.bind(this)
+        this.pasteImage = this.pasteImage.bind(this)
         this.toggleEnableChatEnter = this.toggleEnableChatEnter.bind(this)
         this._downObserverhandler = this._downObserverhandler.bind(this)
         this.setOpenTipUser = this.setOpenTipUser.bind(this)
@@ -887,6 +1307,7 @@ class ChatPage extends LitElement {
         this.editedMessageObj = null
         this.iframeHeight = 42
         this.imageFile = null
+        this.attachment = null
         this.uid = new ShortUniqueId()
         this.userLanguage = ""
         this.lastMessageRefVisible = false
@@ -914,12 +1335,18 @@ class ChatPage extends LitElement {
             selected: false
         }
         this.webWorker = null;
-        this.webWorkerImage = null;
+        this.webWorkerFile = null;
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.setOpenGifModal = this.setOpenGifModal.bind(this)
         this.isEnabledChatEnter = true
         this.openGifModal = false
+        this.isLoadingGoToRepliedMessage = {
+            isLoading: false,
+            top: 0,
+            left: 0,
+            offsetHeight: 0
+        }
     }
 
 
@@ -1039,7 +1466,6 @@ console.log({zipFileBlob})
                     </div>
                 </div>
                 ` : null}
-               
                 <div>
                     ${this.isLoadingMessages ? 
                         html`
@@ -1068,6 +1494,9 @@ console.log({zipFileBlob})
                     style=${this.openGifModal ? "visibility: visible; z-index: 4" : "visibility: hidden; z-index: -100"}>
                 </div>
                 <!-- main chat bar -->
+                ${this.isLoadingGoToRepliedMessage && this.isLoadingGoToRepliedMessage.loading ? html`
+                <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
+                ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                 <!-- gif div -->
                 <chat-gifs 
@@ -1096,16 +1525,20 @@ console.log({zipFileBlob})
                                         <vaadin-icon class="reply-icon" icon="vaadin:reply" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
-                                            ${this.repliedToMessageObj.toString() === '1' ? html`
-                                        ${this.repliedToMessageObj.message}
-                                        ` : ''}
-                                        ${this.repliedToMessageObj.toString() === '2' ? html`
-                                        ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [
-                                            StarterKit,
-                                            Underline,
-                                            Highlight
-                                            // other extensions …
-                                            ]))}    ` : ''}          
+                                            ${this.repliedToMessageObj.version.toString() === '1' ? html`
+                                            ${this.repliedToMessageObj.message}
+                                            ` : ''}
+                                            ${this.repliedToMessageObj.version.toString() === '2' 
+                                            ? html`
+                                                ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, 
+                                                [
+                                                    StarterKit,
+                                                    Underline,
+                                                    Highlight
+                                                    // other extensions …
+                                                ]))}
+                                            ` 
+                                            : ''}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
@@ -1122,19 +1555,20 @@ console.log({zipFileBlob})
                                         <vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
                                         <div class="repliedTo-message">
                                             <p class="senderName">${translate("chatpage.cchange25")}</p>
-                                            ${unsafeHTML(generateHTML(this.editedMessageObj.message, [
-                                                StarterKit,
-                                                Underline,
-                                                Highlight
-                                                // other extensions …
+                                                ${unsafeHTML(generateHTML(this.editedMessageObj.message, 
+                                                [
+                                                    StarterKit,
+                                                    Underline,
+                                                    Highlight
+                                                    // other extensions …
                                                 ]))}
                                         </div>
                                         <vaadin-icon
                                             class="close-icon"
                                             icon="vaadin:close-big"
                                             slot="icon"
-                                            @click=${() => this.closeEditMessageContainer()}
-                                            ></vaadin-icon>
+                                            @click=${() => this.closeEditMessageContainer()}>
+                                        </vaadin-icon>
                                     </div>
                                 </div>
                             `}
@@ -1145,7 +1579,7 @@ console.log({zipFileBlob})
                                 placeholder=${this.chatEditorPlaceholder}
                                 ._sendMessage=${this._sendMessage}
                                 .imageFile=${this.imageFile}
-                                .insertImage=${this.insertImage}
+                                .insertFile=${this.insertFile}
                                 .editedMessageObj=${this.editedMessageObj}
                                 ?isLoading=${this.isLoading}
                                 ?isLoadingMessages=${this.isLoadingMessages}
@@ -1158,31 +1592,46 @@ console.log({zipFileBlob})
                                 ?isEnabledChatEnter=${this.isEnabledChatEnter}
                                 ?openGifModal=${this.openGifModal}
                                 .setOpenGifModal=${(val)=> this.setOpenGifModal(val)}
+                                chatId=${this.chatId}
                                 >                           
                             </chat-text-editor>
                     </div>
                 </div>
             </div>
           
-            ${(this.isUploadingImage || this.isDeletingImage) ? html`
+                ${(this.isUploadingImage || this.isDeletingImage) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
                             <div class="dialog-container-loader">
                                 <div class=${`smallLoading marginLoader`}></div>
-                                <p>
-                                ${this.isDeletingImage ?
-                                    translate("chatpage.cchange31") : translate("chatpage.cchange30")}
-                                </p>
-                            </div>			
-                        </div>                        
-			        </div>
-            </div>
-			`: ''}
+                                    <p>
+                                    ${this.isDeletingImage ?
+                                        translate("chatpage.cchange31") : translate("chatpage.cchange30")}
+                                    </p>
+                                </div>			
+                            </div>                        
+			            </div>
+                    </div>
+			    `: ''}
+                ${(this.isUploadingAttachment || this.isDeletingAttachment) ? html`
+					<div class="dialogCustom">
+                        <div class="dialogCustomInner">
+                            <div class="dialog-container-loader">
+                                <div class=${`smallLoading marginLoader`}></div>
+                                    <p>
+                                    ${this.isDeletingAttachment ?
+                                        translate("chatpage.cchange76") : translate("chatpage.cchange75")}
+                                    </p>
+                                </div>			
+                            </div>                        
+			            </div>
+                    </div>
+                `: ''}
                 <wrapper-modal 
                 .onClickFunc=${() => {
                     this.removeImage();
                 }} 
-                style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100"}>
+                style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible; z-index:50" : "visibility: hidden;z-index:-100"}>
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
@@ -1195,7 +1644,7 @@ console.log({zipFileBlob})
                                     placeholder=${this.chatEditorPlaceholder}
                                     ._sendMessage=${this._sendMessage}
                                     .imageFile=${this.imageFile}
-                                    .insertImage=${this.insertImage}
+                                    .insertFile=${this.insertFile}
                                     .editedMessageObj=${this.editedMessageObj}
                                     ?isLoading=${this.isLoading}
                                     ?isLoadingMessages=${this.isLoadingMessages}
@@ -1218,7 +1667,6 @@ console.log({zipFileBlob})
                                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                                         chatTextEditor.sendMessageFunc({
                                             type: 'image',
-                                            imageFile:  this.imageFile,
                                         })
                                     }}
                                 >
@@ -1228,7 +1676,58 @@ console.log({zipFileBlob})
                         </div>
                 </div>    	
             </wrapper-modal>
-           
+            <wrapper-modal 
+            .onClickFunc=${() => {
+                this.removeAttachment();
+            }} 
+            style=${this.attachment && !this.isUploadingAttachment ? "visibility: visible; z-index: 50" : "visibility: hidden; z-index: -100"}>
+                <div>
+                    <div class="dialog-container">
+                        ${this.attachment && html`
+                        <div class="attachment-icon-container">
+                            <img src="/img/attachment-icon.png" alt="attachment-icon" class="attachment-icon" />
+                        </div>
+                        `}
+                        <p class="attachment-name">${this.attachment && this.attachment.name}</p>
+                        <div class="caption-container">
+                            <chat-text-editor
+                                iframeId="newAttachmentChat"
+                                ?hasGlobalEvents=${false}
+                                placeholder=${this.chatEditorPlaceholder}
+                                ._sendMessage=${this._sendMessage}
+                                .imageFile=${this.imageFile}
+                                .attachment=${this.attachment}
+                                .insertFile=${this.insertFile}
+                                .editedMessageObj=${this.editedMessageObj}
+                                ?isLoading=${this.isLoading}
+                                ?isLoadingMessages=${this.isLoadingMessages}
+                                id="chatAttachmentId"
+                                .editor=${this.editorAttachment}
+                                .updatePlaceholder=${(editor, value)=> this.updatePlaceholder(editor, value)}
+                                >
+                            </chat-text-editor>
+                        </div>
+                        <div class="modal-button-row">
+                            <button class="modal-button-red" @click=${() => {
+                            this.removeAttachment();
+                            }}>
+                                ${translate("chatpage.cchange33")}
+                            </button>
+                            <button
+                                class="modal-button"
+                                @click=${() => {
+                                    const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId');
+                                    chatTextEditor.sendMessageFunc({
+                                        type: 'attachment',
+                                    })
+                                }}
+                            >
+                                ${translate("chatpage.cchange9")}
+                            </button>
+                        </div>
+                    </div>
+            </div>    	
+            </wrapper-modal>
             <paper-dialog class="warning" id="confirmDialog" modal>
                 <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
                 <hr>
@@ -1434,7 +1933,6 @@ console.log({zipFileBlob})
                     name: name ? name : undefined
                   }
                 } catch (error) {
-                    console.log(error)
                 }
         
                 return memberItem
@@ -1443,20 +1941,21 @@ console.log({zipFileBlob})
             this.groupMembers = membersWithName
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
-          console.error(error)
         }
     }
 
 
 
-  async  connectedCallback() {
+    async connectedCallback() {
         super.connectedCallback();
+        await this.initUpdate()
         this.webWorker = new WebWorker();
-        this.webWorkerImage = new WebWorkerImage();
+        this.webWorkerFile = new WebWorkerFile();
         await this.getUpdateCompleteTextEditor();
 
-        const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
-        const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
+        const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM');
+        const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat');
+        const elementChatAttachmentId = this.shadowRoot.getElementById('chatAttachmentId').shadowRoot.getElementById('newAttachmentChat');
         this.editor = new Editor({
               onUpdate: ()=> {
                 this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
@@ -1513,11 +2012,37 @@ console.log({zipFileBlob})
               Extension.create({
                 addKeyboardShortcuts:()=> {
                   return {
-                    'Enter':()=> {
+                    'Enter':() => {
                         const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
                         chatTextEditor.sendMessageFunc({
-                            type: 'image',
-                            imageFile:  this.imageFile,
+                            type: 'image'
+                        })
+                      return true
+                    }
+                  }
+                }})
+            ]
+          })
+
+          this.editorAttachment = new Editor({
+            onUpdate: () => {
+                this.shadowRoot.getElementById('chatAttachmentId').getMessageSize(this.editorAttachment.getJSON())
+              },
+            element: elementChatAttachmentId,
+            extensions: [
+              StarterKit,
+              Underline,
+              Highlight,
+              Placeholder.configure({
+                placeholder: 'Write something …',
+              }),
+              Extension.create({
+                addKeyboardShortcuts:()=> {
+                  return {
+                    'Enter':()=> {
+                        const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
+                        chatTextEditor.sendMessageFunc({
+                            type: 'attachment'
                         })
                       return true
                     }
@@ -1526,16 +2051,45 @@ console.log({zipFileBlob})
             ]
           })
           document.addEventListener('keydown', this.initialChat);
-      }
+          document.addEventListener('paste', this.pasteImage);
+          if(this.chatId){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+        }
+    }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.webWorker.terminate();
-        this.webWorkerImage.terminate();
-        this.editor.destroy()
-        this.editorImage.destroy()
+        if(this.webSocket){
+            this.webSocket.close(1000, 'switch chat')
+            this.webSocket= ''
+        }
+        if(this.webWorker){
+            this.webWorker.terminate();
+        }
+        if(this.webWorkerImage){
+            this.webWorkerImage.terminate();
+        }
+        if(this.editor){
+            this.editor.destroy()
+        }
+        if(this.editorImage){
+            this.editorImage.destroy()
+        }
+        
         document.removeEventListener('keydown', this.initialChat);
-      }
+        document.removeEventListener('paste', this.pasteImage);
+        if(this.chatId){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+           
+        }
+       
+    }
 
       initialChat(e) {
         if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser && !this.openGifModal) {
@@ -1548,12 +2102,59 @@ console.log({zipFileBlob})
                this.editor.commands.focus('end')
             }
         }
-
-        
     }
 
-   async goToRepliedMessage(message){
+
+    async pasteImage (e) { 
+        const event = e;
+        const handleTransferIntoURL = (dataTransfer) => {
+            try {
+                const [firstItem] = dataTransfer.items;
+                const blob = firstItem.getAsFile();
+                return blob;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (event.clipboardData) {
+            const blobFound = handleTransferIntoURL(event.clipboardData)
+            if (blobFound) {
+                this.insertImage(blobFound);
+                return;
+            } else {
+                const item_list = await navigator.clipboard.read();
+                let image_type; 
+                const item = item_list.find(item => 
+                    item.types.some( type => { 
+                    if (type.startsWith( 'image/')) {
+                        image_type = type; 
+                        return true;
+                    }
+                })
+                );
+                if (item) {
+                    try {                        
+                        const blob = item && await item.getType(image_type);
+                        let file = new File([blob], "name", {
+                        type: image_type
+                        });
+                        this.insertImage(file);
+                    } catch (error) {
+                        console.error(error);
+                        let errorMsg = get("chatpage.cchange81")
+                        parentEpml.request('showSnackBar', `${errorMsg}`)
+                    }
+                } else {
+                    return
+                }
+            }
+        }   
+
+    }
+
+   async goToRepliedMessage(message, clickedOnMessage){
     const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    
     if(findMessage){
         findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
@@ -1572,11 +2173,29 @@ console.log({zipFileBlob})
         return
     } 
 
+  
+
+    
     if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
+        const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.reference)
+    if(findOriginalMessage){
+        const messageClientRect = findOriginalMessage.getBoundingClientRect()
+        this.isLoadingGoToRepliedMessage = {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: true,
+            left: messageClientRect.left,
+            top: messageClientRect.top,
+            offsetHeight: findOriginalMessage.offsetHeight
+        }
+    }
        await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
        const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
     if(findMessage){
-        findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        this.isLoadingGoToRepliedMessage =   {
+            ...this.isLoadingGoToRepliedMessage,
+            loading: false
+        }
+        findMessage.scrollIntoView({block: 'center' })
         const findElement = findMessage.shadowRoot.querySelector('.message-parent')
         if(findElement){
             findElement.classList.add('blink-bg')
@@ -1584,10 +2203,13 @@ console.log({zipFileBlob})
                 findElement.classList.remove('blink-bg')
             }, 2000)
         }
-  
+        
         return
     }
-
+    this.isLoadingGoToRepliedMessage = {
+        ...this.isLoadingGoToRepliedMessage,
+        loading: false
+    }
     let errorMsg = get("chatpage.cchange66")
     parentEpml.request('showSnackBar', `${errorMsg}`)
     
@@ -1621,7 +2243,6 @@ console.log({zipFileBlob})
                 this.userFoundModalOpen = true;
             } catch (error) {
                 this.loading = false;
-                console.error(error);
                 let err4string = get("chatpage.cchange35");
                 parentEpml.request('showSnackBar', `${err4string}`)
             }
@@ -1650,7 +2271,6 @@ console.log({zipFileBlob})
             const stringifyMessageObject = JSON.stringify(message);
             this.sendMessage(stringifyMessageObject, undefined, '', true)
         } catch (error) {
-            console.log({error});
         }
     }
 
@@ -1659,19 +2279,29 @@ console.log({zipFileBlob})
     }
 
     
-    insertImage(file) {
+    insertFile(file) {
         if (file.type.includes('image')) {
             this.imageFile = file;
-            this.currentEditor = 'newChat'
+            this.currentEditor = 'newChat';
             return;
-        }       
-         parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
+        } else {
+            this.attachment = file;
+            this.currentEditor = "newAttachmentChat";
+            return;
+        }     
+        //  parentEpml.request('showSnackBar', get("chatpage.cchange28")); 
     }
 
     removeImage() {
         this.imageFile = null;
-        this.resetChatEditor()
-        this.currentEditor = '_chatEditorDOM'
+        this.resetChatEditor();
+        this.currentEditor = '_chatEditorDOM';
+    }
+
+    removeAttachment() {
+        this.attachment = null;
+        this.resetChatEditor();
+        this.currentEditor = '_chatEditorDOM';
     }
 
     changeMsgInput(id) {
@@ -1680,10 +2310,6 @@ console.log({zipFileBlob})
     }
 
     async initUpdate(){
-        if(this.webSocket){
-            this.webSocket.close()
-            this.webSocket= ''
-        }
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -1729,7 +2355,7 @@ console.log({zipFileBlob})
 
         const isRecipient = this.chatId.includes('direct') === true ? true : false;
         const groupId = this.chatId.split('/')[1];
-        if(!isRecipient && groupId !== 0){
+        if(!isRecipient && groupId.toString() !== '0'){
 
             try {
                 const getMembers = await parentEpml.request("apiCall", {
@@ -1753,7 +2379,6 @@ console.log({zipFileBlob})
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1768,7 +2393,6 @@ console.log({zipFileBlob})
                         name: name ? name : undefined
                       }
                     } catch (error) {
-                        console.log(error)
                     }
             
                     return memberItem
@@ -1778,7 +2402,6 @@ console.log({zipFileBlob})
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
             } catch (error) {
-                console.error(error)
             }
         }
         
@@ -1813,7 +2436,7 @@ console.log({zipFileBlob})
         if(isEnabledChatEnter){
             this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true 
         }
-    await this.initUpdate()
+    
     }
 
     async updated(changedProperties) {
@@ -1825,20 +2448,16 @@ console.log({zipFileBlob})
             }       
         }
 
-        if (changedProperties && changedProperties.has('chatId') && changedProperties.get('chatId')) {
-           await this.initUpdate()
-        }
 
      
         if (changedProperties && changedProperties.has('isLoading')) {
-            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === true && this.currentEditor === '_chatEditorDOM' && this.editor && this.editor.setEditable) {
                 this.editor.setEditable(false)
             }
-            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM') {
+            if (this.isLoading === false && this.currentEditor === '_chatEditorDOM' && this.editor &&  this.editor.setEditable) {
                 this.editor.setEditable(true)
             }
         }
-        
     }
 
     async getName (recipient) {
@@ -1909,7 +2528,7 @@ console.log({zipFileBlob})
             .setSelectedHead=${(val) => this.setSelectedHead(val)}
             ?openTipUser=${this.openTipUser}
             .selectedHead=${this.selectedHead}
-            .goToRepliedMessage=${(val)=> this.goToRepliedMessage(val)}
+            .goToRepliedMessage=${(val, val2)=> this.goToRepliedMessage(val, val2)}
             .getOldMessageAfter=${(val)=> this.getOldMessageAfter(val)}
             >
             </chat-scroller>
@@ -2208,7 +2827,13 @@ console.log({zipFileBlob})
               await  this.renderNewMessage(msg)
             })
           await Promise.all(renderEachMessage)
-
+          if(this.chatId){
+            window.parent.reduxStore.dispatch( window.parent.reduxAction.addChatLastSeen({
+                key: this.chatId,
+                timestamp: Date.now()
+            }))
+           
+        }
             // this.newMessages = this.newMessages.concat(_newMessages)
             this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -2260,7 +2885,8 @@ console.log({zipFileBlob})
             const findOriginalMessageIndex = this.messagesRendered.findIndex(msg=> msg.reference === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference) )
             if(findOriginalMessageIndex !== -1){
                 const newMessagesRendered = [...this.messagesRendered]
-                newMessagesRendered[findOriginalMessageIndex] = {...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, editedTimestamp: newMessage.timestamp }
+                newMessagesRendered[findOriginalMessageIndex] = {...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
+					sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp }
                 this.messagesRendered = newMessagesRendered
             await this.getUpdateComplete();
             }
@@ -2334,7 +2960,7 @@ console.log({zipFileBlob})
 
     async fetchChatMessages(chatId) {
 
-        const initDirect = async (cid) => {
+        const initDirect = async (cid, noInitial) => {
             let initial = 0
 
             let directSocketTimeout
@@ -2354,17 +2980,15 @@ console.log({zipFileBlob})
             }
 
             this.webSocket  = new WebSocket(directSocketLink);
-
             // Open Connection
             this.webSocket.onopen = () => {
-
                 setTimeout(pingDirectSocket, 50)
             }
 
             // Message Event
             this.webSocket.onmessage = async (e) => {
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2396,8 +3020,10 @@ console.log({zipFileBlob})
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartDirectWebSocket()
             }
 
             // Error Event
@@ -2412,8 +3038,17 @@ console.log({zipFileBlob})
             }
 
         };
+        const restartDirectWebSocket = () => {
+            const noInitial = true
+            setTimeout(() => initDirect(chatId, noInitial), 50)
+        }
+        const restartGroupWebSocket = () => {
+            const noInitial = true
+            let groupChatId = Number(chatId)
+            setTimeout(() => initGroup(groupChatId, noInitial), 50)
+        }
 
-        const initGroup = (gId) => {
+        const initGroup = (gId, noInitial) => {
             let groupId = Number(gId)
 
             let initial = 0
@@ -2446,7 +3081,7 @@ console.log({zipFileBlob})
             this.webSocket.onmessage = async (e) => {
 
                 if (initial === 0) {
-                    
+                    if(noInitial) return
                     const cachedData = null;
                     let getInitialMessages = []
                     if (cachedData && cachedData.length !== 0) {
@@ -2481,8 +3116,10 @@ console.log({zipFileBlob})
             }
 
             // Closed Event
-            this.webSocket.onclose = () => {
+            this.webSocket.onclose = (e) => {
                 clearTimeout(groupSocketTimeout)
+                if(e.reason === 'switch chat') return
+                restartGroupWebSocket()
             }
 
             // Error Event
@@ -2522,6 +3159,9 @@ console.log({zipFileBlob})
         if(this.currentEditor === 'newChat'){
             this.editorImage.commands.setContent('')
         }
+        if(this.currentEditor === 'newAttachmentChat'){
+            this.editorAttachment.commands.setContent('')
+        }
     }
 
    async _sendMessage(outSideMsg, msg) {
@@ -2546,7 +3186,6 @@ console.log({zipFileBlob})
                         this._publicKey.hasPubKey = false
                     }
                 } catch (error) {
-                    console.error(error);
                 }
 
                 if(!hasPublicKey || !this._publicKey.hasPubKey){
@@ -2565,6 +3204,7 @@ console.log({zipFileBlob})
         // find specific object property in local
         let typeMessage = 'regular';
         let workerImage;
+        let workerAttachment;
         this.isLoading = true;
         const trimmedMessage = msg
         
@@ -2593,62 +3233,152 @@ console.log({zipFileBlob})
             let compressedFile = ''
             var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
 
-            if (this.webWorkerImage) {
-                workerImage = this.webWorkerImage;
+            if (this.webWorkerFile) {
+                workerImage = this.webWorkerFile;
             } else {
-                this.webWorkerImage = new WebWorkerImage();
+                this.webWorkerFile = new WebWorkerFile();
             }
    
-        const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
-            const byteCharacters = atob(b64Data);
-            const byteArrays = [];
-            
-            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                const slice = byteCharacters.slice(offset, offset + sliceSize);
-            
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
+            const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+                
+                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    const slice = byteCharacters.slice(offset, offset + sliceSize);
+                
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                
+                const blob = new Blob(byteArrays, {type: contentType});
+                return blob;
+            }
+            const blob = b64toBlob(str, 'image/png');
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            });
+                        
+                            compressedFile = file;
+                            resolve();
+                        },
+                        error(err) {
+                            console.log(err.message);
+                        },
+                    })
+                })
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file : compressedFile,
+                        service: 'QCHAT_IMAGE',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: workerImage
+                    })
+                    this.isDeletingImage = false
+                } catch (error) {
+                    this.isLoading = false;
+                    return
+                }
+                    typeMessage = 'edit';
+                    let chatReference = outSideMsg.editedMessageObj.reference;
+
+                if(outSideMsg.editedMessageObj.chatReference){
+                    chatReference = outSideMsg.editedMessageObj.chatReference;
                 }
             
-                const byteArray = new Uint8Array(byteNumbers);
-                byteArrays.push(byteArray);
+                let message = "";
+            try {
+                const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
+                message = parsedMessageObj;
+                
+            } catch (error) {
+                message = outSideMsg.editedMessageObj.decodedMessage;
             }
-            
-            const blob = new Blob(byteArrays, {type: contentType});
-            return blob;
-        }
-      const blob = b64toBlob(str, 'image/png');
-            await new Promise(resolve => {
-                new Compressor(blob, {
-                    quality: 0.6,
-                    maxWidth: 500,
-                    success(result) {
-                        const file = new File([result], "name", {
-                            type: 'image/png'
-                        });
-                       
-                        compressedFile = file;
-                        resolve();
-                    },
-                    error(err) {
-                        console.log(err.message);
-                      },
+                const messageObject = {
+                    ...message,
+                    isImageDeleted: true
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject);
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
+        } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
+            this.isDeletingAttachment = true;
+            let compressedFile = ''
+            var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
+            const userName = outSideMsg.name;
+            const identifier = outSideMsg.identifier;
+
+            if (this.webWorkerFile) {
+                workerAttachment = this.webWorkerFile;
+            } else {
+                this.webWorkerFile = new WebWorkerFile();
+            }
+
+            const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+                
+                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    const slice = byteCharacters.slice(offset, offset + sliceSize);
+                
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                
+                const blob = new Blob(byteArrays, {type: contentType});
+                return blob;
+            }
+
+            const blob = b64toBlob(str, 'image/png');
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            });
+                        
+                            compressedFile = file;
+                            resolve();
+                        },
+                        error(err) {
+                            console.log(err.message);
+                        },
+                    })
                 })
-            })
+
             try {
                 await publishData({
                     registeredName: userName,
-                    file : compressedFile,
-                    service: 'QCHAT_IMAGE',
+                    file: compressedFile,
+                    service: 'QCHAT_ATTACHMENT',
                     identifier: identifier,
                     parentEpml,
                     metaData: undefined,
                     uploadType: 'file',
                     selectedAddress: this.selectedAddress,
-                    worker: workerImage
-                   })
-                   this.isDeletingImage = false
+                    worker: workerAttachment
+                })
+                this.isDeletingAttachment = false
             } catch (error) {
                 this.isLoading = false;
                 return
@@ -2659,7 +3389,7 @@ console.log({zipFileBlob})
             if(outSideMsg.editedMessageObj.chatReference){
                 chatReference = outSideMsg.editedMessageObj.chatReference;
             }
-           
+        
             let message = "";
         try {
             const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage);
@@ -2670,36 +3400,35 @@ console.log({zipFileBlob})
         }
             const messageObject = {
                 ...message,
-                isImageDeleted: true
+                isAttachmentDeleted: true
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
-           
-
-        }
-        else if (outSideMsg && outSideMsg.type === 'image') {
+        } else if (outSideMsg && outSideMsg.type === 'image') {
             this.isUploadingImage = true;
             const userName = await getName(this.selectedAddress.address);
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
                 this.isLoading = false;
+                this.isUploadingImage = false;
+                this.imageFile = null;
                 return;
             }
 
-            if (this.webWorkerImage) {
-                workerImage = this.webWorkerImage;
+            if (this.webWorkerFile) {
+                workerImage = this.webWorkerFile;
             } else {
-                this.webWorkerImage = new WebWorkerImage();
+                this.webWorkerFile = new WebWorkerFile();
             }
 
             const image = this.imageFile
             const id = this.uid();
-            const identifier = `qchat_${id}`;
+            const identifier = qchat_${id};
             let compressedFile = '';
             await new Promise(resolve => {
                 new Compressor( image, {
                     quality: .6,
-                    maxWidth: 500,
+                    maxWidth: 1200,
                     success(result){
                         const file = new File([result], "name", {
                             type: image.type
@@ -2719,40 +3448,41 @@ console.log({zipFileBlob})
                 this.isUploadingImage = false;
                 return;
             }
-                try {
-                    await publishData({
-                        registeredName: userName,
-                        file : compressedFile,
-                        service: 'QCHAT_IMAGE',
-                        identifier : identifier,
-                        parentEpml,
-                        metaData: undefined,
-                        uploadType: 'file',
-                        selectedAddress: this.selectedAddress,
-                        worker: workerImage
-                    });
+            try {
+                await publishData({
+                    registeredName: userName,
+                    file : compressedFile,
+                    service: 'QCHAT_IMAGE',
+                    identifier : identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: workerImage
+                });
+            this.isUploadingImage = false;
+            this.removeImage();
+            } catch (error) {
+                console.error(error);
+                this.isLoading = false;
                 this.isUploadingImage = false;
-                this.removeImage()
-                } catch (error) {
-                    this.isLoading = false;
-                    this.isUploadingImage = false;
-                    return;
-                }
-                const messageObject = {
-                    messageText: trimmedMessage,
-                    images: [{
-                            service: "QCHAT_IMAGE",
-                            name: userName,
-                            identifier: identifier
-                    }],
-                    isImageDeleted: false,
-                    repliedTo: '',
-                    version: 2
-                };
-                const stringifyMessageObject = JSON.stringify(messageObject);
-                this.sendMessage(stringifyMessageObject, typeMessage);
+                return;
+            }
+            
+            const messageObject = {
+                messageText: trimmedMessage,
+                images: [{
+                        service: "QCHAT_IMAGE",
+                        name: userName,
+                        identifier: identifier
+                }],
+                isImageDeleted: false,
+                repliedTo: '',
+                version: 2
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
         }  else if (outSideMsg && outSideMsg.type === 'gif') {
-            console.log(outSideMsg, "gif received here");
             const userName = await getName(this.selectedAddress.address);
             if (!userName) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
@@ -2773,7 +3503,68 @@ console.log({zipFileBlob})
             };
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
-        } else if (outSideMsg && outSideMsg.type === 'reaction') {
+        } else if (outSideMsg && outSideMsg.type === 'attachment') {
+            this.isUploadingAttachment = true;
+            const userName = await getName(this.selectedAddress.address);
+            if (!userName) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
+                this.isLoading = false;
+                return;
+            }
+
+            if (this.webWorkerFile) {
+                workerAttachment = this.webWorkerFile;
+            } else {
+                this.webWorkerFile = new WebWorkerFile();
+            }
+
+            const attachment = this.attachment;
+            const id = this.uid();
+            const identifier = qchat_${id};
+            const fileSize = attachment.size;
+            if (fileSize > 1000000) {
+                parentEpml.request('showSnackBar', get("chatpage.cchange77"));
+                this.isLoading = false;
+                this.isUploadingAttachment = false;
+                return;
+            }
+            try {
+                await publishData({
+                    registeredName: userName,
+                    file : attachment,
+                    service: 'QCHAT_ATTACHMENT',
+                    identifier : identifier,
+                    parentEpml,
+                    metaData: undefined,
+                    uploadType: 'file',
+                    selectedAddress: this.selectedAddress,
+                    worker: workerAttachment
+                });
+            this.isUploadingAttachment = false;
+            this.removeAttachment();
+            } catch (error) {
+                console.error(error);
+                this.isLoading = false;
+                this.isUploadingAttachment = false;
+                return;
+            }
+            const messageObject = {
+                messageText: trimmedMessage,
+                attachments: [{
+                        service: 'QCHAT_ATTACHMENT',
+                        name: userName,
+                        identifier: identifier,
+                        attachmentName: attachment.name,
+                        attachmentSize: attachment.size
+                }],
+                isAttachmentDeleted: false,
+                repliedTo: '',
+                version: 2
+            };
+            const stringifyMessageObject = JSON.stringify(messageObject);
+            this.sendMessage(stringifyMessageObject, typeMessage);
+        }  else if (outSideMsg && outSideMsg.type === 'reaction') {
+            const userName = await getName(this.selectedAddress.address);
             typeMessage = 'edit';
             let chatReference = outSideMsg.editedMessageObj.reference;
 
@@ -2795,11 +3586,14 @@ console.log({zipFileBlob})
             const findEmojiIndex = reactions.findIndex((reaction)=> reaction.type === outSideMsg.reaction)
             if(findEmojiIndex !== -1){
                 let users =  reactions[findEmojiIndex].users || []
-                const findUserIndex = users.findIndex((user)=> user === this.selectedAddress.address )
+                const findUserIndex = users.findIndex((user)=> user.address === this.selectedAddress.address )
                 if(findUserIndex !== -1){
                   users.splice(findUserIndex, 1)
                 } else {
-                    users.push(this.selectedAddress.address)
+                    users.push({ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    })
                 }
                 reactions[findEmojiIndex] = {
                     ...reactions[findEmojiIndex],
@@ -2813,7 +3607,10 @@ console.log({zipFileBlob})
                 reactions = [...reactions, {
                     type: outSideMsg.reaction,
                     qty: 1,
-                    users: [this.selectedAddress.address]
+                    users: [{ 
+                        address: this.selectedAddress.address,
+                        name: userName
+                    }]
                 }]
             }
             const messageObject = {
@@ -2859,7 +3656,7 @@ console.log({zipFileBlob})
             const messageObject = {
                 ...message,
                 messageText: trimmedMessage,
-                
+                isEdited: true
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject, typeMessage, chatReference);
@@ -3128,6 +3925,15 @@ console.log({zipFileBlob})
                     let successString = get("blockpage.bcchange15");
                     parentEpml.request('showSnackBar', `${successString}`);
                 }
+
+                this.closeEditMessageContainer()
+                this.closeRepliedToContainer()
+                this.openForwardOpen = false
+                this.forwardActiveChatHeadUrl = {
+                url: "",
+                name: "",
+                selected: false
+                }
             } else if (response.error) {
                 parentEpml.request('showSnackBar', response.message);
             } else {
@@ -3139,14 +3945,7 @@ console.log({zipFileBlob})
                 return
             }
             this.isLoading = false;
-            this.closeEditMessageContainer()
-            this.closeRepliedToContainer()
-            this.openForwardOpen = false
-            this.forwardActiveChatHeadUrl = {
-                url: "",
-                name: "",
-                selected: false
-            }
+            
         };
 
         if (isForward) {
