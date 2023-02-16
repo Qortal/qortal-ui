@@ -991,7 +991,7 @@ class ChatPage extends LitElement {
                                             ${this.repliedToMessageObj.version.toString() === '1' ? html`
                                             ${this.repliedToMessageObj.message}
                                             ` : ''}
-                                            ${this.repliedToMessageObj.version.toString() === '2' 
+                                            ${+this.repliedToMessageObj.version > 1 
                                             ? html`
                                                 ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, 
                                                 [
@@ -2730,7 +2730,7 @@ class ChatPage extends LitElement {
                     }],
                     isImageDeleted: false,
                     repliedTo: '',
-                    version: 2
+                    version: 3
                 };
                 const stringifyMessageObject = JSON.stringify(messageObject);
                 this.sendMessage(stringifyMessageObject, typeMessage);
@@ -2804,7 +2804,7 @@ class ChatPage extends LitElement {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: chatReference,
-                version: 2
+                version: 3
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
@@ -2836,7 +2836,7 @@ class ChatPage extends LitElement {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
-                version: 2
+                version: 3
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
            

@@ -371,7 +371,8 @@ class MessageTemplate extends LitElement {
         let isEdited = false
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-            if(parsedMessageObj.version.toString() === '2'){
+            console.log({parsedMessageObj}, +parsedMessageObj.version, +parsedMessageObj.version > 1)
+            if(+parsedMessageObj.version > 1){
 
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
                     StarterKit,
@@ -574,7 +575,7 @@ class MessageTemplate extends LitElement {
                                             ${version.toString() === '1' ? html`
                                             ${repliedToData.decodedMessage.messageText}
                                             ` : ''}
-                                            ${version.toString() === '2' ? html`
+                                            ${+version > 1 ? html`
                                             ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
                                                 StarterKit,
                                                 Underline,
@@ -627,7 +628,7 @@ class MessageTemplate extends LitElement {
                                     id="messageContent" 
                                     class="message" 
                                     style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
-                                        ${version.toString() === '2' ? html`
+                                        ${+version > 1 ? html`
                                         ${unsafeHTML(messageVersion2)}
                                         ` : ''}
                                         ${version.toString() === '1' ? html`
