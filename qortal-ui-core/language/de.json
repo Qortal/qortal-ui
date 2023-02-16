@@ -36,7 +36,10 @@
 		"puzzles": "RÄTSEL",
 		"nodemanagement": "KNOTENVERWALTUNG",
 		"trading": "HANDELN",
-		"groups": "GRUPPEN"
+		"groups": "GRUPPEN",
+		"sm1": "NAMEN",
+		"sm2": "NAMENSVERWALTUNG",
+		"sm3": "NAMENSMARKT"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -283,7 +286,8 @@
 		"wchange54": "Adressbuch exportieren",
 		"wchange55": "Ihr bestehendes Adressbuch wird gelöscht und aus einem Backup neu erstellt.",
 		"wchange56": "WARNUNG!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "Neue Adresse"
 	},
 	"tradepage": {
 		"tchange1": "Handelsportal",
@@ -382,7 +386,7 @@
 		"nchange19": "Name Verkaufen",
 		"nchange20": "Verkauf abbrechen",
 		"nchange21": "Name kaufen",
-		"nchange22": "Offenstehende Namen zum Verkauf",
+		"nchange22": "Namensmarkt",
 		"nchange23": "Verkaufspreis",
 		"nchange24": "Keine Namen zu verkaufen",
 		"nchange25": "Name zu verkaufen",
@@ -400,7 +404,14 @@
 		"nchange37": "ACHTUNG!",
 		"nchange38": "Du hast nicht genug Qort, um diesen Namen zu kaufen.",
 		"nchange39": "Sind Sie sicher, diesen Namen zu kaufen?",
-		"nchange40": "Wenn Sie auf Bestätigen drücken, wird die Anfrage zum Kauf des Namens gesendet!"
+		"nchange40": "Wenn Sie auf Bestätigen drücken, wird die Anfrage zum Kauf des Namens gesendet!",
+		"nchange41": "Alter Name",
+		"nchange42": "Neuer Name",
+		"nchange43": "Möchten Sie diesen Namen wirklich ändern?",
+		"nchange44": "Zum neuen Namen",
+		"nchange45": "Beim Bestätigen wird die Anfrage zur Namensaktualisierung gesendet!",
+		"nchange46": "Namensverkaufshistorie",
+		"nchange47": "Namensaktualisierung erfolgreich!"
 	},
 	"websitespage": {
 		"schange1": "Webseiten durchsuchen",
@@ -574,7 +585,13 @@
 		"cchange65": "Bitte geben Sie einen Empfänger ein",
 		"cchange66": "Beantwortete Nachricht kann nicht abgerufen werden. Nachricht ist zu alt.",
 		"cchange68": "bearbeitet",
-		"cchange69": "Zeige Bilder automatisch"
+		"cchange69": "Zeige Bilder automatisch",
+		"cchange70": "Dieser Bildtyp wird nicht unterstützt",
+		"cchange71": "und",
+		"cchange72": "andere",
+		"cchange73": "s",
+		"cchange74": "reagiert mit",
+		"cchange90": "Keine Nachrichten"
 	},
 	"welcomepage": {
 		"wcchange1": "Willkommen zu Q-Chat",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENÜ",
 		"bcchange8": "Adresse Kopieren",
 		"bcchange9": "Private Nachricht",
-		"bcchange10": "Mehr"
+		"bcchange10": "Mehr",
+		"bcchange11": "Antworten",
+		"bcchange12": "Bearbeiten",
+		"bcchange13": "Reaktion",
+		"bcchange14": "Weiterleiten",
+		"bcchange15": "Nachricht weitergeleitet",
+		"bcchange16": "Empfänger auswählen oder darunter suchen",
+		"bcchange17": "WEITERGELEITET",
+		"bcchange18": "Tipp Benutzer"
 	},
 	"grouppage": {
 		"gchange1": "Qortal-Gruppen",
@@ -657,7 +682,8 @@
 		"gchange55": "Private Gruppe suchen",
 		"gchange56": "Zu suchender Gruppenname",
 		"gchange57": "Privater Gruppenname nicht gefunden",
-		"gchange58": "Beachten Sie, dass der Gruppenname genau übereinstimmen muss."
+		"gchange58": "Beachten Sie, dass der Gruppenname genau übereinstimmen muss.",
+		"gchange59": "Ticker ein-/ausblenden"
 	},
 	"puzzlepage": {
 		"pchange1": "Rätsel",

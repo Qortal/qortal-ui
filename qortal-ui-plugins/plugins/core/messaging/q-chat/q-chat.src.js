@@ -8,6 +8,7 @@ import { Epml } from '../../../../epml.js';
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate';
 import { qchatStyles } from './q-chat-css.src.js'
 import WebWorker from 'web-worker:./computePowWorker.src.js';
+import {repeat} from 'lit/directives/repeat.js';
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -28,8 +29,9 @@ import '@vaadin/grid'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder'
-import { Editor, Extension } from '@tiptap/core'
+import Highlight from '@tiptap/extension-highlight'
 
+import { Editor, Extension } from '@tiptap/core'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class Chat extends LitElement {
@@ -55,7 +57,7 @@ class Chat extends LitElement {
             userFoundModalOpen: { type: Boolean },
             userSelected: { type: Object },
             editor: {type: Object},
-            groupInvites: { type: Array }
+            groupInvites: { type: Array },
         }
     }
 
@@ -118,6 +120,7 @@ class Chat extends LitElement {
     }
 
     async connectedCallback() {
+        
         super.connectedCallback();
         await this.getUpdateCompleteTextEditor();
 
@@ -147,14 +150,35 @@ class Chat extends LitElement {
                 }})
             ]
           })
+
          
+          this.unsubscribeStore =  window.parent.reduxStore.subscribe(() => {
+            try {
+      
+                if(window.parent.location && window.parent.location.search){
+                    const queryString = window.parent.location.search;
+                    const params = new URLSearchParams(queryString);
+                    const chat = params.get("chat")
+                    if(chat && chat !== this.activeChatHeadUrl){
+                        let url = window.parent.location.href;
+                        let newUrl = url.split("?")[0];
+                        window.parent.history.pushState({}, "", newUrl);
+                        this.setActiveChatHeadUrl(chat)
+                    }
+                }
+            } catch (error) {
+                console.error(error)
+            }
+          
+          });         
       }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.editor.destroy()
-  
+        this.editor.destroy();
+        this.unsubscribeStore();
       }
+
 
       updatePlaceholder(editor, text){
         editor.extensionManager.extensions.forEach((extension) => {
@@ -215,7 +239,7 @@ class Chat extends LitElement {
                     </div>
                     <div class="chat-history">
                
-                        ${window.parent.location.pathname !== "/app/q-chat" || this.activeChatHeadUrl ? html`${this.renderChatPage(this.chatId)}` : html`${this.renderChatWelcomePage()}`}
+                        ${this.activeChatHeadUrl ? html`${this.renderChatPage()}` : html`${this.renderChatWelcomePage()}`}
                     </div>
                 </div>
                 <!-- Start Chatting Dialog -->
@@ -367,6 +391,8 @@ class Chat extends LitElement {
         `
     }
 
+ 
+
    async firstUpdated() {
         this.changeLanguage();
         this.changeTheme();
@@ -482,7 +508,10 @@ class Chat extends LitElement {
             })
         })
         parentEpml.imReady()
+     
     }
+
+    
 
     setOpenPrivateMessage(props) {
         this.openPrivateMessage = props.open;
@@ -829,17 +858,14 @@ class Chat extends LitElement {
     }
 
     renderChatHead(chatHeadArr) {
-
-        let tempUrl = document.location.href
-        let splitedUrl = decodeURI(tempUrl).split('?')
-        // let activeChatHeadUrl = splitedUrl[1] === undefined ? '' : splitedUrl[1]
-
+      
         return chatHeadArr.map(eachChatHead => {
             return html`<chat-head activeChatHeadUrl=${this.activeChatHeadUrl} .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)} chatInfo=${JSON.stringify(eachChatHead)}></chat-head>`
         })
+      
     }
 
-    renderChatPage(chatId) {
+    renderChatPage() {
         
         // Check for the chat ID from and render chat messages
         // Else render Welcome to Q-CHat
@@ -861,7 +887,7 @@ class Chat extends LitElement {
     setChatHeads(chatObj) {
         const chatObjGroups = Array.isArray(chatObj.groups) ? chatObj.groups  : [];
         const chatObjDirect = Array.isArray(chatObj.direct) ? chatObj.direct : [];
-        let groupList = chatObjGroups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
+        let groupList = chatObjGroups.map(group => group.groupId === 0 ? { groupId: group.groupId, url: `group/${group.groupId}`, groupName: "Qortal General Chat", timestamp: group.timestamp === undefined ? 2 : group.timestamp, sender: group.sender } : { ...group, timestamp: group.timestamp === undefined ? 1 : group.timestamp, url: `group/${group.groupId}` })
         let directList = chatObjDirect.map(dc => {
             return { ...dc, url: `direct/${dc.address}` }
         })

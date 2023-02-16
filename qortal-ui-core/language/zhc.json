@@ -36,7 +36,10 @@
 		"puzzles": "益智游戏",
 		"nodemanagement": "节点管理",
 		"trading": "贸易",
-		"groups": "群组"
+		"groups": "群组",
+		"sm1": "名字",
+		"sm2": "名称管理",
+		"sm3": "名称市场"
 	},
 	"login": {
 		"login": "登入",
@@ -283,7 +286,8 @@
 		"wchange54": "导出通讯录",
 		"wchange55": "您现有的通讯簿将被删除并从新创建的备份中。",
 		"wchange56": "警告！",
-		"wchange57": "备忘录"
+		"wchange57": "备忘录",
+		"wchange58": "新的钱包地址"
 	},
 	"tradepage": {
 		"tchange1": "交易门户",
@@ -382,7 +386,7 @@
 		"nchange19": "销售名称",
 		"nchange20": "取消销售",
 		"nchange21": "购买名称",
-		"nchange22": "公开市场名称出售",
+		"nchange22": "地名市场",
 		"nchange23": "卖出价",
 		"nchange24": "没有名字可以卖",
 		"nchange25": "出售名称",
@@ -400,7 +404,14 @@
 		"nchange37": "注意！",
 		"nchange38": "你没有足够的qort 来购买这个名字。",
 		"nchange39": "你确定要买这个名字吗？",
-		"nchange40": "按下确认后，将发送购买名称请求！"
+		"nchange40": "按下确认后，将发送购买名称请求！",
+		"nchange41": "旧名称",
+		"nchange42": "新名称",
+		"nchange43": "您确定要更改此名称吗？",
+		"nchange44": "改成新名字",
+		"nchange45": "按下确认后，将发送名称更新请求！",
+		"nchange46": "命名销售历史",
+		"nchange47": "名称更新成功！"
 	},
 	"websitespage": {
 		"schange1": "浏览网站",
@@ -579,7 +590,8 @@
 		"cchange71": "和",
 		"cchange72": "其他",
 		"cchange73": "的",
-		"cchange74": "心情回应"
+		"cchange74": "心情回应",
+		"cchange90": "没有消息"
 	},
 	"welcomepage": {
 		"wcchange1": "欢迎来到Q-Chat",
@@ -670,7 +682,8 @@
 		"gchange55": "搜索私人群组",
 		"gchange56": "要搜索的群组名称",
 		"gchange57": "未找到私人群组名称",
-		"gchange58": "注意群组名称必须完全匹配。"
+		"gchange58": "注意群组名称必须完全匹配。",
+		"gchange59": "显示/隐藏代码"
 	},
 	"puzzlepage": {
 		"pchange1": "益智游戏",

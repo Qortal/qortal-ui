@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLES",
 		"nodemanagement": "GESTION DE NOEUDS",
 		"trading": "COMMERCE",
-		"groups": "GROUPES"
+		"groups": "GROUPES",
+		"sm1": "NOMS",
+		"sm2": "GESTION DES NOM",
+		"sm3": "MARCHÉ DES NOMS"
 	},
 	"login": {
 		"login": "Connexion",
@@ -283,7 +286,8 @@
 		"wchange54": "Exporter le carnet d'adresses",
 		"wchange55": "Votre carnet d'adresses existant sera supprimé et une nouvelle sauvegarde sera créée.",
 		"wchange56": "ATTENTION!",
-		"wchange57": "Mémo"
+		"wchange57": "Mémo",
+		"wchange58": "Nouvelle Adresse"
 	},
 	"tradepage": {
 		"tchange1": "Portail de commerce",
@@ -382,7 +386,7 @@
 		"nchange19": "Nom de vente",
 		"nchange20": "Annuler la vente",
 		"nchange21": "Acheter le nom",
-		"nchange22": "Noms du marché ouvert à vendre",
+		"nchange22": "Marché des noms",
 		"nchange23": "Prix de vente",
 		"nchange24": "Aucun nom à vendre",
 		"nchange25": "Nom à vendre",
@@ -400,7 +404,14 @@
 		"nchange37": "ATTENTION !",
 		"nchange38": "Vous n'avez pas assez de qort pour acheter ce nom.",
 		"nchange39": "Êtes-vous sûr d'acheter ce nom ?",
-		"nchange40": "En appuyant sur confirmer, la demande d'achat de nom sera envoyée !"
+		"nchange40": "En appuyant sur confirmer, la demande d'achat de nom sera envoyée !",
+		"nchange41": "Ancien nom",
+		"nchange42": "Nouveau nom",
+		"nchange43": "Êtes-vous sûr de vouloir changer ce nom ?",
+		"nchange44": "Au nouveau nom",
+		"nchange45": "En appuyant sur confirmer, la demande de mise à jour du nom sera envoyée !",
+		"nchange46": "Historique des ventes de noms",
+		"nchange47": "Mise à jour du nom réussie !"
 	},
 	"websitespage": {
 		"schange1": "Parcourir les sites Web",
@@ -574,7 +585,13 @@
 		"cchange65": "Veuillez saisir un destinataire",
 		"cchange66": "Impossible de récupérer le message auquel vous avez répondu. Le message est trop ancien.",
 		"cchange68": "modifié",
-		"cchange69": "Afficher automatiquement les images"
+		"cchange69": "Afficher automatiquement les images",
+		"cchange70": "Ce type d'image n'est pas pris en charge",
+		"cchange71": "et",
+		"cchange72": "autre",
+		"cchange73": "s",
+		"cchange74": "a réagi avec",
+		"cchange90": "Aucun message"
 	},
 	"welcomepage": {
 		"wcchange1": "Bienvenue dans Q-Chat",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Copier l'Adresse",
 		"bcchange9": "Message Privé",
-		"bcchange10": "Suite"
+		"bcchange10": "Suite",
+		"bcchange11": "Répondre",
+		"bcchange12": "Modifier",
+		"bcchange13": "Réaction",
+		"bcchange14": "En avant",
+		"bcchange15": "Message transféré",
+		"bcchange16": "Choisissez le destinataire ou recherchez-en un ci-dessous",
+		"bcchange17": "TRANSMIS",
+		"bcchange18": "Astuce à l'utilisateur"
 	},
 	"grouppage": {
 		"gchange1": "Groupes Qortal",
@@ -657,7 +682,8 @@
 		"gchange55": "Rechercher un groupe privé",
 		"gchange56": "Nom du groupe à rechercher",
 		"gchange57": "Nom de groupe privé introuvable",
-		"gchange58": "Notez que le nom du groupe doit correspondre exactement."
+		"gchange58": "Notez que le nom du groupe doit correspondre exactement.",
+		"gchange59": "Afficher / Masquer le téléscripteur"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

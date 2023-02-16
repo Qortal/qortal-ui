@@ -10,7 +10,7 @@
   "electron_translate_7": "Mise à jour prête à installer",
   "electron_translate_8": "Une nouvelle version de l'interface utilisateur de Qortal a été téléchargée.",
   "electron_translate_9": "Cliquez sur INSTALLER MAINTENANT pour appliquer la mise à jour, PEUT-ÊTRE PLUS TARD pour ne pas mettre à jour l'interface utilisateur.",
-  "electron_translate_10": "Erreur lors de la mise à jour...",
+  "electron_translate_10": "Échec de la mise à jour temporaire, réessayera plus tard",
   "electron_translate_11": "TÉLÉCHARGER LA MISE À JOUR",
   "electron_translate_12": "Il sera téléchargé ⌛️ en arrière-plan !"
 }

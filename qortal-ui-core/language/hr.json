@@ -36,7 +36,10 @@
 		"puzzles": "ZAGONETKE",
 		"nodemanagement": "UPRAVLJANJE ČVOROVIMA",
 		"trading": "TRGOVANJE",
-		"groups": "GRUPE"
+		"groups": "GRUPE",
+		"sm1": "IMENA",
+		"sm2": "UPRAVLJANJE IMENIMA",
+		"sm3": "TRŽIŠTE IMENA"
 	},
 	"login": {
 		"login": "Prijavi se",
@@ -283,7 +286,8 @@
 		"wchange54": "Izvezi adresar",
 		"wchange55": "Vaš postojeći adresar bit će izbrisan i novi će se stvoriti iz sigurnosne kopije.",
 		"wchange56": "UPOZORENJE!",
-		"wchange57": "Dopis"
+		"wchange57": "Dopis",
+		"wchange58": "Nova Adresa"
 	},
 	"tradepage": {
 		"tchange1": "Portal razmjene",
@@ -382,7 +386,7 @@
 		"nchange19": "Ime prodaje",
 		"nchange20": "Otkaži prodaju",
 		"nchange21": "Ime kupovine",
-		"nchange22": "Imena otvorenog tržišta za prodaju",
+		"nchange22": "Tržište imena",
 		"nchange23": "Prodajna cijena",
 		"nchange24": "Nema imena za prodaju",
 		"nchange25": "Ime za prodaju",
@@ -400,7 +404,14 @@
 		"nchange37": "PAŽNJA!",
 		"nchange38": "Nemate dovoljno qort da kupite ovo ime.",
 		"nchange39": "Jeste li sigurni da želite kupiti ovo ime?",
-		"nchange40": "Pritiskom na potvrdu, zahtjev za kupnju imena bit će poslan!"
+		"nchange40": "Pritiskom na potvrdu, zahtjev za kupnju imena bit će poslan!",
+		"nchange41": "Staro ime",
+		"nchange42": "Novo ime",
+		"nchange43": "Jeste li sigurni da želite promijeniti ovo ime?",
+		"nchange44": "Na novo ime",
+		"nchange45": "Kada pritisnete potvrdu, bit će poslan zahtjev za ažuriranje imena!",
+		"nchange46": "Povijest prodaje imena",
+		"nchage47": "Ažuriranje imena uspješno!"
 	},
 	"websitespage": {
 		"schange1": "Pregledavanje web stranica",
@@ -574,7 +585,13 @@
 		"cchange65": "Molimo unesite primatelja",
 		"cchange66": "Ne mogu dohvatiti poruku s odgovorom. Poruka je prestara.",
 		"cchange68": "uređeno",
-		"cchange69": "Automatsko prikazivanje slika"
+		"cchange69": "Automatsko prikazivanje slika",
+		"cchange70": "Ova vrsta slike nije podržana",
+		"cchange71": "i",
+		"cchange72": "ostalo",
+		"cchange73": "s",
+		"cchange74": "reagirao sa",
+		"cchange90": "Nema poruka"
 	},
 	"welcomepage": {
 		"wcchange1": "Dobrodošli u Q-Čavrljanje",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENI",
 		"bcchange8": "Kopiraj Adresu",
 		"bcchange9": "Privatna Poruka",
-		"bcchange10": "Više"
+		"bcchange10": "Više",
+		"bcchange11": "Odgovori",
+		"bcchange12": "Uredi",
+		"bcchange13": "Reakcija",
+		"bcchange14": "Naprijed",
+		"bcchange15": "Poruka proslijeđena",
+		"bcchange16": "Odaberite primatelja ili potražite jednog ispod",
+		"bcchange17": "PROSLJEĐENO",
+		"bcchange18": "Savjet korisniku"
 	},
 	"grouppage": {
 		"gchange1": "Qortal Grupe",
@@ -657,7 +682,8 @@
 		"gchange55": "Traži privatnu grupu",
 		"gchange56": "Naziv grupe za pretraživanje",
 		"gchange57": "Ime privatne grupe nije pronađeno",
-		"gchange58": "Imajte na umu da se naziv grupe mora točno podudarati."
+		"gchange58": "Imajte na umu da se naziv grupe mora točno podudarati.",
+		"gchange59": "Prikaži / sakrij ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Zagonetke",

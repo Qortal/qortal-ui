@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLES",
 		"nodemanagement": "NODEADMINISTRASJON",
 		"trading": "HANDEL",
-		"groups": "GRUPPER"
+		"groups": "GRUPPER",
+		"sm1": "NAVN",
+		"sm2": "NAVNEBEHANDLING",
+		"sm3": "NAMES MARKET"
 	},
 	"login": {
 		"login": "Logg på",
@@ -283,7 +286,8 @@
 		"wchange54": "Eksporter adressebok",
 		"wchange55": "Din eksisterende adressebok vil bli slettet og ny opprettet fra sikkerhetskopi.",
 		"wchange56": "ADVARSEL!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "Ny Adresse"
 	},
 	"tradepage": {
 		"tchange1": "Handelsportal",
@@ -382,7 +386,7 @@
 		"nchange19": "Selgsnavn",
 		"nchange20": "Avbryt salg",
 		"nchange21": "Kjøp navn",
-		"nchange22": "Åpne markedsnavn å selge",
+		"nchange22": "Navnemarked",
 		"nchange23": "Selgspris",
 		"nchange24": "Ingen navn å selge",
 		"nchange25": "Navn å selge",
@@ -400,7 +404,14 @@
 		"nchange37": "OBS!",
 		"nchange38": "Du har ikke nok qort til å kjøpe dette navnet.",
 		"nchange39": "Er du sikker på å kjøpe dette navnet?",
-		"nchange40": "Når du trykker bekreft, vil forespørselen om kjøpsnavn bli sendt!"
+		"nchange40": "Når du trykker bekreft, vil forespørselen om kjøpsnavn bli sendt!",
+		"nchange41": "Gammelt navn",
+		"nchange42": "Nytt navn",
+		"nchange43": "Er du sikker på at du vil endre dette navnet?",
+		"nchange44": "Til det nye navnet",
+		"nchange45": "Når du trykker bekreft, vil forespørselen om navneoppdatering bli sendt!",
+		"nchange46": "Navnsalgshistorikk",
+		"nchange47": "Navneoppdateringen er vellykket!"
 	},
 	"websitespage": {
 		"schange1": "Bla gjennom nettsteder",
@@ -574,7 +585,13 @@
 		"cchange65": "Vennligst skriv inn en mottaker",
 		"cchange66": "Kan ikke hente besvart melding. Meldingen er for gammel.",
 		"cchange68": "redigert",
-		"cchange69": "Vis bilder automatisk"
+		"cchange69": "Vis bilder automatisk",
+		"cchange70": "Denne bildetypen støttes ikke",
+		"cchange71": "og",
+		"cchange72": "annet",
+		"cchange73": "s",
+		"cchange74": "reagerte med",
+		"cchange90": "Ingen meldinger"
 	},
 	"welcomepage": {
 		"wcchange1": "Velkommen til Q-Chat",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENY",
 		"bcchange8": "Kopier adresse",
 		"bcchange9": "Privat melding",
-		"bcchange10": "Mer"
+		"bcchange10": "Mer",
+		"bcchange11": "Svar",
+		"bcchange12": "Rediger",
+		"bcchange13": "Reaksjon",
+		"bcchange14": "Videresend",
+		"bcchange15": "Melding videresendt",
+		"bcchange16": "Velg mottaker eller søk etter en nedenfor",
+		"bcchange17": "VIDERESENDE",
+		"bcchange18": "Tipsbruker"
 	},
 	"grouppage": {
 		"gchange1": "Qortal-grupper",
@@ -657,7 +682,8 @@
 		"gchange55": "Søk i privat gruppe",
 		"gchange56": "Gruppenavn å søke",
 		"gchange57": "Privat gruppenavn ikke funnet",
-		"gchange58": "Merk at gruppenavnet må samsvare nøyaktig."
+		"gchange58": "Merk at gruppenavnet må samsvare nøyaktig.",
+		"gchange59": "Vis / Skjul Ticker"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

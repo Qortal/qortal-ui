@@ -10,7 +10,7 @@
   "electron_translate_7": "更新准备安装",
   "electron_translate_8": "已下载新的 Qortal UI 版本。",
   "electron_translate_9": "点击现在安装应用更新，可能稍后不更新用户界面。",
-  "electron_translate_10": "更新时出错...",
+  "electron_translate_10": "暂时更新失败，稍后再试",
   "electron_translate_11": "下载更新",
   "electron_translate_12": "它将在后台下载 ⌛️！"
 }

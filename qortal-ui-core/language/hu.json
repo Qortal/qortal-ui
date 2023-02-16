@@ -36,7 +36,10 @@
 		"puzzles": "REJTVÉNYEK",
 		"nodemanagement": "CSOMÓPONTKEZELÉS",
 		"trading": "KERESKEDÉS",
-		"groups": "CSOPORTOK"
+		"groups": "CSOPORTOK",
+		"sm1": "NAMES",
+		"sm2": "NÉVKEZELÉS",
+		"sm3": "NAMES PIAC"
 	},
 	"login": {
 		"login": "Bejelentkezés",
@@ -283,7 +286,8 @@
 		"wchange54": "Címjegyzék exportálása",
 		"wchange55": "Meglévő címjegyzéke törlésre kerül, és a biztonsági másolatból új jön létre.",
 		"wchange56": "FIGYELEM!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "Új Cím"
 	},
 	"tradepage": {
 		"tchange1": "Kereskedelmi Portál",
@@ -382,7 +386,7 @@
 		"nchange19": "Eladási név",
 		"nchange20": "Eladás törlése",
 		"nchange21": "Vásárlási név",
-		"nchange22": "Eladó nyílt piaci nevek",
+		"nchange22": "Nevek Piac",
 		"nchange23": "Eladási ár",
 		"nchange24": "Nincsenek eladható nevek",
 		"nchange25": "Eladó név",
@@ -400,7 +404,14 @@
 		"nchange37": "FIGYELEM!",
 		"nchange38": "Nincs elég qortja ennek a névnek a megvásárlásához.",
 		"nchange39": "Biztosan megveszi ezt a nevet?",
-		"nchange40": "A megerősítés megnyomására a vásárlási névkérelem elküldésre kerül!"
+		"nchange40": "A megerősítés megnyomására a vásárlási névkérelem elküldésre kerül!",
+		"nchange41": "Régi név",
+		"nchange42": "Új név",
+		"nchange43": "Biztosan megváltoztatja ezt a nevet?",
+		"nchange44": "Az új névre",
+		"nchange45": "A megerősítés megnyomására a névfrissítési kérés elküldésre kerül!",
+		"nchange46": "Név eladási előzmények",
+		"nchange47": "A névfrissítés sikeres!"
 	},
 	"websitespage": {
 		"schange1": "Webhelyek Böngészése",
@@ -574,7 +585,13 @@
 		"cchange65": "Kérjük, adjon meg egy címzettet",
 		"cchange66": "Nem sikerült lekérni a válaszolt üzenetet. Az üzenet túl régi.",
 		"cchange68": "szerkesztve",
-		"cchange69": "Képek automatikus megjelenítése"
+		"cchange69": "Képek automatikus megjelenítése",
+		"cchange70": "Ez a képtípus nem támogatott",
+		"cchange71": "és",
+		"cchange72": "egyéb",
+		"cchange73": "s",
+		"cchange74": "reagált:",
+		"cchange90": "Nincs üzenet"
 	},
 	"welcomepage": {
 		"wcchange1": "Üdvözöljük a Q-Chathoz",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENÜ",
 		"bcchange8": "Cím Másolása",
 		"bcchange9": "Privát Üzenet",
-		"bcchange10": "Több"
+		"bcchange10": "Több",
+		"bcchange11": "Válasz",
+		"bcchange12": "Szerkesztés",
+		"bcchange13": "Reakció",
+		"bcchange14": "Tovább",
+		"bcchange15": "Üzenet továbbítva",
+		"bcchange16": "Válasszon címzettet vagy keressen egyet lent",
+		"bcchange17": "TOVÁLTVA",
+		"bcchange18": "Tipp felhasználó"
 	},
 	"grouppage": {
 		"gchange1": "Qortal Csoportok",
@@ -657,7 +682,8 @@
 		"gchange55": "Keresés privát csoportban",
 		"gchange56": "A keresendő csoport neve",
 		"gchange57": "A privát csoport neve nem található",
-		"gchange58": "Ne feledje, hogy a csoport nevének pontosan meg kell egyeznie."
+		"gchange58": "Ne feledje, hogy a csoport nevének pontosan meg kell egyeznie.",
+		"gchange59": "Ticker megjelenítése / elrejtése"
 	},
 	"puzzlepage": {
 		"pchange1": "Rejtvények",

@@ -15,6 +15,8 @@ class ChatTextEditor extends LitElement {
             isLoadingMessages: { type: Boolean },
             _sendMessage: { attribute: false },
             placeholder: { type: String },
+            attachment: { type: Object },
+            insertFile: { attribute: false },
             imageFile: { type: Object },
             insertImage: { attribute: false },
             iframeHeight: { type: Number },
@@ -481,16 +483,19 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     </vaadin-icon>     
                     <div class="file-picker-input-container">
                     <input 
-                            @change="${e => {
-                                this.insertImage(e.target.files[0]);
-                                const filePickerInput = this.shadowRoot.getElementById('file-picker') 
-                                if(filePickerInput){
-                                    filePickerInput.value = ""
-                                }
-                                    }
-                                }"
-                            id="file-picker"
-                            class="file-picker-input" type="file" name="myImage" accept="image/*" />
+                        @change="${e => {
+                            this.insertFile(e.target.files[0]);
+                            const filePickerInput = this.shadowRoot.getElementById('file-picker');
+                            if (filePickerInput) {
+                                    filePickerInput.value = "";
+                                }   
+                            }
+                        }"
+                        id="file-picker"
+                        class="file-picker-input" 
+                        type="file" 
+                        name="myImage" 
+                        accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" />
                     </div>     
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
@@ -523,7 +528,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     html`
                         <div 
                         style="margin-bottom: 10px;
-                        ${this.iframeId === 'newChat'
+                        ${(this.iframeId === 'newChat'  || this.iframeId === "newAttachmentChat")
                         ? 'display: none;' 
                         : 'display: flex;'}">
                             ${this.isLoading === false ? html`
@@ -692,7 +697,20 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     repliedTo: '',
                     version: 3
                 };
-            } else {
+            } else if (this.attachment && this.iframeId === 'newAttachmentChat') {
+                messageObject = {
+                      messageText: trimmedMessage,
+                      attachments: [{
+                          service: "QCHAT_ATTACHMENT",
+                          name: '123456789123456789123456789',
+                          identifier: '123456',
+                          attachmentName: "123456789123456789123456789",
+                          attachmentSize: "123456"
+                      }],
+                      repliedTo: '',
+                      version: 2
+                  };
+              } else {
                 messageObject = {
                       messageText: trimmedMessage,
                       images: [''],

@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLE",
 		"nodemanagement": "ZARZĄDZANIE WĘZŁAMI",
 		"trading": "HANDLOWY",
-		"groups": "GRUPY"
+		"groups": "GRUPY",
+		"sm1": "NAZWY",
+		"sm2": "ZARZĄDZANIE NAZWAMI",
+		"sm3": "RYNEK NAZW"
 	},
 	"login": {
 		"login": "Zaloguj się",
@@ -283,7 +286,8 @@
 		"wchange54": "Eksportuj książkę adresową",
 		"wchange55": "Twoja istniejąca książka adresowa zostanie usunięta, az kopii zapasowej utworzona nowa.",
 		"wchange56": "OSTRZEŻENIE!",
-		"wchange57": "Memo"
+		"wchange57": "Memo",
+		"wchange58": "Nowy Adres"
 	},
 	"tradepage": {
 		"tchange1": "Portal Handlowy",
@@ -382,7 +386,7 @@
 		"nchange19": "Nazwa sprzedaży",
 		"nchange20": "Anuluj sprzedaż",
 		"nchange21": "Kup nazwę",
-		"nchange22": "Otwórz nazwy rynków do sprzedaży",
+		"nchange22": "Rynek imion",
 		"nchange23": "Cena sprzedaży",
 		"nchange24": "Brak nazw do sprzedania",
 		"nchange25": "Nazwa do sprzedania",
@@ -400,7 +404,14 @@
 		"nchange37": "UWAGA!",
 		"nchange38": "Nie masz wystarczającej ilości qort, aby kupić tę nazwę.",
 		"nchange39": "Czy na pewno kupisz tę nazwę?",
-		"nchange40": "Po naciśnięciu potwierdzenia, prośba o nazwę kupna zostanie wysłana!"
+		"nchange40": "Po naciśnięciu potwierdzenia, prośba o nazwę kupna zostanie wysłana!",
+		"nchange41": "Stara nazwa",
+		"nchange42": "Nowa nazwa",
+		"nchange43": "Czy na pewno chcesz zmienić tę nazwę?",
+		"nchange44": "Do nowej nazwy",
+		"nchange45": "Po naciśnięciu potwierdzenia, prośba o aktualizację nazwy zostanie wysłana!",
+		"nchange46": "Historia sprzedaży nazw",
+		"nchange47": "Aktualizacja nazwy powiodła się!"
 	},
 	"websitespage": {
 		"schange1": "Przeglądaj strony internetowe",
@@ -574,7 +585,13 @@
 		"cchange65": "Wprowadź odbiorcę",
 		"cchange66": "Nie można pobrać wiadomości, na którą udzielono odpowiedzi. Wiadomość jest za stara.",
 		"cchange68": "edytowano",
-		"cchange69": "Automatyczne wyświetlanie obrazów"
+		"cchange69": "Automatyczne wyświetlanie obrazów",
+		"cchange70": "Ten typ obrazu nie jest obsługiwany",
+		"cchange71": "i",
+		"cchange72": "inne",
+		"cchange73": "s",
+		"cchange74": "zareagował z",
+		"cchange90": "Brak wiadomości"
 	},
 	"welcomepage": {
 		"wcchange1": "Witamy w Q-Chat",
@@ -597,7 +614,15 @@
 		"bcchange7": "MENU",
 		"bcchange8": "Kopiuj Adres",
 		"bcchange9": "Prywatna Wiadomość",
-		"bcchange10": "Więcej"
+		"bcchange10": "Więcej",
+		"bcchange11": "Odpowiedz",
+		"bcchange12": "Edytuj",
+		"bcchange13": "Reakcja",
+		"bcchange14": "Przekaż",
+		"bcchange15": "Wiadomość przekazana",
+		"bcchange16": "Wybierz odbiorcę lub wyszukaj poniżej",
+		"bcchange17": "PRZEKAZANA",
+		"bcchange18": "Użytkownik napiwku"
 	},
 	"grouppage": {
 		"gchange1": "Grupy Qortal",
@@ -657,7 +682,8 @@
 		"gchange55": "Wyszukaj grupę prywatną",
 		"gchange56": "Nazwa grupy do wyszukania",
 		"gchange57": "Nie znaleziono nazwy grupy prywatnej",
-		"gchange58": "Zauważ, że nazwa grupy musi dokładnie pasować."
+		"gchange58": "Zauważ, że nazwa grupy musi dokładnie pasować.",
+		"gchange59": "Pokaż / Ukryj Znacznik"
 	},
 	"puzzlepage": {
 		"pchange1": "Zagadki",
@@ -868,7 +894,7 @@
 		"inf9": "„Automatyczne kupowanie” to funkcja umożliwiająca składanie „zleceń kupna” w portalu handlowym. Te „zlecenia kupna” są widoczne tylko dla osoby, która je składa. Nie są to „publiczne” zlecenia kupna, jak np. „sprzedaże z otwartego rynku” są i NIE są przechowywane w łańcuchu blokowym Qortal. Auto Buy to funkcja interfejsu użytkownika i jako taka wymaga, aby interfejs użytkownika URUCHAMIAŁ.",
 		"inf10": "Aby złożyć zamówienie automatycznego zakupu, kliknij przycisk „Dodaj zamówienie automatycznego zakupu” i wypełnij pole, które się pojawi. Wprowadź KWOTĘ KWARTOŚCI, którą chcesz KUPIĆ, oraz CENĘ, do której chcesz KUPIĆ. Raz zamówienie jest aktywne, Auto Buy kupi dla ciebie DO tej kwoty QORT, po MAKSYMALNIE ustalonej cenie (zaczynając od najniższego zamówienia i przesuwając się w górę).",
 		"inf11": "Po prostu ZOSTAW DZIAŁAJĄCY UI, a Auto Buy zrobi resztę automatycznie!",
-		"inf12": "MOŻESZ przeglądać inne wtyczki w interfejsie użytkownika (Q-Chat, portfele itp.), ale NIE MOŻESZ ZAMKNĄĆ interfejsu użytkownika, jeśli chcesz, aby zakup automatyczny został zakończony. Pozostawienie interfejsu użytkownika „zminimalizowanego” na „pasku zadań” lub „panel” jest w porządku, o ile interfejs użytkownika pozostaje OTWARTY, Auto Buy będzie działać."
+		"inf12": "MOŻESZ przeglądać inne wtyczki w interfejsie użytkownika (Q-Chat, portfele itp.), ale NIE MOŻESZ ZAMKNĄĆ interfejsu użytkownika, jeśli chcesz, aby zakup automatyczny został zakończony. Pozostawienie interfejsu użytkownika „zminimalizowanego” na „pasku zadań” lub „panel” jest w porządku, o ile interfejs użytkownika pozostaje OTWARTY, Auto Buy będzie działać.",
 		"inf13": "Kup automatycznie",
 		"inf14": "z",
 		"inf15": "Aktywne automatyczne zamówienia zakupu",
