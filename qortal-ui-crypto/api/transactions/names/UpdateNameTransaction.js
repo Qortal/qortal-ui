@@ -26,12 +26,12 @@ export default class UpdateNameTransaction extends TransactionBase {
 		this._dialogUpdateName1 = dialogUpdateName1
 	}
 
-	set dialogUpdateName1(dialogUpdateName1) {
-		this._dialogUpdateName1 = dialogUpdateName1
-	}
-
 	set dialogUpdateName2(dialogUpdateName2) {
 		this._dialogUpdateName2 = dialogUpdateName2
+	}
+
+	set dialogUpdateName3(dialogUpdateName3) {
+		this._dialogUpdateName3 = dialogUpdateName3
 	}
 
 	set fee(fee) {
@@ -45,16 +45,16 @@ export default class UpdateNameTransaction extends TransactionBase {
 		this._nameLength = this.constructor.utils.int32ToBytes(this._nameBytes.length)
 	}
 
-	set newName(mewName) {
+	set newName(newName) {
 		this.newNameText = newName
-		this._newNameBytes = this.constructor.utils.stringtoUTF8Array(mewName)
+		this._newNameBytes = this.constructor.utils.stringtoUTF8Array(newName)
 		this._newNameLength = this.constructor.utils.int32ToBytes(this._newNameBytes.length)
 	}
 
-	set value(value) {
-		this.valueText = value.length === 0 ? "Registered Name on the Qortal Chain" : value
-		this._valueBytes = this.constructor.utils.stringtoUTF8Array(this.valueText)
-		this._valueLength = this.constructor.utils.int32ToBytes(this._valueBytes.length)
+	set newData(newData) {
+		this.newDataText = newData.length === 0 ? "Registered Name on the Qortal Chain" : newData
+		this._newDataBytes = this.constructor.utils.stringtoUTF8Array(this.newDataText)
+		this._newDataLength = this.constructor.utils.int32ToBytes(this._newDataBytes.length)
 	}
 
 	get params() {
@@ -64,8 +64,8 @@ export default class UpdateNameTransaction extends TransactionBase {
 			this._nameBytes,
 			this._newNameLength,
 			this._newNameBytes,
-			this._valueLength,
-			this._valueBytes,
+			this._newDataLength,
+			this._newDataBytes,
 			this._feeBytes
 		)
 		return params
