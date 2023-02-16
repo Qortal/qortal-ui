@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLES",
 		"nodemanagement": "GESTION DE NOEUDS",
 		"trading": "COMMERCE",
-		"groups": "GROUPES"
+		"groups": "GROUPES",
+		"sm1": "NOMS",
+		"sm2": "GESTION DES NOM",
+		"sm3": "MARCHÉ DES NOMS"
 	},
 	"login": {
 		"login": "Connexion",
@@ -383,7 +386,7 @@
 		"nchange19": "Nom de vente",
 		"nchange20": "Annuler la vente",
 		"nchange21": "Acheter le nom",
-		"nchange22": "Noms du marché ouvert à vendre",
+		"nchange22": "Marché des noms",
 		"nchange23": "Prix de vente",
 		"nchange24": "Aucun nom à vendre",
 		"nchange25": "Nom à vendre",
@@ -401,7 +404,14 @@
 		"nchange37": "ATTENTION !",
 		"nchange38": "Vous n'avez pas assez de qort pour acheter ce nom.",
 		"nchange39": "Êtes-vous sûr d'acheter ce nom ?",
-		"nchange40": "En appuyant sur confirmer, la demande d'achat de nom sera envoyée !"
+		"nchange40": "En appuyant sur confirmer, la demande d'achat de nom sera envoyée !",
+		"nchange41": "Ancien nom",
+		"nchange42": "Nouveau nom",
+		"nchange43": "Êtes-vous sûr de vouloir changer ce nom ?",
+		"nchange44": "Au nouveau nom",
+		"nchange45": "En appuyant sur confirmer, la demande de mise à jour du nom sera envoyée !",
+		"nchange46": "Historique des ventes de noms",
+		"nchange47": "Mise à jour du nom réussie !"
 	},
 	"websitespage": {
 		"schange1": "Parcourir les sites Web",

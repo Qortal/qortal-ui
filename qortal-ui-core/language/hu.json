@@ -36,7 +36,10 @@
 		"puzzles": "REJTVÉNYEK",
 		"nodemanagement": "CSOMÓPONTKEZELÉS",
 		"trading": "KERESKEDÉS",
-		"groups": "CSOPORTOK"
+		"groups": "CSOPORTOK",
+		"sm1": "NAMES",
+		"sm2": "NÉVKEZELÉS",
+		"sm3": "NAMES PIAC"
 	},
 	"login": {
 		"login": "Bejelentkezés",
@@ -383,7 +386,7 @@
 		"nchange19": "Eladási név",
 		"nchange20": "Eladás törlése",
 		"nchange21": "Vásárlási név",
-		"nchange22": "Eladó nyílt piaci nevek",
+		"nchange22": "Nevek Piac",
 		"nchange23": "Eladási ár",
 		"nchange24": "Nincsenek eladható nevek",
 		"nchange25": "Eladó név",
@@ -401,7 +404,14 @@
 		"nchange37": "FIGYELEM!",
 		"nchange38": "Nincs elég qortja ennek a névnek a megvásárlásához.",
 		"nchange39": "Biztosan megveszi ezt a nevet?",
-		"nchange40": "A megerősítés megnyomására a vásárlási névkérelem elküldésre kerül!"
+		"nchange40": "A megerősítés megnyomására a vásárlási névkérelem elküldésre kerül!",
+		"nchange41": "Régi név",
+		"nchange42": "Új név",
+		"nchange43": "Biztosan megváltoztatja ezt a nevet?",
+		"nchange44": "Az új névre",
+		"nchange45": "A megerősítés megnyomására a névfrissítési kérés elküldésre kerül!",
+		"nchange46": "Név eladási előzmények",
+		"nchange47": "A névfrissítés sikeres!"
 	},
 	"websitespage": {
 		"schange1": "Webhelyek Böngészése",

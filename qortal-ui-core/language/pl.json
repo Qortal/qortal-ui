@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLE",
 		"nodemanagement": "ZARZĄDZANIE WĘZŁAMI",
 		"trading": "HANDLOWY",
-		"groups": "GRUPY"
+		"groups": "GRUPY",
+		"sm1": "NAZWY",
+		"sm2": "ZARZĄDZANIE NAZWAMI",
+		"sm3": "RYNEK NAZW"
 	},
 	"login": {
 		"login": "Zaloguj się",
@@ -383,7 +386,7 @@
 		"nchange19": "Nazwa sprzedaży",
 		"nchange20": "Anuluj sprzedaż",
 		"nchange21": "Kup nazwę",
-		"nchange22": "Otwórz nazwy rynków do sprzedaży",
+		"nchange22": "Rynek imion",
 		"nchange23": "Cena sprzedaży",
 		"nchange24": "Brak nazw do sprzedania",
 		"nchange25": "Nazwa do sprzedania",
@@ -401,7 +404,14 @@
 		"nchange37": "UWAGA!",
 		"nchange38": "Nie masz wystarczającej ilości qort, aby kupić tę nazwę.",
 		"nchange39": "Czy na pewno kupisz tę nazwę?",
-		"nchange40": "Po naciśnięciu potwierdzenia, prośba o nazwę kupna zostanie wysłana!"
+		"nchange40": "Po naciśnięciu potwierdzenia, prośba o nazwę kupna zostanie wysłana!",
+		"nchange41": "Stara nazwa",
+		"nchange42": "Nowa nazwa",
+		"nchange43": "Czy na pewno chcesz zmienić tę nazwę?",
+		"nchange44": "Do nowej nazwy",
+		"nchange45": "Po naciśnięciu potwierdzenia, prośba o aktualizację nazwy zostanie wysłana!",
+		"nchange46": "Historia sprzedaży nazw",
+		"nchange47": "Aktualizacja nazwy powiodła się!"
 	},
 	"websitespage": {
 		"schange1": "Przeglądaj strony internetowe",

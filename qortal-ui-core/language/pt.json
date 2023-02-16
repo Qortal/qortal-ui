@@ -36,7 +36,10 @@
 		"puzzles": "ENIGMAS",
 		"nodemanagement": "GERENCIAMENTO DO NÓDULO",
 		"trading": "NEGOCIAÇÃO",
-		"groups": "GRUPOS"
+		"groups": "GRUPOS",
+		"sm1": "NOMES",
+		"sm2": "GESTÃO DE NOME",
+		"sm3": "MERCADO DE NOMES"
 	},
 	"login": {
 		"login": "Login",
@@ -383,7 +386,7 @@
 		"nchange19": "Nome de venda",
 		"nchange20": "Cancelar venda",
 		"nchange21": "Nome da compra",
-		"nchange22": "Nomes de mercado aberto para vender",
+		"nchange22": "Mercado de nomes",
 		"nchange23": "Preço de venda",
 		"nchange24": "Sem nomes para vender",
 		"nchange25": "Nome para vender",
@@ -401,7 +404,14 @@
 		"nchange37": "ATENÇÃO!",
 		"nchange38": "Você não tem qort suficiente para comprar este nome.",
 		"nchange39": "Tem certeza que deseja comprar este nome ?",
-		"nchange40": "Ao pressionar confirmar, a solicitação do nome de compra será enviada!"
+		"nchange40": "Ao pressionar confirmar, a solicitação do nome de compra será enviada!",
+		"nchange41": "Nome antigo",
+		"nchange42": "Novo nome",
+		"nchange43": "Tem certeza que deseja alterar este nome?",
+		"nchange44": "Para o novo nome",
+		"nchange45": "Ao pressionar confirmar, a solicitação de atualização de nome será enviada!",
+		"nchange46": "Histórico de vendas de nomes",
+		"nchange47": "Atualização de nome com sucesso!"
 	},
 	"websitespage": {
 		"schange1": "Navegar Sites",

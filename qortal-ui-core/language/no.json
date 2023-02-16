@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLES",
 		"nodemanagement": "NODEADMINISTRASJON",
 		"trading": "HANDEL",
-		"groups": "GRUPPER"
+		"groups": "GRUPPER",
+		"sm1": "NAVN",
+		"sm2": "NAVNEBEHANDLING",
+		"sm3": "NAMES MARKET"
 	},
 	"login": {
 		"login": "Logg på",
@@ -383,7 +386,7 @@
 		"nchange19": "Selgsnavn",
 		"nchange20": "Avbryt salg",
 		"nchange21": "Kjøp navn",
-		"nchange22": "Åpne markedsnavn å selge",
+		"nchange22": "Navnemarked",
 		"nchange23": "Selgspris",
 		"nchange24": "Ingen navn å selge",
 		"nchange25": "Navn å selge",
@@ -401,7 +404,14 @@
 		"nchange37": "OBS!",
 		"nchange38": "Du har ikke nok qort til å kjøpe dette navnet.",
 		"nchange39": "Er du sikker på å kjøpe dette navnet?",
-		"nchange40": "Når du trykker bekreft, vil forespørselen om kjøpsnavn bli sendt!"
+		"nchange40": "Når du trykker bekreft, vil forespørselen om kjøpsnavn bli sendt!",
+		"nchange41": "Gammelt navn",
+		"nchange42": "Nytt navn",
+		"nchange43": "Er du sikker på at du vil endre dette navnet?",
+		"nchange44": "Til det nye navnet",
+		"nchange45": "Når du trykker bekreft, vil forespørselen om navneoppdatering bli sendt!",
+		"nchange46": "Navnsalgshistorikk",
+		"nchange47": "Navneoppdateringen er vellykket!"
 	},
 	"websitespage": {
 		"schange1": "Bla gjennom nettsteder",

@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLE-URI",
 		"nodemanagement": "GESTIONARE NOD",
 		"trading": "COMERCIAL",
-		"groups": "GRUPURI"
+		"groups": "GRUPURI",
+		"sm1": "NUME",
+		"sm2": "GESTIONAREA NUMELE",
+		"sm3": "PIAȚA NUMELOR"
 	},
 	"login": {
 		"login": "Login",
@@ -383,7 +386,7 @@
 		"nchange19": "Numele vinde",
 		"nchange20": "Anulați vânzarea",
 		"nchange21": "Cumpărați numele",
-		"nchange22": "Nume piețe deschise de vândut",
+		"nchange22": "Piața de nume",
 		"nchange23": "Preț de vânzare",
 		"nchange24": "Fără nume de vândut",
 		"nchange25": "Nume de vândut",
@@ -401,7 +404,14 @@
 		"nchange37": "ATENȚIE!",
 		"nchange38": "Nu aveți suficient qort pentru a cumpăra acest nume.",
 		"nchange39": "Sunteți sigur că veți cumpăra acest nume?",
-		"nchange40": "La apăsarea confirmării, cererea de nume de cumpărare va fi trimisă!"
+		"nchange40": "La apăsarea confirmării, cererea de nume de cumpărare va fi trimisă!",
+		"nchange41": "Nume vechi",
+		"nchange42": "Nume nou",
+		"nchange43": "Sigur vei schimba acest nume?",
+		"nchange44": "La noul nume",
+		"nchange45": "La apăsarea confirmării, cererea de actualizare a numelui va fi trimisă!",
+		"nchange46": "Istoricul vânzărilor de nume",
+		"nchange47": "Actualizarea numelui a reușit!"
 	},
 	"websitespage": {
 		"schange1": "Navigati pe Site-uri Web",

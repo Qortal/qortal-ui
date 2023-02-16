@@ -36,7 +36,10 @@
 		"puzzles": "益智遊戲",
 		"nodemanagement": "節點管理",
 		"trading": "貿易",
-		"groups": "群組"
+		"groups": "群組",
+		"sm1": "名字",
+		"sm2": "名稱管理",
+		"sm3": "名稱市場"
 	},
 	"login": {
 		"login": "登入",
@@ -383,7 +386,7 @@
 		"nchange19": "銷售名稱",
 		"nchange20": "取消銷售",
 		"nchange21": "購買名稱",
-		"nchange22": "公開市場名稱出售",
+		"nchange22": "地名市場",
 		"nchange23": "賣出價",
 		"nchange24": "沒有名字可以賣",
 		"nchange25": "出售名稱",
@@ -401,7 +404,14 @@
 		"nchange37": "注意！",
 		"nchange38": "你沒有足夠的 qort 來購買這個名字。",
 		"nchange39": "你確定要買這個名字嗎？",
-		"nchange40": "按下確認後，將發送購買名稱請求！"
+		"nchange40": "按下確認後，將發送購買名稱請求！",
+		"nchange41": "舊名稱",
+		"nchange42": "新名稱",
+		"nchange43": "您確定要更改此名稱嗎？",
+		"nchange44": "改成新名字",
+		"nchange45": "按下確認後，將發送名稱更新請求！",
+		"nchange46": "命名銷售歷史",
+		"nchange47": "名稱更新成功！"
 	},
 	"websitespage": {
 		"schange1": "瀏覽網站",

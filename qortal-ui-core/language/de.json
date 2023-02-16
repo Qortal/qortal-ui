@@ -36,7 +36,10 @@
 		"puzzles": "RÄTSEL",
 		"nodemanagement": "KNOTENVERWALTUNG",
 		"trading": "HANDELN",
-		"groups": "GRUPPEN"
+		"groups": "GRUPPEN",
+		"sm1": "NAMEN",
+		"sm2": "NAMENSVERWALTUNG",
+		"sm3": "NAMENSMARKT"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -383,7 +386,7 @@
 		"nchange19": "Name Verkaufen",
 		"nchange20": "Verkauf abbrechen",
 		"nchange21": "Name kaufen",
-		"nchange22": "Offenstehende Namen zum Verkauf",
+		"nchange22": "Namensmarkt",
 		"nchange23": "Verkaufspreis",
 		"nchange24": "Keine Namen zu verkaufen",
 		"nchange25": "Name zu verkaufen",
@@ -401,7 +404,14 @@
 		"nchange37": "ACHTUNG!",
 		"nchange38": "Du hast nicht genug Qort, um diesen Namen zu kaufen.",
 		"nchange39": "Sind Sie sicher, diesen Namen zu kaufen?",
-		"nchange40": "Wenn Sie auf Bestätigen drücken, wird die Anfrage zum Kauf des Namens gesendet!"
+		"nchange40": "Wenn Sie auf Bestätigen drücken, wird die Anfrage zum Kauf des Namens gesendet!",
+		"nchange41": "Alter Name",
+		"nchange42": "Neuer Name",
+		"nchange43": "Möchten Sie diesen Namen wirklich ändern?",
+		"nchange44": "Zum neuen Namen",
+		"nchange45": "Beim Bestätigen wird die Anfrage zur Namensaktualisierung gesendet!",
+		"nchange46": "Namensverkaufshistorie",
+		"nchange47": "Namensaktualisierung erfolgreich!"
 	},
 	"websitespage": {
 		"schange1": "Webseiten durchsuchen",

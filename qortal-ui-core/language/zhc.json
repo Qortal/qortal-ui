@@ -36,7 +36,10 @@
 		"puzzles": "益智游戏",
 		"nodemanagement": "节点管理",
 		"trading": "贸易",
-		"groups": "群组"
+		"groups": "群组",
+		"sm1": "名字",
+		"sm2": "名称管理",
+		"sm3": "名称市场"
 	},
 	"login": {
 		"login": "登入",
@@ -383,7 +386,7 @@
 		"nchange19": "销售名称",
 		"nchange20": "取消销售",
 		"nchange21": "购买名称",
-		"nchange22": "公开市场名称出售",
+		"nchange22": "地名市场",
 		"nchange23": "卖出价",
 		"nchange24": "没有名字可以卖",
 		"nchange25": "出售名称",
@@ -401,7 +404,14 @@
 		"nchange37": "注意！",
 		"nchange38": "你没有足够的qort 来购买这个名字。",
 		"nchange39": "你确定要买这个名字吗？",
-		"nchange40": "按下确认后，将发送购买名称请求！"
+		"nchange40": "按下确认后，将发送购买名称请求！",
+		"nchange41": "旧名称",
+		"nchange42": "新名称",
+		"nchange43": "您确定要更改此名称吗？",
+		"nchange44": "改成新名字",
+		"nchange45": "按下确认后，将发送名称更新请求！",
+		"nchange46": "命名销售历史",
+		"nchange47": "名称更新成功！"
 	},
 	"websitespage": {
 		"schange1": "浏览网站",

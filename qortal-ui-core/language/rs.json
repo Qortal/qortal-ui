@@ -36,7 +36,10 @@
 		"puzzles": "SLAGALICE",
 		"nodemanagement": "MENADŽMENT ČVORIŠTA",
 		"trading": "TRADING",
-		"groups": "GRUPE"
+		"groups": "GRUPE",
+		"sm1": "NAMES",
+		"sm2": "UPRAVLJANJE IMENOM",
+		"sm3": "TRŽIŠTE IMENA"
 	},
 	"login": {
 		"login": "Prijava",
@@ -383,7 +386,7 @@
 		"nchange19": "Ime prodaje",
 		"nchange20": "Otkaži prodaju",
 		"nchange21": "Kupite ime",
-		"nchange22": "Imena na otvorenom tržištu za prodaju",
+		"nchange22": "Tržište imena",
 		"nchange23": "Cena prodaje",
 		"nchange24": "Nema imena za prodaju",
 		"nchange25": "Ime za prodaju",
@@ -401,7 +404,14 @@
 		"nchange37": "PAŽNJA!",
 		"nchange38": "Nemate dovoljno kort da kupite ovo ime.",
 		"nchange39": "Da li ste sigurni da kupujete ovo ime?",
-		"nchange40": "Pritiskom na potvrdu, zahtev za kupovinu imena će biti poslat!"
+		"nchange40": "Pritiskom na potvrdu, zahtev za kupovinu imena će biti poslat!",
+		"nchange41": "Staro ime",
+		"nchange42": "Novo ime",
+		"nchange43": "Da li ste sigurni da promenite ovo ime?",
+		"nchange44": "Na novo ime",
+		"nchange45": "Pritiskom na potvrdu, zahtev za ažuriranje imena će biti poslat!",
+		"nchange46": "Istorija prodaje imena",
+		"nchange47": "Ažuriranje imena je uspešno!"
 	},
 	"websitespage": {
 		"schange1": "Pretraživanje web sajtova",

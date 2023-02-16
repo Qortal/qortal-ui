@@ -36,7 +36,10 @@
 		"puzzles": "PUZZLES",
 		"nodemanagement": "NODE MANAGEMENT",
 		"trading": "TRADING",
-		"groups": "GROUPS"
+		"groups": "GROUPS",
+		"sm1": "NAMES",
+		"sm2": "NAME MANAGEMENT",
+		"sm3": "NAMES MARKET"
 	},
 	"login": {
 		"login": "Login",
@@ -383,7 +386,7 @@
 		"nchange19": "Sell Name",
 		"nchange20": "Cancel Sell",
 		"nchange21": "Buy Name",
-		"nchange22": "Open Market Names To Sell",
+		"nchange22": "Names Market",
 		"nchange23": "Sell Price",
 		"nchange24": "No Names To Sell",
 		"nchange25": "Name To Sell",
@@ -401,7 +404,14 @@
 		"nchange37": "ATTENTION!",
 		"nchange38": "You not have enough qort to buy this name.",
 		"nchange39": "Are you sure to buy this name ?",
-		"nchange40": "On pressing confirm, the buy name request will be sent!"
+		"nchange40": "On pressing confirm, the buy name request will be sent!",
+		"nchange41": "Old Name",
+		"nchange42": "New Name",
+		"nchange43": "Are you sure to change this name ?",
+		"nchange44": "To the new name",
+		"nchange45": "On pressing confirm, the name update request will be sent!",
+		"nchange46": "Name Sale History",
+		"nchange47": "Name Update Successful!"
 	},
 	"websitespage": {
 		"schange1": "Browse Websites",

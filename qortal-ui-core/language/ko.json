@@ -36,7 +36,10 @@
 		"puzzles": "퍼즐",
 		"nodemanagement": "노드 관리",
 		"trading": "무역",
-		"groups": "여러 떼"
+		"groups": "여러 떼",
+		"sm1": "이름",
+		"sm2": "이름 관리",
+		"sm3": "이름 시장"
 	},
 	"login": {
 		"login": "로그인",
@@ -383,7 +386,7 @@
 		"nchange19": "판매 이름",
 		"nchange20": "매도 취소",
 		"nchange21": "구매 이름",
-		"nchange22": "판매할 공개 시장 이름",
+		"nchange22": "이름 시장",
 		"nchange23": "판매 가격",
 		"nchange24": "판매할 이름 없음",
 		"nchange25": "판매할 이름",
@@ -401,7 +404,14 @@
 		"nchange37": "주의!",
 		"nchange38": "이 이름을 살 만큼 충분한 qort가 없습니다.",
 		"nchange39": "이 이름을 구입하시겠습니까?",
-		"nchange40": "확인을 누르면 구매 이름 요청이 전송됩니다!"
+		"nchange40": "확인을 누르면 구매 이름 요청이 전송됩니다!",
+		"nchange41": "이전 이름",
+		"nchange42": "새 이름",
+		"nchange43": "이 이름을 변경하시겠습니까?",
+		"nchange44": "새 이름으로",
+		"nchange45": "확인을 누르면 이름 업데이트 요청이 전송됩니다!",
+		"nchange46": "네임 세일 내역",
+		"nchange47": "이름 업데이트 성공!"
 	},
 	"websitespage": {
 		"schange1": "웹 사이트 찾아보기",
