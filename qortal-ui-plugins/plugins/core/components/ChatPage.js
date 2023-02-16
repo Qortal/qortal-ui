@@ -3423,7 +3423,7 @@ console.log({zipFileBlob})
 
             const image = this.imageFile
             const id = this.uid();
-            const identifier = qchat_${id};
+            const identifier = `qchat_${id}`;
             let compressedFile = '';
             await new Promise(resolve => {
                 new Compressor( image, {
@@ -3520,7 +3520,7 @@ console.log({zipFileBlob})
 
             const attachment = this.attachment;
             const id = this.uid();
-            const identifier = qchat_${id};
+            const identifier = `qchat_${id}`;
             const fileSize = attachment.size;
             if (fileSize > 1000000) {
                 parentEpml.request('showSnackBar', get("chatpage.cchange77"));
