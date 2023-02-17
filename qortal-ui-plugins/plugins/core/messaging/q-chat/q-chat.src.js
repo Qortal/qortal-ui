@@ -562,7 +562,7 @@ class Chat extends LitElement {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
-                version: 2
+                version: 3
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
             this.sendMessage(stringifyMessageObject);
