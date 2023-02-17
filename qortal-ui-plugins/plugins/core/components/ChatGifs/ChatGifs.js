@@ -186,7 +186,7 @@ setOpenGifModal: { attribute: false }
     					if (metaData.files) {
     						const metaDataArray = metaData.files.map((data) => {
     							return {
-									url: `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}`,
+									url: `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}&apiKey=${this.getApiKey()}`,
 									filePath: data,
 									identifier: collection.identifier,
 									name: this.myAccountName
@@ -612,6 +612,7 @@ setOpenGifModal: { attribute: false }
                         @click=${() => {
 												if (this.isLoading) return;
 												this.mode = 'explore';
+												this.currentCollection = null;
 											}}
                         icon="vaadin:search"
                         slot="icon">

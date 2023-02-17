@@ -67,7 +67,7 @@ async _fetchImage() {
     }, 1000)
   });
   try {
-    const response = await fetch(this.gif.url + `&apiKey=${this.getApiKey()}`);
+    const response = await fetch(this.gif.url);
     const data = await response.json();
     console.log({data});
     if (data.ok) {
