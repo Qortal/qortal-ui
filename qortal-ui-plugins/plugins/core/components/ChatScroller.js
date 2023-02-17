@@ -125,7 +125,7 @@ class ChatScroller extends LitElement {
                 ${formattedMessages.map((formattedMessage) => {
                     return repeat(
                             formattedMessage.messages,
-                            (message) => message.reference,
+                            (message) => message.signature,
                             (message, indexMessage) => html`
                             <message-template 
                             .emojiPicker=${this.emojiPicker} 
@@ -145,7 +145,7 @@ class ChatScroller extends LitElement {
                             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                             .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                             .setUserName=${(val) => this.setUserName(val)}
-                            id=${message.reference}
+                            id=${message.signature}
                             .goToRepliedMessage=${this.goToRepliedMessage}
                             .addSeenMessage=${(val)=> this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
@@ -370,7 +370,7 @@ class MessageTemplate extends LitElement {
     }
     firstUpdated(){
         const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
-        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.reference)){
+        if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.signature)){
             this.viewImage =  true
         }
 
@@ -398,17 +398,13 @@ class MessageTemplate extends LitElement {
         let attachment = null;
         try {
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
-            if (parsedMessageObj.version.toString() === '2' && parsedMessageObj.messageText) {
-                try {                    
-                    messageVersion2 = generateHTML(parsedMessageObj.messageText, [
-                        StarterKit,
-                        Underline,
-                        Highlight
-                        // other extensions …
-                      ])
-                } catch (error) {
-                    console.error(error);
-                }
+            if(+parsedMessageObj.version > 1 && parsedMessageObj.messageText){
+                messageVersion2 = generateHTML(parsedMessageObj.messageText, [
+                    StarterKit,
+                    Underline,
+                    Highlight
+                    // other extensions …
+                  ])
             }
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
@@ -652,7 +648,7 @@ class MessageTemplate extends LitElement {
                                             ${version.toString() === '1' ? html`
                                             ${repliedToData.decodedMessage.messageText}
                                             ` : ''}
-                                            ${version.toString() === '2' ? html`
+                                            ${+version > 1 ? html`
                                             ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
                                                 StarterKit,
                                                 Underline,
@@ -668,7 +664,7 @@ class MessageTemplate extends LitElement {
                                         <div 
                                         @click=${()=> {
                                             this.viewImage = true
-                                            this.addSeenMessage(this.messageObj.reference)
+                                            this.addSeenMessage(this.messageObj.signature)
                                         }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
@@ -768,7 +764,7 @@ class MessageTemplate extends LitElement {
                                     id="messageContent" 
                                     class="message" 
                                     style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
-                                        ${version.toString() === '2' ? html`
+                                        ${+version > 1 ? html`
                                         ${unsafeHTML(messageVersion2)}
                                         ` : ''}
                                         ${version.toString() === '1' ? html`
