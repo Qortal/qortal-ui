@@ -19,6 +19,8 @@ class WebBrowser extends LitElement {
             name: { type: String },
             service: { type: String },
             identifier: { type: String },
+            path: { type: String },
+            displayUrl: {type: String },
             followedNames: { type: Array },
             blockedNames: { type: Array },
             theme: { type: String, reflect: true }
@@ -103,11 +105,17 @@ class WebBrowser extends LitElement {
         const urlParams = new URLSearchParams(window.location.search);
         this.name = urlParams.get('name');
         this.service = urlParams.get('service');
-        // FUTURE: add support for identifiers
-        this.identifier = null;
+        this.identifier = urlParams.get('identifier') != null ? urlParams.get('identifier') : null;
+        this.path = urlParams.get('path') != null ? ((urlParams.get('path').startsWith("/") ? "" : "/") + urlParams.get('path')) : "";
         this.followedNames = []
         this.blockedNames = []
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+
+        // Build initial display URL
+        let displayUrl = "qortal://" + this.service + "/" + this.name;
+        if (this.identifier != null && data.identifier != "" && this.identifier != "default") displayUrl = displayUrl.concat("/" + this.identifier);
+        if (this.path != null && this.path != "/") displayUrl = displayUrl.concat(this.path);
+        this.displayUrl = displayUrl;
 
         const getFollowedNames = async () => {
 
@@ -132,7 +140,7 @@ class WebBrowser extends LitElement {
         const render = () => {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            this.url = `${nodeUrl}/render/${this.service}/${this.name}?theme=${this.theme}`;
+            this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ""}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ""}`;
         }
 
         const authorizeAndRender = () => {
@@ -186,7 +194,7 @@ class WebBrowser extends LitElement {
 						<mwc-button @click=${() => this.goForward()} title="${translate("browserpage.bchange1")}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
 						<mwc-button @click=${() => this.refresh()} title="${translate("browserpage.bchange2")}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
 						<mwc-button @click=${() => this.goBackToList()} title="${translate("browserpage.bchange3")}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="qortal://${this.service.toLowerCase()}/${this.name}"></input>
+						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
 						<mwc-button @click=${() => this.delete()} title="${translate("browserpage.bchange4")} ${this.service} ${this.name} ${translate("browserpage.bchange5")}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
 						${this.renderBlockUnblockButton()}
 						${this.renderFollowUnfollowButton()}
@@ -252,6 +260,20 @@ class WebBrowser extends LitElement {
                     account["publicKey"] = this.selectedAddress.base58PublicKey;
                     response = JSON.stringify(account);
                     break;
+
+                case "LINK_TO_QDN_RESOURCE":
+                case "QDN_RESOURCE_DISPLAYED":
+                    // Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
+                    // Note: don't update this.url here, as we don't want to force reload the iframe each time.
+                    let url = "qortal://" + data.service + "/" + data.name;
+                    this.path = data.path != null ? ((data.path.startsWith("/") ? "" : "/") + data.path) : null;
+                    if (data.identifier != null && data.identifier != "" && data.identifier != "default") url = url.concat("/" + data.identifier);
+                    if (this.path != null && this.path != "/") url = url.concat(this.path);
+                    this.name = data.name;
+                    this.service = data.service;
+                    this.identifier = data.identifier;
+                    this.displayUrl = url;
+                    return;
 
                 case "PUBLISH_QDN_RESOURCE":
                     // Use "default" if user hasn't specified an identifer
@@ -397,7 +419,9 @@ class WebBrowser extends LitElement {
     }
 
     refresh() {
-        window.location.reload();
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ""}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ""}`;
     }
 
     goBackToList() {
