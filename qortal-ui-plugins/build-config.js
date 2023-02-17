@@ -97,6 +97,10 @@ const generateForPlugins = () => {
 			out: 'plugins/core/name-registration/name-registration.js',
 		},
 		{
+			in: 'plugins/core/names-market/names-market.src.js',
+			out: 'plugins/core/names-market/names-market.js',
+		},
+		{
 			in: 'plugins/core/qdn/websites.src.js',
 			out: 'plugins/core/qdn/websites.js',
 		},

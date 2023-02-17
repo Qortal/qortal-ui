@@ -1516,8 +1516,16 @@ class AppView extends connect(store)(LitElement) {
                     <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
-                    <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
+                <side-menu-item label="${translate('sidemenu.sm1')}" expanded>
+                    <vaadin-icon icon="vaadin:user-card" slot="icon"></vaadin-icon>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.sm2')}" href="/app/name-registration">
+                        <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.sm3')}" href="/app/names-market">
+                        <vaadin-icon icon="vaadin:shop" slot="icon"></vaadin-icon>
+                    </side-menu-item>
                 </side-menu-item>
 
                 <side-menu-item drawer-toggle label="${translate('sidemenu.websites')}" href="/app/websites">

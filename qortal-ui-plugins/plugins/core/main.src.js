@@ -80,6 +80,15 @@ parentEpml.ready().then(() => {
 			parent: false,
 		},
 		{
+			url: 'names-market',
+			domain: 'core',
+			page: 'names-market/index.html',
+			title: 'Names Market',
+			icon: 'vaadin:user-check',
+			menus: [],
+			parent: false,
+		},
+		{
 			url: 'websites',
 			domain: 'core',
 			page: 'qdn/index.html',

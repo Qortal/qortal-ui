@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
+import '../components/qortal-info-view.js'
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -12,6 +12,7 @@ import '@material/mwc-dialog'
 import '@material/mwc-formfield'
 import '@material/mwc-icon'
 import '@material/mwc-icon-button'
+import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-progress/paper-progress.js'
@@ -23,31 +24,31 @@ import '@vaadin/text-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
-class NameRegistration extends LitElement {
+class NamesMarket extends LitElement {
     static get properties() {
         return {
             theme: { type: String, reflect: true },
             qortWalletBalance: { type: Number },
             loading: { type: Boolean },
-            names: { type: Array },
             marketSellNames: { type: Array },
+            marketSoldNames: { type: Array },
+            filteredItems: { type: Array },
+            filteredSoldItems: { type: Array },
+            searchSellNames: { type: Array },
             recipientPublicKey: { type: String },
             selectedAddress: { type: Object },
             btnDisable: { type: Boolean },
             isLoading: { type: Boolean },
-            registerNameLoading: { type: Boolean },
             error: { type: Boolean },
             message: { type: String },
             removeError: { type: Boolean },
             removeMessage: { type: String },
-            fee: { type: Number },
-            updateFee: { type: Number },
-            sellFee: { type: Number },
             cancelSellFee: { type: Number },
-            toSellName: { type: String },
-            toSellPrice: { type: String },
+            buyFee: { type: Number },
             toCancelSellName: { type: String },
-            toUpdateName: { type: String },
+            toBuyName: { type: String },
+            toBuyPrice: { type: String },
+            toBuySeller: { type: String },
             errorMessage: { type: String },
             successMessage: { type: String }
         }
@@ -92,6 +93,8 @@ class NameRegistration extends LitElement {
                 border: 1px solid var(--border);
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
+                margin-bottom: 10px;
+                margin-top: 10px;
             }
 
             h2 {
@@ -110,6 +113,21 @@ class NameRegistration extends LitElement {
                 max-height: 42px;
             }
 
+            #tabs-height {
+                --mdc-tab-height: 50px;
+            }
+
+            #tabs-1-content {
+                height: 100%;
+                padding-bottom: 10px;
+            }
+
+            mwc-tab-bar {
+                --mdc-text-transform: none;
+                --mdc-tab-color-default: var(--black);
+                --mdc-tab-text-label-color-default: var(--black);
+            }
+
             paper-progress {
                 --paper-progress-active-color: var(--mdc-theme-primary);
             }
@@ -124,6 +142,22 @@ class NameRegistration extends LitElement {
 
             .warning {
                 --mdc-theme-primary: #f0ad4e;
+            }
+
+            .sellerAddress {
+                color: var(--mdc-theme-primary);
+                cursor: pointer;
+            }
+
+            .buyerAddress {
+                color: #198754;
+                cursor: pointer;
+            }
+
+            .sold {
+                color: #F44336;
+                --mdc-icon-size: 16px;
+                padding-top: 10px;
             }
 
             .buttons {
@@ -163,6 +197,43 @@ class NameRegistration extends LitElement {
             }
 
             #pages > button[disabled] {
+                opacity: 0.5;
+                cursor: default;
+            }
+
+            #pagesSold {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px 5px 5px 5px;
+                margin: 0px 20px 20px 20px;
+            }
+
+            #pagesSold > button {
+                user-select: none;
+                padding: 5px;
+                margin: 0 5px;
+                border-radius: 10%;
+                border: 0;
+                background: transparent;
+                font: inherit;
+                outline: none;
+                cursor: pointer;
+                color: var(--black);
+            }
+
+            #pagesSold > button:not([disabled]):hover,
+            #pagesSold > button:focus {
+                color: #ccc;
+                background-color: #eee;
+            }
+
+            #pagesSold > button[selected] {
+                font-weight: bold;
+                color: var(--white);
+                background-color: #ccc;
+            }
+
+            #pagesSold > button[disabled] {
                 opacity: 0.5;
                 cursor: default;
             }
@@ -227,20 +298,20 @@ class NameRegistration extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.qortWalletBalance = 0
         this.selectedAddress = {}
-        this.names = []
         this.marketSellNames = []
+        this.marketSoldNames = []
+        this.filteredItems = []
+        this.filteredSoldItems = []
+        this.searchSellNames = []
         this.recipientPublicKey = ''
         this.btnDisable = false
         this.isLoading = false
-        this.registerNameLoading = false
-        this.fee = 0.001
-        this.updateFee = 0.001
-        this.sellFee = 0.001
         this.cancelSellFee = 0.001
-        this.toSellName = ''
-        this.toUpdateName = ''
-        this.toSellPrice = ''
+        this.buyFee = 0.001
         this.toCancelSellName = ''
+        this.toBuyName = ''
+        this.toBuyPrice = ''
+        this.toBuySeller = ''
         this.errorMessage = ''
         this.successMessage = ''
     }
@@ -248,215 +319,75 @@ class NameRegistration extends LitElement {
     render() {
         return html`
             <div id="name-registration-page">
-                <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                    <h3 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("sidemenu.sm2")}</h3>
-                    <mwc-button style="float:right;" @click=${() => this.shadowRoot.querySelector('#registerNameDialog').show()}><mwc-icon>add</mwc-icon>${translate("registernamepage.nchange2")}</mwc-button>
-                </div>
+                <mwc-tab-bar id="tabs-1" activeIndex="0">
+                    <mwc-tab label="${translate("registernamepage.nchange22")}" @click="${(e) => this.displayTabContent('sell')}"></mwc-tab>
+                    <mwc-tab label="${translate("registernamepage.nchange46")}" @click="${(e) => this.displayTabContent('sold')}"></mwc-tab>
+                </mwc-tab-bar>
 
-                <div class="divCard">
-                    <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("registernamepage.nchange3")}</h3>
-                    <vaadin-grid theme="large" id="namesGrid" ?hidden="${this.isEmptyArray(this.names)}" aria-label="Names" .items="${this.names}" all-rows-visible>
-                        <vaadin-grid-column width="5rem" flex-grow="0" header="${translate("registernamepage.nchange4")}" .renderer=${(root, column, data) => {
-                            render(html`${this.renderAvatar(data.item)}`, root)
-                        }}></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("registernamepage.nchange6")}" path="owner"></vaadin-grid-column>
-                        <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
-                            render(html`${this.renderAvatarButton(data.item)}`, root)
-                        }}></vaadin-grid-column>
-                        <vaadin-grid-column width="14rem" flex-grow="0" .renderer=${(root, column, data) => {
-                            render(html`${this.renderUpdateNameButton(data.item)}`, root)
-                        }}></vaadin-grid-column>
-                        <vaadin-grid-column width="14rem" flex-grow="0" .renderer=${(root, column, data) => {
-                            if (this.marketSellNames.some(e => e.owner === this.selectedAddress.address)) {
-                                render(html`${this.renderCancelSellNameButton(data.item)}`, root)
-                            } else {
-                                render(html`${this.renderSellNameButton(data.item)}`, root)
-                            }
-                        }}></vaadin-grid-column>
-                    </vaadin-grid>
-                    ${this.isEmptyArray(this.names) ? html`
-                        <span style="color: var(--black);">${translate("registernamepage.nchange8")}</span>
-                    `: ''}
-                </div>
-
-                <mwc-dialog id="registerNameDialog" scrimClickAction="${this.registerNameLoading ? '' : 'close'}">
-                    <div style="text-align:center">
-                        <h1>${translate("registernamepage.nchange9")}</h1>
-                        <hr><br>
-                    </div>
-                    <p>
-                        <mwc-textfield
-                            style="width: 100%; color: var(--black);"
-                            ?disabled="${this.registerNameLoading}"
-                            required
-                            outlined
-                            id="nameInput"
-                            label="${translate("registernamepage.nchange5")}"
-                            type="text"
-                        >
-                        </mwc-textfield>
-                    </p>
-                    <p>
-                        <mwc-textfield
-                            style="width: 100%; color: var(--black);"
-                            ?disabled="${this.registerNameLoading}"
-                            outlined
-                            id="descInput"
-                            label="${translate("registernamepage.nchange10")}"
-                            type="text"
-                        >
-                        </mwc-textfield>
-                    </p>
-                    <div style="text-align:right; height:36px;">
-                        <span ?hidden="${!this.registerNameLoading}">
-                            ${translate("registernamepage.nchange11")} &nbsp;
-                            <paper-spinner-lite
-                                style="margin-top:12px;"
-                                ?active="${this.registerNameLoading}"
-                                alt="${translate("registernamepage.nchange12")}"></paper-spinner-lite>
-                        </span>
-                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
-                            ${this.message}
-                        </span><br>
-                        <span>
-                            <b>${translate("registernamepage.nchange13")} ${this.fee} QORT.</b>
-                        </span>
-                    </div>
-                    <mwc-button
-                        ?disabled="${this.registerNameLoading}"
-                        slot="primaryAction"
-                        @click=${this.registerName}
-                    >
-                    ${translate("registernamepage.nchange14")}
-                    </mwc-button>
-                    <mwc-button
-                        ?disabled="${this.registerNameLoading}"
-                        slot="secondaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="updateNameDialog" scrimClickAction="" escapeKeyAction="">
-                    <div style="text-align:center">
-                        <h1>${translate("publishpage.pchange2")} ${translate("login.name")}</h1>
-                        <hr><br>
-                    </div>
-                    <p>
-                        <mwc-textfield
-                            style="width: 100%; color: var(--black);"
-                            readOnly
-                            outlined
-                            id="oldNameInput"
-                            label="${translate("registernamepage.nchange41")}"
-                            type="text"
-                            value="${this.toUpdateName}"
-                        >
-                        </mwc-textfield>
-                    </p>
-                    <p>
-                        <mwc-textfield
-                            style="width: 100%; color: var(--black);"
-                            required
-                            outlined
-                            id="newNameInput"
-                            label="${translate("registernamepage.nchange42")}"
-                            type="text"
-                        >
-                        </mwc-textfield>
-                    </p>
-                    <p>
-                        <mwc-textfield
-                            style="width: 100%; color: var(--black);"
-                            outlined
-                            id="newDescInput"
-                            label="${translate("registernamepage.nchange10")}"
-                            type="text"
-                        >
-                        </mwc-textfield>
-                    </p>
-                    <div style="text-align:right; height:36px;">
-                        <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : 'color:green;'}">
-                            ${this.message}
-                        </span><br>
-                        <span>
-                            <b>${translate("walletpage.wchange21")} ${this.updateFee} QORT.</b>
-                        </span>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        @click="${() => this.updateName()}"
-                    >
-                    ${translate("publishpage.pchange2")} ${translate("login.name")}
-                    </mwc-button>
-                    <mwc-button
-                        slot="secondaryAction"
-                        dialogAction="cancel"
-                        class="red"
-				@click="${() => this.closeUpdateNameDialog()}"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="sellNameDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="manage-group-dialog">
-                        <div style="text-align: center;">
-                            <h2>${translate("registernamepage.nchange19")}</h2>
-                            <hr />
-                            <br>
-                        </div>
-                        <p>
-                            <mwc-textfield
-                                style="width: 100%; color: var(--black);"
-                                readOnly
-                                outlined
-                                id="toSellName"
-                                label="${translate("registernamepage.nchange25")}"
-                                type="text"
-                                value="${this.toSellName}"
+                <div id="tabs-1-content">
+                    <div id="tab-sell-content">
+                        <div class="divCard">
+                            <vaadin-text-field
+                                placeholder="${translate("datapage.dchange4")}"
+                                style="width: 25%; margin-bottom: 20px;"
+                                clear-button-visible
+                                @value-changed="${(e) => {
+                                    this.searchSellNames = []
+                                    const searchTerm = (e.target.value || '').trim()
+                                    const keys = ['name', 'owner', 'salePrice']
+                                    const filtered = this.marketSellNames.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
+                                    if (!e.target.value) {
+                                        this.updatePageSize()
+                                    } else {
+                                        this.searchSellNames = filtered
+                                        this.updatePageSizeSearch()
+                                    }
+                                }}"
                             >
-                            </mwc-textfield>
-                        </p>
-                        <p>
-                            <mwc-textfield
-                                style="width: 100%; color: var(--black);"
-                                required
-                                outlined
-                                id="toSellPrice"
-                                label="${translate("registernamepage.nchange23")} (QORT)"
-                                type="number"
-                                value="${this.toSellPrice}"
-                            >
-                            </mwc-textfield>
-                        </p>
-                        <div style="margin-bottom: 10px;">
-                            <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.sellFee} QORT<span></p>
-                            <br>
-                        </div>
-                        ${this.renderClearSuccess()}
-                        ${this.renderClearError()}
-                        ${this.isLoading ? html`<paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress>` : ''}
-                        <div class="buttons">
-                            <div>
-                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.createSellName()}>
-                                    <vaadin-icon icon="vaadin:exit" slot="prefix"></vaadin-icon>
-                                    ${translate("registernamepage.nchange19")}
-                                </vaadin-button>
-                            </div>
+                            <vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
+                            </vaadin-text-field><br>
+                            <vaadin-grid theme="large" id="marketSellNames" ?hidden="${this.isEmptyArray(this.marketSellNames)}" aria-label="Names" page-size="20" all-rows-visible>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange6")}" .renderer=${(root, column, data) => {
+                                        render(html`<span class="sellerAddress" @click=${() => this.openSellerInfo(data.item.owner)}>${data.item.owner}</span>`, root)
+                                }}></vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange23")} (QORT)" path="salePrice"></vaadin-grid-column>
+                                <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
+                                    if (data.item.owner === this.selectedAddress.address) {
+                                        render(html`${this.renderCancelSellNameButton(data.item)}`, root)
+                                    } else {
+                                        render(html`${this.renderBuyNameButton(data.item)}`, root)
+                                    }
+                                }}></vaadin-grid-column>
+                            </vaadin-grid>
+                            <div id="pages"></div>
+                            ${this.isEmptyArray(this.marketSellNames) ? html`
+                                <span style="color: var(--black);">${translate("registernamepage.nchange24")}</span>
+                            `: ''}
                         </div>
                     </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        @click="${() => this.closeSellNameDialog()}"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
+                    <div id="tab-sold-content">
+                        <div class="divCard">
+                            <vaadin-grid theme="large" id="marketSoldNames" ?hidden="${this.isEmptyArray(this.marketSoldNames)}" aria-label="Sold Names" page-size="20" all-rows-visible>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange5")}" path="name"></vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange6")}" .renderer=${(root, column, data) => {
+                                        render(html`<span class="sellerAddress" @click=${() => this.openSellerInfo(data.item.seller)}>${data.item.seller}</span>`, root)
+                                }}></vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("rewardsharepage.rchange6")}" .renderer=${(root, column, data) => {
+                                        render(html`<span class="buyerAddress" @click=${() => this.openSellerInfo(data.item.creatorAddress)}>${data.item.creatorAddress}</span>`, root)
+                                }}></vaadin-grid-column>
+                                <vaadin-grid-column header="${translate("registernamepage.nchange23")} (QORT)" path="amount"></vaadin-grid-column>
+                                <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("websitespage.schange28")}" .renderer=${(root, column, data) => {
+                                        render(html`<span style="color: #F44336;"><mwc-icon class="sold">sell</mwc-icon>&nbsp;${translate("tradepage.tchange31")}</span>`, root)
+                                }}></vaadin-grid-column>
+                            </vaadin-grid>
+                            <div id="pagesSold"></div>
+                            ${this.isEmptyArray(this.marketSoldNames) ? html`
+                                <span style="color: var(--black);">${translate("registernamepage.nchange24")}</span>
+                            `: ''}
+                        </div>
+                    </div>
+                </div>
 
                 <mwc-dialog id="cancelSellNameDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="manage-group-dialog">
@@ -502,6 +433,74 @@ class NameRegistration extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
 
+                <mwc-dialog id="buyNameDialog" scrimClickAction="" escapeKeyAction="">
+                    <div class="manage-group-dialog">
+                        <div style="text-align: center;">
+                            <h2>${translate("registernamepage.nchange21")}</h2>
+                            <hr />
+                            <br>
+                        </div>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%; color: var(--black);"
+                                readOnly
+                                outlined
+                                id="toBuyName"
+                                label="${translate("registernamepage.nchange5")}"
+                                type="text"
+                                value="${this.toBuyName}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%; color: var(--black);"
+                                readOnly
+                                outlined
+                                id="toBuySeller"
+                                label="${translate("registernamepage.nchange6")}"
+                                type="text"
+                                value="${this.toBuySeller}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <p>
+                            <mwc-textfield
+                                style="width: 100%; color: var(--black);"
+                                readOnly
+                                outlined
+                                id="toBuyPrice"
+                                label="${translate("registernamepage.nchange23")}"
+                                type="number"
+                                value="${this.toBuyPrice}"
+                            >
+                            </mwc-textfield>
+                        </p>
+                        <div style="margin-bottom: 10px;">
+                            <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.buyFee} QORT<span></p>
+                            <br>
+                        </div>
+                        ${this.renderClearSuccess()}
+                        ${this.renderClearError()}
+                        ${this.isLoading ? html`<paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress>` : ''}
+                        <div class="buttons">
+                            <div>
+                                <vaadin-button ?disabled="${this.btnDisable}" theme="primary medium" style="width: 100%;" @click=${() => this.openCheckFunds()}>
+                                    <vaadin-icon icon="vaadin:cart" slot="prefix"></vaadin-icon>
+                                    ${translate("registernamepage.nchange21")}
+                                </vaadin-button>
+                            </div>
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeBuyNameDialog()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
                 <mwc-dialog id="buyErrorNameDialog" scrimClickAction="" escapeKeyAction="">
                     <div class="card-container">
                         <mwc-icon class="error-icon">warning</mwc-icon>
@@ -532,6 +531,7 @@ class NameRegistration extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
             </div>
+            <qortal-info-view></qortal-info-view>
         `
     }
 
@@ -539,19 +539,12 @@ class NameRegistration extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
-        this.unitFee()
-        this.unitUpdateFee()
-        this.unitSellFee()
         this.unitCancelSellFee()
+        this.unitBuyFee()
 
-        const fetchNames = () => {
-            parentEpml.request('apiCall', {
-                url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
-            }).then(res => {
-                setTimeout(() => { this.names = res }, 1)
-            })
-            setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
-        }
+        setTimeout(() => {
+            this.displayTabContent('sell')
+        }, 0)
 
         const fetchMarketSellNames = async () => {
             await parentEpml.request('apiCall', {
@@ -559,7 +552,18 @@ class NameRegistration extends LitElement {
             }).then(res => {
                 this.marketSellNames = res
             })
+            this.updatePageSize()
             setTimeout(fetchMarketSellNames, 180000)
+        }
+
+        const fetchMarketSoldNames = async () => {
+            await parentEpml.request('apiCall', {
+                url: `/transactions/search?txType=BUY_NAME&confirmationStatus=BOTH&limit=0&reverse=true`
+            }).then(res => {
+                this.marketSoldNames = res
+            })
+            this.updatePageSoldSize()
+            setTimeout(fetchMarketSoldNames, 300000)
         }
 
         window.addEventListener("contextmenu", (event) => {
@@ -602,8 +606,8 @@ class NameRegistration extends LitElement {
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
-                    setTimeout(fetchNames, 1)
                     setTimeout(fetchMarketSellNames, 1)
+                    setTimeout(fetchMarketSoldNames, 1)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -615,6 +619,13 @@ class NameRegistration extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    displayTabContent(tab) {
+        const tabSellContent = this.shadowRoot.getElementById('tab-sell-content')
+        const tabSoldContent = this.shadowRoot.getElementById('tab-sold-content')
+        tabSellContent.style.display = (tab === 'sell') ? 'block' : 'none'
+        tabSoldContent.style.display = (tab === 'sold') ? 'block' : 'none'
     }
 
     changeTheme() {
@@ -636,6 +647,187 @@ class NameRegistration extends LitElement {
         } else {
             use(checkLanguage)
         }
+    }
+
+    async updatePageSize() {
+        this.filteredItems = []
+        this.marketSellNames.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice))
+        this.filteredItems = this.marketSellNames
+        await this.setPages()
+        await this.updateItemsFromPage(1, true)
+    }
+
+    async setPages() {
+        this.namesGrid = this.shadowRoot.querySelector(`#marketSellNames`)
+        this.pagesControl = this.shadowRoot.querySelector('#pages')
+        this.pages = undefined
+    }
+
+    async updatePageSizeSearch() {
+        this.filteredItems = []
+        this.searchSellNames.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice))
+        this.filteredItems = this.searchSellNames
+        await this.setPagesSearch()
+        await this.updateItemsFromPage(1, true)
+    }
+
+    async setPagesSearch() {
+        this.namesGrid = this.shadowRoot.querySelector(`#marketSellNames`)
+        this.pagesControl = this.shadowRoot.querySelector('#pages')
+        this.pages = undefined
+    }
+
+    async updatePageSoldSize() {
+        this.filteredSoldItems = []
+        this.marketSoldNames.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount))
+        this.filteredSoldItems = this.marketSoldNames
+        await this.setSoldPages()
+        await this.updateItemsSoldFromPage(1, true)
+    }
+
+    async setSoldPages() {
+        this.namesSoldGrid = this.shadowRoot.querySelector(`#marketSoldNames`)
+        this.pagesSoldControl = this.shadowRoot.querySelector('#pagesSold')
+        this.soldPages = undefined
+    }
+
+    async updateItemsFromPage(page, changeNames = false) {
+        if (page === undefined) {
+            return
+        }
+
+        changeNames === true ? (this.pagesControl.innerHTML = '') : null
+
+        if (!this.pages) {
+            this.pages = Array.apply(null, { length: Math.ceil(this.filteredItems.length / this.namesGrid.pageSize) }).map((item, index) => {
+                return index + 1
+            })
+
+            const prevBtn = document.createElement('button')
+            prevBtn.textContent = '<'
+            prevBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage - 1)
+            })
+            this.pagesControl.appendChild(prevBtn)
+
+            this.pages.forEach((pageNumber) => {
+                const pageBtn = document.createElement('button')
+                pageBtn.textContent = pageNumber
+                pageBtn.addEventListener('click', (e) => {
+                    this.updateItemsFromPage(parseInt(e.target.textContent))
+                })
+                if (pageNumber === page) {
+                    pageBtn.setAttribute('selected', true)
+                }
+                this.pagesControl.appendChild(pageBtn)
+            })
+
+            const nextBtn = window.document.createElement('button')
+            nextBtn.textContent = '>'
+            nextBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
+                this.updateItemsFromPage(selectedPage + 1)
+            })
+            this.pagesControl.appendChild(nextBtn)
+        }
+
+        const buttons = Array.from(this.pagesControl.children)
+        buttons.forEach((btn, index) => {
+            if (parseInt(btn.textContent) === page) {
+                btn.setAttribute('selected', true)
+            } else {
+                btn.removeAttribute('selected')
+            }
+            if (index === 0) {
+                if (page === 1) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+            if (index === buttons.length - 1) {
+                if (page === this.pages.length) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+        })
+        let start = (page - 1) * this.namesGrid.pageSize
+        let end = page * this.namesGrid.pageSize
+
+        this.namesGrid.items = this.filteredItems.slice(start, end)
+    }
+
+    async updateItemsSoldFromPage(pageSold, changeSoldNames = false) {
+        if (pageSold === undefined) {
+            return
+        }
+
+        changeSoldNames === true ? (this.pagesSoldControl.innerHTML = '') : null
+
+        if (!this.soldPages) {
+            this.soldPages = Array.apply(null, { length: Math.ceil(this.filteredSoldItems.length / this.namesSoldGrid.pageSize) }).map((item, index) => {
+                return index + 1
+            })
+
+            const prevBtn = document.createElement('button')
+            prevBtn.textContent = '<'
+            prevBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesSoldControl.querySelector('[selected]').textContent)
+                this.updateItemsSoldFromPage(selectedPage - 1)
+            })
+            this.pagesSoldControl.appendChild(prevBtn)
+
+            this.soldPages.forEach((pageNumber) => {
+                const pageBtn = document.createElement('button')
+                pageBtn.textContent = pageNumber
+                pageBtn.addEventListener('click', (e) => {
+                    this.updateItemsSoldFromPage(parseInt(e.target.textContent))
+                })
+                if (pageNumber === pageSold) {
+                    pageBtn.setAttribute('selected', true)
+                }
+                this.pagesSoldControl.appendChild(pageBtn)
+            })
+
+            const nextBtn = window.document.createElement('button')
+            nextBtn.textContent = '>'
+            nextBtn.addEventListener('click', () => {
+                const selectedPage = parseInt(this.pagesSoldControl.querySelector('[selected]').textContent)
+                this.updateItemsSoldFromPage(selectedPage + 1)
+            })
+            this.pagesSoldControl.appendChild(nextBtn)
+        }
+
+        const buttons = Array.from(this.pagesSoldControl.children)
+
+        buttons.forEach((btn, index) => {
+            if (parseInt(btn.textContent) === pageSold) {
+                btn.setAttribute('selected', true)
+            } else {
+                btn.removeAttribute('selected')
+            }
+            if (index === 0) {
+                if (pageSold === 1) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+            if (index === buttons.length - 1) {
+                if (pageSold === this.soldPages.length) {
+                    btn.setAttribute('disabled', '')
+                } else {
+                    btn.removeAttribute('disabled')
+                }
+            }
+        })
+        let start = (pageSold - 1) * this.namesSoldGrid.pageSize
+        let end = pageSold * this.namesSoldGrid.pageSize
+
+        this.namesSoldGrid.items = this.filteredSoldItems.slice(start, end)
     }
 
     async updateQortWalletBalance() {
@@ -718,58 +910,6 @@ class NameRegistration extends LitElement {
         return html`<img src="${url}" onerror="this.onerror=null; this.src='/img/incognito.png';">`
     }
 
-    renderAvatarButton(nameObj) {
-        return html`<mwc-button @click=${() => this.uploadAvatar(nameObj)}><mwc-icon>perm_identity</mwc-icon>&nbsp;${translate("registernamepage.nchange15")}</mwc-button>`
-    }
-
-    async uploadAvatar(nameObj) {
-        let name = nameObj.name
-        window.location.href = `../qdn/publish/index.html?service=THUMBNAIL&identifier=qortal_avatar&name=${name}&uploadType=file&category=Avatar&showName=false&showService=false&showIdentifier=false`
-    }
-
-    renderSellNameButton(nameObj) {
-        return html`<mwc-button class="green" @click=${() => this.openSellNameDialog(nameObj)}><mwc-icon>sell</mwc-icon>&nbsp;${translate("registernamepage.nchange19")}</mwc-button>`
-    }
-
-    openSellNameDialog(nameObj) {
-        this.toSellName = ''
-        this.toSellPrice = ''
-        this.shadowRoot.getElementById("toSellName").value = ''
-        this.shadowRoot.getElementById("toSellPrice").value = ''
-        this.toSellName = nameObj.name
-        this.toSellPrice = '5'
-        this.shadowRoot.querySelector('#sellNameDialog').show()
-    }
-
-    closeSellNameDialog() {
-        this.shadowRoot.querySelector('#sellNameDialog').close()
-        this.toSellName = ''
-        this.toSellPrice = ''
-        this.shadowRoot.getElementById("toSellName").value = ''
-        this.shadowRoot.getElementById("toSellPrice").value = ''
-    }
-
-    renderUpdateNameButton(nameObj) {
-        return html`<mwc-button class="warning" @click=${() => this.openUpdateNameDialog(nameObj)}><mwc-icon>update</mwc-icon>&nbsp;${translate("publishpage.pchange2")} ${translate("login.name")}</mwc-button>`
-    }
-
-    openUpdateNameDialog(nameObj) {
-        this.toUpdateName = ''
-        this.shadowRoot.getElementById("oldNameInput").value = ''
-        this.shadowRoot.getElementById("newNameInput").value = ''
-        this.shadowRoot.getElementById("newDescInput").value = ''
-        this.toUpdateName = nameObj.name
-        this.shadowRoot.querySelector('#updateNameDialog').show()
-    }
-
-    closeUpdateNameDialog() {
-        this.shadowRoot.querySelector('#updateNameDialog').close()
-        this.toUpdateName = ''
-        this.shadowRoot.getElementById("oldNameInput").value = ''
-        this.shadowRoot.getElementById("newNameInput").value = ''
-        this.shadowRoot.getElementById("newDescInput").value = ''
-    }
-
     renderCancelSellNameButton(nameObj) {
         return html`<mwc-button class="red" @click=${() => this.openCancelSellNameDialog(nameObj)}><mwc-icon>cancel</mwc-icon>&nbsp;${translate("registernamepage.nchange20")}</mwc-button>`
     }
@@ -787,6 +927,44 @@ class NameRegistration extends LitElement {
         this.shadowRoot.getElementById("toCancelSellName").value = ''
     }
 
+    renderBuyNameButton(nameObj) {
+        return html`<mwc-button class="green" @click=${() => this.openCheck(nameObj)}><mwc-icon>shop</mwc-icon>&nbsp;${translate("registernamepage.nchange21")}</mwc-button>`
+    }
+
+    openCheck(nameObj) {
+       const _name = nameObj.name
+       const _seller = nameObj.owner
+       const _price = nameObj.salePrice
+       if (this.isEmptyArray(this.names) === true) {
+           this.openBuyNameDialog(_name, _seller, _price)
+       } else {
+           this.shadowRoot.querySelector('#buyErrorNameDialog').show()
+       }
+    }
+
+    openBuyNameDialog(_name, _seller, _price) {
+        this.toBuyName = ''
+        this.toBuyPrice = ''
+        this.toBuySeller = ''
+        this.shadowRoot.getElementById("toBuyName").value = ''
+        this.shadowRoot.getElementById("toBuyPrice").value = ''
+        this.shadowRoot.getElementById("toBuySeller").value = ''
+        this.toBuyName = _name
+        this.toBuyPrice = _price
+        this.toBuySeller = _seller
+        this.shadowRoot.querySelector('#buyNameDialog').show()
+    }
+
+    closeBuyNameDialog() {
+        this.toBuyName = ''
+        this.toBuyPrice = ''
+        this.toBuySeller = ''
+        this.shadowRoot.getElementById("toBuyName").value = ''
+        this.shadowRoot.getElementById("toBuyPrice").value = ''
+        this.shadowRoot.getElementById("toBuySeller").value = ''
+        this.shadowRoot.querySelector('#buyNameDialog').close()
+    }
+
     async openCheckFunds() {
         await this.updateQortWalletBalance()
 
@@ -800,54 +978,18 @@ class NameRegistration extends LitElement {
         }
     }
 
+    openSellerInfo(address) {
+        let sendInfoAddress = address
+        const infoDialog = this.shadowRoot.querySelector('qortal-info-view')
+        infoDialog.openUserInfo(sendInfoAddress)
+    }
+
     closeBuyErrorNameDialog() {
         this.shadowRoot.querySelector('#buyErrorNameDialog').close()
     }
 
     closeBuyErrorPriceDialog() {
         this.shadowRoot.querySelector('#buyErrorPriceDialog').close()
-    }
-
-    async unitFee() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/transactions/unitfee?txType=REGISTER_NAME`
-        await fetch(url).then((response) => {
-            if (response.ok) {
-                return response.json()
-            }
-            return Promise.reject(response)
-        }).then((json) => {
-            this.fee = (Number(json) / 1e8).toFixed(2)
-        })
-    }
-
-    async unitUpdateFee() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/transactions/unitfee?txType=UPDATE_NAME`
-        await fetch(url).then((response) => {
-            if (response.ok) {
-                return response.json()
-            }
-            return Promise.reject(response)
-        }).then((json) => {
-            this.updateFee = (Number(json) / 1e8).toFixed(8)
-        })
-    }
-
-    async unitSellFee() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const url = `${nodeUrl}/transactions/unitfee?txType=SELL_NAME`
-        await fetch(url).then((response) => {
-            if (response.ok) {
-                return response.json()
-            }
-            return Promise.reject(response)
-        }).then((json) => {
-            this.sellFee = (Number(json) / 1e8).toFixed(8)
-        })
     }
 
     async unitCancelSellFee() {
@@ -864,6 +1006,20 @@ class NameRegistration extends LitElement {
         })
     }
 
+    async unitBuyFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=BUY_NAME`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.buyFee = (Number(json) / 1e8).toFixed(8)
+        })
+    }
+
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         let apiKey = myNode.apiKey
@@ -873,245 +1029,6 @@ class NameRegistration extends LitElement {
     clearSelection() {
         window.getSelection().removeAllRanges()
         window.parent.getSelection().removeAllRanges()
-    }
-
-    async registerName(e) {
-        this.error = false
-        this.message = ''
-        const feeInput = this.fee
-        const nameInput = this.shadowRoot.getElementById("nameInput").value
-        const descInput = this.shadowRoot.getElementById("descInput").value
-
-        // Check for valid...
-        this.registerNameLoading = true
-
-        // Get Last Ref
-        const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
-        };
-
-        // Get Account Details
-        const validateName = async () => {
-            let isValid = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${nameInput}`
-            })
-            return isValid
-        };
-
-        const validateReceiver = async () => {
-            let nameInfo = await validateName()
-            let lastRef = await getLastRef()
-
-            if (nameInfo.error === 401) {
-                this.error = false
-                this.message = ''
-                let myTransaction = await makeTransactionRequest(lastRef)
-                getTxnRequestResponse(myTransaction)
-            } else {
-                this.error = true
-                this.message = this.renderFailText()
-            }
-        }
-
-        // Make Transaction Request
-        const makeTransactionRequest = async (lastRef) => {
-            let dialogyou = get("transactions.namedialog1")
-            let dialogonpress = get("transactions.namedialog2")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 3,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: feeInput,
-                    name: nameInput,
-                    value: descInput,
-                    lastReference: lastRef,
-                    dialogyou: dialogyou,
-                    dialogonpress: dialogonpress,
-                }
-            })
-            return myTxnrequest
-        }
-
-        const getTxnRequestResponse = (txnResponse) => {
-            if (txnResponse.success === false && txnResponse.message) {
-                this.error = true
-                this.message = txnResponse.message
-                throw new Error(txnResponse)
-            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = this.renderSuccessText()
-                this.error = false
-            } else {
-                this.error = true
-                this.message = txnResponse.data.message
-                throw new Error(txnResponse)
-            }
-        }
-
-        validateReceiver()
-
-        this.registerNameLoading = false
-    }
-
-    async updateName() {
-        this.error = false
-        this.message = ''
-        const updateFeeInput = this.updateFee
-        const oldNameInput = this.shadowRoot.getElementById("oldNameInput").value
-        const newNameInput = this.shadowRoot.getElementById("newNameInput").value
-        const newDescInput = this.shadowRoot.getElementById("newDescInput").value
-
-        // Get Last Ref
-        const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
-        }
-
-        // Get Account Details
-        const validateName = async () => {
-            let isValid = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${newNameInput}`
-            })
-            return isValid
-        }
-
-        const validateReceiver = async () => {
-            let nameInfo = await validateName()
-            let lastRef = await getLastRef()
-
-            if (nameInfo.error === 401) {
-                this.error = false
-                this.message = ''
-                let myTransaction = await makeTransactionRequest(lastRef)
-                getTxnRequestResponse(myTransaction)
-            } else {
-                this.error = true
-                this.message = this.renderFailText()
-            }
-        }
-
-        // Make Transaction Request
-        const makeTransactionRequest = async (lastRef) => {
-            const myOldName = oldNameInput
-            const myNewName = newNameInput
-            const myNewDesc = newDescInput
-            const myLastRef = lastRef
-            const myFee = updateFeeInput
-            let dialogUpdateName1 = get("registernamepage.nchange43")
-            let dialogUpdateName2 = get("registernamepage.nchange44")
-            let dialogUpdateName3 = get("registernamepage.nchange45")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 4,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myOldName,
-                    newName: myNewName,
-                    newData: myNewDesc,
-                    lastReference: myLastRef,
-                    dialogUpdateName1: dialogUpdateName1,
-                    dialogUpdateName2: dialogUpdateName2,
-                    dialogUpdateName3: dialogUpdateName3
-                }
-            })
-            return myTxnrequest
-        }
-
-        const getTxnRequestResponse = (txnResponse) => {
-            if (txnResponse.success === false && txnResponse.message) {
-                this.error = true
-                this.message = txnResponse.message
-                throw new Error(txnResponse)
-            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.message = this.renderSuccessUpdateText()
-                this.error = false
-            } else {
-                this.error = true
-                this.message = txnResponse.data.message
-                throw new Error(txnResponse)
-            }
-        }
-
-        validateReceiver()
-    }
-
-    async createSellName() {
-        const name = this.shadowRoot.getElementById("toSellName").value
-        const price = this.shadowRoot.getElementById("toSellPrice").value
-        const sellFeeInput = this.sellFee
-        this.isLoading = true
-        this.btnDisable = true
-
-        const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
-        }
-
-        const validateReceiver = async () => {
-            let lastRef = await getLastRef()
-            let myTransaction = await makeTransactionRequest(lastRef)
-            getTxnRequestResponse(myTransaction)
-        }
-
-        const makeTransactionRequest = async (lastRef) => {
-            const myName = name
-            const myPrice = price
-            const myLastRef = lastRef
-            const myFee = sellFeeInput
-            const mySellNameDialog1 = get("registernamepage.nchange26")
-            const mySellNameDialog2 = get("registernamepage.nchange27")
-            const mySellNameDialog3 = get("registernamepage.nchange28")
-
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 5,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myName,
-                    sellPrice: myPrice,
-                    lastReference: myLastRef,
-                    sellNameDialog1: mySellNameDialog1,
-                    sellNameDialog2: mySellNameDialog2,
-                    sellNameDialog3: mySellNameDialog3
-                }
-            })
-            return myTxnrequest
-        }
-
-        const getTxnRequestResponse = (txnResponse) => {
-            if (txnResponse.success === false && txnResponse.message) {
-                this.errorMessage = txnResponse.message
-                this.isLoading = false
-                this.btnDisable = false
-                throw new Error(txnResponse)
-            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                this.shadowRoot.getElementById("toSellName").value = ''
-                this.shadowRoot.getElementById("toSellPrice").value = ''
-                this.toSellName = ''
-                this.toSellPrice = ''
-                this.errorMessage = ''
-                this.successMessage = this.renderSellSuccessText()
-                this.isLoading = false
-                this.btnDisable = false
-            } else {
-                this.errorMessage = txnResponse.data.message
-                this.isLoading = false
-                this.btnDisable = false
-                throw new Error(txnResponse)
-            }
-        }
-        validateReceiver()
     }
 
     async createCancelSellName() {
@@ -1178,6 +1095,82 @@ class NameRegistration extends LitElement {
         validateReceiver()
     }
 
+    createBuyName() {
+        const name = this.shadowRoot.getElementById("toBuyName").value
+        const price = this.shadowRoot.getElementById("toBuyPrice").value
+        const seller = this.shadowRoot.getElementById("toBuySeller").value
+        const buyFeeInput = this.buyFee
+        this.isLoading = true
+        this.btnDisable = true
+
+        const getLastRef = async () => {
+            let myRef = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.selectedAddress.address}`
+            })
+            return myRef
+        }
+
+        const validateReceiver = async () => {
+            let lastRef = await getLastRef()
+            let myTransaction = await makeTransactionRequest(lastRef)
+            getTxnRequestResponse(myTransaction)
+        }
+
+        const makeTransactionRequest = async (lastRef) => {
+            const myName = name
+            const myPrice = price
+            const mySeller = seller
+            const myLastRef = lastRef
+            const myFee = buyFeeInput
+            const myBuyNameDialog1 = get("registernamepage.nchange39")
+            const myBuyNameDialog2 = get("registernamepage.nchange27")
+            const myBuyNameDialog3 = get("registernamepage.nchange40")
+
+            let myTxnrequest = await parentEpml.request('transaction', {
+                type: 7,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    fee: myFee,
+                    name: myName,
+                    sellPrice: myPrice,
+                    recipient: mySeller,
+                    lastReference: myLastRef,
+                    buyNameDialog1: myBuyNameDialog1,
+                    buyNameDialog2: myBuyNameDialog2,
+                    buyNameDialog3: myBuyNameDialog3
+                }
+            })
+            return myTxnrequest
+        }
+
+        const getTxnRequestResponse = (txnResponse) => {
+            if (txnResponse.success === false && txnResponse.message) {
+                this.errorMessage = txnResponse.message
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            } else if (txnResponse.success === true && !txnResponse.data.error) {
+                this.shadowRoot.getElementById("toBuyName").value = ''
+                this.shadowRoot.getElementById("toBuyPrice").value = ''
+                this.shadowRoot.getElementById("toBuySeller").value = ''
+                this.toBuyName = ''
+                this.toBuyPrice = ''
+                this.toBuySeller = ''
+                this.errorMessage = ''
+                this.successMessage = this.renderBuySuccessText()
+                this.isLoading = false
+                this.btnDisable = false
+            } else {
+                this.errorMessage = txnResponse.data.message
+                this.isLoading = false
+                this.btnDisable = false
+                throw new Error(txnResponse)
+            }
+        }
+        validateReceiver()
+    }
+
     _textMenu(event) {
 
         const getSelectedText = () => {
@@ -1215,4 +1208,4 @@ class NameRegistration extends LitElement {
     }
 }
 
-window.customElements.define('name-registration', NameRegistration)
+window.customElements.define('names-market', NamesMarket)
