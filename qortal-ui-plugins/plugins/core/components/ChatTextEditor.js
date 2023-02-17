@@ -664,7 +664,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             let messageObject = {};
 
             if (this.repliedToMessageObj) {
-                let chatReference = this.repliedToMessageObj.reference;
+                let chatReference = this.repliedToMessageObj.signature;
                 if (this.repliedToMessageObj.chatReference) {
                     chatReference = this.repliedToMessageObj.chatReference;
                 }
@@ -672,7 +672,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                     messageText: trimmedMessage,
                     images: [''],
                     repliedTo: chatReference,
-                    version: 2
+                    version: 3
                 }
             } else if (this.editedMessageObj) {
                 let message = "";
@@ -695,7 +695,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         identifier: '123456'
                 }],
                     repliedTo: '',
-                    version: 2
+                    version: 3
                 };
             } else if (this.attachment && this.iframeId === 'newAttachmentChat') {
                 messageObject = {
@@ -715,7 +715,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                       messageText: trimmedMessage,
                       images: [''],
                       repliedTo: '',
-                      version: 2
+                      version: 3
                   };
               }
 

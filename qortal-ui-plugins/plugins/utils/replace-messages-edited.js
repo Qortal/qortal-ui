@@ -14,7 +14,7 @@ export const replaceMessagesEdited = async ({
 			}
 			const response = await parentEpml.request("apiCall", {
 				type: "api",
-				url: `/chat/messages?chatreference=${msg.reference}&reverse=true${msgQuery}`,
+				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}`,
 			})
 
 			if (response && Array.isArray(response) && response.length !== 0) {
@@ -50,24 +50,36 @@ export const replaceMessagesEdited = async ({
 				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
 			if (parsedMessageObj.repliedTo) {
-				const originalReply = await parentEpml.request("apiCall", {
-					type: "api",
-					url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
-				})
+				console.log({parsedMessageObj})
+				let originalReply
+				if(+parsedMessageObj.version > 2){
+					 originalReply = await parentEpml.request("apiCall", {
+						type: "api",
+						url: `/chat/message/${parsedMessageObj.repliedTo}`,
+					})
+				}
+				if(+parsedMessageObj.version < 3){
+					 originalReply = await parentEpml.request("apiCall", {
+						type: "api",
+						url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+					})
+			   }
+			
+				
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
 				})
+
+				const originalReplyMessage = originalReply.timestamp ? originalReply : originalReply.length !== 0 ? originalReply[0] : null
 				
 				if (
-					originalReply &&
-					Array.isArray(originalReply) &&
-					originalReply.length !== 0 &&
+					originalReplyMessage &&
 					response &&
 					Array.isArray(response) &&
 					response.length !== 0
 				) {
-					const decodeOriginalReply = decodeMessageFunc(originalReply[0], isReceipient, _publicKey)
+					const decodeOriginalReply = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey)
 
 					const decodeUpdatedReply = decodeMessageFunc(response[0], isReceipient, _publicKey)
 					const formattedRepliedToData = {
@@ -83,14 +95,12 @@ export const replaceMessagesEdited = async ({
 					
 
 					if (
-						originalReply &&
-						Array.isArray(originalReply) &&
-						originalReply.length !== 0
+						originalReplyMessage
 					) {
 						
 						msgItem = {
 							...msg,
-							repliedToData: decodeMessageFunc(originalReply[0], isReceipient, _publicKey),
+							repliedToData: decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey),
 						}
 					}
 				}

@@ -1020,7 +1020,7 @@ class ChatPage extends LitElement {
                                             ${this.repliedToMessageObj.version.toString() === '1' ? html`
                                             ${this.repliedToMessageObj.message}
                                             ` : ''}
-                                            ${this.repliedToMessageObj.version.toString() === '2' 
+                                            ${+this.repliedToMessageObj.version > 1 
                                             ? html`
                                                 ${unsafeHTML(generateHTML(this.repliedToMessageObj.message, 
                                                 [
@@ -1643,7 +1643,7 @@ class ChatPage extends LitElement {
     }
 
    async goToRepliedMessage(message, clickedOnMessage){
-    const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+    const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
     
     if(findMessage){
         findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -1667,7 +1667,7 @@ class ChatPage extends LitElement {
 
     
     if((message.timestamp -  this.messagesRendered[0].timestamp)  < 86400000){
-        const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.reference)
+        const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.signature)
     if(findOriginalMessage){
         const messageClientRect = findOriginalMessage.getBoundingClientRect()
         this.isLoadingGoToRepliedMessage = {
@@ -1679,7 +1679,7 @@ class ChatPage extends LitElement {
         }
     }
        await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
-       const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.reference)
+       const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
     if(findMessage){
         this.isLoadingGoToRepliedMessage =   {
             ...this.isLoadingGoToRepliedMessage,
@@ -2156,7 +2156,7 @@ class ChatPage extends LitElement {
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
 
-            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            const findElement = marginElements.find((item)=> item.messageObj.signature === scrollElement.messageObj.signature)
           
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
@@ -2189,7 +2189,7 @@ class ChatPage extends LitElement {
             this.isLoadingOldMessages = false
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
-            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            const findElement = marginElements.find((item)=> item.messageObj.signature === scrollElement.messageObj.signature)
             
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
@@ -2227,7 +2227,7 @@ class ChatPage extends LitElement {
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
 
-            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            const findElement = marginElements.find((item)=> item.messageObj.signature === scrollElement.messageObj.signature)
           
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
@@ -2260,7 +2260,7 @@ class ChatPage extends LitElement {
             this.isLoadingOldMessages = false
             await this.getUpdateComplete();
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'));
-            const findElement = marginElements.find((item)=> item.messageObj.reference === scrollElement.messageObj.reference)
+            const findElement = marginElements.find((item)=> item.messageObj.signature === scrollElement.messageObj.signature)
             
             if(findElement){
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' });
@@ -2372,7 +2372,7 @@ class ChatPage extends LitElement {
 
     async renderNewMessage(newMessage) {
         if(newMessage.chatReference){
-            const findOriginalMessageIndex = this.messagesRendered.findIndex(msg=> msg.reference === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference) )
+            const findOriginalMessageIndex = this.messagesRendered.findIndex(msg=> msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference) )
             if(findOriginalMessageIndex !== -1){
                 const newMessagesRendered = [...this.messagesRendered]
                 newMessagesRendered[findOriginalMessageIndex] = {...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
@@ -2784,7 +2784,7 @@ class ChatPage extends LitElement {
                     return
                 }
                     typeMessage = 'edit';
-                    let chatReference = outSideMsg.editedMessageObj.reference;
+                    let chatReference = outSideMsg.editedMessageObj.signature;
 
                 if(outSideMsg.editedMessageObj.chatReference){
                     chatReference = outSideMsg.editedMessageObj.chatReference;
@@ -2874,7 +2874,7 @@ class ChatPage extends LitElement {
                 return
             }
                 typeMessage = 'edit';
-                let chatReference = outSideMsg.editedMessageObj.reference;
+                let chatReference = outSideMsg.editedMessageObj.signature;
 
             if(outSideMsg.editedMessageObj.chatReference){
                 chatReference = outSideMsg.editedMessageObj.chatReference;
@@ -3036,7 +3036,7 @@ class ChatPage extends LitElement {
         }  else if (outSideMsg && outSideMsg.type === 'reaction') {
             const userName = await getName(this.selectedAddress.address);
             typeMessage = 'edit';
-            let chatReference = outSideMsg.editedMessageObj.reference;
+            let chatReference = outSideMsg.editedMessageObj.signature;
 
             if (outSideMsg.editedMessageObj.chatReference) {
                 chatReference = outSideMsg.editedMessageObj.chatReference;
@@ -3094,7 +3094,7 @@ class ChatPage extends LitElement {
 
         } 
         else if (this.repliedToMessageObj) {
-            let chatReference = this.repliedToMessageObj.reference;
+            let chatReference = this.repliedToMessageObj.signature;
             if(this.repliedToMessageObj.chatReference){
                 chatReference = this.repliedToMessageObj.chatReference;
             }
@@ -3103,13 +3103,13 @@ class ChatPage extends LitElement {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: chatReference,
-                version: 2
+                version: 3
             }
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
         } else if (this.editedMessageObj) {
             typeMessage = 'edit'
-            let chatReference = this.editedMessageObj.reference
+            let chatReference = this.editedMessageObj.signature
 
             if(this.editedMessageObj.chatReference){
                 chatReference = this.editedMessageObj.chatReference
@@ -3135,7 +3135,7 @@ class ChatPage extends LitElement {
                 messageText: trimmedMessage,
                 images: [''],
                 repliedTo: '',
-                version: 2
+                version: 3
             }
             const stringifyMessageObject = JSON.stringify(messageObject)
            
