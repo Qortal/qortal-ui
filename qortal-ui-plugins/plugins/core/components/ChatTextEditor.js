@@ -455,7 +455,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 >${translate('chatpage.cchange69')}</label>
         
         <mwc-checkbox style="margin-right: -15px;"  id="qChatShowAutoMsg" @click=${e => {
-        console.log(e.target.checked)
         if(e.target.checked){
             window.parent.reduxStore.dispatch( window.parent.reduxAction.removeAutoLoadImageChat(this.chatId))
             return

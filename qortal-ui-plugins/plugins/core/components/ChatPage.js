@@ -1386,68 +1386,14 @@ class ChatPage extends LitElement {
     }
 
     addGifs(gifs){
-        console.log('gifs', gifs)
         this.gifsToBeAdded = [...this.gifsToBeAdded, ...gifs]
-        console.log('this.gifsToBeAdded', this.gifsToBeAdded)
     }
 
     setGifsLoading(props) {
         this.gifsLoading = props;
     }
 
-    async uploadGifCollection(){
-        try {
-            function blobToBase64(blob) {
-                return new Promise((resolve, _) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => resolve(reader.result);
-                  reader.readAsDataURL(blob);
-                });
-              }
-            const zipFileWriter = new zip.BlobWriter("application/zip");
-// Creates a TextReader object storing the text of the entry to add in the zip
-// (i.e. "Hello world!").
-const helloWorldReader = new zip.TextReader("Hello world!");
-
-// Creates a ZipWriter object writing data via `zipFileWriter`, adds the entry
-// "hello.txt" containing the text "Hello world!" via `helloWorldReader`, and
-// closes the writer.
-const file = this.gifsToBeAdded[0]
-const file2 = this.gifsToBeAdded[1]
-const zipWriter = new zip.ZipWriter(zipFileWriter, { bufferedWrite: true });
-await zipWriter.add(file.name, new zip.BlobReader(file));
-await zipWriter.add(file2.name, new zip.BlobReader(file2));
-
-await zipWriter.close();
-const zipFileBlob = await zipFileWriter.getData()
-const blobTobase = await blobToBase64(zipFileBlob)
-console.log({blobTobase})
-const userName = await this.getName(this.selectedAddress.address);
-            if (!userName) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange27"));
-                this.isLoading = false;
-                return;
-            }
-            const id = this.uid();
-            const identifier = `gif_${id}`;
-await publishData({
-    registeredName: userName,
-    file : blobTobase.split(',')[1],
-    service: 'GIF_REPOSITORY',
-    identifier: identifier,
-    parentEpml,
-    metaData: undefined,
-    uploadType: 'zip',
-    selectedAddress: this.selectedAddress,
-    worker: this.webWorkerImage,
-    isBase64: true
-   })
-saveAs(zipFileBlob, 'zipfile');
-console.log({zipFileBlob})
-        } catch (error) {
-            console.log(error)
-        }
-    }
+  
     
     render() {
         return html`
@@ -1502,7 +1448,7 @@ console.log({zipFileBlob})
                 <chat-gifs 
                     class="chat-gifs"
                     style=${this.openGifModal ? "display: flex;" : "display: none;"}
-                    .webWorkerImage=${this.webWorkerImage}
+                    .webWorkerImage=${this.webWorkerFile}
                     .setGifsLoading=${(val) => this.setGifsLoading(val)}
                     .sendMessage=${(val) => this._sendMessage(val)}
                     .setOpenGifModal=${(val)=> this.setOpenGifModal(val)}>
@@ -2069,8 +2015,8 @@ console.log({zipFileBlob})
         if(this.webWorker){
             this.webWorker.terminate();
         }
-        if(this.webWorkerImage){
-            this.webWorkerImage.terminate();
+        if(this.webWorkerFile){
+            this.webWorkerFile.terminate();
         }
         if(this.editor){
             this.editor.destroy()

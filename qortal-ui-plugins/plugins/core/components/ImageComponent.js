@@ -52,6 +52,11 @@ constructor() {
   this.attempts = 0;
   this.maxAttempts = 5;
 }
+getApiKey() {
+  const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+  let apiKey = myNode.apiKey;
+  return apiKey;
+}
 
 async _fetchImage() {
   this.attempts++;
@@ -62,7 +67,7 @@ async _fetchImage() {
     }, 1000)
   });
   try {
-    const response = await fetch(this.gif.url);
+    const response = await fetch(this.gif.url + `&apiKey=${this.getApiKey()}`);
     const data = await response.json();
     console.log({data});
     if (data.ok) {

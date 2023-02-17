@@ -68,6 +68,11 @@ class ChatGifsExplore extends LitElement {
     		this.shadowRoot.getElementById('downObserver');
     	this.elementObserver();
     }
+	getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
 
 		async searchCollections() {
 			this.isSearched = true;
@@ -75,7 +80,7 @@ class ChatGifsExplore extends LitElement {
 				this.exploreCollections = [];
 				this.isLoading = true;
 				const response = await parentEpml.request('apiCall', {
-					url: `/arbitrary/resources/search?service=GIF_REPOSITORY&query=${this.searchCollectionName}&limit=0
+					url: `/arbitrary/resources/search?service=GIF_REPOSITORY&query=${this.searchCollectionName}&limit=0&apiKey=${this.getApiKey()}
 					`,
 				});
 				await new Promise((res) => {

@@ -2,7 +2,6 @@ import {LitElement, html, css} from 'lit';
 import {render} from 'lit/html.js';
 import {Epml} from '../../../../epml.js';
 import * as zip from '@zip.js/zip.js';
-import {saveAs} from 'file-saver';
 import '@material/mwc-icon';
 import ShortUniqueId from 'short-unique-id';
 import {publishData} from '../../../utils/publish-image.js';
@@ -150,9 +149,7 @@ setOpenGifModal: { attribute: false }
 
 			if (changedProperties && changedProperties.has('currentCollection')) {
 				if (this.mode === 'explore') {
-					console.log(this.mySubscribedCollections, "subbed collections here");
 					const subbedCollection = this.mySubscribedCollections.find((collection) => ((collection.name === this.currentCollection.name) && (collection.identifier === this.currentCollection.identifier)));
-					console.log({subbedCollection});
 					if (subbedCollection) {
 						this.isSubscribed = true;
 					} else {
@@ -179,7 +176,7 @@ setOpenGifModal: { attribute: false }
     				let collectionObj = collection;
     				try {
     					const metaData = await parentEpml.request('apiCall', {
-    						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}`,
+    						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?apiKey=${this.getApiKey()}`,
     					});
 
     					collectionObj = {
@@ -212,13 +209,19 @@ setOpenGifModal: { attribute: false }
     	} catch (error) {}
     }
 
+	getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        let apiKey = myNode.apiKey;
+        return apiKey;
+    }
+
     async getMoreExploreGifs() {
     	try {
     		const getAllGifCollections = await parentEpml.request('apiCall', {
     			type: 'api',
     			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${
     				this.pageNumber * 20
-    			}`,
+    			}&apiKey=${this.getApiKey()}`,
     		});
 
     		const gifCollectionWithMetaData = await this.structureCollections(
@@ -239,7 +242,7 @@ setOpenGifModal: { attribute: false }
     	try {
     		return await parentEpml.request('apiCall', {
     			type: 'api',
-    			url: `/lists/gifSubscribedRepos`,
+    			url: `/lists/gifSubscribedRepos?apiKey=${this.getApiKey()}`,
     		});
     	} catch (error) {}
     }
@@ -254,7 +257,7 @@ setOpenGifModal: { attribute: false }
     		await parentEpml.request('apiCall', {
     			type: 'api',
     			method: 'POST',
-    			url: `/lists/gifSubscribedRepos`,
+    			url: `/lists/gifSubscribedRepos?apiKey=${this.getApiKey()}`,
     			body: bodyToString,
     			headers: {
     				'Content-Type': 'application/json',
@@ -272,7 +275,7 @@ setOpenGifModal: { attribute: false }
     		await parentEpml.request('apiCall', {
     			type: 'api',
     			method: 'DELETE',
-    			url: `/lists/gifSubscribedRepos`,
+    			url: `/lists/gifSubscribedRepos?apiKey=${this.getApiKey()}`,
     			body: bodyToString,
     			headers: {
     				'Content-Type': 'application/json',
@@ -286,7 +289,7 @@ setOpenGifModal: { attribute: false }
     	this.myAccountName = userName;
     	if (this.myAccountName) {
     		const getMyGifCollections = await parentEpml.request('apiCall', {
-    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}`,
+    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}&apiKey=${this.getApiKey()}`,
     		});
     		const gifCollectionWithMetaData = await this.structureCollections(
     			getMyGifCollections
@@ -305,7 +308,7 @@ setOpenGifModal: { attribute: false }
     		type: 'api',
     		url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=20&offset=${
     			this.pageNumber * 20
-    		}`,
+    		}&apiKey=${this.getApiKey()}`,
     	});
     	const gifCollectionWithMetaData = await this.structureCollections(
     		getAllGifCollections
@@ -324,7 +327,7 @@ setOpenGifModal: { attribute: false }
     			const identifier = splitCollection[1];
     			try {
     				const data = await parentEpml.request('apiCall', {
-    					url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${name}&identifier=${identifier}`,
+    					url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${name}&identifier=${identifier}&apiKey=${this.getApiKey()}`,
     				});
     				if (data.length > 0) {
     					savedCollections.push(data[0]);
@@ -346,7 +349,7 @@ setOpenGifModal: { attribute: false }
     	try {
     		const getNames = await parentEpml.request('apiCall', {
     			type: 'api',
-    			url: `/names/address/${recipient}`,
+    			url: `/names/address/${recipient}?apiKey=${this.getApiKey()}`,
     		});
 
     		if (Array.isArray(getNames) && getNames.length > 0) {
@@ -400,7 +403,7 @@ setOpenGifModal: { attribute: false }
     			this.isLoading = true;
 					const userName = await this.getName(this.selectedAddress.address);
 					const doesNameExist = await parentEpml.request('apiCall', {
-    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`,
+    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}&apiKey=${this.getApiKey()}`,
     		});
 
 				if (!userName) {
@@ -465,6 +468,7 @@ setOpenGifModal: { attribute: false }
 
     		const blobTobase = await blobToBase64(zipFileBlob);
 
+
     		await publishData({
     			registeredName: userName,
     			file: blobTobase.split(',')[1],
@@ -488,7 +492,7 @@ setOpenGifModal: { attribute: false }
     						let myCollection = await parentEpml.request(
     							'apiCall',
     							{
-    								url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}`,
+    								url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}&apiKey=${this.getApiKey()}`,
     							}
     						);
     						if (myCollection.length > 0) {
@@ -509,7 +513,7 @@ setOpenGifModal: { attribute: false }
     			};
     			interval = setInterval(getAnswer, 5000);
     		});
-    		saveAs(zipFileBlob, 'zipfile');
+    	
 				this.isLoading = false;
 				this.setGifsLoading(false);
 				this.mode = 'myCollection';
@@ -519,6 +523,8 @@ setOpenGifModal: { attribute: false }
 				} catch (error) {
     		console.log(error);
 				parentEpml.request('showSnackBar', get('gifs.gchange12'));
+				this.setGifsLoading(false);
+    			this.isLoading = false;
     	}
     }
 
@@ -552,8 +558,6 @@ setOpenGifModal: { attribute: false }
 		}
 
     render() {
-			console.log(8, "chat gifs here");
-    	console.log('this.currentCollection', this.currentCollection);
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
