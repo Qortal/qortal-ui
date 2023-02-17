@@ -34,6 +34,8 @@ class ChatTextEditor extends LitElement {
               },
             toggleEnableChatEnter: {attribute: false},
             isEnabledChatEnter: {type: Boolean},
+            openGifModal: { type: Boolean },
+            setOpenGifModal: { attribute: false },
             chatId: {type: String}
 		}
 	}
@@ -392,7 +394,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             .toggleBold()
             .run()
         }
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
       >
       <!-- <mwc-icon >format_bold</mwc-icon> -->
       <span class="material-symbols-outlined">&#xe238;</span>
@@ -406,33 +408,33 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             .toggleItalic()
             .run()
         }
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor &&  this.editor.isActive('italic') ? 'is-active' : ''].join(' ')}
       >
       <span class="material-symbols-outlined">&#xe23f;</span>
       </button>
     
       <button
         @click=${() => this.editor.chain().focus().toggleUnderline().run()}
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
       >
       <span class="material-symbols-outlined">&#xe249;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleHighlight().run()}
-        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
       >
       <span class="material-symbols-outlined">&#xf82b;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
-        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
       <span class="material-symbols-outlined">&#xf84d;</span>
       </button>
       <button
       @click=${()=> this.toggleEnableChatEnter() }
       style="height: 26px; box-sizing: border-box;"
-        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
+        class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
       ${this.isEnabledChatEnter ? html`
       ${translate("chatpage.cchange63")}
@@ -453,7 +455,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 >${translate('chatpage.cchange69')}</label>
         
         <mwc-checkbox style="margin-right: -15px;"  id="qChatShowAutoMsg" @click=${e => {
-        console.log(e.target.checked)
         if(e.target.checked){
             window.parent.reduxStore.dispatch( window.parent.reduxAction.removeAutoLoadImageChat(this.chatId))
             return
@@ -505,6 +506,21 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                 <button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
                     ${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
                 </button>
+                ${this.setOpenGifModal ?
+                    html`
+                     <button 
+                     class="emoji-button" 
+                     @click=${()=> {
+                        if (!this.userName) {
+                            parentEpml.request('showSnackBar', get("gifs.gchange26"));
+                            return;
+                        }
+                        this.setOpenGifModal(true)
+                        }}>
+                     <span style="font-size: 30px" class="material-symbols-outlined">&#xe7a3;</span>
+                    </button>
+                    `
+                    : ''}
                 ${this.editedMessageObj ? (
                     html`
                     <div style="margin-bottom: 10px">
@@ -568,14 +584,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
            }
 	}
 
-  
-
- 
-
-	async firstUpdated() {
-     
-   
-          
+	async firstUpdated() {      
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
             const chatbar = this.shadowRoot.querySelector('.element')

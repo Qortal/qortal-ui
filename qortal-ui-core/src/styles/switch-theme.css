@@ -50,6 +50,13 @@ html {
   --group-header: #929292;
   --group-drop-shadow: rgb(17 17 26 / 10%) 0px 1px 0px;
   --reactions-tooltip-bg: #ffffff;
+  --gifs-drop-shadow: #32326926 0px 2px 5px 0px, #0000000d 0px 1px 1px 0px;
+  --gif-tooltip-bg: #dad7ef;
+  --gif-search-icon-bs: rgb(17 17 26 / 10%) 0px 4px 16px, rgb(17 17 26 / 5%) 0px 8px 32px;
+  --gif-search-icon: #ffffff;
+  --gif-button-row-bg: #eaeaef;
+  --gif-button-row-color: #464040;
+  --gif-collection-hover-bg: #eaeaefa3;
 }
 
 html[theme="dark"] {
@@ -104,4 +111,11 @@ html[theme="dark"] {
   --group-header: #c8c8c8;
   --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px;
   --reactions-tooltip-bg: #161515;
+  --gifs-drop-shadow: 0px 2px 2px 0px hsla(0, 0%, 0%, 0.14), 0px 3px 1px -2px hsla(0, 0%, 0%, 0.12), 0px 1px 5px 0px hsla(0, 0%, 0%, 0.2);
+  --gif-tooltip-bg: #586b8d;
+  --gif-search-icon-bs: 0px 8px 10px 1px hsla(0, 0%, 0%, 0.14), 0px 3px 14px 2px hsla(0, 0%, 0%, 0.12), 0px 5px 5px -3px hsla(0, 0%, 0%, 0.2);
+  --gif-search-icon: #586b8d;
+  --gif-button-row-bg: #82899c;
+  --gif-button-row-color: #151212;
+  --gif-collection-hover-bg: #ffffff26;
 }
