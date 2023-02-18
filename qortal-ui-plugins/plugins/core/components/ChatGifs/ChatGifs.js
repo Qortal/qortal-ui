@@ -176,7 +176,7 @@ setOpenGifModal: { attribute: false }
     				let collectionObj = collection;
     				try {
     					const metaData = await parentEpml.request('apiCall', {
-    						url: `/arbitrary/metadata/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?apiKey=${this.getApiKey()}`,
+    						url: `/arbitrary/metadata/GIF_REPOSITORY/${collection.name}/${collection.identifier}?apiKey=${this.getApiKey()}`,
     					});
 
     					collectionObj = {
@@ -186,10 +186,10 @@ setOpenGifModal: { attribute: false }
     					if (metaData.files) {
     						const metaDataArray = metaData.files.map((data) => {
     							return {
-									url: `${nodeUrl}/arbitrary/GIF_REPOSITORY/${this.myAccountName}/${collection.identifier}?filepath=${data}&apiKey=${this.getApiKey()}`,
+									url: `${nodeUrl}/arbitrary/GIF_REPOSITORY/${collection.name}/${collection.identifier}?filepath=${data}&apiKey=${this.getApiKey()}`,
 									filePath: data,
 									identifier: collection.identifier,
-									name: this.myAccountName
+									name: collection.name
 								};
     						});
 
@@ -289,7 +289,7 @@ setOpenGifModal: { attribute: false }
     	this.myAccountName = userName;
     	if (this.myAccountName) {
     		const getMyGifCollections = await parentEpml.request('apiCall', {
-    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${this.myAccountName}&apiKey=${this.getApiKey()}`,
+    			url: `/arbitrary/resources/search?service=GIF_REPOSITORY&query=${this.myAccountName}&apiKey=${this.getApiKey()}`,
     		});
     		const gifCollectionWithMetaData = await this.structureCollections(
     			getMyGifCollections
@@ -327,10 +327,14 @@ setOpenGifModal: { attribute: false }
     			const identifier = splitCollection[1];
     			try {
     				const data = await parentEpml.request('apiCall', {
-    					url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${name}&identifier=${identifier}&apiKey=${this.getApiKey()}`,
+    					url: `/arbitrary/metadata/GIF_REPOSITORY/${name}/${identifier}?apiKey=${this.getApiKey()}`,
     				});
-    				if (data.length > 0) {
-    					savedCollections.push(data[0]);
+    				if (data.title) {
+    					savedCollections.push({
+							identifier,
+							name,
+							service: 'GIF_REPOSITORY'
+						});
     				}
     			} catch (error) {
     				console.log(error);
@@ -403,7 +407,7 @@ setOpenGifModal: { attribute: false }
     			this.isLoading = true;
 					const userName = await this.getName(this.selectedAddress.address);
 					const doesNameExist = await parentEpml.request('apiCall', {
-    			url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}&apiKey=${this.getApiKey()}`,
+    			url: `/arbitrary/metadata/GIF_REPOSITORY/${userName}/${this.newCollectionName}?apiKey=${this.getApiKey()}`,
     		});
 
 				if (!userName) {
@@ -492,7 +496,7 @@ setOpenGifModal: { attribute: false }
     						let myCollection = await parentEpml.request(
     							'apiCall',
     							{
-    								url: `/arbitrary/resources?service=GIF_REPOSITORY&limit=0&name=${userName}&identifier=${this.newCollectionName}&apiKey=${this.getApiKey()}`,
+    								url: `/arbitrary/metadata/GIF_REPOSITORY/${userName}/${this.newCollectionName}&apiKey=${this.getApiKey()}`,
     							}
     						);
     						if (myCollection.length > 0) {
