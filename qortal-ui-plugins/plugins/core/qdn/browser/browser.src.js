@@ -314,6 +314,11 @@ class WebBrowser extends LitElement {
             worker.terminate();
         } catch (error) {
             worker.terminate();
+            const data = {}
+            const errorMsg = error.message || 'Upload failed'
+            data["error"] = errorMsg
+            response =  JSON.stringify(data);
+          
             return
         }
        
