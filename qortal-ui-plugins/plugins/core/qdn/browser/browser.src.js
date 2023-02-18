@@ -9,6 +9,8 @@ registerTranslateConfig({
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
+import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
+import {publishData} from '../../../utils/publish-image.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -277,12 +279,42 @@ class WebBrowser extends LitElement {
 
                 case actions.PUBLISH_QDN_RESOURCE:
                     // Use "default" if user hasn't specified an identifer
-                    if (data.identifier == null) {
-                        data.identifier = "default";
+                    const service = data.service
+                    const name =  data.name
+                    let identifier =  data.identifier
+                    const data64 = data.data64
+                    if(!service || !name  || !data64){
+                        return
                     }
+                    if (data.identifier == null) {
+                        identifier = "default";
+                    }
+
                     console.log('hello')
                     const result = await showModalAndWait(actions.PUBLISH_QDN_RESOURCE);
+                    console.log({result})
     if (result.action === 'accept') {
+        const worker = new WebWorker();
+        console.log({worker})
+        try {
+            await publishData({
+                registeredName: name,
+                file: data64,
+                service: service,
+                identifier: identifier,
+                parentEpml,
+                uploadType: 'file',
+                selectedAddress: this.selectedAddress,
+                worker: worker,
+                isBase64: true,
+            });
+
+            worker.terminate();
+        } catch (error) {
+            worker.terminate();
+            return
+        }
+       
       console.log('User accepted:', result.userData);
     } else if (result.action === 'reject') {
       console.log('User rejected');

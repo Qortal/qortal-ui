@@ -16,7 +16,9 @@ export const publishData = async ({
 	parentEpml,
 	uploadType,
 	selectedAddress,
-	worker
+	worker,
+	isBase64,
+	metaData
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -115,16 +117,26 @@ export const publishData = async ({
 				}
 
 				// Base64 encode the file to work around compatibility issues between javascript and java byte arrays
+				if(isBase64){
+					postBody = file
+				}
+				if(!isBase64){
 				let fileBuffer = new Uint8Array(await file.arrayBuffer())
 				postBody = Buffer.from(fileBuffer).toString("base64")
+				}
+				
 			}
-
-		
 		
 			let uploadDataUrl = `/arbitrary/${service}/${registeredName}${urlSuffix}?apiKey=${getApiKey()}`
 			if (identifier != null && identifier.trim().length > 0) {
 				uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?apiKey=${getApiKey()}`
+
+				if(metaData){
+					uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?${metaData}&apiKey=${getApiKey()}`
+					
+				}
 			}
+			
 			let uploadDataRes = await parentEpml.request("apiCall", {
 				type: "api",
 				method: "POST",
