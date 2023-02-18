@@ -286,6 +286,7 @@ class WebBrowser extends LitElement {
       console.log('User accepted:', result.userData);
     } else if (result.action === 'reject') {
       console.log('User rejected');
+      response = "{\"error\": \"User declined request\"}"
     }
                     // Params: data.service, data.name, data.identifier, data.data64, 
                     // TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
