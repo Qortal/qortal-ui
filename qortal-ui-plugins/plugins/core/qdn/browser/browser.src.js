@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
+import * as actions from '../../components/qdn-action-types';
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -243,7 +243,7 @@ class WebBrowser extends LitElement {
             }
         }
 
-        window.addEventListener("message", (event) => {
+        window.addEventListener("message", async (event) => {
             if (event == null || event.data == null || event.data.length == 0 || event.data.action == null) {
                 return;
             }
@@ -262,7 +262,7 @@ class WebBrowser extends LitElement {
                     break;
 
                 case "LINK_TO_QDN_RESOURCE":
-                case "QDN_RESOURCE_DISPLAYED":
+                case actions.QDN_RESOURCE_DISPLAYED:
                     // Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
                     // Note: don't update this.url here, as we don't want to force reload the iframe each time.
                     let url = "qortal://" + data.service + "/" + data.name;
@@ -275,12 +275,18 @@ class WebBrowser extends LitElement {
                     this.displayUrl = url;
                     return;
 
-                case "PUBLISH_QDN_RESOURCE":
+                case actions.PUBLISH_QDN_RESOURCE:
                     // Use "default" if user hasn't specified an identifer
                     if (data.identifier == null) {
                         data.identifier = "default";
                     }
-
+                    console.log('hello')
+                    const result = await showModalAndWait(actions.PUBLISH_QDN_RESOURCE);
+    if (result.action === 'accept') {
+      console.log('User accepted:', result.userData);
+    } else if (result.action === 'reject') {
+      console.log('User rejected');
+    }
                     // Params: data.service, data.name, data.identifier, data.data64, 
                     // TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
                     // then set the response string from the core to the `response` variable (defined above)
@@ -624,3 +630,113 @@ class WebBrowser extends LitElement {
 }
 
 window.customElements.define('web-browser', WebBrowser)
+
+
+async function showModalAndWait(type, data) {
+    // Create a new Promise that resolves with user data and an action when the user clicks a button
+    return new Promise((resolve) => {
+      // Create the modal and add it to the DOM
+      const modal = document.createElement('div');
+      modal.innerHTML = `
+        <div class="modal my-modal-class">
+          <div class="modal-content">
+          <div class="modal-body">
+
+          ${type === actions.PUBLISH_QDN_RESOURCE ? `
+          <p>Would you like to publish</p>
+          
+        ` : ''}
+        ${type === 'confirmation' ? `
+          <p>Test2</p>
+        ` : ''}
+        </div>
+            <div class="modal-buttons">
+              <button id="cancel-button">Reject</button>
+              <button id="ok-button">Accept</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+  
+      // Add click event listeners to the buttons
+      const okButton = modal.querySelector('#ok-button');
+      okButton.addEventListener('click', () => {
+        const userData = {
+        
+        };
+        document.body.removeChild(modal);
+        resolve({ action: 'accept', userData });
+      });
+      const cancelButton = modal.querySelector('#cancel-button');
+      cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+        resolve({ action: 'reject' });
+      });
+    });
+  }
+
+  // Add the styles for the modal
+const styles = `
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 80%;
+    min-width: 300px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .modal-body {
+
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .modal-buttons button {
+    background-color: #4caf50;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .modal-buttons button:hover {
+    background-color: #3e8e41;
+  }
+
+  #cancel-button {
+    background-color: #f44336;
+  }
+
+  #cancel-button:hover {
+    background-color: #d32f2f;
+  }
+`;
+
+const styleSheet = new CSSStyleSheet();
+styleSheet.replaceSync(styles);
+
+document.adoptedStyleSheets = [styleSheet];
