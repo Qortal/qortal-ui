@@ -297,7 +297,7 @@ class WebBrowser extends LitElement {
         const worker = new WebWorker();
         console.log({worker})
         try {
-            await publishData({
+          const resPublish =  await publishData({
                 registeredName: name,
                 file: data64,
                 service: service,
@@ -308,7 +308,9 @@ class WebBrowser extends LitElement {
                 worker: worker,
                 isBase64: true,
             });
-
+            let data = {};
+            data["data"] = resPublish;
+            response = JSON.stringify(data);
             worker.terminate();
         } catch (error) {
             worker.terminate();

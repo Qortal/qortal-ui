@@ -44,7 +44,7 @@ export const publishData = async ({
             transactionBytesBase58
         )
         if (convertedBytesBase58.error) {
-            return
+            throw new Error('Error when signing');
         }
 
         const convertedBytes =
@@ -74,7 +74,7 @@ export const publishData = async ({
         })
         let myResponse = { error: "" }
         if (response === false) {
-            return
+            throw new Error('Error when signing');
         } else {
             myResponse = response
         }
@@ -85,21 +85,22 @@ export const publishData = async ({
 	const validate = async () => {
 		let validNameRes = await validateName(registeredName)
 		if (validNameRes.error) {
-			return
+			throw new Error('Name not found');
 		}
 		let transactionBytes = await uploadData(registeredName, path, file)
 		if (transactionBytes.error) {
-			return
+			throw new Error('Error when uploading');
 		} else if (
 			transactionBytes.includes("Error 500 Internal Server Error")
 		) {
-			return
+			throw new Error('Error when uploading');
 		}
 
 		let signAndProcessRes = await signAndProcess(transactionBytes)
 		if (signAndProcessRes.error) {
-			return
+			throw new Error('Error when signing');
 		}
+		return signAndProcessRes
 	}
 
 	const uploadData = async (registeredName, path, file) => {
