@@ -656,7 +656,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
       }
 
     sendMessageFunc(props) {
-        if(this.editor.isEmpty && this.iframeId !== 'newChat') return
+        if(this.editor.isEmpty && (this.iframeId !== 'newChat' && this.iframeId !== 'newAttachmentChat')) return
         this.getMessageSize(this.editor.getJSON())
         if (this.chatMessageSize > 4000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"));
