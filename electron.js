@@ -153,7 +153,7 @@ if (!isLock) {
 	})
 	ipcMain.on('app_version', (event) => {
 		log.info(app.getVersion())
-		mainWindow.webContents.send('app_version', { version: app.getVersion() })
+		myWindow.webContents.send('app_version', { version: app.getVersion() })
 	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {

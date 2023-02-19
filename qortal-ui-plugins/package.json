@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-plugins",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -20,14 +20,14 @@
 		"@lit-labs/motion": "1.0.3",
 		"@material/mwc-list": "0.27.0",
 		"@material/mwc-select": "0.27.0",
-		"@tiptap/pm": "2.0.0-beta.217",
-		"@tiptap/core": "2.0.0-beta.217",
-		"@tiptap/extension-highlight": "2.0.0-beta.217",
-		"@tiptap/extension-image": "2.0.0-beta.217",
-		"@tiptap/extension-placeholder": "2.0.0-beta.217",
-		"@tiptap/extension-underline": "2.0.0-beta.217",
-		"@tiptap/html": "2.0.0-beta.217",
-		"@tiptap/starter-kit": "2.0.0-beta.217",
+		"@tiptap/pm": "2.0.0-beta.218",
+		"@tiptap/core": "2.0.0-beta.218",
+		"@tiptap/extension-highlight": "2.0.0-beta.218",
+		"@tiptap/extension-image": "2.0.0-beta.218",
+		"@tiptap/extension-placeholder": "2.0.0-beta.218",
+		"@tiptap/extension-underline": "2.0.0-beta.218",
+		"@tiptap/html": "2.0.0-beta.218",
+		"@tiptap/starter-kit": "2.0.0-beta.218",
 		"asmcrypto.js": "2.3.2",
 		"compressorjs": "1.1.1",
 		"emoji-picker-js": "https://github.com/Qortal/emoji-picker-js",
@@ -65,6 +65,7 @@
 		"@polymer/paper-slider": "3.0.1",
 		"@polymer/paper-spinner": "3.0.2",
 		"@polymer/paper-tooltip": "3.0.1",
+		"@qortal/rollup-plugin-web-worker-loader": "1.6.4",
 		"@rollup/plugin-alias": "4.0.3",
 		"@rollup/plugin-babel": "6.0.3",
 		"@rollup/plugin-commonjs": "24.0.1",
@@ -85,10 +86,9 @@
 		"lit": "2.6.1",
 		"lit-translate": "2.0.1",
 		"passive-events-support": "1.0.33",
-		"rollup": "3.16.0",
+		"rollup": "3.17.1",
 		"rollup-plugin-node-globals": "1.4.0",
-		"rollup-plugin-progress": "1.1.2",
-		"rollup-plugin-web-worker-loader": "1.6.1"
+		"rollup-plugin-progress": "1.1.2"
 
 	},
 	"engines": {

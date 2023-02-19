@@ -8,7 +8,7 @@ const commonjs = require('@rollup/plugin-commonjs');
 const alias = require('@rollup/plugin-alias');
 const terser = require('@rollup/plugin-terser');
 const babel = require('@rollup/plugin-babel');
-const webWorkerLoader = require('rollup-plugin-web-worker-loader');
+const webWorkerLoader = require('@qortal/rollup-plugin-web-worker-loader');
 
 
 const aliases = {};

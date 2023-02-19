@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui-core",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -19,7 +19,7 @@
 	"dependencies": {
 		"@hapi/hapi": "21.3.0",
 		"@hapi/inert": "7.0.1",
-		"sass": "1.58.2"
+		"sass": "1.58.3"
 	},
 	"devDependencies": {
 		"@babel/core": "7.20.12",
@@ -53,6 +53,7 @@
 		"@polymer/paper-spinner": "3.0.2",
 		"@polymer/paper-toast": "3.0.1",
 		"@polymer/paper-tooltip": "3.0.1",
+		"@qortal/rollup-plugin-web-worker-loader": "1.6.4",
 		"@rollup/plugin-alias": "4.0.3",
 		"@rollup/plugin-babel": "6.0.3",
 		"@rollup/plugin-commonjs": "24.0.1",
@@ -74,11 +75,10 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.16.0",
+		"rollup": "3.17.1",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
-		"rollup-plugin-scss": "3.0.0",
-		"rollup-plugin-web-worker-loader": "1.6.1"
+		"rollup-plugin-scss": "3.0.0"
 	},
 	"engines": {
 		"node": ">=18.12.1"
