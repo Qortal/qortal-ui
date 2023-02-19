@@ -11,8 +11,10 @@ import '@material/mwc-button'
 import '@material/mwc-icon'
 import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
 import {publishData} from '../../../utils/publish-image.js';
-
+import { Loader } from '../../../utils/loader.js';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+
 
 class WebBrowser extends LitElement {
     static get properties() {
@@ -112,7 +114,7 @@ class WebBrowser extends LitElement {
         this.followedNames = []
         this.blockedNames = []
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
-
+        this.loader = new Loader();
         // Build initial display URL
         let displayUrl = "qortal://" + this.service + "/" + this.name;
         if (this.identifier != null && data.identifier != "" && this.identifier != "default") displayUrl = displayUrl.concat("/" + this.identifier);
@@ -290,13 +292,14 @@ class WebBrowser extends LitElement {
                         identifier = "default";
                     }
 
-                    console.log('hello')
+                    console.log('hello2')
                     const result = await showModalAndWait(actions.PUBLISH_QDN_RESOURCE);
                     console.log({result})
     if (result.action === 'accept') {
         const worker = new WebWorker();
         console.log({worker})
         try {
+            this.loader.show();
           const resPublish =  await publishData({
                 registeredName: name,
                 file: data64,
@@ -320,6 +323,8 @@ class WebBrowser extends LitElement {
             response =  JSON.stringify(data);
           
             return
+        } finally {
+            this.loader.hide();
         }
        
       console.log('User accepted:', result.userData);
@@ -340,7 +345,14 @@ class WebBrowser extends LitElement {
                     // If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
                     break;
 
-                case "JOIN_GROUP":
+                case actions.JOIN_GROUP:
+                    const groupId =  data.groupId
+                   
+                    if(!groupId){
+                        return
+                    }
+
+
                     // Params: data.groupId
                     // TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
                     // then set the response string from the core to the `response` variable (defined above)
@@ -725,7 +737,7 @@ const styles = `
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    z-index: 100;
+    z-index: 1000000;
     display: flex;
     justify-content: center;
     align-items: center;
