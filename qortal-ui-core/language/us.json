@@ -192,7 +192,7 @@
 		"gchange24": "This collection name is already taken. Try another name!",
 		"gchange25": "GIF (click to view)",
 		"gchange26": "A name is needed to access and send GIF files"
-	 },
+	},
 	"startminting": {
 		"smchange1": "Cannot fetch minting accounts",
 		"smchange2": "Failed to remove key",
@@ -620,13 +620,13 @@
 		"cchange73": "s",
 		"cchange74": "reacted with",
 		"cchange75": "Uploading attachment. This may take up to one minute.",
-      	"cchange76": "Deleting attachment. This may take up to one minute.",
-      	"cchange77": "Attachment size exceeds 1 MB",
-      	"cchange78": "Are you sure you want to delete this image?",
-      	"cchange79": "Are you sure you want to delete this attachment?",
-      	"cchange80": "This image has been deleted",
-        "cchange81": "This image type is not supported",
-      	"cchange82": "This attachment has been deleted",
+		"cchange76": "Deleting attachment. This may take up to one minute.",
+		"cchange77": "Attachment size exceeds 1 MB",
+		"cchange78": "Are you sure you want to delete this image?",
+		"cchange79": "Are you sure you want to delete this attachment?",
+		"cchange80": "This image has been deleted",
+		"cchange81": "This image type is not supported",
+		"cchange82": "This attachment has been deleted",
 		"cchange90": "No messages"
 	},
 	"welcomepage": {
