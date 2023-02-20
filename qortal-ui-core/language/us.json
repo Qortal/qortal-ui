@@ -493,7 +493,12 @@
 		"bchange13": "Error occurred when trying to block this registered name. Please try again!",
 		"bchange14": "Error occurred when trying to unblock this registered name. Please try again!",
 		"bchange15": "Can't delete data from followed names. Please unfollow first.",
-		"bchange16": "Error occurred when trying to delete this resource. Please try again!"
+		"bchange16": "Error occurred when trying to delete this resource. Please try again!",
+		"bchange17": "User declined to share account details",
+		"bchange18": "Do you give this application permission to get your user address?",
+		"bchange19": "Do you give this application permission to publish to QDN?",
+		"bchange20": "Do you give this application permission to get your wallet balance?",
+		"bchange21": "Fetch Wallet Failed. Please try again!"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
