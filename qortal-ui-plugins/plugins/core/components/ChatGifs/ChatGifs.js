@@ -496,7 +496,7 @@ setOpenGifModal: { attribute: false }
     						let myCollection = await parentEpml.request(
     							'apiCall',
     							{
-    								url: `/arbitrary/metadata/GIF_REPOSITORY/${userName}/${this.newCollectionName}&apiKey=${this.getApiKey()}`,
+    								url: `/arbitrary/metadata/GIF_REPOSITORY/${userName}/${this.newCollectionName}?apiKey=${this.getApiKey()}`,
     							}
     						);
     						if (myCollection.title) {
