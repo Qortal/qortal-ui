@@ -417,7 +417,7 @@ setOpenGifModal: { attribute: false }
     			return;
     		}
 
-    		if (doesNameExist.length !== 0) {
+    		if (doesNameExist.title) {
     			parentEpml.request('showSnackBar', get('gifs.gchange24'));
 					this.isLoading = false;
 					this.setGifsLoading(false);
@@ -499,7 +499,7 @@ setOpenGifModal: { attribute: false }
     								url: `/arbitrary/metadata/GIF_REPOSITORY/${userName}/${this.newCollectionName}&apiKey=${this.getApiKey()}`,
     							}
     						);
-    						if (myCollection.length > 0) {
+    						if (myCollection.title) {
     							clearInterval(interval);
     							res();
     						}
