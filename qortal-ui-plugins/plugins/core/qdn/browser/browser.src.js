@@ -614,13 +614,13 @@ class WebBrowser extends LitElement {
                     
                             if (isAddress) {
                                 let myTransaction = await makeTransactionRequest(recipient, lastRef);
-                                getTxnRequestResponse(myTransaction);
+                                return getTxnRequestResponse(myTransaction);
                             } else {
                                 let myNameRes = await validateName(recipient);
                                 if (myNameRes !== false) {
                                     let myNameAddress = myNameRes.owner
                                     let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
-                                    getTxnRequestResponse(myTransaction)
+                                return getTxnRequestResponse(myTransaction)
                                 } else {
                                     console.error(`${translate("chatpage.cchange54")}`)
                                     parentEpml.request('showSnackBar', `${translate("chatpage.cchange54")}`)
@@ -686,7 +686,17 @@ class WebBrowser extends LitElement {
                                 throw new Error(txnResponse);
                             }
                         }
-                        validateReceiver(recipient);
+                        try {
+                            const result = await validateReceiver(recipient);
+                            if (result) {
+                              return result;
+                            }
+                          } catch (error) {
+                            console.error(error);
+                            return '{"error": "Request could not be fulfilled"}';
+                          } finally {
+                            console.log("Case completed.");
+                          }
 					break;
 
 				default:
