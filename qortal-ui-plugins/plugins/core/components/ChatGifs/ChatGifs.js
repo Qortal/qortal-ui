@@ -400,7 +400,6 @@ setOpenGifModal: { attribute: false }
     }
 
     async uploadGifCollection() {
-			console.log(this.gifsToBeAdded);
     	if (!this.newCollectionName) {
     		parentEpml.request('showSnackBar', get('gifs.gchange8'));
     		return;
@@ -604,7 +603,6 @@ setOpenGifModal: { attribute: false }
 		}
 
     render() {
-			console.log(5, "chat gifs here");
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
