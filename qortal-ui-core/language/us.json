@@ -191,7 +191,9 @@
 		"gchange23": "Your gif collection cannot contain two gifs with the same name!",
 		"gchange24": "This collection name is already taken. Try another name!",
 		"gchange25": "GIF (click to view)",
-		"gchange26": "A name is needed to access and send GIF files"
+		"gchange26": "A name is needed to access and send GIF files",
+		"gchange27": "The gif collection size is over 25mb! Please try again!",
+		"gchange28": "Each gif in the collection cannot be over 0.7mb! Please try again!"
 	},
 	"startminting": {
 		"smchange1": "Cannot fetch minting accounts",

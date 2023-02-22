@@ -7,6 +7,7 @@ import ShortUniqueId from 'short-unique-id';
 import {publishData} from '../../../utils/publish-image.js';
 import {translate, get} from 'lit-translate';
 import {gifExplorerStyles} from './ChatGifs-css.js';
+import { bytesToMegabytes } from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
@@ -391,6 +392,7 @@ setOpenGifModal: { attribute: false }
     		return {
     			file,
     			name: file.name,
+					size: file.size
     		};
     	});
 			const removedExtensions = this.removeDotGIF(mapGifs);
@@ -398,6 +400,7 @@ setOpenGifModal: { attribute: false }
     }
 
     async uploadGifCollection() {
+			console.log(this.gifsToBeAdded);
     	if (!this.newCollectionName) {
     		parentEpml.request('showSnackBar', get('gifs.gchange8'));
     		return;
@@ -424,6 +427,37 @@ setOpenGifModal: { attribute: false }
     			return;
     		}
 
+				 function validateGifSizes(gifs) {
+					const maxSizeInMB = 0.7;
+					const invalidGifs = [];
+					
+					for (let i = 0; i < gifs.length; i++) {
+						const gif = gifs[i];
+						const gifSize = gif.size;
+						
+						const gifSizeMB = bytesToMegabytes(gifSize);
+						
+						if (gifSizeMB > maxSizeInMB) {
+							invalidGifs.push(gif);
+						}
+					}
+					
+					if (invalidGifs.length > 0) {
+						return false;
+					} else {
+						return true;
+					}
+				}
+				
+				let validatedSize = validateGifSizes(this.gifsToBeAdded);
+
+				if (!validatedSize) {
+					parentEpml.request('showSnackBar', get('gifs.gchange28'));
+					this.isLoading = false;
+					this.setGifsLoading(false);
+					return;
+				}
+
 				function validateDuplicateGifNames(arr) {
 					let names = [];
 					for (let i = 0; i < arr.length; i++) {
@@ -435,9 +469,9 @@ setOpenGifModal: { attribute: false }
 					return true;
 			}
 
-			let result = validateDuplicateGifNames(this.gifsToBeAdded);
+			let validatedNames = validateDuplicateGifNames(this.gifsToBeAdded);
 
-			if (!result) {
+			if (!validatedNames) {
 				parentEpml.request('showSnackBar', get('gifs.gchange23'));
 				this.isLoading = false;
 				this.setGifsLoading(false);
@@ -470,8 +504,16 @@ setOpenGifModal: { attribute: false }
 
     		const zipFileBlob = await zipFileWriter.getData();
 
-    		const blobTobase = await blobToBase64(zipFileBlob);
+				const zipSize = bytesToMegabytes(zipFileBlob.size);
+				
+				if (zipSize > 10) {
+					parentEpml.request('showSnackBar', get('gifs.gchange27'));
+					this.isLoading = false;
+					this.setGifsLoading(false);
+					return;
+				}
 
+    		const blobTobase = await blobToBase64(zipFileBlob);
 
     		await publishData({
     			registeredName: userName,
@@ -562,6 +604,7 @@ setOpenGifModal: { attribute: false }
 		}
 
     render() {
+			console.log(5, "chat gifs here");
     	return html`
                 <div class="gifs-container">
                 <div class="gif-explorer-container">
