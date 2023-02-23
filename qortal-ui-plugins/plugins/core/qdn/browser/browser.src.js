@@ -16,6 +16,7 @@ registerTranslateConfig({
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
+import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
 import { publishData } from '../../../utils/publish-image.js';
 import { Loader } from '../../../utils/loader.js';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -108,7 +109,8 @@ class WebBrowser extends LitElement {
 	constructor() {
 		super();
 		this.url = 'about:blank';
-        this.myAddress = window.parent.reduxStore.getState().app.selectedAddress;
+		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress;
+		this._publicKey = { key: '', hasPubKey: false };
 		const urlParams = new URLSearchParams(window.location.search);
 		this.name = urlParams.get('name');
 		this.service = urlParams.get('service');
@@ -231,7 +233,6 @@ class WebBrowser extends LitElement {
 	}
 
 	render() {
-		console.log(3, 'browser page here');
 		return html`
     		<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     			<div class="layout horizontal center">
@@ -321,8 +322,8 @@ class WebBrowser extends LitElement {
 			console.log('UI received event: ' + JSON.stringify(data));
 
 			switch (data.action) { 
-                case 'GET_USER_ACCOUNT':
-                case actions.GET_USER_ACCOUNT:
+					case 'GET_USER_ACCOUNT':
+					case actions.GET_USER_ACCOUNT:
 					const res1 = await showModalAndWait(
 						actions.GET_USER_ACCOUNT
 					);
@@ -418,12 +419,159 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 
-				case 'SEND_CHAT_MESSAGE':
+				case 'SEND_CHAT_MESSAGE': {
+					const message = data.message;
+					const recipient = data.destinationAddress;
+					const sendMessage = async (messageText, chatReference) => {
+						this.loader.show();
+						let _reference = new Uint8Array(64);
+						window.crypto.getRandomValues(_reference);
+						let reference = window.parent.Base58.encode(_reference);
+						const sendMessageRequest = async () => {
+										let chatResponse = await parentEpml.request('chat', {
+												type: 18,
+												nonce: this.selectedAddress.nonce,
+												params: {
+														timestamp: Date.now(),
+														recipient: recipient,
+														recipientPublicKey: this._publicKey.key,
+														hasChatReference: 0,
+														chatReference: chatReference,
+														message: messageText,
+														lastReference: reference,
+														proofOfWorkNonce: 0,
+														isEncrypted: 1,
+														isText: 1
+												}
+										});
+								const msgResponse =	await	_computePow(chatResponse)
+								return msgResponse;
+						};
+		
+						const _computePow = async (chatBytes) => {
+								const difficulty = 8;
+								const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
+								const worker = new WebWorkerChat();
+								let nonce = null;
+								let chatBytesArray = null;
+		
+									await new Promise((res) => {
+										worker.postMessage({chatBytes, path, difficulty});
+										worker.onmessage = e => {
+											chatBytesArray = e.data.chatBytesArray;
+												nonce = e.data.nonce;
+												res();
+										}
+									});
+		
+								let _response = await parentEpml.request('sign_chat', {
+										nonce: this.selectedAddress.nonce,
+										chatBytesArray: chatBytesArray,
+										chatNonce: nonce
+								});
+		
+							const chatResponse =	getSendChatResponse(_response);
+							return chatResponse;
+						};
+		
+						const getSendChatResponse = (res) => {
+								if (res === true) {
+									let successString = get("browserpage.bchange23");
+									parentEpml.request('showSnackBar', `${successString}`);
+								} else if (res.error) {
+										parentEpml.request('showSnackBar', res.message);
+								} 
+								this.loader.hide();
+								return res;
+						};
+		
+						const chatResponse = await sendMessageRequest();
+						return chatResponse;
+				}		
+
+					const result = await showModalAndWait(
+						actions.SEND_CHAT_MESSAGE
+					);
+					if (result.action === "accept") {
+								let hasPublicKey = true;
+								const res =	await parentEpml.request('apiCall', {
+									type: 'api',
+									url: `/addresses/publickey/${recipient}`
+								});
+
+								if (res.error === 102) {
+											this._publicKey.key = ''
+											this._publicKey.hasPubKey = false
+											hasPublicKey = false;
+									} else if (res !== false) {
+											this._publicKey.key = res
+											this._publicKey.hasPubKey = true
+									} else {
+											this._publicKey.key = ''
+											this._publicKey.hasPubKey = false
+											hasPublicKey = false;
+									}
+
+								if (!hasPublicKey) {
+									let err4string = get("chatpage.cchange39");
+									parentEpml.request('showSnackBar', `${err4string}`)
+									return
+								}
+
+								this.loader.show();
+
+							const tiptapJson = {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: message,
+											},
+											
+										],
+									},
+								],
+							}
+
+							const messageObject = {
+									messageText: tiptapJson,
+									images: [''],
+									repliedTo: '',
+									version: 2
+							};
+
+							const stringifyMessageObject = JSON.stringify(messageObject);
+								// if (this.balance < 4) {
+								// 		this.myTrimmedMeassage = ''
+								// 		this.myTrimmedMeassage = stringifyMessageObject
+								// 		this.shadowRoot.getElementById('confirmDialog').open()
+								// } else {
+										// this.sendMessage(stringifyMessageObject, typeMessage);
+								// }
+							try {
+								const msgResponse = await sendMessage(stringifyMessageObject);
+								response = msgResponse;
+							} catch (error) {
+								console.error(error);
+								return '{"error": "Request could not be fulfilled"}';
+							} finally {
+								this.loader.hide();
+								console.log("Case completed.");
+							}
+						
+					} else {
+						response = '{"error": "User declined request"}';
+					}
+					// this.loader.show();
 					// Params: data.groupId, data.destinationAddress, data.message
 					// TODO: prompt user to send chat message. If they confirm, sign+process a CHAT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
+				}
 
 				case actions.JOIN_GROUP:
 					const groupId = data.groupId;
@@ -450,8 +598,7 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-                    console.log({data});
-                    const res3 = await showModalAndWait(
+						const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
 					);
 					if (res3.action === 'accept') {
@@ -463,7 +610,6 @@ class WebBrowser extends LitElement {
                                 const QORTBalance = await parentEpml.request('apiCall', {
                                       url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
                                   })
-                                  console.log({QORTBalance})
                                   return QORTBalance;
                             } catch (error) {
                                 console.error(error);
@@ -504,19 +650,21 @@ class WebBrowser extends LitElement {
                                     break
                             }
                                 try {
-                                    this.loader.show()                                    
-                                    await parentEpml.request('apiCall', {
+																	this.loader.show();                                    
+                                   const res = await parentEpml.request('apiCall', {
                                         url: _url,
                                         method: 'POST',
                                         body: _body,
-                                    }).then((res) => {
-                                        if (isNaN(Number(res))) {
-                                            throw new Error(get("browserpage.bchange21"));
-                                        } else {
-                                            console.log((Number(res) / 1e8).toFixed(8), "other wallet balance here");
-                                           return (Number(res) / 1e8).toFixed(8)
-                                        }
                                     })
+																	if (isNaN(Number(res))) {
+																		const data = {};
+																		const errorMsg = error.message || get("browserpage.bchange21");
+																		data['error'] = errorMsg;
+																		response = JSON.stringify(data);
+																		return;
+																	} else {
+																		response = (Number(res) / 1e8).toFixed(8);
+																	}											
                                 } catch (error) {                                    
                                     console.error(error);
                                     const data = {};
@@ -534,7 +682,6 @@ class WebBrowser extends LitElement {
 					break;
 
 				case 'SEND_COIN':
-                    console.log({data});
 					// Params: data.coin, data.destinationAddress, data.amount, data.fee
 					// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
 					// then set the response string from the core to the `response` variable (defined above)
@@ -697,12 +844,12 @@ class WebBrowser extends LitElement {
                           } finally {
                             console.log("Case completed.");
                           }
-					break;
+												break;
 
-				default:
-					console.log('Unhandled message: ' + JSON.stringify(data));
-					return;
-			}
+											default:
+												console.log('Unhandled message: ' + JSON.stringify(data));
+												return;
+										}
 
 			// Parse response
 			let responseObj;
@@ -712,7 +859,6 @@ class WebBrowser extends LitElement {
 				// Not all responses will be JSON
 				responseObj = response;
 			}
-
 			// Respond to app
 			if (responseObj.error != null) {
 				event.ports[0].postMessage({
@@ -1050,6 +1196,7 @@ async function showModalAndWait(type, data) {
                     ${type === actions.GET_USER_ACCOUNT ? `<p class="modal-paragraph">${get("browserpage.bchange18")}</p>` : ''}
                     ${type === actions.PUBLISH_QDN_RESOURCE ? `<p class="modal-paragraph">${get("browserpage.bchange19")}</p>` : ''}
                     ${type === actions.GET_WALLET_BALANCE ? `<p class="modal-paragraph">${get("browserpage.bchange20")}</p>` : ''}
+                    ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
                 </div>
                 <div class="modal-buttons">
                     <button id="cancel-button">Reject</button>
