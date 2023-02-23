@@ -632,45 +632,41 @@ class WebBrowser extends LitElement {
 					break;
 				}
 
-				case 'DEPLOY_AT': {
-					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
-					const missingFields = [];
+				// case 'DEPLOY_AT': {
+				// 	const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
+				// 	const missingFields = [];
 
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field);
-						}
-					});
+				// 	requiredFields.forEach((field) => {
+				// 		if (!data[field]) {
+				// 			missingFields.push(field);
+				// 		}
+				// 	});
 
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
+				// 	if (missingFields.length > 0) {
+				// 		const missingFieldsString = missingFields.join(', ');
+				// 		const errorMsg = `Missing fields: ${missingFieldsString}`
+				// 		let data = {};
+				// 		data['error'] = errorMsg;
+				// 		response = JSON.stringify(data);
+				// 		break
+				// 	}
 					
 					
-					try {
-						this.loader.show();
-						const fee = data.fee || undefined
-						const resJoinGroup = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, fee, data.type)
-						response = JSON.stringify(resJoinGroup);
-					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to join the group.';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-					} finally {
-						this.loader.hide();
-					}
-					// Params: data.creationBytes, data.name, data.description, data.type, data.tags, data.amount, data.assetId, data.fee
-					// TODO: prompt user to deploy an AT. If they confirm, sign+process a DEPLOY_AT transaction
-					// then set the response string from the core to the `response` variable (defined above)
-					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break;
-				}
+				// 	try {
+				// 		this.loader.show();
+				// 		const fee = data.fee || undefined
+				// 		const resJoinGroup = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, fee, data.type)
+				// 		response = JSON.stringify(resJoinGroup);
+				// 	} catch (error) {
+				// 		const obj = {};
+				// 		const errorMsg = error.message || 'Failed to join the group.';
+				// 		obj['error'] = errorMsg;
+				// 		response = JSON.stringify(obj);
+				// 	} finally {
+				// 		this.loader.hide();
+				// 	}
+				// 	break;
+				// }
 
 
 				case 'GET_WALLET_BALANCE':
