@@ -22,6 +22,7 @@ import LeaveGroupTransaction from './groups/LeaveGroupTransaction.js'
 import RewardShareTransaction from './reward-share/RewardShareTransaction.js'
 import RemoveRewardShareTransaction from './reward-share/RemoveRewardShareTransaction.js'
 import TransferPrivsTransaction from './TransferPrivsTransaction.js'
+import DeployAtTransaction from './DeployAtTransaction.js'
 
 export const transactionTypes = {
 	2: PaymentTransaction,
@@ -30,6 +31,7 @@ export const transactionTypes = {
 	5: SellNameTransacion,
 	6: CancelSellNameTransacion,
 	7: BuyNameTransacion,
+	16: DeployAtTransaction,
 	17: MessageTransaction,
 	18: ChatTransaction,
 	181: GroupChatTransaction,

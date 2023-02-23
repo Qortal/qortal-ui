@@ -148,7 +148,8 @@ export const publishData = async ({
 		}
 	}
 	try {
-		await validate()
+		const validateRes = await validate()
+		return validateRes
 	} catch (error) {
 		throw new Error(error.message)
 	}

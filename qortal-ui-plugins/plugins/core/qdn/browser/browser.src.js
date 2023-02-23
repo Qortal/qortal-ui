@@ -119,7 +119,7 @@ class WebBrowser extends LitElement {
 		this.path =
 			urlParams.get('path') != null
 				? (urlParams.get('path').startsWith('/') ? '' : '/') +
-				  urlParams.get('path')
+				urlParams.get('path')
 				: '';
 		this.followedNames = [];
 		this.blockedNames = [];
@@ -166,23 +166,20 @@ class WebBrowser extends LitElement {
 		const render = () => {
 			const myNode =
 				window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-					window.parent.reduxStore.getState().app.nodeConfig.node
+				window.parent.reduxStore.getState().app.nodeConfig.node
 				];
 			const nodeUrl =
 				myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-			this.url = `${nodeUrl}/render/${this.service}/${this.name}${
-				this.path != null ? this.path : ''
-			}?theme=${this.theme}&identifier=${
-				this.identifier != null ? this.identifier : ''
-			}`;
+			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
+				}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
+				}`;
 		};
 
 		const authorizeAndRender = () => {
 			parentEpml
 				.request('apiCall', {
-					url: `/render/authorize/${
-						this.name
-					}?apiKey=${this.getApiKey()}`,
+					url: `/render/authorize/${this.name
+						}?apiKey=${this.getApiKey()}`,
 					method: 'POST',
 				})
 				.then((res) => {
@@ -231,7 +228,6 @@ class WebBrowser extends LitElement {
 	}
 
 	render() {
-		console.log(2, 'browser page here');
 		return html`
     		<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     			<div class="layout horizontal center">
@@ -248,29 +244,163 @@ class WebBrowser extends LitElement {
     					<mwc-button @click=${() => this.goBackToList()} title="${translate(
 			'browserpage.bchange3'
 		)}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-    					<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${
-							this.displayUrl
-						}"></input>
+    					<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl
+			}"></input>
     					<mwc-button @click=${() => this.delete()} title="${translate(
-			'browserpage.bchange4'
-		)} ${this.service} ${this.name} ${translate(
-			'browserpage.bchange5'
-		)}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
+				'browserpage.bchange4'
+			)} ${this.service} ${this.name} ${translate(
+				'browserpage.bchange5'
+			)}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
     					${this.renderBlockUnblockButton()}
     					${this.renderFollowUnfollowButton()}
     				</div>
     				<div class="iframe-container">
-    					<iframe id="browser-iframe" src="${
-							this.url
-						}" sandbox="allow-scripts allow-forms allow-downloads">
+    					<iframe id="browser-iframe" src="${this.url
+			}" sandbox="allow-scripts allow-forms allow-downloads">
     						<span style="color: var(--black);">${translate(
-								'browserpage.bchange6'
-							)}</span>
+				'browserpage.bchange6'
+			)}</span>
     					</iframe>
     				</div>
     			</div>
     		</div>
     	`;
+	}
+
+	async unitJoinFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee');
+		}
+
+		const data = await response.json()
+		const joinFee = (Number(data) / 1e8).toFixed(8)
+		return joinFee
+	}
+
+	async deployAtFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee');
+		}
+
+		const data = await response.json()
+		const joinFee = data
+		return joinFee
+	}
+
+	async _joinGroup(groupId, groupName) {
+		const joinFeeInput = await this.unitJoinFee()
+		const getLastRef = async () => {
+			let myRef = await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+			return myRef
+		};
+
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef();
+			let myTransaction = await makeTransactionRequest(lastRef)
+			const res = getTxnRequestResponse(myTransaction)
+			return res
+		}
+
+		const makeTransactionRequest = async (lastRef) => {
+			let groupdialog1 = get("transactions.groupdialog1")
+			let groupdialog2 = get("transactions.groupdialog2")
+			let myTxnrequest = await parentEpml.request('transaction', {
+				type: 31,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: joinFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog1: groupdialog1,
+					groupdialog2: groupdialog2
+				}
+			})
+			return myTxnrequest
+		}
+
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		const groupRes = await validateReceiver()
+		return groupRes
+
+	}
+
+	async _deployAt(name, description, tags, creationBytes, amount, assetId, fee, atType) {
+		const deployAtFee = await this.deployAtFee()
+		const getLastRef = async () => {
+			let myRef = await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+			return myRef
+		};
+
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef();
+			let myTransaction = await makeTransactionRequest(lastRef)
+			const res = getTxnRequestResponse(myTransaction)
+			return res
+		}
+
+		const makeTransactionRequest = async (lastRef) => {
+			let groupdialog1 = get("transactions.groupdialog1")
+			let groupdialog2 = get("transactions.groupdialog2")
+			let myTxnrequest = await parentEpml.request('transaction', {
+				type: 16,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: fee || deployAtFee,
+					rName: name,
+					rDescription: description,
+					rTags: tags,
+					rAmount: amount,
+					rAssetId: assetId,
+					rCreationBytes: creationBytes,
+					atType: atType,
+					lastReference: lastRef,
+					atDeployDialog1: groupdialog1,
+					atDeployDialog2: groupdialog2
+				}
+			})
+			return myTxnrequest
+		}
+
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		const groupRes = await validateReceiver()
+		return groupRes
+
 	}
 
 	firstUpdated() {
@@ -320,9 +450,9 @@ class WebBrowser extends LitElement {
 			let data = event.data;
 			console.log('UI received event: ' + JSON.stringify(data));
 
-			switch (data.action) { 
-                case 'GET_USER_ACCOUNT':
-                case actions.GET_USER_ACCOUNT:
+			switch (data.action) {
+				case 'GET_USER_ACCOUNT':
+				case actions.GET_USER_ACCOUNT:
 					const res1 = await showModalAndWait(
 						actions.GET_USER_ACCOUNT
 					);
@@ -338,7 +468,7 @@ class WebBrowser extends LitElement {
 						const errorMsg = get('browserpage.bchange17');
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
-						return;
+						break;
 					}
 				case 'LINK_TO_QDN_RESOURCE':
 				case actions.QDN_RESOURCE_DISPLAYED:
@@ -363,16 +493,29 @@ class WebBrowser extends LitElement {
 					this.displayUrl = url;
 					return;
 
-				case actions.PUBLISH_QDN_RESOURCE:
+				case actions.PUBLISH_QDN_RESOURCE: {
+					const requiredFields = ['service', 'name', 'data64'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 					// Use "default" if user hasn't specified an identifer
 					const service = data.service;
 					const name = data.name;
 					let identifier = data.identifier;
 					const data64 = data.data64;
-
-                    if (!service || !name || !data64) {
-						return;
-					}
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
@@ -394,17 +537,16 @@ class WebBrowser extends LitElement {
 								worker: worker,
 								isBase64: true,
 							});
-							let data = {};
-							data['data'] = resPublish;
-							response = JSON.stringify(data);
+
+							response = JSON.stringify(resPublish);
 							worker.terminate();
 						} catch (error) {
 							worker.terminate();
-							const data = {};
+							const obj = {};
 							const errorMsg = error.message || 'Upload failed';
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
-                            console.error(error);
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							console.error(error);
 							return;
 						} finally {
 							this.loader.hide();
@@ -417,6 +559,8 @@ class WebBrowser extends LitElement {
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
+				}
+
 
 				case 'SEND_CHAT_MESSAGE':
 					// Params: data.groupId, data.destinationAddress, data.message
@@ -425,11 +569,60 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 
-				case actions.JOIN_GROUP:
+				case actions.JOIN_GROUP: {
+					const requiredFields = ['groupId'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 					const groupId = data.groupId;
 
-					if (!groupId) {
-						return;
+				
+					let groupInfo = null
+					try {
+						groupInfo = await parentEpml.request("apiCall", {
+							type: "api",
+							url: `/groups/${groupId}`,
+						});
+					} catch (error) {
+						const errorMsg = (error && error.message) || 'Group not found';
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
+
+					if (!groupInfo || groupInfo.error) {
+						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found';
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
+
+					try {
+						this.loader.show();
+						const resJoinGroup = await this._joinGroup(groupId, groupInfo.groupName)
+						response = JSON.stringify(resJoinGroup);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
 					}
 
 					// Params: data.groupId
@@ -437,99 +630,132 @@ class WebBrowser extends LitElement {
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
+				}
 
-				case 'DEPLOY_AT':
+				case 'DEPLOY_AT': {
+					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					
+					
+					try {
+						this.loader.show();
+						const fee = data.fee || undefined
+						const resJoinGroup = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, fee, data.type)
+						response = JSON.stringify(resJoinGroup);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
 					// Params: data.creationBytes, data.name, data.description, data.type, data.tags, data.amount, data.assetId, data.fee
 					// TODO: prompt user to deploy an AT. If they confirm, sign+process a DEPLOY_AT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
+				}
+
 
 				case 'GET_WALLET_BALANCE':
 					// Params: data.coin (QORT / LTC / DOGE / DGB / C / ARRR)
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-                    console.log('case passed here');
-                    console.log(data.coin, "data coin here");
-                    const res3 = await showModalAndWait(
+	
+					const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
 					);
 					if (res3.action === 'accept') {
-                    let coin = data.coin;
-                        if (coin === "QORT") {
-                            let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-                            try {
-                                this.loader.show();                               
-                                const QORTBalance = await parentEpml.request('apiCall', {
-                                      url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
-                                  })
-                                  console.log({QORTBalance})
-                                  return QORTBalance;
-                            } catch (error) {
-                                console.error(error);
-                                const data = {};
-                                const errorMsg = error.message || get("browserpage.bchange21");
-                                data['error'] = errorMsg;
-                                response = JSON.stringify(data);
-                                return;
-                            } finally {
-                                this.loader.hide();
-                            }
-                        } else {
-                            let _url = ``
-                            let _body = null
+						let coin = data.coin;
+						if (coin === "QORT") {
+							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+							try {
+								this.loader.show();
+								const QORTBalance = await parentEpml.request('apiCall', {
+									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
+								})
+								return QORTBalance;
+							} catch (error) {
+								console.error(error);
+								const data = {};
+								const errorMsg = error.message || get("browserpage.bchange21");
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								return;
+							} finally {
+								this.loader.hide();
+							}
+						} else {
+							let _url = ``
+							let _body = null
 
-                            switch (coin) {
-                                case 'LTC':
-                                    _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
-                                    break
-                                case 'DOGE':
-                                    _url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
-                                    break
-                                case 'DGB':
-                                    _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-                                    break
-                                case 'RVN':
-                                    _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
-                                    break
-                                case 'ARRR':
-                                    _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
-                                    break
-                                default:
-                                    break
-                            }
-                                try {
-                                    this.loader.show()                                    
-                                    await parentEpml.request('apiCall', {
-                                        url: _url,
-                                        method: 'POST',
-                                        body: _body,
-                                    }).then((res) => {
-                                        if (isNaN(Number(res))) {
-                                            throw new Error(get("browserpage.bchange21"));
-                                        } else {
-                                            console.log((Number(res) / 1e8).toFixed(8), "other wallet balance here");
-                                           return (Number(res) / 1e8).toFixed(8)
-                                        }
-                                    })
-                                } catch (error) {                                    
-                                    console.error(error);
-                                    const data = {};
-                                    const errorMsg = error.message || get("browserpage.bchange21");
-                                    data['error'] = errorMsg;
-                                    response = JSON.stringify(data);
-                                    return;
-                                } finally {
-                                    this.loader.hide()                                    
-                                }
-                        }
-                    } else if (res3.action === 'reject') {
+							switch (coin) {
+								case 'LTC':
+									_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+									break
+								case 'DOGE':
+									_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+									break
+								case 'DGB':
+									_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+									break
+								case 'RVN':
+									_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+									break
+								case 'ARRR':
+									_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+									break
+								default:
+									break
+							}
+							try {
+								this.loader.show()
+								await parentEpml.request('apiCall', {
+									url: _url,
+									method: 'POST',
+									body: _body,
+								}).then((res) => {
+									if (isNaN(Number(res))) {
+										throw new Error(get("browserpage.bchange21"));
+									} else {
+										console.log((Number(res) / 1e8).toFixed(8), "other wallet balance here");
+										return (Number(res) / 1e8).toFixed(8)
+									}
+								})
+							} catch (error) {
+								console.error(error);
+								const data = {};
+								const errorMsg = error.message || get("browserpage.bchange21");
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								return;
+							} finally {
+								this.loader.hide()
+							}
+						}
+					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}';
 					}
 					break;
@@ -554,14 +780,16 @@ class WebBrowser extends LitElement {
 				// Not all responses will be JSON
 				responseObj = response;
 			}
-
+			console.log({ responseObj })
 			// Respond to app
 			if (responseObj.error != null) {
+				console.log('hello error')
 				event.ports[0].postMessage({
 					result: null,
 					error: responseObj,
 				});
 			} else {
+				console.log('hello success')
 				event.ports[0].postMessage({
 					result: responseObj,
 					error: null,
@@ -654,15 +882,13 @@ class WebBrowser extends LitElement {
 	refresh() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 		const nodeUrl =
 			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		this.url = `${nodeUrl}/render/${this.service}/${this.name}${
-			this.path != null ? this.path : ''
-		}?theme=${this.theme}&identifier=${
-			this.identifier != null ? this.identifier : ''
-		}`;
+		this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
+			}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
+			}`;
 	}
 
 	goBackToList() {
@@ -811,9 +1037,8 @@ class WebBrowser extends LitElement {
 			this.identifier == null ? 'default' : resource.identifier;
 
 		let ret = await parentEpml.request('apiCall', {
-			url: `/arbitrary/resource/${this.service}/${
-				this.name
-			}/${identifier}?apiKey=${this.getApiKey()}`,
+			url: `/arbitrary/resource/${this.service}/${this.name
+				}/${identifier}?apiKey=${this.getApiKey()}`,
 			method: 'DELETE',
 		});
 
@@ -864,7 +1089,7 @@ class WebBrowser extends LitElement {
 	getApiKey() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 		let apiKey = myNode.apiKey;
 		return apiKey;
@@ -883,10 +1108,10 @@ async function showModalAndWait(type, data) {
 	return new Promise((resolve) => {
 		// Create the modal and add it to the DOM
 		const modal = document.createElement('div');
-        modal.id = "backdrop"
-        modal.classList.add("backdrop");
-		modal.innerHTML = 
-        ` <div class="modal my-modal-class">
+		modal.id = "backdrop"
+		modal.classList.add("backdrop");
+		modal.innerHTML =
+			` <div class="modal my-modal-class">
             <div class="modal-content">
                 <div class="modal-body">
                     ${type === actions.GET_USER_ACCOUNT ? `<p class="modal-paragraph">${get("browserpage.bchange18")}</p>` : ''}
@@ -900,30 +1125,30 @@ async function showModalAndWait(type, data) {
             </div>
         </div>
      `;
-        document.body.appendChild(modal);
+		document.body.appendChild(modal);
 
 		// Add click event listeners to the buttons
 		const okButton = modal.querySelector('#ok-button');
 		okButton.addEventListener('click', () => {
 			const userData = {};
-            if (modal.parentNode === document.body) {
-			document.body.removeChild(modal);
-            }
+			if (modal.parentNode === document.body) {
+				document.body.removeChild(modal);
+			}
 			resolve({ action: 'accept', userData });
 		});
-        const backdropClick = document.getElementById('backdrop');
+		const backdropClick = document.getElementById('backdrop');
 		backdropClick.addEventListener('click', () => {
-            if (modal.parentNode === document.body) {
-			document.body.removeChild(modal);
-            }
-            resolve({ action: 'reject' });
+			if (modal.parentNode === document.body) {
+				document.body.removeChild(modal);
+			}
+			resolve({ action: 'reject' });
 		});
 		const cancelButton = modal.querySelector('#cancel-button');
 		cancelButton.addEventListener('click', () => {
-            if (modal.parentNode === document.body) {
-                document.body.removeChild(modal);
-            }			
-            resolve({ action: 'reject' });
+			if (modal.parentNode === document.body) {
+				document.body.removeChild(modal);
+			}
+			resolve({ action: 'reject' });
 		});
 	});
 }
