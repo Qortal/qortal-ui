@@ -452,9 +452,9 @@ class WebBrowser extends LitElement {
 			let data = event.data;
 			console.log('UI received event: ' + JSON.stringify(data));
 
-			switch (data.action) { 
-					case 'GET_USER_ACCOUNT':
-					case actions.GET_USER_ACCOUNT:
+			switch (data.action) {
+				case 'GET_USER_ACCOUNT':
+				case actions.GET_USER_ACCOUNT:
 					const res1 = await showModalAndWait(
 						actions.GET_USER_ACCOUNT
 					);
@@ -573,140 +573,140 @@ class WebBrowser extends LitElement {
 						window.crypto.getRandomValues(_reference);
 						let reference = window.parent.Base58.encode(_reference);
 						const sendMessageRequest = async () => {
-										let chatResponse = await parentEpml.request('chat', {
-												type: 18,
-												nonce: this.selectedAddress.nonce,
-												params: {
-														timestamp: Date.now(),
-														recipient: recipient,
-														recipientPublicKey: this._publicKey.key,
-														hasChatReference: 0,
-														chatReference: chatReference,
-														message: messageText,
-														lastReference: reference,
-														proofOfWorkNonce: 0,
-														isEncrypted: 1,
-														isText: 1
-												}
-										});
-								const msgResponse =	await	_computePow(chatResponse)
-								return msgResponse;
+							let chatResponse = await parentEpml.request('chat', {
+								type: 18,
+								nonce: this.selectedAddress.nonce,
+								params: {
+									timestamp: Date.now(),
+									recipient: recipient,
+									recipientPublicKey: this._publicKey.key,
+									hasChatReference: 0,
+									chatReference: chatReference,
+									message: messageText,
+									lastReference: reference,
+									proofOfWorkNonce: 0,
+									isEncrypted: 1,
+									isText: 1
+								}
+							});
+							const msgResponse = await _computePow(chatResponse)
+							return msgResponse;
 						};
-		
+
 						const _computePow = async (chatBytes) => {
-								const difficulty = 8;
-								const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
-								const worker = new WebWorkerChat();
-								let nonce = null;
-								let chatBytesArray = null;
-		
-									await new Promise((res) => {
-										worker.postMessage({chatBytes, path, difficulty});
-										worker.onmessage = e => {
-											chatBytesArray = e.data.chatBytesArray;
-												nonce = e.data.nonce;
-												res();
-										}
-									});
-		
-								let _response = await parentEpml.request('sign_chat', {
-										nonce: this.selectedAddress.nonce,
-										chatBytesArray: chatBytesArray,
-										chatNonce: nonce
-								});
-		
-							const chatResponse =	getSendChatResponse(_response);
+							const difficulty = 8;
+							const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
+							const worker = new WebWorkerChat();
+							let nonce = null;
+							let chatBytesArray = null;
+
+							await new Promise((res) => {
+								worker.postMessage({ chatBytes, path, difficulty });
+								worker.onmessage = e => {
+									chatBytesArray = e.data.chatBytesArray;
+									nonce = e.data.nonce;
+									res();
+								}
+							});
+
+							let _response = await parentEpml.request('sign_chat', {
+								nonce: this.selectedAddress.nonce,
+								chatBytesArray: chatBytesArray,
+								chatNonce: nonce
+							});
+
+							const chatResponse = getSendChatResponse(_response);
 							return chatResponse;
 						};
-		
+
 						const getSendChatResponse = (res) => {
-								if (res === true) {
-									let successString = get("browserpage.bchange23");
-									parentEpml.request('showSnackBar', `${successString}`);
-								} else if (res.error) {
-										parentEpml.request('showSnackBar', res.message);
-								} 
-								this.loader.hide();
-								return res;
+							if (res === true) {
+								let successString = get("browserpage.bchange23");
+								parentEpml.request('showSnackBar', `${successString}`);
+							} else if (res.error) {
+								parentEpml.request('showSnackBar', res.message);
+							}
+							this.loader.hide();
+							return res;
 						};
-		
+
 						const chatResponse = await sendMessageRequest();
 						return chatResponse;
-				}		
+					}
 
 					const result = await showModalAndWait(
 						actions.SEND_CHAT_MESSAGE
 					);
 					if (result.action === "accept") {
-								let hasPublicKey = true;
-								const res =	await parentEpml.request('apiCall', {
-									type: 'api',
-									url: `/addresses/publickey/${recipient}`
-								});
+						let hasPublicKey = true;
+						const res = await parentEpml.request('apiCall', {
+							type: 'api',
+							url: `/addresses/publickey/${recipient}`
+						});
 
-								if (res.error === 102) {
-											this._publicKey.key = ''
-											this._publicKey.hasPubKey = false
-											hasPublicKey = false;
-									} else if (res !== false) {
-											this._publicKey.key = res
-											this._publicKey.hasPubKey = true
-									} else {
-											this._publicKey.key = ''
-											this._publicKey.hasPubKey = false
-											hasPublicKey = false;
-									}
+						if (res.error === 102) {
+							this._publicKey.key = ''
+							this._publicKey.hasPubKey = false
+							hasPublicKey = false;
+						} else if (res !== false) {
+							this._publicKey.key = res
+							this._publicKey.hasPubKey = true
+						} else {
+							this._publicKey.key = ''
+							this._publicKey.hasPubKey = false
+							hasPublicKey = false;
+						}
 
-								if (!hasPublicKey) {
-									let err4string = get("chatpage.cchange39");
-									parentEpml.request('showSnackBar', `${err4string}`)
-									return
-								}
+						if (!hasPublicKey) {
+							let err4string = get("chatpage.cchange39");
+							parentEpml.request('showSnackBar', `${err4string}`)
+							return
+						}
 
-								this.loader.show();
+						this.loader.show();
 
-							const tiptapJson = {
-								type: 'doc',
-								content: [
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: message,
-											},
-											
-										],
-									},
-								],
-							}
+						const tiptapJson = {
+							type: 'doc',
+							content: [
+								{
+									type: 'paragraph',
+									content: [
+										{
+											type: 'text',
+											text: message,
+										},
 
-							const messageObject = {
-									messageText: tiptapJson,
-									images: [''],
-									repliedTo: '',
-									version: 2
-							};
+									],
+								},
+							],
+						}
 
-							const stringifyMessageObject = JSON.stringify(messageObject);
-								// if (this.balance < 4) {
-								// 		this.myTrimmedMeassage = ''
-								// 		this.myTrimmedMeassage = stringifyMessageObject
-								// 		this.shadowRoot.getElementById('confirmDialog').open()
-								// } else {
-										// this.sendMessage(stringifyMessageObject, typeMessage);
-								// }
-							try {
-								const msgResponse = await sendMessage(stringifyMessageObject);
-								response = msgResponse;
-							} catch (error) {
-								console.error(error);
-								return '{"error": "Request could not be fulfilled"}';
-							} finally {
-								this.loader.hide();
-								console.log("Case completed.");
-							}
-						
+						const messageObject = {
+							messageText: tiptapJson,
+							images: [''],
+							repliedTo: '',
+							version: 2
+						};
+
+						const stringifyMessageObject = JSON.stringify(messageObject);
+						// if (this.balance < 4) {
+						// 		this.myTrimmedMeassage = ''
+						// 		this.myTrimmedMeassage = stringifyMessageObject
+						// 		this.shadowRoot.getElementById('confirmDialog').open()
+						// } else {
+						// this.sendMessage(stringifyMessageObject, typeMessage);
+						// }
+						try {
+							const msgResponse = await sendMessage(stringifyMessageObject);
+							response = msgResponse;
+						} catch (error) {
+							console.error(error);
+							return '{"error": "Request could not be fulfilled"}';
+						} finally {
+							this.loader.hide();
+							console.log("Case completed.");
+						}
+
 					} else {
 						response = '{"error": "User declined request"}';
 					}
@@ -738,7 +738,7 @@ class WebBrowser extends LitElement {
 					}
 					const groupId = data.groupId;
 
-				
+
 					let groupInfo = null
 					try {
 						groupInfo = await parentEpml.request("apiCall", {
@@ -799,8 +799,8 @@ class WebBrowser extends LitElement {
 				// 		response = JSON.stringify(data);
 				// 		break
 				// 	}
-					
-					
+
+
 				// 	try {
 				// 		this.loader.show();
 				// 		const fee = data.fee || undefined
@@ -823,85 +823,85 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-						const res3 = await showModalAndWait(
+					const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
 					);
 					if (res3.action === 'accept') {
-                    let coin = data.coin;
-                        if (coin === "QORT") {
-                            let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
-                            try {
-                                this.loader.show();                               
-                                const QORTBalance = await parentEpml.request('apiCall', {
-                                      url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
-                                  })
-                                  return QORTBalance;
-                            } catch (error) {
-                                console.error(error);
-                                const data = {};
-                                const errorMsg = error.message || get("browserpage.bchange21");
-                                data['error'] = errorMsg;
-                                response = JSON.stringify(data);
-                                return;
-                            } finally {
-                                this.loader.hide();
-                            }
-                        } else {
-                            let _url = ``
-                            let _body = null
+						let coin = data.coin;
+						if (coin === "QORT") {
+							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+							try {
+								this.loader.show();
+								const QORTBalance = await parentEpml.request('apiCall', {
+									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
+								})
+								return QORTBalance;
+							} catch (error) {
+								console.error(error);
+								const data = {};
+								const errorMsg = error.message || get("browserpage.bchange21");
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								return;
+							} finally {
+								this.loader.hide();
+							}
+						} else {
+							let _url = ``
+							let _body = null
 
-                            switch (coin) {
-                                case 'LTC':
-                                    _url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
-                                    break
-                                case 'DOGE':
-                                    _url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
-                                    break
-                                case 'DGB':
-                                    _url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-                                    break
-                                case 'RVN':
-                                    _url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
-                                    break
-                                case 'ARRR':
-                                    _url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
-                                    _body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
-                                    break
-                                default:
-                                    break
-                            }
-                                try {
-																	this.loader.show();                                    
-                                   const res = await parentEpml.request('apiCall', {
-                                        url: _url,
-                                        method: 'POST',
-                                        body: _body,
-                                    })
-																	if (isNaN(Number(res))) {
-																		const data = {};
-																		const errorMsg = error.message || get("browserpage.bchange21");
-																		data['error'] = errorMsg;
-																		response = JSON.stringify(data);
-																		return;
-																	} else {
-																		response = (Number(res) / 1e8).toFixed(8);
-																	}											
-                                } catch (error) {                                    
-                                    console.error(error);
-                                    const data = {};
-                                    const errorMsg = error.message || get("browserpage.bchange21");
-                                    data['error'] = errorMsg;
-                                    response = JSON.stringify(data);
-                                    return;
-                                } finally {
-                                    this.loader.hide()                                    
-                                }
-                        }
-                    } else if (res3.action === 'reject') {
+							switch (coin) {
+								case 'LTC':
+									_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+									break
+								case 'DOGE':
+									_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+									break
+								case 'DGB':
+									_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+									break
+								case 'RVN':
+									_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+									break
+								case 'ARRR':
+									_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+									break
+								default:
+									break
+							}
+							try {
+								this.loader.show();
+								const res = await parentEpml.request('apiCall', {
+									url: _url,
+									method: 'POST',
+									body: _body,
+								})
+								if (isNaN(Number(res))) {
+									const data = {};
+									const errorMsg = error.message || get("browserpage.bchange21");
+									data['error'] = errorMsg;
+									response = JSON.stringify(data);
+									return;
+								} else {
+									response = (Number(res) / 1e8).toFixed(8);
+								}
+							} catch (error) {
+								console.error(error);
+								const data = {};
+								const errorMsg = error.message || get("browserpage.bchange21");
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								return;
+							} finally {
+								this.loader.hide()
+							}
+						}
+					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}';
 					}
 					break;
@@ -911,170 +911,170 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-                        const amount = data.amount;
-                        let recipient = data.destinationAddress;
-                        const fee = data.fee
-                        this.loader.show();
+					const amount = data.amount;
+					let recipient = data.destinationAddress;
+					const fee = data.fee
+					this.loader.show();
 
-                        const walletBalance = await parentEpml.request('apiCall', {
-                            url: `/addresses/balance/${this.myAddress.address}?apiKey=${this.getApiKey()}`,
-                        }).then((res) => {
-                            if (isNaN(Number(res))) {
-                                let snack4string = get("chatpage.cchange48")
-                                parentEpml.request('showSnackBar', `${snack4string}`)
-                                return;
-                            } else {
-                                return Number(res).toFixed(8);
-                            }
-                        })
+					const walletBalance = await parentEpml.request('apiCall', {
+						url: `/addresses/balance/${this.myAddress.address}?apiKey=${this.getApiKey()}`,
+					}).then((res) => {
+						if (isNaN(Number(res))) {
+							let snack4string = get("chatpage.cchange48")
+							parentEpml.request('showSnackBar', `${snack4string}`)
+							return;
+						} else {
+							return Number(res).toFixed(8);
+						}
+					})
 
-                        const myRef = await parentEpml.request("apiCall", {
-                            type: "api",
-                            url: `/addresses/lastreference/${this.myAddress.address}`,
-                        })
+					const myRef = await parentEpml.request("apiCall", {
+						type: "api",
+						url: `/addresses/lastreference/${this.myAddress.address}`,
+					})
 
-                        if (parseFloat(amount) + parseFloat(data.fee) > parseFloat(walletBalance)) {
-                            this.loader.hide();
-                            let snack1string = get("chatpage.cchange51");
-                            parentEpml.request('showSnackBar', `${snack1string}`);
-                            return false;
-                        }
-                    
-                        if (parseFloat(amount) <= 0) {
-                            this.loader.hide();
-                            let snack2string = get("chatpage.cchange52");
-                            parentEpml.request('showSnackBar', `${snack2string}`);
-                            return false;
-                        }
-                    
-                        if (recipient.length === 0) {
-                            this.loader.hide();
-                            let snack3string = get("chatpage.cchange53");
-                            parentEpml.request('showSnackBar', `${snack3string}`);
-                            return false;
-                        }
-                    
-                        const validateName = async (receiverName) => {
-                            let myRes;
-                            let myNameRes = await parentEpml.request('apiCall', {
-                                type: 'api',
-                                url: `/names/${receiverName}`,
-                            })
-                    
-                            if (myNameRes.error === 401) {
-                                myRes = false;
-                            } else {
-                                myRes = myNameRes;
-                            }
-                            return myRes;
-                        }
-                    
-                        const validateAddress = async (receiverAddress) => {
-                            let myAddress = await window.parent.validateAddress(receiverAddress);
-                            return myAddress;
-                        }
-                    
-                        const validateReceiver = async (recipient) => {
-                            let lastRef = myRef;
-                            let isAddress;
-                    
-                            try {
-                                isAddress = await validateAddress(recipient);
-                            } catch (err) {
-                                isAddress = false;
-                            }
-                    
-                            if (isAddress) {
-                                let myTransaction = await makeTransactionRequest(recipient, lastRef);
-                                return getTxnRequestResponse(myTransaction);
-                            } else {
-                                let myNameRes = await validateName(recipient);
-                                if (myNameRes !== false) {
-                                    let myNameAddress = myNameRes.owner
-                                    let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
-                                return getTxnRequestResponse(myTransaction)
-                                } else {
-                                    console.error(`${translate("chatpage.cchange54")}`)
-                                    parentEpml.request('showSnackBar', `${translate("chatpage.cchange54")}`)
-                                    this.loader.hide();
-                                }
-                            }
-                        }
-                    
-                        const getName = async (recipient)=> {
-                            try {
-                                const getNames = await parentEpml.request("apiCall", {
-                                type: "api",
-                                url: `/names/address/${recipient}`,
-                                });
-                    
-                                if (getNames.length > 0 ) {
-                                    return getNames[0].name;
-                                } else {
-                                    return '';
-                                }
-                            } catch (error) {
-                                return "";
-                            }
-                        }
-                    
-                        const makeTransactionRequest = async (receiver, lastRef) => {
-                            let myReceiver = receiver;
-                            let mylastRef = lastRef;
-                            let dialogamount = get("transactions.amount");
-                            let dialogAddress = get("login.address");
-                            let dialogName = get("login.name");
-                            let dialogto = get("transactions.to");
-                            let recipientName = await getName(myReceiver);
-                            let myTxnrequest = await parentEpml.request('transaction', {
-                                type: 2,
-                                nonce: this.myAddress.nonce,
-                                params: {
-                                    recipient: myReceiver,
-                                    recipientName: recipientName,
-                                    amount: amount,
-                                    lastReference: mylastRef,
-                                    fee: fee,
-                                    dialogamount: dialogamount,
-                                    dialogto: dialogto,
-                                    dialogAddress,
-                                    dialogName
-                                },
-                            })
-                            return myTxnrequest;
-                        }
-                    
-                        const getTxnRequestResponse = (txnResponse) => {
-                            if (txnResponse.success === false && txnResponse.message) {
-                                parentEpml.request('showSnackBar', `${txnResponse.message}`);
-                                this.loader.hide();
-                                throw new Error(txnResponse);
-                            } else if (txnResponse.success === true && !txnResponse.data.error) {
-                                parentEpml.request('showSnackBar', `${get("chatpage.cchange55")}`)
-                                this.loader.hide();
-                            } else {
-                                parentEpml.request('showSnackBar', `${txnResponse.data.message}`);
-                                this.loader.hide();
-                                throw new Error(txnResponse);
-                            }
-                        }
-                        try {
-                            const result = await validateReceiver(recipient);
-                            if (result) {
-                              return result;
-                            }
-                          } catch (error) {
-                            console.error(error);
-                            return '{"error": "Request could not be fulfilled"}';
-                          } finally {
-                            console.log("Case completed.");
-                          }
-												break;
+					if (parseFloat(amount) + parseFloat(data.fee) > parseFloat(walletBalance)) {
+						this.loader.hide();
+						let snack1string = get("chatpage.cchange51");
+						parentEpml.request('showSnackBar', `${snack1string}`);
+						return false;
+					}
 
-											default:
-												console.log('Unhandled message: ' + JSON.stringify(data));
-												return;
-										}
+					if (parseFloat(amount) <= 0) {
+						this.loader.hide();
+						let snack2string = get("chatpage.cchange52");
+						parentEpml.request('showSnackBar', `${snack2string}`);
+						return false;
+					}
+
+					if (recipient.length === 0) {
+						this.loader.hide();
+						let snack3string = get("chatpage.cchange53");
+						parentEpml.request('showSnackBar', `${snack3string}`);
+						return false;
+					}
+
+					const validateName = async (receiverName) => {
+						let myRes;
+						let myNameRes = await parentEpml.request('apiCall', {
+							type: 'api',
+							url: `/names/${receiverName}`,
+						})
+
+						if (myNameRes.error === 401) {
+							myRes = false;
+						} else {
+							myRes = myNameRes;
+						}
+						return myRes;
+					}
+
+					const validateAddress = async (receiverAddress) => {
+						let myAddress = await window.parent.validateAddress(receiverAddress);
+						return myAddress;
+					}
+
+					const validateReceiver = async (recipient) => {
+						let lastRef = myRef;
+						let isAddress;
+
+						try {
+							isAddress = await validateAddress(recipient);
+						} catch (err) {
+							isAddress = false;
+						}
+
+						if (isAddress) {
+							let myTransaction = await makeTransactionRequest(recipient, lastRef);
+							return getTxnRequestResponse(myTransaction);
+						} else {
+							let myNameRes = await validateName(recipient);
+							if (myNameRes !== false) {
+								let myNameAddress = myNameRes.owner
+								let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
+								return getTxnRequestResponse(myTransaction)
+							} else {
+								console.error(`${translate("chatpage.cchange54")}`)
+								parentEpml.request('showSnackBar', `${translate("chatpage.cchange54")}`)
+								this.loader.hide();
+							}
+						}
+					}
+
+					const getName = async (recipient) => {
+						try {
+							const getNames = await parentEpml.request("apiCall", {
+								type: "api",
+								url: `/names/address/${recipient}`,
+							});
+
+							if (getNames.length > 0) {
+								return getNames[0].name;
+							} else {
+								return '';
+							}
+						} catch (error) {
+							return "";
+						}
+					}
+
+					const makeTransactionRequest = async (receiver, lastRef) => {
+						let myReceiver = receiver;
+						let mylastRef = lastRef;
+						let dialogamount = get("transactions.amount");
+						let dialogAddress = get("login.address");
+						let dialogName = get("login.name");
+						let dialogto = get("transactions.to");
+						let recipientName = await getName(myReceiver);
+						let myTxnrequest = await parentEpml.request('transaction', {
+							type: 2,
+							nonce: this.myAddress.nonce,
+							params: {
+								recipient: myReceiver,
+								recipientName: recipientName,
+								amount: amount,
+								lastReference: mylastRef,
+								fee: fee,
+								dialogamount: dialogamount,
+								dialogto: dialogto,
+								dialogAddress,
+								dialogName
+							},
+						})
+						return myTxnrequest;
+					}
+
+					const getTxnRequestResponse = (txnResponse) => {
+						if (txnResponse.success === false && txnResponse.message) {
+							parentEpml.request('showSnackBar', `${txnResponse.message}`);
+							this.loader.hide();
+							throw new Error(txnResponse);
+						} else if (txnResponse.success === true && !txnResponse.data.error) {
+							parentEpml.request('showSnackBar', `${get("chatpage.cchange55")}`)
+							this.loader.hide();
+						} else {
+							parentEpml.request('showSnackBar', `${txnResponse.data.message}`);
+							this.loader.hide();
+							throw new Error(txnResponse);
+						}
+					}
+					try {
+						const result = await validateReceiver(recipient);
+						if (result) {
+							return result;
+						}
+					} catch (error) {
+						console.error(error);
+						return '{"error": "Request could not be fulfilled"}';
+					} finally {
+						console.log("Case completed.");
+					}
+					break;
+
+				default:
+					console.log('Unhandled message: ' + JSON.stringify(data));
+					return;
+			}
 
 			// Parse response
 			let responseObj;
