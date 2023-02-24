@@ -19,6 +19,7 @@ import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
 import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
 import { publishData } from '../../../utils/publish-image.js';
 import { Loader } from '../../../utils/loader.js';
+import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -818,7 +819,24 @@ class WebBrowser extends LitElement {
 				// }
 
 
-				case 'GET_WALLET_BALANCE':
+				case 'GET_WALLET_BALANCE': {
+					const requiredFields = ['coin'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 					// Params: data.coin (QORT / LTC / DOGE / DGB / C / ARRR)
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
@@ -826,6 +844,7 @@ class WebBrowser extends LitElement {
 					const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
 					);
+
 					if (res3.action === 'accept') {
 						let coin = data.coin;
 						if (coin === "QORT") {
@@ -835,14 +854,16 @@ class WebBrowser extends LitElement {
 								const QORTBalance = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
 								})
-								return QORTBalance;
+								response = QORTBalance
+							
+							
 							} catch (error) {
 								console.error(error);
 								const data = {};
 								const errorMsg = error.message || get("browserpage.bchange21");
 								data['error'] = errorMsg;
 								response = JSON.stringify(data);
-								return;
+								
 							} finally {
 								this.loader.hide();
 							}
@@ -904,36 +925,39 @@ class WebBrowser extends LitElement {
 					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}';
 					}
+
 					break;
+				}
+					
 
 				case 'SEND_COIN':
 					// Params: data.coin, data.destinationAddress, data.amount, data.fee
 					// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					const amount = data.amount;
+					const amount = data.amount
 					let recipient = data.destinationAddress;
 					const fee = data.fee
 					this.loader.show();
 
 					const walletBalance = await parentEpml.request('apiCall', {
 						url: `/addresses/balance/${this.myAddress.address}?apiKey=${this.getApiKey()}`,
-					}).then((res) => {
-						if (isNaN(Number(res))) {
-							let snack4string = get("chatpage.cchange48")
-							parentEpml.request('showSnackBar', `${snack4string}`)
-							return;
-						} else {
-							return Number(res).toFixed(8);
-						}
 					})
+					if (isNaN(Number(walletBalance))) {
+						let snack4string = get("chatpage.cchange48")
+						parentEpml.request('showSnackBar', `${snack4string}`)
+						return;
+					} 
+					
 
 					const myRef = await parentEpml.request("apiCall", {
 						type: "api",
 						url: `/addresses/lastreference/${this.myAddress.address}`,
 					})
 
-					if (parseFloat(amount) + parseFloat(data.fee) > parseFloat(walletBalance)) {
+					const walletBalanceDecimals = parseFloat(walletBalance) * QORT_DECIMALS;
+
+					if (parseFloat(amount) + parseFloat(data.fee) > parseFloat(walletBalanceDecimals)) {
 						this.loader.hide();
 						let snack1string = get("chatpage.cchange51");
 						parentEpml.request('showSnackBar', `${snack1string}`);
@@ -1084,15 +1108,14 @@ class WebBrowser extends LitElement {
 				// Not all responses will be JSON
 				responseObj = response;
 			}
+
 			// Respond to app
 			if (responseObj.error != null) {
-				console.log('hello error')
 				event.ports[0].postMessage({
 					result: null,
 					error: responseObj,
 				});
 			} else {
-				console.log('hello success')
 				event.ports[0].postMessage({
 					result: responseObj,
 					error: null,
