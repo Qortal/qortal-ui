@@ -1,5 +1,6 @@
 'use strict'
 import TransactionBase from './TransactionBase.js'
+import { store } from '../../api.js'
 
 export default class DeployAtTransaction extends TransactionBase {
 	constructor() {
@@ -33,7 +34,7 @@ export default class DeployAtTransaction extends TransactionBase {
 		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
 	}
 	set rAmount(rAmount) {
-		this._rAmount = rAmount
+		this._rAmount = Math.round(rAmount * store.getState().config.coin.decimals)
 		this._rAmountBytes = this.constructor.utils.int64ToBytes(this._rAmount)
 	}
 
@@ -60,7 +61,6 @@ export default class DeployAtTransaction extends TransactionBase {
 	}
 	set rCreationBytes(rCreationBytes) {
 		const decode = this.constructor.Base58.decode(rCreationBytes)
-		console.log({decode})
 		this._rCreationBytes = this.constructor.utils.stringtoUTF8Array(decode)
 		this._rCreationBytesLength = this.constructor.utils.int32ToBytes(this._rCreationBytes.length)
 	}
