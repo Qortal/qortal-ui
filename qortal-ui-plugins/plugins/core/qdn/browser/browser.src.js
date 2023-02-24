@@ -15,6 +15,7 @@ registerTranslateConfig({
 
 import '@material/mwc-button';
 import '@material/mwc-icon';
+import '@material/mwc-checkbox'
 import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
 import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
 import { publishData } from '../../../utils/publish-image.js';
@@ -231,7 +232,6 @@ class WebBrowser extends LitElement {
 	}
 
 	render() {
-		console.log(1, "browser page here");
 		return html`
     		<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     			<div class="layout horizontal center">
@@ -457,10 +457,21 @@ class WebBrowser extends LitElement {
 			switch (data.action) {
 				case 'GET_USER_ACCOUNT':
 				case actions.GET_USER_ACCOUNT:
-					const res1 = await showModalAndWait(
-						actions.GET_USER_ACCOUNT
-					);
-					if (res1.action === 'accept') {
+					let skip = false;
+					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
+						skip = true;
+					}
+					let res1;
+					if (!skip) {
+						 res1 = await showModalAndWait(
+							actions.GET_USER_ACCOUNT,
+							{
+								service: this.service,
+								name: this.name
+							}
+						);
+					};
+					if ((res1 && res1.action === 'accept') || skip) {
 						let account = {};
 						account['address'] = this.selectedAddress.address;
 						account['publicKey'] =
@@ -1439,7 +1450,21 @@ async function showModalAndWait(type, data) {
 			` <div class="modal my-modal-class">
             <div class="modal-content">
                 <div class="modal-body">
-                    ${type === actions.GET_USER_ACCOUNT ? `<p class="modal-paragraph">${get("browserpage.bchange18")}</p>` : ''}
+                    ${type === actions.GET_USER_ACCOUNT ? `
+										<div class="modal-subcontainer">
+											<p class="modal-paragraph">${`${data.service} ${data.name} ${get("browserpage.bchange18")}`}</p>
+											<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service}</p>
+											<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
+											<div class="checkbox-row">
+											<label for="authButton" id="authButtonLabel">
+												${get('browserpage.bchange26')}
+											</label>
+											<mwc-checkbox style="margin-right: -15px;"  id="authButton" 
+											?checked=${window.parent.reduxStore.getState().app.qAPPAutoAuth}>
+												</mwc-checkbox>
+											</div>
+										</div>
+										` : ''}
                     ${type === actions.PUBLISH_QDN_RESOURCE ? `<p class="modal-paragraph">${get("browserpage.bchange19")}</p>` : ''}
                     ${type === actions.GET_WALLET_BALANCE ? `<p class="modal-paragraph">${get("browserpage.bchange20")}</p>` : ''}
                     ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
@@ -1462,6 +1487,11 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'accept', userData });
 		});
+		const modalContent = modal.querySelector('.modal-content');
+		modalContent.addEventListener('click', (e) => {
+			e.stopPropagation();
+			return;
+		});
 		const backdropClick = document.getElementById('backdrop');
 		backdropClick.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
@@ -1476,6 +1506,18 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'reject' });
 		});
+		const labelButton = modal.querySelector('#authButtonLabel');
+		labelButton.addEventListener('click', () => {
+			this.shadowRoot.getElementById('authButton').click();
+		})
+		const checkbox = modal.querySelector('#authButton');
+		checkbox.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
+					return
+			}
+				window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
+		})
 	});
 }
 
@@ -1553,6 +1595,13 @@ justify-content: space-between;
 padding: 25px;
 }
 
+.modal-subcontainer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 15px;
+}
+
 .modal-paragraph {
 font-family: Roboto, sans-serif;
 font-size: 18px;
@@ -1560,6 +1609,14 @@ letter-spacing: 0.3px;
 font-weight: 300;
 color: black;
 margin: 0;
+}
+
+.checkbox-row {
+	display: flex;
+	align-items: center;
+	font-family: Montserrat, sans-serif;
+	font-weight: 600;
+	color: black;
 }
 
 .modal-buttons {
