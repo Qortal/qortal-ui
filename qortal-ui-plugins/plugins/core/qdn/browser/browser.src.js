@@ -295,7 +295,20 @@ class WebBrowser extends LitElement {
 		}
 
 		const data = await response.json()
-		const joinFee = data
+		const joinFee = (Number(data) / 1e8).toFixed(8)
+		return joinFee
+	}
+	async sendQortFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee');
+		}
+
+		const data = await response.json()
+		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
 
@@ -330,7 +343,8 @@ class WebBrowser extends LitElement {
 					lastReference: lastRef,
 					groupdialog1: groupdialog1,
 					groupdialog2: groupdialog2
-				}
+				},
+				apiVersion: 2
 			})
 			return myTxnrequest
 		}
@@ -386,7 +400,8 @@ class WebBrowser extends LitElement {
 					lastReference: lastRef,
 					atDeployDialog1: groupdialog1,
 					atDeployDialog2: groupdialog2
-				}
+				},
+				apiVersion: 2
 			})
 			return myTxnrequest
 		}
@@ -452,10 +467,8 @@ class WebBrowser extends LitElement {
 
 			let response = '{"error": "Request could not be fulfilled"}';
 			let data = event.data;
-			console.log('UI received event: ' + JSON.stringify(data));
 
 			switch (data.action) {
-				case 'GET_USER_ACCOUNT':
 				case actions.GET_USER_ACCOUNT:
 					let skip = false;
 					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
@@ -480,12 +493,12 @@ class WebBrowser extends LitElement {
 						break;
 					} else {
 						const data = {};
-						const errorMsg = get('browserpage.bchange17');
+						const errorMsg = "User declined to share account details"
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
 						break;
 					}
-				case 'LINK_TO_QDN_RESOURCE':
+				case actions.LINK_TO_QDN_RESOURCE:
 				case actions.QDN_RESOURCE_DISPLAYED:
 					// Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
 					// Note: don't update this.url here, as we don't want to force reload the iframe each time.
@@ -551,6 +564,7 @@ class WebBrowser extends LitElement {
 								selectedAddress: this.selectedAddress,
 								worker: worker,
 								isBase64: true,
+								apiVersion: 2
 							});
 
 							response = JSON.stringify(resPublish);
@@ -577,11 +591,11 @@ class WebBrowser extends LitElement {
 				}
 
 
-				case 'SEND_CHAT_MESSAGE': {
+				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message;
 					const recipient = data.destinationAddress;
 					const sendMessage = async (messageText, chatReference) => {
-						this.loader.show();
+					
 						let _reference = new Uint8Array(64);
 						window.crypto.getRandomValues(_reference);
 						let reference = window.parent.Base58.encode(_reference);
@@ -625,7 +639,8 @@ class WebBrowser extends LitElement {
 							let _response = await parentEpml.request('sign_chat', {
 								nonce: this.selectedAddress.nonce,
 								chatBytesArray: chatBytesArray,
-								chatNonce: nonce
+								chatNonce: nonce,
+								apiVersion: 2
 							});
 
 							const chatResponse = getSendChatResponse(_response);
@@ -634,13 +649,13 @@ class WebBrowser extends LitElement {
 
 						const getSendChatResponse = (res) => {
 							if (res === true) {
-								let successString = get("browserpage.bchange23");
-								parentEpml.request('showSnackBar', `${successString}`);
+								return res
 							} else if (res.error) {
-								parentEpml.request('showSnackBar', res.message);
+								throw new Error(res.message);
+							} else {
+								throw new Error('ERROR: Could not send message');
 							}
-							this.loader.hide();
-							return res;
+							
 						};
 
 						const chatResponse = await sendMessageRequest();
@@ -676,7 +691,7 @@ class WebBrowser extends LitElement {
 							return
 						}
 
-						this.loader.show();
+						
 
 						const tiptapJson = {
 							type: 'doc',
@@ -710,14 +725,15 @@ class WebBrowser extends LitElement {
 						// this.sendMessage(stringifyMessageObject, typeMessage);
 						// }
 						try {
+							this.loader.show();
 							const msgResponse = await sendMessage(stringifyMessageObject);
 							response = msgResponse;
 						} catch (error) {
 							console.error(error);
-							return '{"error": "Request could not be fulfilled"}';
+							response = '{"error": "Request could not be fulfilled"}';
 						} finally {
 							this.loader.hide();
-							console.log("Case completed.");
+						
 						}
 
 					} else {
@@ -831,7 +847,7 @@ class WebBrowser extends LitElement {
 				// }
 
 
-				case 'GET_WALLET_BALANCE': {
+				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin'];
 					const missingFields = [];
 
@@ -942,23 +958,43 @@ class WebBrowser extends LitElement {
 				}
 					
 
-				case 'SEND_COIN':
+				case actions.SEND_COIN: {
+					const requiredFields = ['coin', 'destinationAddress', 'amount'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						this.loader.hide();
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 					// Params: data.coin, data.destinationAddress, data.amount, data.fee
 					// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					const amount = data.amount
+					const amount = Number(data.amount)
 					let recipient = data.destinationAddress;
-					const fee = data.fee
 					this.loader.show();
 
 					const walletBalance = await parentEpml.request('apiCall', {
 						url: `/addresses/balance/${this.myAddress.address}?apiKey=${this.getApiKey()}`,
 					})
 					if (isNaN(Number(walletBalance))) {
-						let snack4string = get("chatpage.cchange48")
-						parentEpml.request('showSnackBar', `${snack4string}`)
-						return;
+						this.loader.hide();
+						let errorMsg = "Failed to Fetch QORT Balance. Try again!"
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
 					} 
 					
 					const myRef = await parentEpml.request("apiCall", {
@@ -966,27 +1002,35 @@ class WebBrowser extends LitElement {
 						url: `/addresses/lastreference/${this.myAddress.address}`,
 					})
 
-					const walletBalanceDecimals = parseFloat(walletBalance) * QORT_DECIMALS;
-
-					if (parseFloat(amount) + parseFloat(data.fee) > parseFloat(walletBalanceDecimals)) {
+					const walletBalanceDecimals = Number(walletBalance) * QORT_DECIMALS;
+					const amountDecimals = Number(amount) * QORT_DECIMALS
+					const fee = await this.sendQortFee()
+					// TODO fee
+					if (amountDecimals + (fee *  QORT_DECIMALS) > walletBalanceDecimals) {
 						this.loader.hide();
-						let snack1string = get("chatpage.cchange51");
-						parentEpml.request('showSnackBar', `${snack1string}`);
-						return false;
+						let errorMsg = "Insufficient Funds!"
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
 					}
 
-					if (parseFloat(amount) <= 0) {
+					if (amount <= 0) {
 						this.loader.hide();
-						let snack2string = get("chatpage.cchange52");
-						parentEpml.request('showSnackBar', `${snack2string}`);
-						return false;
+						let errorMsg = "Invalid Amount!"
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
 					}
 
 					if (recipient.length === 0) {
 						this.loader.hide();
-						let snack3string = get("chatpage.cchange53");
-						parentEpml.request('showSnackBar', `${snack3string}`);
-						return false;
+						let errorMsg = "Receiver cannot be empty!"
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
 					}
 
 					const validateName = async (receiverName) => {
@@ -1031,9 +1075,10 @@ class WebBrowser extends LitElement {
 								const res = getTxnRequestResponse(myTransaction)
 								return res;
 							} else {
-								console.error(`${translate("chatpage.cchange54")}`)
-								parentEpml.request('showSnackBar', `${translate("chatpage.cchange54")}`)
-								this.loader.hide();
+						
+						let errorMsg = "Invalid Receiver!"
+								throw new Error(errorMsg)
+						
 							}
 						}
 					}
@@ -1077,6 +1122,7 @@ class WebBrowser extends LitElement {
 								dialogAddress,
 								dialogName
 							},
+							apiVersion: 2
 						})
 						return myTxnrequest;
 					}
@@ -1084,14 +1130,15 @@ class WebBrowser extends LitElement {
 					const getTxnRequestResponse = (txnResponse) => {
 						if (txnResponse.success === false && txnResponse.message) {
 							this.loader.hide();
-							throw new Error(txnResponse);
+							throw new Error(txnResponse.message);
 						} else if (txnResponse.success === true && !txnResponse.data.error) {
 							this.loader.hide();
+							return txnResponse.data;
 						} else {
 							this.loader.hide();
-							throw new Error(txnResponse);
+							throw new Error('Error: could not send coin');
 						}
-						return txnResponse;
+					
 					}
 
 					try {
@@ -1099,11 +1146,13 @@ class WebBrowser extends LitElement {
 						response = result;
 					} catch (error) {
 						console.error(error);
-						return '{"error": "Request could not be fulfilled"}';
+						response = '{"error": "Request could not be fulfilled"}';
 					} finally {
-						console.log("Case completed.");
+						this.loader.hide();
 					}
 					break;
+				}
+					
 
 				default:
 					console.log('Unhandled message: ' + JSON.stringify(data));
@@ -1118,7 +1167,6 @@ class WebBrowser extends LitElement {
 				// Not all responses will be JSON
 				responseObj = response;
 			}
-
 			// Respond to app
 			if (responseObj.error != null) {
 				event.ports[0].postMessage({
@@ -1470,8 +1518,8 @@ async function showModalAndWait(type, data) {
                     ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
                 </div>
                 <div class="modal-buttons">
-                    <button id="cancel-button">Reject</button>
-                    <button id="ok-button">Accept</button>
+                    <button id="cancel-button">${get("browserpage.bchange27")}</button>
+                    <button id="ok-button">${get("browserpage.bchange28")}</button>
                 </div>
             </div>
         </div>

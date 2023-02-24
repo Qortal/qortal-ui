@@ -503,7 +503,9 @@
 		"bchange23": "Message Sent!",
 		"bchange24": "This shares your QORT address and allows your account to interact with the",
 		"bchange25": "No sensitive data is shared.",
-		"bchange26": "Always authenticate automatically"
+		"bchange26": "Always authenticate automatically",
+		"bchange27": "Reject",
+		"bchange28": "Accept"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

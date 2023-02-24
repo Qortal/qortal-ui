@@ -18,7 +18,8 @@ export const publishData = async ({
 	selectedAddress,
 	worker,
 	isBase64,
-	metaData
+	metaData,
+	apiVersion
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -71,6 +72,7 @@ export const publishData = async ({
             arbitraryBytesBase58: transactionBytesBase58,
             arbitraryBytesForSigningBase58: convertedBytesBase58,
             arbitraryNonce: nonce,
+			apiVersion: apiVersion ? apiVersion : null
         })
         let myResponse = { error: "" }
         if (response === false) {
