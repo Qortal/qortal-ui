@@ -217,18 +217,20 @@ export const chatStyles = css`
 
 	.replied-message {
 		margin: 0;
+		padding: 0;
+	}
+
+	.replied-message p {
+		margin: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 300px;
+		max-width: 500px;
 		max-height: 40px;
+		margin: 0;
+		padding: 0;
 	}
 	
-	.replied-message p {
-		margin: 0px;
-		padding: 0px;
-	}
-
 	.message {
 		display: flex;
 		flex-direction: column;
