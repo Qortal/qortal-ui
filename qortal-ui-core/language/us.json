@@ -500,7 +500,9 @@
 		"bchange20": "Do you give this application permission to get your wallet balance?",
 		"bchange21": "Fetch Wallet Failed. Please try again!",
 		"bchange22": "Do you give this application permission to send a chat message?",
-		"bchange23": "Message Sent!"
+		"bchange23": "Message Sent!",
+		"bchange24": "Reject",
+		"bchange25": "Accept"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
