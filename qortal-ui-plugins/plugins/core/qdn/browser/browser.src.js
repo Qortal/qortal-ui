@@ -342,7 +342,8 @@ class WebBrowser extends LitElement {
 					lastReference: lastRef,
 					groupdialog1: groupdialog1,
 					groupdialog2: groupdialog2
-				}
+				},
+				apiVersion: 2
 			})
 			return myTxnrequest
 		}
@@ -398,7 +399,8 @@ class WebBrowser extends LitElement {
 					lastReference: lastRef,
 					atDeployDialog1: groupdialog1,
 					atDeployDialog2: groupdialog2
-				}
+				},
+				apiVersion: 2
 			})
 			return myTxnrequest
 		}
@@ -550,6 +552,7 @@ class WebBrowser extends LitElement {
 								selectedAddress: this.selectedAddress,
 								worker: worker,
 								isBase64: true,
+								apiVersion: 2
 							});
 
 							response = JSON.stringify(resPublish);
@@ -624,7 +627,8 @@ class WebBrowser extends LitElement {
 							let _response = await parentEpml.request('sign_chat', {
 								nonce: this.selectedAddress.nonce,
 								chatBytesArray: chatBytesArray,
-								chatNonce: nonce
+								chatNonce: nonce,
+								apiVersion: 2
 							});
 
 							const chatResponse = getSendChatResponse(_response);
@@ -1106,6 +1110,7 @@ class WebBrowser extends LitElement {
 								dialogAddress,
 								dialogName
 							},
+							apiVersion: 2
 						})
 						return myTxnrequest;
 					}
