@@ -231,6 +231,7 @@ class WebBrowser extends LitElement {
 	}
 
 	render() {
+		console.log(1, "browser page here");
 		return html`
     		<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     			<div class="layout horizontal center">
@@ -949,7 +950,6 @@ class WebBrowser extends LitElement {
 						return;
 					} 
 					
-
 					const myRef = await parentEpml.request("apiCall", {
 						type: "api",
 						url: `/addresses/lastreference/${this.myAddress.address}`,
@@ -1010,13 +1010,15 @@ class WebBrowser extends LitElement {
 
 						if (isAddress) {
 							let myTransaction = await makeTransactionRequest(recipient, lastRef);
-							return getTxnRequestResponse(myTransaction);
+							const res = getTxnRequestResponse(myTransaction)
+							return res;
 						} else {
 							let myNameRes = await validateName(recipient);
 							if (myNameRes !== false) {
 								let myNameAddress = myNameRes.owner
 								let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
-								return getTxnRequestResponse(myTransaction)
+								const res = getTxnRequestResponse(myTransaction)
+								return res;
 							} else {
 								console.error(`${translate("chatpage.cchange54")}`)
 								parentEpml.request('showSnackBar', `${translate("chatpage.cchange54")}`)
@@ -1070,23 +1072,20 @@ class WebBrowser extends LitElement {
 
 					const getTxnRequestResponse = (txnResponse) => {
 						if (txnResponse.success === false && txnResponse.message) {
-							parentEpml.request('showSnackBar', `${txnResponse.message}`);
 							this.loader.hide();
 							throw new Error(txnResponse);
 						} else if (txnResponse.success === true && !txnResponse.data.error) {
-							parentEpml.request('showSnackBar', `${get("chatpage.cchange55")}`)
 							this.loader.hide();
 						} else {
-							parentEpml.request('showSnackBar', `${txnResponse.data.message}`);
 							this.loader.hide();
 							throw new Error(txnResponse);
 						}
+						return txnResponse;
 					}
+
 					try {
 						const result = await validateReceiver(recipient);
-						if (result) {
-							return result;
-						}
+						response = result;
 					} catch (error) {
 						console.error(error);
 						return '{"error": "Request could not be fulfilled"}';
