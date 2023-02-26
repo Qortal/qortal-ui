@@ -895,61 +895,62 @@ class WebBrowser extends LitElement {
 							} finally {
 								this.loader.hide();
 							}
-						} else {
-							let _url = ``
-							let _body = null
+						} 
+						// else {
+						// 	let _url = ``
+						// 	let _body = null
 
-							switch (coin) {
-								case 'LTC':
-									_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
-									_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
-									break
-								case 'DOGE':
-									_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
-									_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
-									break
-								case 'DGB':
-									_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
-									_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-									break
-								case 'RVN':
-									_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
-									_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
-									break
-								case 'ARRR':
-									_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
-									_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
-									break
-								default:
-									break
-							}
-							try {
-								this.loader.show();
-								const res = await parentEpml.request('apiCall', {
-									url: _url,
-									method: 'POST',
-									body: _body,
-								})
-								if (isNaN(Number(res))) {
-									const data = {};
-									const errorMsg = error.message || get("browserpage.bchange21");
-									data['error'] = errorMsg;
-									response = JSON.stringify(data);
-									return;
-								} else {
-									response = (Number(res) / 1e8).toFixed(8);
-								}
-							} catch (error) {
-								console.error(error);
-								const data = {};
-								const errorMsg = error.message || get("browserpage.bchange21");
-								data['error'] = errorMsg;
-								response = JSON.stringify(data);
-								return;
-							} finally {
-								this.loader.hide()
-							}
-						}
+						// 	switch (coin) {
+						// 		case 'LTC':
+						// 			_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+						// 			break
+						// 		case 'DOGE':
+						// 			_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+						// 			break
+						// 		case 'DGB':
+						// 			_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+						// 			break
+						// 		case 'RVN':
+						// 			_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+						// 			break
+						// 		case 'ARRR':
+						// 			_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+						// 			break
+						// 		default:
+						// 			break
+						// 	}
+						// 	try {
+						// 		this.loader.show();
+						// 		const res = await parentEpml.request('apiCall', {
+						// 			url: _url,
+						// 			method: 'POST',
+						// 			body: _body,
+						// 		})
+						// 		if (isNaN(Number(res))) {
+						// 			const data = {};
+						// 			const errorMsg = error.message || get("browserpage.bchange21");
+						// 			data['error'] = errorMsg;
+						// 			response = JSON.stringify(data);
+						// 			return;
+						// 		} else {
+						// 			response = (Number(res) / 1e8).toFixed(8);
+						// 		}
+						// 	} catch (error) {
+						// 		console.error(error);
+						// 		const data = {};
+						// 		const errorMsg = error.message || get("browserpage.bchange21");
+						// 		data['error'] = errorMsg;
+						// 		response = JSON.stringify(data);
+						// 		return;
+						// 	} finally {
+						// 		this.loader.hide()
+						// 	}
+						// }
 					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}';
 					}
@@ -1555,17 +1556,21 @@ async function showModalAndWait(type, data) {
 			resolve({ action: 'reject' });
 		});
 		const labelButton = modal.querySelector('#authButtonLabel');
-		labelButton.addEventListener('click', () => {
-			this.shadowRoot.getElementById('authButton').click();
-		})
+		if (labelButton) {
+			labelButton.addEventListener('click', () => {
+				this.shadowRoot.getElementById('authButton').click();
+			})
+		}
 		const checkbox = modal.querySelector('#authButton');
-		checkbox.addEventListener('click', (e) => {
-				if (e.target.checked) {
-					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
-					return
-			}
-				window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
-		})
+		if (checkbox) {
+			checkbox.addEventListener('click', (e) => {
+					if (e.target.checked) {
+						window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
+						return
+				}
+					window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
+			})
+		}
 	});
 }
 
