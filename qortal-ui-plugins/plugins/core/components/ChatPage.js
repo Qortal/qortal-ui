@@ -3149,8 +3149,6 @@ class ChatPage extends LitElement {
         // create new var called repliedToData and use that to modify the UI
         // find specific object property in local
         let typeMessage = 'regular';
-        let workerImage;
-        let workerAttachment;
         this.isLoading = true;
         const trimmedMessage = msg
         
@@ -3180,11 +3178,12 @@ class ChatPage extends LitElement {
             var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg==";
 
             if (this.webWorkerFile) {
-                workerImage = this.webWorkerFile;
-            } else {
-                this.webWorkerFile = new WebWorkerFile();
-            }
-   
+                this.webWorkerFile.terminate();
+                this.webWorkerFile = null;
+            } 
+
+            this.webWorkerFile = new WebWorkerFile();
+
             const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
                 const byteCharacters = atob(b64Data);
                 const byteArrays = [];
@@ -3232,7 +3231,7 @@ class ChatPage extends LitElement {
                         metaData: undefined,
                         uploadType: 'file',
                         selectedAddress: this.selectedAddress,
-                        worker: workerImage
+                        worker: this.webWorkerFile
                     })
                     this.isDeletingImage = false
                 } catch (error) {
@@ -3268,10 +3267,11 @@ class ChatPage extends LitElement {
             const identifier = outSideMsg.identifier;
 
             if (this.webWorkerFile) {
-                workerAttachment = this.webWorkerFile;
-            } else {
-                this.webWorkerFile = new WebWorkerFile();
-            }
+                this.webWorkerFile.terminate();
+                this.webWorkerFile = null;
+            } 
+
+            this.webWorkerFile = new WebWorkerFile();
 
             const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
                 const byteCharacters = atob(b64Data);
@@ -3322,7 +3322,7 @@ class ChatPage extends LitElement {
                     metaData: undefined,
                     uploadType: 'file',
                     selectedAddress: this.selectedAddress,
-                    worker: workerAttachment
+                    worker: this.webWorkerFile
                 })
                 this.isDeletingAttachment = false
             } catch (error) {
@@ -3362,10 +3362,11 @@ class ChatPage extends LitElement {
             }
 
             if (this.webWorkerFile) {
-                workerImage = this.webWorkerFile;
-            } else {
-                this.webWorkerFile = new WebWorkerFile();
-            }
+                this.webWorkerFile.terminate();
+                this.webWorkerFile = null;
+            } 
+
+            this.webWorkerFile = new WebWorkerFile();
 
             const image = this.imageFile
             const id = this.uid();
@@ -3404,7 +3405,7 @@ class ChatPage extends LitElement {
                     metaData: undefined,
                     uploadType: 'file',
                     selectedAddress: this.selectedAddress,
-                    worker: workerImage
+                    worker: this.webWorkerFile
                 });
             this.isUploadingImage = false;
             this.removeImage();
@@ -3459,10 +3460,12 @@ class ChatPage extends LitElement {
             }
 
             if (this.webWorkerFile) {
-                workerAttachment = this.webWorkerFile;
-            } else {
-                this.webWorkerFile = new WebWorkerFile();
-            }
+                this.webWorkerFile.terminate();
+                this.webWorkerFile = null;
+            } 
+
+            this.webWorkerFile = new WebWorkerFile();
+
 
             const attachment = this.attachment;
             const id = this.uid();
@@ -3484,7 +3487,7 @@ class ChatPage extends LitElement {
                     metaData: undefined,
                     uploadType: 'file',
                     selectedAddress: this.selectedAddress,
-                    worker: workerAttachment
+                    worker: this.webWorkerFile
                 });
             this.isUploadingAttachment = false;
             this.removeAttachment();
