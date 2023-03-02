@@ -7,8 +7,10 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-import '@material/mwc-icon'
 import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@material/mwc-icon'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/button'
 import '@vaadin/grid'
 import '@vaadin/icon'
@@ -27,15 +29,26 @@ class DataManagement extends LitElement {
             blockedNames: { type: Array },
             followedNames: { type: Array },
             datres: { type: Array },
+            dataImageUrl: { type: String },
+            savedGifRepo: { type: Array },
+            collectionName: { type: String },
             theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
         return css`
-	    * {
-	        --mdc-theme-primary: rgb(3, 169, 244);
+	      * {
+                --mdc-theme-primary: rgb(3, 169, 244);
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
+                --mdc-theme-surface: var(--white);
+                --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+                --mdc-text-field-label-ink-color: var(--black);
+                --mdc-text-field-ink-color: var(--black);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-dialog-max-width: 85vw;
+                --mdc-dialog-max-height: 95vh;
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
@@ -49,41 +62,61 @@ class DataManagement extends LitElement {
             }
 
             #pages {
-		display: flex;
-		flex-wrap: wrap;
-		padding: 10px 5px 5px 5px;
-		margin: 0px 20px 20px 20px;
-	    }
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px 5px 5px 5px;
+                margin: 0px 20px 20px 20px;
+            }
 
-	    #pages > button {
-		user-select: none;
-		padding: 5px;
-		margin: 0 5px;
-		border-radius: 10%;
-		border: 0;
-		background: transparent;
-		font: inherit;
-		outline: none;
-		cursor: pointer;
+	      #pages > button {
+		    user-select: none;
+		    padding: 5px;
+		    margin: 0 5px;
+		    border-radius: 10%;
+		    border: 0;
+		    background: transparent;
+		    font: inherit;
+		    outline: none;
+                cursor: pointer;
                 color: var(--black);
-	    }
+	      }
 
-	    #pages > button:not([disabled]):hover,
-	    #pages > button:focus {
-		color: #ccc;
-		background-color: #eee;
-	    }
+	      #pages > button:not([disabled]):hover,
+	      #pages > button:focus {
+		    color: #ccc;
+		    background-color: #eee;
+	      }
 
-	    #pages > button[selected] {
-		font-weight: bold;
-		color: var(--white);
-		background-color: #ccc;
-	    }
+	      #pages > button[selected] {
+		    font-weight: bold;
+		    color: var(--white);
+		    background-color: #ccc;
+	      }
 
-	    #pages > button[disabled] {
-		opacity: 0.5;
-		cursor: default;
-	    }
+	      #pages > button[disabled] {
+	          opacity: 0.5;
+	          cursor: default;
+	      }
+
+            paper-dialog.gif-repo {
+                width: auto;
+                max-width: 80vw;
+                height: auto;
+                max-height: 80vh;
+                background-color: var(--white);
+                color: var(--black);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                line-height: 1.6;
+                overflow-y: auto;
+            }
+
+            .actions {
+                display:flex;
+                justify-content: space-between;
+                padding: 0 1em;
+                margin: 12px 0 -6px 0;
+            }
 
             #websites-list-page {
                 background: var(--white);
@@ -101,6 +134,52 @@ class DataManagement extends LitElement {
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 2em;
+            }
+
+            .image-container {
+                display: flex;
+            }
+
+            .image-display {
+                height: auto;
+                max-height: 80vh;
+                width: auto;
+                max-width: 80vw;
+                object-fit: contain;
+                border-radius: 5px;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
+            }
+
+            .red {
+                --mdc-theme-primary: #F44336;
+            }
+
+            .close-icon {
+                font-size: 36px;
+            }
+
+            .close-icon:hover {
+                cursor: pointer;
+                opacity: .6;
+            }
+
+            .buttons {
+                text-align: right;
+            }
+
+            .container {
+                max-width: 90vw;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 20px;
+                padding: .6em;
+            }
+
+            a.visitSite {
+                text-decoration: none;
             }
 
             h2 {
@@ -168,7 +247,66 @@ class DataManagement extends LitElement {
         this.followedNames = []
         this.datres = []
         this.isLoading = false
+        this.dataImageUrl = ''
+        this.savedGifRepo = []
+        this.collectionName = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+    }
+
+    gifCollection() {
+        return html`
+            <vaadin-grid theme="large" id="gifCollectionGrid" ?hidden="${this.isEmptyArray(this.savedGifRepo)}" .items="${this.savedGifRepo}" aria-label="GIF REPO" all-rows-visible>
+                <vaadin-grid-column
+                    width="12rem"
+                    flex-grow="0"
+                    header="${translate("registernamepage.nchange6")}"
+                    .renderer=${(root, column, data) => {
+	                  render(html`${data.item.name}`, root)
+	              }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    width="12rem"
+                    flex-grow="0"
+                    header="${translate("gifs.gchange9")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.identifier}`, root)
+                    }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    width="20rem"
+                    flex-grow="0"
+                    header="${translate("gifs.gchange29")}"
+                    .renderer=${(root, column, data) => {
+	                  render(html`${data.item.filepath}`, root)
+	              }}
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    width="9rem"
+                    flex-grow="0"
+                    header="${translate("tradepage.tchange17")}"
+                    .renderer=${(root, column, data) => {
+                        render(html`${this.renderViewGifImage(data.item)}`, root)
+                    }}
+                ></vaadin-grid-column>
+            </vaadin-grid>
+
+            <mwc-dialog id="showGifImage" scrimClickAction="" escapeKeyAction="">
+                <div></div>
+                <div class="image-container">
+                    <div class="image-display">
+                        <img src="${this.dataImageUrl}">
+                    </div>
+                </div>
+                <mwc-button
+                    slot="primaryAction"
+                    dialogAction="cancel"
+                    class="red"
+                    @click=${() => {this.closeGifRepoImageView()}}
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+        `
     }
 
     render() {
@@ -195,15 +333,29 @@ class DataManagement extends LitElement {
                 	    render(html`${this.renderSearchIdentifier(data.item)}`, root)
             		}}>
                         </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
+			<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderSearchDeleteButton(data.item)}`, root);
-            		}}>
-                        </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+            	}}>
+                  </vaadin-grid-column>
+			<vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderSearchBlockUnblockButton(data.item)}`, root);
-            		}}>
-                        </vaadin-grid-column>
-                    </vaadin-grid>
+            	}}>
+                  </vaadin-grid-column>
+			<vaadin-grid-column width="9rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                      if (data.item.service === "QCHAT_IMAGE") {
+                          render(html`${this.renderViewQchatImage(data.item)}`, root)
+                      } else if (data.item.service === "THUMBNAIL") {
+                          render(html`${this.renderViewAvatarImage(data.item)}`, root)
+                      } else if (data.item.service === "GIF_REPOSITORY") {
+                          render(html`${this.renderViewGifRepo(data.item)}`, root)
+                      } else if (data.item.service === "WEBSITE") {
+                          render(html`${this.renderViewWebsite(data.item)}`, root)
+                      } else {
+                          render(html``, root)
+                      }
+            	}}>
+                  </vaadin-grid-column>
+                </vaadin-grid>
 	        </div><br />
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("datapage.dchange9")}</h3>
@@ -214,19 +366,76 @@ class DataManagement extends LitElement {
                 	    render(html`${this.renderIdentifier(data.item)}`, root)
             		}}>
                         </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
+			<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderDeleteButton(data.item)}`, root);
             		}}>
                         </vaadin-grid-column>
-			<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+			<vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                 	    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-            		}}>
-                        </vaadin-grid-column>
-                    </vaadin-grid>
+            	}}>
+                  </vaadin-grid-column>
+			<vaadin-grid-column width="9rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                      if (data.item.service === "QCHAT_IMAGE") {
+                          render(html`${this.renderViewQchatImage(data.item)}`, root)
+                      } else if (data.item.service === "THUMBNAIL") {
+                          render(html`${this.renderViewAvatarImage(data.item)}`, root)
+                      } else if (data.item.service === "GIF_REPOSITORY") {
+                          render(html`${this.renderViewGifRepo(data.item)}`, root)
+                      } else if (data.item.service === "WEBSITE") {
+                          render(html`${this.renderViewWebsite(data.item)}`, root)
+                      } else {
+                          render(html``, root)
+                      }
+            	}}>
+                  </vaadin-grid-column>
+                  </vaadin-grid>
                     <div id="pages"></div>
 		    ${this.renderDefaultText()}
                 </div>
+
+                <mwc-dialog id="showQchatImage" scrimClickAction="" escapeKeyAction="">
+                    <div></div>
+                    <div class="image-container">
+                        <div class="image-display">
+                            <img src="${this.dataImageUrl}">
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                        @click=${() => {this.closeQchatImageViewDialog()}}
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+
+                <mwc-dialog id="showAvatarImage" scrimClickAction="" escapeKeyAction="">
+                    <div></div>
+                    <div class="image-container">
+                        <div class="image-display">
+                            <img src="${this.dataImageUrl}">
+                        </div>
+                    </div>
+                    <mwc-button
+                        slot="primaryAction"
+                        dialogAction="cancel"
+                        class="red"
+                        @click=${() => {this.closeAvatarImageViewDialog()}}
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
+
+            <paper-dialog id="gifCollectionDialog" class="gif-repo" modal>
+                <div class="actions">
+                    <h2>${translate("gifs.gchange9")} : ${this.collectionName}</h2>
+                    <mwc-icon class="close-icon" @click=${ () => this.closeGifRepoView()} title="${translate("general.close")}">highlight_off</mwc-icon>
+                </div>
+                <hr />
+                <div class="container">${this.gifCollection()}</div>
+            </paper-dialog>
         `
     }
 
@@ -347,6 +556,124 @@ class DataManagement extends LitElement {
                 this.searchDatres = searchDatres
             }
         }
+    }
+
+    renderViewWebsite(viewWebsiteObj) {
+        return html`<a class="visitSite" href="../browser/index.html?name=${viewWebsiteObj.name}&service=${viewWebsiteObj.service}"><mwc-button class="green"><mwc-icon>pageview</mwc-icon>&nbsp;${translate("general.view")}</mwc-button></a>`
+    }
+
+    renderViewQchatImage(viewQchatObj) {
+        return html`<mwc-button class="green"  @click=${() => this.openQchatImageView(viewQchatObj)} onclick="this.blur();"><mwc-icon>pageview</mwc-icon>&nbsp;${translate("general.view")}</mwc-button>`
+    }
+
+    openQchatImageView(viewChatObj) {
+        let name = viewChatObj.name
+        let identifier = viewChatObj.identifier
+        let service = viewChatObj.service
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?rebuild=true&async=true&apiKey=${this.getApiKey()}`
+        this.openQchatImageViewDialog(url)
+    }
+
+    openQchatImageViewDialog(qchatUrl) {
+        this.dataImageUrl = ''
+        this.dataImageUrl = qchatUrl
+        this.shadowRoot.querySelector('#showQchatImage').show()
+    }
+
+    closeQchatImageViewDialog() {
+        this.shadowRoot.querySelector('#showQchatImage').close()
+        this.dataImageUrl = ''
+    }
+
+    renderViewAvatarImage(viewAvatarObj) {
+        return html`<mwc-button class="green" @click=${() => this.openAvatarImageView(viewAvatarObj)} onclick="this.blur();"><mwc-icon>pageview</mwc-icon>&nbsp;${translate("general.view")}</mwc-button>`
+    }
+
+    openAvatarImageView(viewAvatarObj) {
+        let name = viewAvatarObj.name
+        let identifier = viewAvatarObj.identifier
+        let service = viewAvatarObj.service
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?rebuild=true&async=true&apiKey=${this.getApiKey()}`
+        this.openAvatarImageViewDialog(url)
+    }
+
+    openAvatarImageViewDialog(avatarUrl) {
+        this.dataImageUrl = ''
+        this.dataImageUrl = avatarUrl
+        this.shadowRoot.querySelector('#showAvatarImage').show()
+    }
+
+    closeAvatarImageViewDialog() {
+        this.shadowRoot.querySelector('#showAvatarImage').close()
+        this.dataImageUrl = ''
+    }
+
+
+    renderViewGifRepo(viewGifRepoObj) {
+        return html`<mwc-button class="green" @click=${() => this.openGifRepoView(viewGifRepoObj)} onclick="this.blur();"><mwc-icon>pageview</mwc-icon>&nbsp;${translate("general.view")}</mwc-button>`
+    }
+
+    async openGifRepoView(viewGifRepoObj) {
+        let name = viewGifRepoObj.name
+        let identifier = viewGifRepoObj.identifier
+        let service = viewGifRepoObj.service
+        this.collectionName = ''
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?rebuild=true&async=true&apiKey=${this.getApiKey()}`
+        const metaUrl = `${nodeUrl}/arbitrary/metadata/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
+
+        this.savedGifRepo = []
+        var imageList = []
+        this.collectionName = identifier
+
+        await fetch(metaUrl).then(response => {
+            return response.json()
+        }).then(data => {
+            data.files.map(item => {
+                const gifDetails = {
+                    name: name,
+                    identifier: identifier,
+                    service: service,
+                    filepath: item
+                }
+                imageList.push(gifDetails)
+            })
+        })
+        this.savedGifRepo = imageList
+        this.shadowRoot.querySelector('#gifCollectionDialog').open()
+    }
+
+    renderViewGifImage(viewGifImageObj) {
+        return html`<mwc-button class="green" @click=${() => this.openGifRepoImageView(viewGifImageObj)} onclick="this.blur();"><mwc-icon>pageview</mwc-icon>&nbsp;${translate("general.view")}</mwc-button>`
+    }
+
+    closeGifRepoView() {
+        this.shadowRoot.querySelector('#gifCollectionDialog').close()
+        this.savedGifRepo = []
+        this.collectionName = ''
+    }
+
+    openGifRepoImageView(gifViewObj) {
+        this.dataImageUrl = ''
+        let name = gifViewObj.name
+        let identifier = gifViewObj.identifier
+        let service = gifViewObj.service
+        let filepath = gifViewObj.filepath
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const gifUrl = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?filepath=${filepath}&rebuild=true&async=true&apiKey=${this.getApiKey()}`
+        this.dataImageUrl = gifUrl
+        this.shadowRoot.querySelector('#showGifImage').show()
+    }
+
+    closeGifRepoImageView() {
+        this.shadowRoot.querySelector('#showGifImage').close()
+        this.dataImageUrl = ''
     }
 
     renderDefaultText() {
