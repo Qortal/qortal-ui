@@ -22,6 +22,7 @@ import framePasteMenu from '../functional-components/frame-paste-menu.js';
 
 const createTransaction = api.createTransaction;
 const processTransaction = api.processTransaction;
+const processTransactionVersion2 = api.processTransactionVersion2;
 const signChatTransaction = api.signChatTransaction;
 const signArbitraryTransaction = api.signArbitraryTransaction;
 const tradeBotCreateRequest = api.tradeBotCreateRequest;
@@ -144,8 +145,16 @@ export const routes = {
 			if (!req.disableModal && !req.data.disableModal) {
 				await requestTransactionDialog.requestTransaction(tx);
 			}
-		
-			const res = await processTransaction(tx.signedBytes);
+
+			let res
+
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(tx.signedBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(tx.signedBytes);
+			}
+	
 			let extraData = {}
 			if(req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey){
 				extraData.rewardSharePrivateKey = Base58.encode(tx._rewardShareKeyPair.secretKey)
@@ -191,7 +200,16 @@ export const routes = {
 				_keyPair,
 				req.data.params
 			);
-			const res = await processTransaction(tx.signedBytes);
+			let res
+
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(tx.signedBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(tx.signedBytes);
+			}
+	
+		
 			response = {
 				success: true,
 				data: res,
@@ -242,8 +260,16 @@ export const routes = {
 				req.data.chatNonce,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			);
+			
+			let res
 
-			const res = await processTransaction(signedChatBytes);
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(signedChatBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(signedChatBytes);
+			}
+	
 			response = res;
 		} catch (e) {
 			console.error(e);
@@ -262,8 +288,15 @@ export const routes = {
 				req.data.arbitraryNonce,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			);
+			let res
 
-			const res = await processTransaction(signedArbitraryBytes);
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(signedArbitraryBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(signedArbitraryBytes);
+			}
+			
 			response = res;
 		} catch (e) {
 			console.error(e);
@@ -293,8 +326,14 @@ export const routes = {
 				unsignedTxn,
 				store.getState().app.selectedAddress.keyPair
 			);
+			let res
 
-			const res = await processTransaction(signedTxnBytes);
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(signedTxnBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(signedTxnBytes);
+			}
 			response = res;
 		} catch (e) {
 			console.error(e);
@@ -327,8 +366,15 @@ export const routes = {
 				unsignedTxn,
 				store.getState().app.selectedAddress.keyPair
 			);
+			
+			let res
 
-			const res = await processTransaction(signedTxnBytes);
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(signedTxnBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(signedTxnBytes);
+			}
 
 			response = res;
 		} catch (e) {

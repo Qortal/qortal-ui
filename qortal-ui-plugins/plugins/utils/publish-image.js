@@ -18,7 +18,8 @@ export const publishData = async ({
 	selectedAddress,
 	worker,
 	isBase64,
-	metaData
+	metaData,
+	apiVersion
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -44,7 +45,7 @@ export const publishData = async ({
             transactionBytesBase58
         )
         if (convertedBytesBase58.error) {
-            return
+            throw new Error('Error when signing');
         }
 
         const convertedBytes =
@@ -71,10 +72,11 @@ export const publishData = async ({
             arbitraryBytesBase58: transactionBytesBase58,
             arbitraryBytesForSigningBase58: convertedBytesBase58,
             arbitraryNonce: nonce,
+			apiVersion: apiVersion ? apiVersion : null
         })
         let myResponse = { error: "" }
         if (response === false) {
-            return
+            throw new Error('Error when signing');
         } else {
             myResponse = response
         }
@@ -85,21 +87,22 @@ export const publishData = async ({
 	const validate = async () => {
 		let validNameRes = await validateName(registeredName)
 		if (validNameRes.error) {
-			return
+			throw new Error('Name not found');
 		}
 		let transactionBytes = await uploadData(registeredName, path, file)
 		if (transactionBytes.error) {
-			return
+			throw new Error('Error when uploading');
 		} else if (
 			transactionBytes.includes("Error 500 Internal Server Error")
 		) {
-			return
+			throw new Error('Error when uploading');
 		}
 
 		let signAndProcessRes = await signAndProcess(transactionBytes)
 		if (signAndProcessRes.error) {
-			return
+			throw new Error('Error when signing');
 		}
+		return signAndProcessRes
 	}
 
 	const uploadData = async (registeredName, path, file) => {
@@ -147,7 +150,8 @@ export const publishData = async ({
 		}
 	}
 	try {
-		await validate()
+		const validateRes = await validate()
+		return validateRes
 	} catch (error) {
 		throw new Error(error.message)
 	}

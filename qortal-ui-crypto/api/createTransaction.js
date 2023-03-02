@@ -36,3 +36,9 @@ export const processTransaction = bytes => request('/transactions/process', {
 	method: 'POST',
 	body: Base58.encode(bytes)
 })
+
+export const processTransactionVersion2 = bytes => request('/transactions/process?apiVersion=2', {
+	method: 'POST',
+	body: Base58.encode(bytes)
+})
+
