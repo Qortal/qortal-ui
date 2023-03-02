@@ -97,8 +97,6 @@ class ChatGifsExplore extends LitElement {
 		}
 
     render() {
-    	console.log(18, "chat-gifs-explore-here");
-			console.log(this.searchCollectionName, "search collection name");
     	return html`
     		<div id='viewElement' class='container-body'>
     			<div class='search-collection-wrapper'>
@@ -111,7 +109,6 @@ class ChatGifsExplore extends LitElement {
     						e.target.value;
     				}}
     				@keyup=${async (e) => {
-    					console.log(e.key);
     					if (e.key === 'Enter' && this.searchCollectionName) {
     						await this.searchCollections()
     					}
