@@ -179,22 +179,6 @@ class WebBrowser extends LitElement {
 				}`;
 		};
 
-		const authorizeAndRender = () => {
-			parentEpml
-				.request('apiCall', {
-					url: `/render/authorize/${this.name
-						}?apiKey=${this.getApiKey()}`,
-					method: 'POST',
-				})
-				.then((res) => {
-					if (res.error) {
-						// Authorization problem - API key incorrect?
-					} else {
-						render();
-					}
-				});
-		};
-
 		let configLoaded = false;
 
 		parentEpml.ready().then(() => {
@@ -214,7 +198,7 @@ class WebBrowser extends LitElement {
 			parentEpml.subscribe('config', (c) => {
 				this.config = JSON.parse(c);
 				if (!configLoaded) {
-					authorizeAndRender();
+					render();
 					setTimeout(getFollowedNames, 1);
 					setTimeout(getBlockedNames, 1);
 					configLoaded = true;
