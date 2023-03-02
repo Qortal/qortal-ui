@@ -163,7 +163,8 @@
 		"save": "Salvar",
 		"balance": "Saldo",
 		"balances": "SEUS SALDOS DE CARTEIRA",
-		"update": "ATUALIZAR SALDOS DA CARTEIRA"
+		"update": "ATUALIZAR SALDOS DA CARTEIRA",
+		"view": "Ver"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
@@ -191,7 +192,10 @@
 		"gchange23": "Sua coleção de gifs não pode conter dois gifs com o mesmo nome!",
 		"gchange24": "Este nome de coleção já está sendo usado. Tente outro nome!",
 		"gchange25": "GIF (clique para ver)",
-		"gchange26": "É necessário um nome para acessar e enviar arquivos GIF"
+		"gchange26": "É necessário um nome para acessar e enviar arquivos GIF",
+		"gchange27": "O tamanho da coleção de gifs é superior a 25mb! Tente novamente!",
+		"gchange28": "Cada gif na coleção não pode ter mais de 0,7 MB! Tente novamente!",
+		"gchange29": "Nome do arquivo"
 	},
 	"startminting": {
 		"smchange1": "Não é possível buscar contas de cunhagem",

@@ -163,7 +163,8 @@
 		"save": "Spremi",
 		"balance": "Kreditna",
 		"balances": "VAŠ NOVČANIK JE NA SALJU",
-		"update": "AŽURIRAJTE STANJE NOVČANIKA"
+		"update": "AŽURIRAJTE STANJE NOVČANIKA",
+		"view": "Pogled"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
@@ -191,7 +192,10 @@
 		"gchange23": "Vaša zbirka gifova ne može sadržavati dva gifa s istim nazivom!",
 		"gchange24": "Ovaj naziv zbirke je već zauzet. Pokušajte s drugim imenom!",
 		"gchange25": "GIF (kliknite za prikaz)",
-		"gchange26": "Potrebno je ime za pristup i slanje GIF datoteka"
+		"gchange26": "Potrebno je ime za pristup i slanje GIF datoteka",
+		"gchange27": "Veličina kolekcije GIF-ova veća je od 25 MB! Pokušajte ponovo!",
+		"gchange28": "Svaki gif u kolekciji ne može biti veći od 0,7 mb! Pokušajte ponovo!",
+		"gchange29": "Naziv datoteke"
 	},
 	"startminting": {
 		"smchange1": "Nije moguće dohvatiti račune za kovanje",

@@ -163,7 +163,8 @@
 		"save": "Speichern",
 		"balance": "Guthaben",
 		"balances": "IHR WALLET-GUTHABEN",
-		"update": "AKTUALISIERE WALLET-GUTHABEN"
+		"update": "AKTUALISIERE WALLET-GUTHABEN",
+		"view": "Ansehen"
 	},
 	"gifs": {
 		"gchange1": "GIF-Explorer",
@@ -191,7 +192,10 @@
 		"gchange23": "Ihre GIF-Sammlung darf nicht zwei GIFs mit demselben Namen enthalten!",
 		"gchange24": "Dieser Sammlungsname ist bereits vergeben. Versuchen Sie es mit einem anderen Namen!",
 		"gchange25": "GIF (zum Anzeigen klicken)",
-		"gchange26": "Ein Name wird benötigt, um auf GIF-Dateien zuzugreifen und sie zu senden"
+		"gchange26": "Ein Name wird benötigt, um auf GIF-Dateien zuzugreifen und sie zu senden",
+		"gchange27": "Die Größe der GIF-Sammlung beträgt mehr als 25 MB! Bitte versuchen Sie es erneut!",
+		"gchange28": "Jedes GIF in der Sammlung darf nicht größer als 0,7 MB sein! Bitte versuchen Sie es erneut!",
+		"gchange29": "Dateiname"
 	},
 	"startminting": {
 		"smchange1": "Prägekonten können nicht abgerufen werden",

@@ -163,7 +163,8 @@
 		"save": "Save",
 		"balance": "Balance",
 		"balances": "YOUR WALLET BALANCES",
-		"update": "UPDATE WALLET BALANCES"
+		"update": "UPDATE WALLET BALANCES",
+		"view": "View"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
@@ -193,7 +194,8 @@
 		"gchange25": "GIF (click to view)",
 		"gchange26": "A name is needed to access and send GIF files",
 		"gchange27": "The gif collection size is over 25mb! Please try again!",
-		"gchange28": "Each gif in the collection cannot be over 0.7mb! Please try again!"
+		"gchange28": "Each gif in the collection cannot be over 0.7mb! Please try again!",
+		"gchange29": "Filename"
 	},
 	"startminting": {
 		"smchange1": "Cannot fetch minting accounts",

@@ -163,7 +163,8 @@
 		"save": "Mentéshez",
 		"balance": "Hitel",
 		"balances": "A PÉNZTÁRCSA EGYENLEGEK",
-		"update": "FRISSÍTSE A PÉNZTÁRCSA-EGYENLEGEKET"
+		"update": "FRISSÍTSE A PÉNZTÁRCSA-EGYENLEGEKET",
+		"view": "Kilátás"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
@@ -191,7 +192,10 @@
 		"gchange23": "Az Ön gif-gyűjteménye nem tartalmazhat két azonos nevű gifet!",
 		"gchange24": "Ez a gyűjteménynév már foglalt. Próbálkozzon másik névvel!",
 		"gchange25": "GIF (kattintson a megtekintéséhez)",
-		"gchange26": "A GIF-fájlok eléréséhez és küldéséhez név szükséges"
+		"gchange26": "A GIF-fájlok eléréséhez és küldéséhez név szükséges",
+		"gchange27": "A gif-gyűjtemény mérete meghaladja a 25 MB-ot! Kérjük, próbálja újra!",
+		"gchange28": "A gyűjteményben lévő gif-ek mérete nem haladhatja meg a 0,7 MB-ot! Próbáld újra!",
+		"gchange29": "Fájl név"
 	},
 	"startminting": {
 		"smchange1": "Nem lehet lekérni a pénzverési számlákat",

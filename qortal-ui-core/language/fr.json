@@ -163,7 +163,8 @@
 		"save": "Sauvegarder",
 		"balance": "Solde",
 		"balances": "VOS SOLDES DE PORTEFEUILLE",
-		"update": "METTRE À JOUR LES SOLDES DES PORTEFEUILLES"
+		"update": "METTRE À JOUR LES SOLDES DES PORTEFEUILLES",
+		"view": "Voir"
 	},
 	"gifs": {
 		"gchange1": "Explorateur GIF",
@@ -191,7 +192,10 @@
 		"gchange23": "Votre collection de gifs ne peut pas contenir deux gifs portant le même nom !",
 		"gchange24": "Ce nom de collection est déjà pris. Essayez un autre nom !",
 		"gchange25": "GIF (cliquez pour afficher)",
-		"gchange26": "Un nom est nécessaire pour accéder et envoyer des fichiers GIF"
+		"gchange26": "Un nom est nécessaire pour accéder et envoyer des fichiers GIF",
+		"gchange27": "La taille de la collection gif dépasse 25 Mo ! Veuillez réessayer !",
+		"gchange28": "Chaque gif de la collection ne peut pas dépasser 0,7 Mo ! Veuillez réessayer !",
+		"gchange29": "Nom de fichier"
 	},
 	"startminting": {
 		"smchange1": "Impossible de récupérer les comptes de frappe",

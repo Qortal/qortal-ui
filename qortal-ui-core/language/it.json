@@ -163,7 +163,8 @@
 		"save": "Salva",
 		"balance": "Saldo",
 		"balances": "I SALDI DEL TUO PORTAFOGLIO",
-		"update": "AGGIORNA I SALDI DEL PORTAFOGLIO"
+		"update": "AGGIORNA I SALDI DEL PORTAFOGLIO",
+		"view": "Vedere"
 	},
 	"gifs": {
 		"gchange1": "Esplora Gif",
@@ -191,7 +192,10 @@
 		"gchange23": "La tua collezione di gif non può contenere due gif con lo stesso nome!",
 		"gchange24": "Il nome di questa raccolta è già in uso. Prova con un altro nome!",
 		"gchange25": "GIF (clicca per visualizzare)",
-		"gchange26": "È necessario un nome per accedere e inviare file GIF"
+		"gchange26": "È necessario un nome per accedere e inviare file GIF",
+		"gchange27": "La dimensione della raccolta di gif supera i 25 MB! Riprova!",
+		"gchange28": "Ogni gif nella raccolta non può superare i 0,7 MB! Riprova!",
+		"gchange29": "Nome del file"
 	},
 	"startminting": {
 		"smchange1": "Impossibile recuperare i conti di conio",

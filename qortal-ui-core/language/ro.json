@@ -163,7 +163,8 @@
 		"save": "Salveza",
 		"balance": "Credit",
 		"balances": "SOLDELE PORTOTELULUI DVS",
-		"update": "ACTUALIZAȚI SOLDELE PORTOTELULUI"
+		"update": "ACTUALIZAȚI SOLDELE PORTOTELULUI",
+		"view": "Vedere"
 	},
 	"gifs": {
 		"gchange1": "Explorator GIF",
@@ -191,7 +192,10 @@
 		"gchange23": "Colecția dvs. de gif-uri nu poate conține două gif-uri cu același nume!",
 		"gchange24": "Acest nume de colecție este deja luat. Încercați un alt nume!",
 		"gchange25": "GIF (clic pentru a vizualiza)",
-		"gchange26": "Este necesar un nume pentru a accesa și trimite fișiere GIF"
+		"gchange26": "Este necesar un nume pentru a accesa și trimite fișiere GIF",
+		"gchange27": "Dimensiunea colecției gif este de peste 25 MB! Vă rugăm să încercați din nou!",
+		"gchange28": "Fiecare gif din colecție nu poate depăși 0,7 MB! Vă rugăm să încercați din nou!",
+		"gchange29": "Nume de fișier"
 	},
 	"startminting": {
 		"smchange1": "Nu se pot prelua conturile de batere",

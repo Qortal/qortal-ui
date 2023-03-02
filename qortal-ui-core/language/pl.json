@@ -163,7 +163,8 @@
 		"save": "Zapisz",
 		"balance": "Saldo",
 		"balances": "SALDO TWOJEGO PORTFELA",
-		"update": "AKTUALIZUJ SALDA W PORTFELU"
+		"update": "AKTUALIZUJ SALDA W PORTFELU",
+		"view": "Pogląd"
 	},
 	"gifs": {
 		"gchange1": "Eksplorator gifów",
@@ -191,7 +192,10 @@
 		"gchange23": "Twoja kolekcja gifów nie może zawierać dwóch gifów o tej samej nazwie!",
 		"gchange24": "Ta nazwa kolekcji jest już zajęta. Wypróbuj inną nazwę!",
 		"gchange25": "GIF (kliknij, aby wyświetlić)",
-		"gchange26": "Aby uzyskać dostęp do plików GIF i wysyłać je, potrzebna jest nazwa"
+		"gchange26": "Aby uzyskać dostęp do plików GIF i wysyłać je, potrzebna jest nazwa",
+		"gchange27": "Rozmiar kolekcji gifów przekracza 25 MB! Spróbuj ponownie!",
+		"gchange28": "Każdy gif w kolekcji nie może przekraczać 0,7 MB! Spróbuj ponownie!",
+		"gchange29": "Nazwa pliku"
 	},
 	"startminting": {
 		"smchange1": "Nie można pobrać kont menniczych",

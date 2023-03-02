@@ -163,7 +163,8 @@
 		"save": "Guardar",
 		"balance": "Saldo",
 		"balances": "LOS SALDOS DE TU BILLETERA",
-		"update": "ACTUALIZAR SALDOS DE CARTERA"
+		"update": "ACTUALIZAR SALDOS DE CARTERA",
+		"view": "Vista"
 	},
 	"gifs": {
 		"gchange1": "Explorador de gifs",
@@ -191,7 +192,10 @@
 		"gchange23": "¡Tu colección de gifs no puede contener dos gifs con el mismo nombre!",
 		"gchange24": "Este nombre de colección ya está en uso. ¡Prueba con otro nombre!",
 		"gchange25": "GIF (haga clic para ver)",
-		"gchange26": "Se necesita un nombre para acceder y enviar archivos GIF"
+		"gchange26": "Se necesita un nombre para acceder y enviar archivos GIF",
+		"gchange27": "¡El tamaño de la colección de gifs supera los 25 MB! ¡Inténtalo de nuevo!",
+		"gchange28": "¡Cada gif en la colección no puede tener más de 0.7 MB! ¡Inténtalo de nuevo!",
+		"gchange29": "El nombre de fila"
 	},
 	"startminting": {
 		"smchange1": "No se pueden obtener cuentas de acuñación",

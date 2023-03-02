@@ -163,7 +163,8 @@
 		"save": "Lagre",
 		"balance": "Saldo",
 		"balances": "DIN WALLET-SALDO",
-		"update": "OPPDATERT WALLET-SALDOER"
+		"update": "OPPDATERT WALLET-SALDOER",
+		"view": "Utsikt"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
@@ -191,7 +192,10 @@
 		"gchange23": "Gif-samlingen din kan ikke inneholde to gif-filer med samme navn!",
 		"gchange24": "Dette samlingsnavnet er allerede tatt. Prøv et annet navn!",
 		"gchange25": "GIF (klikk for å se)",
-		"gchange26": "Et navn er nødvendig for å få tilgang til og sende GIF-filer"
+		"gchange26": "Et navn er nødvendig for å få tilgang til og sende GIF-filer",
+		"gchange27": "Gif-samlingsstørrelsen er over 25 MB! Vennligst prøv igjen!",
+		"gchange28": "Hver gif i samlingen kan ikke være over 0,7 MB! Vennligst prøv igjen!",
+		"gchange29": "Filnavn"
 	},
 	"startminting": {
 		"smchange1": "Kan ikke hente myntingkontoer",

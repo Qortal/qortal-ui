@@ -163,7 +163,8 @@
 		"save": "保存",
 		"balance": "余额",
 		"balances": "您的钱包余额",
-		"update": "更新钱包余额"
+		"update": "更新钱包余额",
+		"view": "看法"
 	},
 	"gifs": {
 		"gchange1": "Gif 浏览器",
@@ -191,7 +192,10 @@
 		"gchange23": "您的 gif 收藏不能包含两个同名的 gif！",
 		"gchange24": "此集合名称已被占用。尝试其他名称！",
 		"gchange25": "GIF（点击查看）",
-		"gchange26": "访问和发送 GIF 文件需要一个名称"
+		"gchange26": "访问和发送 GIF 文件需要一个名称",
+		"gchange27": "gif 合集大小超过 25mb！请重试！",
+		"gchange28": "收藏中的每个 gif 不能超过 0.7mb！请重试！",
+		"gchange29": "文件名"
 	},
 	"startminting": {
 		"smchange1": "无法获取铸币帐户",
