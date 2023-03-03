@@ -1261,7 +1261,12 @@ class WebBrowser extends LitElement {
 	}
 
 	goBackToList() {
-		window.location = '../index.html';
+		if (this.service == "APP") {
+			window.location = '../../q-app/index.html';
+		}
+		else { // Default to websites list
+			window.location = '../index.html';
+		}
 	}
 
 	follow() {
