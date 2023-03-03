@@ -579,8 +579,7 @@
 		"bchange25": "No sensitive data is shared.",
 		"bchange26": "Always authenticate automatically",
 		"bchange27": "Reject",
-		"bchange28": "Accept",
-		"bchange16": "Error occurred when trying to delete this resource. Please try again!"
+		"bchange28": "Accept"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
