@@ -1485,8 +1485,8 @@ async function showModalAndWait(type, data) {
                 <div class="modal-body">
                     ${type === actions.GET_USER_ACCOUNT ? `
 										<div class="modal-subcontainer">
-											<p class="modal-paragraph">${`${data.service} ${data.name} ${get("browserpage.bchange18")}`}</p>
-											<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service}</p>
+											<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> ${get("browserpage.bchange18")}`}</p>
+											<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service.toLowerCase()}.</p>
 											<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
 											<div class="checkbox-row">
 											<label for="authButton" id="authButtonLabel">
@@ -1646,6 +1646,10 @@ letter-spacing: 0.3px;
 font-weight: 300;
 color: black;
 margin: 0;
+}
+
+.capitalize-first {
+	text-transform: capitalize;
 }
 
 .checkbox-row {
