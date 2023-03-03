@@ -576,7 +576,7 @@ class WebBrowser extends LitElement {
 							obj['error'] = errorMsg;
 							response = JSON.stringify(obj);
 							console.error(error);
-							return;
+							break;
 						} finally {
 							this.loader.hide();
 						}
