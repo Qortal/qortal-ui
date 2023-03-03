@@ -517,7 +517,12 @@
 		"schange32": "Opphev blokkering",
 		"schange33": "Navn å søke på",
 		"schange34": "Navn kan ikke være tomt!",
-		"schange35": "Søk"
+		"schange35": "Søk",
+		"schange36": "Last ned",
+		"schange37": "Nedlastet",
+		"schange38": "Oppdater",
+		"schange39": "Åpne",
+		"schange40": "Forhåndsvisning"
 	},
 	"publishpage": {
 		"pchange1": "Publiser",
@@ -562,7 +567,19 @@
 		"bchange13": "Det oppstod en feil ved forsøk på å blokkere dette registrerte navnet. Prøv på nytt!",
 		"bchange14": "Det oppstod en feil ved forsøk på å oppheve blokkeringen av dette registrerte navnet. Prøv på nytt!",
 		"bchange15": "Kan ikke slette data fra fulgte navn. Vennligst slutt å følge først.",
-		"bchange16": "Det oppstod en feil ved forsøk på å slette denne ressursen. Prøv på nytt!"
+		"bchange16": "Det oppstod en feil ved forsøk på å slette denne ressursen. Prøv på nytt!",
+		"bchange17": "Bruker nektet å dele kontodetaljer",
+		"bchange18": "har bedt om autentisering. Vil du autentisere?",
+		"bchange19": "Gir du denne applikasjonen tillatelse til å publisere til QDN?",
+		"bchange20": "Gir du dette programmet tillatelse til å få lommeboksaldoen din?",
+		"bchange21": "Henting av lommebok mislyktes. Prøv igjen!",
+		"bchange22": "Gir du denne applikasjonen tillatelse til å sende en chatmelding?",
+		"bchange23": "Melding sendt!",
+		"bchange24": "Dette deler din QORT-adresse og lar kontoen din samhandle med",
+		"bchange25": "Ingen sensitive data er delt.",
+		"bchange26": "Autentiser alltid automatisk",
+		"bchange27": "Avvis",
+		"bchange28": "Godta"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

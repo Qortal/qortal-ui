@@ -517,7 +517,12 @@
 		"schange32": "Felszabadít",
 		"schange33": "Keresendő Név",
 		"schange34": "A név nem lehet üres!",
-		"schange35": "Keresés"
+		"schange35": "Keresés",
+		"schange36": "Letöltés",
+		"schange37": "Letöltve",
+		"schange38": "Frissítés",
+		"schange39": "Nyitva",
+		"schange40": "Előnézet"
 	},
 	"publishpage": {
 		"pchange1": "Közzétesz",
@@ -562,7 +567,19 @@
 		"bchange13": "Hiba történt a regisztrált név letiltásakor. Próbálkozzon újra!",
 		"bchange14": "Hiba történt a regisztrált név blokkolásának feloldásakor. Próbálkozzon újra!",
 		"bchange15": "Nem lehet adatokat törölni a követett nevekből. Először szüntesse meg a követést.",
-		"bchange16": "Hiba történt az erőforrás törlésekor. Próbálkozzon újra!"
+		"bchange16": "Hiba történt az erőforrás törlésekor. Próbálkozzon újra!",
+		"bchange17": "A felhasználó megtagadta a fiókadatok megosztását",
+		"bchange18": "hitelesítést kért. Szeretné hitelesíteni?",
+		"bchange19": "Engedélyt ad ennek az alkalmazásnak a QDN-ben való közzétételre?",
+		"bchange20": "Engedélyt ad ennek az alkalmazásnak a pénztárca egyenlegének lekérésére?",
+		"bchange21": "A Wallet lekérése nem sikerült. Kérjük, próbálja újra!",
+		"bchange22": "Engedélyt ad ennek az alkalmazásnak csevegőüzenet küldésére?",
+		"bchange23": "Üzenet elküldve!",
+		"bchange24": "Ez megosztja az Ön QORT-címét, és lehetővé teszi, hogy fiókja interakcióba lépjen a",
+		"bchange25": "Nincs kényes adat megosztása.",
+		"bchange26": "Mindig automatikus hitelesítés",
+		"bchange27": "Elutasítás",
+		"bchange28": "Elfogadás"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",

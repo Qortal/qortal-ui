@@ -521,7 +521,8 @@
 		"schange36": "Herunterladen",
 		"schange37": "Heruntergeladen",
 		"schange38": "Update",
-		"schange39": "Öffnen"
+		"schange39": "Öffnen",
+		"schange40": "Vorschau"
 	},
 	"publishpage": {
 		"pchange1": "Veröffentlichen",
@@ -566,7 +567,19 @@
 		"bchange13": "Beim Blockieren dieses registrierten Namens ist ein Fehler aufgetreten. Bitte versuche es erneut!",
 		"bchange14": "Beim Versuch, diesen registrierten Namen zu entsperren, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
 		"bchange15": "Daten von verfolgten Namen können nicht gelöscht werden. Bitte zuerst entfolgen.",
-		"bchange16": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!"
+		"bchange16": "Beim Versuch, diese Ressource zu löschen, ist ein Fehler aufgetreten. Bitte versuche es erneut!",
+		"bchange17": "Benutzer hat die Weitergabe von Kontodetails abgelehnt",
+		"bchange18": "hat Authentifizierung angefordert. Möchten Sie sich authentifizieren?",
+		"bchange19": "Erteilen Sie dieser Anwendung die Erlaubnis, auf QDN zu veröffentlichen?",
+		"bchange20": "Erteilen Sie dieser Anwendung die Erlaubnis, Ihr Wallet-Guthaben abzurufen?",
+		"bchange21": "Wallet abrufen fehlgeschlagen. Bitte versuchen Sie es erneut!",
+		"bchange22": "Erteilen Sie dieser Anwendung die Erlaubnis, eine Chat-Nachricht zu senden?",
+		"bchange23": "Nachricht gesendet!",
+		"bchange24": "Dies gibt Ihre QORT-Adresse weiter und ermöglicht Ihrem Konto, mit dem zu interagieren",
+		"bchange25": "Es werden keine sensiblen Daten geteilt.",
+		"bchange26": "Immer automatisch authentifizieren",
+		"bchange27": "Ablehnen",
+		"bchange28": "Akzeptieren"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",

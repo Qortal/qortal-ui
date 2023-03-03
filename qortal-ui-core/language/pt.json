@@ -517,7 +517,12 @@
 		"schange32": "Desbloquear",
 		"schange33": "Nome para pesquisar",
 		"schange34": "Nome não pode estar vazio!",
-		"schange35": "Pesquisar"
+		"schange35": "Pesquisar",
+		"schange36": "Baixar",
+		"schange37": "Baixado",
+		"schange38": "Atualizar",
+		"schange39": "Abrir",
+		"schange40": "Pré-visualização"
 	},
 	"publishpage": {
 		"pchange1": "Publicar",
@@ -562,7 +567,19 @@
 		"bchange13": "Ocorreu um erro ao tentar bloquear esse nome registrado. Por favor, tente de novo!",
 		"bchange14": "Ocorreu um erro ao tentar desbloquear esse nome registrado. Por favor, tente de novo!",
 		"bchange15": "Não é possível excluir dados de nomes seguidos. Por favor, desseguir primeiro.",
-		"bchange16": "Ocorreu um erro ao tentar excluir esse recurso. Por favor, tente de novo!"
+		"bchange16": "Ocorreu um erro ao tentar excluir esse recurso. Por favor, tente de novo!",
+		"bchange17": "Usuário se recusou a compartilhar detalhes da conta",
+		"bchange18": "solicitou autenticação. Deseja autenticar?",
+		"bchange19": "Você concede a este aplicativo permissão para publicar no QDN?",
+		"bchange20": "Você dá permissão a este aplicativo para obter o saldo da sua carteira?",
+		"bchange21": "Falha ao buscar carteira. Tente novamente!",
+		"bchange22": "Você concede a este aplicativo permissão para enviar uma mensagem de bate-papo?",
+		"bchange23": "Mensagem enviada!",
+		"bchange24": "Isto compartilha seu endereço QORT e permite que sua conta interaja com o",
+		"bchange25": "Nenhum dado confidencial é compartilhado.",
+		"bchange26": "Sempre autenticar automaticamente",
+		"bchange27": "Rejeitar",
+		"bchange28": "Aceitar"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

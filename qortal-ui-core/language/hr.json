@@ -517,7 +517,12 @@
 		"schange32": "Odblokiraj",
 		"schange33": "Ime za tražiti",
 		"schange34": "Ime nemože biti prazno!",
-		"schange35": "Traži"
+		"schange35": "Traži",
+		"schange36": "Preuzmi",
+		"schange37": "Preuzeto",
+		"schange38": "Ažuriraj",
+		"schange39": "Otvori",
+		"schange40": "Pregled"
 	},
 	"publishpage": {
 		"pchange1": "Objavi",
@@ -562,7 +567,19 @@
 		"bchange13": "Došlo je do pogreške prilikom pokušaja da blokirate ovo registrirano ime. Molimo pokušajte ponovno!",
 		"bchange14": "Došlo je do pogreške prilikom pokušaja da odblokirate ovo registrirano ime. Molimo pokušajte ponovno!",
 		"bchange15": "Nemogu se izbrisati podaci iz prećeni imena. Molimo vas da najprije nepratite.",
-		"bchange16": "Došlo je do pogreške prilikom pokušaja da izbrišete ovaj resurs. Molimo pokušajte ponovno!"
+		"bchange16": "Došlo je do pogreške prilikom pokušaja da izbrišete ovaj resurs. Molimo pokušajte ponovno!",
+		"bchange17": "Korisnik je odbio podijeliti podatke o računu",
+		"bchange18": "zatražio je autentifikaciju. Želite li se autentificirati?",
+		"bchange19": "Dajete li ovoj aplikaciji dozvolu za objavljivanje na QDN?",
+		"bchange20": "Dajete li ovoj aplikaciji dopuštenje da dobije stanje vašeg novčanika?",
+		"bchange21": "Dohvaćanje novčanika nije uspjelo. Pokušajte ponovo!",
+		"bchange22": "Dajete li ovoj aplikaciji dopuštenje za slanje chat poruke?",
+		"bchange23": "Poruka poslana!",
+		"bchange24": "Ovo dijeli vašu QORT adresu i omogućuje vašem računu interakciju s",
+		"bchange25": "Ne dijele se osjetljivi podaci.",
+		"bchange26": "Uvijek autentificiraj automatski",
+		"bchange27": "Odbaci",
+		"bchange28": "Prihvati"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

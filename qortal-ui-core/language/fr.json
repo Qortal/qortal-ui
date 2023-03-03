@@ -517,7 +517,12 @@
 		"schange32": "Débloquer",
 		"schange33": "Nom à chercher",
 		"schange34": "Le nom ne peut être vide!",
-		"schange35": "Recherche"
+		"schange35": "Recherche",
+		"schange36": "Télécharger",
+		"schange37": "Téléchargé",
+		"schange38": "Mettre à jour",
+		"schange39": "Ouvrir",
+		"schange40": "Aperçu"
 	},
 	"publishpage": {
 		"pchange1": "Publier",
@@ -562,7 +567,19 @@
 		"bchange13": "Une erreur s’est produite lors de la tentative de blocage de ce nom enregistré. Veuillez réessayer!",
 		"bchange14": "Une erreur s’est produite lors de la tentative de débloquage de ce nom enregistré. Veuillez réessayer!",
 		"bchange15": "Impossible de supprimer les données des noms suivis. Désabonnez-vous d’abord.",
-		"bchange16": "Une erreur s’est produite lors de la suppression de cette ressource. Veuillez réessayer!"
+		"bchange16": "Une erreur s’est produite lors de la suppression de cette ressource. Veuillez réessayer!",
+		"bchange17": "L'utilisateur a refusé de partager les détails du compte",
+		"bchange18": "a demandé une authentification. Voulez-vous vous authentifier ?",
+		"bchange19": "Autorisez-vous cette application à publier sur QDN ?",
+		"bchange20": "Autorisez-vous cette application à récupérer le solde de votre portefeuille ?",
+		"bchange21": "Échec de la récupération du portefeuille. Veuillez réessayer !",
+		"bchange22": "Autorisez-vous cette application à envoyer un message de chat ?",
+		"bchange23": "Message envoyé !",
+		"bchange24": "Cela partage votre adresse QORT et permet à votre compte d'interagir avec",
+		"bchange25": "Aucune donnée sensible n'est partagée.",
+		"bchange26": "Toujours s'authentifier automatiquement",
+		"bchange27": "Rejeter",
+		"bchange28": "Accepter"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",

@@ -517,7 +517,12 @@
 		"schange32": "Odblokuj",
 		"schange33": "Nazwa do wyszukania",
 		"schange34": "Nazwa nie może być pusta!",
-		"schange35": "Szukaj"
+		"schange35": "Szukaj",
+		"schange36": "Pobierz",
+		"schange37": "Pobrano",
+		"schange38": "Aktualizacja",
+		"schange39": "Otwórz",
+		"schange40": "Podgląd"
 	},
 	"publishpage": {
 		"pchange1": "Opublikuj",
@@ -562,7 +567,19 @@
 		"bchange13": "Wystąpił błąd podczas próby zablokowania tej zarejestrowanej nazwy. Spróbuj ponownie!",
 		"bchange14": "Wystąpił błąd podczas próby odblokowania tej zarejestrowanej nazwy. Spróbuj ponownie!",
 		"bchange15": "Nie można usunąć danych z obserwowanych nazw. Najpierw przestań obserwować.",
-		"bchange16": "Wystąpił błąd podczas próby usunięcia tego zasobu. Spróbuj ponownie!"
+		"bchange16": "Wystąpił błąd podczas próby usunięcia tego zasobu. Spróbuj ponownie!",
+		"bchange17": "Użytkownik odmówił udostępnienia szczegółów konta",
+		"bchange18": "zażądał uwierzytelnienia. Czy chcesz uwierzytelnić?",
+		"bchange19": "Czy zezwalasz tej aplikacji na publikowanie w QDN?",
+		"bchange20": "Czy zezwalasz tej aplikacji na pobieranie salda portfela?",
+		"bchange21": "Pobranie portfela nie powiodło się. Spróbuj ponownie!",
+		"bchange22": "Czy zezwalasz tej aplikacji na wysyłanie wiadomości na czacie?",
+		"bchange23": "Wiadomość wysłana!",
+		"bchange24": "To udostępnia twój adres QORT i pozwala twojemu kontu na interakcję z",
+		"bchange25": "Żadne wrażliwe dane nie są udostępniane.",
+		"bchange26": "Zawsze uwierzytelniaj automatycznie",
+		"bchange27": "Odrzuć",
+		"bchange28": "Akceptuj"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

@@ -517,7 +517,12 @@
 		"schange32": "Sblocca",
 		"schange33": "Nome da cercare",
 		"schange34": "Il nome non può essere vuoto!",
-		"schange35": "Cerca"
+		"schange35": "Cerca",
+		"schange36": "Scarica",
+		"schange37": "Scaricato",
+		"schange38": "Aggiorna",
+		"schange39": "Apri",
+		"schange40": "Anteprima"
 	},
 	"publishpage": {
 		"pchange1": "Pubblica",
@@ -562,7 +567,19 @@
 		"bchange13": "Si è verificato un errore durante il tentativo di bloccare questo nome registrato. Per favore, riprova!",
 		"bchange14": "Si è verificato un errore durante il tentativo di sbloccare questo nome registrato. Per favore, riprova!",
 		"bchange15": "Impossibile eliminare i dati dai nomi seguiti. Per favore smettila prima.",
-		"bchange16": "Si è verificato un errore durante il tentativo di eliminare questa risorsa. Per favore, riprova!"
+		"bchange16": "Si è verificato un errore durante il tentativo di eliminare questa risorsa. Per favore, riprova!",
+		"bchange17": "L'utente ha rifiutato di condividere i dettagli dell'account",
+		"bchange18": "ha richiesto l'autenticazione. Vuoi autenticarti?",
+		"bchange19": "Concedi a questa applicazione il permesso di pubblicare su QDN?",
+		"bchange20": "Concedi a questa applicazione il permesso di ottenere il saldo del tuo portafoglio?",
+		"bchange21": "Recupero portafoglio fallito. Riprova!",
+		"bchange22": "Concedi a questa applicazione il permesso di inviare un messaggio di chat?",
+		"bchange23": "Messaggio inviato!",
+		"bchange24": "Questo condivide il tuo indirizzo QORT e consente al tuo account di interagire con",
+		"bchange25": "Nessun dato sensibile viene condiviso.",
+		"bchange26": "Autenticati sempre automaticamente",
+		"bchange27": "Rifiuta",
+		"bchange28": "Accetta"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",

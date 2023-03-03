@@ -517,7 +517,12 @@
 		"schange32": "Deblocheaza",
 		"schange33": "Numele cautat",
 		"schange34": "Numele nu poate fi gol!",
-		"schange35": "Cauta"
+		"schange35": "Cauta",
+		"schange36": "Descărcați",
+		"schange37": "Descărcat",
+		"schange38": "Actualizare",
+		"schange39": "Deschide",
+		"schange40": "Previzualizare"
 	},
 	"publishpage": {
 		"pchange1": "Publica",
@@ -562,7 +567,19 @@
 		"bchange13": "A aparut o eroare in timpul incercarii de a bloca acest nume inregistrat. Va rugam sa incercati din nou!",
 		"bchange14": "A aparut o eroare in timpul incercarii de a debloca acest nume inregistrat. Va rugam sa incercati din nou!",
 		"bchange15": "Nu se pot sterge datele de la numele urmarite. Va rugam sa renuntati mai intai la urmarire.",
-		"bchange16": "A aparut o eroare atunci cand ati incercat sa stergeti aceasta resursa. Va rugam sa incercati din nou!"
+		"bchange16": "A aparut o eroare atunci cand ati incercat sa stergeti aceasta resursa. Va rugam sa incercati din nou!",
+		"bchange17": "Utilizatorul a refuzat să distribuie detaliile contului",
+		"bchange18": "a solicitat autentificare. Doriți să vă autentificați?",
+		"bchange19": "Acordați acestei aplicații permisiunea de a publica în QDN?",
+		"bchange20": "Dați această aplicație permisiunea de a obține soldul portofelului dvs.?",
+		"bchange21": "Preluarea portofelului a eșuat. Vă rugăm să încercați din nou!",
+		"bchange22": "Acordați acestei aplicații permisiunea de a trimite un mesaj de chat?",
+		"bchange23": "Mesajul trimis!",
+		"bchange24": "Acest lucru partajează adresa dvs. QORT și permite contului dvs. să interacționeze cu",
+		"bchange25": "Nu sunt partajate date sensibile.",
+		"bchange26": "Autentificați-vă întotdeauna automat",
+		"bchange27": "Respinge",
+		"bchange28": "Accept"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",
