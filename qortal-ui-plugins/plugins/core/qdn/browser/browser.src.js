@@ -594,28 +594,58 @@ class WebBrowser extends LitElement {
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message;
 					const recipient = data.destinationAddress;
+					const groupId = data.groupId;
+					const isRecipient = groupId ? false : true
 					const sendMessage = async (messageText, chatReference) => {
 					
 						let _reference = new Uint8Array(64);
 						window.crypto.getRandomValues(_reference);
 						let reference = window.parent.Base58.encode(_reference);
 						const sendMessageRequest = async () => {
-							let chatResponse = await parentEpml.request('chat', {
-								type: 18,
-								nonce: this.selectedAddress.nonce,
-								params: {
-									timestamp: Date.now(),
-									recipient: recipient,
-									recipientPublicKey: this._publicKey.key,
-									hasChatReference: 0,
-									chatReference: chatReference,
-									message: messageText,
-									lastReference: reference,
-									proofOfWorkNonce: 0,
-									isEncrypted: 1,
-									isText: 1
-								}
-							});
+							let chatResponse 
+							
+							if(isRecipient){
+								chatResponse =	await parentEpml.request('chat', {
+									type: 18,
+									nonce: this.selectedAddress.nonce,
+									params: {
+										timestamp: Date.now(),
+										recipient: recipient,
+										recipientPublicKey: this._publicKey.key,
+										hasChatReference: 0,
+										chatReference: chatReference,
+										message: messageText,
+										lastReference: reference,
+										proofOfWorkNonce: 0,
+										isEncrypted: 1,
+										isText: 1
+									}
+								});
+
+
+							}
+
+							if(!isRecipient){
+								chatResponse =	await parentEpml.request('chat', {
+									type: 181,
+									nonce: this.selectedAddress.nonce,
+									params: {
+										timestamp: Date.now(),
+										groupID:  Number(groupId),
+										hasReceipient: 0,
+										hasChatReference: 0,
+										chatReference: chatReference,
+										message: messageText,
+										lastReference: reference,
+										proofOfWorkNonce: 0,
+										isEncrypted: 0,
+										isText: 1
+									}
+								});
+
+
+							}
+							
 							const msgResponse = await _computePow(chatResponse)
 							return msgResponse;
 						};
@@ -666,28 +696,31 @@ class WebBrowser extends LitElement {
 					);
 					if (result.action === "accept") {
 						let hasPublicKey = true;
-						const res = await parentEpml.request('apiCall', {
-							type: 'api',
-							url: `/addresses/publickey/${recipient}`
-						});
 
-						if (res.error === 102) {
-							this._publicKey.key = ''
-							this._publicKey.hasPubKey = false
-							hasPublicKey = false;
-						} else if (res !== false) {
-							this._publicKey.key = res
-							this._publicKey.hasPubKey = true
-						} else {
-							this._publicKey.key = ''
-							this._publicKey.hasPubKey = false
-							hasPublicKey = false;
+						if(isRecipient){
+							const res = await parentEpml.request('apiCall', {
+								type: 'api',
+								url: `/addresses/publickey/${recipient}`
+							});
+	
+							if (res.error === 102) {
+								this._publicKey.key = ''
+								this._publicKey.hasPubKey = false
+								hasPublicKey = false;
+							} else if (res !== false) {
+								this._publicKey.key = res
+								this._publicKey.hasPubKey = true
+							} else {
+								this._publicKey.key = ''
+								this._publicKey.hasPubKey = false
+								hasPublicKey = false;
+							}
 						}
+						
 
-						if (!hasPublicKey) {
-							let err4string = get("chatpage.cchange39");
-							parentEpml.request('showSnackBar', `${err4string}`)
-							return
+						if (!hasPublicKey && isRecipient) {
+							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}';
+							break
 						}
 
 						
@@ -729,6 +762,12 @@ class WebBrowser extends LitElement {
 							response = msgResponse;
 						} catch (error) {
 							console.error(error);
+							if(error.message){
+								let data = {};
+								data['error'] = error.message;
+						response = JSON.stringify(data);
+						break
+							}
 							response = '{"error": "Request could not be fulfilled"}';
 						} finally {
 							this.loader.hide();
