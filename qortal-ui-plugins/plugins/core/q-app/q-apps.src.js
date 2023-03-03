@@ -37,6 +37,8 @@ class QApps extends LitElement {
             searchResources: { type: Array },
             followedResources: { type: Array },
             blockedResources: { type: Array },
+            textStatus: { type: String },
+            textProgress: { type: String },
             theme: { type: String, reflect: true }
         }
     }
@@ -237,6 +239,8 @@ class QApps extends LitElement {
         this.searchResources = []
         this.followedResources = []
         this.blockedResources = []
+        this.textStatus = ''
+        this.textProgress = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -328,7 +332,8 @@ class QApps extends LitElement {
 	                          <span style="color: var(--black);">${translate("appspage.schange10")}</span>
 	                      ` : ''}
 	                  </div>
-	                  ${this.renderRelayModeText()}
+	                  ${this.renderRelayModeText()}<br>
+                       <div class="relay-mode-notice">${this.textStatus} ${this.textProgress}</div>
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
@@ -747,7 +752,7 @@ class QApps extends LitElement {
     renderDownload(downObj) {
         if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
             return html`<mwc-button dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
-        } else if (downObj.status.description === "Ready") {
+        } else if (downObj.status.description === "Ready" || downObj.status.status === "DOWNLOADED") {
             return html`<a class="visitSite" href="../qdn/browser/index.html?name=${downObj.name}&service=${this.service}"><mwc-button class="green" dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
         } else {
             return html``
@@ -759,11 +764,66 @@ class QApps extends LitElement {
         await parentEpml.request('apiCall', {
             url: `/arbitrary/resource/status/APP/${downObj.name}?build=true&apiKey=${this.getApiKey()}`
         })
-        this.getData(0)
-        this.updateComplete.then(() => this.requestUpdate())
     }
 
     showChunks(downObj) {
+        const checkStatus = async () => {
+            const service = this.service
+            const name = downObj.name
+
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const url = `${nodeUrl}/arbitrary/resource/status/${service}/${name}?build=true&apiKey=${this.getApiKey()}`
+
+            this.textStatus = 'Loading...'
+            this.textProgress = ''
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            const status = await response.json()
+
+            console.log("status:", status.id)
+
+            if (status.id === "UNSUPPORTED") {
+                this.textStatus = status.description
+            } else if (status.id === "BLOCKED") {
+                this.textStatus = name + " is blocked so content cannot be served"
+                this.retryInterval = 5000
+                setTimeout(checkStatus, this.retryInterval)
+            } else if (status.id === "READY") {
+                this.textStatus = ''
+                this.textProgress = ''
+                this.getData(0)
+                this.updateComplete.then(() => this.requestUpdate())
+            } else if (status.id === "BUILDING") {
+                this.textStatus = status.description
+                this.retryInterval = 1000
+                setTimeout(checkStatus, this.retryInterval)
+            } else if (status.id === "BUILD_FAILED") {
+                this.textStatus = status.description
+            } else if (status.id === "NOT_STARTED") {
+                this.textStatus = status.description
+                this.retryInterval = 1000
+                setTimeout(checkStatus, this.retryInterval)
+            } else if (status.id === "DOWNLOADING") {
+                this.textStatus = status.description
+                this.textProgress = "Files downloaded: " + status.localChunkCount + " / " + status.totalChunkCount
+                this.retryInterval = 1000
+                setTimeout(checkStatus, this.retryInterval)
+            } else if (status.id === "MISSING_DATA") {
+                this.textStatus = status.description
+                this.retryInterval = 5000
+                setTimeout(checkStatus, this.retryInterval)
+            } else if (status.id === "DOWNLOADED") {
+               this.textStatus = status.description
+            }
+        }
+        checkStatus()
     }
 
     publishApp() {
