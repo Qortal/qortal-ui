@@ -31,6 +31,7 @@ class WebBrowser extends LitElement {
 			service: { type: String },
 			identifier: { type: String },
 			path: { type: String },
+			preview: { type: String },
 			displayUrl: { type: String },
 			followedNames: { type: Array },
 			blockedNames: { type: Array },
@@ -125,6 +126,7 @@ class WebBrowser extends LitElement {
 				? (urlParams.get('path').startsWith('/') ? '' : '/') +
 				urlParams.get('path')
 				: '';
+		this.preview = urlParams.get('preview');
 		this.followedNames = [];
 		this.blockedNames = [];
 		this.theme = localStorage.getItem('qortalTheme')
@@ -174,9 +176,17 @@ class WebBrowser extends LitElement {
 				];
 			const nodeUrl =
 				myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
-				}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
-				}`;
+
+			if (this.preview != null && this.preview.length > 0) {
+				// In preview mode we access the preview URL path directly
+				this.url = `${nodeUrl}${this.preview}&theme=${this.theme}`
+			}
+			else {
+				// Normal mode
+				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
+					}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
+					}`;
+			}
 		};
 
 		let configLoaded = false;
@@ -486,6 +496,12 @@ class WebBrowser extends LitElement {
 				case actions.QDN_RESOURCE_DISPLAYED:
 					// Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
 					// Note: don't update this.url here, as we don't want to force reload the iframe each time.
+
+					if (this.preview != null && this.preview.length > 0) {
+						this.displayUrl = translate("appspage.schange40");
+						return;
+					}
+
 					let url = 'qortal://' + data.service + '/' + data.name;
 					this.path =
 						data.path != null

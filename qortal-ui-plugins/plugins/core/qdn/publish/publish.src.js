@@ -290,7 +290,8 @@ class PublishData extends LitElement {
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
                         <div>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:100%;" raised icon="send" @click=${(e) => this.doPublish(e)}> ${translate("publishpage.pchange11")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.doPublish(e, true)}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => this.doPublish(e, false)}> ${translate("publishpage.pchange11")}</mwc-button>
                         </div>
                     </div>
                 </div>
@@ -386,7 +387,7 @@ class PublishData extends LitElement {
     }
 
 
-    doPublish(e) {
+    doPublish(e, preview) {
         let registeredName = this.shadowRoot.getElementById('registeredName').value
         let service = this.shadowRoot.getElementById('service').value
         let identifier = this.shadowRoot.getElementById('identifier').value
@@ -432,11 +433,11 @@ class PublishData extends LitElement {
             parentEpml.request('showSnackBar', `${err5string}`)
         }
         else {
-            this.publishData(registeredName, path, file, service, identifier)
+            this.publishData(registeredName, path, file, service, identifier, preview)
         }
     }
 
-    async publishData(registeredName, path, file, service, identifier) {
+    async publishData(registeredName, path, file, service, identifier, preview) {
         this.loading = true
         this.btnDisable = true
 
@@ -467,19 +468,32 @@ class PublishData extends LitElement {
 
             let err6string = get("publishpage.pchange19")
             this.generalMessage = `${err6string}`
+            let transactionBytes;
+            let previewUrlPath;
 
-            let transactionBytes = await uploadData(registeredName, path, file)
-            if (transactionBytes.error) {
+            let uploadDataRes = await uploadData(registeredName, path, file, preview)
+            if (uploadDataRes.error) {
                 let err7string = get("publishpage.pchange20")
-                this.errorMessage = `${err7string}` + transactionBytes.message
+                this.errorMessage = `${err7string}` + uploadDataRes.message
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
             }
-            else if (transactionBytes.includes("Error 500 Internal Server Error")) {
+            else if (uploadDataRes.includes("Error 500 Internal Server Error")) {
                 let err8string = get("publishpage.pchange21")
                 this.errorMessage = `${err8string}`
                 showError(this.errorMessage)
                 throw new Error(this.errorMessage);
+            }
+
+            if (preview) {
+                // uploadData() returns preview URL path when in preview mode
+                previewUrlPath = uploadDataRes;
+                window.location = `../browser/index.html?service=${this.service}&name=Preview&preview=${previewUrlPath}`;
+                return;
+            }
+            else {
+                // uploadData() returns transaction bytes when not in preview mode
+                transactionBytes = uploadDataRes;
             }
 
             let err9string = get("publishpage.pchange22")
@@ -502,7 +516,7 @@ class PublishData extends LitElement {
             this.successMessage = `${err11string}`
         }
 
-        const uploadData = async (registeredName, path, file) => {
+        const uploadData = async (registeredName, path, file, preview) => {
             let postBody = path
             let urlSuffix = ""
             if (file != null) {
@@ -533,9 +547,9 @@ class PublishData extends LitElement {
 
             let metadataQueryString = `title=${title}&description=${description}&category=${category}&tags=${tag1}&tags=${tag2}&tags=${tag3}&tags=${tag4}&tags=${tag5}`
 
-            let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
+            let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
             if (identifier != null && identifier.trim().length > 0) {
-                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
+                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
             }
 
             let uploadDataRes = await parentEpml.request('apiCall', {
