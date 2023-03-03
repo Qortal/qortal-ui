@@ -98,6 +98,15 @@ parentEpml.ready().then(() => {
 			parent: false,
 		},
 		{
+			url: 'qapps',
+			domain: 'core',
+			page: 'q-app/index.html',
+			title: 'Q-Apps',
+			icon: 'vaadin:desktop',
+			menus: [],
+			parent: false,
+		},
+		{
 			url: 'data-management',
 			domain: 'core',
 			page: 'qdn/data-management/index.html',
