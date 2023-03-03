@@ -148,14 +148,6 @@ const generateForPlugins = () => {
 			in: 'plugins/core/q-app/q-apps.src.js',
 			out: 'plugins/core/q-app/q-apps.js',
 		},
-		{
-			in: 'plugins/core/q-app/app-browser/app-browser.src.js',
-			out: 'plugins/core/q-app/app-browser/app-browser.js',
-		},
-		{
-			in: 'plugins/core/q-app/publish-app/publish-app.src.js',
-			out: 'plugins/core/q-app/publish-app/publish-app.js',
-		},
 	].map((file) => {
 		return generateRollupConfig(
 			path.join(__dirname, file.in),
