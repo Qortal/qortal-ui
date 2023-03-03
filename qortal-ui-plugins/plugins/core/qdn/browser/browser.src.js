@@ -648,14 +648,13 @@ class WebBrowser extends LitElement {
 						};
 
 						const getSendChatResponse = (res) => {
-							if (res === true) {
+							if (res.signature) {
 								return res
 							} else if (res.error) {
 								throw new Error(res.message);
 							} else {
 								throw new Error('ERROR: Could not send message');
 							}
-							
 						};
 
 						const chatResponse = await sendMessageRequest();
