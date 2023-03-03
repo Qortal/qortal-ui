@@ -785,14 +785,14 @@ class QApps extends LitElement {
         if (openObj.status.description === "Published but not yet downloaded") {
             return html`<mwc-button dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button>`
         } else if (openObj.status.description === "Ready") {
-            return html`<a class="visitSite" href="app-browser/index.html?name=${openObj.name}&service=${this.service}"><mwc-button dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
+            return html`<a class="visitSite" href="../qdn/browser/index.html?name=${openObj.name}&service=${this.service}"><mwc-button dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
         } else {
             return html``
         }
     }
 
     publishApp() {
-        window.location.href = `publish-app/index.html?service=${this.service}&identifier=${this.identifier}&uploadType=zip&category=app&showName=true&showService=false&showIdentifier=false&showMetadata=true`
+        window.location.href = `../qdn/publish/index.html?service=${this.service}&identifier=${this.identifier}&uploadType=zip&category=app&showName=true&showService=false&showIdentifier=false&showMetadata=true`
     }
 
     async followName(appObj) {
