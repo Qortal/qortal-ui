@@ -1272,7 +1272,7 @@ class WebBrowser extends LitElement {
 			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 		this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
 			}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
-			}`;
+			}&time=${new Date().getMilliseconds()}`;
 	}
 
 	goBackToList() {
