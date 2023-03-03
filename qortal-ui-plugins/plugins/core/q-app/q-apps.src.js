@@ -282,10 +282,6 @@ class QApps extends LitElement {
                                    render(html`${this.renderDownload(data.item)}`, root)
                                }}>
                                </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderOpenApp(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
 	                          <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
 	                              render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
 	                          }}>
@@ -313,10 +309,6 @@ class QApps extends LitElement {
 	                          </vaadin-grid-column>
                                <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
                                    render(html`${this.renderDownload(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderOpenApp(data.item)}`, root)
                                }}>
                                </vaadin-grid-column>
 	                          <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
@@ -362,10 +354,6 @@ class QApps extends LitElement {
                                     render(html`${this.renderDownload(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderOpenApp(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
                                     render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
                                 }}>
@@ -408,10 +396,6 @@ class QApps extends LitElement {
                                     render(html`${this.renderDownload(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderOpenApp(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
                                     render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
                                 }}>
@@ -740,7 +724,7 @@ class QApps extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        return html`<a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}"><img src="${url}" onerror="this.src='/img/incognito.png';"></a>`
+        return html`<img src="${url}" onerror="this.src='/img/incognito.png';">`
     }
 
     renderRelayModeText() {
@@ -761,10 +745,10 @@ class QApps extends LitElement {
     }
 
     renderDownload(downObj) {
-        if (downObj.status.description === "Published but not yet downloaded") {
+        if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
             return html`<mwc-button dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
         } else if (downObj.status.description === "Ready") {
-            return html`<mwc-button class="green" dense unelevated label="${translate("appspage.schange37")}" icon="file_download_done"></mwc-button>`
+            return html`<a class="visitSite" href="../qdn/browser/index.html?name=${downObj.name}&service=${this.service}"><mwc-button class="green" dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
         } else {
             return html``
         }
@@ -775,20 +759,11 @@ class QApps extends LitElement {
         await parentEpml.request('apiCall', {
             url: `/arbitrary/resource/status/APP/${downObj.name}?build=true&apiKey=${this.getApiKey()}`
         })
-        this.showApps()
+        this.getData(0)
+        this.updateComplete.then(() => this.requestUpdate())
     }
 
     showChunks(downObj) {
-    }
-
-    renderOpenApp(openObj) {
-        if (openObj.status.description === "Published but not yet downloaded") {
-            return html`<mwc-button dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button>`
-        } else if (openObj.status.description === "Ready") {
-            return html`<a class="visitSite" href="../qdn/browser/index.html?name=${openObj.name}&service=${this.service}"><mwc-button dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
-        } else {
-            return html``
-        }
     }
 
     publishApp() {
@@ -936,7 +911,7 @@ class QApps extends LitElement {
 
         return html`
             <div class="resourceTitle">
-                <a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${title}</a>
+                ${title}
             </div>
             <div class="resourceDescription">
                 ${description}
