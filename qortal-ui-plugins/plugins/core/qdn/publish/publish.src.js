@@ -270,11 +270,11 @@ class PublishData extends LitElement {
                             </mwc-select>
                         </p>
                         <p>
-                            <mwc-textfield style="width:19.85%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="${translate("publishpage.pchange8")} 1" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="${translate("publishpage.pchange8")} 2" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="${translate("publishpage.pchange8")} 3" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="${translate("publishpage.pchange8")} 4" maxLength="20"></mwc-textfield>
-                            <mwc-textfield style="width:19.85%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="${translate("publishpage.pchange8")} 5" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.6%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="${translate("publishpage.pchange8")} 1" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.6%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="${translate("publishpage.pchange8")} 2" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.6%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="${translate("publishpage.pchange8")} 3" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.6%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="${translate("publishpage.pchange8")} 4" maxLength="20"></mwc-textfield>
+                            <mwc-textfield style="width:19.6%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="${translate("publishpage.pchange8")} 5" maxLength="20"></mwc-textfield>
                         </p>
                     </div>
                     ${this.renderUploadField()}
