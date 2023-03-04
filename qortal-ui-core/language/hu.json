@@ -522,7 +522,9 @@
 		"schange37": "Letöltve",
 		"schange38": "Frissítés",
 		"schange39": "Nyitva",
-		"schange40": "Előnézet"
+		"schange40": "Előnézet",
+		"schange41": "Letöltés, kérem várjon...",
+		"schange42": "Fájlok letöltve"
 	},
 	"publishpage": {
 		"pchange1": "Közzétesz",

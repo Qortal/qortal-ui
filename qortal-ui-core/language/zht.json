@@ -522,7 +522,9 @@
 		"schange37": "已下載",
 		"schange38": "更新",
 		"schange39": "打開",
-		"schange40": "預覽"
+		"schange40": "預覽",
+		"schange41": "下載中請稍候...",
+		"schange42": "文件已下載"
 	},
 	"publishpage": {
 		"pchange1": "發佈",

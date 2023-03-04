@@ -522,7 +522,9 @@
 		"schange37": "Pobrano",
 		"schange38": "Aktualizacja",
 		"schange39": "Otwórz",
-		"schange40": "Podgląd"
+		"schange40": "Podgląd",
+		"schange41": "Pobieranie, proszę czekać...",
+		"schange42": "Pliki pobrane"
 	},
 	"publishpage": {
 		"pchange1": "Opublikuj",

@@ -522,7 +522,9 @@
 		"schange37": "Téléchargé",
 		"schange38": "Mettre à jour",
 		"schange39": "Ouvrir",
-		"schange40": "Aperçu"
+		"schange40": "Aperçu",
+		"schange41": "Téléchargement, veuillez patienter...",
+		"schange42": "Fichiers téléchargés"
 	},
 	"publishpage": {
 		"pchange1": "Publier",

@@ -522,7 +522,9 @@
 		"schange37": "Heruntergeladen",
 		"schange38": "Update",
 		"schange39": "Öffnen",
-		"schange40": "Vorschau"
+		"schange40": "Vorschau",
+		"schange41": "Wird heruntergeladen, bitte warten...",
+		"schange42": "Heruntergeladene Dateien"
 	},
 	"publishpage": {
 		"pchange1": "Veröffentlichen",

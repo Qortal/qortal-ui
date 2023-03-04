@@ -522,7 +522,9 @@
 		"schange37": "다운로드됨",
 		"schange38": "업데이트",
 		"schange39": "열기",
-		"schange40": "미리보기"
+		"schange40": "미리보기",
+		"schange41": "다운로드 중입니다...",
+		"schange42": "다운로드된 파일"
 	},
 	"publishpage": {
 		"pchange1": "발표",

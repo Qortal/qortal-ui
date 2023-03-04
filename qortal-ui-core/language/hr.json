@@ -522,7 +522,9 @@
 		"schange37": "Preuzeto",
 		"schange38": "Ažuriraj",
 		"schange39": "Otvori",
-		"schange40": "Pregled"
+		"schange40": "Pregled",
+		"schange41": "Preuzimanje, molimo pričekajte...",
+		"schange42": "Preuzete datoteke"
 	},
 	"publishpage": {
 		"pchange1": "Objavi",

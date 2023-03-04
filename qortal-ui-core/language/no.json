@@ -522,7 +522,9 @@
 		"schange37": "Nedlastet",
 		"schange38": "Oppdater",
 		"schange39": "Åpne",
-		"schange40": "Forhåndsvisning"
+		"schange40": "Forhåndsvisning",
+		"schange41": "Laster ned, vennligst vent...",
+		"schange42": "Filer lastet ned"
 	},
 	"publishpage": {
 		"pchange1": "Publiser",

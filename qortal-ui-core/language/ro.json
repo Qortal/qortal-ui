@@ -522,7 +522,9 @@
 		"schange37": "Descărcat",
 		"schange38": "Actualizare",
 		"schange39": "Deschide",
-		"schange40": "Previzualizare"
+		"schange40": "Previzualizare",
+		"schange41": "Se descarcă, așteptați...",
+		"schange42": "Fișiere descărcate"
 	},
 	"publishpage": {
 		"pchange1": "Publica",
