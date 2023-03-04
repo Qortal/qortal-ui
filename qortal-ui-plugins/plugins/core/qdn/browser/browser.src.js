@@ -1461,8 +1461,7 @@ class WebBrowser extends LitElement {
 			return;
 		}
 
-		let identifier =
-			this.identifier == null ? 'default' : resource.identifier;
+		let identifier = (this.identifier == null || this.identifier.length == 0) ? 'default' : this.identifier;
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/arbitrary/resource/${this.service}/${this.name
