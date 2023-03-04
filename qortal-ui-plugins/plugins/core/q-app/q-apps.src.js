@@ -12,7 +12,7 @@ import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
-
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/button'
 import '@vaadin/grid'
 import '@vaadin/icon'
@@ -32,6 +32,7 @@ class QApps extends LitElement {
             followedNames: { type: Array },
             blockedNames: { type: Array },
             relayMode: { type: Boolean },
+            btnDisabled: { type: Boolean },
             selectedAddress: { type: Object },
             searchName: { type: String },
             searchResources: { type: Array },
@@ -47,6 +48,8 @@ class QApps extends LitElement {
         return css`
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-button-disabled-fill-color: rgba(3, 169, 244, 0.5);
+
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -73,44 +76,44 @@ class QApps extends LitElement {
                 --mdc-text-transform: none;
                 --mdc-tab-color-default: var(--black);
                 --mdc-tab-text-label-color-default: var(--black);
-	      }
+	       }
 
             #pages {
 		    display: flex;
 		    flex-wrap: wrap;
 		    padding: 10px 5px 5px 5px;
 		    margin: 0px 20px 20px 20px;
-	      }
+	       }
 
-	      #pages > button {
-		    user-select: none;
-		    padding: 5px;
-		    margin: 0 5px;
-		    border-radius: 10%;
-		    border: 0;
-		    background: transparent;
-		    font: inherit;
-		    outline: none;
-		    cursor: pointer;
-		    color: var(--black);
-	      }
+	       #pages > button {
+		     user-select: none;
+		     padding: 5px;
+		     margin: 0 5px;
+ 		     border-radius: 10%;
+		     border: 0;
+		     background: transparent;
+		     font: inherit;
+		     outline: none;
+		     cursor: pointer;
+		     color: var(--black);
+	       }
 
-	      #pages > button:not([disabled]):hover,
-	      #pages > button:focus {
-		    color: #ccc;
-		    background-color: #eee;
-	      }
+	       #pages > button:not([disabled]):hover,
+	       #pages > button:focus {
+		     color: #ccc;
+		     background-color: #eee;
+	       }
 
-	      #pages > button[selected] {
-		    font-weight: bold;
-		    color: var(--white);
-		    background-color: #ccc;
-	      }
+	       #pages > button[selected] {
+		     font-weight: bold;
+		     color: var(--white);
+		     background-color: #ccc;
+	       }
 
-	      #pages > button[disabled] {
-		    opacity: 0.5;
-		    cursor: default;
-	      }
+	       #pages > button[disabled] {
+                opacity: 0.5;
+		     cursor: default;
+	       }
 
             #apps-list-page {
                 background: var(--white);
@@ -118,9 +121,9 @@ class QApps extends LitElement {
             }
 
             #search {
-               display: flex;
-               width: 50%;
-               align-items: center;
+                display: flex;
+                width: 50%;
+                align-items: center;
             }
 
             .divCard {
@@ -128,6 +131,21 @@ class QApps extends LitElement {
                 padding: 1em;
                 box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
                 margin-bottom: 2em;
+            }
+
+            paper-dialog.progress {
+                width: auto;
+                max-width: 50vw;
+                height: auto;
+                max-height: 30vh;
+                background-color: var(--white);
+                color: var(--black);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                text-align:center;
+                padding: 15px;
+                line-height: 1.6;
+                overflow-y: auto;
             }
 
             h2 {
@@ -221,6 +239,111 @@ class QApps extends LitElement {
             .green {
                 --mdc-theme-primary: #198754;
             }
+
+            .lds-roller {
+                display: inline-block;
+                position: relative;
+                width: 80px;
+                height: 80px;
+            }
+
+            .lds-roller div {
+                animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                transform-origin: 40px 40px;
+            }
+
+            .lds-roller div:after {
+                content: " ";
+                display: block;
+                position: absolute;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--black);
+                margin: -4px 0 0 -4px;
+            }
+
+            .lds-roller div:nth-child(1) {
+                animation-delay: -0.036s;
+            }
+
+            .lds-roller div:nth-child(1):after {
+                top: 63px;
+                left: 63px;
+            }
+
+            .lds-roller div:nth-child(2) {
+                animation-delay: -0.072s;
+            }
+
+            .lds-roller div:nth-child(2):after {
+                top: 68px;
+                left: 56px;
+            }
+
+            .lds-roller div:nth-child(3) {
+                animation-delay: -0.108s;
+            }
+
+            .lds-roller div:nth-child(3):after {
+                top: 71px;
+                left: 48px;
+            }
+
+            .lds-roller div:nth-child(4) {
+                animation-delay: -0.144s;
+            }
+
+            .lds-roller div:nth-child(4):after {
+                top: 72px;
+                left: 40px;
+            }
+
+            .lds-roller div:nth-child(5) {
+                animation-delay: -0.18s;
+            }
+
+            .lds-roller div:nth-child(5):after {
+                top: 71px;
+                left: 32px;
+            }
+
+            .lds-roller div:nth-child(6) {
+                animation-delay: -0.216s;
+            }
+
+            .lds-roller div:nth-child(6):after {
+                top: 68px;
+                left: 24px;
+            }
+
+            .lds-roller div:nth-child(7) {
+                animation-delay: -0.252s;
+            }
+
+            .lds-roller div:nth-child(7):after {
+                top: 63px;
+                left: 17px;
+            }
+
+            .lds-roller div:nth-child(8) {
+                animation-delay: -0.288s;
+            }
+
+            .lds-roller div:nth-child(8):after {
+                top: 56px;
+                left: 12px;
+            }
+
+            @keyframes lds-roller {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
         `
     }
 
@@ -235,6 +358,7 @@ class QApps extends LitElement {
         this.blockedNames = []
         this.relayMode = null
         this.isLoading = false
+        this.btnDisabled = false
         this.searchName = ''
         this.searchResources = []
         this.followedResources = []
@@ -333,7 +457,6 @@ class QApps extends LitElement {
 	                      ` : ''}
 	                  </div>
 	                  ${this.renderRelayModeText()}<br>
-                       <div class="relay-mode-notice">${this.textStatus} ${this.textProgress}</div>
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
@@ -421,6 +544,12 @@ class QApps extends LitElement {
 	              </div>
 	          </div>
 	      </div>
+
+           <paper-dialog id="downloadProgressDialog" class="progress" modal>
+               <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+               <h2>${translate("appspage.schange41")}</h2>
+               <h3>${this.textProgress}</h3>
+           </paper-dialog>
         `
     }
 
@@ -751,7 +880,7 @@ class QApps extends LitElement {
 
     renderDownload(downObj) {
         if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
-            return html`<mwc-button dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
+            return html`<mwc-button ?disabled="${this.btnDisabled}" dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
         } else if (downObj.status.description === "Ready" || downObj.status.status === "DOWNLOADED") {
             return html`<a class="visitSite" href="../qdn/browser/index.html?name=${downObj.name}&service=${this.service}"><mwc-button class="green" dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
         } else {
@@ -776,7 +905,12 @@ class QApps extends LitElement {
             const url = `${nodeUrl}/arbitrary/resource/status/${service}/${name}?build=true&apiKey=${this.getApiKey()}`
 
             this.textStatus = 'Loading...'
-            this.textProgress = ''
+
+            this.btnDisabled = true
+
+            this.shadowRoot.getElementById('downloadProgressDialog').open()
+
+            let timerDownload
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -790,37 +924,60 @@ class QApps extends LitElement {
             console.log("status:", status.id)
 
             if (status.id === "UNSUPPORTED") {
+                this.btnDisabled = false
+                this.textProgress = ''
+                clearTimeout(timerDownload)
                 this.textStatus = status.description
             } else if (status.id === "BLOCKED") {
+                this.btnDisabled = false
+                this.textProgress = ''
                 this.textStatus = name + " is blocked so content cannot be served"
-                this.retryInterval = 5000
-                setTimeout(checkStatus, this.retryInterval)
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 5000)
             } else if (status.id === "READY") {
+                this.btnDisabled = false
+                clearTimeout(timerDownload)
                 this.textStatus = ''
                 this.textProgress = ''
+                this.shadowRoot.getElementById('downloadProgressDialog').close()
                 this.getData(0)
                 this.updateComplete.then(() => this.requestUpdate())
             } else if (status.id === "BUILDING") {
+                this.btnDisabled = true
+                this.textProgress = ''
                 this.textStatus = status.description
-                this.retryInterval = 1000
-                setTimeout(checkStatus, this.retryInterval)
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 1000)
             } else if (status.id === "BUILD_FAILED") {
+                this.btnDisabled = false
+                this.textProgress = ''
+                clearTimeout(timerDownload)
                 this.textStatus = status.description
             } else if (status.id === "NOT_STARTED") {
+                this.btnDisabled = false
+                this.textProgress = ''
                 this.textStatus = status.description
-                this.retryInterval = 1000
-                setTimeout(checkStatus, this.retryInterval)
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 1000)
             } else if (status.id === "DOWNLOADING") {
+                this.btnDisabled = true
                 this.textStatus = status.description
-                this.textProgress = "Files downloaded: " + status.localChunkCount + " / " + status.totalChunkCount
-                this.retryInterval = 1000
-                setTimeout(checkStatus, this.retryInterval)
+                let progressString = get("appspage.schange42")
+                this.textProgress = progressString + ": " + status.localChunkCount + " / " + status.totalChunkCount
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 1000)
             } else if (status.id === "MISSING_DATA") {
+                this.btnDisabled = true
+                this.textProgress = ''
                 this.textStatus = status.description
-                this.retryInterval = 5000
-                setTimeout(checkStatus, this.retryInterval)
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 5000)
             } else if (status.id === "DOWNLOADED") {
-               this.textStatus = status.description
+                this.btnDisabled = true
+                this.textProgress = ''
+                this.textStatus = status.description
+                clearTimeout(timerDownload)
+                timerDownload = setTimeout(checkStatus, 1000)
             }
         }
         checkStatus()
