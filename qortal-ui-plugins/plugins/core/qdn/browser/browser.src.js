@@ -745,7 +745,7 @@ class WebBrowser extends LitElement {
 							messageText: tiptapJson,
 							images: [''],
 							repliedTo: '',
-							version: 2
+							version: 3
 						};
 
 						const stringifyMessageObject = JSON.stringify(messageObject);
