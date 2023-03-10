@@ -16,23 +16,79 @@ export const replaceMessagesEdited = async ({
 				type: "api",
 				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}`,
 			})
+			let decodedMsgs = []
+		response.map((eachMessage) => {
+                const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
+				let parsedMessageObj = msg
+		try {
+			parsedMessageObj = JSON.parse(msgRes.decodedMessage)
+			decodedMsgs.push({
+				...msgRes,
+				decodedMessage: parsedMessageObj
+			})
+		} catch (error) {
+			
+		}
+			
+            })
 
-			if (response && Array.isArray(response) && response.length !== 0) {
-				let responseItem = { ...response[0] }
-                const decodeResponseItem = decodeMessageFunc(responseItem, isReceipient, _publicKey)
-				delete decodeResponseItem.timestamp
-		
-				msgItem = {
+			const filterReactions = decodedMsgs.filter((message)=> {
+				if(!message.decodedMessage) return false
+				if(!message.decodedMessage.reactions || !Array.isArray(message.decodedMessage.reactions)) return false
+				return message.decodedMessage.reactions.length > 0
+			})
+
+			const filterWithoutReactions = decodedMsgs.filter((message)=> {
+				
+				return message.sender === msg.sender
+			})
+			if (filterReactions && Array.isArray(filterReactions) && filterReactions.length !== 0) {
+				let responseItem = { ...filterReactions[0] }
+				let parsedMessageMsg = {}
+				try {
+					parsedMessageMsg = JSON.parse(msg.decodedMessage)
+					
+				} catch (error) {
+					
+				}
+				let originalPosterMsg = {
 					...msg,
-					...decodeResponseItem,
+					decodedMessage: parsedMessageMsg
+				}
+				if(filterWithoutReactions.length > 0){
+					originalPosterMsg = {
+						...filterWithoutReactions[0] 
+					}
+
+					
+				}
+
+				originalPosterMsg.decodedMessage = JSON.stringify({
+					...originalPosterMsg.decodedMessage,
+					reactions: responseItem.decodedMessage.reactions
+				})
+
+				msgItem = {
+					...originalPosterMsg,
 					senderName: msg.senderName,
 					sender: msg.sender,
 					editedTimestamp: response[0].timestamp,
 				}
 			}
+
+			
+			if ((!Array.isArray(filterReactions) || (filterReactions || []).length === 0) && filterWithoutReactions.length > 0) {
+				let responseItem = { ...filterWithoutReactions[0] }
+				const originalPosterMsg = JSON.stringify(responseItem.decodedMessage)
+				msgItem = {
+					...responseItem,
+					decodedMessage: originalPosterMsg,
+					timestamp: msg.timestamp,
+					editedTimestamp: responseItem.timestamp,
+				}
+			}
 		} catch (error) {
 		}
-
 		return msgItem
 	})
 	const updateMessages = await Promise.all(findNewMessages)
@@ -50,7 +106,6 @@ export const replaceMessagesEdited = async ({
 				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
 			if (parsedMessageObj.repliedTo) {
-				console.log({parsedMessageObj})
 				let originalReply
 				if(+parsedMessageObj.version > 2){
 					 originalReply = await parentEpml.request("apiCall", {
@@ -71,17 +126,36 @@ export const replaceMessagesEdited = async ({
 					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
 				})
 
+				let decodedMsgs = []
+				response.map((eachMessage) => {
+					const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
+					let parsedMessageObj = msg
+			try {
+				parsedMessageObj = JSON.parse(msgRes.decodedMessage)
+				decodedMsgs.push({
+					...msgRes,
+					decodedMessage: parsedMessageObj
+				})
+			} catch (error) {
+				
+			}
+				
+				})
+		const filterWithoutReactions = decodedMsgs.filter((message)=> {
+				
+			return message.sender === msg.sender
+		})
 				const originalReplyMessage = originalReply.timestamp ? originalReply : originalReply.length !== 0 ? originalReply[0] : null
 				
 				if (
 					originalReplyMessage &&
-					response &&
-					Array.isArray(response) &&
-					response.length !== 0
+					filterWithoutReactions &&
+					Array.isArray(filterWithoutReactions) &&
+					filterWithoutReactions.length !== 0
 				) {
 					const decodeOriginalReply = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey)
 
-					const decodeUpdatedReply = decodeMessageFunc(response[0], isReceipient, _publicKey)
+					const decodeUpdatedReply = decodeMessageFunc(filterWithoutReactions[0], isReceipient, _publicKey)
 					const formattedRepliedToData = {
 						...decodeUpdatedReply,
 						senderName: decodeOriginalReply.senderName,
