@@ -6,20 +6,28 @@ export const replaceMessagesEdited = async ({
     _publicKey
 }) => {
 	const findNewMessages = decodedMessages.map(async (msg) => {
+		let originalMsg = msg
 		let msgItem = msg
 		try {
-			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+			if(msg.chatReference){
+				originalMsg = await parentEpml.request("apiCall", {
+					type: "api",
+					url: `/chat/message/${msg.chatReference}`,
+				})
+				originalMsg.chatReference = msg.chatReference
+			}
+			let msgQuery = `&involving=${originalMsg.recipient}&involving=${originalMsg.sender}`
 			if (!isReceipient) {
-				msgQuery = `&txGroupId=${msg.txGroupId}`
+				msgQuery = `&txGroupId=${originalMsg.txGroupId}`
 			}
 			const response = await parentEpml.request("apiCall", {
 				type: "api",
-				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}`,
+				url: `/chat/messages?chatreference=${originalMsg.signature}&reverse=true${msgQuery}`,
 			})
 			let decodedMsgs = []
 		response.map((eachMessage) => {
                 const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
-				let parsedMessageObj = msg
+				let parsedMessageObj = originalMsg
 		try {
 			parsedMessageObj = JSON.parse(msgRes.decodedMessage)
 			decodedMsgs.push({
@@ -40,19 +48,19 @@ export const replaceMessagesEdited = async ({
 
 			const filterWithoutReactions = decodedMsgs.filter((message)=> {
 				
-				return message.sender === msg.sender
+				return message.sender === originalMsg.sender
 			})
 			if (filterReactions && Array.isArray(filterReactions) && filterReactions.length !== 0) {
 				let responseItem = { ...filterReactions[0] }
 				let parsedMessageMsg = {}
 				try {
-					parsedMessageMsg = JSON.parse(msg.decodedMessage)
+					parsedMessageMsg = JSON.parse(originalMsg.decodedMessage)
 					
 				} catch (error) {
 					
 				}
 				let originalPosterMsg = {
-					...msg,
+					...originalMsg,
 					decodedMessage: parsedMessageMsg
 				}
 				if(filterWithoutReactions.length > 0){
@@ -70,8 +78,8 @@ export const replaceMessagesEdited = async ({
 
 				msgItem = {
 					...originalPosterMsg,
-					senderName: msg.senderName,
-					sender: msg.sender,
+					senderName: originalMsg.senderName,
+					sender: originalMsg.sender,
 					editedTimestamp: response[0].timestamp,
 				}
 			}
@@ -83,7 +91,7 @@ export const replaceMessagesEdited = async ({
 				msgItem = {
 					...responseItem,
 					decodedMessage: originalPosterMsg,
-					timestamp: msg.timestamp,
+					timestamp: originalMsg.timestamp,
 					editedTimestamp: responseItem.timestamp,
 				}
 			}
@@ -92,18 +100,18 @@ export const replaceMessagesEdited = async ({
 		return msgItem
 	})
 	const updateMessages = await Promise.all(findNewMessages)
-	const findNewMessages2 = updateMessages.map(async (msg) => {
-		let parsedMessageObj = msg
+	const findNewMessages2 = updateMessages.map(async (originalMsg) => {
+		let parsedMessageObj = originalMsg
 		try {
-			parsedMessageObj = JSON.parse(msg.decodedMessage)
+			parsedMessageObj = JSON.parse(originalMsg.decodedMessage)
 		} catch (error) {
-			return msg
+			return originalMsg
 		}
-		let msgItem = msg
+		let msgItem = originalMsg
 		try {
-			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
+			let msgQuery = `&involving=${originalMsg.recipient}&involving=${originalMsg.sender}`
 			if (!isReceipient) {
-				msgQuery = `&txGroupId=${msg.txGroupId}`
+				msgQuery = `&txGroupId=${originalMsg.txGroupId}`
 			}
 			if (parsedMessageObj.repliedTo) {
 				let originalReply
@@ -129,7 +137,7 @@ export const replaceMessagesEdited = async ({
 				let decodedMsgs = []
 				response.map((eachMessage) => {
 					const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
-					let parsedMessageObj = msg
+					let parsedMessageObj = originalMsg
 			try {
 				parsedMessageObj = JSON.parse(msgRes.decodedMessage)
 				decodedMsgs.push({
@@ -143,7 +151,7 @@ export const replaceMessagesEdited = async ({
 				})
 		const filterWithoutReactions = decodedMsgs.filter((message)=> {
 				
-			return message.sender === msg.sender
+			return message.sender === originalMsg.sender
 		})
 				const originalReplyMessage = originalReply.timestamp ? originalReply : originalReply.length !== 0 ? originalReply[0] : null
 				
@@ -162,7 +170,7 @@ export const replaceMessagesEdited = async ({
 						sender: decodeOriginalReply.sender,
 					}
 					msgItem = {
-						...msg,
+						...originalMsg,
 						repliedToData: formattedRepliedToData,
 					}
 				} else {
@@ -173,7 +181,7 @@ export const replaceMessagesEdited = async ({
 					) {
 						
 						msgItem = {
-							...msg,
+							...originalMsg,
 							repliedToData: decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey),
 						}
 					}
