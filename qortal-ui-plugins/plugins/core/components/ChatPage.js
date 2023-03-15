@@ -2766,7 +2766,8 @@ class ChatPage extends LitElement {
 	        parentEpml,
             isReceipient: isReceipient,
             decodeMessageFunc: this.decodeMessage,
-            _publicKey: this._publicKey
+            _publicKey: this._publicKey,
+            isNotInitial: true
             })
 
             const renderEachMessage = replacedMessages.map(async(msg)=> {

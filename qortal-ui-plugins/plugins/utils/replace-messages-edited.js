@@ -3,18 +3,34 @@ export const replaceMessagesEdited = async ({
 	parentEpml,
     isReceipient,
     decodeMessageFunc,
-    _publicKey
+    _publicKey,
+	isNotInitial
 }) => {
 	const findNewMessages = decodedMessages.map(async (msg) => {
 		let originalMsg = msg
 		let msgItem = msg
+		let newReactions = null
 		try {
-			if(msg.chatReference){
-				originalMsg = await parentEpml.request("apiCall", {
+			if(isNotInitial && msg.chatReference){
+				const originalMsg2 = await parentEpml.request("apiCall", {
 					type: "api",
 					url: `/chat/message/${msg.chatReference}`,
 				})
-				originalMsg.chatReference = msg.chatReference
+				if(originalMsg2.sender !== msg.sender){
+					const originalMsg2Decoded = decodeMessageFunc(originalMsg2, isReceipient, _publicKey)
+					let parsedMessageObj = null
+					try {
+						parsedMessageObj = JSON.parse(originalMsg2Decoded.decodedMessage)
+						if(Array.isArray(parsedMessageObj.reactions) && parsedMessageObj.reactions.length > 0){
+							newReactions = parsedMessageObj.reactions
+						}
+						originalMsg = originalMsg2
+						originalMsg.chatReference = msg.chatReference
+					} catch (error) {
+						
+					}
+				}
+				
 			}
 			let msgQuery = `&involving=${originalMsg.recipient}&involving=${originalMsg.sender}`
 			if (!isReceipient) {
@@ -50,7 +66,8 @@ export const replaceMessagesEdited = async ({
 				
 				return message.sender === originalMsg.sender
 			})
-			if (filterReactions && Array.isArray(filterReactions) && filterReactions.length !== 0) {
+			
+			if (filterReactions && Array.isArray(filterReactions) && filterReactions.length !== 0 && !newReactions) {
 				let responseItem = { ...filterReactions[0] }
 				let parsedMessageMsg = {}
 				try {
@@ -83,9 +100,41 @@ export const replaceMessagesEdited = async ({
 					editedTimestamp: response[0].timestamp,
 				}
 			}
+			if (newReactions) {
+				let parsedMessageMsg = {}
+				try {
+					parsedMessageMsg = JSON.parse(originalMsg.decodedMessage)
+					
+				} catch (error) {
+					
+				}
+				let originalPosterMsg = {
+					...originalMsg,
+					decodedMessage: parsedMessageMsg
+				}
+				if(filterWithoutReactions.length > 0){
+					originalPosterMsg = {
+						...filterWithoutReactions[0] 
+					}
+
+					
+				}
+
+				originalPosterMsg.decodedMessage = JSON.stringify({
+					...originalPosterMsg.decodedMessage,
+					reactions: newReactions
+				})
+
+				msgItem = {
+					...originalPosterMsg,
+					senderName: originalMsg.senderName,
+					sender: originalMsg.sender,
+					editedTimestamp: response[0].timestamp,
+				}
+			}
 
 			
-			if ((!Array.isArray(filterReactions) || (filterReactions || []).length === 0) && filterWithoutReactions.length > 0) {
+			if ((!Array.isArray(filterReactions) || (filterReactions || []).length === 0) && !newReactions && filterWithoutReactions.length > 0) {
 				let responseItem = { ...filterWithoutReactions[0] }
 				const originalPosterMsg = JSON.stringify(responseItem.decodedMessage)
 				msgItem = {
