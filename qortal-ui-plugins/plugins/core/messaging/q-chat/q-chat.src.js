@@ -362,7 +362,7 @@ class Chat extends LitElement {
                     </div>
                     <vaadin-grid theme="compact" id="blockedGrid" ?hidden="${this.isEmptyArray(this.blockedUserList)}" aria-label="Blocked List" .items="${this.blockedUserList}" all-rows-visible>
                         <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" .renderer=${(root, column, data) => {
-                            if (data.item.name = 'No registered name') {
+                            if (data.item.name === "No registered name") {
                                 render(html`${translate("chatpage.cchange15")}`, root);
                             } else {
                                 render(html`${data.item.name}`, root);
