@@ -3,164 +3,51 @@ export const replaceMessagesEdited = async ({
 	parentEpml,
     isReceipient,
     decodeMessageFunc,
-    _publicKey,
-	isNotInitial
+    _publicKey
 }) => {
 	const findNewMessages = decodedMessages.map(async (msg) => {
-		let originalMsg = msg
 		let msgItem = msg
-		let newReactions = null
 		try {
-			if(isNotInitial && msg.chatReference){
-				const originalMsg2 = await parentEpml.request("apiCall", {
-					type: "api",
-					url: `/chat/message/${msg.chatReference}`,
-				})
-				if(originalMsg2.sender !== msg.sender){
-					const originalMsg2Decoded = decodeMessageFunc(originalMsg2, isReceipient, _publicKey)
-					let parsedMessageObj = null
-					try {
-						parsedMessageObj = JSON.parse(originalMsg2Decoded.decodedMessage)
-						if(Array.isArray(parsedMessageObj.reactions) && parsedMessageObj.reactions.length > 0){
-							newReactions = parsedMessageObj.reactions
-						}
-						originalMsg = originalMsg2
-						originalMsg.chatReference = msg.chatReference
-					} catch (error) {
-						
-					}
-				}
-				
-			}
-			let msgQuery = `&involving=${originalMsg.recipient}&involving=${originalMsg.sender}`
+			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
 			if (!isReceipient) {
-				msgQuery = `&txGroupId=${originalMsg.txGroupId}`
+				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
 			const response = await parentEpml.request("apiCall", {
 				type: "api",
-				url: `/chat/messages?chatreference=${originalMsg.signature}&reverse=true${msgQuery}`,
-			})
-			let decodedMsgs = []
-		response.map((eachMessage) => {
-                const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
-				let parsedMessageObj = originalMsg
-		try {
-			parsedMessageObj = JSON.parse(msgRes.decodedMessage)
-			decodedMsgs.push({
-				...msgRes,
-				decodedMessage: parsedMessageObj
-			})
-		} catch (error) {
-			
-		}
-			
-            })
-
-			const filterReactions = decodedMsgs.filter((message)=> {
-				if(!message.decodedMessage) return false
-				if(!message.decodedMessage.reactions || !Array.isArray(message.decodedMessage.reactions)) return false
-				return message.decodedMessage.reactions.length > 0
+				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}&limit=1&sender=${msg.sender}`,
 			})
 
-			const filterWithoutReactions = decodedMsgs.filter((message)=> {
-				
-				return message.sender === originalMsg.sender
-			})
-			
-			if (filterReactions && Array.isArray(filterReactions) && filterReactions.length !== 0 && !newReactions) {
-				let responseItem = { ...filterReactions[0] }
-				let parsedMessageMsg = {}
-				try {
-					parsedMessageMsg = JSON.parse(originalMsg.decodedMessage)
-					
-				} catch (error) {
-					
-				}
-				let originalPosterMsg = {
-					...originalMsg,
-					decodedMessage: parsedMessageMsg
-				}
-				if(filterWithoutReactions.length > 0){
-					originalPosterMsg = {
-						...filterWithoutReactions[0] 
-					}
-
-					
-				}
-
-				originalPosterMsg.decodedMessage = JSON.stringify({
-					...originalPosterMsg.decodedMessage,
-					reactions: responseItem.decodedMessage.reactions
-				})
-
+			if (response && Array.isArray(response) && response.length !== 0) {
+				let responseItem = { ...response[0] }
+                const decodeResponseItem = decodeMessageFunc(responseItem, isReceipient, _publicKey)
+				delete decodeResponseItem.timestamp
+		
 				msgItem = {
-					...originalPosterMsg,
-					senderName: originalMsg.senderName,
-					sender: originalMsg.sender,
+					...msg,
+					...decodeResponseItem,
+					senderName: msg.senderName,
+					sender: msg.sender,
 					editedTimestamp: response[0].timestamp,
-				}
-			}
-			if (newReactions) {
-				let parsedMessageMsg = {}
-				try {
-					parsedMessageMsg = JSON.parse(originalMsg.decodedMessage)
-					
-				} catch (error) {
-					
-				}
-				let originalPosterMsg = {
-					...originalMsg,
-					decodedMessage: parsedMessageMsg
-				}
-				if(filterWithoutReactions.length > 0){
-					originalPosterMsg = {
-						...filterWithoutReactions[0] 
-					}
-
-					
-				}
-
-				originalPosterMsg.decodedMessage = JSON.stringify({
-					...originalPosterMsg.decodedMessage,
-					reactions: newReactions
-				})
-
-				msgItem = {
-					...originalPosterMsg,
-					senderName: originalMsg.senderName,
-					sender: originalMsg.sender,
-					editedTimestamp: response[0].timestamp,
-				}
-			}
-
-			
-			if ((!Array.isArray(filterReactions) || (filterReactions || []).length === 0) && !newReactions && filterWithoutReactions.length > 0) {
-				let responseItem = { ...filterWithoutReactions[0] }
-				const originalPosterMsg = JSON.stringify(responseItem.decodedMessage)
-				msgItem = {
-					...responseItem,
-					decodedMessage: originalPosterMsg,
-					timestamp: originalMsg.timestamp,
-					editedTimestamp: responseItem.timestamp,
 				}
 			}
 		} catch (error) {
 		}
+
 		return msgItem
 	})
 	const updateMessages = await Promise.all(findNewMessages)
-	const findNewMessages2 = updateMessages.map(async (originalMsg) => {
-		let parsedMessageObj = originalMsg
+	const findNewMessages2 = updateMessages.map(async (msg) => {
+		let parsedMessageObj = msg
 		try {
-			parsedMessageObj = JSON.parse(originalMsg.decodedMessage)
+			parsedMessageObj = JSON.parse(msg.decodedMessage)
 		} catch (error) {
-			return originalMsg
+			return msg
 		}
-		let msgItem = originalMsg
+		let msgItem = msg
 		try {
-			let msgQuery = `&involving=${originalMsg.recipient}&involving=${originalMsg.sender}`
+			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
 			if (!isReceipient) {
-				msgQuery = `&txGroupId=${originalMsg.txGroupId}`
+				msgQuery = `&txGroupId=${msg.txGroupId}`
 			}
 			if (parsedMessageObj.repliedTo) {
 				let originalReply
@@ -178,48 +65,31 @@ export const replaceMessagesEdited = async ({
 			   }
 			
 				
+				
+
+				const originalReplyMessage = originalReply.timestamp ? originalReply : originalReply.length !== 0 ? originalReply[0] : null
+
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
-					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}&limit=1&sender=${originalReplyMessage.sender}`,
 				})
-
-				let decodedMsgs = []
-				response.map((eachMessage) => {
-					const msgRes = decodeMessageFunc(eachMessage, isReceipient, _publicKey)
-					let parsedMessageObj = originalMsg
-			try {
-				parsedMessageObj = JSON.parse(msgRes.decodedMessage)
-				decodedMsgs.push({
-					...msgRes,
-					decodedMessage: parsedMessageObj
-				})
-			} catch (error) {
-				
-			}
-				
-				})
-		const filterWithoutReactions = decodedMsgs.filter((message)=> {
-				
-			return message.sender === originalMsg.sender
-		})
-				const originalReplyMessage = originalReply.timestamp ? originalReply : originalReply.length !== 0 ? originalReply[0] : null
 				
 				if (
 					originalReplyMessage &&
-					filterWithoutReactions &&
-					Array.isArray(filterWithoutReactions) &&
-					filterWithoutReactions.length !== 0
+					response &&
+					Array.isArray(response) &&
+					response.length !== 0
 				) {
 					const decodeOriginalReply = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey)
 
-					const decodeUpdatedReply = decodeMessageFunc(filterWithoutReactions[0], isReceipient, _publicKey)
+					const decodeUpdatedReply = decodeMessageFunc(response[0], isReceipient, _publicKey)
 					const formattedRepliedToData = {
 						...decodeUpdatedReply,
 						senderName: decodeOriginalReply.senderName,
 						sender: decodeOriginalReply.sender,
 					}
 					msgItem = {
-						...originalMsg,
+						...msg,
 						repliedToData: formattedRepliedToData,
 					}
 				} else {
@@ -230,7 +100,7 @@ export const replaceMessagesEdited = async ({
 					) {
 						
 						msgItem = {
-							...originalMsg,
+							...msg,
 							repliedToData: decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey),
 						}
 					}

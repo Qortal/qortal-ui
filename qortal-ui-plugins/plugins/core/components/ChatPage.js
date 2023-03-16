@@ -2830,7 +2830,7 @@ class ChatPage extends LitElement {
     async renderNewMessage(newMessage) {
         if(newMessage.chatReference){
             const findOriginalMessageIndex = this.messagesRendered.findIndex(msg=> msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference) )
-            if(findOriginalMessageIndex !== -1){
+            if(findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender){
                 const newMessagesRendered = [...this.messagesRendered]
                 newMessagesRendered[findOriginalMessageIndex] = {...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
 					sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp }
