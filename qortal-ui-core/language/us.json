@@ -581,7 +581,8 @@
 		"bchange25": "No sensitive data is shared.",
 		"bchange26": "Always authenticate automatically",
 		"bchange27": "Reject",
-		"bchange28": "Accept"
+		"bchange28": "Accept",
+		"bchange29": "Instant publish (requires 0.001 QORT fee)"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

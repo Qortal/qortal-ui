@@ -19,7 +19,8 @@ export const publishData = async ({
 	worker,
 	isBase64,
 	metaData,
-	apiVersion
+	apiVersion,
+	withFee
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -84,6 +85,33 @@ export const publishData = async ({
         return myResponse
     }
 
+	const signAndProcessWithFee = async (transactionBytesBase58) => {
+        let convertedBytesBase58 = await convertBytesForSigning(
+            transactionBytesBase58
+        )
+        if (convertedBytesBase58.error) {
+            throw new Error('Error when signing');
+        }
+
+	
+     
+  
+        let response = await parentEpml.request("sign_arbitrary_with_fee", {
+            nonce: selectedAddress.nonce,
+            arbitraryBytesBase58: transactionBytesBase58,
+            arbitraryBytesForSigningBase58: convertedBytesBase58,
+			apiVersion: apiVersion ? apiVersion : null
+        })
+        let myResponse = { error: "" }
+        if (response === false) {
+            throw new Error('Error when signing');
+        } else {
+            myResponse = response
+        }
+
+        return myResponse
+    }
+
 	const validate = async () => {
 		let validNameRes = await validateName(registeredName)
 		if (validNameRes.error) {
@@ -91,14 +119,22 @@ export const publishData = async ({
 		}
 		let transactionBytes = await uploadData(registeredName, path, file)
 		if (transactionBytes.error) {
-			throw new Error('Error when uploading');
+			throw new Error(transactionBytes.message || 'Error when uploading');
 		} else if (
 			transactionBytes.includes("Error 500 Internal Server Error")
 		) {
 			throw new Error('Error when uploading');
 		}
 
-		let signAndProcessRes = await signAndProcess(transactionBytes)
+		let signAndProcessRes
+		if(withFee){
+			signAndProcessRes = await signAndProcessWithFee(transactionBytes)
+
+		}
+		if(!withFee){
+		 signAndProcessRes = await signAndProcess(transactionBytes)
+
+		}
 		if (signAndProcessRes.error) {
 			throw new Error('Error when signing');
 		}
@@ -138,6 +174,10 @@ export const publishData = async ({
 					uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?${metaData}&apiKey=${getApiKey()}`
 					
 				}
+			}
+
+			if(withFee){
+				uploadDataUrl = uploadDataUrl + '&fee=100000'
 			}
 			
 			let uploadDataRes = await parentEpml.request("apiCall", {

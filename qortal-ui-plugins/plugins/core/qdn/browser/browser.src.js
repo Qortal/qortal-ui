@@ -564,7 +564,8 @@ class WebBrowser extends LitElement {
 								selectedAddress: this.selectedAddress,
 								worker: worker,
 								isBase64: true,
-								apiVersion: 2
+								apiVersion: 2,
+								withFee: res2.userData.isWithFee === true ? true: false
 							});
 
 							response = JSON.stringify(resPublish);
@@ -1556,7 +1557,16 @@ async function showModalAndWait(type, data) {
 											</div>
 										</div>
 										` : ''}
-                    ${type === actions.PUBLISH_QDN_RESOURCE ? `<p class="modal-paragraph">${get("browserpage.bchange19")}</p>` : ''}
+										${type === actions.PUBLISH_QDN_RESOURCE ? `<div class="modal-subcontainer">
+										<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+										<div class="checkbox-row">
+											<label for="isWithFee" id="isWithFeeLabel">
+												${get('browserpage.bchange29')}
+											</label>
+											<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee">
+											</mwc-checkbox>
+										</div>
+									</div>` : ''}
                     ${type === actions.GET_WALLET_BALANCE ? `<p class="modal-paragraph">${get("browserpage.bchange20")}</p>` : ''}
                     ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
                 </div>
@@ -1573,6 +1583,10 @@ async function showModalAndWait(type, data) {
 		const okButton = modal.querySelector('#ok-button');
 		okButton.addEventListener('click', () => {
 			const userData = {};
+			if (type === actions.PUBLISH_QDN_RESOURCE) {
+				const isWithFeeCheckbox = modal.querySelector('#isWithFee');
+				userData.isWithFee = isWithFeeCheckbox.checked;
+			}
 			if (modal.parentNode === document.body) {
 				document.body.removeChild(modal);
 			}
