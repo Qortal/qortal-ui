@@ -1,5 +1,5 @@
 export { request } from './fetch-request.js'
 export { transactionTypes as transactions } from './transactions/transactions.js'
-export { processTransaction, processTransactionVersion2, createTransaction, computeChatNonce, signChatTransaction, signArbitraryTransaction } from './createTransaction.js'
+export { processTransaction, processTransactionVersion2, createTransaction, computeChatNonce, signChatTransaction, signArbitraryTransaction, signArbitraryWithFeeTransaction } from './createTransaction.js'
 export { tradeBotCreateRequest, tradeBotRespondRequest, signTradeBotTxn, deleteTradeOffer, sendBtc, sendLtc, sendDoge, sendDgb, sendRvn, sendArrr } from './tradeRequest.js'
 export { cancelAllOffers } from './transactions/trade-portal/tradeoffer/cancelAllOffers.js'

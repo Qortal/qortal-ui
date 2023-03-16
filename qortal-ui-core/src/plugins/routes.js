@@ -25,6 +25,7 @@ const processTransaction = api.processTransaction;
 const processTransactionVersion2 = api.processTransactionVersion2;
 const signChatTransaction = api.signChatTransaction;
 const signArbitraryTransaction = api.signArbitraryTransaction;
+const signArbitraryWithFeeTransaction = api.signArbitraryWithFeeTransaction;
 const tradeBotCreateRequest = api.tradeBotCreateRequest;
 const tradeBotRespondRequest = api.tradeBotRespondRequest;
 const signTradeBotTxn = api.signTradeBotTxn;
@@ -286,6 +287,32 @@ export const routes = {
 				req.data.arbitraryBytesBase58,
 				req.data.arbitraryBytesForSigningBase58,
 				req.data.arbitraryNonce,
+				store.getState().app.wallet._addresses[req.data.nonce].keyPair
+			);
+			let res
+
+			if(req.data.apiVersion && req.data.apiVersion === 2){
+				res = await processTransactionVersion2(signedArbitraryBytes)
+			}
+			if(!req.data.apiVersion){
+				res = await processTransaction(signedArbitraryBytes);
+			}
+			
+			response = res;
+		} catch (e) {
+			console.error(e);
+			console.error(e.message);
+			response = false;
+		}
+		return response;
+	},
+
+	sign_arbitrary_with_fee: async (req) => {
+		let response;
+		try {
+			const signedArbitraryBytes = await signArbitraryWithFeeTransaction(
+				req.data.arbitraryBytesBase58,
+				req.data.arbitraryBytesForSigningBase58,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			);
 			let res
