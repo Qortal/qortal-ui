@@ -410,7 +410,7 @@ class MessageTemplate extends LitElement {
             repliedToData = this.messageObj.repliedToData;
             isImageDeleted = parsedMessageObj.isImageDeleted;
             isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted;
-            reactions = parsedMessageObj.reactions || [];
+            // reactions = parsedMessageObj.reactions || [];
             version = parsedMessageObj.version;
             isForwarded = parsedMessageObj.type === 'forward';
             isEdited = parsedMessageObj.isEdited && true;
@@ -1105,7 +1105,7 @@ class ChatMenu extends LitElement {
     render() {
         return html` 
             <div class="container">
-            <div 
+            <!-- <div 
                 class=${`menu-icon reaction ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange13")}" 
                 @click=${(e) => {
@@ -1122,7 +1122,7 @@ class ChatMenu extends LitElement {
                     }}
                >
                     <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
-                </div>
+                </div> -->
                 <div 
                 class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`} 
                 data-text="${translate("blockpage.bcchange14")}" 
