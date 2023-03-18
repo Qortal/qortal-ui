@@ -544,6 +544,7 @@ class WebBrowser extends LitElement {
 					const name = data.name;
 					let identifier = data.identifier;
 					const data64 = data.data64;
+					const filename = data.filename;
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
@@ -564,6 +565,7 @@ class WebBrowser extends LitElement {
 								selectedAddress: this.selectedAddress,
 								worker: worker,
 								isBase64: true,
+								filename: filename,
 								apiVersion: 2,
 								withFee: res2.userData.isWithFee === true ? true: false
 							});

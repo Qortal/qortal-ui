@@ -18,6 +18,7 @@ export const publishData = async ({
 	selectedAddress,
 	worker,
 	isBase64,
+	filename,
 	metaData,
 	apiVersion,
 	withFee
@@ -178,6 +179,10 @@ export const publishData = async ({
 
 			if(withFee){
 				uploadDataUrl = uploadDataUrl + '&fee=100000'
+			}
+
+			if(filename != null && filename != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&filename=' + encodeURIComponent(filename)
 			}
 			
 			let uploadDataRes = await parentEpml.request("apiCall", {
