@@ -19,9 +19,16 @@ export const publishData = async ({
 	worker,
 	isBase64,
 	filename,
-	metaData,
 	apiVersion,
-	withFee
+	withFee,
+	title,
+    description,
+    category,
+    tag1,
+    tag2,
+    tag3,
+    tag4,
+    tag5
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -171,10 +178,6 @@ export const publishData = async ({
 			if (identifier != null && identifier.trim().length > 0) {
 				uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?apiKey=${getApiKey()}`
 
-				if(metaData){
-					uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?${metaData}&apiKey=${getApiKey()}`
-					
-				}
 			}
 
 			if(withFee){
@@ -183,6 +186,30 @@ export const publishData = async ({
 
 			if(filename != null && filename != "undefined"){
 				uploadDataUrl = uploadDataUrl + '&filename=' + encodeURIComponent(filename)
+			}
+			if(title != null && title != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&title=' + encodeURIComponent(title)
+			}
+			if(description != null && description != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&description=' + encodeURIComponent(description)
+			}
+			if(category != null && category != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&category=' + encodeURIComponent(category)
+			}
+			if(tag1 != null && tag1 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tag1=' + encodeURIComponent(tag1)
+			}
+			if(tag2 != null && tag2 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tag2=' + encodeURIComponent(tag2)
+			}
+			if(tag3 != null && tag3 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tag3=' + encodeURIComponent(tag3)
+			}
+			if(tag4 != null && tag4 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tag4=' + encodeURIComponent(tag4)
+			}
+			if(tag5 != null && tag5 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tag5=' + encodeURIComponent(tag5)
 			}
 			
 			let uploadDataRes = await parentEpml.request("apiCall", {
