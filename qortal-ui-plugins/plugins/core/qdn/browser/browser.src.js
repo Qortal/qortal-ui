@@ -545,6 +545,14 @@ class WebBrowser extends LitElement {
 					let identifier = data.identifier;
 					const data64 = data.data64;
 					const filename = data.filename;
+					const title = data.title;
+					const description = data.description;
+					const category = data.category;
+					const tag1 = data.tag1;
+					const tag2 = data.tag2;
+					const tag3 = data.tag3;
+					const tag4 = data.tag4;
+					const tag5 = data.tag5;
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
@@ -566,6 +574,14 @@ class WebBrowser extends LitElement {
 								worker: worker,
 								isBase64: true,
 								filename: filename,
+								title,
+    							description,
+   								category,
+    							tag1,
+    							tag2,
+    							tag3,
+    							tag4,
+    							tag5,
 								apiVersion: 2,
 								withFee: res2.userData.isWithFee === true ? true: false
 							});
