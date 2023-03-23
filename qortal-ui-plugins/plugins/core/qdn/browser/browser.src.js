@@ -557,7 +557,12 @@ class WebBrowser extends LitElement {
 						identifier = 'default';
 					}
 					const res2 = await showModalAndWait(
-						actions.PUBLISH_QDN_RESOURCE
+						actions.PUBLISH_QDN_RESOURCE,
+						{
+							name,
+							identifier,
+							service
+						}
 					);
 					if (res2.action === 'accept') {
 						const worker = new WebWorker();
@@ -1577,6 +1582,9 @@ async function showModalAndWait(type, data) {
 										` : ''}
 										${type === actions.PUBLISH_QDN_RESOURCE ? `<div class="modal-subcontainer">
 										<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
+										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
+										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 										<div class="checkbox-row">
 											<label for="isWithFee" id="isWithFeeLabel">
 												${get('browserpage.bchange29')}
