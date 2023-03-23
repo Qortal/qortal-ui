@@ -627,7 +627,10 @@
 		"bchange26": "Always authenticate automatically",
 		"bchange27": "Reject",
 		"bchange28": "Accept",
-		"bchange29": "Instant publish (requires 0.001 QORT fee)"
+		"bchange29": "Instant publish (requires 0.001 QORT fee)",
+		"bchange30": "Service",
+		"bchange31": "Name",
+		"bchange32": "Identifier"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
