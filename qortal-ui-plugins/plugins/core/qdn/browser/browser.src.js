@@ -254,7 +254,7 @@ class WebBrowser extends LitElement {
     				</div>
     				<div class="iframe-container">
     					<iframe id="browser-iframe" src="${this.url
-			}" sandbox="allow-scripts allow-forms allow-downloads">
+			}" sandbox="allow-scripts allow-forms allow-downloads" allow="fullscreen">
     						<span style="color: var(--black);">${translate(
 				'browserpage.bchange6'
 			)}</span>
@@ -569,10 +569,10 @@ class WebBrowser extends LitElement {
 						try {
 							this.loader.show();
 							const resPublish = await publishData({
-								registeredName: name,
+								registeredName: encodeURIComponent(name),
 								file: data64,
 								service: service,
-								identifier: identifier,
+								identifier: encodeURIComponent(identifier),
 								parentEpml,
 								uploadType: 'file',
 								selectedAddress: this.selectedAddress,
