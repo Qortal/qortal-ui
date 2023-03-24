@@ -613,6 +613,145 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 				}
+				case actions.PUBLISH_MULTIPLE_QDN_RESOURCES: {
+					const requiredFields = ['resources'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const resources = data.resources
+					if (!Array.isArray(resources)) {
+						let data = {};
+						data['error'] = "Invalid data"
+						response = JSON.stringify(data);
+						break
+					}
+					if (resources.length === 0) {
+						let data = {};
+						data['error'] = "No resources to publish"
+						response = JSON.stringify(data);
+						break
+					}
+					const res2 = await showModalAndWait(
+						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
+						{
+							resources,
+
+						}
+					);
+
+					if (res2.action === 'reject') {
+						response = '{"error": "User declined request"}';
+						break
+
+					}
+					const resourcesMap = resources.map(async (resource) => {
+						const requiredFields = ['service', 'name', 'data64'];
+						const missingFields = [];
+
+						requiredFields.forEach((field) => {
+							if (!resource[field]) {
+								missingFields.push(field);
+							}
+						});
+
+						if (missingFields.length > 0) {
+							const missingFieldsString = missingFields.join(', ');
+							const errorMsg = `Missing fields: ${missingFieldsString}`
+							throw new Error(errorMsg)
+						}
+
+						const service = resource.service;
+						const name = resource.name;
+						let identifier = resource.identifier;
+						const data64 = resource.data64;
+						const filename = resource.filename;
+						const title = resource.title;
+						const description = resource.description;
+						const category = resource.category;
+						const tag1 = resource.tag1;
+						const tag2 = resource.tag2;
+						const tag3 = resource.tag3;
+						const tag4 = resource.tag4;
+						const tag5 = resource.tag5;
+						if (resource.identifier == null) {
+							identifier = 'default';
+						}
+
+						const worker = new WebWorker();
+						try {
+
+							const resPublish = await publishData({
+								registeredName: encodeURIComponent(name),
+								file: data64,
+								service: service,
+								identifier: encodeURIComponent(identifier),
+								parentEpml,
+								uploadType: 'file',
+								selectedAddress: this.selectedAddress,
+								worker: worker,
+								isBase64: true,
+								filename: filename,
+								title,
+								description,
+								category,
+								tag1,
+								tag2,
+								tag3,
+								tag4,
+								tag5,
+								apiVersion: 2,
+								withFee: res2.userData.isWithFee === true ? true : false
+							});
+
+							worker.terminate();
+							return resPublish
+						} catch (error) {
+							worker.terminate();
+							const errorMsg = error.message || 'Upload failed';
+							throw new Error(errorMsg)
+						}
+
+
+					})
+
+					try {
+						this.loader.show();
+						const results = await Promise.all(resourcesMap);
+						response = JSON.stringify(results);
+						this.loader.hide();
+						break
+						// handle successful results
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Upload failed';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						this.loader.hide();
+						break;
+					}
+
+
+
+
+					// Params: data.service, data.name, data.identifier, data.data64,
+					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
+					// then set the response string from the core to the `response` variable (defined above)
+					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+					break;
+				}
 
 
 				case actions.SEND_CHAT_MESSAGE: {
@@ -1580,7 +1719,36 @@ async function showModalAndWait(type, data) {
 											</div>
 										</div>
 										` : ''}
-										${type === actions.PUBLISH_QDN_RESOURCE ? `<div class="modal-subcontainer">
+										${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `
+							
+                    <div class="modal-subcontainer">
+                        <p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+                        <table>
+                            ${data.resources.map((resource) => `
+                                <tr>
+                                    <td><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${resource.service}</td>
+                                    <td><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${resource.name}</td>
+                                    <td><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${resource.identifier}</td>
+                                    ${resource.filename ? `<td><span style="font-weight: bold">${get("browserpage.bchange34")}:</span> ${resource.filename}</td>` : ''}
+                                </tr>
+                            `).join('')}
+                        </table>
+                        <div class="checkbox-row">
+                            <label for="isWithFee" id="isWithFeeLabel">
+                                ${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
+                            </label>
+                            <mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button id="cancel-button">${get("browserpage.bchange27")}</button>
+                    <button id="ok-button">${get("browserpage.bchange28")}</button>
+                </div>
+            </div>
+        </div>
+										` : ''}
+									${type === actions.PUBLISH_QDN_RESOURCE ? `<div class="modal-subcontainer">
 										<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
@@ -1593,6 +1761,7 @@ async function showModalAndWait(type, data) {
 											</mwc-checkbox>
 										</div>
 									</div>` : ''}
+
                     ${type === actions.GET_WALLET_BALANCE ? `<p class="modal-paragraph">${get("browserpage.bchange20")}</p>` : ''}
                     ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
                 </div>
@@ -1609,7 +1778,7 @@ async function showModalAndWait(type, data) {
 		const okButton = modal.querySelector('#ok-button');
 		okButton.addEventListener('click', () => {
 			const userData = {};
-			if (type === actions.PUBLISH_QDN_RESOURCE) {
+			if (type === actions.PUBLISH_QDN_RESOURCE || type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES) {
 				const isWithFeeCheckbox = modal.querySelector('#isWithFee');
 				userData.isWithFee = isWithFeeCheckbox.checked;
 			}

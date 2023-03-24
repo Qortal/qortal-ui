@@ -630,7 +630,9 @@
 		"bchange29": "Instant publish (requires 0.001 QORT fee)",
 		"bchange30": "Service",
 		"bchange31": "Name",
-		"bchange32": "Identifier"
+		"bchange32": "Identifier",
+		"bchange33": "Instant publish",
+		"bchange34": "Filename"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
