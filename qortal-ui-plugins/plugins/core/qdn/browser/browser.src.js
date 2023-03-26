@@ -1710,7 +1710,7 @@ async function showModalAndWait(type, data) {
 											<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service.toLowerCase()}.</p>
 											<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
 											<div class="checkbox-row">
-											<label for="authButton" id="authButtonLabel">
+											<label for="authButton" id="authButtonLabel" style="color: var(--black);>
 												${get('browserpage.bchange26')}
 											</label>
 											<mwc-checkbox style="margin-right: -15px;"  id="authButton" 
@@ -1734,7 +1734,7 @@ async function showModalAndWait(type, data) {
                             `).join('')}
                         </table>
                         <div class="checkbox-row">
-                            <label for="isWithFee" id="isWithFeeLabel">
+                            <label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
                                 ${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
                             </label>
                             <mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
@@ -1754,7 +1754,7 @@ async function showModalAndWait(type, data) {
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 										<div class="checkbox-row">
-											<label for="isWithFee" id="isWithFeeLabel">
+											<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);>
 												${get('browserpage.bchange29')}
 											</label>
 											<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee">
@@ -1884,7 +1884,7 @@ z-index: 1000001;
 }
 
 .modal-content {
-background-color: #fff;
+background-color: var(--white);
 border-radius: 10px;
 padding: 20px;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -1900,6 +1900,7 @@ padding: 25px;
 }
 
 .modal-subcontainer {
+	color: var(--black);
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -1911,7 +1912,7 @@ font-family: Roboto, sans-serif;
 font-size: 18px;
 letter-spacing: 0.3px;
 font-weight: 300;
-color: black;
+color: var(--black);
 margin: 0;
 }
 
