@@ -197,19 +197,19 @@ export const publishData = async ({
 				uploadDataUrl = uploadDataUrl + '&category=' + encodeURIComponent(category)
 			}
 			if(tag1 != null && tag1 != "undefined"){
-				uploadDataUrl = uploadDataUrl + '&tag1=' + encodeURIComponent(tag1)
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag1)
 			}
 			if(tag2 != null && tag2 != "undefined"){
-				uploadDataUrl = uploadDataUrl + '&tag2=' + encodeURIComponent(tag2)
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag2)
 			}
 			if(tag3 != null && tag3 != "undefined"){
-				uploadDataUrl = uploadDataUrl + '&tag3=' + encodeURIComponent(tag3)
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag3)
 			}
 			if(tag4 != null && tag4 != "undefined"){
-				uploadDataUrl = uploadDataUrl + '&tag4=' + encodeURIComponent(tag4)
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag4)
 			}
 			if(tag5 != null && tag5 != "undefined"){
-				uploadDataUrl = uploadDataUrl + '&tag5=' + encodeURIComponent(tag5)
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag5)
 			}
 			
 			let uploadDataRes = await parentEpml.request("apiCall", {
