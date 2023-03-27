@@ -1754,7 +1754,7 @@ async function showModalAndWait(type, data) {
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
 										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 										<div class="checkbox-row">
-											<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);>
+											<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
 												${get('browserpage.bchange29')}
 											</label>
 											<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee">
