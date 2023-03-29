@@ -26,6 +26,7 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 class WebBrowser extends LitElement {
 	static get properties() {
 		return {
+			selectedAddress: { type: Object },
 			url: { type: String },
 			name: { type: String },
 			service: { type: String },
@@ -36,11 +37,17 @@ class WebBrowser extends LitElement {
 			followedNames: { type: Array },
 			blockedNames: { type: Array },
 			theme: { type: String, reflect: true },
-		};
+			btcFeePerByte: { type: Number },
+			ltcFeePerByte: { type: Number },
+			dogeFeePerByte: { type: Number },
+			dgbFeePerByte: { type: Number },
+			rvnFeePerByte: { type: Number },
+			arrrWalletAddress: { type: String }
+		}
 	}
 
 	static get observers() {
-		return ['_kmxKeyUp(amount)'];
+		return ['_kmxKeyUp(amount)']
 	}
 
 	static get styles() {
@@ -173,9 +180,9 @@ class WebBrowser extends LitElement {
 			const myNode =
 				window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-				];
+				]
 			const nodeUrl =
-				myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+				myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
 			if (this.preview != null && this.preview.length > 0) {
 				// In preview mode we access the preview URL path directly
@@ -185,26 +192,33 @@ class WebBrowser extends LitElement {
 				// Normal mode
 				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
 					}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
-					}`;
+					}`
 			}
-		};
+		}
+
+		this.selectedAddress = {} 
+		this.btcFeePerByte = 100
+		this.ltcFeePerByte = 30
+		this.dogeFeePerByte = 1000
+		this.dgbFeePerByte = 10
+		this.rvnFeePerByte = 1125
+		this.arrrWalletAddress = ''
 
 		let configLoaded = false;
 
 		parentEpml.ready().then(() => {
-			parentEpml.subscribe(
-				'selected_address',
-				async (selectedAddress) => {
-					this.selectedAddress = {};
-					selectedAddress = JSON.parse(selectedAddress);
-					if (
-						!selectedAddress ||
-						Object.entries(selectedAddress).length === 0
-					)
-						return;
-					this.selectedAddress = selectedAddress;
-				}
-			);
+			parentEpml.subscribe('selected_address', async (selectedAddress) => {
+				selectedAddress = JSON.parse(selectedAddress)
+				if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+
+				this.selectedAddress = selectedAddress
+				this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet
+				this.ltcWallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet
+				this.dogeWallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
+				this.dgbWallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
+				this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+				this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
+			})
 			parentEpml.subscribe('config', (c) => {
 				this.config = JSON.parse(c);
 				if (!configLoaded) {
@@ -213,7 +227,7 @@ class WebBrowser extends LitElement {
 					setTimeout(getBlockedNames, 1);
 					configLoaded = true;
 				}
-			});
+			})
 			parentEpml.subscribe('copy_menu_switch', async (value) => {
 				if (
 					value === 'false' &&
@@ -221,8 +235,8 @@ class WebBrowser extends LitElement {
 				) {
 					this.clearSelection();
 				}
-			});
-		});
+			})
+		})
 	}
 
 	render() {
@@ -302,8 +316,8 @@ class WebBrowser extends LitElement {
 		}
 
 		const data = await response.json()
-		const joinFee = (Number(data) / 1e8).toFixed(8)
-		return joinFee
+		const qortFee = (Number(data) / 1e8).toFixed(8)
+		return qortFee
 	}
 
 	async _joinGroup(groupId, groupName) {
@@ -419,6 +433,13 @@ class WebBrowser extends LitElement {
 	firstUpdated() {
 		this.changeTheme();
 		this.changeLanguage();
+
+		this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet
+		this.ltcWallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet
+		this.dogeWallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet
+		this.dgbWallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
+		this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
+		this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 
 		window.addEventListener('contextmenu', (event) => {
 			event.preventDefault();
@@ -648,7 +669,6 @@ class WebBrowser extends LitElement {
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
 							resources,
-
 						}
 					);
 
@@ -743,9 +763,6 @@ class WebBrowser extends LitElement {
 						break;
 					}
 
-
-
-
 					// Params: data.service, data.name, data.identifier, data.data64,
 					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
 					// then set the response string from the core to the `response` variable (defined above)
@@ -768,7 +785,7 @@ class WebBrowser extends LitElement {
 							let chatResponse 
 							
 							if(isRecipient){
-								chatResponse =	await parentEpml.request('chat', {
+								chatResponse = await parentEpml.request('chat', {
 									type: 18,
 									nonce: this.selectedAddress.nonce,
 									params: {
@@ -1066,7 +1083,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-					// Params: data.coin (QORT / LTC / DOGE / DGB / C / ARRR)
+					// Params: data.coin (QORT / BTC / LTC / DOGE / DGB / RVN / ARRR)
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
@@ -1161,204 +1178,873 @@ class WebBrowser extends LitElement {
 					
 
 				case actions.SEND_COIN: {
-					const requiredFields = ['coin', 'destinationAddress', 'amount'];
-					const missingFields = [];
+					const requiredFields = ['coin', 'destinationAddress', 'amount']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						this.loader.hide();
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						showErrorAndWait("MISSING_FIELDS", errorMsg)
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-					// Params: data.coin, data.destinationAddress, data.amount, data.fee
-					// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
-					// then set the response string from the core to the `response` variable (defined above)
-					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					const amount = Number(data.amount)
-					let recipient = data.destinationAddress;
-					this.loader.show();
 
-					const walletBalance = await parentEpml.request('apiCall', {
-						url: `/addresses/balance/${this.myAddress.address}?apiKey=${this.getApiKey()}`,
-					})
-					if (isNaN(Number(walletBalance))) {
-						this.loader.hide();
-						let errorMsg = "Failed to Fetch QORT Balance. Try again!"
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
-					} 
-					
-					const myRef = await parentEpml.request("apiCall", {
-						type: "api",
-						url: `/addresses/lastreference/${this.myAddress.address}`,
-					})
+					let checkCoin = data.coin
 
-					const walletBalanceDecimals = Number(walletBalance) * QORT_DECIMALS;
-					const amountDecimals = Number(amount) * QORT_DECIMALS
-					const fee = await this.sendQortFee()
-					// TODO fee
-					if (amountDecimals + (fee *  QORT_DECIMALS) > walletBalanceDecimals) {
-						this.loader.hide();
-						let errorMsg = "Insufficient Funds!"
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
-					}
+					if (checkCoin === "QORT") {
+						// Params: data.coin, data.destinationAddress, data.amount, data.fee
+						// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
+						// then set the response string from the core to the `response` variable (defined above)
+						// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
 
-					if (amount <= 0) {
-						this.loader.hide();
-						let errorMsg = "Invalid Amount!"
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
-					}
-
-					if (recipient.length === 0) {
-						this.loader.hide();
-						let errorMsg = "Receiver cannot be empty!"
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
-					}
-
-					const validateName = async (receiverName) => {
-						let myRes;
-						let myNameRes = await parentEpml.request('apiCall', {
-							type: 'api',
-							url: `/names/${receiverName}`,
+						const walletBalance = await parentEpml.request('apiCall', {
+							url: `/addresses/balance/${this.myAddress.address}`,
 						})
 
-						if (myNameRes.error === 401) {
-							myRes = false;
-						} else {
-							myRes = myNameRes;
-						}
-						return myRes;
-					}
-
-					const validateAddress = async (receiverAddress) => {
-						let myAddress = await window.parent.validateAddress(receiverAddress);
-						return myAddress;
-					}
-
-					const validateReceiver = async (recipient) => {
-						let lastRef = myRef;
-						let isAddress;
-
-						try {
-							isAddress = await validateAddress(recipient);
-						} catch (err) {
-							isAddress = false;
+						if (isNaN(Number(walletBalance))) {
+							let errorMsg = "Failed to Fetch QORT Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " QORT " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
 						}
 
-						if (isAddress) {
-							let myTransaction = await makeTransactionRequest(recipient, lastRef);
-							const res = getTxnRequestResponse(myTransaction)
-							return res;
-						} else {
-							let myNameRes = await validateName(recipient);
-							if (myNameRes !== false) {
-								let myNameAddress = myNameRes.owner
-								let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
+						const myRef = await parentEpml.request("apiCall", {
+							type: "api",
+							url: `/addresses/lastreference/${this.myAddress.address}`,
+						})
+
+						const transformDecimals = (Number(walletBalance) * QORT_DECIMALS).toFixed(0)
+						const walletBalanceDecimals = Number(transformDecimals)
+						const amountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(transformDecimals) / 1e8).toFixed(8)
+						const fee = await this.sendQortFee()
+
+						if (amountDecimals + (fee *  QORT_DECIMALS) > walletBalanceDecimals) {
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						if (amount <= 0) {
+							let errorMsg = "Invalid Amount!"
+							showErrorAndWait("INVALID_AMOUNT", errorMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						if (recipient.length === 0) {
+							let errorMsg = "Receiver cannot be empty!"
+							showErrorAndWait("NO_RECEIVER", errorMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						const validateName = async (receiverName) => {
+							let myRes
+							let myNameRes = await parentEpml.request('apiCall', {
+								type: 'api',
+								url: `/names/${receiverName}`,
+							})
+
+							if (myNameRes.error === 401) {
+								myRes = false
+							} else {
+								myRes = myNameRes
+							}
+							return myRes
+						}
+
+						const validateAddress = async (receiverAddress) => {
+							let myAddress = await window.parent.validateAddress(receiverAddress)
+							return myAddress
+						}
+
+						const validateReceiver = async (recipient) => {
+							let lastRef = myRef
+							let isAddress
+
+							try {
+								isAddress = await validateAddress(recipient)
+							} catch (err) {
+								isAddress = false
+							}
+
+							if (isAddress) {
+								let myTransaction = await makeTransactionRequest(recipient, lastRef)
 								const res = getTxnRequestResponse(myTransaction)
-								return res;
+								return res
 							} else {
-						
-						let errorMsg = "Invalid Receiver!"
-								throw new Error(errorMsg)
-						
+								let myNameRes = await validateName(recipient)
+								if (myNameRes !== false) {
+									let myNameAddress = myNameRes.owner
+									let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
+									const res = getTxnRequestResponse(myTransaction)
+									return res
+								} else {
+									let errorMsg = get("walletpage.wchange29")
+									let pleaseMsg = get("walletpage.wchange44")
+									showErrorAndWait("INVALID_RECEIVER", errorMsg, pleaseMsg)
+									throw new Error(errorMsg)
+								}
 							}
 						}
-					}
 
-					const getName = async (recipient) => {
+						const getName = async (recipient) => {
+							try {
+								const getNames = await parentEpml.request("apiCall", {
+									type: "api",
+									url: `/names/address/${recipient}`
+								})
+
+								if (getNames.length > 0) {
+									return getNames[0].name
+								} else {
+									return ''
+								}
+							} catch (error) {
+								return ""
+							}
+						}
+
+						this.loader.show()
+
+						const makeTransactionRequest = async (receiver, lastRef) => {
+							let myReceiver = receiver
+							let mylastRef = lastRef
+							let dialogamount = get("transactions.amount")
+							let dialogAddress = get("login.address")
+							let dialogName = get("login.name")
+							let dialogto = get("transactions.to")
+							let recipientName = await getName(myReceiver)
+							let myTxnrequest = await parentEpml.request('transaction', {
+								type: 2,
+								nonce: this.myAddress.nonce,
+								params: {
+									recipient: myReceiver,
+									recipientName: recipientName,
+									amount: amount,
+									lastReference: mylastRef,
+									fee: fee,
+									dialogamount: dialogamount,
+									dialogto: dialogto,
+									dialogAddress,
+									dialogName
+								},
+								apiVersion: 2
+							})
+							return myTxnrequest
+						}
+
+						const getTxnRequestResponse = (txnResponse) => {
+							if (txnResponse.success === false && txnResponse.message) {
+								this.loader.hide()
+								throw new Error(txnResponse.message)
+							} else if (txnResponse.success === true && !txnResponse.data.error) {
+								this.loader.hide()
+								return txnResponse.data
+							} else {
+								this.loader.hide()
+								throw new Error('Error: could not send coin')
+							}
+	
+						}
+
 						try {
-							const getNames = await parentEpml.request("apiCall", {
-								type: "api",
-								url: `/names/address/${recipient}`,
-							});
-
-							if (getNames.length > 0) {
-								return getNames[0].name;
-							} else {
-								return '';
-							}
+							const result = await validateReceiver(recipient)
+							response = result
 						} catch (error) {
-							return "";
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
 						}
-					}
+						break
+					} else if (checkCoin === "BTC") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const xprv58 = this.btcWallet.derivedMasterPrivateKey
 
-					const makeTransactionRequest = async (receiver, lastRef) => {
-						let myReceiver = receiver;
-						let mylastRef = lastRef;
-						let dialogamount = get("transactions.amount");
-						let dialogAddress = get("login.address");
-						let dialogName = get("login.name");
-						let dialogto = get("transactions.to");
-						let recipientName = await getName(myReceiver);
-						let myTxnrequest = await parentEpml.request('transaction', {
-							type: 2,
-							nonce: this.myAddress.nonce,
-							params: {
-								recipient: myReceiver,
-								recipientName: recipientName,
-								amount: amount,
-								lastReference: mylastRef,
-								fee: fee,
-								dialogamount: dialogamount,
-								dialogto: dialogto,
-								dialogAddress,
-								dialogName
-							},
-							apiVersion: 2
+						const btcWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.btcWallet.derivedMasterPublicKey}`
 						})
-						return myTxnrequest;
-					}
 
-					const getTxnRequestResponse = (txnResponse) => {
-						if (txnResponse.success === false && txnResponse.message) {
-							this.loader.hide();
-							throw new Error(txnResponse.message);
-						} else if (txnResponse.success === true && !txnResponse.data.error) {
-							this.loader.hide();
-							return txnResponse.data;
-						} else {
-							this.loader.hide();
-							throw new Error('Error: could not send coin');
+						if (isNaN(Number(btcWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch BTC Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " BTC " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
 						}
-					
-					}
 
-					try {
-						const result = await validateReceiver(recipient);
-						response = result;
-					} catch (error) {
-						console.error(error);
-						response = '{"error": "Request could not be fulfilled"}';
-					} finally {
-						this.loader.hide();
+						const btcWalletBalanceDecimals = Number(btcWalletBalance)
+						const btcAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(btcWalletBalance) / 1e8).toFixed(8)
+						const fee = 50000
+
+						if (btcAmountDecimals + fee > btcWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								xprv58: xprv58,
+								receivingAddress: recipient,
+								bitcoinAmount: amount,
+								feePerByte: (this.btcFeePerByte / 1e8).toFixed(8)
+							}
+							const response = await parentEpml.request('sendBtc', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
+					} else if (checkCoin === "LTC") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const xprv58 = this.ltcWallet.derivedMasterPrivateKey
+
+						const ltcWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.ltcWallet.derivedMasterPublicKey}`
+						})
+
+						if (isNaN(Number(ltcWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch LTC Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " LTC " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const ltcWalletBalanceDecimals = Number(ltcWalletBalance)
+						const ltcAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(ltcWalletBalance) / 1e8).toFixed(8)
+						const fee = 30000
+
+						if (ltcAmountDecimals + fee > ltcWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								xprv58: xprv58,
+								receivingAddress: recipient,
+								litecoinAmount: amount,
+								feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8)
+							}
+							const response = await parentEpml.request('sendLtc', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
+					} else if (checkCoin === "DOGE") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const xprv58 = this.dogeWallet.derivedMasterPrivateKey
+
+						const dogeWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.dogeWallet.derivedMasterPublicKey}`
+						})
+
+						if (isNaN(Number(dogeWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch DOGE Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " DOGE " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const dogeWalletBalanceDecimals = Number(dogeWalletBalance)
+						const dogeAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(dogeWalletBalance) / 1e8).toFixed(8)
+						const fee = 5000000
+
+						if (dogeAmountDecimals + fee > dogeWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								xprv58: xprv58,
+								receivingAddress: recipient,
+								dogecoinAmount: amount,
+								feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8)
+							}
+							const response = await parentEpml.request('sendDoge', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
+					} else if (checkCoin === "DGB") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const xprv58 = this.dgbWallet.derivedMasterPrivateKey
+
+						const dgbWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.dgbWallet.derivedMasterPublicKey}`
+						})
+
+						if (isNaN(Number(dgbWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch DGB Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " DGB " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const dgbWalletBalanceDecimals = Number(dgbWalletBalance)
+						const dgbAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(dgbWalletBalance) / 1e8).toFixed(8)
+						const fee = 5000
+
+						if (dgbAmountDecimals + fee > dgbWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								xprv58: xprv58,
+								receivingAddress: recipient,
+								digibyteAmount: amount,
+								feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8)
+							}
+							const response = await parentEpml.request('sendDgb', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
+					} else if (checkCoin === "RVN") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const xprv58 = this.rvnWallet.derivedMasterPrivateKey
+
+						const rvnWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.rvnWallet.derivedMasterPublicKey}`
+						})
+
+						if (isNaN(Number(rvnWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch RVN Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " RVN " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const rvnWalletBalanceDecimals = Number(rvnWalletBalance)
+						const rvnAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(rvnWalletBalance) / 1e8).toFixed(8)
+						const fee = 562500
+
+						if (rvnAmountDecimals + fee > rvnWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								xprv58: xprv58,
+								receivingAddress: recipient,
+								ravencoinAmount: amount,
+								feePerByte: (this.rvnFeePerByte / 1e8).toFixed(8)
+							}
+							const response = await parentEpml.request('sendRvn', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
+					} else if (checkCoin === "ARRR") {
+						this.loader.show()
+						const amount = Number(data.amount)
+						const recipient = data.destinationAddress
+						const coin = data.coin
+						const memo = data.memo
+						const seed58 = this.arrrWallet.seed58
+
+						const arrrWalletBalance = await parentEpml.request('apiCall', {
+							url: `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`,
+							method: 'POST',
+							body: `${this.arrrWallet.seed58}`
+						})
+
+						if (isNaN(Number(arrrWalletBalance))) {
+							this.loader.hide()
+							let errorMsg = "Failed to Fetch ARRR Balance. Try again!"
+							let failedMsg = get("walletpage.wchange33") + " ARRR " + get("general.balance")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						const arrrWalletBalanceDecimals = Number(arrrWalletBalance)
+						const arrrAmountDecimals = Number(amount) * QORT_DECIMALS
+						const balance = (Number(arrrWalletBalance) / 1e8).toFixed(8)
+						const fee = 10000
+
+						if (arrrAmountDecimals + fee > arrrWalletBalanceDecimals) {
+							this.loader.hide()
+							let errorMsg = "Insufficient Funds!"
+							let failedMsg = get("walletpage.wchange26")
+							let pleaseMsg = get("walletpage.wchange44")
+							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let obj = {}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							break
+						}
+
+						this.loader.hide()
+
+						const processPayment = await showModalAndWait(
+							actions.SEND_COIN,
+							{
+								amount,
+								recipient,
+								coin,
+								balance
+							}
+						)
+
+						if (processPayment.action === 'reject') {
+							let errorMsg = "User declined request"
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+
+						this.loader.show()
+
+						const makeRequest = async () => {
+							const opts = {
+								entropy58: seed58,
+								receivingAddress: recipient,
+								arrrAmount: amount,
+								memo: memo
+							}
+							const response = await parentEpml.request('sendArrr', opts)
+							return response
+						}
+
+						const manageResponse = (response) => {
+							if (response.length === 64) {
+								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+							} else if (response === false) {
+								this.loader.hide()
+								let errorMsg = get("walletpage.wchange31")
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+							} else {
+								this.loader.hide()
+								let errorMsg = response.message
+								let pleaseMsg = get("walletpage.wchange44")
+								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
+							}
+						}
+
+						try {
+							const res = await makeRequest()
+							manageResponse(res)
+						} catch (error) {
+							console.error(error)
+							response = '{"error": "Request could not be fulfilled"}'
+						} finally {
+							this.loader.hide()
+						}
+						break
 					}
-					break;
 				}
-					
 
 				default:
-					console.log('Unhandled message: ' + JSON.stringify(data));
-					return;
+					console.log('Unhandled message: ' + JSON.stringify(data))
+					return
 			}
 
 			// Parse response
@@ -1700,78 +2386,89 @@ async function showModalAndWait(type, data) {
 		const modal = document.createElement('div');
 		modal.id = "backdrop"
 		modal.classList.add("backdrop");
-		modal.innerHTML =
-			` <div class="modal my-modal-class">
-            <div class="modal-content">
-                <div class="modal-body">
-                    ${type === actions.GET_USER_ACCOUNT ? `
-										<div class="modal-subcontainer">
-											<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> ${get("browserpage.bchange18")}`}</p>
-											<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service.toLowerCase()}.</p>
-											<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
-											<div class="checkbox-row">
-											<label for="authButton" id="authButtonLabel" style="color: var(--black);>
-												${get('browserpage.bchange26')}
-											</label>
-											<mwc-checkbox style="margin-right: -15px;"  id="authButton" 
-											?checked=${window.parent.reduxStore.getState().app.qAPPAutoAuth}>
-												</mwc-checkbox>
-											</div>
-										</div>
-										` : ''}
-										${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `
-							
-                    <div class="modal-subcontainer">
-                        <p class="modal-paragraph">${get("browserpage.bchange19")}</p>
-                        <table>
-                            ${data.resources.map((resource) => `
-                                <tr>
-                                    <td><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${resource.service}</td>
-                                    <td><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${resource.name}</td>
-                                    <td><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${resource.identifier}</td>
-                                    ${resource.filename ? `<td><span style="font-weight: bold">${get("browserpage.bchange34")}:</span> ${resource.filename}</td>` : ''}
-                                </tr>
-                            `).join('')}
-                        </table>
-                        <div class="checkbox-row">
-                            <label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-                                ${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
-                            </label>
-                            <mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-buttons">
-                    <button id="cancel-button">${get("browserpage.bchange27")}</button>
-                    <button id="ok-button">${get("browserpage.bchange28")}</button>
-                </div>
-            </div>
-        </div>
-										` : ''}
-									${type === actions.PUBLISH_QDN_RESOURCE ? `<div class="modal-subcontainer">
-										<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
-										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
-										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
-										<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
-										<div class="checkbox-row">
-											<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-												${get('browserpage.bchange29')}
-											</label>
-											<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee">
-											</mwc-checkbox>
-										</div>
-									</div>` : ''}
+		modal.innerHTML = `
+			<div class="modal my-modal-class">
+				<div class="modal-content">
+					<div class="modal-body">
 
-                    ${type === actions.GET_WALLET_BALANCE ? `<p class="modal-paragraph">${get("browserpage.bchange20")}</p>` : ''}
-                    ${type === actions.SEND_CHAT_MESSAGE ? `<p class="modal-paragraph">${get("browserpage.bchange22")}</p>` : ''}
-                </div>
-                <div class="modal-buttons">
-                    <button id="cancel-button">${get("browserpage.bchange27")}</button>
-                    <button id="ok-button">${get("browserpage.bchange28")}</button>
-                </div>
-            </div>
-        </div>
-     `;
+						${type === actions.GET_USER_ACCOUNT ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> ${get("browserpage.bchange18")}`}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service.toLowerCase()}.</p>
+								<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
+								<div class="checkbox-row">
+									<label for="authButton" id="authButtonLabel" style="color: var(--black);>
+										${get('browserpage.bchange26')}
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="authButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoAuth}></mwc-checkbox>
+								</div>
+							</div>
+						` : ''}
+
+						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `			
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+								<table>
+									${data.resources.map((resource) => `
+										<tr>
+											<td><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${resource.service}</td>
+											<td><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${resource.name}</td>
+											<td><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${resource.identifier}</td>
+											${resource.filename ? `<td><span style="font-weight: bold">${get("browserpage.bchange34")}:</span> ${resource.filename}</td>` : ''}
+										</tr>
+									`).join('')}
+								</table>
+								<div class="checkbox-row">
+									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
+										${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
+									</label>
+									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+								</div>
+							</div>
+						` : ''}
+
+						${type === actions.PUBLISH_QDN_RESOURCE ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
+								<div class="checkbox-row">
+									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
+										${get('browserpage.bchange29')}
+									</label>
+									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+								</div>
+							</div>
+						` : ''}
+
+						${type === actions.SEND_COIN ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange35")}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange2")}:</span> ${data.coin}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange19")}:</span> ${data.balance} ${data.coin}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange10")}:</span> ${data.recipient}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange11")}:</span> ${data.amount} ${data.coin}</p>
+							</div>
+						` : ''}
+
+						${type === actions.GET_WALLET_BALANCE ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
+							</div>
+						` : ''}
+
+						${type === actions.SEND_CHAT_MESSAGE ? `
+							<p class="modal-paragraph">${get("browserpage.bchange22")}</p>
+						` : ''}
+					</div>
+					<div class="modal-buttons">
+						<button id="cancel-button">${get("browserpage.bchange27")}</button>
+						<button id="ok-button">${get("browserpage.bchange28")}</button>
+					</div>
+				</div>
+			</div>
+		`;
 		document.body.appendChild(modal);
 
 		// Add click event listeners to the buttons
@@ -1815,146 +2512,247 @@ async function showModalAndWait(type, data) {
 		const checkbox = modal.querySelector('#authButton');
 		if (checkbox) {
 			checkbox.addEventListener('click', (e) => {
-					if (e.target.checked) {
-						window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
-						return
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
+					return
 				}
-					window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
+				window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
 			})
 		}
 	});
 }
 
+async function showErrorAndWait(type, data, data1) {
+	// Create the modal and add it to the DOM
+	const modalDelay = ms => new Promise(res => setTimeout(res, ms))
+	const error = document.createElement('div');
+	error.id = "backdrop"
+	error.classList.add("backdrop");
+	error.innerHTML = `
+		<div class="modal my-modal-class">
+			<div class="modal-content">
+				<div class="modal-body">
+
+					${type === "MISSING_FIELDS" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}<</p>
+						</div>
+					` : ''}
+
+					${type === "FAILED_FETCH" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "INSSUFFICIENT_FUNDS" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "INVALID_AMOUNT" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "NO_RECEIVER" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "INVALID_RECEIVER" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "DECLINED_REQUEST" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "TRANSACTION_FAILED" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+					${type === "TRANSACTION_SUCCESS" ? `
+						<div class="modal-subcontainer-error">
+							<p class="modal-paragraph-error">${data}</p>
+							<p class="modal-paragraph-error">${data1}</p>
+						</div>
+					` : ''}
+
+				</div>
+			</div>
+		</div>
+	`;
+	document.body.appendChild(error)
+
+	await modalDelay(3000)
+	document.body.removeChild(error)
+}
+
 // Add the styles for the modal
 const styles = `
-.backdrop {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgb(186 186 186 / 26%);
-overflow: hidden;
-animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards; 
-z-index: 1000000;
-}
+	.backdrop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgb(186 186 186 / 26%);
+		overflow: hidden;
+		animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards; 
+		z-index: 1000000;
+	}
 
-@keyframes backdrop_blur {
-0% { 
-    backdrop-filter: blur(0px);
-    background: transparent;
-    }
-100% { 
-    backdrop-filter: blur(5px);
-    background: rgb(186 186 186 / 26%);
-    }
-}
+	@keyframes backdrop_blur {
+		0% {
+			backdrop-filter: blur(0px);
+			background: transparent;
+		}
+		100% { 
+			backdrop-filter: blur(5px);
+			background: rgb(186 186 186 / 26%);
+		}
+	}
 
-@keyframes modal_transition {
-0% {
-    visibility: hidden;
-    opacity: 0;
-}
-100% {
-    visibility: visible;
-    opacity: 1;
-}
-}
+	@keyframes modal_transition {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+	}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
 
-.modal {
-position: relative;
-display: flex;
-justify-content: center;
-align-items: center;
-width: 100%;
-height: 100%;
-animation: 1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;
-z-index: 1000001;
-}
+	.modal {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+		animation: 1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;
+		z-index: 1000001;
+	}
 
-@keyframes modal_transition {
-0% {
-    visibility: hidden;
-    opacity: 0;
-}
-100% {
-    visibility: visible;
-    opacity: 1;
-}
-}
+	@keyframes modal_transition {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
 
-.modal-content {
-background-color: var(--white);
-border-radius: 10px;
-padding: 20px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-max-width: 80%;
-min-width: 300px;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-}
+	.modal-content {
+		background-color: var(--white);
+		border-radius: 10px;
+		padding: 20px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+		max-width: 80%;
+		min-width: 300px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
 
-.modal-body {
-padding: 25px;
-}
+	.modal-body {
+		padding: 25px;
+	}
 
-.modal-subcontainer {
-	color: var(--black);
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 15px;
-}
+	.modal-subcontainer {
+		color: var(--black);
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 15px;
+	}
 
-.modal-paragraph {
-font-family: Roboto, sans-serif;
-font-size: 18px;
-letter-spacing: 0.3px;
-font-weight: 300;
-color: var(--black);
-margin: 0;
-}
+	.modal-subcontainer-error {
+		color: var(--black);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 15px;
+	}
 
-.capitalize-first {
-	text-transform: capitalize;
-}
+	.modal-paragraph-error {
+		font-family: Roboto, sans-serif;
+		font-size: 20px;
+		letter-spacing: 0.3px;
+		font-weight: 700;
+		color: var(--black);
+		margin: 0;
+	}
 
-.checkbox-row {
-	display: flex;
-	align-items: center;
-	font-family: Montserrat, sans-serif;
-	font-weight: 600;
-	color: black;
-}
+	.modal-paragraph {
+		font-family: Roboto, sans-serif;
+		font-size: 18px;
+		letter-spacing: 0.3px;
+		font-weight: 300;
+		color: var(--black);
+		margin: 0;
+	}
 
-.modal-buttons {
-display: flex;
-justify-content: space-between;
-margin-top: 20px;
-}
+	.capitalize-first {
+		text-transform: capitalize;
+	}
 
-.modal-buttons button {
-background-color: #4caf50;
-border: none;
-color: #fff;
-padding: 10px 20px;
-border-radius: 5px;
-cursor: pointer;
-transition: background-color 0.2s;
-}
+	.checkbox-row {
+		display: flex;
+		align-items: center;
+		font-family: Montserrat, sans-serif;
+		font-weight: 600;
+		color: black;
+	}
 
-.modal-buttons button:hover {
-background-color: #3e8e41;
-}
+	.modal-buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 20px;
+	}
 
-#cancel-button {
-background-color: #f44336;
-}
+	.modal-buttons button {
+		background-color: #4caf50;
+		border: none;
+		color: #fff;
+		padding: 10px 20px;
+		border-radius: 5px;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
 
-#cancel-button:hover {
-background-color: #d32f2f;
-}
+	.modal-buttons button:hover {
+		background-color: #3e8e41;
+	}
+
+	#cancel-button {
+		background-color: #f44336;
+	}
+
+	#cancel-button:hover {
+		background-color: #d32f2f;
+	}
 `;
 
 const styleSheet = new CSSStyleSheet();
