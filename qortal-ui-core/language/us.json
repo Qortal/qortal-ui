@@ -319,7 +319,8 @@
 		"wchange55": "Your existing address book will be deleted and from backup new created.",
 		"wchange56": "WARNING!",
 		"wchange57": "Memo",
-		"wchange58": "New Address"
+		"wchange58": "New Address",
+		"wchange59": "Coin"
 	},
 	"tradepage": {
 		"tchange1": "Trade Portal",
@@ -632,7 +633,8 @@
 		"bchange31": "Name",
 		"bchange32": "Identifier",
 		"bchange33": "Instant publish",
-		"bchange34": "Filename"
+		"bchange34": "Filename",
+		"bchange35": "Do you give this application permission to send coins?"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
