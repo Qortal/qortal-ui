@@ -2397,7 +2397,7 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange24")} ${data.service.toLowerCase()}.</p>
 								<p class="modal-paragraph">${get("browserpage.bchange25")}</p>
 								<div class="checkbox-row">
-									<label for="authButton" id="authButtonLabel" style="color: var(--black);>
+									<label for="authButton" id="authButtonLabel" style="color: var(--black);">
 										${get('browserpage.bchange26')}
 									</label>
 									<mwc-checkbox style="margin-right: -15px;" id="authButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoAuth}></mwc-checkbox>
