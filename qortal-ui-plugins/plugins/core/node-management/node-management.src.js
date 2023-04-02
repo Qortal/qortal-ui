@@ -36,8 +36,9 @@ class NodeManagement extends LitElement {
             tempMintingAccount: { type: Object },
             nodeConfig: { type: Object },
             nodeDomain: { type: String },
+            myElementId: { type: String },
             theme: { type: String, reflect: true }
-        };
+        }
     }
 
     static get styles() {
@@ -124,27 +125,28 @@ class NodeManagement extends LitElement {
     }
 
     constructor() {
-        super();
-        this.upTime = "";
-        this.mintingAccounts = [];
-        this.peers = [];
-        this.addPeerLoading = false;
-        this.confPeerLoading = false;
-        this.addMintingAccountLoading = false;
-        this.removeMintingAccountLoading = false;
-        this.addMintingAccountKey = "";
-        this.addPeerMessage = "";
-        this.confPeerMessage = "";
-        this.addMintingAccountMessage = "";
-        this.tempMintingAccount = {};
+        super()
+        this.upTime = ""
+        this.mintingAccounts = []
+        this.peers = []
+        this.addPeerLoading = false
+        this.confPeerLoading = false
+        this.addMintingAccountLoading = false
+        this.removeMintingAccountLoading = false
+        this.addMintingAccountKey = ""
+        this.addPeerMessage = ""
+        this.confPeerMessage = ""
+        this.addMintingAccountMessage = ""
+        this.tempMintingAccount = {}
         this.config = {
             user: {
                 node: {},
             },
         };
-        this.nodeConfig = {};
-        this.nodeDomain = "";
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
+        this.nodeConfig = {}
+        this.nodeDomain = ""
+        this.myElementId = ''
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
@@ -285,13 +287,16 @@ class NodeManagement extends LitElement {
         // Call updateMintingAccounts
         this.updateMintingAccounts()
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            this.isTextMenuOpen = true
             this._textMenu(event)
         })
 
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
+        window.addEventListener('click', () => {
+            if (this.isTextMenuOpen) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
         })
 
         window.addEventListener('storage', () => {
@@ -309,8 +314,35 @@ class NodeManagement extends LitElement {
         })
 
         window.onkeyup = (e) => {
-            if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
+            if (e.keyCode === 27) {
+                parentEpml.request('closeCopyTextMenu', null)
+            }
         }
+
+        this.shadowRoot.getElementById('addMintingAccountKey').addEventListener('contextmenu', (event) => {
+            const getSelectedText = () => {
+                var text = ''
+                if (typeof window.getSelection != 'undefined') {
+                    text = window.getSelection().toString()
+                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                    text = this.shadowRoot.selection.createRange().text
+                }
+                return text
+            }
+            const checkSelectedTextAndShowMenu = () => {
+                let selectedText = getSelectedText()
+                if (selectedText && typeof selectedText === 'string') {
+                } else {
+                    this.myElementId = ''
+                    this.pasteMenu(event, 'addMintingAccountKey')
+                    this.myElementId = this.shadowRoot.getElementById('addMintingAccountKey')
+                    this.isPasteMenuOpen = true
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+            }
+            checkSelectedTextAndShowMenu()
+        })
 
         // Calculate HH MM SS from Milliseconds...
         const convertMsToTime = (milliseconds) => {
@@ -369,7 +401,8 @@ class NodeManagement extends LitElement {
             setTimeout(getNodeConfig, 1000);
         };
 
-        let configLoaded = false;
+        let configLoaded = false
+
         parentEpml.ready().then(() => {
             parentEpml.subscribe("config", async c => {
                 if (!configLoaded) {
@@ -381,11 +414,23 @@ class NodeManagement extends LitElement {
                 }
                 this.config = JSON.parse(c);
             })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection();
+
+            parentEpml.subscribe('copy_menu_switch', async (value) => {
+                if (value === 'false' && this.isTextMenuOpen === true) {
+                    this.clearSelection()
+                    this.isTextMenuOpen = false
+                }
             })
-        });
-        parentEpml.imReady();
+
+            parentEpml.subscribe('frame_paste_menu_switch', async res => {
+                res = JSON.parse(res)
+                if (res.isOpen === false && this.isPasteMenuOpen === true) {
+                    this.pasteToTextBox(this.myElementId)
+                    this.isPasteMenuOpen = false
+                }
+            })
+        })
+        parentEpml.imReady()
     }
 
     changeTheme() {
@@ -513,22 +558,33 @@ class NodeManagement extends LitElement {
         });
     }
 
-    _textMenu(event) {
+    pasteToTextBox(elementId) {
+        window.focus()
+        navigator.clipboard.readText().then((clipboardText) => {
+            elementId.value += clipboardText
+            elementId.focus()
+        })
+    }
 
+    pasteMenu(event, elementId) {
+        let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY, elementId }
+        parentEpml.request('openFramePasteMenu', eventObject)
+    }
+
+    _textMenu(event) {
         const getSelectedText = () => {
-            var text = "";
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text;
+            var text = ''
+            if (typeof window.getSelection != 'undefined') {
+                text = window.getSelection().toString()
+            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
+                text = this.shadowRoot.selection.createRange().text
             }
-            return text;
+            return text
         }
 
         const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
+            let selectedText = getSelectedText()
             if (selectedText && typeof selectedText === 'string') {
-
                 let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
 
                 let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
@@ -536,7 +592,6 @@ class NodeManagement extends LitElement {
                 parentEpml.request('openCopyTextMenu', textMenuObject)
             }
         }
-
         checkSelectedTextAndShowMenu()
     }
 
