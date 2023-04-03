@@ -115,6 +115,19 @@ class TradePortal extends LitElement {
 			--_lumo-grid-border-color: var(--border);
 			--_lumo-grid-secondary-border-color: var(--border2);
 		}
+
+		.myhover vaadin-grid::part(first-column-cell):hover {
+			background-color: var(--black);
+			color: var(--white);
+		}
+		.myfocused vaadin-grid::part(focused-cell) {
+			background-color: var(--black);
+			color: var(--white);
+		}
+		vaadin-grid::part(selected-row) {
+			background-color: var(--black);
+			color: var(--white);
+		}
 		paper-spinner-lite {
 			height: 30px;
 			width: 30px;
@@ -847,19 +860,26 @@ class TradePortal extends LitElement {
 
     openTradesTemplate() {
         return html`
-		<div class="open-trades">
+		<div class="open-trades myhover myfocused">
 			<div class="box">
 				<header><span>${translate("tradepage.tchange5")}</span></header>
 				<div class="border-wrapper">
 					<div class="loadingContainer" id="loadingHistoricTrades" style="display:${this.isLoadingOpenTrades ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
-					<vaadin-grid multi-sort="true" theme="compact column-borders row-stripes wrap-cell-content" id="openOrdersGrid" aria-label="Open Orders" .items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}">
+					<vaadin-grid
+						multi-sort="true"
+						theme="compact column-borders row-stripes"
+						wrap-cell-content
+						id="openOrdersGrid"
+						aria-label="Open Orders"
+						.items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}"
+					>
 						<vaadin-grid-column
 							auto-width
 							resizable
 							header="${translate("tradepage.tchange8")} (QORT)"
 							id="qortAmountColumn"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.fillBuyForm(data)}">${this.round(data.item.qortAmount)}</span>`, root)
+								render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${this.round(data.item.qortAmount)}</span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
