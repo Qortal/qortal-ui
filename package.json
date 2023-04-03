@@ -37,7 +37,7 @@
     "os-locale": "3.0.0"
   },
   "devDependencies": {
-    "electron": "23.2.0",
+    "electron": "23.2.1",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
     "shelljs": "0.8.5"

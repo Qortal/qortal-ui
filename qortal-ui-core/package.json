@@ -17,12 +17,12 @@
 	"author": "QORTAL <admin@qortal.org>",
 	"license": "GPL-3.0",
 	"dependencies": {
-		"@hapi/hapi": "21.3.0",
+		"@hapi/hapi": "21.3.1",
 		"@hapi/inert": "7.1.0",
-		"sass": "1.59.3"
+		"sass": "1.60.0"
 	},
 	"devDependencies": {
-		"@babel/core": "7.21.3",
+		"@babel/core": "7.21.4",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
@@ -60,11 +60,11 @@
 		"@rollup/plugin-node-resolve": "15.0.1",
 		"@rollup/plugin-replace": "5.0.2",
 		"@rollup/plugin-terser": "0.4.0",
-		"@vaadin/button": "23.3.9",
-		"@vaadin/grid": "23.3.9",
-		"@vaadin/icons": "23.3.9",
-		"@vaadin/password-field": "23.3.9",
-		"@vaadin/tooltip": "23.3.9",
+		"@vaadin/button": "24.0.2",
+		"@vaadin/grid": "24.0.2",
+		"@vaadin/icons": "24.0.2",
+		"@vaadin/password-field": "24.0.2",
+		"@vaadin/tooltip": "24.0.2",
 		"asmcrypto.js": "2.3.2",
 		"bcryptjs": "2.4.3",
 		"epml": "0.3.3",
@@ -75,7 +75,7 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.20.1",
+		"rollup": "3.20.2",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0"
