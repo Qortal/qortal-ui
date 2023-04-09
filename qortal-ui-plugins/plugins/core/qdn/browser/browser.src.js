@@ -268,7 +268,7 @@ class WebBrowser extends LitElement {
     				</div>
     				<div class="iframe-container">
     					<iframe id="browser-iframe" src="${this.url
-			}" sandbox="allow-scripts allow-forms allow-downloads" allow="fullscreen">
+			}" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin" allow="fullscreen">
     						<span style="color: var(--black);">${translate(
 				'browserpage.bchange6'
 			)}</span>
