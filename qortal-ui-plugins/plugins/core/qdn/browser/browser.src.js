@@ -42,7 +42,8 @@ class WebBrowser extends LitElement {
 			dogeFeePerByte: { type: Number },
 			dgbFeePerByte: { type: Number },
 			rvnFeePerByte: { type: Number },
-			arrrWalletAddress: { type: String }
+			arrrWalletAddress: { type: String },
+			theme: { type: String, reflect: true }
 		}
 	}
 
@@ -56,6 +57,10 @@ class WebBrowser extends LitElement {
 				--mdc-theme-primary: rgb(3, 169, 244);
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--paper-input-container-focus-color: var(--mdc-theme-primary);
+				--mdc-checkbox-unchecked-color: var(--black);
+				--mdc-theme-on-surface: var(--black);
+				--mdc-checkbox-disabled-color: var(--black);
+				--mdc-checkbox-ink-color: var(--black);
 			}
 
 			#websitesWrapper paper-button {
@@ -136,9 +141,7 @@ class WebBrowser extends LitElement {
 		this.preview = urlParams.get('preview');
 		this.followedNames = [];
 		this.blockedNames = [];
-		this.theme = localStorage.getItem('qortalTheme')
-			? localStorage.getItem('qortalTheme')
-			: 'light';
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 		this.loader = new Loader();
 		// Build initial display URL
 		let displayUrl = 'qortal://' + this.service + '/' + this.name;
@@ -268,7 +271,7 @@ class WebBrowser extends LitElement {
     				</div>
     				<div class="iframe-container">
     					<iframe id="browser-iframe" src="${this.url
-			}" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin" allow="fullscreen">
+			}" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-modals" allow="fullscreen">
     						<span style="color: var(--black);">${translate(
 				'browserpage.bchange6'
 			)}</span>
@@ -2516,7 +2519,7 @@ async function showModalAndWait(type, data) {
 					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
 					return
 				}
-				window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
 			})
 		}
 	});
@@ -2608,6 +2611,16 @@ async function showErrorAndWait(type, data, data1) {
 
 // Add the styles for the modal
 const styles = `
+	* {
+		--mdc-theme-primary: rgb(3, 169, 244);
+		--mdc-theme-secondary: var(--mdc-theme-primary);
+		--paper-input-container-focus-color: var(--mdc-theme-primary);
+		--mdc-checkbox-unchecked-color: var(--black);
+		--mdc-theme-on-surface: var(--black);
+		--mdc-checkbox-disabled-color: var(--black);
+		--mdc-checkbox-ink-color: var(--black);
+	}
+
 	.backdrop {
 		position: fixed;
 		top: 0;
@@ -2723,7 +2736,7 @@ const styles = `
 		align-items: center;
 		font-family: Montserrat, sans-serif;
 		font-weight: 600;
-		color: black;
+		color: var(--black);
 	}
 
 	.modal-buttons {
