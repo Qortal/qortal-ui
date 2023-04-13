@@ -1320,9 +1320,9 @@ class GroupManagement extends LitElement {
                 <div class="divCard">
                     <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
                     <vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
-                        <vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
+                        <vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
+                        <vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
+                        <vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderRole(data.item)}`, root)
                         }}></vaadin-grid-column>
@@ -1382,9 +1382,9 @@ class GroupManagement extends LitElement {
                     </vaadin-text-field><br>
                     <vaadin-grid theme="large" id="publicGroupsGrid" .items="${this.filteredItems}" aria-label="Public Open Groups" all-rows-visible>
                         <vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-column>
+                        <vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
+                        <vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
+                        <vaadin-grid-sort-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-sort-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
                             render(html`<mwc-button @click=${() => this.joinGroup(data.item)}><mwc-icon>queue</mwc-icon>&nbsp;${translate("grouppage.gchange51")}</mwc-button>`, root)
                         }}></vaadin-grid-column>
