@@ -258,12 +258,12 @@ class LoginView extends connect(store)(LitElement) {
             </style>
             <div class="login-page" ?hidden=${this.loggedIn}>
                 <mwc-fab icon="settings" style="position:fixed; right:24px; bottom:24px;" @click=${() => settings.show()}></mwc-fab>
-                <h4 style="position:fixed; right:24px; bottom:-19px; color:#03a8f5">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h4>
                 <span style="position:fixed; left:24px; bottom:24px;"><qort-theme-toggle></qort-theme-toggle></span>
                 <div class="login-card-container">
                     <div class="login-card-center-container">
                         <div class="login-card" id="login-card">
                         <img class="qortal-logo" src="${this.config.coin.logo}">
+						<h5 style="color:var(--mdc-theme-primary)" ?hidden="${this.selectedPage != "welcome"}">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
                             <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="loginContainerPages">
                                 <welcome-page @next=${e => this.selectedPageElement.next(e)} page="welcome"></welcome-page>
                                 <create-account-section @next=${e => this.selectedPageElement.next(e)} page="create-account"></create-account-section>
