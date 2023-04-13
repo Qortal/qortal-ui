@@ -634,7 +634,8 @@
 		"bchange32": "Identifier",
 		"bchange33": "Instant publish",
 		"bchange34": "Filename",
-		"bchange35": "Do you give this application permission to send coins?"
+		"bchange35": "Do you give this application permission to send coins?",
+		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
