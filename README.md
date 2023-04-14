@@ -27,9 +27,9 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.profile ``` (For Debian based distro) <br/>
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
-``` nvm install v18.12.1 ```  (LTS: Hydrogen supported by Electron) <br/>
+``` nvm install v18.14.0 ```  (LTS: Hydrogen supported by Electron) <br/>
 ``` npm --location=global install yarn@1.22.19 ``` <br/>
-``` npm --location=global install npm@9.4.2 ``` <br/>
+``` npm --location=global install npm@9.6.4 ``` <br/>
 
 On BSD do a ``` pkg_add node followed by npm install -g yarn ```
 
