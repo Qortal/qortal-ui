@@ -3,6 +3,7 @@ import Base58 from './deps/Base58.js'
 import { request } from './fetch-request'
 import signChat from './transactions/chat/signChat.js'
 import signArbitrary from './transactions/arbitrary/signArbitrary.js'
+import signArbitraryWithFee from './transactions/arbitrary/signArbitraryWithFee.js'
 
 
 export const createTransaction = (type, keyPair, params) => {
@@ -31,8 +32,20 @@ export const signArbitraryTransaction = (arbitraryBytesBase58, arbitraryBytesFor
 	return signArbitrary(arbitraryBytesBase58, arbitraryBytesForSigningBase58, nonce, keyPair)
 }
 
+export const signArbitraryWithFeeTransaction = (arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair) => {
+	return signArbitraryWithFee(arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair)
+}
+
+
+
 // Process Transactions
 export const processTransaction = bytes => request('/transactions/process', {
 	method: 'POST',
 	body: Base58.encode(bytes)
 })
+
+export const processTransactionVersion2 = bytes => request('/transactions/process?apiVersion=2', {
+	method: 'POST',
+	body: Base58.encode(bytes)
+})
+
