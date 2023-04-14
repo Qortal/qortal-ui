@@ -679,7 +679,7 @@ class NamesMarket extends LitElement {
 
     async updatePageSoldSize() {
         this.filteredSoldItems = []
-        this.marketSoldNames.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount))
+        this.marketSoldNames.sort((b, a) => parseFloat(a.amount) - parseFloat(b.amount))
         this.filteredSoldItems = this.marketSoldNames
         await this.setSoldPages()
         await this.updateItemsSoldFromPage(1, true)

@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { stateAwait } from '../../stateAwait.js'
+import { translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -36,6 +37,7 @@ class LoginView extends connect(store)(LitElement) {
             config: { type: Object },
             rippleLoadingMessage: { type: String },
             selectedPageElement: {},
+            nodeConfig: { type: Object },
             theme: { type: String, reflect: true }
         }
     }
@@ -132,10 +134,8 @@ class LoginView extends connect(store)(LitElement) {
                     max-height:var(--window-height);
                     margin-right: auto;
                     margin-left: auto;
-
                     width: calc(100vw);
                 }
-
                 .qortal-logo {
 		    margin-left: auto;
 		    margin-right: auto;
@@ -202,7 +202,6 @@ class LoginView extends connect(store)(LitElement) {
                         border-radius: 4px;
                     }
                     #loginContainerPages [page="welcome"] {
-
                     }
                 }
                 @media only screen and (max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
@@ -222,7 +221,6 @@ class LoginView extends connect(store)(LitElement) {
                         padding-left:12px;
                     }
                 }
-
                 @keyframes fade {
                     from {
                         opacity: 0;
@@ -258,7 +256,6 @@ class LoginView extends connect(store)(LitElement) {
                     display: none;
                 }
             </style>
-
             <div class="login-page" ?hidden=${this.loggedIn}>
                 <mwc-fab icon="settings" style="position:fixed; right:24px; bottom:24px;" @click=${() => settings.show()}></mwc-fab>
                 <span style="position:fixed; left:24px; bottom:24px;"><qort-theme-toggle></qort-theme-toggle></span>
@@ -266,6 +263,7 @@ class LoginView extends connect(store)(LitElement) {
                     <div class="login-card-center-container">
                         <div class="login-card" id="login-card">
                         <img class="qortal-logo" src="${this.config.coin.logo}">
+						<h5 style="color:var(--mdc-theme-primary)" ?hidden="${this.selectedPage != "welcome"}">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
                             <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="loginContainerPages">
                                 <welcome-page @next=${e => this.selectedPageElement.next(e)} page="welcome"></welcome-page>
                                 <create-account-section @next=${e => this.selectedPageElement.next(e)} page="create-account"></create-account-section>
@@ -294,6 +292,7 @@ class LoginView extends connect(store)(LitElement) {
         if (this.loggedIn && !state.app.loggedIn) this.cleanup()
         this.loggedIn = state.app.loggedIn
         this.config = state.config
+        this.nodeConfig = state.app.nodeConfig
     }
 
     cleanup() {
