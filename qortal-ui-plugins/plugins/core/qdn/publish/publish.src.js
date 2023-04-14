@@ -10,6 +10,7 @@ registerTranslateConfig({
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-select'
+import '@material/mwc-dialog'
 import '@material/mwc-list/mwc-list-item.js'
 import '@polymer/paper-progress/paper-progress.js'
 
@@ -55,6 +56,10 @@ class PublishData extends LitElement {
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-min-width: 400px;
+                --mdc-dialog-max-width: 1024px;
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -67,7 +72,6 @@ class PublishData extends LitElement {
                 --_lumo-grid-border-color: var(--border);
                 --_lumo-grid-secondary-border-color: var(--border2);
             }
-
 
             input[type=text] {
                 padding: 6px 6px 6px 6px;
@@ -94,7 +98,10 @@ class PublishData extends LitElement {
             }
 
             #publishWrapper .buttons {
-                width: auto !important;
+                display: flex;
+                justify-content: space-between;
+                max-width:100%;
+                width:100%;
             }
 
             mwc-textfield {
@@ -124,16 +131,24 @@ class PublishData extends LitElement {
             .address-bar-button mwc-icon {
                 width: 30px;
             }
+
+            .red {
+                --mdc-theme-primary: #F44336;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
+            }
         `
     }
 
     constructor() {
         super()
 
-        this.showName = false;
+        this.showName = false
         this.showService = false
         this.showIdentifier = false
-	this.showMetadata = false
+        this.showMetadata = false
 
         const urlParams = new URLSearchParams(window.location.search)
         this.name = urlParams.get('name')
@@ -182,7 +197,7 @@ class PublishData extends LitElement {
                 setTimeout(() => {
                     this.names = res
                     if (res[0] != null) {
-                        this.myRegisteredName = res[0].name;
+                        this.myRegisteredName = res[0].name
                     }
                 }, 1)
             })
@@ -201,7 +216,7 @@ class PublishData extends LitElement {
         const fetchPeersSummary = () => {
             parentEpml.request('apiCall', {url: `/peers/summary`}).then(res => {
                 setTimeout(() => {
-                    this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0);
+                    this.portForwardingEnabled = (res.inboundConnections != null && res.inboundConnections > 0)
                 }, 1)
             })
             setTimeout(fetchPeersSummary, this.config.user.nodeSettings.pingInterval)
@@ -252,7 +267,7 @@ class PublishData extends LitElement {
                     <p style="display: ${this.showName ? 'block' : 'none'}">
                         <mwc-select id="registeredName" label="${translate("publishpage.pchange4")}" @selected=${(e) => this.selectName(e)} style="min-width: 130px; max-width:100%; width:100%;">
                             <mwc-list-item selected value=""></mwc-list-item>
-                            <mwc-list-item value="${this.myRegisteredName}">${this.myRegisteredName}</mwc-list-item>
+                            <mwc-list-item value="${this.myRegisteredName}" style="color: var(--black);">${this.myRegisteredName}</mwc-list-item>
                         </mwc-select>
                     </p>
                     <div style="display: ${this.showMetadata ? 'block' : 'none'}">
@@ -269,13 +284,13 @@ class PublishData extends LitElement {
                                 `)}
                             </mwc-select>
                         </p>
-                        <p>
+                        <div style="display: flex; justify-content: space-between; max-width:100%; width:100%;">
                             <mwc-textfield style="width:19.6%;" id="tag1" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[0] != null ? this.metadata.tags[0] : ''}" placeholder="${translate("publishpage.pchange8")} 1" maxLength="20"></mwc-textfield>
                             <mwc-textfield style="width:19.6%;" id="tag2" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[1] != null ? this.metadata.tags[1] : ''}" placeholder="${translate("publishpage.pchange8")} 2" maxLength="20"></mwc-textfield>
                             <mwc-textfield style="width:19.6%;" id="tag3" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[2] != null ? this.metadata.tags[2] : ''}" placeholder="${translate("publishpage.pchange8")} 3" maxLength="20"></mwc-textfield>
                             <mwc-textfield style="width:19.6%;" id="tag4" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[3] != null ? this.metadata.tags[3] : ''}" placeholder="${translate("publishpage.pchange8")} 4" maxLength="20"></mwc-textfield>
                             <mwc-textfield style="width:19.6%;" id="tag5" type="text" value="${this.metadata != null && this.metadata.tags != null && this.metadata.tags[4] != null ? this.metadata.tags[4] : ''}" placeholder="${translate("publishpage.pchange8")} 5" maxLength="20"></mwc-textfield>
-                        </p>
+                        </div>
                     </div>
                     ${this.renderUploadField()}
                     <p style="display: ${this.showService ? 'block' : 'none'}">
@@ -289,14 +304,22 @@ class PublishData extends LitElement {
                     <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
-                        <div>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.doPublish(e, true)}> ${translate("appspage.schange40")}</mwc-button>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => this.doPublish(e, false)}> ${translate("publishpage.pchange11")}</mwc-button>
-                        </div>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.doPublish(e, true, false)}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${() => this.shadowRoot.querySelector('#publishWithFeeDialog').show()}> ${translate("publishpage.pchange11")}</mwc-button>
                     </div>
                 </div>
             </div>
-	`
+            <!-- Publish With Fee Dialog -->
+            <mwc-dialog id="publishWithFeeDialog" scrimClickAction="" escapeKeyAction="">
+                 <div style="text-align: center;">${translate("browserpage.bchange36")}<br>${translate("browserpage.bchange29")}</div>
+                 <mwc-button slot="primaryAction" @click="${(e) => this.feeDialogNo(e, false, false)}" class="red">
+                     ${translate("general.no")}
+                 </mwc-button>
+                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green">
+                     ${translate("general.yes")}
+                 </mwc-button>
+            </mwc-dialog>
+        `
     }
 
     firstUpdated() {
@@ -337,11 +360,11 @@ class PublishData extends LitElement {
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
-            this.theme = 'dark';
+            this.theme = 'dark'
         } else {
-            this.theme = 'light';
+            this.theme = 'light'
         }
-        document.querySelector('html').setAttribute('theme', this.theme);
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     changeLanguage() {
@@ -357,7 +380,7 @@ class PublishData extends LitElement {
 
     // Navigation
     goBack() {
-        window.history.back();
+        window.history.back()
     }
 
 
@@ -386,8 +409,17 @@ class PublishData extends LitElement {
         }
     }
 
+    feeDialogYes(e, preview, fee) {
+        this.doPublish(e, preview, fee)
+        this.shadowRoot.querySelector('#publishWithFeeDialog').close()
+    }
 
-    doPublish(e, preview) {
+    feeDialogNo(e, preview, fee) {
+        this.doPublish(e, preview, fee)
+        this.shadowRoot.querySelector('#publishWithFeeDialog').close()
+    }
+
+    doPublish(e, preview, fee) {
         let registeredName = this.shadowRoot.getElementById('registeredName').value
         let service = this.shadowRoot.getElementById('service').value
         let identifier = this.shadowRoot.getElementById('identifier').value
@@ -397,8 +429,8 @@ class PublishData extends LitElement {
             registeredName = this.name
         }
 
-        let file;
-        let path;
+        let file
+        let path
 
         if (this.uploadType === "file" || this.uploadType === "zip") {
             file = this.shadowRoot.getElementById('file').files[0]
@@ -433,11 +465,11 @@ class PublishData extends LitElement {
             parentEpml.request('showSnackBar', `${err5string}`)
         }
         else {
-            this.publishData(registeredName, path, file, service, identifier, preview)
+            this.publishData(registeredName, path, file, service, identifier, preview, fee)
         }
     }
 
-    async publishData(registeredName, path, file, service, identifier, preview) {
+    async publishData(registeredName, path, file, service, identifier, preview, fee) {
         this.loading = true
         this.btnDisable = true
 
@@ -463,48 +495,55 @@ class PublishData extends LitElement {
             if (validNameRes.error) {
                 this.errorMessage = "Error: " + validNameRes.message
                 showError(this.errorMessage)
-                throw new Error(this.errorMessage);
+                throw new Error(this.errorMessage)
             }
 
             let err6string = get("publishpage.pchange19")
             this.generalMessage = `${err6string}`
-            let transactionBytes;
-            let previewUrlPath;
+            let transactionBytes
+            let previewUrlPath
 
-            let uploadDataRes = await uploadData(registeredName, path, file, preview)
+            let uploadDataRes = await uploadData(registeredName, path, file, preview, fee)
+
             if (uploadDataRes.error) {
                 let err7string = get("publishpage.pchange20")
                 this.errorMessage = `${err7string}` + uploadDataRes.message
                 showError(this.errorMessage)
-                throw new Error(this.errorMessage);
+                throw new Error(this.errorMessage)
             }
             else if (uploadDataRes.includes("Error 500 Internal Server Error")) {
                 let err8string = get("publishpage.pchange21")
                 this.errorMessage = `${err8string}`
                 showError(this.errorMessage)
-                throw new Error(this.errorMessage);
+                throw new Error(this.errorMessage)
             }
 
             if (preview) {
                 // uploadData() returns preview URL path when in preview mode
-                previewUrlPath = uploadDataRes;
-                window.location = `../browser/index.html?service=${this.service}&name=Preview&preview=${previewUrlPath}`;
-                return;
+                previewUrlPath = uploadDataRes
+                window.location = `../browser/index.html?service=${this.service}&name=Preview&preview=${previewUrlPath}`
+                return
             }
             else {
                 // uploadData() returns transaction bytes when not in preview mode
-                transactionBytes = uploadDataRes;
+                transactionBytes = uploadDataRes
             }
 
-            let err9string = get("publishpage.pchange22")
-            this.generalMessage = `${err9string}`
+            if (fee) {
+                let err9string = get("publishpage.pchange26")
+                this.generalMessage = `${err9string}`
+            } else {
+                let err9string = get("publishpage.pchange22")
+                this.generalMessage = `${err9string}`
+            }
 
-            let signAndProcessRes = await signAndProcess(transactionBytes)
+            let signAndProcessRes = await signAndProcess(transactionBytes, fee)
+
             if (signAndProcessRes.error) {
                 let err10string = get("publishpage.pchange20")
                 this.errorMessage = `${err10string}` + signAndProcessRes.message
                 showError(this.errorMessage)
-                throw new Error(this.errorMessage);
+                throw new Error(this.errorMessage)
             }
 
             let err11string = get("publishpage.pchange23")
@@ -516,7 +555,7 @@ class PublishData extends LitElement {
             this.successMessage = `${err11string}`
         }
 
-        const uploadData = async (registeredName, path, file, preview) => {
+        const uploadData = async (registeredName, path, file, preview, fee) => {
             let postBody = path
             let urlSuffix = ""
             if (file != null) {
@@ -532,24 +571,37 @@ class PublishData extends LitElement {
 
                 // Base64 encode the file to work around compatibility issues between javascript and java byte arrays
                 let fileBuffer = new Uint8Array(await file.arrayBuffer())
-                postBody = Buffer.from(fileBuffer).toString('base64');
+                postBody = Buffer.from(fileBuffer).toString('base64')
             }
 
             // Optional metadata
-            let title = encodeURIComponent(this.shadowRoot.getElementById('title').value);
-            let description = encodeURIComponent(this.shadowRoot.getElementById('description').value);
-            let category = encodeURIComponent(this.shadowRoot.getElementById('category').value);
-            let tag1 = encodeURIComponent(this.shadowRoot.getElementById('tag1').value);
-            let tag2 = encodeURIComponent(this.shadowRoot.getElementById('tag2').value);
-            let tag3 = encodeURIComponent(this.shadowRoot.getElementById('tag3').value);
-            let tag4 = encodeURIComponent(this.shadowRoot.getElementById('tag4').value);
-            let tag5 = encodeURIComponent(this.shadowRoot.getElementById('tag5').value);
+            let title = encodeURIComponent(this.shadowRoot.getElementById('title').value)
+            let description = encodeURIComponent(this.shadowRoot.getElementById('description').value)
+            let category = encodeURIComponent(this.shadowRoot.getElementById('category').value)
+            let tag1 = encodeURIComponent(this.shadowRoot.getElementById('tag1').value)
+            let tag2 = encodeURIComponent(this.shadowRoot.getElementById('tag2').value)
+            let tag3 = encodeURIComponent(this.shadowRoot.getElementById('tag3').value)
+            let tag4 = encodeURIComponent(this.shadowRoot.getElementById('tag4').value)
+            let tag5 = encodeURIComponent(this.shadowRoot.getElementById('tag5').value)
 
             let metadataQueryString = `title=${title}&description=${description}&category=${category}&tags=${tag1}&tags=${tag2}&tags=${tag3}&tags=${tag4}&tags=${tag5}`
+            let uploadDataUrl = ``
 
-            let uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
-            if (identifier != null && identifier.trim().length > 0) {
-                uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
+            if (preview) {
+                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
+                if (identifier != null && identifier.trim().length > 0) {
+                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
+                }
+            } else if (fee) {
+                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                if (identifier != null && identifier.trim().length > 0) {
+                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                }
+            } else {
+                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
+                if (identifier != null && identifier.trim().length > 0) {
+                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
+                }
             }
 
             let uploadDataRes = await parentEpml.request('apiCall', {
@@ -571,38 +623,47 @@ class PublishData extends LitElement {
             return convertedBytes
         }
 
-        const signAndProcess = async (transactionBytesBase58) => {
+        const signAndProcess = async (transactionBytesBase58, fee) => {
             let convertedBytesBase58 = await convertBytesForSigning(transactionBytesBase58)
             if (convertedBytesBase58.error) {
                 let err12string = get("publishpage.pchange20")
                 this.errorMessage = `${err12string}` + convertedBytesBase58.message
                 showError(this.errorMessage)
-                throw new Error(this.errorMessage);
+                throw new Error(this.errorMessage)
             }
 
-            const convertedBytes = window.parent.Base58.decode(convertedBytesBase58);
-            const _convertedBytesArray = Object.keys(convertedBytes).map(function (key) { return convertedBytes[key]; });
+            const convertedBytes = window.parent.Base58.decode(convertedBytesBase58)
+            const _convertedBytesArray = Object.keys(convertedBytes).map(function (key) { return convertedBytes[key] })
             const convertedBytesArray = new Uint8Array(_convertedBytesArray)
             const convertedBytesHash = new window.parent.Sha256().process(convertedBytesArray).finish().result
 
-            const hashPtr = window.parent.sbrk(32, window.parent.heap);
-            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
-            hashAry.set(convertedBytesHash);
+            const hashPtr = window.parent.sbrk(32, window.parent.heap)
+            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
+            hashAry.set(convertedBytesHash)
 
-            const difficulty = 14;
-            const workBufferLength = 8 * 1024 * 1024;
-            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
+            const difficulty = 14
+            const workBufferLength = 8 * 1024 * 1024
+            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
 
-            this.errorMessage = '';
-            this.successMessage = '';
+            this.errorMessage = ''
+            this.successMessage = ''
             let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
+            let response = false
 
-            let response = await parentEpml.request('sign_arbitrary', {
-                nonce: this.selectedAddress.nonce,
-                arbitraryBytesBase58: transactionBytesBase58,
-                arbitraryBytesForSigningBase58: convertedBytesBase58,
-                arbitraryNonce: nonce
-            })
+            if (fee) {
+                response = await parentEpml.request('sign_arbitrary_with_fee', {
+                    nonce: this.selectedAddress.nonce,
+                    arbitraryBytesBase58: transactionBytesBase58,
+                    arbitraryBytesForSigningBase58: convertedBytesBase58
+                })
+            } else {
+                response = await parentEpml.request('sign_arbitrary', {
+                    nonce: this.selectedAddress.nonce,
+                    arbitraryBytesBase58: transactionBytesBase58,
+                    arbitraryBytesForSigningBase58: convertedBytesBase58,
+                    arbitraryNonce: nonce
+                })
+            }
 
             let myResponse = { error: '' }
             if (response === false) {
@@ -641,7 +702,7 @@ class PublishData extends LitElement {
 
 
     fetchResourceMetadata() {
-        let identifier = this.identifier != null ? this.identifier : "default";
+        let identifier = this.identifier != null ? this.identifier : "default"
 
         parentEpml.request('apiCall', {
             url: `/arbitrary/metadata/${this.service}/${this.name}/${identifier}?apiKey=${this.getApiKey()}`
@@ -650,10 +711,10 @@ class PublishData extends LitElement {
             setTimeout(() => {
                 this.metadata = res
                 if (this.metadata != null && this.metadata.category != null) {
-                    this.shadowRoot.getElementById('category').value = this.metadata.category;
+                    this.shadowRoot.getElementById('category').value = this.metadata.category
                 }
                 else {
-                    this.shadowRoot.getElementById('category').value = "";
+                    this.shadowRoot.getElementById('category').value = ""
                 }
             }, 1)
         })
@@ -666,13 +727,13 @@ class PublishData extends LitElement {
         if (name.value.length > 0) {
             this.name = (name.value)
         }
-        this.fetchResourceMetadata();
+        this.fetchResourceMetadata()
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
     clearSelection() {

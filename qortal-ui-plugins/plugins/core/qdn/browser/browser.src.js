@@ -42,7 +42,8 @@ class WebBrowser extends LitElement {
 			dogeFeePerByte: { type: Number },
 			dgbFeePerByte: { type: Number },
 			rvnFeePerByte: { type: Number },
-			arrrWalletAddress: { type: String }
+			arrrWalletAddress: { type: String },
+			theme: { type: String, reflect: true }
 		}
 	}
 
@@ -56,6 +57,10 @@ class WebBrowser extends LitElement {
 				--mdc-theme-primary: rgb(3, 169, 244);
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--paper-input-container-focus-color: var(--mdc-theme-primary);
+				--mdc-checkbox-unchecked-color: var(--black);
+				--mdc-theme-on-surface: var(--black);
+				--mdc-checkbox-disabled-color: var(--black);
+				--mdc-checkbox-ink-color: var(--black);
 			}
 
 			#websitesWrapper paper-button {
@@ -136,9 +141,7 @@ class WebBrowser extends LitElement {
 		this.preview = urlParams.get('preview');
 		this.followedNames = [];
 		this.blockedNames = [];
-		this.theme = localStorage.getItem('qortalTheme')
-			? localStorage.getItem('qortalTheme')
-			: 'light';
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 		this.loader = new Loader();
 		// Build initial display URL
 		let displayUrl = 'qortal://' + this.service + '/' + this.name;
@@ -241,42 +244,81 @@ class WebBrowser extends LitElement {
 
 	render() {
 		return html`
-    		<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
-    			<div class="layout horizontal center">
-    				<div class="address-bar">
-    					<mwc-button @click=${() => this.goBack()} title="${translate(
-			'general.back'
-		)}" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
-    					<mwc-button @click=${() => this.goForward()} title="${translate(
-			'browserpage.bchange1'
-		)}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
-    					<mwc-button @click=${() => this.refresh()} title="${translate(
-			'browserpage.bchange2'
-		)}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
-    					<mwc-button @click=${() => this.goBackToList()} title="${translate(
-			'browserpage.bchange3'
-		)}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-    					<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl
-			}"></input>
-    					<mwc-button @click=${() => this.delete()} title="${translate(
-				'browserpage.bchange4'
-			)} ${this.service} ${this.name} ${translate(
-				'browserpage.bchange5'
-			)}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
-    					${this.renderBlockUnblockButton()}
-    					${this.renderFollowUnfollowButton()}
-    				</div>
-    				<div class="iframe-container">
-    					<iframe id="browser-iframe" src="${this.url
-			}" sandbox="allow-scripts allow-forms allow-downloads" allow="fullscreen">
-    						<span style="color: var(--black);">${translate(
-				'browserpage.bchange6'
-			)}</span>
-    					</iframe>
+    			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
+    				<div class="layout horizontal center">
+    					<div class="address-bar">
+    						<mwc-button @click=${() => this.goBack()} title="${translate('general.back')}" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
+    						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
+    						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
+    						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
+    						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
+    						${this.renderFullScreen()}
+    						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
+    						${this.renderBlockUnblockButton()}
+    						${this.renderFollowUnfollowButton()}
+    					</div>
+    					<div class="iframe-container">
+    						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms allow-downloads allow-modals" allow="fullscreen">
+    							<span style="color: var(--black);">${translate('browserpage.bchange6')}</span>
+    						</iframe>
+    					</div>
     				</div>
     			</div>
-    		</div>
-    	`;
+		`;
+	}
+
+      renderFullScreen() {
+		if (window.innerHeight == screen.height) {
+			return html`
+				<mwc-button
+					@click=${() => this.exitFullScreen()}
+					title="${translate('browserpage.bchange9')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>fullscreen_exit</mwc-icon>
+				</mwc-button>
+			`
+		} else {
+			return html`
+				<mwc-button
+					@click=${() => this.goFullScreen()}
+					title="${translate('browserpage.bchange9')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>fullscreen</mwc-icon>
+				</mwc-button>
+			`
+		}
+      }
+
+	goFullScreen() {
+		var elem = this.shadowRoot.getElementById('websitesWrapper')
+
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen()
+		} else if (elem.mozRequestFullScreen) {
+			elem.mozRequestFullScreen()
+		} else if (elem.webkitRequestFullscreen) {
+			elem.webkitRequestFullscreen()
+		} else if (elem.msRequestFullscreen) {
+			elem.msRequestFullscreen()
+		}
+
+		this.renderFullScreen()
+	}
+
+	exitFullScreen() {
+		if(document.exitFullscreen) {
+			document.exitFullscreen()
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen()
+		} else if (document.webkitExitFullscreen) {
+			document.webkitExitFullscreen()
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen()
+		}
+
+		this.renderFullScreen()
 	}
 
 	async unitJoinFee() {
@@ -2165,9 +2207,11 @@ class WebBrowser extends LitElement {
 
 	goBackToList() {
 		if (this.service == "APP") {
+			this.exitFullScreen()
 			window.location = '../../q-app/index.html';
 		}
 		else { // Default to websites list
+			this.exitFullScreen()
 			window.location = '../index.html';
 		}
 	}
@@ -2516,7 +2560,7 @@ async function showModalAndWait(type, data) {
 					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
 					return
 				}
-				window.parent.reduxStore.dispatch( window.parent.reduxAction.allowQAPPAutoAuth(true))
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
 			})
 		}
 	});
@@ -2608,6 +2652,16 @@ async function showErrorAndWait(type, data, data1) {
 
 // Add the styles for the modal
 const styles = `
+	* {
+		--mdc-theme-primary: rgb(3, 169, 244);
+		--mdc-theme-secondary: var(--mdc-theme-primary);
+		--paper-input-container-focus-color: var(--mdc-theme-primary);
+		--mdc-checkbox-unchecked-color: var(--black);
+		--mdc-theme-on-surface: var(--black);
+		--mdc-checkbox-disabled-color: var(--black);
+		--mdc-checkbox-ink-color: var(--black);
+	}
+
 	.backdrop {
 		position: fixed;
 		top: 0;
@@ -2723,7 +2777,7 @@ const styles = `
 		align-items: center;
 		font-family: Montserrat, sans-serif;
 		font-weight: 600;
-		color: black;
+		color: var(--black);
 	}
 
 	.modal-buttons {

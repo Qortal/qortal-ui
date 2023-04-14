@@ -596,7 +596,8 @@
 		"pchange22": "Computando prova de trabalho... isso pode levar algum tempo...",
 		"pchange23": "Transação bem sucedida!",
 		"pchange24": "Não foi possível assinar e processar a transação",
-		"pchange25": "Escolha um Arqivo"
+		"pchange25": "Escolha um Arqivo",
+		"pchange26": "Carregando dados... isso pode levar algum tempo..."
 	},
 	"browserpage": {
 		"bchange1": "Encaminhar",
@@ -627,7 +628,14 @@
 		"bchange26": "Sempre autenticar automaticamente",
 		"bchange27": "Rejeitar",
 		"bchange28": "Aceitar",
-		"bchange29": "Publicação instantânea (requer taxa QORT de 0,001)"
+		"bchange29": "Publicação instantânea (requer taxa QORT de 0,001)",
+		"bchange30": "Serviço",
+		"bchange31": "Nome",
+		"bchange32": "Identificador",
+		"bchange33": "Publicação instantânea",
+		"bchange34": "Nome do arquivo",
+		"bchange35": "Você dá permissão a este aplicativo para enviar moedas?",
+		"bchange36": "Deseja publicar instantaneamente em QDN sem calcular a prova de trabalho?"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

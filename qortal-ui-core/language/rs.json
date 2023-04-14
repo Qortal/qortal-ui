@@ -596,7 +596,8 @@
 		"pchange22": "Proračunavanje dokaza o radu... ovo može potrajati...",
 		"pchange23": "Transakcija uspešna!",
 		"pchange24": "Nemogućnost potpisa i izvršenja transakcije",
-		"pchange25": "Izaberite Datoteku"
+		"pchange25": "Izaberite Datoteku",
+		"pchange26": "Otpremanje podataka... ovo može potrajati..."
 	},
 	"browserpage": {
 		"bchange1": "Prosledite",
@@ -627,7 +628,14 @@
 		"bchange26": "Uvek automatski autentifikovati",
 		"bchange27": "Odbaci",
 		"bchange28": "Prihvatam",
-		"bchange29": "Trenutno objavljivanje (zahteva 0,001 QORT naknade)"
+		"bchange29": "Trenutno objavljivanje (zahteva 0,001 QORT naknade)",
+		"bchange30": "Usluga",
+		"bchange31": "Ime",
+		"bchange32": "Identifikator",
+		"bchange33": "Objavljivanje odmah",
+		"bchange34": "Ime datoteke",
+		"bchange35": "Da li ovoj aplikaciji dajete dozvolu za slanje novčića?",
+		"bchange36": "Da li želite da objavite instant na QDN bez izračunavanja dokaza o radu?"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

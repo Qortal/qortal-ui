@@ -596,7 +596,8 @@
 		"pchange22": "Se calculeaza evidenta contributiei in retea... acest lucru poate dura ceva timp...",
 		"pchange23": "Tranzactie reusita!",
 		"pchange24": "Nu s-a putut semna si procesa tranzactia",
-		"pchange25": "Alege fisier"
+		"pchange25": "Alege fisier",
+		"pchange26": "Încărcarea datelor... poate dura ceva timp..."
 	},
 	"browserpage": {
 		"bchange1": "Inainte",
@@ -627,7 +628,14 @@
 		"bchange26": "Autentificați-vă întotdeauna automat",
 		"bchange27": "Respinge",
 		"bchange28": "Accept",
-		"bchange29": "Publicare instantanee (necesită o taxă QORT de 0,001)"
+		"bchange29": "Publicare instantanee (necesită o taxă QORT de 0,001)",
+		"bchange30": "Serviciul",
+		"bchange31": "Nume",
+		"bchange32": "Identificator",
+		"bchange33": "Publicare instantanee",
+		"bchange34": "Nume fișier",
+		"bchange35": "Acordați acestei aplicații permisiunea de a trimite monede?",
+		"bchange36": "Doriți să publicați instant în QDN fără a calcula dovada de lucru?"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",
