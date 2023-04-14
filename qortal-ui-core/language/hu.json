@@ -635,7 +635,9 @@
 		"bchange33": "Azonnali közzététel",
 		"bchange34": "Fájlnév",
 		"bchange35": "Engedélyt ad ennek az alkalmazásnak érmék küldésére?",
-		"bchange36": "Szeretne azonnal közzétenni a QDN-ben a munkaigazolás kiszámítása nélkül?"
+		"bchange36": "Szeretne azonnal közzétenni a QDN-ben a munkaigazolás kiszámítása nélkül?",
+		"bchange37": "Belépés a teljes képernyőre",
+		"bchange38": "Kilépés a teljes képernyőről"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",

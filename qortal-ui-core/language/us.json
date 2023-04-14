@@ -636,7 +636,9 @@
 		"bchange33": "Instant publish",
 		"bchange34": "Filename",
 		"bchange35": "Do you give this application permission to send coins?",
-		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?"
+		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?",
+		"bchange37": "Enter Fullscreen",
+		"bchange38": "Exit Fullscreen"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

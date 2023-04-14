@@ -635,7 +635,9 @@
 		"bchange33": "Sofortige Veröffentlichung",
 		"bchange34": "Dateiname",
 		"bchange35": "Erteilen Sie dieser Anwendung die Erlaubnis, Coins zu senden?",
-		"bchange36": "Möchten Sie sofort auf QDN veröffentlichen, ohne einen Proof-of-Work zu berechnen?"
+		"bchange36": "Möchten Sie sofort auf QDN veröffentlichen, ohne einen Proof-of-Work zu berechnen?",
+		"bchange37": "Vollbild aufrufen",
+		"bchange38": "Vollbild beenden"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",

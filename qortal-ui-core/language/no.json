@@ -635,7 +635,9 @@
 		"bchange33": "Øyeblikkelig publisering",
 		"bchange34": "Filnavn",
 		"bchange35": "Gir du denne applikasjonen tillatelse til å sende mynter?",
-		"bchange36": "Vil du publisere øyeblikkelig til QDN uten å regne ut bevis på arbeid?"
+		"bchange36": "Vil du publisere øyeblikkelig til QDN uten å regne ut bevis på arbeid?",
+		"bchange37": "Gå inn i fullskjerm",
+		"bchange38": "Avslutt fullskjerm"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",
