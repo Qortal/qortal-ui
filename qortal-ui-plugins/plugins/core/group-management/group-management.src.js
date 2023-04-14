@@ -1979,7 +1979,7 @@ class GroupManagement extends LitElement {
     }
 
     renderBanButton(groupObj) {
-        return html`<mwc-button class="warning" @click=${() => this.openCreateBanMemberDialog(groupObj)}><mwc-icon>hardware</mwc-icon>&nbsp;${translate("managegroup.mg6")}</mwc-button>`
+        return html`<mwc-button class="red" @click=${() => this.openCreateBanMemberDialog(groupObj)}><mwc-icon>hardware</mwc-icon>&nbsp;${translate("managegroup.mg6")}</mwc-button>`
     }
 
     openCreateBanMemberDialog(groupObj) {
@@ -2029,7 +2029,7 @@ class GroupManagement extends LitElement {
     }
 
     renderKickGroupMemberButton(groupObj) {
-        return html`<mwc-button class="red" title="${translate("managegroup.mg31")}" @click=${() => this.openKickGroupMemberDialog(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("managegroup.mg7")}</mwc-button>`
+        return html`<mwc-button class="warning" title="${translate("managegroup.mg31")}" @click=${() => this.openKickGroupMemberDialog(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("managegroup.mg7")}</mwc-button>`
     }
 
     openKickGroupMemberDialog(groupObj) {
