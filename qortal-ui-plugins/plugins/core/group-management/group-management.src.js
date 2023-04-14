@@ -1979,7 +1979,7 @@ class GroupManagement extends LitElement {
     }
 
     renderBanButton(groupObj) {
-        return html`<mwc-button class="warning" @click=${() => this.openCreateBanMemberDialog(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("managegroup.mg6")}</mwc-button>`
+        return html`<mwc-button class="warning" @click=${() => this.openCreateBanMemberDialog(groupObj)}><mwc-icon>hardware</mwc-icon>&nbsp;${translate("managegroup.mg6")}</mwc-button>`
     }
 
     openCreateBanMemberDialog(groupObj) {
