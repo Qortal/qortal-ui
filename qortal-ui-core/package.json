@@ -19,7 +19,7 @@
 	"dependencies": {
 		"@hapi/hapi": "21.3.1",
 		"@hapi/inert": "7.1.0",
-		"sass": "1.60.0"
+		"sass": "1.62.0"
 	},
 	"devDependencies": {
 		"@babel/core": "7.21.4",
@@ -54,12 +54,12 @@
 		"@polymer/paper-toast": "3.0.1",
 		"@polymer/paper-tooltip": "3.0.1",
 		"@qortal/rollup-plugin-web-worker-loader": "1.6.4",
-		"@rollup/plugin-alias": "4.0.3",
+		"@rollup/plugin-alias": "5.0.0",
 		"@rollup/plugin-babel": "6.0.3",
-		"@rollup/plugin-commonjs": "24.0.1",
-		"@rollup/plugin-node-resolve": "15.0.1",
+		"@rollup/plugin-commonjs": "24.1.0",
+		"@rollup/plugin-node-resolve": "15.0.2",
 		"@rollup/plugin-replace": "5.0.2",
-		"@rollup/plugin-terser": "0.4.0",
+		"@rollup/plugin-terser": "0.4.1",
 		"@vaadin/button": "24.0.2",
 		"@vaadin/grid": "24.0.2",
 		"@vaadin/icons": "24.0.2",
@@ -69,7 +69,7 @@
 		"bcryptjs": "2.4.3",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
-		"lit": "2.7.0",
+		"lit": "2.7.2",
 		"lit-translate": "2.0.1",
 		"localforage": "1.10.0",
 		"pwa-helpers": "0.9.1",
@@ -81,6 +81,6 @@
 		"rollup-plugin-scss": "3.0.0"
 	},
 	"engines": {
-		"node": ">=18.12.1"
+		"node": ">=18.14.0"
 	}
 }
