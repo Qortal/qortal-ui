@@ -596,7 +596,8 @@
 		"pchange22": "Prova di calcolo del lavoro... questo può richiedere del tempo...",
 		"pchange23": "Transazione riuscita!",
 		"pchange24": "Impossibile firmare ed elaborare la transazione",
-		"pchange25": "Scegli file"
+		"pchange25": "Scegli file",
+		"pchange26": "Caricamento dei dati... questo può richiedere del tempo..."
 	},
 	"browserpage": {
 		"bchange1": "Avanti",
@@ -627,7 +628,14 @@
 		"bchange26": "Autenticati sempre automaticamente",
 		"bchange27": "Rifiuta",
 		"bchange28": "Accetta",
-		"bchange29": "Pubblicazione istantanea (richiede una quota di 0,001 QORT)"
+		"bchange29": "Pubblicazione istantanea (richiede una quota di 0,001 QORT)",
+		"bchange30": "Servizio",
+		"bchange31": "Nome",
+		"bchange32": "Identificativo",
+		"bchange33": "Pubblicazione istantanea",
+		"bchange34": "Nome file",
+		"bchange35": "Concedi a questa applicazione il permesso di inviare monete?",
+		"bchange36": "Vuoi pubblicare istantaneamente su QDN senza calcolare la prova del lavoro?"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",

@@ -596,7 +596,8 @@
 		"pchange22": "Berechnung des Arbeitsnachweises ... dies kann einige Zeit dauern ...",
 		"pchange23": "Transaktion Erfolgreich!",
 		"pchange24": "Transaktion kann nicht signiert und verarbeitet werden",
-		"pchange25": "Datei wählen"
+		"pchange25": "Datei wählen",
+		"pchange26": "Daten werden hochgeladen... dies kann einige Zeit dauern..."
 	},
 	"browserpage": {
 		"bchange1": "Vorwärts",
@@ -627,7 +628,14 @@
 		"bchange26": "Immer automatisch authentifizieren",
 		"bchange27": "Ablehnen",
 		"bchange28": "Akzeptieren",
-		"bchange29": "Sofortige Veröffentlichung (erfordert 0,001 QORT-Gebühr)"
+		"bchange29": "Sofortige Veröffentlichung (erfordert 0,001 QORT-Gebühr)",
+		"bchange30": "Dienst",
+		"bchange31": "Name",
+		"bchange32": "Kennung",
+		"bchange33": "Sofortige Veröffentlichung",
+		"bchange34": "Dateiname",
+		"bchange35": "Erteilen Sie dieser Anwendung die Erlaubnis, Coins zu senden?",
+		"bchange36": "Möchten Sie sofort auf QDN veröffentlichen, ohne einen Proof-of-Work zu berechnen?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",

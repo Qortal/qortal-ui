@@ -596,7 +596,8 @@
 		"pchange22": "A munka igazolásának számítása... Ez eltarthat egy ideig...",
 		"pchange23": "A tranzakció sikeres!",
 		"pchange24": "Nem lehet aláírni és feldolgozni a tranzakciót",
-		"pchange25": "Fájl Kiválasztása"
+		"pchange25": "Fájl Kiválasztása",
+		"pchange26": "Adatok feltöltése... ez eltarthat egy ideig..."
 	},
 	"browserpage": {
 		"bchange1": "Előre",
@@ -627,7 +628,14 @@
 		"bchange26": "Mindig automatikus hitelesítés",
 		"bchange27": "Elutasítás",
 		"bchange28": "Elfogadás",
-		"bchange29": "Azonnali közzététel (0,001 QORT díj szükséges)"
+		"bchange29": "Azonnali közzététel (0,001 QORT díj szükséges)",
+		"bchange30": "Szolgáltatás",
+		"bchange31": "Név",
+		"bchange32": "Azonosító",
+		"bchange33": "Azonnali közzététel",
+		"bchange34": "Fájlnév",
+		"bchange35": "Engedélyt ad ennek az alkalmazásnak érmék küldésére?",
+		"bchange36": "Szeretne azonnal közzétenni a QDN-ben a munkaigazolás kiszámítása nélkül?"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",
