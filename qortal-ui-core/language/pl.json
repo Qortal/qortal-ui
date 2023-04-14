@@ -596,7 +596,8 @@
 		"pchange22": "Obliczanie dowodu pracy... może to zająć trochę czasu...",
 		"pchange23": "Transakcja powiodła się!",
 		"pchange24": "Nie można podpisać i przetworzyć transakcji",
-		"pchange25": "Wybierz plik"
+		"pchange25": "Wybierz plik",
+		"pchange26": "Ładowanie danych... może to trochę potrwać..."
 	},
 	"browserpage": {
 		"bchange1": "Naprzód",
@@ -627,7 +628,14 @@
 		"bchange26": "Zawsze uwierzytelniaj automatycznie",
 		"bchange27": "Odrzuć",
 		"bchange28": "Akceptuj",
-		"bchange29": "Natychmiastowa publikacja (wymagana opłata QORT 0,001)"
+		"bchange29": "Natychmiastowa publikacja (wymagana opłata QORT 0,001)",
+		"bchange30": "Usługa",
+		"bchange31": "Nazwa",
+		"bchange32": "Identyfikator",
+		"bchange33": "Natychmiastowa publikacja",
+		"bchange34": "Nazwa pliku",
+		"bchange35": "Czy zezwalasz tej aplikacji na wysyłanie monet?",
+		"bchange36": "Czy chcesz natychmiast opublikować w QDN bez obliczania dowodu pracy?"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

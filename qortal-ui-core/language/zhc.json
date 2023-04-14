@@ -596,7 +596,8 @@
 		"pchange22": "计算工作量证明中... 请稍等...",
 		"pchange23": "发布成功!",
 		"pchange24": "发布失败!",
-		"pchange25": "选择文件"
+		"pchange25": "选择文件",
+		"pchange26": "正在上传数据...这可能需要一些时间..."
 	},
 	"browserpage": {
 		"bchange1": "下一页",
@@ -627,7 +628,14 @@
 		"bchange26": "始终自动验证",
 		"bchange27": "拒绝",
 		"bchange28": "接受",
-		"bchange29": "即时发布（需要 0.001 QORT 费用）"
+		"bchange29": "即时发布（需要 0.001 QORT 费用）",
+		"bchange30": "服务",
+		"bchange31": "姓名",
+		"bchange32": "标识符",
+		"bchange33": "即时发布",
+		"bchange34": "文件名",
+		"bchange35": "你允许这个应用程序发送硬币吗？",
+		"bchange36": "你想在不计算工作证明的情况下即时发布到 QDN 吗？"
 	},
 	"datapage": {
 		"dchange1": "资料管理",

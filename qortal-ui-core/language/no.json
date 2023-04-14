@@ -596,7 +596,8 @@
 		"pchange22": "Databehandler proof of work... dette kan ta litt tid...",
 		"pchange23": "Transaksjon vellykket!",
 		"pchange24": "Kan ikke signere og behandle transaksjonen",
-		"pchange25": "Velg fil"
+		"pchange25": "Velg fil",
+		"pchange26": "Laster opp data... dette kan ta litt tid..."
 	},
 	"browserpage": {
 		"bchange1": "Frem",
@@ -627,7 +628,14 @@
 		"bchange26": "Autentiser alltid automatisk",
 		"bchange27": "Avvis",
 		"bchange28": "Godta",
-		"bchange29": "Øyeblikkelig publisering (krever 0,001 QORT-avgift)"
+		"bchange29": "Øyeblikkelig publisering (krever 0,001 QORT-avgift)",
+		"bchange30": "Tjeneste",
+		"bchange31": "Navn",
+		"bchange32": "Identifikator",
+		"bchange33": "Øyeblikkelig publisering",
+		"bchange34": "Filnavn",
+		"bchange35": "Gir du denne applikasjonen tillatelse til å sende mynter?",
+		"bchange36": "Vil du publisere øyeblikkelig til QDN uten å regne ut bevis på arbeid?"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

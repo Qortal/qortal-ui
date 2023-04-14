@@ -596,7 +596,8 @@
 		"pchange22": "Calcul de la preuve de travail... cela peut prendre un certain temps...",
 		"pchange23": "Transaction réussie!",
 		"pchange24": "Impossible de signer et de traiter la transaction",
-		"pchange25": "Choisissez un fichier"
+		"pchange25": "Choisissez un fichier",
+		"pchange26": "Télécharger des données... cela peut prendre un certain temps..."
 	},
 	"browserpage": {
 		"bchange1": "En avant",
@@ -627,7 +628,14 @@
 		"bchange26": "Toujours s'authentifier automatiquement",
 		"bchange27": "Rejeter",
 		"bchange28": "Accepter",
-		"bchange29": "Publication instantanée (nécessite des frais de 0,001 QORT)"
+		"bchange29": "Publication instantanée (nécessite des frais de 0,001 QORT)",
+		"bchange30": "Service",
+		"bchange31": "Nom",
+		"bchange32": "Identifiant",
+		"bchange33": "Publication instantanée",
+		"bchange34": "Nom de fichier",
+		"bchange35": "Autorisez-vous cette application à envoyer des pièces ?",
+		"bchange36": "Voulez-vous publier instantanément sur QDN sans calculer de preuve de travail ?"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",

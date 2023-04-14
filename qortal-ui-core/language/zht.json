@@ -596,7 +596,8 @@
 		"pchange22": "計算工作量證明中... 請稍等...",
 		"pchange23": "發佈成功!",
 		"pchange24": "發佈失敗!",
-		"pchange25": "選擇文件"
+		"pchange25": "選擇文件",
+		"pchange26": "正在上傳數據...這可能需要一些時間..."
 	},
 	"browserpage": {
 		"bchange1": "下一頁",
@@ -627,7 +628,14 @@
 		"bchange26": "始終自動驗證",
 		"bchange27": "拒絕",
 		"bchange28": "接受",
-		"bchange29": "即時發布（需要 0.001 QORT 費用）"
+		"bchange29": "即時發布（需要 0.001 QORT 費用）",
+		"bchange30": "服務",
+		"bchange31": "姓名",
+		"bchange32": "標識符",
+		"bchange33": "即時發布",
+		"bchange34": "文件名",
+		"bchange35": "你允許這個應用程序發送硬幣嗎？",
+		"bchange36": "你想在不計算工作證明的情況下即時發佈到 QDN 嗎？"
 	},
 	"datapage": {
 		"dchange1": "資料管理",
