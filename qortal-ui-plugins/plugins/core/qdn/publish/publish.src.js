@@ -529,8 +529,13 @@ class PublishData extends LitElement {
                 transactionBytes = uploadDataRes
             }
 
-            let err9string = get("publishpage.pchange22")
-            this.generalMessage = `${err9string}`
+            if (fee) {
+                let err9string = get("publishpage.pchange26")
+                this.generalMessage = `${err9string}`
+            } else {
+                let err9string = get("publishpage.pchange22")
+                this.generalMessage = `${err9string}`
+            }
 
             let signAndProcessRes = await signAndProcess(transactionBytes, fee)
 
