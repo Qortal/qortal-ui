@@ -272,7 +272,7 @@ class WebBrowser extends LitElement {
 			return html`
 				<mwc-button
 					@click=${() => this.exitFullScreen()}
-					title="${translate('browserpage.bchange9')} ${this.name}"
+					title="${translate('browserpage.bchange38')}"
 					class="address-bar-button float-right"
 				>
 					<mwc-icon>fullscreen_exit</mwc-icon>
@@ -282,7 +282,7 @@ class WebBrowser extends LitElement {
 			return html`
 				<mwc-button
 					@click=${() => this.goFullScreen()}
-					title="${translate('browserpage.bchange9')} ${this.name}"
+					title="${translate('browserpage.bchange37')}"
 					class="address-bar-button float-right"
 				>
 					<mwc-icon>fullscreen</mwc-icon>
@@ -2704,14 +2704,14 @@ async function showModalAndWait(type, data) {
 						` : ''}
 						${type === actions.ADD_LIST_ITEMS ? `
 							<div class="modal-subcontainer">
-								<p class="modal-paragraph">${get("browserpage.bchange37")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange43")}</p>
 								<p class="modal-paragraph">${get("browserpage.bchange40")}: <span> ${data.list_name}</span></p>
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.items.join(', ')}</span></p>
 							</div>
 						` : ''}
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
-								<p class="modal-paragraph">${get("browserpage.bchange38")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>
 								<p class="modal-paragraph">${get("browserpage.bchange40")}: <span> ${data.list_name}</span></p>
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.item}</span></p>
 							</div>

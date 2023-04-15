@@ -635,7 +635,9 @@
 		"bchange33": "Publicare instantanee",
 		"bchange34": "Nume fișier",
 		"bchange35": "Acordați acestei aplicații permisiunea de a trimite monede?",
-		"bchange36": "Doriți să publicați instant în QDN fără a calcula dovada de lucru?"
+		"bchange36": "Doriți să publicați instant în QDN fără a calcula dovada de lucru?",
+		"bchange37": "Intrați pe ecran complet",
+		"bchange38": "Ieșiți din ecranul complet"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",

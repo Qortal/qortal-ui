@@ -635,7 +635,9 @@
 		"bchange33": "Objavljivanje odmah",
 		"bchange34": "Ime datoteke",
 		"bchange35": "Da li ovoj aplikaciji dajete dozvolu za slanje novčića?",
-		"bchange36": "Da li želite da objavite instant na QDN bez izračunavanja dokaza o radu?"
+		"bchange36": "Da li želite da objavite instant na QDN bez izračunavanja dokaza o radu?",
+		"bchange37": "Uđi u ceo ekran",
+		"bchange38": "Izađi iz celog ekrana"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

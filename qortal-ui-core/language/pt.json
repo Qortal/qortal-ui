@@ -635,7 +635,9 @@
 		"bchange33": "Publicação instantânea",
 		"bchange34": "Nome do arquivo",
 		"bchange35": "Você dá permissão a este aplicativo para enviar moedas?",
-		"bchange36": "Deseja publicar instantaneamente em QDN sem calcular a prova de trabalho?"
+		"bchange36": "Deseja publicar instantaneamente em QDN sem calcular a prova de trabalho?",
+		"bchange37": "Entrar em tela cheia",
+		"bchange38": "Sair da tela cheia"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

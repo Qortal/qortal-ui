@@ -635,7 +635,9 @@
 		"bchange33": "Natychmiastowa publikacja",
 		"bchange34": "Nazwa pliku",
 		"bchange35": "Czy zezwalasz tej aplikacji na wysyłanie monet?",
-		"bchange36": "Czy chcesz natychmiast opublikować w QDN bez obliczania dowodu pracy?"
+		"bchange36": "Czy chcesz natychmiast opublikować w QDN bez obliczania dowodu pracy?",
+		"bchange37": "Wejdź na pełny ekran",
+		"bchange38": "Wyjdź z pełnego ekranu"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

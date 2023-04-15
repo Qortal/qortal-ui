@@ -635,7 +635,9 @@
 		"bchange33": "Publication instantanée",
 		"bchange34": "Nom de fichier",
 		"bchange35": "Autorisez-vous cette application à envoyer des pièces ?",
-		"bchange36": "Voulez-vous publier instantanément sur QDN sans calculer de preuve de travail ?"
+		"bchange36": "Voulez-vous publier instantanément sur QDN sans calculer de preuve de travail ?",
+		"bchange37": "Entrez en plein écran",
+		"bchange38": "Quitter le plein écran"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",
