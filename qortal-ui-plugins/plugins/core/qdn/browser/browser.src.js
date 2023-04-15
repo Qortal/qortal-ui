@@ -258,7 +258,7 @@ class WebBrowser extends LitElement {
     						${this.renderFollowUnfollowButton()}
     					</div>
     					<div class="iframe-container">
-    						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-forms allow-downloads allow-modals" allow="fullscreen">
+    						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals" allow="fullscreen">
     							<span style="color: var(--black);">${translate('browserpage.bchange6')}</span>
     						</iframe>
     					</div>
@@ -526,7 +526,8 @@ class WebBrowser extends LitElement {
 			let data = event.data;
 
 			switch (data.action) {
-				case actions.GET_USER_ACCOUNT:
+				case actions.GET_USER_ACCOUNT: {
+
 					let skip = false;
 					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
 						skip = true;
@@ -555,11 +556,199 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break;
 					}
+				}
+				case actions.GET_LIST_ITEMS: {
+					const requiredFields = ['list_name'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					let skip = false;
+					if (window.parent.reduxStore.getState().app.qAPPAutoLists) {
+						skip = true;
+					}
+					let res1;
+					if (!skip) {
+						res1 = await showModalAndWait(
+							actions.GET_LIST_ITEMS,
+							{
+								list_name: data.list_name
+							}
+						);
+					};
+
+
+					if (res1 && res1.action === 'accept' || skip) {
+
+						try {
+							const list = await parentEpml.request('apiCall', {
+								type: 'api',
+								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`,
+							});
+							response = JSON.stringify(list);
+
+						} catch (error) {
+							const data = {};
+							const errorMsg = "Error in retrieving list"
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+						} finally {
+							break;
+						}
+
+					} else {
+						const data = {};
+						const errorMsg = "User declined to share list"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break;
+					}
+				};
+				case actions.ADD_LIST_ITEMS: {
+					const requiredFields = ['list_name', 'items'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const items = data.items
+					const list_name = data.list_name
+					const res = await showModalAndWait(
+						actions.ADD_LIST_ITEMS,
+						{
+							list_name: list_name,
+							items: items
+						}
+					);
+
+					if (res && res.action === 'accept') {
+
+						try {
+							const body = {
+								items: items,
+							};
+
+							const bodyToString = JSON.stringify(body);
+							const data = await parentEpml.request('apiCall', {
+								type: 'api',
+								method: 'POST',
+								url: `/lists/${list_name}?apiKey=${this.getApiKey()}`,
+								body: bodyToString,
+								headers: {
+									'Content-Type': 'application/json',
+								},
+							});
+							response = data
+						} catch (error) {
+							const data = {};
+							const errorMsg = "Error in adding to list"
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+						} finally {
+							break;
+						}
+
+					} else {
+						const data = {};
+						const errorMsg = "User declined add to list"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break;
+					}
+				};
+				case actions.DELETE_LIST_ITEM: {
+					const requiredFields = ['list_name', 'item'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const item = data.item
+					const list_name = data.list_name
+					const res = await showModalAndWait(
+						actions.DELETE_LIST_ITEM,
+						{
+							list_name: list_name,
+							item: item
+						}
+					);
+
+					if (res && res.action === 'accept') {
+
+						try {
+							const body = {
+								items: [item],
+							};
+
+							const bodyToString = JSON.stringify(body);
+
+							const data = await parentEpml.request('apiCall', {
+								type: 'api',
+								method: 'DELETE',
+								url: `/lists/${list_name}?apiKey=${this.getApiKey()}`,
+								body: bodyToString,
+								headers: {
+									'Content-Type': 'application/json',
+								},
+							});
+							response = data
+						} catch (error) {
+							const data = {};
+							const errorMsg = "Error in adding to list"
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+						} finally {
+							break;
+						}
+
+					} else {
+						const data = {};
+						const errorMsg = "User declined add to list"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break;
+					}
+				};
+
+
 				case actions.LINK_TO_QDN_RESOURCE:
 				case actions.QDN_RESOURCE_DISPLAYED:
 					// Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
 					// Note: don't update this.url here, as we don't want to force reload the iframe each time.
-
 					if (this.preview != null && this.preview.length > 0) {
 						this.displayUrl = translate("appspage.schange40");
 						return;
@@ -2501,7 +2690,32 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
 							</div>
 						` : ''}
-
+						${type === actions.GET_LIST_ITEMS ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange41")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange40")}: <span> ${data.list_name}</span></p>
+								<div class="checkbox-row">
+									<label for="listsButton" id="listsButtonLabel" style="color: var(--black);">
+										${get('browserpage.bchange39')}
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="listsButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoLists}></mwc-checkbox>
+								</div>
+							</div>
+						` : ''}
+						${type === actions.ADD_LIST_ITEMS ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange37")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange40")}: <span> ${data.list_name}</span></p>
+								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.items.join(', ')}</span></p>
+							</div>
+						` : ''}
+						${type === actions.DELETE_LIST_ITEM ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange38")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange40")}: <span> ${data.list_name}</span></p>
+								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.item}</span></p>
+							</div>
+						` : ''}
 						${type === actions.SEND_CHAT_MESSAGE ? `
 							<p class="modal-paragraph">${get("browserpage.bchange22")}</p>
 						` : ''}
@@ -2561,6 +2775,22 @@ async function showModalAndWait(type, data) {
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
+			})
+		}
+		const labelButton2 = modal.querySelector('#listsButtonLabel');
+		if (labelButton2) {
+			labelButton2.addEventListener('click', () => {
+				this.shadowRoot.getElementById('listsButton').click();
+			})
+		}
+		const checkbox2 = modal.querySelector('#listsButton');
+		if (checkbox2) {
+			checkbox2.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoLists(false))
+					return
+				}
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoLists(true))
 			})
 		}
 	});
@@ -2766,6 +2996,8 @@ const styles = `
 		font-weight: 300;
 		color: var(--black);
 		margin: 0;
+		word-wrap: break-word; 
+  		overflow-wrap: break-word;
 	}
 
 	.capitalize-first {

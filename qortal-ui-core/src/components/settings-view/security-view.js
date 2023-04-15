@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { allowQAPPAutoAuth, removeQAPPAutoAuth } from '../../redux/app/app-actions.js'
+import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 import '@material/mwc-checkbox'
@@ -115,6 +115,12 @@ class SecurityView extends connect(store)(LitElement) {
                             </label>
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForAuth(e)} ?checked=${store.getState().app.qAPPAutoAuth}></mwc-checkbox>
                     </div>
+                    <div class="checkbox-row">
+                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                                ${get('browserpage.bchange39')}
+                            </label>
+                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
+                    </div>
                 </div>
         `
     }
@@ -127,6 +133,13 @@ class SecurityView extends connect(store)(LitElement) {
            store.dispatch(removeQAPPAutoAuth(false))
         } else {
            store.dispatch(allowQAPPAutoAuth(true))
+        }
+    }
+    checkForLists(e) {
+        if (e.target.checked) {
+            store.dispatch(removeQAPPAutoLists(false))
+        } else {
+            store.dispatch(allowQAPPAutoLists(true))
         }
     }
 

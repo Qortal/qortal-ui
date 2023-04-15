@@ -636,7 +636,14 @@
 		"bchange33": "Instant publish",
 		"bchange34": "Filename",
 		"bchange35": "Do you give this application permission to send coins?",
-		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?"
+		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?",
+		"bchange37": "Do you give this application permission to add to this list?",
+		"bchange38": "Do you give this application permission to delete from this list?",
+		"bchange39": "Always allow lists to be retrieved automatically",
+		"bchange40": "List",
+		"bchange41": "Do you give this application permission to access this list?",
+		"bchange42": "Items"
+
 	},
 	"datapage": {
 		"dchange1": "Data Management",
