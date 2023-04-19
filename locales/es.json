@@ -12,5 +12,20 @@
   "electron_translate_9": "Haz clic en INSTALAR AHORA para aplicar la actualización, QUIZÁS MÁS TARDE para no actualizar la interfaz de usuario".,
   "electron_translate_10": "Error de actualización temporal, lo intentaré más tarde",
   "electron_translate_11": "DESCARGAR ACTUALIZACIÓN",
-  "electron_translate_12": "¡Se descargará ⌛️ en segundo plano!"
+  "electron_translate_12": "¡Se descargará ⌛️ en segundo plano!",
+  "electron_translate_13": "INICIAR NÚCLEO QORTAL",
+  "electron_translate_14": "NO GRACIAS",
+  "electron_translate_15": "Qortal Core NO se está ejecutando en este sistema",
+  "electron_translate_16": "La interfaz de usuario de Qortal ha detectado que Qortal Core NO se está ejecutando en este sistema",
+  "electron_translate_17": "Haga clic en START QORTAL CORE para iniciar Qortal Core en este sistema O haga clic en NO GRACIAS para omitir el inicio en este sistema",
+  "electron_translate_18": "DESCARGAR NÚCLEO QORTAL",
+  "electron_translate_19": "NO GRACIAS",
+  "electron_translate_20": "Qortal Core NO se detecta",
+  "electron_translate_21": "La interfaz de usuario de Qortal ha detectado que Qortal Core NO está instalado (en la ubicación predeterminada) en este sistema".,
+  "electron_translate_22": "Haga clic en DESCARGAR NÚCLEO QORTAL para descargar e instalar el núcleo (a la ubicación predeterminada) O haga clic en NO GRACIAS para omitir la descarga e instalación.",
+  "electron_translate_23": "DESCARGAR JAVA",
+  "electron_translate_24": "NO GRACIAS",
+  "electron_translate_25": "Java no está instalado.",
+  "electron_translate_26": "La interfaz de usuario de Qortal ha detectado que Java no está instalado en su sistema".,
+  "electron_translate_27": "Haz clic en DESCARGAR JAVA para descargar e instalar Java o en NO GRACIAS para no descargarlo e instalarlo".
 }

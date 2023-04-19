@@ -12,5 +12,20 @@
   "electron_translate_9": "Щракнете върху ИНСТАЛИРАНЕ СЕГА, за да приложите актуализация, МОЖЕ БИ ПО-КЪСНО, за да не актуализирате потребителския интерфейс.",
   "electron_translate_10": "Временна неуспешна актуализация, ще опитаме отново по-късно",
   "electron_translate_11": "ИЗТЕГЛЕТЕ АКТУАЛИЗАЦИЯТА",
-  "electron_translate_12": "Ще бъде изтеглено ⌛️ във фонов режим!"
+  "electron_translate_12": "Ще бъде изтеглено ⌛️ във фонов режим!",
+  "electron_translate_13": "СТАРТ QORTAL CORE",
+  "electron_translate_14": "НЕ БЛАГОДАРЯ",
+  "electron_translate_15": "Qortal Core НЕ работи на тази система",
+  "electron_translate_16": "Qortal UI откри, че Qortal Core НЕ работи на тази система",
+  "electron_translate_17": "Щракнете върху СТАРТ QORTAL CORE, за да стартирате Qortal Core на тази система ИЛИ щракнете върху НЕ, БЛАГОДАРЯ, за да пропуснете стартирането на тази система",
+  "electron_translate_18": "ИЗТЕГЛЕТЕ QORTAL CORE",
+  "electron_translate_19": "НЕ БЛАГОДАРЯ",
+  "electron_translate_20": "Qortal Core НЕ е открит",
+  "electron_translate_21": "Qortal UI откри, че Qortal Core НЕ е инсталиран (в местоположение по подразбиране) на тази система.",
+  "electron_translate_22": "Щракнете върху ИЗТЕГЛЯНЕ на QORTAL CORE, за да изтеглите и инсталирате ядрото (до местоположение по подразбиране) ИЛИ щракнете върху НЕ, БЛАГОДАРЯ, за да пропуснете изтеглянето и инсталирането.",
+  "electron_translate_23": "ИЗТЕГЛЕТЕ JAVA",
+  "electron_translate_24": "НЕ БЛАГОДАРЯ",
+  "electron_translate_25": "Java не е инсталирана.",
+  "electron_translate_26": "Qortal UI откри, че Java не е инсталирана на вашата система.",
+  "electron_translate_27": "Щракнете върху ИЗТЕГЛЯНЕ на JAVA, за да изтеглите и инсталирате Java, или върху НЕ, БЛАГОДАРЯ, за да не я изтеглите и инсталирате."
 }

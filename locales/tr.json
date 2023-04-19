@@ -12,5 +12,20 @@
   "electron_translate_9": "Güncellemeyi uygulamak için ŞİMDİ YÜKLE'ye tıklayın, kullanıcı arayüzünü güncellememek için MAYBE SONRA tıklayın.",
   "electron_translate_10": "Geçici güncelleme hatası, daha sonra tekrar denenecek",
   "electron_translate_11": "GÜNCELLEMEYİ İNDİRİN",
-  "electron_translate_12": "Arka planda ⌛️ indirilecek!"
+  "electron_translate_12": "Arka planda ⌛️ indirilecek!",
+  "electron_translate_13": "QORTAL CORE'U BAŞLAT",
+  "electron_translate_14": "TEŞEKKÜR ETMİYORUM",
+  "electron_translate_15": "Qortal Core bu sistemde ÇALIŞMIYOR",
+  "electron_translate_16": "Qortal UI, Qortal Core'un bu sistemde ÇALIŞMADIĞINI algıladı",
+  "electron_translate_17": "Qortal Core'u bu sistemde başlatmak için QORTAL CORE'u BAŞLAT'a tıklayın VEYA bu sistemde başlatmayı atlamak için HAYIR'a TEŞEKKÜRLER'e tıklayın",
+  "electron_translate_18": "QORTAL CORE'U İNDİRİN",
+  "electron_translate_19": "TEŞEKKÜR ETMİYORUM",
+  "electron_translate_20": "Qortal Core algılanmadı",
+  "electron_translate_21": "Qortal UI, Qortal Core'un bu sistemde yüklü OLMADIĞINI (varsayılan konumda) algıladı.",
+  "electron_translate_22": "Çekirdeği indirip yüklemek için QORTAL CORE'U İNDİR'e tıklayın (varsayılan konuma) VEYA indirme ve yüklemeyi atlamak için HAYIR TEŞEKKÜRLER'e tıklayın.",
+  "electron_translate_23": "JAVA'YI İNDİRİN",
+  "electron_translate_24": "TEŞEKKÜR ETMİYORUM",
+  "electron_translate_25": "Java yüklü değil.",
+  "electron_translate_26": "Qortal UI sisteminizde java'nın kurulu olmadığını tespit etti.",
+  "electron_translate_27": "Java'yı indirip yüklemek için JAVA'YI İNDİR'e, indirip kurmamak için HAYIR'a TEŞEKKÜRLER'e tıklayın."
 }

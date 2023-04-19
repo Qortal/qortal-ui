@@ -12,5 +12,20 @@
   "electron_translate_9": "Klik op NU INSTALLEREN om de update toe te passen, MISSCHIEN LATER om de gebruikersinterface niet bij te werken.",
   "electron_translate_10": "Tijdelijke update mislukt, zal het later opnieuw proberen",
   "electron_translate_11": "UPDATE DOWNLOADEN",
-  "electron_translate_12": "Het wordt ⌛️ op de achtergrond gedownload!"
+  "electron_translate_12": "Het wordt ⌛️ op de achtergrond gedownload!",
+  "electron_translate_13": "START QORTALE KERN",
+  "electron_translate_14": "NEE BEDANKT",
+  "electron_translate_15": "Qortal Core draait NIET op dit systeem",
+  "electron_translate_16": "Qortal UI heeft gedetecteerd dat Qortal Core NIET draait op dit systeem",
+  "electron_translate_17": "Klik op START QORTAL CORE om de Qortal Core op dit systeem te starten OF klik op NEE BEDANKT om het starten op dit systeem over te slaan",
+  "electron_translate_18": "DOWNLOAD QORTALE KERN",
+  "electron_translate_19": "NEE BEDANKT",
+  "electron_translate_20": "Qortal Core wordt NIET gedetecteerd",
+  "electron_translate_21": "Qortal UI heeft gedetecteerd dat Qortal Core NIET is geïnstalleerd (op de standaardlocatie) op dit systeem.",
+  "electron_translate_22": "Klik op DOWNLOAD QORTAL CORE om de kern te downloaden en te installeren (naar de standaardlocatie) OF klik op NEE BEDANKT om het downloaden en installeren over te slaan.",
+  "electron_translate_23": "JAVA DOWNLOADEN",
+  "electron_translate_24": "NEE BEDANKT",
+  "electron_translate_25": "Java is niet geïnstalleerd.",
+  "electron_translate_26": "Qortal UI heeft gedetecteerd dat java niet op uw systeem is geïnstalleerd.",
+  "electron_translate_27": "Klik op DOWNLOAD JAVA om java te downloaden en te installeren of op NO BEDANKT om het niet te downloaden en te installeren."
 }

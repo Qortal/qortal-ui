@@ -12,5 +12,20 @@
   "electron_translate_9": "点击现在安装应用更新，可能稍后不更新用户界面。",
   "electron_translate_10": "暂时更新失败，稍后再试",
   "electron_translate_11": "下载更新",
-  "electron_translate_12": "它将在后台下载 ⌛️！"
+  "electron_translate_12": "它将在后台下载 ⌛️！",
+  "electron_translate_13": "启动 QORTAL 核心",
+  "electron_translate_14": "不，谢谢",
+  "electron_translate_15": "Qortal Core 未在此系统上运行",
+  "electron_translate_16": "Qortal UI 检测到 Qortal Core 未在此系统上运行",
+  "electron_translate_17": "点击 START QORTAL CORE 在此系统上启动 Qortal Core 或点击 NO THANKS 跳过在此系统上启动",
+  "electron_translate_18": "下载 QORTAL 核心",
+  "electron_translate_19": "不用谢",
+  "electron_translate_20": "未检测到 Qortal 核心",
+  "electron_translate_21": "Qortal UI 检测到此系统上未安装 Qortal Core（在默认位置）。",
+  "electron_translate_22": "点击 DOWNLOAD QORTAL CORE 下载并安装核心（到默认位置）或点击 NO THANKS 跳过下载和安装。",
+  "electron_translate_23": "下载 JAVA",
+  "electron_translate_24": "不用谢",
+  "electron_translate_25": "Java 未安装。",
+  "electron_translate_26": "Qortal UI 检测到您的系统上没有安装 java。",
+  "electron_translate_27": "点击 DOWNLOAD JAVA 下载并安装 java 或点击 NO THANKS 不下载并安装它。"
 }

@@ -12,5 +12,20 @@
   "electron_translate_9": "Cliquez sur INSTALLER MAINTENANT pour appliquer la mise à jour, PEUT-ÊTRE PLUS TARD pour ne pas mettre à jour l'interface utilisateur.",
   "electron_translate_10": "Échec de la mise à jour temporaire, réessayera plus tard",
   "electron_translate_11": "TÉLÉCHARGER LA MISE À JOUR",
-  "electron_translate_12": "Il sera téléchargé ⌛️ en arrière-plan !"
+  "electron_translate_12": "Il sera téléchargé ⌛️ en arrière-plan !",
+  "electron_translate_13": "DÉMARRER LE NOYAU QORTAL",
+  "electron_translate_14": "NON MERCI",
+  "electron_translate_15": "Qortal Core ne fonctionne PAS sur ce système",
+  "electron_translate_16": "L'interface utilisateur Qortal a détecté que Qortal Core ne fonctionne PAS sur ce système",
+  "electron_translate_17": "Cliquez sur DÉMARRER QORTAL CORE pour démarrer Qortal Core sur ce système OU cliquez sur NON MERCI pour ne pas démarrer sur ce système",
+  "electron_translate_18": "TÉLÉCHARGER LE NOYAU QORTAL",
+  "electron_translate_19": "NON MERCI",
+  "electron_translate_20": "Qortal Core n'est PAS détecté",
+  "electron_translate_21": "L'interface utilisateur Qortal a détecté que Qortal Core n'est PAS installé (à l'emplacement par défaut) sur ce système.",
+  "electron_translate_22": "Cliquez sur TÉLÉCHARGER QORTAL CORE pour télécharger et installer le noyau (à l'emplacement par défaut) OU cliquez sur NON MERCI pour ignorer le téléchargement et l'installation.",
+  "electron_translate_23": "TÉLÉCHARGER JAVA",
+  "electron_translate_24": "NON MERCI",
+  "electron_translate_25": "Java n'est pas installé.",
+  "electron_translate_26": "L'interface utilisateur Qortal a détecté que Java n'est pas installé sur votre système.",
+  "electron_translate_27": "Cliquez sur TÉLÉCHARGER JAVA pour télécharger et installer java ou sur NON MERCI pour ne pas le télécharger et l'installer."
 }

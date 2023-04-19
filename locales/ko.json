@@ -12,5 +12,20 @@
   "electron_translate_9": "업데이트를 적용하려면 지금 설치를 클릭하고 UI를 업데이트하지 않으려면 나중에 할 수도 있습니다.",
   "electron_translate_10": "임시 업데이트 실패, 나중에 다시 시도합니다.",
   "electron_translate_11": "업데이트 다운로드",
-  "electron_translate_12": "백그라운드에서 ⌛️ 다운로드됩니다!"
+  "electron_translate_12": "백그라운드에서 ⌛️ 다운로드됩니다!",
+  "electron_translate_13": "QORTAL 코어 시작",
+  "electron_translate_14": "고마워요",
+  "electron_translate_15": "Qortal Core가 이 시스템에서 실행되고 있지 않습니다.",
+  "electron_translate_16": "Qortal UI가 Qortal Core가 이 시스템에서 실행되고 있지 않음을 감지했습니다.",
+  "electron_translate_17": "이 시스템에서 Qortal 코어를 시작하려면 QORTAL 코어 시작을 클릭하거나 이 시스템에서 시작을 건너뛰려면 아니오를 클릭하십시오.",
+  "electron_translate_18": "QORTAL 코어 다운로드",
+  "electron_translate_19": "고마워요",
+  "electron_translate_20": "Qortal 핵이 감지되지 않음",
+  "electron_translate_21": "Qortal UI에서 Qortal Core가 이 시스템에 설치되어 있지 않음(기본 위치)을 감지했습니다.",
+  "electron_translate_22": "QORTAL 코어 다운로드를 클릭하여 코어를 다운로드하고 설치하거나(기본 위치에) 다운로드 및 설치를 건너뛰려면 아니오를 클릭하십시오.",
+  "electron_translate_23": "자바 다운로드",
+  "electron_translate_24": "고마워요",
+  "electron_translate_25": "자바가 설치되지 않았습니다.",
+  "electron_translate_26": "Qortal UI에서 시스템에 Java가 설치되어 있지 않음을 감지했습니다.",
+  "electron_translate_27": "Java를 다운로드하여 설치하려면 JAVA 다운로드를 클릭하고, 다운로드 및 설치하지 않으려면 NO THANKS를 클릭하십시오."
 }
