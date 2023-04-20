@@ -1479,6 +1479,10 @@ class AppView extends connect(store)(LitElement) {
                 <side-menu-item label="${translate('sidemenu.minting')}" expanded>
                     <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
 
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
+                        <vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
+                    </side-menu-item>
+
                     <side-menu-item drawer-toggle label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
                         <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
                     </side-menu-item>
@@ -1506,10 +1510,6 @@ class AppView extends connect(store)(LitElement) {
                     <side-menu-item drawer-toggle label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
                         <vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
                     </side-menu-item>
-                </side-menu-item>
-
-                <side-menu-item drawer-toggle label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
-                    <vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
