@@ -122,7 +122,7 @@ class RewardShare extends LitElement {
                     <br>
                     <mwc-textfield style="width:100%;" ?disabled="${this.createRewardShareLoading}" label="${translate("rewardsharepage.rchange10")}" id="recipientPublicKey"></mwc-textfield>
                     <p style="margin-bottom:0;">
-                        ${translate("rewardsharepage.rchange11")}: ${this.rewardSharePercentage}
+                        ${translate("rewardsharepage.rchange11")}: ${this.rewardSharePercentage}%
                     </p>
                     <mwc-slider
                         @change="${e => this.rewardSharePercentage = this.shadowRoot.getElementById('rewardSharePercentageSlider').value}"
@@ -170,7 +170,7 @@ class RewardShare extends LitElement {
                     <br>
                     <div>${translate("rewardsharepage.rchange10")}:<br>${this.selectedAddress.base58PublicKey}</div>
                     <p style="margin-bottom:0;">
-                        ${translate("rewardsharepage.rchange11")}: 0
+                        ${translate("rewardsharepage.rchange11")}: 0%
                     </p>
                     <div style="text-align:right; height:36px;">
                         <span ?hidden="${!this.createRewardShareLoading}">
