@@ -647,7 +647,6 @@ class PublishData extends LitElement {
 
             this.errorMessage = ''
             this.successMessage = ''
-            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
             let response = false
 
             if (fee) {
@@ -657,6 +656,8 @@ class PublishData extends LitElement {
                     arbitraryBytesForSigningBase58: convertedBytesBase58
                 })
             } else {
+                const nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
+                
                 response = await parentEpml.request('sign_arbitrary', {
                     nonce: this.selectedAddress.nonce,
                     arbitraryBytesBase58: transactionBytesBase58,
