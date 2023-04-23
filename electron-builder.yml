@@ -29,7 +29,6 @@ files:
       - "build/"
       - "lib/*.js"
       - "locales/*.json"
-	  - "splash/"
 
 # Mac OS configuration
 mac:
