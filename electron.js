@@ -486,39 +486,11 @@ async function removeQortalZip() {
 	} catch (err) {
 		log.info('rm error', err)
 	}
-	addBindLinux1()
+	checkAndStart()
 }
 
-async function addBindLinux1() {
+async function checkAndStart() {
 	try {
-		await spawn(
-			'sed', ["-i '1a\LbindAddressL: L0.0.0.0L'", qortalsettings],
-			{ cwd: qortaldir, shell: true }
-		)
-	} catch (err) {
-		log.info('Sed error', err)
-	}
-	addBindLinux2()
-}
-
-async function addBindLinux2() {
-	try {
-		await spawn(
-			'sed', ["-i 's/LbindAddressL/\"bindAddress\"\/g'", qortalsettings],
-			{ cwd: qortaldir, shell: true }
-		)
-	} catch (err) {
-		log.info('Sed error', err)
-	}
-	addBindLinux3()
-}
-
-async function addBindLinux3() {
-	try {
-		await spawn(
-			'sed', ["-i 's/L0.0.0.0L/\"0.0.0.0\"\/g'", qortalsettings],
-			{ cwd: qortaldir, shell: true }
-		)
 		const dialogOpts = {
 			type: 'info',
 			buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
