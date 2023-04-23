@@ -144,6 +144,10 @@ const generateForPlugins = () => {
 			in: 'plugins/core/puzzles/puzzles.src.js',
 			out: 'plugins/core/puzzles/puzzles.js',
 		},
+		{
+			in: 'plugins/core/q-app/q-apps.src.js',
+			out: 'plugins/core/q-app/q-apps.js',
+		},
 	].map((file) => {
 		return generateRollupConfig(
 			path.join(__dirname, file.in),

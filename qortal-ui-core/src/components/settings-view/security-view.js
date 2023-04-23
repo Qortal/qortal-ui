@@ -1,8 +1,10 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
+import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
+import '@material/mwc-checkbox'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@vaadin/password-field/vaadin-password-field.js'
@@ -27,6 +29,10 @@ class SecurityView extends connect(store)(LitElement) {
                 --lumo-body-text-color: var(--black);
                 --lumo-secondary-text-color: var(--sectxt);
                 --lumo-contrast-60pct: var(--vdicon);
+                --mdc-checkbox-unchecked-color: var(--black);
+                --mdc-theme-on-surface: var(--black);
+                --mdc-checkbox-disabled-color: var(--black);
+                --mdc-checkbox-ink-color: var(--black);
             }
 
             .center-box {
@@ -36,6 +42,16 @@ class SecurityView extends connect(store)(LitElement) {
                 transform: translate(-50%, 0%);
                 text-align: center;
             }
+
+	      .checkbox-row {
+                position: relative;
+		    display: flex;
+		    align-items: center;
+		    align-content: center;
+		    font-family: Montserrat, sans-serif;
+		    font-weight: 600;
+		    color: var(--black);
+	      }
 
             .q-button {
                 display: inline-flex;
@@ -92,11 +108,39 @@ class SecurityView extends connect(store)(LitElement) {
                             <div @click=${() => this.checkForDownload()} class="q-button"> ${translate("settings.download")} </div>
                         </div>
                     </div>
+                    <hr style="margin-top: 20px;">
+                        <div class="checkbox-row">
+                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                                ${get('browserpage.bchange26')}
+                            </label>
+                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForAuth(e)} ?checked=${store.getState().app.qAPPAutoAuth}></mwc-checkbox>
+                    </div>
+                    <div class="checkbox-row">
+                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                                ${get('browserpage.bchange39')}
+                            </label>
+                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
+                    </div>
                 </div>
         `
     }
 
     stateChanged(state) {
+    }
+
+    checkForAuth(e) {
+        if (e.target.checked) {
+           store.dispatch(removeQAPPAutoAuth(false))
+        } else {
+           store.dispatch(allowQAPPAutoAuth(true))
+        }
+    }
+    checkForLists(e) {
+        if (e.target.checked) {
+            store.dispatch(removeQAPPAutoLists(false))
+        } else {
+            store.dispatch(allowQAPPAutoLists(true))
+        }
     }
 
     checkForDownload() {

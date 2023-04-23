@@ -1528,8 +1528,16 @@ class AppView extends connect(store)(LitElement) {
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.websites')}" href="/app/websites">
-                    <vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
+                <side-menu-item label="QDN" expanded>
+                    <vaadin-icon icon="vaadin:cluster" slot="icon"></vaadin-icon>
+
+                    <side-menu-item drawer-toggle label="${translate('sidemenu.websites')}" href="/app/websites">
+                        <vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
+                    </side-menu-item>
+
+                    <side-menu-item drawer-toggle label="Q-Apps" href="/app/qapps">
+                        <vaadin-icon icon="vaadin:external-browser" slot="icon" ></vaadin-icon>
+                    </side-menu-item>
                 </side-menu-item>
 
                 <side-menu-item drawer-toggle label="${translate('sidemenu.groups')}" href="/app/group-management">

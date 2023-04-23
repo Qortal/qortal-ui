@@ -18,7 +18,17 @@ export const publishData = async ({
 	selectedAddress,
 	worker,
 	isBase64,
-	metaData
+	filename,
+	apiVersion,
+	withFee,
+	title,
+    description,
+    category,
+    tag1,
+    tag2,
+    tag3,
+    tag4,
+    tag5
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -44,7 +54,7 @@ export const publishData = async ({
             transactionBytesBase58
         )
         if (convertedBytesBase58.error) {
-            return
+            throw new Error('Error when signing');
         }
 
         const convertedBytes =
@@ -71,10 +81,38 @@ export const publishData = async ({
             arbitraryBytesBase58: transactionBytesBase58,
             arbitraryBytesForSigningBase58: convertedBytesBase58,
             arbitraryNonce: nonce,
+			apiVersion: apiVersion ? apiVersion : null
         })
         let myResponse = { error: "" }
         if (response === false) {
-            return
+            throw new Error('Error when signing');
+        } else {
+            myResponse = response
+        }
+
+        return myResponse
+    }
+
+	const signAndProcessWithFee = async (transactionBytesBase58) => {
+        let convertedBytesBase58 = await convertBytesForSigning(
+            transactionBytesBase58
+        )
+        if (convertedBytesBase58.error) {
+            throw new Error('Error when signing');
+        }
+
+	
+     
+  
+        let response = await parentEpml.request("sign_arbitrary_with_fee", {
+            nonce: selectedAddress.nonce,
+            arbitraryBytesBase58: transactionBytesBase58,
+            arbitraryBytesForSigningBase58: convertedBytesBase58,
+			apiVersion: apiVersion ? apiVersion : null
+        })
+        let myResponse = { error: "" }
+        if (response === false) {
+            throw new Error('Error when signing');
         } else {
             myResponse = response
         }
@@ -85,21 +123,30 @@ export const publishData = async ({
 	const validate = async () => {
 		let validNameRes = await validateName(registeredName)
 		if (validNameRes.error) {
-			return
+			throw new Error('Name not found');
 		}
 		let transactionBytes = await uploadData(registeredName, path, file)
 		if (transactionBytes.error) {
-			return
+			throw new Error(transactionBytes.message || 'Error when uploading');
 		} else if (
 			transactionBytes.includes("Error 500 Internal Server Error")
 		) {
-			return
+			throw new Error('Error when uploading');
 		}
 
-		let signAndProcessRes = await signAndProcess(transactionBytes)
-		if (signAndProcessRes.error) {
-			return
+		let signAndProcessRes
+		if(withFee){
+			signAndProcessRes = await signAndProcessWithFee(transactionBytes)
+
 		}
+		if(!withFee){
+		 signAndProcessRes = await signAndProcess(transactionBytes)
+
+		}
+		if (signAndProcessRes.error) {
+			throw new Error('Error when signing');
+		}
+		return signAndProcessRes
 	}
 
 	const uploadData = async (registeredName, path, file) => {
@@ -131,10 +178,38 @@ export const publishData = async ({
 			if (identifier != null && identifier.trim().length > 0) {
 				uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?apiKey=${getApiKey()}`
 
-				if(metaData){
-					uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?${metaData}&apiKey=${getApiKey()}`
-					
-				}
+			}
+
+			if(withFee){
+				uploadDataUrl = uploadDataUrl + '&fee=100000'
+			}
+
+			if(filename != null && filename != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&filename=' + encodeURIComponent(filename)
+			}
+			if(title != null && title != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&title=' + encodeURIComponent(title)
+			}
+			if(description != null && description != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&description=' + encodeURIComponent(description)
+			}
+			if(category != null && category != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&category=' + encodeURIComponent(category)
+			}
+			if(tag1 != null && tag1 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag1)
+			}
+			if(tag2 != null && tag2 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag2)
+			}
+			if(tag3 != null && tag3 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag3)
+			}
+			if(tag4 != null && tag4 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag4)
+			}
+			if(tag5 != null && tag5 != "undefined"){
+				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag5)
 			}
 			
 			let uploadDataRes = await parentEpml.request("apiCall", {
@@ -147,7 +222,8 @@ export const publishData = async ({
 		}
 	}
 	try {
-		await validate()
+		const validateRes = await validate()
+		return validateRes
 	} catch (error) {
 		throw new Error(error.message)
 	}

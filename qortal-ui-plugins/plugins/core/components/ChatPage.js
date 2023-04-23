@@ -3426,7 +3426,7 @@ class ChatPage extends LitElement {
                 }],
                 isImageDeleted: false,
                 repliedTo: '',
-                version: 2
+                version: 3
             };
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
@@ -3447,7 +3447,7 @@ class ChatPage extends LitElement {
                         filePath: outSideMsg.filePath
                 }],
                 repliedTo: '',
-                version: 2
+                version: 3
             };
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);
@@ -3509,7 +3509,7 @@ class ChatPage extends LitElement {
                 }],
                 isAttachmentDeleted: false,
                 repliedTo: '',
-                version: 2
+                version: 3
             };
             const stringifyMessageObject = JSON.stringify(messageObject);
             this.sendMessage(stringifyMessageObject, typeMessage);

@@ -15,14 +15,17 @@ import './login-section.js'
 import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
-import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen } from '../../redux/app/app-actions.js'
+import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen, allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
 
 window.reduxStore = store
 window.reduxAction = {
     addAutoLoadImageChat: addAutoLoadImageChat,
     removeAutoLoadImageChat: removeAutoLoadImageChat,
-    addChatLastSeen: addChatLastSeen
-
+    addChatLastSeen: addChatLastSeen,
+    allowQAPPAutoAuth: allowQAPPAutoAuth,
+    removeQAPPAutoAuth: removeQAPPAutoAuth,
+    allowQAPPAutoLists: allowQAPPAutoLists,
+    removeQAPPAutoLists: removeQAPPAutoLists
 }
 
 const animationDuration = 0.7 // Seconds

@@ -520,7 +520,7 @@ setOpenGifModal: { attribute: false }
     			service: 'GIF_REPOSITORY',
     			identifier: this.newCollectionName,
     			parentEpml,
-    			metaData: `title=${this.newCollectionName}`,
+				title: this.newCollectionName,
     			uploadType: 'zip',
     			selectedAddress: this.selectedAddress,
     			worker: this.webWorkerImage,

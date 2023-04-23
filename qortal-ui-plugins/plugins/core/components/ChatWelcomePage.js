@@ -412,7 +412,7 @@ class ChatWelcomePage extends LitElement {
                 messageText,
                 images: [''],
                 repliedTo: '',
-                version: 1
+                version: 3
             };
             const stringifyMessageObject = JSON.stringify(messageObject);
             let chatResponse = await parentEpml.request('chat', {
