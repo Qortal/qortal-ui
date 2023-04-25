@@ -8,7 +8,7 @@ const fs = require('fs')
 const electronDl = require('electron-dl')
 const extract = require('extract-zip')
 const fetch = require('node-fetch')
-const child = require('child_process').execFile
+const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 
@@ -19,6 +19,7 @@ electronDl()
 process.env['APP_PATH'] = app.getAppPath()
 
 const homePath = app.getPath('home')
+const downloadPath = app.getPath('downloads')
 
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
@@ -30,9 +31,8 @@ log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
-const windir = String.raw`C:\Qortal`
 const winurl = "https://github.com/Qortal/qortal/releases/latest/download/qortal.exe"
-const winexe = "C:\\Qortal\\qortal.exe"
+const winexe = downloadPath + "\\qortal.exe"
 const startWinCore = "C:\\Program Files\\Qortal\\qortal.exe"
 
 const zipdir = homePath
@@ -84,6 +84,46 @@ const isRunning = (query, cb) => {
 	})
 }
 
+async function checkWin() {
+	if (fs.existsSync(winjar)) {
+		isRunning('qortal.exe', (status) => {
+			if (status == true) {
+				log.info("Core is running, perfect !")
+			} else {
+				const dialogOpts = {
+					type: 'info',
+					buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+					title: i18n.__("electron_translate_15"),
+					message: i18n.__("electron_translate_16"),
+					detail: i18n.__("electron_translate_17")
+				}
+				dialog.showMessageBox(dialogOpts).then((returnValue) => {
+					if (returnValue.response === 0) {
+						spawn(startWinCore, { detached: true })
+					} else {
+						return
+					}
+				})
+			}
+		})
+	} else {
+		const dialogOpts = {
+			type: 'info',
+			buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
+			title: i18n.__("electron_translate_20"),
+			message: i18n.__("electron_translate_21"),
+			detail: i18n.__("electron_translate_22")
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				downloadWindows()
+			} else {
+				return
+			}
+		})
+	}
+}
+
 async function downloadWindows() {
 	let winLoader = new BrowserWindow({
 		width: 500,
@@ -97,17 +137,34 @@ async function downloadWindows() {
 
 	winLoader.show()
 	await electronDl.download(myWindow, winurl, {
-		directory: windir,
-		onProgress: function () { log.info("Starting Download Windows Installer") }
+		directory: downloadPath,
+		onProgress: function () { log.info("Starting Download Qortal Core Installer") }
 	})
 	winLoader.destroy()
-	child(winexe, function (err, data) {
-		if (err) {
-			log.info(err)
-			return
+
+	const coreInstall = execFile(winexe, (e, stdout, stderr) => {
+		if (e) {
+			log.info(e)
+			removeQortalExe()
+		} else {
+			log.info('Qortal Core Installation Done', stdout, stderr)
+			removeQortalExe()
 		}
-		log.info(data.toString())
 	})
+
+	coreInstall.stdin.end()
+}
+
+async function removeQortalExe() {
+	try {
+		await fs.rmSync(winexe, {
+			force: true,
+		})
+	} catch (err) {
+		log.info('renove error', err)
+	}
+
+	checkWin()
 }
 
 async function checkPort() {
@@ -123,6 +180,8 @@ async function checkPort() {
 async function checkResponseStatus(res) {
 	if (res.ok) {
 		return
+	} else if (process.platform === 'win32') {
+		await checkWin()
 	} else {
 		await javaversion()
 	}
@@ -721,50 +780,7 @@ const createTray = () => {
 async function checkAll() {
 	if (process.platform === 'win32') {
 		app.setAppUserModelId("org.qortal.QortalUI")
-		if (fs.existsSync(winjar)) {
-			isRunning('qortal.exe', (status) => {
-				if (status == true) {
-					log.info("Core is running, perfect !")
-				} else {
-					log.info("Core is not running, starting it !")
-					const dialogOpts = {
-						type: 'info',
-						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-						title: i18n.__("electron_translate_15"),
-						message: i18n.__("electron_translate_16"),
-						detail: i18n.__("electron_translate_17")
-					}
-					dialog.showMessageBox(dialogOpts).then((returnValue) => {
-						if (returnValue.response === 0) {
-							child(startWinCore, function (err, data) {
-								if (err) {
-									log.info(err)
-									return
-								}
-								log.info(data.toString())
-							})
-						} else {
-							return
-						}
-					})
-				}
-			})
-		} else {
-			const dialogOpts = {
-				type: 'info',
-				buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
-				title: i18n.__("electron_translate_20"),
-				message: i18n.__("electron_translate_21"),
-				detail: i18n.__("electron_translate_22")
-			}
-			dialog.showMessageBox(dialogOpts).then((returnValue) => {
-				if (returnValue.response === 0) {
-					downloadWindows()
-				} else {
-					return
-				}
-			})
-		}
+		await checkPort()
 	} else if (process.platform === 'darwin') {
 		await checkPort()
 	} else if (process.platform === 'linux') {
