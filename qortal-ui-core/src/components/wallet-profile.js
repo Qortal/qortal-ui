@@ -124,10 +124,14 @@ class WalletProfile extends connect(store)(LitElement) {
     }
 
     getAvatar() {
-        const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-        const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        return html`<img class="round-fullinfo" src="${url}" onerror="this.src='/img/incognito.png';" />`
+        if (this.accountInfo.names.length === 0) {
+            return html`<img class="round-fullinfo" src="/img/incognito.png">`
+        } else {
+            const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+            const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+            return html`<img class="round-fullinfo" src="${url}" onerror="this.src='/img/incognito.png';" />`
+        }
     }
 
     getApiKey() {
