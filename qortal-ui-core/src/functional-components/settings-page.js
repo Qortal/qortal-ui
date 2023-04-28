@@ -3,7 +3,6 @@ import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { doAddNode, doSetNode, doLoadNodeConfig } from '../redux/app/app-actions.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
-import FileSaver from 'file-saver'
 import snackbar from './snackbar.js'
 import '../components/language-selector.js'
 import '../custom-elements/frag-file-input.js'
@@ -320,16 +319,36 @@ class SettingsPage extends connect(store)(LitElement) {
     }
 
     exportQortalNodesList() {
+        let nodelist = ""
         const qortalNodesList = JSON.stringify(localStorage.getItem("myQortalNodes"))
         const qortalNodesListSave = JSON.parse((qortalNodesList) || "[]")
         const blob = new Blob([qortalNodesListSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `qortal.nodes`)
+        nodelist = "qortal.nodes"
+        this.saveFileToDisk(blob, nodelist)
+    }
 
-        let snack4string = get("settings.snack4")
-        snackbar.add({
-            labelText: `${snack4string} qortal.nodes`,
-            dismiss: true
-        })
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("settings.snack4")
+            snackbar.add({
+                labelText: `${snack4string} qortal.nodes`,
+                dismiss: true
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     renderImportNodesListButton() {

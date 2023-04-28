@@ -2,11 +2,11 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import snackbar from '../../functional-components/snackbar.js'
 
 import '@material/mwc-dialog'
 import '@material/mwc-button'
 import '@material/mwc-icon'
-import FileSaver from 'file-saver'
 
 class ExportKeys extends connect(store)(LitElement) {
     static get properties() {
@@ -222,11 +222,37 @@ class ExportKeys extends connect(store)(LitElement) {
     }
 
     async exportKey(cMasterKey, cName, cAddress) {
+        let exportname = ""
         const myPrivateMasterKey = cMasterKey
         const myCoinName = cName
         const myCoinAddress = cAddress
         const blob = new Blob([`${myPrivateMasterKey}`], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `Private_Master_Key_${myCoinName}_${myCoinAddress}.txt`)
+        exportname = "Private_Master_Key_" + myCoinName + "_" + myCoinAddress + ".txt"
+        this.saveFileToDisk(blob, exportname)
+    }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("general.save")
+            snackbar.add({
+                labelText: `${snack4string} ${fileName} ✅`,
+                dismiss: true
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     stateChanged(state) {
