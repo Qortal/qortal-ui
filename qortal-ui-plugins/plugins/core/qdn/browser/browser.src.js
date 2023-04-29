@@ -22,7 +22,7 @@ import { publishData } from '../../../utils/publish-image.js';
 import { Loader } from '../../../utils/loader.js';
 import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
-import ed2curve from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
+import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -597,7 +597,7 @@ class WebBrowser extends LitElement {
 						const sharedSecret = new Uint8Array(32)
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
 
-						const chatEncryptionSeed = new Sha256().process(sharedSecret).finish().result
+						const chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
 
 						const nonce = new Uint8Array(24);
 						window.crypto.getRandomValues(nonce);
@@ -660,7 +660,7 @@ class WebBrowser extends LitElement {
 						const sharedSecret = new Uint8Array(32);
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
 
-						const _chatEncryptionSeed = new Sha256().process(sharedSecret).finish().result
+						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
 						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
 
 						let data = {};
