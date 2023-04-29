@@ -580,7 +580,8 @@ class WebBrowser extends LitElement {
 					}
 					const { Uint8ArrayData, destinationPublicKey } = data
 
-					if (!(Uint8ArrayData instanceof Uint8Array)) {
+					const uint8Array = new Uint8Array(Object.values(Uint8ArrayData));
+					if (!(uint8Array instanceof Uint8Array)) {
 						data['error'] = "The Uint8ArrayData you've submitted is invalid";
 						response = JSON.stringify(data);
 						break
@@ -592,8 +593,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(data);
 							break
 						}
+						const publicKeyUnit8Array = window.parent.Base58.decode(destinationPublicKey)
+
 						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(destinationPublicKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
 						const sharedSecret = new Uint8Array(32)
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
 
@@ -601,7 +604,7 @@ class WebBrowser extends LitElement {
 
 						const nonce = new Uint8Array(24);
 						window.crypto.getRandomValues(nonce);
-						const encryptedData = nacl.secretbox(Uint8ArrayData, nonce, chatEncryptionSeed)
+						const encryptedData = nacl.secretbox(uint8Array, nonce, chatEncryptionSeed)
 						const combinedData = new Uint8Array(nonce.length + encryptedData.length);
 						combinedData.set(nonce);
 						combinedData.set(encryptedData, nonce.length);
@@ -621,7 +624,7 @@ class WebBrowser extends LitElement {
 					}
 				}
 				case actions.DECRYPT_DATA: {
-					const requiredFields = ['encryptedData'];
+					const requiredFields = ['encryptedData', 'senderPublicKey'];
 					const missingFields = [];
 
 					requiredFields.forEach((field) => {
@@ -638,16 +641,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-					const { encryptedData } = data
-
+					const { encryptedData, senderPublicKey } = data
+					const uint8Array = new Uint8Array(Object.values(encryptedData));
 
 					try {
-						const combinedData = encryptedData
+						const combinedData = uint8Array
 						const nonce = combinedData.slice(0, 24);
 						const _encryptedData = combinedData.slice(24);
 
 						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
+						const publicKey = window.parent.Base58.decode(senderPublicKey)
+						// const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
 
 						if (!privateKey || !publicKey) {
 							data['error'] = "Unable to retrieve keys"
@@ -662,7 +666,6 @@ class WebBrowser extends LitElement {
 
 						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
 						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
-
 						let data = {};
 						data['decryptedData'] = _decryptedData
 						response = JSON.stringify(data);
