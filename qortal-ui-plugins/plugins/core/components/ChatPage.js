@@ -10,7 +10,6 @@ import Highlight from '@tiptap/extension-highlight'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
 import * as zip from "@zip.js/zip.js";
-import { saveAs } from 'file-saver';
 import './ChatGifs/ChatGifs.js';
 
 import localForage from "localforage";
