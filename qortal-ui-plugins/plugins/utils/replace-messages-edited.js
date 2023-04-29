@@ -14,7 +14,7 @@ export const replaceMessagesEdited = async ({
 			}
 			const response = await parentEpml.request("apiCall", {
 				type: "api",
-				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}&limit=1&sender=${msg.sender}`,
+				url: `/chat/messages?chatreference=${msg.signature}&reverse=true${msgQuery}&limit=1&sender=${msg.sender}&encoding=BASE64`,
 			})
 
 			if (response && Array.isArray(response) && response.length !== 0) {
@@ -54,13 +54,13 @@ export const replaceMessagesEdited = async ({
 				if(+parsedMessageObj.version > 2){
 					 originalReply = await parentEpml.request("apiCall", {
 						type: "api",
-						url: `/chat/message/${parsedMessageObj.repliedTo}`,
+						 url: `/chat/message/${parsedMessageObj.repliedTo}?encoding=BASE64`,
 					})
 				}
 				if(+parsedMessageObj.version < 3){
 					 originalReply = await parentEpml.request("apiCall", {
 						type: "api",
-						url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}`,
+						 url: `/chat/messages?reference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}&encoding=BASE64`,
 					})
 			   }
 			
@@ -71,7 +71,7 @@ export const replaceMessagesEdited = async ({
 
 				const response = await parentEpml.request("apiCall", {
 					type: "api",
-					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}&limit=1&sender=${originalReplyMessage.sender}`,
+					url: `/chat/messages?chatreference=${parsedMessageObj.repliedTo}&reverse=true${msgQuery}&limit=1&sender=${originalReplyMessage.sender}&encoding=BASE64`,
 				})
 				
 				if (
