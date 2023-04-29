@@ -8,11 +8,11 @@ import {
 	translateUnsafeHTML,
 	registerTranslateConfig,
 } from 'lit-translate';
-import * as actions from '../../components/qdn-action-types';
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
 
+import * as actions from '../../components/qdn-action-types';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-checkbox'
@@ -21,6 +21,8 @@ import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
 import { publishData } from '../../../utils/publish-image.js';
 import { Loader } from '../../../utils/loader.js';
 import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
+import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
+import ed2curve from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -556,6 +558,121 @@ class WebBrowser extends LitElement {
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
 						break;
+					}
+				}
+				case actions.ENCRYPT_DATA: {
+					const requiredFields = ['Uint8ArrayData', 'destinationPublicKey'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const { Uint8ArrayData, destinationPublicKey } = data
+
+					if (!(Uint8ArrayData instanceof Uint8Array)) {
+						data['error'] = "The Uint8ArrayData you've submitted is invalid";
+						response = JSON.stringify(data);
+						break
+					}
+					try {
+						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+						if (!privateKey) {
+							data['error'] = "Unable to retrieve keys"
+							response = JSON.stringify(data);
+							break
+						}
+						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(destinationPublicKey)
+						const sharedSecret = new Uint8Array(32)
+						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
+						const chatEncryptionSeed = new Sha256().process(sharedSecret).finish().result
+
+						const nonce = new Uint8Array(24);
+						window.crypto.getRandomValues(nonce);
+						const encryptedData = nacl.secretbox(Uint8ArrayData, nonce, chatEncryptionSeed)
+						const combinedData = new Uint8Array(nonce.length + encryptedData.length);
+						combinedData.set(nonce);
+						combinedData.set(encryptedData, nonce.length);
+
+
+						let data = {};
+						data['encryptedData'] = combinedData
+						data['destinationPublicKey'] = destinationPublicKey
+						response = JSON.stringify(data);
+						break;
+					} catch (error) {
+						const data = {};
+						const errorMsg = error.message || "Error in encrypting data"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+				}
+				case actions.DECRYPT_DATA: {
+					const requiredFields = ['encryptedData'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const { encryptedData } = data
+
+
+					try {
+						const combinedData = encryptedData
+						const nonce = combinedData.slice(0, 24);
+						const _encryptedData = combinedData.slice(24);
+
+						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+						const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
+
+						if (!privateKey || !publicKey) {
+							data['error'] = "Unable to retrieve keys"
+							response = JSON.stringify(data);
+							break
+						}
+
+						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
+						const sharedSecret = new Uint8Array(32);
+						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
+						const _chatEncryptionSeed = new Sha256().process(sharedSecret).finish().result
+						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
+
+						let data = {};
+						data['decryptedData'] = _decryptedData
+						response = JSON.stringify(data);
+						break;
+					} catch (error) {
+						const data = {};
+						const errorMsg = error.message || "Error in decrypting data"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
 					}
 				}
 				case actions.GET_LIST_ITEMS: {
