@@ -575,8 +575,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavax64bindir)) {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', linjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -584,8 +584,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -595,8 +595,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavaarm64bindir)) {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', linjavaarm64binfile, '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavaarm64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -604,8 +604,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -615,8 +615,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavaarmbindir)) {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', linjavaarmbinfile, '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavaarmbinfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -624,8 +624,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -637,8 +637,8 @@ async function startQortal() {
 			if (fs.existsSync(macjavax64bindir)) {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', macjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', macjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -646,8 +646,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -657,8 +657,8 @@ async function startQortal() {
 			if (fs.existsSync(macjavaaarch64bindir)) {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', macjavaaarch64binfile, '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', macjavaaarch64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -666,8 +666,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
