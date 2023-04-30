@@ -605,9 +605,17 @@ class WebBrowser extends LitElement {
 						const nonce = new Uint8Array(24);
 						window.crypto.getRandomValues(nonce);
 						const encryptedData = nacl.secretbox(uint8Array, nonce, chatEncryptionSeed)
-						const combinedData = new Uint8Array(nonce.length + encryptedData.length);
-						combinedData.set(nonce);
-						combinedData.set(encryptedData, nonce.length);
+
+						const str = "qortalEncryptedData";
+						const strEncoder = new TextEncoder();
+						const strUint8Array = strEncoder.encode(str);
+
+						const combinedData = new Uint8Array(strUint8Array.length + nonce.length + encryptedData.length);
+
+						combinedData.set(strUint8Array);
+
+						combinedData.set(nonce, strUint8Array.length);
+						combinedData.set(encryptedData, strUint8Array.length + nonce.length);
 
 
 						let data = {};
@@ -642,16 +650,21 @@ class WebBrowser extends LitElement {
 						break
 					}
 					const { encryptedData, senderPublicKey } = data
-					const uint8Array = new Uint8Array(Object.values(encryptedData));
+
 
 					try {
+						const uint8Array = new Uint8Array(Object.values(encryptedData));
 						const combinedData = uint8Array
-						const nonce = combinedData.slice(0, 24);
-						const _encryptedData = combinedData.slice(24);
+						const str = "qortalEncryptedData";
+						const strEncoder = new TextEncoder();
+						const strUint8Array = strEncoder.encode(str);
+
+						const strData = combinedData.slice(0, strUint8Array.length);
+						const nonce = combinedData.slice(strUint8Array.length, strUint8Array.length + 24);
+						const _encryptedData = combinedData.slice(strUint8Array.length + 24);
 
 						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
 						const publicKey = window.parent.Base58.decode(senderPublicKey)
-						// const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
 
 						if (!privateKey || !publicKey) {
 							data['error'] = "Unable to retrieve keys"
