@@ -760,7 +760,7 @@ class QApps extends LitElement {
                 } else {
                     offset = 0
                 }
-                this.getData(offset);
+                this.getData(offset)
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage - 1)
             })
@@ -776,7 +776,7 @@ class QApps extends LitElement {
                     } else {
                         offset = 0
                     }
-                    this.getData(offset);
+                    this.getData(offset)
                     this.updateItemsFromPage(parseInt(e.target.textContent))
                 })
                 if (pageNumber === page) {
@@ -793,7 +793,7 @@ class QApps extends LitElement {
                 } else {
                     offset = 0
                 }
-                this.getData(offset);
+                this.getData(offset)
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage + 1)
             })
@@ -828,6 +828,12 @@ class QApps extends LitElement {
         await this.getData(0)
         await this.getArbitraryResources()
         await this.getResourcesGrid()
+        await this.updateItemsFromPage(1, true)
+    }
+
+    async refreshapps() {
+        await this.getData(0)
+        await this.getArbitraryResources()
         await this.updateItemsFromPage(1, true)
     }
 
@@ -1008,7 +1014,7 @@ class QApps extends LitElement {
             this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshapps()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("appspage.schange22")
@@ -1037,7 +1043,7 @@ class QApps extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshapps()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("appspage.schange23")
@@ -1067,7 +1073,7 @@ class QApps extends LitElement {
             this.blockedNames.push(name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshapps()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("appspage.schange24")
@@ -1096,7 +1102,7 @@ class QApps extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshapps()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("appspage.schange25")

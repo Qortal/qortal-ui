@@ -676,6 +676,12 @@ class Websites extends LitElement {
         await this.updateItemsFromPage(1, true)
     }
 
+    async refreshWebsites() {
+        await this.getData(0)
+        await this.getArbitraryResources()
+        await this.updateItemsFromPage(1, true)
+    }
+
     doSearch(e) {
         this.searchResult()
     }
@@ -753,7 +759,7 @@ class Websites extends LitElement {
             this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("websitespage.schange22")
@@ -783,7 +789,7 @@ class Websites extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("websitespage.schange23")
@@ -816,7 +822,7 @@ class Websites extends LitElement {
             this.blockedNames.push(name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("websitespage.schange24")
@@ -846,7 +852,7 @@ class Websites extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("websitespage.schange25")
