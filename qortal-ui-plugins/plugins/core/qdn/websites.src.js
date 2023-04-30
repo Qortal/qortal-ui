@@ -541,7 +541,7 @@ class Websites extends LitElement {
 
     getArbitraryResources = async () => {
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false&excludeblocked=true`
         })
         this.resources = resources
     }
@@ -577,7 +577,7 @@ class Websites extends LitElement {
     async getData(offset) {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
+      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
 
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
       const jsonOffsetData = await jsonOffsetRes.json()
