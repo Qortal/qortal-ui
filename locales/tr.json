@@ -27,5 +27,11 @@
   "electron_translate_24": "TEŞEKKÜR ETMİYORUM",
   "electron_translate_25": "Java yüklü değil.",
   "electron_translate_26": "Qortal UI sisteminizde java'nın kurulu olmadığını tespit etti.",
-  "electron_translate_27": "Java'yı indirip yüklemek için JAVA'YI İNDİR'e, indirip kurmamak için HAYIR'a TEŞEKKÜRLER'e tıklayın."
+  "electron_translate_27": "Java'yı indirip yüklemek için JAVA'YI İNDİR'e, indirip kurmamak için HAYIR'a TEŞEKKÜRLER'e tıklayın.",
+  "electron_translate_28": "Bir daha asla sorma",
+  "electron_translate_29": "AYARI DEĞİŞTİR",
+  "electron_translate_30": "İPTAL",
+  "electron_translate_31": "Temel Ayarları Başlat",
+  "electron_translate_32": "Çalışmıyorsa çekirdeği başlatma isteğinin mevcut durumunu değiştir",
+  "electron_translate_33": "(Bana bir daha asla sorma onay kutusunu işaretleyin veya işaretini kaldırın)"
 }

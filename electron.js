@@ -6,6 +6,7 @@ const path = require('path')
 const i18n = require('./lib/i18n.js')
 const fs = require('fs')
 const electronDl = require('electron-dl')
+const Store = require('electron-store')
 const extract = require('extract-zip')
 const fetch = require('node-fetch')
 const execFile = require('child_process').execFile
@@ -20,15 +21,21 @@ process.env['APP_PATH'] = app.getAppPath()
 
 const homePath = app.getPath('home')
 const downloadPath = app.getPath('downloads')
+const store = new Store()
 
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 
+if(!store.has('askingCore')) {
+	store.set('askingCore', false)
+}
+
 log.info('App starting...')
 log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
+log.info("ASKING CORE", store.get('askingCore'))
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
 const winurl = "https://github.com/Qortal/qortal/releases/latest/download/qortal.exe"
@@ -90,20 +97,26 @@ async function checkWin() {
 			if (status == true) {
 				log.info("Core is running, perfect !")
 			} else {
-				const dialogOpts = {
-					type: 'info',
-					buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-					title: i18n.__("electron_translate_15"),
-					message: i18n.__("electron_translate_16"),
-					detail: i18n.__("electron_translate_17")
-				}
-				dialog.showMessageBox(dialogOpts).then((returnValue) => {
-					if (returnValue.response === 0) {
-						spawn(startWinCore, { detached: true })
-					} else {
-						return
+				if (!store.get('askingCore')) {
+					const dialogOpts = {
+						type: 'info',
+						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+						title: i18n.__("electron_translate_15"),
+						message: i18n.__("electron_translate_16"),
+						detail: i18n.__("electron_translate_17"),
+						checkboxLabel: i18n.__("electron_translate_28"),
+						checkboxChecked: false
 					}
-				})
+					dialog.showMessageBox(dialogOpts).then((returnValue) => {
+						if (returnValue.response === 0) {
+							spawn(startWinCore, { detached: true })
+							store.set('askingCore', returnValue.checkboxChecked)
+						} else {
+							store.set('askingCore', returnValue.checkboxChecked)
+							return
+						}
+					})
+				}
 			}
 		})
 	} else {
@@ -460,12 +473,16 @@ function checkQortal() {
 					buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
 					title: i18n.__("electron_translate_15"),
 					message: i18n.__("electron_translate_16"),
-					detail: i18n.__("electron_translate_17")
+					detail: i18n.__("electron_translate_17"),
+					checkboxLabel: i18n.__("electron_translate_28"),
+					checkboxChecked: false
 				}
 				dialog.showMessageBox(dialogOpts).then((returnValue) => {
 					if (returnValue.response === 0) {
 						startQortal()
+						store.set('askingCore', returnValue.checkboxChecked)
 					} else {
+						store.set('askingCore', returnValue.checkboxChecked)
 						return
 					}
 				})
@@ -555,12 +572,16 @@ async function checkAndStart() {
 			buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
 			title: i18n.__("electron_translate_15"),
 			message: i18n.__("electron_translate_16"),
-			detail: i18n.__("electron_translate_17")
+			detail: i18n.__("electron_translate_17"),
+			checkboxLabel: i18n.__("electron_translate_28"),
+			checkboxChecked: false
 		}
 		dialog.showMessageBox(dialogOpts).then((returnValue) => {
 			if (returnValue.response === 0) {
 				startQortal()
+				store.set('askingCore', returnValue.checkboxChecked)
 			} else {
+				store.set('askingCore', returnValue.checkboxChecked)
 				return
 			}
 		})
@@ -752,6 +773,32 @@ const createTray = () => {
 		{
 			label: `Qortal UI v${app.getVersion()}`,
 			enabled: false,
+		},
+		{
+			type: 'separator',
+		},
+		{
+			label: i18n.__("electron_translate_31"),
+			click: function () {
+				const dialogOpts = {
+					type: 'info',
+					noLink: true,
+					buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+					title: i18n.__("electron_translate_31"),
+					message: i18n.__("electron_translate_32"),
+					detail: i18n.__("electron_translate_33"),
+					checkboxLabel: i18n.__("electron_translate_28"),
+					checkboxChecked: store.get('askingCore')
+				}
+				dialog.showMessageBox(dialogOpts).then((returnValue) => {
+					if (returnValue.response === 0) {
+						store.set('askingCore', returnValue.checkboxChecked)
+					} else {
+						store.set('askingCore', returnValue.checkboxChecked)
+						return
+					}
+				})
+			},
 		},
 		{
 			type: 'separator',

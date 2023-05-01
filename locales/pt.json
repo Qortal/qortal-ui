@@ -27,5 +27,11 @@
   "electron_translate_24": "NÃO, OBRIGADO",
   "electron_translate_25": "Java não está instalado.",
   "electron_translate_26": "Qortal UI detectou que o java não está instalado em seu sistema.",
-  "electron_translate_27": "Clique em DOWNLOAD JAVA para baixar e instalar o java ou em NÃO, OBRIGADO para não baixar e instalar."
+  "electron_translate_27": "Clique em DOWNLOAD JAVA para baixar e instalar o java ou em NÃO, OBRIGADO para não baixar e instalar.",
+  "electron_translate_28": "Nunca mais me pergunte",
+  "electron_translate_29": "ALTERAR CONFIGURAÇÃO",
+  "electron_translate_30": "CANCELAR",
+  "electron_translate_31": "Iniciar configurações do núcleo",
+  "electron_translate_32": "Alterar o status atual de pedir para iniciar o núcleo se não estiver em execução",
+  "electron_translate_33": "(Marque ou desmarque a caixa de seleção para nunca mais me perguntar)"
 }
