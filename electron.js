@@ -467,25 +467,26 @@ function checkQortal() {
 			if (status == true) {
 				log.info("Core is running, perfect !")
 			} else {
-				log.info("Core is not running, starting it !")
-				const dialogOpts = {
-					type: 'info',
-					buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-					title: i18n.__("electron_translate_15"),
-					message: i18n.__("electron_translate_16"),
-					detail: i18n.__("electron_translate_17"),
-					checkboxLabel: i18n.__("electron_translate_28"),
-					checkboxChecked: false
-				}
-				dialog.showMessageBox(dialogOpts).then((returnValue) => {
-					if (returnValue.response === 0) {
-						startQortal()
-						store.set('askingCore', returnValue.checkboxChecked)
-					} else {
-						store.set('askingCore', returnValue.checkboxChecked)
-						return
+				if (!store.get('askingCore')) {
+					const dialogOpts = {
+						type: 'info',
+						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+						title: i18n.__("electron_translate_15"),
+						message: i18n.__("electron_translate_16"),
+						detail: i18n.__("electron_translate_17"),
+						checkboxLabel: i18n.__("electron_translate_28"),
+						checkboxChecked: false
 					}
-				})
+					dialog.showMessageBox(dialogOpts).then((returnValue) => {
+						if (returnValue.response === 0) {
+							startQortal()
+							store.set('askingCore', returnValue.checkboxChecked)
+						} else {
+							store.set('askingCore', returnValue.checkboxChecked)
+							return
+						}
+					})
+				}
 			}
 		})
 	} else {
@@ -567,24 +568,26 @@ async function removeQortalZip() {
 
 async function checkAndStart() {
 	try {
-		const dialogOpts = {
-			type: 'info',
-			buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-			title: i18n.__("electron_translate_15"),
-			message: i18n.__("electron_translate_16"),
-			detail: i18n.__("electron_translate_17"),
-			checkboxLabel: i18n.__("electron_translate_28"),
-			checkboxChecked: false
-		}
-		dialog.showMessageBox(dialogOpts).then((returnValue) => {
-			if (returnValue.response === 0) {
-				startQortal()
-				store.set('askingCore', returnValue.checkboxChecked)
-			} else {
-				store.set('askingCore', returnValue.checkboxChecked)
-				return
+		if (!store.get('askingCore')) {
+			const dialogOpts = {
+				type: 'info',
+				buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+				title: i18n.__("electron_translate_15"),
+				message: i18n.__("electron_translate_16"),
+				detail: i18n.__("electron_translate_17"),
+				checkboxLabel: i18n.__("electron_translate_28"),
+				checkboxChecked: false
 			}
-		})
+			dialog.showMessageBox(dialogOpts).then((returnValue) => {
+				if (returnValue.response === 0) {
+					startQortal()
+					store.set('askingCore', returnValue.checkboxChecked)
+				} else {
+					store.set('askingCore', returnValue.checkboxChecked)
+					return
+				}
+			})
+		}
 	} catch (err) {
 		log.info('Sed error', err)
 	}
@@ -709,16 +712,36 @@ const editMenu = Menu.buildFromTemplate([
 		}]
 	},
 	{
-		label: "Edit",
-		submenu: [
-			{ label: "Undo", accelerator: "CommandOrControl+Z", selector: "undo:" },
-			{ label: "Redo", accelerator: "CommandOrControl+Shift+Z", selector: "redo:" },
-			{ type: "separator" },
-			{ label: "Cut", accelerator: "CommandOrControl+X", selector: "cut:" },
-			{ label: "Copy", accelerator: "CommandOrControl+C", selector: "copy:" },
-			{ label: "Paste", accelerator: "CommandOrControl+V", selector: "paste:" },
-			{ label: "Select All", accelerator: "CommandOrControl+A", selector: "selectAll:" }
-		]
+		label: i18n.__("electron_translate_34"),
+		submenu: [{
+			label: i18n.__("electron_translate_31"),
+			click() {
+				const dialogOpts = {
+					type: 'info',
+					noLink: true,
+					buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+					title: i18n.__("electron_translate_31"),
+					message: i18n.__("electron_translate_32"),
+					detail: i18n.__("electron_translate_33"),
+					checkboxLabel: i18n.__("electron_translate_28"),
+					checkboxChecked: store.get('askingCore')
+				}
+				dialog.showMessageBox(dialogOpts).then((returnValue) => {
+					if (returnValue.response === 0) {
+						store.set('askingCore', returnValue.checkboxChecked)
+					} else {
+						store.set('askingCore', returnValue.checkboxChecked)
+						return
+					}
+				})
+			}
+		}]
+	},
+	{
+		label: "Check for update",
+		click() {
+			autoUpdater.checkForUpdatesAndNotify()
+		}
 	}
 ])
 
@@ -896,6 +919,13 @@ if (!isLock) {
 				return
 			}
 		})
+	})
+	autoUpdater.on('update-not-available', (event) => {
+		const noUpdate = new Notification({
+			title: 'Checking for update',
+			body: 'No update available, you are on latest version.'
+		})
+		noUpdate.show()
 	})
 	autoUpdater.on('download-progress', (progressObj) => {
 		myWindow.webContents.send('downloadProgress', progressObj)
