@@ -83,6 +83,28 @@ class NotificationsView extends connect(store)(LitElement) {
                 font-size: 16px;
                 display: inline-block;
             }
+
+            .q-button {
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                align-content: center;
+                border: none;
+                border-radius: 20px;
+                padding-left: 25px;
+                padding-right: 25px;
+                color: white;
+                background: #03a9f4;
+                width: 50%;
+                font-size: 17px;
+                cursor: pointer;
+                height: 50px;
+                margin-top: 1rem;
+                text-transform: uppercase;
+                text-decoration: none;
+                transition: all .2s;
+                position: relative;
+            } 
         `
     }
 
@@ -123,8 +145,15 @@ class NotificationsView extends connect(store)(LitElement) {
                             </div>
                         </div>
                     </div>
+                    <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
+                        <div @click=${() => this.checkCoreSettings()} class="q-button"> ${translate("settings.core")} </div>
+                    </div>
                 </div>
         `
+    }
+
+    checkCoreSettings() {
+        window.electronAPI.setStartCore()
     }
 
     stateChanged(state) {

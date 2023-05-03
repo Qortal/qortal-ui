@@ -135,7 +135,8 @@
 		"exp1": "Privaten Hauptschlüssel exportieren",
 		"exp2": "Hauptschlüssel exportieren",
 		"exp3": "Exportieren",
-		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern."
+		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern.",
+		"core": "Core-Einstellungen starten"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",

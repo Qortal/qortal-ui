@@ -135,7 +135,8 @@
 		"exp1": "Privát főkulcs exportálása",
 		"exp2": "Főkulcs exportálása",
 		"exp3": "Exportálás",
-		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez."
+		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez.",
+		"core": "Alapbeállítások indítása"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",

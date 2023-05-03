@@ -135,7 +135,8 @@
 		"exp1": "Eksportuj prywatny klucz główny",
 		"exp2": "Eksportuj klucz główny",
 		"exp3": "Eksportuj",
-		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego."
+		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego.",
+		"core": "Uruchom podstawowe ustawienia"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",

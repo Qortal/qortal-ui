@@ -135,7 +135,8 @@
 		"exp1": "Exportați cheia principală privată",
 		"exp2": "Exportați cheia principală",
 		"exp3": "Export",
-		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private."
+		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
+		"core": "Porniți setările de bază"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",

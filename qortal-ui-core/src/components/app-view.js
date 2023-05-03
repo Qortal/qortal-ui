@@ -28,6 +28,7 @@ import './qort-theme-toggle.js'
 import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
+import './check-for-update.js'
 import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
@@ -501,6 +502,8 @@ class AppView extends connect(store)(LitElement) {
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="${translate("settings.settings")}"></paper-icon-button>
                             </div>
+                            <div>&nbsp;&nbsp;</div>
+                            <check-for-update></check-for-update>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="${translate("logout.logout")}"></paper-icon-button>

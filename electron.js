@@ -13,6 +13,7 @@ const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 
+app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 app.disableHardwareAcceleration()
 app.enableSandbox()
 electronDl()
@@ -760,10 +761,13 @@ function createWindow() {
 		title: "Qortal UI",
 		autoHideMenuBar: true,
 		webPreferences: {
-			nodeIntegration: true,
-			nodeIntegrationInWorker: true,
 			partition: 'persist:webviewsession',
-			enableRemoteModule: false
+			nodeIntegration: false,
+			contextIsolation: true,
+			enableRemoteModule: false,
+			allowRunningInsecureContent: false,
+			experimentalFeatures: false,
+			preload: path.join(__dirname, '/lib/preload.js')
 		},
 		show: false
 	})
@@ -899,6 +903,29 @@ if (!isLock) {
 	ipcMain.on('app_version', (event) => {
 		log.info(app.getVersion())
 		myWindow.webContents.send('app_version', { version: app.getVersion() })
+	})
+	ipcMain.on('set-start-core', (event) => {
+		const dialogOpts = {
+			type: 'info',
+			noLink: true,
+			buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+			title: i18n.__("electron_translate_31"),
+			message: i18n.__("electron_translate_32"),
+			detail: i18n.__("electron_translate_33"),
+			checkboxLabel: i18n.__("electron_translate_28"),
+			checkboxChecked: store.get('askingCore')
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				store.set('askingCore', returnValue.checkboxChecked)
+			} else {
+				store.set('askingCore', returnValue.checkboxChecked)
+				return
+			}
+		})
+	})
+	ipcMain.on('check-for-update', (event) => {
+		autoUpdater.checkForUpdatesAndNotify()
 	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {
