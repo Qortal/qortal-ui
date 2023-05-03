@@ -23,6 +23,7 @@ import { Loader } from '../../../utils/loader.js';
 import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
+import { mimeToExtensionMap } from '../../components/qdn-action-constants';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -150,8 +151,7 @@ class WebBrowser extends LitElement {
 		if (
 			this.identifier && this.identifier != 'null' &&
 			this.identifier != 'default'
-		)
-		{
+		) {
 			displayUrl = displayUrl.concat('/' + this.identifier);
 		}
 		if (this.path != null && this.path != '/')
@@ -202,7 +202,7 @@ class WebBrowser extends LitElement {
 			}
 		}
 
-		this.selectedAddress = {} 
+		this.selectedAddress = {}
 		this.btcFeePerByte = 100
 		this.ltcFeePerByte = 30
 		this.dogeFeePerByte = 1000
@@ -270,7 +270,7 @@ class WebBrowser extends LitElement {
 		`;
 	}
 
-      renderFullScreen() {
+	renderFullScreen() {
 		if (window.innerHeight == screen.height) {
 			return html`
 				<mwc-button
@@ -292,7 +292,7 @@ class WebBrowser extends LitElement {
 				</mwc-button>
 			`
 		}
-      }
+	}
 
 	goFullScreen() {
 		var elem = this.shadowRoot.getElementById('websitesWrapper')
@@ -311,7 +311,7 @@ class WebBrowser extends LitElement {
 	}
 
 	exitFullScreen() {
-		if(document.exitFullscreen) {
+		if (document.exitFullscreen) {
 			document.exitFullscreen()
 		} else if (document.mozCancelFullScreen) {
 			document.mozCancelFullScreen()
@@ -537,7 +537,7 @@ class WebBrowser extends LitElement {
 					}
 					let res1;
 					if (!skip) {
-						 res1 = await showModalAndWait(
+						res1 = await showModalAndWait(
 							actions.GET_USER_ACCOUNT,
 							{
 								service: this.service,
@@ -966,15 +966,15 @@ class WebBrowser extends LitElement {
 								isBase64: true,
 								filename: filename,
 								title,
-    							description,
-   								category,
-    							tag1,
-    							tag2,
-    							tag3,
-    							tag4,
-    							tag5,
+								description,
+								category,
+								tag1,
+								tag2,
+								tag3,
+								tag4,
+								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true: false
+								withFee: res2.userData.isWithFee === true ? true : false
 							});
 
 							response = JSON.stringify(resPublish);
@@ -1142,14 +1142,14 @@ class WebBrowser extends LitElement {
 					const groupId = data.groupId;
 					const isRecipient = groupId ? false : true
 					const sendMessage = async (messageText, chatReference) => {
-					
+
 						let _reference = new Uint8Array(64);
 						window.crypto.getRandomValues(_reference);
 						let reference = window.parent.Base58.encode(_reference);
 						const sendMessageRequest = async () => {
-							let chatResponse 
-							
-							if(isRecipient){
+							let chatResponse
+
+							if (isRecipient) {
 								chatResponse = await parentEpml.request('chat', {
 									type: 18,
 									nonce: this.selectedAddress.nonce,
@@ -1170,13 +1170,13 @@ class WebBrowser extends LitElement {
 
 							}
 
-							if(!isRecipient){
-								chatResponse =	await parentEpml.request('chat', {
+							if (!isRecipient) {
+								chatResponse = await parentEpml.request('chat', {
 									type: 181,
 									nonce: this.selectedAddress.nonce,
 									params: {
 										timestamp: Date.now(),
-										groupID:  Number(groupId),
+										groupID: Number(groupId),
 										hasReceipient: 0,
 										hasChatReference: 0,
 										chatReference: chatReference,
@@ -1190,7 +1190,7 @@ class WebBrowser extends LitElement {
 
 
 							}
-							
+
 							const msgResponse = await _computePow(chatResponse)
 							return msgResponse;
 						};
@@ -1242,12 +1242,12 @@ class WebBrowser extends LitElement {
 					if (result.action === "accept") {
 						let hasPublicKey = true;
 
-						if(isRecipient){
+						if (isRecipient) {
 							const res = await parentEpml.request('apiCall', {
 								type: 'api',
 								url: `/addresses/publickey/${recipient}`
 							});
-	
+
 							if (res.error === 102) {
 								this._publicKey.key = ''
 								this._publicKey.hasPubKey = false
@@ -1261,14 +1261,14 @@ class WebBrowser extends LitElement {
 								hasPublicKey = false;
 							}
 						}
-						
+
 
 						if (!hasPublicKey && isRecipient) {
 							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}';
 							break
 						}
 
-						
+
 
 						const tiptapJson = {
 							type: 'doc',
@@ -1307,16 +1307,16 @@ class WebBrowser extends LitElement {
 							response = msgResponse;
 						} catch (error) {
 							console.error(error);
-							if(error.message){
+							if (error.message) {
 								let data = {};
 								data['error'] = error.message;
-						response = JSON.stringify(data);
-						break
+								response = JSON.stringify(data);
+								break
 							}
 							response = '{"error": "Request could not be fulfilled"}';
 						} finally {
 							this.loader.hide();
-						
+
 						}
 
 					} else {
@@ -1390,6 +1390,83 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+					break;
+				}
+				case 'DOWNLOAD': {
+					try {
+						const requiredFields = ['filename', 'blob'];
+						const missingFields = [];
+
+						requiredFields.forEach((field) => {
+							if (!data[field]) {
+								missingFields.push(field);
+							}
+						});
+
+						if (missingFields.length > 0) {
+							const missingFieldsString = missingFields.join(', ');
+							const errorMsg = `Missing fields: ${missingFieldsString}`
+							let data = {};
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+							break
+						}
+
+						const filename = data.filename
+						const blob = data.blob
+
+						const mimeType = blob.type || data.mimeType
+						let backupExention = filename.split('.').pop()
+						if (backupExention) {
+							backupExention = '.' + backupExention
+						}
+						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
+						let fileHandleOptions = {}
+						if (!mimeType) {
+							const obj = {};
+							const errorMsg = 'A mimeType could not be derived';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+						if (!fileExtension) {
+							const obj = {};
+							const errorMsg = 'A file extension could not be derived';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+						if (fileExtension && mimeType) {
+							fileHandleOptions = {
+								accept: {
+									[mimeType]: [fileExtension]
+								}
+							}
+						}
+						const fileHandle = await self.showSaveFilePicker({
+							suggestedName: filename,
+							types: [
+								{
+									description: mimeType,
+									...fileHandleOptions
+								},
+							]
+
+
+						})
+						const writeFile = async (fileHandle, contents) => {
+							const writable = await fileHandle.createWritable()
+							await writable.write(contents)
+							await writable.close()
+						}
+						writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+						response = JSON.stringify(true);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to initiate download';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					}
 					break;
 				}
 
@@ -1466,19 +1543,19 @@ class WebBrowser extends LitElement {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
 								})
 								response = QORTBalance
-							
-							
+
+
 							} catch (error) {
 								console.error(error);
 								const data = {};
 								const errorMsg = error.message || get("browserpage.bchange21");
 								data['error'] = errorMsg;
 								response = JSON.stringify(data);
-								
+
 							} finally {
 								this.loader.hide();
 							}
-						} 
+						}
 						// else {
 						// 	let _url = ``
 						// 	let _body = null
@@ -1540,7 +1617,7 @@ class WebBrowser extends LitElement {
 
 					break;
 				}
-					
+
 
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'destinationAddress', 'amount']
@@ -1599,7 +1676,7 @@ class WebBrowser extends LitElement {
 						const balance = (Number(transformDecimals) / 1e8).toFixed(8)
 						const fee = await this.sendQortFee()
 
-						if (amountDecimals + (fee *  QORT_DECIMALS) > walletBalanceDecimals) {
+						if (amountDecimals + (fee * QORT_DECIMALS) > walletBalanceDecimals) {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
@@ -1754,7 +1831,7 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								throw new Error('Error: could not send coin')
 							}
-	
+
 						}
 
 						try {
@@ -2905,7 +2982,7 @@ async function showModalAndWait(type, data) {
 		if (checkbox) {
 			checkbox.addEventListener('click', (e) => {
 				if (e.target.checked) {
-					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoAuth(false))
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
