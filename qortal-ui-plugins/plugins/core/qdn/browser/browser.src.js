@@ -24,6 +24,7 @@ import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
+import { encryptData } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -908,6 +909,7 @@ class WebBrowser extends LitElement {
 					return;
 
 				case actions.PUBLISH_QDN_RESOURCE: {
+					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name', 'data64'];
 					const missingFields = [];
 
@@ -929,7 +931,7 @@ class WebBrowser extends LitElement {
 					const service = data.service;
 					const name = data.name;
 					let identifier = data.identifier;
-					const data64 = data.data64;
+					let data64 = data.data64;
 					const filename = data.filename;
 					const title = data.title;
 					const description = data.description;
@@ -942,12 +944,39 @@ class WebBrowser extends LitElement {
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
+
+					if (data.encrypt && !data.recipientPublicKey) {
+						let data = {};
+						data['error'] = "Encrypting data requires the recipient's public key";
+						response = JSON.stringify(data);
+						break
+					}
+
+					if (data.encrypt) {
+						try {
+							const encryptDataResponse = encryptData({
+								data64, recipientPublicKey: data.recipientPublicKey
+							})
+							if (encryptDataResponse.encryptedData) {
+								data64 = encryptDataResponse.encryptedData
+							}
+
+						} catch (error) {
+							const obj = {};
+							const errorMsg = error.message || 'Upload failed due to failed encryption';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+
+					}
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
 						{
 							name,
 							identifier,
-							service
+							service,
+							encrypt: data.encrypt
 						}
 					);
 					if (res2.action === 'accept') {
@@ -1034,6 +1063,7 @@ class WebBrowser extends LitElement {
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
 							resources,
+							encrypt: data.encrypt
 						}
 					);
 
@@ -2852,6 +2882,7 @@ async function showModalAndWait(type, data) {
 						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `			
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<table>
 									${data.resources.map((resource) => `
 										<tr>
@@ -2877,6 +2908,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<div class="checkbox-row">
 									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
 										${get('browserpage.bchange29')}
