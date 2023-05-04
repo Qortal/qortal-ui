@@ -541,7 +541,7 @@ class Websites extends LitElement {
 
     getArbitraryResources = async () => {
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false&excludeblocked=true`
         })
         this.resources = resources
     }
@@ -577,7 +577,7 @@ class Websites extends LitElement {
     async getData(offset) {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
+      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
 
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
       const jsonOffsetData = await jsonOffsetRes.json()
@@ -676,6 +676,12 @@ class Websites extends LitElement {
         await this.updateItemsFromPage(1, true)
     }
 
+    async refreshWebsites() {
+        await this.getData(0)
+        await this.getArbitraryResources()
+        await this.updateItemsFromPage(1, true)
+    }
+
     doSearch(e) {
         this.searchResult()
     }
@@ -753,7 +759,7 @@ class Websites extends LitElement {
             this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("websitespage.schange22")
@@ -783,7 +789,7 @@ class Websites extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("websitespage.schange23")
@@ -816,7 +822,7 @@ class Websites extends LitElement {
             this.blockedNames.push(name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("websitespage.schange24")
@@ -846,7 +852,7 @@ class Websites extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
+            this.refreshWebsites()
             this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("websitespage.schange25")

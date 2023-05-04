@@ -146,15 +146,15 @@ class WebBrowser extends LitElement {
 		// Build initial display URL
 		let displayUrl = 'qortal://' + this.service + '/' + this.name;
 		if (
-			this.identifier != null &&
-			data.identifier != '' &&
+			this.identifier && this.identifier != 'null' &&
 			this.identifier != 'default'
 		)
+		{
 			displayUrl = displayUrl.concat('/' + this.identifier);
+		}
 		if (this.path != null && this.path != '/')
 			displayUrl = displayUrl.concat(this.path);
 		this.displayUrl = displayUrl;
-
 		const getFollowedNames = async () => {
 			let followedNames = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -193,8 +193,9 @@ class WebBrowser extends LitElement {
 			}
 			else {
 				// Normal mode
+
 				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
-					}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
+					}?theme=${this.theme}&identifier=${(this.identifier != null && this.identifier != 'null') ? this.identifier : ''
 					}`
 			}
 		}

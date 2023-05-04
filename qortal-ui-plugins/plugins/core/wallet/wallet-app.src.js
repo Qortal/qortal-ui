@@ -11,7 +11,6 @@ import '../components/ButtonIconCopy.js'
 import '../components/QortalQrcodeGenerator.js'
 import '../components/frag-file-input.js'
 import '../components/time-elements/index.js'
-import FileSaver from 'file-saver'
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
 import '@material/mwc-dialog'
@@ -3723,52 +3722,66 @@ class MultiWallet extends LitElement {
     }
 
     exportQortAddressbook() {
+        let bookname = ""
         const qortBookData = JSON.stringify(localStorage.getItem("addressbookQort"))
         const qortBookSave = JSON.parse((qortBookData) || "[]")
         const blob = new Blob([qortBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `qortal_addressbook.qort.json`)
+        bookname = "qortal_addressbook.qort.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportBtcAddressbook() {
+        let bookname = ""
         const btcBookData = JSON.stringify(localStorage.getItem("addressbookBtc"))
         const btcBookSave = JSON.parse((btcBookData) || "[]")
         const blob = new Blob([btcBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `bitcoin_addressbook.btc.json`)
+        bookname = "bitcoin_addressbook.btc.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportLtcAddressbook() {
+        let bookname = ""
         const ltcBookData = JSON.stringify(localStorage.getItem("addressbookLtc"))
         const ltcBookSave = JSON.parse((ltcBookData) || "[]")
         const blob = new Blob([ltcBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `litecoin_addressbook.ltc.json`)
+        bookname = "litecoin_addressbook.ltc.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportDogeAddressbook() {
+        let bookname = ""
         const dogeBookData = JSON.stringify(localStorage.getItem("addressbookDoge"))
         const dogeBookSave = JSON.parse((dogeBookData) || "[]")
         const blob = new Blob([dogeBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `dogecoin_addressbook.doge.json`)
+        bookname = "dogecoin_addressbook.doge.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportDgbAddressbook() {
+        let bookname = ""
         const dgbBookData = JSON.stringify(localStorage.getItem("addressbookDgb"))
         const dgbBookSave = JSON.parse((dgbBookData) || "[]")
         const blob = new Blob([dgbBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `digibyte_addressbook.dgb.json`)
+        bookname = "digibyte_addressbook.dgb.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportRvnAddressbook() {
+        let bookname = ""
         const rvnBookData = JSON.stringify(localStorage.getItem("addressbookRvn"))
         const rvnBookSave = JSON.parse((rvnBookData) || "[]")
         const blob = new Blob([rvnBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `ravencoin_addressbook.rvn.json`)
+        bookname = "ravencoin_addressbook.rvn.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     exportArrrAddressbook() {
+        let bookname = ""
         const arrrBookData = JSON.stringify(localStorage.getItem("addressbookArrr"))
         const arrrBookSave = JSON.parse((arrrBookData) || "[]")
         const blob = new Blob([arrrBookSave], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `piratechain_addressbook.arrr.json`)
+        bookname = "piratechain_addressbook.arrr.json"
+        this.saveFileToDisk(blob, bookname)
     }
 
     importQortAddressbook(file) {
@@ -4947,7 +4960,7 @@ class MultiWallet extends LitElement {
         } else if ( this._selectedWallet === "btc" ) {
             return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.exportBtcAddressbook()}><vaadin-icon icon="vaadin:cloud-download" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange54")}</vaadin-button>`
         } else if ( this._selectedWallet === "ltc" ) {
-            return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.exportKLtcAddressbook()}><vaadin-icon icon="vaadin:cloud-download" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange54")}</vaadin-button>`
+            return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.exportLtcAddressbook()}><vaadin-icon icon="vaadin:cloud-download" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange54")}</vaadin-button>`
         } else if ( this._selectedWallet === "doge" ) {
             return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.exportDogeAddressbook()}><vaadin-icon icon="vaadin:cloud-download" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange54")}</vaadin-button>`
         } else if ( this._selectedWallet === "dgb" ) {
@@ -5778,6 +5791,27 @@ class MultiWallet extends LitElement {
                 }
             }
         })
+    }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("general.save")
+            parentEpml.request('showSnackBar', `${snack4string} ${fileName} ✅`)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     isEmptyArray(arr) {

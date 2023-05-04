@@ -3,12 +3,12 @@ import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import snackbar from '../../functional-components/snackbar.js'
 
 import '@material/mwc-checkbox'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@vaadin/password-field/vaadin-password-field.js'
-import FileSaver from 'file-saver'
 
 class SecurityView extends connect(store)(LitElement) {
     static get properties() {
@@ -155,13 +155,39 @@ class SecurityView extends connect(store)(LitElement) {
     }
 
     async downloadBackup() {
+        let backupname = ''
         this.backupErrorMessage = ''
         const state = store.getState()
         const password = this.shadowRoot.getElementById('downloadBackupPassword').value
         const data = await state.app.wallet.generateSaveWalletData(password, state.config.crypto.kdfThreads, () => { })
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `qortal_backup_${state.app.selectedAddress.address}.json`)
+        backupname = "qortal_backup_" + state.app.selectedAddress.address + ".json"
+        this.saveFileToDisk(blob, backupname)
+    }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("general.save")
+            snackbar.add({
+                labelText: `${snack4string} ${fileName} ✅`,
+                dismiss: true
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

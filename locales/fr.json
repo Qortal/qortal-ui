@@ -27,5 +27,11 @@
   "electron_translate_24": "NON MERCI",
   "electron_translate_25": "Java n'est pas installé.",
   "electron_translate_26": "L'interface utilisateur Qortal a détecté que Java n'est pas installé sur votre système.",
-  "electron_translate_27": "Cliquez sur TÉLÉCHARGER JAVA pour télécharger et installer java ou sur NON MERCI pour ne pas le télécharger et l'installer."
+  "electron_translate_27": "Cliquez sur TÉLÉCHARGER JAVA pour télécharger et installer java ou sur NON MERCI pour ne pas le télécharger et l'installer.",
+  "electron_translate_28": "Ne me demande plus jamais",
+  "electron_translate_29": "MODIFIER LE PARAMÈTRE",
+  "electron_translate_30": "ANNULER",
+  "electron_translate_31": "Démarrer les paramètres de base",
+  "electron_translate_32": "Modifier l'état actuel de la demande de démarrage du noyau s'il n'est pas en cours d'exécution",
+  "electron_translate_33": "(Cochez ou décochez la case Ne plus jamais me demander)"
 }

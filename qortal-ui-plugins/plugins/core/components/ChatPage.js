@@ -10,7 +10,6 @@ import Highlight from '@tiptap/extension-highlight'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { Editor, Extension } from '@tiptap/core'
 import * as zip from "@zip.js/zip.js";
-import { saveAs } from 'file-saver';
 import './ChatGifs/ChatGifs.js';
 
 import localForage from "localforage";
@@ -2514,7 +2513,7 @@ class ChatPage extends LitElement {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false`,
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`,
             });
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
@@ -2548,7 +2547,7 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false`,
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`,
             });
 
 
@@ -2589,7 +2588,7 @@ class ChatPage extends LitElement {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`,
             });
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
@@ -2622,7 +2621,7 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`,
             });
 
 
@@ -2660,7 +2659,7 @@ class ChatPage extends LitElement {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&afer=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&afer=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`,
             });
 
             const decodeMsgs = getInitialMessages.map((eachMessage) => {
@@ -2693,7 +2692,7 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${scrollElement.messageObj.timestamp}&haschatreference=false`,
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`,
             });
 
 
@@ -2739,8 +2738,7 @@ class ChatPage extends LitElement {
                     let _eachMessage = this.decodeMessage(eachMessage)
                     return _eachMessage
                 }
-            })
-       
+         })
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder();
             const replacedMessages = await replaceMessagesEdited({
@@ -2759,6 +2757,7 @@ class ChatPage extends LitElement {
             // TODO: Determine number of initial messages by screen height...
             this.messagesRendered = this._messages;
             this.isLoadingMessages = false;
+
             setTimeout(() => this.downElementObserver(), 500);
         } else {
             const replacedMessages = await replaceMessagesEdited({
@@ -2885,11 +2884,10 @@ class ChatPage extends LitElement {
         if (isReceipientVar === true) {
             // direct chat
             if (encodedMessageObj.isEncrypted === true && _publicKeyVar.hasPubKey === true && encodedMessageObj.data) {
-                let decodedMessage = window.parent.decryptChatMessage(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);
+                let decodedMessage = window.parent.decryptChatMessageBase64(encodedMessageObj.data, window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey, _publicKeyVar.key, encodedMessageObj.reference);
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage };
             } else if (encodedMessageObj.isEncrypted === false && encodedMessageObj.data) {
-                let bytesArray = window.parent.Base58.decode(encodedMessageObj.data);
-                let decodedMessage = new TextDecoder('utf-8').decode(bytesArray);
+                let decodedMessage = window.parent.Base64.decode(encodedMessageObj.data);
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage };
             } else {
                 decodedMessageObj = { ...encodedMessageObj, decodedMessage: "Cannot Decrypt Message!" };
@@ -2897,8 +2895,7 @@ class ChatPage extends LitElement {
 
         } else {
             // group chat
-            let bytesArray = window.parent.Base58.decode(encodedMessageObj.data);
-            let decodedMessage = new TextDecoder('utf-8').decode(bytesArray);
+            let decodedMessage = window.parent.Base64.decode(encodedMessageObj.data);
             decodedMessageObj = { ...encodedMessageObj, decodedMessage };
         }
 
@@ -2942,13 +2939,13 @@ class ChatPage extends LitElement {
                         const lastMessage = cachedData[cachedData.length - 1]
                         const newMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`,
                         });
                         getInitialMessages = [...cachedData, ...newMessages].slice(-20)
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&haschatreference=false`,
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&haschatreference=false&encoding=BASE64`,
                         });
 
 
@@ -2959,9 +2956,14 @@ class ChatPage extends LitElement {
                     initial = initial + 1
 
                 } else {
+                    try {
                     if(e.data){
                         this.processMessages(JSON.parse(e.data), false)
                     }
+                    } catch (error) {
+
+                    }
+
                     
                 }
             }
@@ -3037,16 +3039,14 @@ class ChatPage extends LitElement {
 
                         const newMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false`,
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`,
                         });
-
                         getInitialMessages = [...cachedData, ...newMessages].slice(-20)
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&haschatreference=false`,
+                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&haschatreference=false&encoding=BASE64`,
                         });
-
 
                     }
 
@@ -3055,9 +3055,14 @@ class ChatPage extends LitElement {
 
                     initial = initial + 1
                 } else {
-                    if(e.data){
-                        this.processMessages(JSON.parse(e.data), false)
+                    try {
+                        if (e.data) {
+                            this.processMessages(JSON.parse(e.data), false)
+                        } 
+                    } catch (error) {
+
                     }
+
                    
                 }
             }

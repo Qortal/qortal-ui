@@ -135,7 +135,8 @@
 		"exp1": "Izvezi privatni glavni ključ",
 		"exp2": "Izvezi glavni ključ",
 		"exp3": "Izvoz",
-		"exp4": "Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa."
+		"exp4": "Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa.",
+		"core": "Pokreni podešavanja jezgra"
 	},
 	"appinfo": {
 		"blockheight": "Visina Bloka",

@@ -135,7 +135,8 @@
 		"exp1": "Exporter la clé principale privée",
 		"exp2": "Exporter la clé principale",
 		"exp3": "Exporter",
-		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée."
+		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
+		"core": "Démarrer les paramètres du noyau"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",

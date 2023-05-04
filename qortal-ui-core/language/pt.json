@@ -135,7 +135,8 @@
 		"exp1": "Exportar Chave Mestra Privada",
 		"exp2": "Exportar Chave Mestra",
 		"exp3": "Exportar",
-		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada."
+		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada.",
+		"core": "Iniciar configurações do núcleo"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",

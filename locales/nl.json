@@ -27,5 +27,11 @@
   "electron_translate_24": "NEE BEDANKT",
   "electron_translate_25": "Java is niet geïnstalleerd.",
   "electron_translate_26": "Qortal UI heeft gedetecteerd dat java niet op uw systeem is geïnstalleerd.",
-  "electron_translate_27": "Klik op DOWNLOAD JAVA om java te downloaden en te installeren of op NO BEDANKT om het niet te downloaden en te installeren."
+  "electron_translate_27": "Klik op DOWNLOAD JAVA om java te downloaden en te installeren of op NO BEDANKT om het niet te downloaden en te installeren.",
+  "electron_translate_28": "Vraag het me nooit meer",
+  "electron_translate_29": "INSTELLING WIJZIGEN",
+  "electron_translate_30": "ANNULEREN",
+  "electron_translate_31": "Kerninstellingen starten",
+  "electron_translate_32": "Wijzig de huidige status van vragen om de kern te starten als deze niet draait",
+  "electron_translate_33": "(vink het selectievakje Nooit meer vragen aan of uit)"
 }

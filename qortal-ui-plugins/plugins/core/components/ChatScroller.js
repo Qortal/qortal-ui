@@ -20,7 +20,6 @@ import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
 import { generateHTML } from '@tiptap/core';
-import { saveAs } from 'file-saver';
 import axios from "axios";
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
@@ -28,6 +27,112 @@ import Highlight from '@tiptap/extension-highlight'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 let toggledMessage = {}
+
+const getApiKey = () => {
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+    let apiKey = myNode.apiKey;
+    return apiKey;
+}
+
+const extractComponents = async (url) => {
+    if (!url.startsWith("qortal://")) {
+        return null;
+    }
+
+    url = url.replace(/^(qortal\:\/\/)/, "");
+    if (url.includes("/")) {
+        let parts = url.split("/");
+        const service = parts[0].toUpperCase();
+        parts.shift();
+        const name = parts[0];
+        parts.shift();
+        let identifier;
+
+        if (parts.length > 0) {
+            identifier = parts[0]; // Do not shift yet
+            // Check if a resource exists with this service, name and identifier combination
+            let responseObj = await parentEpml.request('apiCall', {
+                url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${getApiKey()}`
+            })
+
+            if (responseObj.totalChunkCount > 0) {
+                // Identifier exists, so don't include it in the path
+                parts.shift();
+            }
+            else {
+                identifier = null;
+            }
+        }
+
+        const path = parts.join("/");
+
+        const components = {};
+        components["service"] = service;
+        components["name"] = name;
+        components["identifier"] = identifier;
+        components["path"] = path;
+        return components;
+    }
+
+    return null;
+}
+
+function processText(input) {
+    const linkRegex = /(qortal:\/\/\S+)/g;
+
+    function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const parts = node.textContent.split(linkRegex);
+
+            if (parts.length > 1) {
+                const fragment = document.createDocumentFragment();
+
+                parts.forEach((part) => {
+                    if (part.startsWith('qortal://')) {
+                        const link = document.createElement('span');
+                        // Store the URL in a data attribute
+                        link.setAttribute('data-url', part);
+                        link.textContent = part;
+                        link.style.color = 'var(--nav-text-color)';
+                        link.style.textDecoration = 'underline';
+                        link.style.cursor = 'pointer'
+
+                        link.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            try {
+                                const res = await extractComponents(part)
+                                if (!res) return
+                                const { service, name, identifier, path } = res
+                                window.location = `../../qdn/browser/index.html?service=${service}&name=${name}&identifier=${identifier}&path=${path}`
+                            } catch (error) {
+                                console.log({ error })
+                            }
+
+                        });
+
+                        fragment.appendChild(link);
+                    } else {
+                        const textNode = document.createTextNode(part);
+                        fragment.appendChild(textNode);
+                    }
+                });
+
+                node.replaceWith(fragment);
+            }
+        } else {
+            for (const childNode of Array.from(node.childNodes)) {
+                processNode(childNode);
+            }
+        }
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = input;
+
+    processNode(wrapper);
+
+    return wrapper
+}
 class ChatScroller extends LitElement {
     static get properties() {
         return {
@@ -61,7 +166,9 @@ class ChatScroller extends LitElement {
         }
     }
 
-    static styles = [chatStyles]
+    static get styles() {
+        return [chatStyles];
+    }
 
     constructor() {
         super()
@@ -103,7 +210,10 @@ class ChatScroller extends LitElement {
             const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData;
        
             if (isSameGroup) {
-                messageArray[messageArray.length - 1].messages = [...(messageArray[messageArray.length - 1]?.messages || []), message];
+                messageArray[messageArray.length - 1].messages = [
+                    ...(messageArray[messageArray.length - 1].messages || []),
+                    message
+                ];
             } else {
                 messageArray.push({
                     messages: [message],
@@ -324,7 +434,10 @@ class MessageTemplate extends LitElement {
         this.viewImage =  false
     }
 
-    static styles = [chatStyles]
+    static get styles() {
+        return [chatStyles];
+    }
+
 
     // Open & Close Private Message Chat Modal
     showPrivateMessageModal() {
@@ -362,14 +475,34 @@ class MessageTemplate extends LitElement {
             .then(response =>{              
                 let filename = attachment.attachmentName;
                 let blob = new Blob([response.data], { type:"application/octet-stream" });
-                saveAs(blob , filename);
+                this.saveFileToDisk(blob , filename);
             })
         } catch (error) {
             console.error(error);
         }
     }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     firstUpdated(){
-        const autoSeeChatList = window.parent.reduxStore.getState().app?.autoLoadImageChats
+        const autoSeeChatList = window.parent.reduxStore.getState().app.autoLoadImageChats
         if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.signature)){
             this.viewImage =  true
         }
@@ -386,6 +519,7 @@ class MessageTemplate extends LitElement {
         const hidemsg = this.hideMessages;
         let message = "";
         let messageVersion2 = ""
+        let messageVersion2WithLink = null
         let reactions = [];
         let repliedToData = null;
         let image = null;
@@ -405,6 +539,8 @@ class MessageTemplate extends LitElement {
                     Highlight
                     // other extensions …
                   ])
+                messageVersion2WithLink = processText(messageVersion2)
+
             }
             message = parsedMessageObj.messageText;
             repliedToData = this.messageObj.repliedToData;
@@ -424,7 +560,6 @@ class MessageTemplate extends LitElement {
                 gif = parsedMessageObj.gifs[0];
             }
         } catch (error) {
-            console.error(error);
             message = this.messageObj.decodedMessage;
         }
         let avatarImg = '';
@@ -550,8 +685,28 @@ class MessageTemplate extends LitElement {
             }
             
         }
-        const escapedMessage = this.escapeHTML(message)
-        const replacedMessage = escapedMessage.replace(new RegExp('\r?\n','g'), '<br />');
+        let repliedToMessageText = ''
+        if (repliedToData && repliedToData.decodedMessage && repliedToData.decodedMessage.messageText) {
+            try {
+                repliedToMessageText = generateHTML(repliedToData.decodedMessage.messageText, [
+                    StarterKit,
+                    Underline,
+                    Highlight
+                    // other extensions …
+                ])
+            } catch (error) {
+
+            }
+        }
+        let replacedMessage = ''
+        if (message && +version < 2) {
+            const escapedMessage = this.escapeHTML(message)
+            if (escapedMessage) {
+                replacedMessage = escapedMessage.replace(new RegExp('\r?\n', 'g'), '<br />');
+            }
+
+        }
+
        
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
@@ -645,16 +800,11 @@ class MessageTemplate extends LitElement {
                                              ${repliedToData.senderName ? repliedToData.senderName : cropAddress(repliedToData.sender) }
                                         </p>
                                         <p class="replied-message">
-                                            ${version.toString() === '1' ? html`
+                                            ${version && version.toString() === '1' ? html`
                                             ${repliedToData.decodedMessage.messageText}
                                             ` : ''}
-                                            ${+version > 1 ? html`
-                                            ${unsafeHTML(generateHTML(repliedToData.decodedMessage.messageText, [
-                                                StarterKit,
-                                                Underline,
-                                                Highlight
-                                                // other extensions …
-                                            ]))}
+                                            ${+version > 1 && repliedToMessageText ? html`
+                                            ${unsafeHTML(repliedToMessageText)}
                                             ` 
                                         : ''}
                                         </p>
@@ -764,13 +914,14 @@ class MessageTemplate extends LitElement {
                                     id="messageContent" 
                                     class="message" 
                                     style=${(image && replacedMessage !== "") &&"margin-top: 15px;"}>
-                                        ${+version > 1 ? html`
+                                        ${+version > 1 ? messageVersion2WithLink ? html`${messageVersion2WithLink}` : html`
                                         ${unsafeHTML(messageVersion2)}
                                         ` : ''}
-                                        ${version.toString() === '1' ? html`
+
+                                        ${version && version.toString() === '1' ? html`
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         ` : ''}
-                                        ${version.toString() === '0' ? html`
+                                        ${version && version.toString() === '0' ? html`
                                         ${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
                                         ` : ''}
                                         <div 
@@ -1039,7 +1190,9 @@ class ChatMenu extends LitElement {
         this.showBlockUserModal = () => {};
     }
 
-    static styles = [chatStyles]
+    static get styles() {
+        return [chatStyles];
+    }
 
     // Copy address to clipboard
     async copyToClipboard(text) {

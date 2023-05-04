@@ -26,6 +26,12 @@
   "electron_translate_23": "DESCARGAR JAVA",
   "electron_translate_24": "NO GRACIAS",
   "electron_translate_25": "Java no está instalado.",
-  "electron_translate_26": "La interfaz de usuario de Qortal ha detectado que Java no está instalado en su sistema".,
-  "electron_translate_27": "Haz clic en DESCARGAR JAVA para descargar e instalar Java o en NO GRACIAS para no descargarlo e instalarlo".
+  "electron_translate_26": "La interfaz de usuario de Qortal ha detectado que Java no está instalado en su sistema.",
+  "electron_translate_27": "Haz clic en DESCARGAR JAVA para descargar e instalar Java o en NO GRACIAS para no descargarlo e instalarlo.",
+  "electron_translate_28": "Nunca me vuelvas a preguntar",
+  "electron_translate_29": "CAMBIAR CONFIGURACIÓN",
+  "electron_translate_30": "CANCELAR",
+  "electron_translate_31": "Iniciar configuración básica",
+  "electron_translate_32": "Cambiar el estado actual de solicitar iniciar el núcleo si no se está ejecutando",
+  "electron_translate_33": "(Marque o desmarque la casilla de verificación Nunca volver a preguntarme)"
 }

@@ -7,7 +7,6 @@ import { createWallet } from '../../../../qortal-ui-crypto/api/createWallet.js'
 import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.js'
 import { doStoreWallet } from '../../redux/user/user-actions.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
-import FileSaver from 'file-saver'
 import ripple from '../../functional-components/loading-ripple.js'
 import snackbar from '../../functional-components/snackbar.js'
 import '../../functional-components/random-sentence-generator.js'
@@ -587,17 +586,45 @@ class CreateAccountSection extends connect(store)(LitElement) {
     }
 
     async downloadBackup(wallet) {
+        let backupname = ""
         const state = store.getState()
         const data = await wallet.generateSaveWalletData(this._pass, state.config.crypto.kdfThreads, () => { })
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `qortal_backup_${wallet.addresses[0].address}.json`)
+        backupname = "qortal_backup_" + wallet.addresses[0].address + ".json"
+        this.saveFileToDisk(blob, backupname)
     }
 
     downloadSeedphrase() {
+        let seedname = ""
         const seed = this.shadowRoot.getElementById('randSentence').parsedString
         const blob = new Blob([seed], { type: 'text/plain;charset=utf-8' })
-        FileSaver.saveAs(blob, `qortal_seedphrase.txt`)
+        seedname = "qortal_seedphrase_" + wallet.addresses[0].address + ".txt"
+        this.saveFileToDisk(blob, seedname)
+    }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("general.save")
+            snackbar.add({
+                labelText: `${snack4string} ${fileName} ✅`,
+                dismiss: true
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

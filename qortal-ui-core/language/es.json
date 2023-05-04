@@ -135,7 +135,8 @@
 		"exp1": "Exportar clave maestra privada",
 		"exp2": "Exportar clave maestra",
 		"exp3": "Exportar",
-		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada."
+		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada.",
+		"core": "Iniciar configuración básica"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",

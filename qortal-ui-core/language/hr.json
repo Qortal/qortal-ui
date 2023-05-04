@@ -135,7 +135,8 @@
 		"exp1": "Izvezi privatni glavni ključ",
 		"exp2": "Glavni ključ izvoza",
 		"exp3": "Izvoz",
-		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa."
+		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa.",
+		"core": "Pokreni osnovne postavke"
 	},
 	"appinfo": {
 		"blockheight": "Visina bloka",
