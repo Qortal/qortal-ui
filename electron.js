@@ -705,12 +705,9 @@ async function startQortal() {
 const editMenu = Menu.buildFromTemplate([
 	{
 		label: "Qortal",
-		submenu: [{
-			label: "Quit",
-			click() {
-				app.quit()
-			}
-		}]
+		submenu: [
+			{ label: "Quit", click() {app.quit()}}
+		]
 	},
 	{
 		label: i18n.__("electron_translate_34"),
@@ -739,10 +736,19 @@ const editMenu = Menu.buildFromTemplate([
 		}]
 	},
 	{
-		label: "Check for update",
-		click() {
-			autoUpdater.checkForUpdatesAndNotify()
-		}
+		label: "Edit",
+		submenu: [
+			{ label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+			{ label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+			{ type: "separator" },
+			{ label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+			{ label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+			{ label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+			{ label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+		]
+	},
+	{
+		label: "Check for update", click() {autoUpdater.checkForUpdatesAndNotify()}
 	}
 ])
 
