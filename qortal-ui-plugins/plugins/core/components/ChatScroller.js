@@ -642,7 +642,7 @@ class MessageTemplate extends LitElement {
                                             class=${this.myAddress !== repliedToData.sender
                                             ? "original-message-sender" 
                                             : "message-data-my-name"}>
-                                             ${repliedToData.senderName ?? cropAddress(repliedToData.sender)}
+                                             ${repliedToData.senderName ? repliedToData.senderName : cropAddress(repliedToData.sender) }
                                         </p>
                                         <p class="replied-message">
                                             ${version.toString() === '1' ? html`

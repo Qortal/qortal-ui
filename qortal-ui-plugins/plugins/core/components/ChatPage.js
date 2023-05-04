@@ -2919,11 +2919,11 @@ class ChatPage extends LitElement {
 
             if (window.parent.location.protocol === "https:") {
 
-                directSocketLink = `wss://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
+                directSocketLink = `wss://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`;
             } else {
 
                 // Fallback to http
-                directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}`;
+                directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`;
             }
 
             this.webSocket  = new WebSocket(directSocketLink);
@@ -3009,11 +3009,11 @@ class ChatPage extends LitElement {
 
             if (window.parent.location.protocol === "https:") {
 
-                groupSocketLink = `wss://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}`;
+                groupSocketLink = `wss://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`;
             } else {
 
                 // Fallback to http
-                groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}`;
+                groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`;
             }
 
             this.webSocket = new WebSocket(groupSocketLink);
