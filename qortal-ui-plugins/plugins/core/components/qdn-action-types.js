@@ -42,3 +42,6 @@ export const ENCRYPT_DATA = 'ENCRYPT_DATA'
 
 // DECRYPT_DATA
 export const DECRYPT_DATA = 'DECRYPT_DATA'
+
+// SAVE_FILE
+export const SAVE_FILE = 'SAVE_FILE'

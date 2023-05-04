@@ -24,7 +24,7 @@ import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { encryptData } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, encryptData, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -561,79 +561,9 @@ class WebBrowser extends LitElement {
 						break;
 					}
 				}
-				case actions.ENCRYPT_DATA: {
-					const requiredFields = ['Uint8ArrayData', 'destinationPublicKey'];
-					const missingFields = [];
 
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field);
-						}
-					});
-
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
-					const { Uint8ArrayData, destinationPublicKey } = data
-
-					const uint8Array = new Uint8Array(Object.values(Uint8ArrayData));
-					if (!(uint8Array instanceof Uint8Array)) {
-						data['error'] = "The Uint8ArrayData you've submitted is invalid";
-						response = JSON.stringify(data);
-						break
-					}
-					try {
-						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						if (!privateKey) {
-							data['error'] = "Unable to retrieve keys"
-							response = JSON.stringify(data);
-							break
-						}
-						const publicKeyUnit8Array = window.parent.Base58.decode(destinationPublicKey)
-
-						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
-						const sharedSecret = new Uint8Array(32)
-						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-
-						const chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
-
-						const nonce = new Uint8Array(24);
-						window.crypto.getRandomValues(nonce);
-						const encryptedData = nacl.secretbox(uint8Array, nonce, chatEncryptionSeed)
-
-						const str = "qortalEncryptedData";
-						const strEncoder = new TextEncoder();
-						const strUint8Array = strEncoder.encode(str);
-
-						const combinedData = new Uint8Array(strUint8Array.length + nonce.length + encryptedData.length);
-
-						combinedData.set(strUint8Array);
-
-						combinedData.set(nonce, strUint8Array.length);
-						combinedData.set(encryptedData, strUint8Array.length + nonce.length);
-
-
-						let data = {};
-						data['encryptedData'] = combinedData
-						data['destinationPublicKey'] = destinationPublicKey
-						response = JSON.stringify(data);
-						break;
-					} catch (error) {
-						const data = {};
-						const errorMsg = error.message || "Error in encrypting data"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
-				}
 				case actions.DECRYPT_DATA: {
-					const requiredFields = ['encryptedData', 'senderPublicKey'];
+					const requiredFields = ['encryptedData', 'publicKey'];
 					const missingFields = [];
 
 					requiredFields.forEach((field) => {
@@ -650,11 +580,11 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-					const { encryptedData, senderPublicKey } = data
+					const { encryptedData, publicKey } = data
 
 
 					try {
-						const uint8Array = new Uint8Array(Object.values(encryptedData));
+						const uint8Array = base64ToUint8Array(encryptedData)
 						const combinedData = uint8Array
 						const str = "qortalEncryptedData";
 						const strEncoder = new TextEncoder();
@@ -665,26 +595,27 @@ class WebBrowser extends LitElement {
 						const _encryptedData = combinedData.slice(strUint8Array.length + 24);
 
 						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const publicKey = window.parent.Base58.decode(senderPublicKey)
+						const _publicKey = window.parent.Base58.decode(publicKey)
 
-						if (!privateKey || !publicKey) {
+						if (!privateKey || !_publicKey) {
 							data['error'] = "Unable to retrieve keys"
 							response = JSON.stringify(data);
 							break
 						}
 
 						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(_publicKey)
 						const sharedSecret = new Uint8Array(32);
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
 
 						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
 						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
-						let data = {};
-						data['decryptedData'] = _decryptedData
-						response = JSON.stringify(data);
+						const decryptedDataToBase64 = uint8ArrayToBase64(_decryptedData)
+						response = JSON.stringify(decryptedDataToBase64);
+
 						break;
 					} catch (error) {
+						console.log({ error })
 						const data = {};
 						const errorMsg = error.message || "Error in decrypting data"
 						data['error'] = errorMsg;
@@ -1059,6 +990,12 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					if (data.encrypt && !data.recipientPublicKey) {
+						let data = {};
+						data['error'] = "Encrypting data requires the recipient's public key";
+						response = JSON.stringify(data);
+						break
+					}
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
@@ -1091,7 +1028,7 @@ class WebBrowser extends LitElement {
 						const service = resource.service;
 						const name = resource.name;
 						let identifier = resource.identifier;
-						const data64 = resource.data64;
+						let data64 = resource.data64;
 						const filename = resource.filename;
 						const title = resource.title;
 						const description = resource.description;
@@ -1104,6 +1041,24 @@ class WebBrowser extends LitElement {
 						if (resource.identifier == null) {
 							identifier = 'default';
 						}
+
+						if (data.encrypt) {
+							try {
+								const encryptDataResponse = encryptData({
+									data64, recipientPublicKey: data.recipientPublicKey
+								})
+								if (encryptDataResponse.encryptedData) {
+									data64 = encryptDataResponse.encryptedData
+								}
+
+							} catch (error) {
+								const errorMsg = error.message || 'Upload failed due to failed encryption'
+								throw new Error(errorMsg)
+							}
+
+						}
+
+
 
 						const worker = new WebWorker();
 						try {
@@ -1422,8 +1377,9 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 				}
-				case 'DOWNLOAD': {
+				case actions.SAVE_FILE: {
 					try {
+
 						const requiredFields = ['filename', 'blob'];
 						const missingFields = [];
 
@@ -1442,8 +1398,23 @@ class WebBrowser extends LitElement {
 							break
 						}
 
+
+
 						const filename = data.filename
 						const blob = data.blob
+
+						const res = await showModalAndWait(
+							actions.SAVE_FILE,
+							{
+								filename
+							}
+						);
+
+						if (res.action === 'reject') {
+							response = '{"error": "User declined request"}';
+							break
+
+						}
 
 						const mimeType = blob.type || data.mimeType
 						let backupExention = filename.split('.').pop()
@@ -2952,6 +2923,12 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.items.join(', ')}</span></p>
 							</div>
 						` : ''}
+						${type === actions.SAVE_FILE ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
+							</div>
+						` : ''}
+						
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>
