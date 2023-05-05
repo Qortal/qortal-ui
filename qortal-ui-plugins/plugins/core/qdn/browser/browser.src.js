@@ -882,6 +882,12 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					if (!data.encrypt && data.service.endsWith("_PRIVATE")) {
+						let data = {};
+						data['error'] = "Only encrypted data can go into private services";
+						response = JSON.stringify(data);
+						break
+					}
 
 					if (data.encrypt) {
 						try {
@@ -1040,6 +1046,10 @@ class WebBrowser extends LitElement {
 						const tag5 = resource.tag5;
 						if (resource.identifier == null) {
 							identifier = 'default';
+						}
+
+						if (!data.encrypt && service.endsWith("_PRIVATE")) {
+							throw new Error("Only encrypted data can go into private services")
 						}
 
 						if (data.encrypt) {
