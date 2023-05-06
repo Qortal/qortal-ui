@@ -5811,7 +5811,10 @@ class MultiWallet extends LitElement {
             let snack4string = get("general.save")
             parentEpml.request('showSnackBar', `${snack4string} ${fileName} ✅`)
         } catch (error) {
-            FileSaver.saveAs(blob, filename)
+            if (error.name === 'AbortError') {
+                return
+            }
+            FileSaver.saveAs(blob, fileName)
         }
     }
 

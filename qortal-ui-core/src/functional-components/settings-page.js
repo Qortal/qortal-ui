@@ -349,7 +349,10 @@ class SettingsPage extends connect(store)(LitElement) {
                 dismiss: true
             })
         } catch (error) {
-            FileSaver.saveAs(blob, filename)
+            if (error.name === 'AbortError') {
+                return
+            }
+            FileSaver.saveAs(blob, fileName)
         }
     }
 
