@@ -11,7 +11,7 @@ import {
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
-
+import FileSaver from 'file-saver'
 import * as actions from '../../components/qdn-action-types';
 import '@material/mwc-button';
 import '@material/mwc-icon';
@@ -1454,23 +1454,29 @@ class WebBrowser extends LitElement {
 								}
 							}
 						}
-						const fileHandle = await self.showSaveFilePicker({
-							suggestedName: filename,
-							types: [
-								{
-									description: mimeType,
-									...fileHandleOptions
-								},
-							]
+
+						try {
+							const fileHandle = await self.showSaveFilePicker({
+								suggestedName: filename,
+								types: [
+									{
+										description: mimeType,
+										...fileHandleOptions
+									},
+								]
 
 
-						})
-						const writeFile = async (fileHandle, contents) => {
-							const writable = await fileHandle.createWritable()
-							await writable.write(contents)
-							await writable.close()
+							})
+							const writeFile = async (fileHandle, contents) => {
+								const writable = await fileHandle.createWritable()
+								await writable.write(contents)
+								await writable.close()
+							}
+							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+						} catch (error) {
+							FileSaver.saveAs(blob, filename)
 						}
-						writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+
 						response = JSON.stringify(true);
 					} catch (error) {
 						const obj = {};
