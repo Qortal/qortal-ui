@@ -103,7 +103,17 @@ function processText(input) {
                                 const res = await extractComponents(part)
                                 if (!res) return
                                 const { service, name, identifier, path } = res
-                                window.location = `../../qdn/browser/index.html?service=${service}&name=${name}&identifier=${identifier}&path=${path}`
+                                let query = `?service=${service}`
+                                if (name) {
+                                    query = query + `&name=${name}`
+                                }
+                                if (identifier) {
+                                    query = query + `&identifier=${identifier}`
+                                }
+                                if (path) {
+                                    query = query + `&path=${path}`
+                                }
+                                window.location = `../../qdn/browser/index.html${query}`
                             } catch (error) {
                                 console.log({ error })
                             }
