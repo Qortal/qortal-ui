@@ -3,6 +3,7 @@ import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
+import FileSaver from 'file-saver'
 
 import '@material/mwc-dialog'
 import '@material/mwc-button'
@@ -251,7 +252,7 @@ class ExportKeys extends connect(store)(LitElement) {
                 dismiss: true
             })
         } catch (error) {
-            console.log(error)
+            FileSaver.saveAs(blob, filename)
         }
     }
 

@@ -7,6 +7,7 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import FileSaver from 'file-saver'
 import '../components/ButtonIconCopy.js'
 import '../components/QortalQrcodeGenerator.js'
 import '../components/frag-file-input.js'
@@ -5810,7 +5811,7 @@ class MultiWallet extends LitElement {
             let snack4string = get("general.save")
             parentEpml.request('showSnackBar', `${snack4string} ${fileName} ✅`)
         } catch (error) {
-            console.log(error)
+            FileSaver.saveAs(blob, filename)
         }
     }
 

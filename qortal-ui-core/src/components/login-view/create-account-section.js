@@ -8,7 +8,6 @@ import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.
 import { doStoreWallet } from '../../redux/user/user-actions.js'
 import { checkApiKey } from '../../apiKeyUtils.js'
 import FileSaver from 'file-saver'
-import isElectron from 'is-electron'
 import ripple from '../../functional-components/loading-ripple.js'
 import snackbar from '../../functional-components/snackbar.js'
 import '../../functional-components/random-sentence-generator.js'
@@ -594,16 +593,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
         backupname = "qortal_backup_" + wallet.addresses[0].address + ".json"
-        if (!isElectron()) {
-            await FileSaver.saveAs(blob, `qortal_backup_${wallet.addresses[0].address}.json`)
-            let snack4string = get("general.save")
-            snackbar.add({
-                labelText: `${snack4string} ${backupname} ✅`,
-                dismiss: true
-            })
-        } else {
-            this.saveFileToDisk(blob, backupname)
-        }
+        this.saveFileToDisk(blob, backupname)
     }
 
     async downloadSeedphrase() {
@@ -611,16 +601,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const seed = this.shadowRoot.getElementById('randSentence').parsedString
         const blob = new Blob([seed], { type: 'text/plain;charset=utf-8' })
         seedname = "qortal_seedphrase.txt"
-        if (!isElectron()) {
-            await FileSaver.saveAs(blob, `qortal_seedphrase.txt`)
-            let snack4string = get("general.save")
-            snackbar.add({
-                labelText: `${snack4string} ${seedname} ✅`,
-                dismiss: true
-            })
-        } else {
-            this.saveFileToDisk(blob, seedname)
-        }
+        this.saveFileToDisk(blob, seedname)
     }
 
     async saveFileToDisk(blob, fileName) {
@@ -643,7 +624,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                 dismiss: true
             })
         } catch (error) {
-            console.log(error)
+            FileSaver.saveAs(blob, filename)
         }
     }
 }

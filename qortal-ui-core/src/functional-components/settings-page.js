@@ -6,6 +6,8 @@ import { get, translate, translateUnsafeHTML } from 'lit-translate'
 import snackbar from './snackbar.js'
 import '../components/language-selector.js'
 import '../custom-elements/frag-file-input.js'
+import FileSaver from 'file-saver'
+
 import '@material/mwc-dialog'
 import '@material/mwc-button'
 import '@material/mwc-select'
@@ -347,7 +349,7 @@ class SettingsPage extends connect(store)(LitElement) {
                 dismiss: true
             })
         } catch (error) {
-            console.log(error)
+            FileSaver.saveAs(blob, filename)
         }
     }
 

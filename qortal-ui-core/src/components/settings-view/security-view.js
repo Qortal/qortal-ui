@@ -4,6 +4,7 @@ import { store } from '../../store.js'
 import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
+import FileSaver from 'file-saver'
 
 import '@material/mwc-checkbox'
 import '@material/mwc-textfield'
@@ -186,7 +187,7 @@ class SecurityView extends connect(store)(LitElement) {
                 dismiss: true
             })
         } catch (error) {
-            console.log(error)
+            FileSaver.saveAs(blob, filename)
         }
     }
 }
