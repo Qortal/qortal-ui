@@ -8,11 +8,11 @@ import {
 	translateUnsafeHTML,
 	registerTranslateConfig,
 } from 'lit-translate';
-import * as actions from '../../components/qdn-action-types';
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
-
+import FileSaver from 'file-saver'
+import * as actions from '../../components/qdn-action-types';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-checkbox'
@@ -21,6 +21,10 @@ import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
 import { publishData } from '../../../utils/publish-image.js';
 import { Loader } from '../../../utils/loader.js';
 import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
+import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
+import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
+import { mimeToExtensionMap } from '../../components/qdn-action-constants';
+import { base64ToUint8Array, encryptData, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -148,8 +152,7 @@ class WebBrowser extends LitElement {
 		if (
 			this.identifier && this.identifier != 'null' &&
 			this.identifier != 'default'
-		)
-		{
+		) {
 			displayUrl = displayUrl.concat('/' + this.identifier);
 		}
 		if (this.path != null && this.path != '/')
@@ -200,7 +203,7 @@ class WebBrowser extends LitElement {
 			}
 		}
 
-		this.selectedAddress = {} 
+		this.selectedAddress = {}
 		this.btcFeePerByte = 100
 		this.ltcFeePerByte = 30
 		this.dogeFeePerByte = 1000
@@ -268,7 +271,7 @@ class WebBrowser extends LitElement {
 		`;
 	}
 
-      renderFullScreen() {
+	renderFullScreen() {
 		if (window.innerHeight == screen.height) {
 			return html`
 				<mwc-button
@@ -290,7 +293,7 @@ class WebBrowser extends LitElement {
 				</mwc-button>
 			`
 		}
-      }
+	}
 
 	goFullScreen() {
 		var elem = this.shadowRoot.getElementById('websitesWrapper')
@@ -309,7 +312,7 @@ class WebBrowser extends LitElement {
 	}
 
 	exitFullScreen() {
-		if(document.exitFullscreen) {
+		if (document.exitFullscreen) {
 			document.exitFullscreen()
 		} else if (document.mozCancelFullScreen) {
 			document.mozCancelFullScreen()
@@ -535,7 +538,7 @@ class WebBrowser extends LitElement {
 					}
 					let res1;
 					if (!skip) {
-						 res1 = await showModalAndWait(
+						res1 = await showModalAndWait(
 							actions.GET_USER_ACCOUNT,
 							{
 								service: this.service,
@@ -556,6 +559,68 @@ class WebBrowser extends LitElement {
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
 						break;
+					}
+				}
+
+				case actions.DECRYPT_DATA: {
+					const requiredFields = ['encryptedData', 'publicKey'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const { encryptedData, publicKey } = data
+
+
+					try {
+						const uint8Array = base64ToUint8Array(encryptedData)
+						const combinedData = uint8Array
+						const str = "qortalEncryptedData";
+						const strEncoder = new TextEncoder();
+						const strUint8Array = strEncoder.encode(str);
+
+						const strData = combinedData.slice(0, strUint8Array.length);
+						const nonce = combinedData.slice(strUint8Array.length, strUint8Array.length + 24);
+						const _encryptedData = combinedData.slice(strUint8Array.length + 24);
+
+						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+						const _publicKey = window.parent.Base58.decode(publicKey)
+
+						if (!privateKey || !_publicKey) {
+							data['error'] = "Unable to retrieve keys"
+							response = JSON.stringify(data);
+							break
+						}
+
+						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(_publicKey)
+						const sharedSecret = new Uint8Array(32);
+						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
+						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
+						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
+						const decryptedDataToBase64 = uint8ArrayToBase64(_decryptedData)
+						response = JSON.stringify(decryptedDataToBase64);
+
+						break;
+					} catch (error) {
+						console.log({ error })
+						const data = {};
+						const errorMsg = error.message || "Error in decrypting data"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
 					}
 				}
 				case actions.GET_LIST_ITEMS: {
@@ -775,6 +840,7 @@ class WebBrowser extends LitElement {
 					return;
 
 				case actions.PUBLISH_QDN_RESOURCE: {
+					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name', 'data64'];
 					const missingFields = [];
 
@@ -796,7 +862,7 @@ class WebBrowser extends LitElement {
 					const service = data.service;
 					const name = data.name;
 					let identifier = data.identifier;
-					const data64 = data.data64;
+					let data64 = data.data64;
 					const filename = data.filename;
 					const title = data.title;
 					const description = data.description;
@@ -809,12 +875,45 @@ class WebBrowser extends LitElement {
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
+
+					if (data.encrypt && !data.recipientPublicKey) {
+						let data = {};
+						data['error'] = "Encrypting data requires the recipient's public key";
+						response = JSON.stringify(data);
+						break
+					}
+					if (!data.encrypt && data.service.endsWith("_PRIVATE")) {
+						let data = {};
+						data['error'] = "Only encrypted data can go into private services";
+						response = JSON.stringify(data);
+						break
+					}
+
+					if (data.encrypt) {
+						try {
+							const encryptDataResponse = encryptData({
+								data64, recipientPublicKey: data.recipientPublicKey
+							})
+							if (encryptDataResponse.encryptedData) {
+								data64 = encryptDataResponse.encryptedData
+							}
+
+						} catch (error) {
+							const obj = {};
+							const errorMsg = error.message || 'Upload failed due to failed encryption';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+
+					}
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
 						{
 							name,
 							identifier,
-							service
+							service,
+							encrypt: data.encrypt
 						}
 					);
 					if (res2.action === 'accept') {
@@ -833,15 +932,15 @@ class WebBrowser extends LitElement {
 								isBase64: true,
 								filename: filename,
 								title,
-    							description,
-   								category,
-    							tag1,
-    							tag2,
-    							tag3,
-    							tag4,
-    							tag5,
+								description,
+								category,
+								tag1,
+								tag2,
+								tag3,
+								tag4,
+								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true: false
+								withFee: res2.userData.isWithFee === true ? true : false
 							});
 
 							response = JSON.stringify(resPublish);
@@ -897,10 +996,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					if (data.encrypt && !data.recipientPublicKey) {
+						let data = {};
+						data['error'] = "Encrypting data requires the recipient's public key";
+						response = JSON.stringify(data);
+						break
+					}
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
 							resources,
+							encrypt: data.encrypt
 						}
 					);
 
@@ -928,7 +1034,7 @@ class WebBrowser extends LitElement {
 						const service = resource.service;
 						const name = resource.name;
 						let identifier = resource.identifier;
-						const data64 = resource.data64;
+						let data64 = resource.data64;
 						const filename = resource.filename;
 						const title = resource.title;
 						const description = resource.description;
@@ -941,6 +1047,28 @@ class WebBrowser extends LitElement {
 						if (resource.identifier == null) {
 							identifier = 'default';
 						}
+
+						if (!data.encrypt && service.endsWith("_PRIVATE")) {
+							throw new Error("Only encrypted data can go into private services")
+						}
+
+						if (data.encrypt) {
+							try {
+								const encryptDataResponse = encryptData({
+									data64, recipientPublicKey: data.recipientPublicKey
+								})
+								if (encryptDataResponse.encryptedData) {
+									data64 = encryptDataResponse.encryptedData
+								}
+
+							} catch (error) {
+								const errorMsg = error.message || 'Upload failed due to failed encryption'
+								throw new Error(errorMsg)
+							}
+
+						}
+
+
 
 						const worker = new WebWorker();
 						try {
@@ -1009,14 +1137,14 @@ class WebBrowser extends LitElement {
 					const groupId = data.groupId;
 					const isRecipient = groupId ? false : true
 					const sendMessage = async (messageText, chatReference) => {
-					
+
 						let _reference = new Uint8Array(64);
 						window.crypto.getRandomValues(_reference);
 						let reference = window.parent.Base58.encode(_reference);
 						const sendMessageRequest = async () => {
-							let chatResponse 
-							
-							if(isRecipient){
+							let chatResponse
+
+							if (isRecipient) {
 								chatResponse = await parentEpml.request('chat', {
 									type: 18,
 									nonce: this.selectedAddress.nonce,
@@ -1037,13 +1165,13 @@ class WebBrowser extends LitElement {
 
 							}
 
-							if(!isRecipient){
-								chatResponse =	await parentEpml.request('chat', {
+							if (!isRecipient) {
+								chatResponse = await parentEpml.request('chat', {
 									type: 181,
 									nonce: this.selectedAddress.nonce,
 									params: {
 										timestamp: Date.now(),
-										groupID:  Number(groupId),
+										groupID: Number(groupId),
 										hasReceipient: 0,
 										hasChatReference: 0,
 										chatReference: chatReference,
@@ -1057,7 +1185,7 @@ class WebBrowser extends LitElement {
 
 
 							}
-							
+
 							const msgResponse = await _computePow(chatResponse)
 							return msgResponse;
 						};
@@ -1109,12 +1237,12 @@ class WebBrowser extends LitElement {
 					if (result.action === "accept") {
 						let hasPublicKey = true;
 
-						if(isRecipient){
+						if (isRecipient) {
 							const res = await parentEpml.request('apiCall', {
 								type: 'api',
 								url: `/addresses/publickey/${recipient}`
 							});
-	
+
 							if (res.error === 102) {
 								this._publicKey.key = ''
 								this._publicKey.hasPubKey = false
@@ -1128,14 +1256,14 @@ class WebBrowser extends LitElement {
 								hasPublicKey = false;
 							}
 						}
-						
+
 
 						if (!hasPublicKey && isRecipient) {
 							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}';
 							break
 						}
 
-						
+
 
 						const tiptapJson = {
 							type: 'doc',
@@ -1174,16 +1302,16 @@ class WebBrowser extends LitElement {
 							response = msgResponse;
 						} catch (error) {
 							console.error(error);
-							if(error.message){
+							if (error.message) {
 								let data = {};
 								data['error'] = error.message;
-						response = JSON.stringify(data);
-						break
+								response = JSON.stringify(data);
+								break
 							}
 							response = '{"error": "Request could not be fulfilled"}';
 						} finally {
 							this.loader.hide();
-						
+
 						}
 
 					} else {
@@ -1257,6 +1385,112 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+					break;
+				}
+				case actions.SAVE_FILE: {
+					try {
+
+						const requiredFields = ['filename', 'blob'];
+						const missingFields = [];
+
+						requiredFields.forEach((field) => {
+							if (!data[field]) {
+								missingFields.push(field);
+							}
+						});
+
+						if (missingFields.length > 0) {
+							const missingFieldsString = missingFields.join(', ');
+							const errorMsg = `Missing fields: ${missingFieldsString}`
+							let data = {};
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+							break
+						}
+
+
+
+						const filename = data.filename
+						const blob = data.blob
+
+						const res = await showModalAndWait(
+							actions.SAVE_FILE,
+							{
+								filename
+							}
+						);
+
+						if (res.action === 'reject') {
+							response = '{"error": "User declined request"}';
+							break
+
+						}
+
+						const mimeType = blob.type || data.mimeType
+						let backupExention = filename.split('.').pop()
+						if (backupExention) {
+							backupExention = '.' + backupExention
+						}
+						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
+						let fileHandleOptions = {}
+						if (!mimeType) {
+							const obj = {};
+							const errorMsg = 'A mimeType could not be derived';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+						if (!fileExtension) {
+							const obj = {};
+							const errorMsg = 'A file extension could not be derived';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+						if (fileExtension && mimeType) {
+							fileHandleOptions = {
+								accept: {
+									[mimeType]: [fileExtension]
+								}
+							}
+						}
+
+						try {
+							const fileHandle = await self.showSaveFilePicker({
+								suggestedName: filename,
+								types: [
+									{
+										description: mimeType,
+										...fileHandleOptions
+									},
+								]
+
+
+							})
+							const writeFile = async (fileHandle, contents) => {
+								const writable = await fileHandle.createWritable()
+								await writable.write(contents)
+								await writable.close()
+							}
+							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+						} catch (error) {
+							if (error.name === 'AbortError') {
+								const obj = {};
+								const errorMsg = 'User declined the download';
+								obj['error'] = errorMsg;
+								response = JSON.stringify(obj);
+								break
+							}
+							FileSaver.saveAs(blob, filename)
+						}
+
+						response = JSON.stringify(true);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to initiate download';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					}
 					break;
 				}
 
@@ -1333,19 +1567,19 @@ class WebBrowser extends LitElement {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
 								})
 								response = QORTBalance
-							
-							
+
+
 							} catch (error) {
 								console.error(error);
 								const data = {};
 								const errorMsg = error.message || get("browserpage.bchange21");
 								data['error'] = errorMsg;
 								response = JSON.stringify(data);
-								
+
 							} finally {
 								this.loader.hide();
 							}
-						} 
+						}
 						// else {
 						// 	let _url = ``
 						// 	let _body = null
@@ -1407,7 +1641,7 @@ class WebBrowser extends LitElement {
 
 					break;
 				}
-					
+
 
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'destinationAddress', 'amount']
@@ -1466,7 +1700,7 @@ class WebBrowser extends LitElement {
 						const balance = (Number(transformDecimals) / 1e8).toFixed(8)
 						const fee = await this.sendQortFee()
 
-						if (amountDecimals + (fee *  QORT_DECIMALS) > walletBalanceDecimals) {
+						if (amountDecimals + (fee * QORT_DECIMALS) > walletBalanceDecimals) {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
@@ -1621,7 +1855,7 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								throw new Error('Error: could not send coin')
 							}
-	
+
 						}
 
 						try {
@@ -2642,6 +2876,7 @@ async function showModalAndWait(type, data) {
 						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `			
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<table>
 									${data.resources.map((resource) => `
 										<tr>
@@ -2667,6 +2902,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange30")}:</span> ${data.service}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange31")}:</span> ${data.name}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<div class="checkbox-row">
 									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
 										${get('browserpage.bchange29')}
@@ -2710,6 +2946,12 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.items.join(', ')}</span></p>
 							</div>
 						` : ''}
+						${type === actions.SAVE_FILE ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
+							</div>
+						` : ''}
+						
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>
@@ -2772,7 +3014,7 @@ async function showModalAndWait(type, data) {
 		if (checkbox) {
 			checkbox.addEventListener('click', (e) => {
 				if (e.target.checked) {
-					window.parent.reduxStore.dispatch( window.parent.reduxAction.removeQAPPAutoAuth(false))
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoAuth(false))
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))

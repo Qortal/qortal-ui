@@ -645,7 +645,9 @@
 		"bchange41": "Do you give this application permission to access this list?",
 		"bchange42": "Items",
 		"bchange43": "Do you give this application permission to add to this list?",
-		"bchange44": "Do you give this application permission to delete from this list?"
+		"bchange44": "Do you give this application permission to delete from this list?",
+		"bchange45": "Encrypt",
+		"bchange46": "Do you give this application permission to save the following file"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
