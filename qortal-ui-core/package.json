@@ -22,7 +22,7 @@
 		"sass": "1.62.1"
 	},
 	"devDependencies": {
-		"@babel/core": "7.21.5",
+		"@babel/core": "7.21.8",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
@@ -68,13 +68,15 @@
 		"asmcrypto.js": "2.3.2",
 		"bcryptjs": "2.4.3",
 		"epml": "0.3.3",
-		"lit": "2.7.3",
+		"file-saver": "2.0.5",
+		"is-electron": "2.2.2",
+		"lit": "2.7.4",
 		"lit-translate": "2.0.1",
 		"localforage": "1.10.0",
 		"pwa-helpers": "0.9.1",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.21.1",
+		"rollup": "3.21.5",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0"
