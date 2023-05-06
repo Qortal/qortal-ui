@@ -1474,6 +1474,13 @@ class WebBrowser extends LitElement {
 							}
 							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
 						} catch (error) {
+							if (error.name === 'AbortError') {
+								const obj = {};
+								const errorMsg = 'User declined the download';
+								obj['error'] = errorMsg;
+								response = JSON.stringify(obj);
+								break
+							}
 							FileSaver.saveAs(blob, filename)
 						}
 
