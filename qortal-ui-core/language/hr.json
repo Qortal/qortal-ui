@@ -135,7 +135,8 @@
 		"exp1": "Izvezi privatni glavni ključ",
 		"exp2": "Glavni ključ izvoza",
 		"exp3": "Izvoz",
-		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa."
+		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa.",
+		"core": "Pokreni osnovne postavke"
 	},
 	"appinfo": {
 		"blockheight": "Visina bloka",
@@ -637,7 +638,15 @@
 		"bchange35": "Dajete li ovoj aplikaciji dopuštenje za slanje novčića?",
 		"bchange36": "Želite li objaviti instant na QDN bez izračunavanja dokaza o radu?",
 		"bchange37": "Uđi u cijeli zaslon",
-		"bchange38": "Izađi preko cijelog zaslona"
+		"bchange38": "Izađi preko cijelog zaslona",
+		"bchange39": "Uvijek dopusti automatsko dohvaćanje popisa",
+		"bchange40": "Popis",
+		"bchange41": "Dajete li ovoj aplikaciji dozvolu za pristup ovom popisu?",
+		"bchange42": "Stavke",
+		"bchange43": "Dajete li ovoj aplikaciji dopuštenje za dodavanje na ovaj popis?",
+		"bchange44": "Dajete li ovoj aplikaciji dopuštenje za brisanje s ovog popisa?",
+		"bchange45": "Šifriraj",
+		"bchange46": "Dajete li ovoj aplikaciji dopuštenje za spremanje sljedeće datoteke"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

@@ -27,5 +27,11 @@
   "electron_translate_24": "不用谢",
   "electron_translate_25": "Java 未安装。",
   "electron_translate_26": "Qortal UI 检测到您的系统上没有安装 java。",
-  "electron_translate_27": "点击 DOWNLOAD JAVA 下载并安装 java 或点击 NO THANKS 不下载并安装它。"
+  "electron_translate_27": "点击 DOWNLOAD JAVA 下载并安装 java 或点击 NO THANKS 不下载并安装它。",
+  "electron_translate_28": "不要再问我",
+  "electron_translate_29": "更改设置",
+  "electron_translate_30": "取消",
+  "electron_translate_31": "开始核心设置",
+  "electron_translate_32": "更改核心未运行时要求启动的当前状态",
+  "electron_translate_33": "（选中或取消选中不再询问复选框）"
 }

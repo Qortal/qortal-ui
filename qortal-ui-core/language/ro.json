@@ -135,7 +135,8 @@
 		"exp1": "Exportați cheia principală privată",
 		"exp2": "Exportați cheia principală",
 		"exp3": "Export",
-		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private."
+		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
+		"core": "Porniți setările de bază"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",
@@ -637,7 +638,15 @@
 		"bchange35": "Acordați acestei aplicații permisiunea de a trimite monede?",
 		"bchange36": "Doriți să publicați instant în QDN fără a calcula dovada de lucru?",
 		"bchange37": "Intrați pe ecran complet",
-		"bchange38": "Ieșiți din ecranul complet"
+		"bchange38": "Ieșiți din ecranul complet",
+		"bchange39": "Permiteți întotdeauna ca listele să fie preluate automat",
+		"bchange40": "Lista",
+		"bchange41": "Oferiți acestei aplicații permisiunea de a accesa această listă?",
+		"bchange42": "Elemente",
+		"bchange43": "Oferiți acestei aplicații permisiunea de a adăuga la această listă?",
+		"bchange44": "Oferiți acestei aplicații permisiunea de a șterge din această listă?",
+		"bchange45": "Criptați",
+		"bchange46": "Dați această aplicație permisiunea de a salva următorul fișier"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",

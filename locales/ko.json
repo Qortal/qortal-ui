@@ -27,5 +27,11 @@
   "electron_translate_24": "고마워요",
   "electron_translate_25": "자바가 설치되지 않았습니다.",
   "electron_translate_26": "Qortal UI에서 시스템에 Java가 설치되어 있지 않음을 감지했습니다.",
-  "electron_translate_27": "Java를 다운로드하여 설치하려면 JAVA 다운로드를 클릭하고, 다운로드 및 설치하지 않으려면 NO THANKS를 클릭하십시오."
+  "electron_translate_27": "Java를 다운로드하여 설치하려면 JAVA 다운로드를 클릭하고, 다운로드 및 설치하지 않으려면 NO THANKS를 클릭하십시오.",
+  "electron_translate_28": "다시 묻지 않음",
+  "electron_translate_29": "설정 변경",
+  "electron_translate_30": "취소",
+  "electron_translate_31": "핵심 설정 시작",
+  "electron_translate_32": "코어가 실행 중이 아닌 경우 코어 시작을 요청하는 현재 상태 변경",
+  "electron_translate_33": "(다시 묻지 않음 확인란 선택 또는 선택 취소)"
 }

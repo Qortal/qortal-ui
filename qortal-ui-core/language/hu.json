@@ -135,7 +135,8 @@
 		"exp1": "Privát főkulcs exportálása",
 		"exp2": "Főkulcs exportálása",
 		"exp3": "Exportálás",
-		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez."
+		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez.",
+		"core": "Alapbeállítások indítása"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",
@@ -637,7 +638,15 @@
 		"bchange35": "Engedélyt ad ennek az alkalmazásnak érmék küldésére?",
 		"bchange36": "Szeretne azonnal közzétenni a QDN-ben a munkaigazolás kiszámítása nélkül?",
 		"bchange37": "Belépés a teljes képernyőre",
-		"bchange38": "Kilépés a teljes képernyőről"
+		"bchange38": "Kilépés a teljes képernyőről",
+		"bchange39": "Mindig engedélyezze a listák automatikus lekérését",
+		"bchange40": "Lista",
+		"bchange41": "Engedélyt ad ennek az alkalmazásnak a lista eléréséhez?",
+		"bchange42": "Tételek",
+		"bchange43": "Engedélyt ad ennek az alkalmazásnak, hogy felvegye ezt a listát?",
+		"bchange44": "Engedélyezi ennek az alkalmazásnak, hogy töröljön erről a listáról?",
+		"bchange45": "Titkosítás",
+		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",

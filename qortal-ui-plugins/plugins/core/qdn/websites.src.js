@@ -338,11 +338,7 @@ class Websites extends LitElement {
                                 }}>
                                 </vaadin-grid-column>
                                 <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
-                                <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderFollowUnfollowButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -375,12 +371,8 @@ class Websites extends LitElement {
                                     render(html`${this.renderPublishedBy(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("websitespage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
                                 <vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderBlockUnblockButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -479,7 +471,7 @@ class Websites extends LitElement {
                     setTimeout(getRelayMode, 1)
                     setTimeout(this.getFollowedNamesResource, 1)
                     setTimeout(this.getBlockedNamesResource, 1)
-                    setInterval(this.getArbitraryResources, 600000)
+                    setInterval(this.getArbitraryResources, 900000)
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
@@ -522,9 +514,25 @@ class Websites extends LitElement {
         const tabBrowseContent = this.shadowRoot.getElementById('tab-browse-content')
         const tabFollowedContent = this.shadowRoot.getElementById('tab-followed-content')
         const tabBlockedContent = this.shadowRoot.getElementById('tab-blocked-content')
-        tabBrowseContent.style.display = (tab === 'browse') ? 'block' : 'none'
-        tabFollowedContent.style.display = (tab === 'followed') ? 'block' : 'none'
-        tabBlockedContent.style.display = (tab === 'blocked') ? 'block' : 'none'
+        if (tab === 'browse') {
+            this.refreshWebsites()
+            tabBrowseContent.style.display = 'block'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'followed') {
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'block'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'blocked') {
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'block'
+        } else {
+        }
     }
 
     searchListener(e) {
@@ -541,7 +549,7 @@ class Websites extends LitElement {
 
     getArbitraryResources = async () => {
         const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false`
+            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false&excludeblocked=true`
         })
         this.resources = resources
     }
@@ -577,7 +585,7 @@ class Websites extends LitElement {
     async getData(offset) {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true`
+      let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
 
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
       const jsonOffsetData = await jsonOffsetRes.json()
@@ -676,6 +684,12 @@ class Websites extends LitElement {
         await this.updateItemsFromPage(1, true)
     }
 
+    async refreshWebsites() {
+        await this.getData(0)
+        await this.getArbitraryResources()
+        await this.updateItemsFromPage(1, true)
+    }
+
     doSearch(e) {
         this.searchResult()
     }
@@ -751,10 +765,37 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.followedNames = this.followedNames.filter(item => item != name)
             this.followedNames.push(name)
+        } else {
+            let err3string = get("websitespage.schange22")
+            parentEpml.request('showSnackBar', `${err3string}`)
+        }
+        return ret
+    }
+
+    async followNameTab(websiteObj) {
+        let name = websiteObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully followed - add to local list
+            // Remove it first by filtering the list - doing it this way ensures the UI updates
+            // immediately, as apposed to only adding if it doesn't already exist
+            this.followedNames = this.followedNames.filter(item => item != name)
+            this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("websitespage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
@@ -781,10 +822,34 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unfollowed - remove from local list
             this.followedNames = this.followedNames.filter(item => item != name)
+        } else {
+            let err4string = get("websitespage.schange23")
+            parentEpml.request('showSnackBar', `${err4string}`)
+        }
+        return ret
+    }
+
+    async unfollowNameTab(websiteObj) {
+        let name = websiteObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully unfollowed - remove from local list
+            this.followedNames = this.followedNames.filter(item => item != name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.getArbitraryResources()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("websitespage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
@@ -814,10 +879,37 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
+        } else {
+            let err5string = get("websitespage.schange24")
+            parentEpml.request('showSnackBar', `${err5string}`)
+        }
+        return ret
+    }
+
+    async blockNameTab(websiteObj) {
+        let name = websiteObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully blocked - add to local list
+            // Remove it first by filtering the list - doing it this way ensures the UI updates
+            // immediately, as apposed to only adding if it doesn't already exist
+            this.blockedNames = this.blockedNames.filter(item => item != name)
+            this.blockedNames.push(name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("websitespage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
@@ -844,10 +936,34 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unblocked - remove from local list
             this.blockedNames = this.blockedNames.filter(item => item != name)
+        } else {
+            let err6string = get("websitespage.schange25")
+            parentEpml.request('showSnackBar', `${err6string}`)
+        }
+        return ret
+    }
+
+    async unblockNameTab(websiteObj) {
+        let name = websiteObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            // Successfully unblocked - remove from local list
+            this.blockedNames = this.blockedNames.filter(item => item != name)
             this.getBlockedNamesRefresh()
             this.getBlockedNamesResource()
-            this.getArbitraryResources()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("websitespage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
@@ -924,6 +1040,24 @@ class Websites extends LitElement {
         }
     }
 
+    renderFollowUnfollowButtonTab(websiteObj) {
+        let name = websiteObj.name
+
+        // Only show the follow/unfollow button if we have permission to modify the list on this node
+        if (this.followedNames == null || !Array.isArray(this.followedNames)) {
+            return html``
+        }
+
+        if (this.followedNames.indexOf(name) === -1) {
+            // render follow button
+            return html`<mwc-button @click=${() => this.followNameTab(websiteObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;${translate("websitespage.schange29")}</mwc-button>`
+        }
+        else {
+            // render unfollow button
+            return html`<mwc-button @click=${() => this.unfollowNameTab(websiteObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("websitespage.schange30")}</mwc-button>`
+        }
+    }
+
     renderBlockUnblockButton(websiteObj) {
         let name = websiteObj.name
 
@@ -939,6 +1073,24 @@ class Websites extends LitElement {
         else {
             // render unblock button
             return html`<mwc-button @click=${() => this.unblockName(websiteObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("websitespage.schange32")}</mwc-button>`
+        }
+    }
+
+    renderBlockUnblockButtonTab(websiteObj) {
+        let name = websiteObj.name
+
+        // Only show the block/unblock button if we have permission to modify the list on this node
+        if (this.blockedNames == null || !Array.isArray(this.blockedNames)) {
+            return html``
+        }
+
+        if (this.blockedNames.indexOf(name) === -1) {
+            // render block button
+            return html`<mwc-button @click=${() => this.blockNameTab(websiteObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("websitespage.schange31")}</mwc-button>`
+        }
+        else {
+            // render unblock button
+            return html`<mwc-button @click=${() => this.unblockNameTab(websiteObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("websitespage.schange32")}</mwc-button>`
         }
     }
 

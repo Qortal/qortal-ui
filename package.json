@@ -1,6 +1,6 @@
 {
   "name": "qortal-ui",
-  "version": "4.0.0",
+  "version": "4.0.3",
   "description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
   "keywords": [
     "QORT",
@@ -35,12 +35,13 @@
     "electron-log": "4.4.8",
     "electron-updater": "5.3.0",
     "electron-dl": "3.5.0",
+    "electron-store": "8.1.0",
     "extract-zip": "2.0.1",
     "node-fetch": "2.6.9",
     "os-locale": "3.0.0"
   },
   "devDependencies": {
-    "electron": "24.1.2",
+    "electron": "24.2.0",
     "electron-builder": "23.6.0",
     "electron-packager": "17.1.1",
     "shelljs": "0.8.5"

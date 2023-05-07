@@ -135,7 +135,8 @@
 		"exp1": "Exportar Chave Mestra Privada",
 		"exp2": "Exportar Chave Mestra",
 		"exp3": "Exportar",
-		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada."
+		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada.",
+		"core": "Iniciar configurações do núcleo"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",
@@ -637,7 +638,15 @@
 		"bchange35": "Você dá permissão a este aplicativo para enviar moedas?",
 		"bchange36": "Deseja publicar instantaneamente em QDN sem calcular a prova de trabalho?",
 		"bchange37": "Entrar em tela cheia",
-		"bchange38": "Sair da tela cheia"
+		"bchange38": "Sair da tela cheia",
+		"bchange39": "Sempre permitir que as listas sejam recuperadas automaticamente",
+		"bchange40": "Lista",
+		"bchange41": "Você concede a este aplicativo permissão para acessar esta lista?",
+		"bchange42": "Itens",
+		"bchange43": "Você dá a este aplicativo permissão para adicionar a esta lista?",
+		"bchange44": "Você dá a este aplicativo permissão para deletar desta lista?",
+		"bchange45": "Criptografar",
+		"bchange46": "Você concede permissão a este aplicativo para salvar o seguinte arquivo"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

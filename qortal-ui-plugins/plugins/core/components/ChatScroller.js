@@ -20,7 +20,6 @@ import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import { EmojiPicker } from 'emoji-picker-js';
 import { generateHTML } from '@tiptap/core';
-import { saveAs } from 'file-saver';
 import axios from "axios";
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline';
@@ -104,7 +103,17 @@ function processText(input) {
                                 const res = await extractComponents(part)
                                 if (!res) return
                                 const { service, name, identifier, path } = res
-                                window.location = `../../qdn/browser/index.html?service=${service}&name=${name}&identifier=${identifier}&path=${path}`
+                                let query = `?service=${service}`
+                                if (name) {
+                                    query = query + `&name=${name}`
+                                }
+                                if (identifier) {
+                                    query = query + `&identifier=${identifier}`
+                                }
+                                if (path) {
+                                    query = query + `&path=${path}`
+                                }
+                                window.location = `../../qdn/browser/index.html${query}`
                             } catch (error) {
                                 console.log({ error })
                             }
@@ -476,12 +485,32 @@ class MessageTemplate extends LitElement {
             .then(response =>{              
                 let filename = attachment.attachmentName;
                 let blob = new Blob([response.data], { type:"application/octet-stream" });
-                saveAs(blob , filename);
+                this.saveFileToDisk(blob , filename);
             })
         } catch (error) {
             console.error(error);
         }
     }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     firstUpdated(){
         const autoSeeChatList = window.parent.reduxStore.getState().app.autoLoadImageChats
         if(autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.signature)){
@@ -778,7 +807,7 @@ class MessageTemplate extends LitElement {
                                             class=${this.myAddress !== repliedToData.sender
                                             ? "original-message-sender" 
                                             : "message-data-my-name"}>
-                                             ${repliedToData.senderName ? cropAddress(repliedToData.sender) : ''}
+                                             ${repliedToData.senderName ? repliedToData.senderName : cropAddress(repliedToData.sender) }
                                         </p>
                                         <p class="replied-message">
                                             ${version && version.toString() === '1' ? html`

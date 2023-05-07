@@ -6,12 +6,14 @@ const path = require('path')
 const i18n = require('./lib/i18n.js')
 const fs = require('fs')
 const electronDl = require('electron-dl')
+const Store = require('electron-store')
 const extract = require('extract-zip')
 const fetch = require('node-fetch')
-const child = require('child_process').execFile
+const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 
+app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 app.disableHardwareAcceleration()
 app.enableSandbox()
 electronDl()
@@ -19,20 +21,26 @@ electronDl()
 process.env['APP_PATH'] = app.getAppPath()
 
 const homePath = app.getPath('home')
+const downloadPath = app.getPath('downloads')
+const store = new Store()
 
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 
+if(!store.has('askingCore')) {
+	store.set('askingCore', false)
+}
+
 log.info('App starting...')
 log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
+log.info("ASKING CORE", store.get('askingCore'))
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
-const windir = String.raw`C:\Qortal`
 const winurl = "https://github.com/Qortal/qortal/releases/latest/download/qortal.exe"
-const winexe = "C:\\Qortal\\qortal.exe"
+const winexe = downloadPath + "\\qortal.exe"
 const startWinCore = "C:\\Program Files\\Qortal\\qortal.exe"
 
 const zipdir = homePath
@@ -84,6 +92,52 @@ const isRunning = (query, cb) => {
 	})
 }
 
+async function checkWin() {
+	if (fs.existsSync(winjar)) {
+		isRunning('qortal.exe', (status) => {
+			if (status == true) {
+				log.info("Core is running, perfect !")
+			} else {
+				if (!store.get('askingCore')) {
+					const dialogOpts = {
+						type: 'info',
+						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+						title: i18n.__("electron_translate_15"),
+						message: i18n.__("electron_translate_16"),
+						detail: i18n.__("electron_translate_17"),
+						checkboxLabel: i18n.__("electron_translate_28"),
+						checkboxChecked: false
+					}
+					dialog.showMessageBox(dialogOpts).then((returnValue) => {
+						if (returnValue.response === 0) {
+							spawn(startWinCore, { detached: true })
+							store.set('askingCore', returnValue.checkboxChecked)
+						} else {
+							store.set('askingCore', returnValue.checkboxChecked)
+							return
+						}
+					})
+				}
+			}
+		})
+	} else {
+		const dialogOpts = {
+			type: 'info',
+			buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
+			title: i18n.__("electron_translate_20"),
+			message: i18n.__("electron_translate_21"),
+			detail: i18n.__("electron_translate_22")
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				downloadWindows()
+			} else {
+				return
+			}
+		})
+	}
+}
+
 async function downloadWindows() {
 	let winLoader = new BrowserWindow({
 		width: 500,
@@ -97,17 +151,34 @@ async function downloadWindows() {
 
 	winLoader.show()
 	await electronDl.download(myWindow, winurl, {
-		directory: windir,
-		onProgress: function () { log.info("Starting Download Windows Installer") }
+		directory: downloadPath,
+		onProgress: function () { log.info("Starting Download Qortal Core Installer") }
 	})
 	winLoader.destroy()
-	child(winexe, function (err, data) {
-		if (err) {
-			log.info(err)
-			return
+
+	const coreInstall = execFile(winexe, (e, stdout, stderr) => {
+		if (e) {
+			log.info(e)
+			removeQortalExe()
+		} else {
+			log.info('Qortal Core Installation Done', stdout, stderr)
+			removeQortalExe()
 		}
-		log.info(data.toString())
 	})
+
+	coreInstall.stdin.end()
+}
+
+async function removeQortalExe() {
+	try {
+		await fs.rmSync(winexe, {
+			force: true,
+		})
+	} catch (err) {
+		log.info('renove error', err)
+	}
+
+	checkWin()
 }
 
 async function checkPort() {
@@ -123,6 +194,8 @@ async function checkPort() {
 async function checkResponseStatus(res) {
 	if (res.ok) {
 		return
+	} else if (process.platform === 'win32') {
+		await checkWin()
 	} else {
 		await javaversion()
 	}
@@ -395,21 +468,26 @@ function checkQortal() {
 			if (status == true) {
 				log.info("Core is running, perfect !")
 			} else {
-				log.info("Core is not running, starting it !")
-				const dialogOpts = {
-					type: 'info',
-					buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-					title: i18n.__("electron_translate_15"),
-					message: i18n.__("electron_translate_16"),
-					detail: i18n.__("electron_translate_17")
-				}
-				dialog.showMessageBox(dialogOpts).then((returnValue) => {
-					if (returnValue.response === 0) {
-						startQortal()
-					} else {
-						return
+				if (!store.get('askingCore')) {
+					const dialogOpts = {
+						type: 'info',
+						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+						title: i18n.__("electron_translate_15"),
+						message: i18n.__("electron_translate_16"),
+						detail: i18n.__("electron_translate_17"),
+						checkboxLabel: i18n.__("electron_translate_28"),
+						checkboxChecked: false
 					}
-				})
+					dialog.showMessageBox(dialogOpts).then((returnValue) => {
+						if (returnValue.response === 0) {
+							startQortal()
+							store.set('askingCore', returnValue.checkboxChecked)
+						} else {
+							store.set('askingCore', returnValue.checkboxChecked)
+							return
+						}
+					})
+				}
 			}
 		})
 	} else {
@@ -491,20 +569,26 @@ async function removeQortalZip() {
 
 async function checkAndStart() {
 	try {
-		const dialogOpts = {
-			type: 'info',
-			buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-			title: i18n.__("electron_translate_15"),
-			message: i18n.__("electron_translate_16"),
-			detail: i18n.__("electron_translate_17")
-		}
-		dialog.showMessageBox(dialogOpts).then((returnValue) => {
-			if (returnValue.response === 0) {
-				startQortal()
-			} else {
-				return
+		if (!store.get('askingCore')) {
+			const dialogOpts = {
+				type: 'info',
+				buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
+				title: i18n.__("electron_translate_15"),
+				message: i18n.__("electron_translate_16"),
+				detail: i18n.__("electron_translate_17"),
+				checkboxLabel: i18n.__("electron_translate_28"),
+				checkboxChecked: false
 			}
-		})
+			dialog.showMessageBox(dialogOpts).then((returnValue) => {
+				if (returnValue.response === 0) {
+					startQortal()
+					store.set('askingCore', returnValue.checkboxChecked)
+				} else {
+					store.set('askingCore', returnValue.checkboxChecked)
+					return
+				}
+			})
+		}
 	} catch (err) {
 		log.info('Sed error', err)
 	}
@@ -516,8 +600,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavax64bindir)) {
 				try {
 					await spawn(
-						linjavax64binfile, ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -525,8 +609,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'java', ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -536,8 +620,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavaarm64bindir)) {
 				try {
 					await spawn(
-						linjavaarm64binfile, ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavaarm64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -545,8 +629,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'java', ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -556,8 +640,8 @@ async function startQortal() {
 			if (fs.existsSync(linjavaarmbindir)) {
 				try {
 					await spawn(
-						linjavaarmbinfile, ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', linjavaarmbinfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -565,8 +649,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'java', ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -578,8 +662,8 @@ async function startQortal() {
 			if (fs.existsSync(macjavax64bindir)) {
 				try {
 					await spawn(
-						macjavax64binfile, ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', macjavax64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -587,8 +671,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'java', ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -598,8 +682,8 @@ async function startQortal() {
 			if (fs.existsSync(macjavaaarch64bindir)) {
 				try {
 					await spawn(
-						macjavaaarch64binfile, ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', macjavaaarch64binfile, '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -607,8 +691,8 @@ async function startQortal() {
 			} else {
 				try {
 					await spawn(
-						'java', ['-Djava.net.preferIPv4Stack=false', '-Xss1250k', '-Xmx2200m', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
-						{ cwd: qortaldir }
+						'nohup', ['nice', '-n', '20', 'java', '-Djava.net.preferIPv4Stack=false', '-jar', qortaljar, qortalsettings, '1>run.log', '2>&1', '&'],
+						{ cwd: qortaldir, shell: true, detached: true }
 					)
 				} catch (err) {
 					log.info('Start qortal error', err)
@@ -621,24 +705,50 @@ async function startQortal() {
 const editMenu = Menu.buildFromTemplate([
 	{
 		label: "Qortal",
+		submenu: [
+			{ label: "Quit", click() {app.quit()}}
+		]
+	},
+	{
+		label: i18n.__("electron_translate_34"),
 		submenu: [{
-			label: "Quit",
+			label: i18n.__("electron_translate_31"),
 			click() {
-				app.quit()
+				const dialogOpts = {
+					type: 'info',
+					noLink: true,
+					buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+					title: i18n.__("electron_translate_31"),
+					message: i18n.__("electron_translate_32"),
+					detail: i18n.__("electron_translate_33"),
+					checkboxLabel: i18n.__("electron_translate_28"),
+					checkboxChecked: store.get('askingCore')
+				}
+				dialog.showMessageBox(dialogOpts).then((returnValue) => {
+					if (returnValue.response === 0) {
+						store.set('askingCore', returnValue.checkboxChecked)
+					} else {
+						store.set('askingCore', returnValue.checkboxChecked)
+						return
+					}
+				})
 			}
 		}]
 	},
 	{
 		label: "Edit",
 		submenu: [
-			{ label: "Undo", accelerator: "CommandOrControl+Z", selector: "undo:" },
-			{ label: "Redo", accelerator: "CommandOrControl+Shift+Z", selector: "redo:" },
+			{ label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+			{ label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
 			{ type: "separator" },
-			{ label: "Cut", accelerator: "CommandOrControl+X", selector: "cut:" },
-			{ label: "Copy", accelerator: "CommandOrControl+C", selector: "copy:" },
-			{ label: "Paste", accelerator: "CommandOrControl+V", selector: "paste:" },
-			{ label: "Select All", accelerator: "CommandOrControl+A", selector: "selectAll:" }
+			{ label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+			{ label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+			{ label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+			{ label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
 		]
+	},
+	{
+		label: "Check for update", click() {autoUpdater.checkForUpdatesAndNotify()}
 	}
 ])
 
@@ -657,10 +767,13 @@ function createWindow() {
 		title: "Qortal UI",
 		autoHideMenuBar: true,
 		webPreferences: {
-			nodeIntegration: true,
-			nodeIntegrationInWorker: true,
 			partition: 'persist:webviewsession',
-			enableRemoteModule: false
+			nodeIntegration: false,
+			contextIsolation: true,
+			enableRemoteModule: false,
+			allowRunningInsecureContent: false,
+			experimentalFeatures: false,
+			preload: path.join(__dirname, '/lib/preload.js')
 		},
 		show: false
 	})
@@ -698,6 +811,32 @@ const createTray = () => {
 			type: 'separator',
 		},
 		{
+			label: i18n.__("electron_translate_31"),
+			click: function () {
+				const dialogOpts = {
+					type: 'info',
+					noLink: true,
+					buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+					title: i18n.__("electron_translate_31"),
+					message: i18n.__("electron_translate_32"),
+					detail: i18n.__("electron_translate_33"),
+					checkboxLabel: i18n.__("electron_translate_28"),
+					checkboxChecked: store.get('askingCore')
+				}
+				dialog.showMessageBox(dialogOpts).then((returnValue) => {
+					if (returnValue.response === 0) {
+						store.set('askingCore', returnValue.checkboxChecked)
+					} else {
+						store.set('askingCore', returnValue.checkboxChecked)
+						return
+					}
+				})
+			},
+		},
+		{
+			type: 'separator',
+		},
+		{
 			label: i18n.__("electron_translate_1"),
 			click: function () {
 				myWindow.maximize()
@@ -721,50 +860,7 @@ const createTray = () => {
 async function checkAll() {
 	if (process.platform === 'win32') {
 		app.setAppUserModelId("org.qortal.QortalUI")
-		if (fs.existsSync(winjar)) {
-			isRunning('qortal.exe', (status) => {
-				if (status == true) {
-					log.info("Core is running, perfect !")
-				} else {
-					log.info("Core is not running, starting it !")
-					const dialogOpts = {
-						type: 'info',
-						buttons: [i18n.__("electron_translate_13"), i18n.__("electron_translate_14")],
-						title: i18n.__("electron_translate_15"),
-						message: i18n.__("electron_translate_16"),
-						detail: i18n.__("electron_translate_17")
-					}
-					dialog.showMessageBox(dialogOpts).then((returnValue) => {
-						if (returnValue.response === 0) {
-							child(startWinCore, function (err, data) {
-								if (err) {
-									log.info(err)
-									return
-								}
-								log.info(data.toString())
-							})
-						} else {
-							return
-						}
-					})
-				}
-			})
-		} else {
-			const dialogOpts = {
-				type: 'info',
-				buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
-				title: i18n.__("electron_translate_20"),
-				message: i18n.__("electron_translate_21"),
-				detail: i18n.__("electron_translate_22")
-			}
-			dialog.showMessageBox(dialogOpts).then((returnValue) => {
-				if (returnValue.response === 0) {
-					downloadWindows()
-				} else {
-					return
-				}
-			})
-		}
+		await checkPort()
 	} else if (process.platform === 'darwin') {
 		await checkPort()
 	} else if (process.platform === 'linux') {
@@ -814,6 +910,29 @@ if (!isLock) {
 		log.info(app.getVersion())
 		myWindow.webContents.send('app_version', { version: app.getVersion() })
 	})
+	ipcMain.on('set-start-core', (event) => {
+		const dialogOpts = {
+			type: 'info',
+			noLink: true,
+			buttons: [i18n.__("electron_translate_29"), i18n.__("electron_translate_30")],
+			title: i18n.__("electron_translate_31"),
+			message: i18n.__("electron_translate_32"),
+			detail: i18n.__("electron_translate_33"),
+			checkboxLabel: i18n.__("electron_translate_28"),
+			checkboxChecked: store.get('askingCore')
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				store.set('askingCore', returnValue.checkboxChecked)
+			} else {
+				store.set('askingCore', returnValue.checkboxChecked)
+				return
+			}
+		})
+	})
+	ipcMain.on('check-for-update', (event) => {
+		autoUpdater.checkForUpdatesAndNotify()
+	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {
 			type: 'info',
@@ -833,6 +952,13 @@ if (!isLock) {
 				return
 			}
 		})
+	})
+	autoUpdater.on('update-not-available', (event) => {
+		const noUpdate = new Notification({
+			title: 'Checking for update',
+			body: 'No update available, you are on latest version.'
+		})
+		noUpdate.show()
 	})
 	autoUpdater.on('download-progress', (progressObj) => {
 		myWindow.webContents.send('downloadProgress', progressObj)

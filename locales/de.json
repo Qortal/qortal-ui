@@ -27,5 +27,12 @@
   "electron_translate_24": "NEIN DANKE",
   "electron_translate_25": "Java ist nicht installiert.",
   "electron_translate_26": "Qortal UI hat festgestellt, dass Java nicht auf Ihrem System installiert ist.",
-  "electron_translate_27": "Klicken Sie auf JAVA HERUNTERLADEN, um Java herunterzuladen und zu installieren, oder auf NEIN DANKE, um es nicht herunterzuladen und zu installieren."
+  "electron_translate_27": "Klicken Sie auf JAVA HERUNTERLADEN, um Java herunterzuladen und zu installieren, oder auf NEIN DANKE, um es nicht herunterzuladen und zu installieren.",
+  "electron_translate_28": "Frag mich nie wieder",
+  "electron_translate_29": "EINSTELLUNG ÄNDERN",
+  "electron_translate_30": "ABBRECHEN",
+  "electron_translate_31": "Core-Einstellungen starten",
+  "electron_translate_32": "Ändern Sie den aktuellen Status der Aufforderung, den Core zu starten, wenn er nicht läuft",
+  "electron_translate_33": "(Aktivieren oder deaktivieren Sie das Kontrollkästchen Frag mich nie wieder)",
+  "electron_translate_34": "Einstellungen"
 }

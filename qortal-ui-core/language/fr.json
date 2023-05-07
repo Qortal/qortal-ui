@@ -135,7 +135,8 @@
 		"exp1": "Exporter la clé principale privée",
 		"exp2": "Exporter la clé principale",
 		"exp3": "Exporter",
-		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée."
+		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
+		"core": "Démarrer les paramètres du noyau"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",
@@ -637,7 +638,15 @@
 		"bchange35": "Autorisez-vous cette application à envoyer des pièces ?",
 		"bchange36": "Voulez-vous publier instantanément sur QDN sans calculer de preuve de travail ?",
 		"bchange37": "Entrez en plein écran",
-		"bchange38": "Quitter le plein écran"
+		"bchange38": "Quitter le plein écran",
+		"bchange39": "Toujours autoriser la récupération automatique des listes",
+		"bchange40": "Liste",
+		"bchange41": "Autorisez-vous cette application à accéder à cette liste ?",
+		"bchange42": "Articles",
+		"bchange43": "Autorisez-vous cette application à ajouter à cette liste ?",
+		"bchange44": "Autorisez-vous cette application à supprimer de cette liste ?",
+		"bchange45": "Crypter",
+		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",
