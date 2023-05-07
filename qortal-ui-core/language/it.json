@@ -638,7 +638,15 @@
 		"bchange35": "Concedi a questa applicazione il permesso di inviare monete?",
 		"bchange36": "Vuoi pubblicare istantaneamente su QDN senza calcolare la prova del lavoro?",
 		"bchange37": "Entra a schermo intero",
-		"bchange38": "Esci da schermo intero"
+		"bchange38": "Esci da schermo intero",
+		"bchange39": "Consenti sempre il recupero automatico delle liste",
+		"bchange40": "Lista",
+		"bchange41": "Consenti a questa applicazione di accedere a questo elenco?",
+		"bchange42": "Articoli",
+		"bchange43": "Concedi a questa applicazione il permesso di aggiungersi a questa lista?",
+		"bchange44": "Concedi a questa applicazione il permesso di eliminare da questo elenco?",
+		"bchange45": "Cripta",
+		"bchange46": "Concedi a questa applicazione il permesso di salvare il seguente file"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",

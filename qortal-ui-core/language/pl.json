@@ -638,7 +638,15 @@
 		"bchange35": "Czy zezwalasz tej aplikacji na wysyłanie monet?",
 		"bchange36": "Czy chcesz natychmiast opublikować w QDN bez obliczania dowodu pracy?",
 		"bchange37": "Wejdź na pełny ekran",
-		"bchange38": "Wyjdź z pełnego ekranu"
+		"bchange38": "Wyjdź z pełnego ekranu",
+		"bchange39": "Zawsze zezwalaj na automatyczne pobieranie list",
+		"bchange40": "Lista",
+		"bchange41": "Czy zezwalasz tej aplikacji na dostęp do tej listy?",
+		"bchange42": "Przedmioty",
+		"bchange43": "Czy zezwalasz tej aplikacji na dodanie do tej listy?",
+		"bchange44": "Czy zezwalasz tej aplikacji na usunięcie z tej listy?",
+		"bchange45": "Szyfruj",
+		"bchange46": "Czy zezwalasz tej aplikacji na zapisanie następującego pliku"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

@@ -638,7 +638,15 @@
 		"bchange35": "Da li ovoj aplikaciji dajete dozvolu za slanje novčića?",
 		"bchange36": "Da li želite da objavite instant na QDN bez izračunavanja dokaza o radu?",
 		"bchange37": "Uđi u ceo ekran",
-		"bchange38": "Izađi iz celog ekrana"
+		"bchange38": "Izađi iz celog ekrana",
+		"bchange39": "Uvek dozvoli da se liste automatski preuzimaju",
+		"bchange40": "Lista",
+		"bchange41": "Da li ovoj aplikaciji dajete dozvolu da pristupi ovoj listi?",
+		"bchange42": "Stavke",
+		"bchange43": "Da li dajete ovoj aplikaciji dozvolu za dodavanje na ovu listu?",
+		"bchange44": "Da li ovoj aplikaciji dajete dozvolu za brisanje sa ove liste?",
+		"bchange45": "Šifrovanje",
+		"bchange46": "Da li ovoj aplikaciji dajete dozvolu da sačuva sledeću datoteku"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

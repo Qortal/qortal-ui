@@ -638,7 +638,15 @@
 		"bchange35": "Gir du denne applikasjonen tillatelse til å sende mynter?",
 		"bchange36": "Vil du publisere øyeblikkelig til QDN uten å regne ut bevis på arbeid?",
 		"bchange37": "Gå inn i fullskjerm",
-		"bchange38": "Avslutt fullskjerm"
+		"bchange38": "Avslutt fullskjerm",
+		"bchange39": "Tillat alltid at lister hentes automatisk",
+		"bchange40": "Liste",
+		"bchange41": "Gir du dette programmet tillatelse til å få tilgang til denne listen?",
+		"bchange42": "Elementer",
+		"bchange43": "Gir du denne applikasjonen tillatelse til å legge til denne listen?",
+		"bchange44": "Gir du denne applikasjonen tillatelse til å slette fra denne listen?",
+		"bchange45": "Krypter",
+		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

@@ -136,7 +136,7 @@
 		"exp2": "Export Master Key",
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
-		"core": "Start Core Setiings"
+		"core": "Start Core Settings"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",

@@ -638,7 +638,15 @@
 		"bchange35": "Erteilen Sie dieser Anwendung die Erlaubnis, Coins zu senden?",
 		"bchange36": "Möchten Sie sofort auf QDN veröffentlichen, ohne einen Proof-of-Work zu berechnen?",
 		"bchange37": "Vollbild aufrufen",
-		"bchange38": "Vollbild beenden"
+		"bchange38": "Vollbild beenden",
+		"bchange39": "Automatisches Abrufen von Listen immer zulassen",
+		"bchange40": "Liste",
+		"bchange41": "Erteilen Sie dieser Anwendung die Berechtigung, auf diese Liste zuzugreifen?",
+		"bchange42": "Artikel",
+		"bchange43": "Erteilen Sie dieser Anwendung die Erlaubnis, diese Liste hinzuzufügen?",
+		"bchange44": "Erteilen Sie dieser Anwendung die Erlaubnis, sie von dieser Liste zu löschen?",
+		"bchange45": "Verschlüsseln",
+		"bchange46": "Geben Sie dieser Anwendung die Erlaubnis, die folgende Datei zu speichern?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",
