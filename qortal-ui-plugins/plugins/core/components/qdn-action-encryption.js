@@ -3,20 +3,21 @@ import ed2curve from '../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 
 
 
+
 export function uint8ArrayToBase64(uint8Array) {
     const length = uint8Array.length;
-    let base64String = '';
+    let binaryString = '';
     const chunkSize = 1024 * 1024; // Process 1MB at a time
 
     for (let i = 0; i < length; i += chunkSize) {
         const chunkEnd = Math.min(i + chunkSize, length);
         const chunk = uint8Array.subarray(i, chunkEnd);
-        const binaryString = chunk.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
-        base64String += btoa(binaryString);
+        binaryString += Array.from(chunk, byte => String.fromCharCode(byte)).join('');
     }
 
-    return base64String;
+    return btoa(binaryString);
 }
+
 
 export function base64ToUint8Array(base64) {
     const binaryString = atob(base64)
@@ -70,6 +71,7 @@ export const encryptData = ({ data64, recipientPublicKey }) => {
 
         combinedData.set(nonce, strUint8Array.length);
         combinedData.set(encryptedData, strUint8Array.length + nonce.length);
+
 
         const uint8arrayToData64 = uint8ArrayToBase64(combinedData)
 
