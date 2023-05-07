@@ -3,6 +3,7 @@ import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { doSetQChatNotificationConfig } from '../../redux/user/user-actions.js'
 import { translate, translateUnsafeHTML } from 'lit-translate'
+import isElectron from 'is-electron'
 
 import '@material/mwc-checkbox'
 
@@ -145,11 +146,21 @@ class NotificationsView extends connect(store)(LitElement) {
                             </div>
                         </div>
                     </div>
-                    <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
-                        <div @click=${() => this.checkCoreSettings()} class="q-button"> ${translate("settings.core")} </div>
-                    </div>
+                    ${this.renderSetCoreButton()}
                 </div>
         `
+    }
+
+    renderSetCoreButton() {
+        if (!isElectron) {
+            return html`
+                <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
+                    <div @click=${() => this.checkCoreSettings()} class="q-button"> ${translate("settings.core")} </div>
+                </div>
+            `
+        } else {
+            return html``
+        }
     }
 
     checkCoreSettings() {
