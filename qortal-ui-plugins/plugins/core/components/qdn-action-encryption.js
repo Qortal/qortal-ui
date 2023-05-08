@@ -2,6 +2,24 @@ import nacl from '../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 
 
+export const fileToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const dataUrl = reader.result;
+            if (typeof dataUrl === "string") {
+                const base64String = dataUrl.split(',')[1];
+                resolve(base64String);
+            } else {
+                reject(new Error('Invalid data URL'));
+            }
+        };
+        reader.onerror = (error) => {
+            reject(error);
+        };
+    });
+
 
 
 export function uint8ArrayToBase64(uint8Array) {
