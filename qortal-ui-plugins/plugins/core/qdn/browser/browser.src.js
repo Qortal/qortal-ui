@@ -24,7 +24,7 @@ import { QORT_DECIMALS } from 'qortal-ui-crypto/api/constants';
 import nacl from '../../../../../qortal-ui-crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../qortal-ui-crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, encryptData, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, encryptData, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -841,7 +841,7 @@ class WebBrowser extends LitElement {
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
-					const requiredFields = ['service', 'name', 'data64'];
+					const requiredFields = ['service', 'name'];
 					const missingFields = [];
 
 					requiredFields.forEach((field) => {
@@ -855,6 +855,12 @@ class WebBrowser extends LitElement {
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						let data = {};
 						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					if (!data.file && !data.data64) {
+						let data = {};
+						data['error'] = "No data or file was submitted";
 						response = JSON.stringify(data);
 						break
 					}
@@ -907,6 +913,8 @@ class WebBrowser extends LitElement {
 						}
 
 					}
+
+
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
 						{
@@ -917,6 +925,9 @@ class WebBrowser extends LitElement {
 						}
 					);
 					if (res2.action === 'accept') {
+						if (data.file && !data.encrypt) {
+							data64 = await fileToBase64(data.file)
+						}
 						const worker = new WebWorker();
 						try {
 							this.loader.show();
@@ -1016,7 +1027,7 @@ class WebBrowser extends LitElement {
 
 					}
 					const resourcesMap = resources.map(async (resource) => {
-						const requiredFields = ['service', 'name', 'data64'];
+						const requiredFields = ['service', 'name'];
 						const missingFields = [];
 
 						requiredFields.forEach((field) => {
@@ -1029,6 +1040,11 @@ class WebBrowser extends LitElement {
 							const missingFieldsString = missingFields.join(', ');
 							const errorMsg = `Missing fields: ${missingFieldsString}`
 							throw new Error(errorMsg)
+						}
+
+						if (!resource.file && !resource.data64) {
+
+							throw new Error('No data or file was submitted')
 						}
 
 						const service = resource.service;
@@ -1067,7 +1083,9 @@ class WebBrowser extends LitElement {
 							}
 
 						}
-
+						if (resource.file && !data.encrypt) {
+							data64 = await fileToBase64(resource.file)
+						}
 
 
 						const worker = new WebWorker();
