@@ -8,7 +8,7 @@ import localForage from "localforage";
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
-});
+})
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-progress/paper-progress.js'
@@ -29,6 +29,7 @@ import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 import './check-for-update.js'
+import './search-modal.js'
 import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
@@ -45,7 +46,6 @@ class AppView extends connect(store)(LitElement) {
             nodeType: { type: String, reflect: true },
             theme: { type: String, reflect: true },
             addressInfo: { type: Object },
-            searchContentString: { type: String },
             getAllBalancesLoading: { type: Boolean },
             botQortWallet: { type: String },
             botBtcWallet: { type: String },
@@ -353,7 +353,6 @@ class AppView extends connect(store)(LitElement) {
     constructor() {
         super()
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
-        this.searchContentString = ''
         this.urls = [];
         this.nodeType = ''
         this.addressInfo = {}
@@ -474,22 +473,6 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <div style="display: inline;">
-	                          <div class="search">
-	                              <vaadin-text-field
-                                        style="width: 350px"
-                                        theme="medium"
-                                        id="searchContent"
-                                        placeholder="${translate("explorerpage.exp1")}"
-                                        value="${this.searchContentString}"
-                                        @keydown="${this.searchKeyListener}"
-                                        clear-button-visible
-                                    >
-                                    </vaadin-text-field>
-	                              <paper-icon-button icon="icons:search" @click="${() => this.openUserInfo()}"></paper-icon-button>
-	                          </div>
-	                      </div>
-                            <div>&nbsp;&nbsp;&nbsp;</div>
-                            <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
                                 </span>
@@ -499,6 +482,8 @@ class AppView extends connect(store)(LitElement) {
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <qort-theme-toggle></qort-theme-toggle>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <search-modal></search-modal>
+                            <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:settings" @click=${() => this.openSettings()} title="${translate("settings.settings")}"></paper-icon-button>
                             </div>
@@ -2163,23 +2148,6 @@ class AppView extends connect(store)(LitElement) {
         this.config = state.config
         this.urls = state.app.registeredUrls
         this.addressInfo = state.app.accountInfo.addressInfo
-    }
-
-    searchKeyListener(e) {
-        if (e.key === 'Enter') {
-            this.openUserInfo()
-        }
-    }
-
-    clearSearchField() {
-        this.shadowRoot.getElementById('searchContent').value = this.searchContentString
-    }
-
-    openUserInfo() {
-        let sendInfoAddress = this.shadowRoot.getElementById('searchContent').value
-        const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')
-        infoDialog.openUserInfo(sendInfoAddress)
-        this.clearSearchField()
     }
 
     openSettings() {
