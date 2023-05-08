@@ -489,6 +489,7 @@ class AppView extends connect(store)(LitElement) {
                             </div>
                             <div>&nbsp;&nbsp;</div>
                             <check-for-update></check-for-update>
+                            <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="${translate("logout.logout")}"></paper-icon-button>
                             </div>

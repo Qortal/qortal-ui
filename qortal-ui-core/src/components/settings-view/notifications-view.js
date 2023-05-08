@@ -152,14 +152,14 @@ class NotificationsView extends connect(store)(LitElement) {
     }
 
     renderSetCoreButton() {
-        if (!isElectron) {
+        if (!isElectron()) {
+            return html``
+        } else {
             return html`
                 <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
                     <div @click=${() => this.checkCoreSettings()} class="q-button"> ${translate("settings.core")} </div>
                 </div>
             `
-        } else {
-            return html``
         }
     }
 

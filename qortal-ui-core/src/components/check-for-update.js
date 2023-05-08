@@ -32,15 +32,14 @@ class CheckForUpdate extends LitElement {
 	}
 
 	renderUpdateButton() {
-		if (!isElectron) {
+		if (!isElectron()) {
+			return html``
+		} else {
 			return html`
 				<div style="display: inline;">
 					<paper-icon-button icon="icons:get-app" @click=${() => this.checkupdate()} title="${translate("appspage.schange38")} UI"></paper-icon-button>
 				</div>
-				<div>&nbsp;&nbsp;</div>
 			`
-		} else {
-			return html``
 		}
 	}
 
