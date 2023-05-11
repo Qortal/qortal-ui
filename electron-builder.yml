@@ -30,6 +30,9 @@ files:
       - "lib/*.js"
       - "locales/*.json"
       - "splash/"
+      - "crypto/"
+      - "core/"
+      - "plugins/"
 
 # Mac OS configuration
 mac:
@@ -106,17 +109,15 @@ linux:
   target:
     - "deb"
     - "AppImage"
-    - "snap"
-    - "rpm"
 
 deb:
-  artifactName: "Qortal-Setup-amd64.${ext}"
+  artifactName: "Qortal-Setup-arm64.${ext}"
   synopsis: "Qortal UI for Linux"
   afterInstall: "./scripts/add-debian-apt-repo.sh"
   afterRemove: "./scripts/uninstall-debian-conf.sh"
 
 appImage:
-  artifactName: "Qortal-Setup-amd64.${ext}"
+  artifactName: "Qortal-Setup-arm64.${ext}"
 
 snap:
   artifactName: "Qortal-Setup-amd64.${ext}"

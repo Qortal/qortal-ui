@@ -1,11 +1,11 @@
 const path = require("path")
 
-const uiCore = require('qortal-ui-core')
+const uiCore = require('./core/ui-core.js')
 const createServer = uiCore('server')
 
 const config = require('./config/config.js')
 
-const pluginsController = require('qortal-ui-plugins')
+const pluginsController = require('./plugins/default-plugins.js')
 const qortalPlugins = pluginsController('plugins')
 
 const plugins = [

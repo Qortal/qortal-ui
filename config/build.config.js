@@ -7,7 +7,7 @@ const build = {
         imgDir: path.join(__dirname, '../img')
     },
     aliases: {
-        'qortal-ui-crypto': path.join(__dirname, '../node_modules/qortal-ui-crypto/api.js')
+        'qortal-ui-crypto': path.join(__dirname, '../crypto/api.js')
     }
 }
 

@@ -17,7 +17,6 @@ Installation
 Packages required:
  - Node.js
  - npm
- - yarn
 
 Easiest way to install the lastest required packages on Linux is via nvm. 
 
@@ -28,10 +27,7 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
 ``` nvm install v18.14.0 ```  (LTS: Hydrogen supported by Electron) <br/>
-``` npm --location=global install yarn@1.22.19 ``` <br/>
-``` npm --location=global install npm@9.6.4 ``` <br/>
-
-On BSD do a ``` pkg_add node followed by npm install -g yarn ```
+``` npm --location=global install npm@9.6.6 ``` <br/>
 
 Adding via binary package mirror will only work if you have set the package path. You can do a node or java build via ports instead by downloading ports with portsnap fetch method.
 
@@ -41,29 +37,29 @@ Verify your installtion with node --version <br/>
 Clone the main UI repo
  - ``` git clone https://github.com/Qortal/qortal-ui.git ```
 
-Installation and linking
+Installation
 ------------------------
- In `qortal-ui/` install_link:all
+ In `qortal-ui/` npm install
 
 
 Build UI server and files
 -------------------------
 In `qortal-ui` directory, run:
 ```
-yarn run build
+npm run build
 ```
 
 Start UI Server ( preferred way )
 ---------------
 ```
-yarn run server &
+npm run server &
 ```
 The "&" at the end puts the UI server in the background.
 
 Run UI using electron
 ---------------------
 ```
-yarn run start-electron
+npm run start-electron
 ```
 
 Build script (unix-like systems only)
@@ -72,7 +68,7 @@ To automate the above process, run ./build.sh, optionally specifying the followi
 
 `-s`: run UI server after completing the build<br />
 `-e`: run electron server after completing the build<br />
-`-f`: force relink and reinstall dependencies<br />
+`-w`: use 'npm run watch' instead of 'npm run build', to enable hot swapping<br />
 `-h`: show help<br />
 
 Example command to build and run the UI server:

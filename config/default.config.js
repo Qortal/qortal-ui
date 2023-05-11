@@ -1,4 +1,4 @@
-const uiCore = require('qortal-ui-core')
+const uiCore = require('../core/ui-core.js')
 const defaultConfig = uiCore('default_config')
 
 
