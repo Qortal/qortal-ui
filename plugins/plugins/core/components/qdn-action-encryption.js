@@ -127,6 +127,10 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
         // Encrypt the data with the symmetric key.
         const encryptedData = nacl.secretbox(Uint8ArrayData, nonce, messageKey);
 
+        // Generate a keyNonce outside of the loop.
+        const keyNonce = new Uint8Array(24);
+        window.crypto.getRandomValues(keyNonce);
+
         // Encrypt the symmetric key for each recipient.
         let encryptedKeys = [];
         publicKeysDuplicateFree.forEach((recipientPublicKey) => {
@@ -136,20 +140,15 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
             const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
 
             const sharedSecret = new Uint8Array(32)
+            // the length of the sharedSecret will be 32 + 16 
+            // When you're encrypting data using nacl.secretbox, it's adding an authentication tag to the result, which is 16 bytes long. This tag is used for verifying the integrity and authenticity of the data when it is decrypted
+
             nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-
-
-            const keyNonce = new Uint8Array(24);
-            window.crypto.getRandomValues(keyNonce);
 
             // Encrypt the symmetric key with the shared secret.
             const encryptedKey = nacl.secretbox(messageKey, keyNonce, sharedSecret);
 
-            encryptedKeys.push({
-                recipientPublicKey,
-                keyNonce,
-                encryptedKey
-            });
+            encryptedKeys.push(encryptedKey);
         });
 
         const str = "qortalEncryptedData";
@@ -158,11 +157,11 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
 
         // Combine all data into a single Uint8Array.
         // Calculate size of combinedData
-        let combinedDataSize = strUint8Array.length + nonce.length + encryptedData.length + 4;
+        let combinedDataSize = strUint8Array.length + nonce.length + keyNonce.length + encryptedData.length + 4;
         let encryptedKeysSize = 0;
 
         encryptedKeys.forEach((key) => {
-            encryptedKeysSize += key.keyNonce.length + key.encryptedKey.length;
+            encryptedKeysSize += key.length;
         });
 
         combinedDataSize += encryptedKeysSize;
@@ -171,24 +170,43 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
 
         combinedData.set(strUint8Array);
         combinedData.set(nonce, strUint8Array.length);
-        combinedData.set(encryptedData, strUint8Array.length + nonce.length);
+        combinedData.set(keyNonce, strUint8Array.length + nonce.length);
+        combinedData.set(encryptedData, strUint8Array.length + nonce.length + keyNonce.length);
 
         // Initialize offset for encryptedKeys
-        let encryptedKeysOffset = strUint8Array.length + nonce.length + encryptedData.length;
+        let encryptedKeysOffset = strUint8Array.length + nonce.length + encryptedData.length + keyNonce.length;
         encryptedKeys.forEach((key) => {
-            combinedData.set(key.keyNonce, encryptedKeysOffset);
-            encryptedKeysOffset += key.keyNonce.length;
-
-            combinedData.set(key.encryptedKey, encryptedKeysOffset);
-            encryptedKeysOffset += key.encryptedKey.length;
+            combinedData.set(key, encryptedKeysOffset);
+            encryptedKeysOffset += key.length;
         });
         const countArray = new Uint8Array(new Uint32Array([publicKeysDuplicateFree.length]).buffer);
         combinedData.set(countArray, combinedData.length - 4);
         const uint8arrayToData64 = uint8ArrayToBase64(combinedData)
-
         return uint8arrayToData64;
 
     } catch (error) {
         throw new Error("Error in encrypting data")
     }
+}
+
+
+export function uint8ArrayStartsWith(uint8Array, string) {
+    const stringEncoder = new TextEncoder();
+    const stringUint8Array = stringEncoder.encode(string);
+
+    if (uint8Array.length < stringUint8Array.length) {
+        return false;
+    }
+
+    for (let i = 0; i < stringUint8Array.length; i++) {
+        if (uint8Array[i] !== stringUint8Array[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+export function decryptDeprecatedSingle() {
+
 }

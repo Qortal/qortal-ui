@@ -24,7 +24,7 @@ import { QORT_DECIMALS } from '../../../../../crypto/api/constants';
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, encryptData, encryptDataGroup, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, encryptData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -585,6 +585,8 @@ class WebBrowser extends LitElement {
 
 					try {
 						const uint8Array = base64ToUint8Array(encryptedData)
+						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData");
+						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
 						const combinedData = uint8Array
 						const str = "qortalEncryptedData";
 						const strEncoder = new TextEncoder();
@@ -642,7 +644,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-
 					const { encryptedData: data64EncryptedData } = data
 					try {
 						const allCombined = base64ToUint8Array(data64EncryptedData);
@@ -655,19 +656,24 @@ class WebBrowser extends LitElement {
 						const nonceEndPosition = nonceStartPosition + 24; // Nonce is 24 bytes
 						const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition);
 
+						// Extract the shared keyNonce
+						const keyNonceStartPosition = nonceEndPosition;
+						const keyNonceEndPosition = keyNonceStartPosition + 24; // Nonce is 24 bytes
+						const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition);
+
 						// Calculate count first
 						const countStartPosition = allCombined.length - 4; // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
 						const countArray = allCombined.slice(countStartPosition, countStartPosition + 4);
 						const count = new Uint32Array(countArray.buffer)[0];
 
 						// Then use count to calculate encryptedData
-						const encryptedDataStartPosition = nonceEndPosition; // start position of encryptedData
-						const encryptedDataEndPosition = allCombined.length - ((count * (24 + 32 + 16)) + 4);
+						const encryptedDataStartPosition = keyNonceEndPosition; // start position of encryptedData
+						const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4);
 						const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition);
 
 						// Extract the encrypted keys
-						const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * (24 + 48)));
-
+						// 32+16 = 48
+						const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * 48));
 						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
 						const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
 
@@ -679,15 +685,12 @@ class WebBrowser extends LitElement {
 
 						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
 						const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
-
 						const sharedSecret = new Uint8Array(32)
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
 						for (let i = 0; i < count; i++) {
-							const keyNonce = combinedKeys.slice(i * (24 + 48), i * (24 + 48) + 24);
-							const encryptedKey = combinedKeys.slice(i * (24 + 48) + 24, (i + 1) * (24 + 48));
+							const encryptedKey = combinedKeys.slice(i * 48, (i + 1) * 48);
 							// Decrypt the symmetric key.
 							const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret);
-
 							// If decryption was successful, decryptedKey will not be null.
 							if (decryptedKey) {
 								// Decrypt the data using the symmetric key.
@@ -934,7 +937,6 @@ class WebBrowser extends LitElement {
 					return;
 
 				case actions.PUBLISH_QDN_RESOURCE: {
-					console.log({ data })
 					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name'];
 					const missingFields = [];
