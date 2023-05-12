@@ -24,7 +24,7 @@ import { QORT_DECIMALS } from '../../../../../crypto/api/constants';
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, encryptData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, decryptDeprecatedSingle, decryptGroupData, encryptData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -563,161 +563,63 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.DECRYPT_DATA: {
-					const requiredFields = ['encryptedData', 'publicKey'];
-					const missingFields = [];
 
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field);
-						}
-					});
-
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
 					const { encryptedData, publicKey } = data
 
 
 					try {
+						let data = {};
+						if (!encryptedData) {
+							const errorMsg = `Missing fields: encryptedData`
+
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+							break
+
+						}
 						const uint8Array = base64ToUint8Array(encryptedData)
 						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData");
-						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
-						const combinedData = uint8Array
-						const str = "qortalEncryptedData";
-						const strEncoder = new TextEncoder();
-						const strUint8Array = strEncoder.encode(str);
 
-						const strData = combinedData.slice(0, strUint8Array.length);
-						const nonce = combinedData.slice(strUint8Array.length, strUint8Array.length + 24);
-						const _encryptedData = combinedData.slice(strUint8Array.length + 24);
+						if (startsWithQortalEncryptedData) {
 
-						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const _publicKey = window.parent.Base58.decode(publicKey)
+							if (!publicKey) {
+								const errorMsg = `Missing fields: publicKey`
 
-						if (!privateKey || !_publicKey) {
-							data['error'] = "Unable to retrieve keys"
-							response = JSON.stringify(data);
-							break
-						}
-
-						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(_publicKey)
-						const sharedSecret = new Uint8Array(32);
-						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-
-						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
-						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
-						const decryptedDataToBase64 = uint8ArrayToBase64(_decryptedData)
-						response = JSON.stringify(decryptedDataToBase64);
-
-						break;
-					} catch (error) {
-						console.log({ error })
-						const data = {};
-						const errorMsg = error.message || "Error in decrypting data"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
-				}
-
-				case actions.DECRYPT_DATA_GROUP: {
-					const requiredFields = ['encryptedData'];
-					const missingFields = [];
-
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field);
-						}
-					});
-
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break
-					}
-					const { encryptedData: data64EncryptedData } = data
-					try {
-						const allCombined = base64ToUint8Array(data64EncryptedData);
-						const str = "qortalEncryptedData";
-						const strEncoder = new TextEncoder();
-						const strUint8Array = strEncoder.encode(str);
-
-						// Extract the nonce
-						const nonceStartPosition = strUint8Array.length;
-						const nonceEndPosition = nonceStartPosition + 24; // Nonce is 24 bytes
-						const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition);
-
-						// Extract the shared keyNonce
-						const keyNonceStartPosition = nonceEndPosition;
-						const keyNonceEndPosition = keyNonceStartPosition + 24; // Nonce is 24 bytes
-						const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition);
-
-						// Calculate count first
-						const countStartPosition = allCombined.length - 4; // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
-						const countArray = allCombined.slice(countStartPosition, countStartPosition + 4);
-						const count = new Uint32Array(countArray.buffer)[0];
-
-						// Then use count to calculate encryptedData
-						const encryptedDataStartPosition = keyNonceEndPosition; // start position of encryptedData
-						const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4);
-						const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition);
-
-						// Extract the encrypted keys
-						// 32+16 = 48
-						const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * 48));
-						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
-
-						if (!privateKey || !publicKey) {
-							data['error'] = "Unable to retrieve keys"
-							response = JSON.stringify(data);
-							break
-						}
-
-						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
-						const sharedSecret = new Uint8Array(32)
-						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-						for (let i = 0; i < count; i++) {
-							const encryptedKey = combinedKeys.slice(i * 48, (i + 1) * 48);
-							// Decrypt the symmetric key.
-							const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret);
-							// If decryption was successful, decryptedKey will not be null.
-							if (decryptedKey) {
-								// Decrypt the data using the symmetric key.
-								const decryptedData = nacl.secretbox.open(encryptedData, nonce, decryptedKey);
-
-								// If decryption was successful, decryptedData will not be null.
-								if (decryptedData) {
-									const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
-									response = JSON.stringify(decryptedDataToBase64);
-									break;
-								}
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								break
 							}
+
+
+							const decryptedDataToBase64 = decryptDeprecatedSingle(uint8Array, publicKey)
+							response = JSON.stringify(decryptedDataToBase64);
+							break;
+
+
+						}
+						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
+
+						if (startsWithQortalGroupEncryptedData) {
+
+							const decryptedData = decryptGroupData(encryptedData)
+							const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
+							response = JSON.stringify(decryptedDataToBase64);
+							break;
+
 						}
 
-						if (!response) {
-							const data = {};
-							data['error'] = "Unable to decrypt data";
-							response = JSON.stringify(data);
-						}
+						const errorMsg = "Unable to decrypt"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
 					} catch (error) {
 						console.log({ error })
 						const data = {};
 						const errorMsg = error.message || "Error in decrypting data"
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
+						break
 					}
-					break;
 				}
 
 				case actions.GET_LIST_ITEMS: {
