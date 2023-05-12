@@ -102,3 +102,100 @@ export const encryptData = ({ data64, recipientPublicKey }) => {
         throw new Error("Error in encrypting data")
     }
 }
+
+export const encryptDataGroup = ({ data64, recipientPublicKeys }) => {
+    console.log({ recipientPublicKeys, data64 })
+    const Uint8ArrayData = base64ToUint8Array(data64)
+
+    if (!(Uint8ArrayData instanceof Uint8Array)) {
+        throw new Error("The Uint8ArrayData you've submitted is invalid")
+    }
+
+    try {
+        const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+        if (!privateKey) {
+            throw new Error("Unable to retrieve keys")
+        }
+
+        // Generate a random symmetric key for the message.
+        const messageKey = new Uint8Array(32);
+        window.crypto.getRandomValues(messageKey);
+
+        // Encrypt the message with the symmetric key.
+        const nonce = new Uint8Array(24);
+        window.crypto.getRandomValues(nonce);
+
+        const encryptedData = nacl.secretbox(Uint8ArrayData, nonce, messageKey);
+        console.log('front', { encryptedData })
+        // Encrypt the symmetric key for each recipient.
+        let encryptedKeys = [];
+        recipientPublicKeys.forEach((recipientPublicKey) => {
+            const publicKeyUnit8Array = window.parent.Base58.decode(recipientPublicKey)
+
+            const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
+            const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
+
+            const sharedSecret = new Uint8Array(32)
+            nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
+            // Encrypt the symmetric key with the shared secret.
+            const keyNonce = new Uint8Array(24);
+            window.crypto.getRandomValues(keyNonce);
+            const encryptedKey = nacl.secretbox(messageKey, keyNonce, sharedSecret);
+
+            console.log('100', { keyNonce, recipientPublicKey, encryptedKey })
+
+            encryptedKeys.push({
+                recipientPublicKey,
+                keyNonce,
+                encryptedKey
+            });
+        });
+
+        const str = "qortalEncryptedData";
+        const strEncoder = new TextEncoder();
+        const strUint8Array = strEncoder.encode(str);
+        console.log('hello4')
+        // Combine all data into a single Uint8Array.
+        // Calculate size of combinedData
+        let combinedDataSize = strUint8Array.length + nonce.length + encryptedData.length + 4;
+        let encryptedKeysSize = 0;
+
+        encryptedKeys.forEach((key) => {
+            encryptedKeysSize += key.keyNonce.length + key.encryptedKey.length;
+        });
+
+        combinedDataSize += encryptedKeysSize;
+
+        let combinedData = new Uint8Array(combinedDataSize);
+
+        combinedData.set(strUint8Array);
+        combinedData.set(nonce, strUint8Array.length);
+        combinedData.set(encryptedData, strUint8Array.length + nonce.length);
+        console.log('encrypt start', strUint8Array.length + nonce.length)
+        console.log('encryptedLength2', encryptedData.length)
+        // Initialize offset for encryptedKeys
+        let encryptedKeysOffset = strUint8Array.length + nonce.length + encryptedData.length;
+        console.log('encrypt end', encryptedKeysOffset)
+        encryptedKeys.forEach((key) => {
+            combinedData.set(key.keyNonce, encryptedKeysOffset);
+            console.log('key.keyNonce', key.keyNonce.length)
+            encryptedKeysOffset += key.keyNonce.length;
+
+            combinedData.set(key.encryptedKey, encryptedKeysOffset);
+            console.log('key.encryptedKey', key.encryptedKey.length)
+            encryptedKeysOffset += key.encryptedKey.length;
+        });
+        const countArray = new Uint8Array(new Uint32Array([recipientPublicKeys.length]).buffer);
+        console.log({ countArray })
+        combinedData.set(countArray, combinedData.length - 4);
+        console.log('totalLength 2', combinedData.length)
+        const uint8arrayToData64 = uint8ArrayToBase64(combinedData)
+
+        return uint8arrayToData64;
+
+    } catch (error) {
+        console.log({ error })
+        throw new Error("Error in encrypting data")
+    }
+}

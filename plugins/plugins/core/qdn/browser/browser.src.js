@@ -24,7 +24,7 @@ import { QORT_DECIMALS } from '../../../../../crypto/api/constants';
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, encryptData, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, encryptData, encryptDataGroup, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -623,6 +623,118 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+
+				case actions.DECRYPT_DATA_GROUP: {
+					const requiredFields = ['encryptedData', 'publicKeys'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+					const { encryptedData: data64EncryptedData, publicKeys } = data
+					console.log({ publicKeys, data64EncryptedData })
+					try {
+						const allCombined = base64ToUint8Array(data64EncryptedData);
+						console.log('total length', allCombined.length)
+						const str = "qortalEncryptedData";
+						const strEncoder = new TextEncoder();
+						const strUint8Array = strEncoder.encode(str);
+
+						// Extract the nonce
+						const nonceStartPosition = strUint8Array.length;
+						const nonceEndPosition = nonceStartPosition + 24; // Nonce is 24 bytes
+						const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition);
+
+						// Calculate count first
+						const countStartPosition = allCombined.length - 4; // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+						const countArray = allCombined.slice(countStartPosition, countStartPosition + 4);
+						console.log({ countArray })
+						const count = new Uint32Array(countArray.buffer)[0];
+						console.log({ count })
+
+						// Then use count to calculate encryptedData
+						const encryptedDataStartPosition = nonceEndPosition; // start position of encryptedData
+						console.log({ encryptedDataStartPosition })
+						const encryptedDataEndPosition = allCombined.length - ((count * (24 + 32 + 16)) + 4);
+						console.log({ encryptedDataEndPosition })
+						const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition);
+						console.log('back', { encryptedData })
+						console.log({ encryptedLength: encryptedData.length })
+
+						// Extract the encrypted keys
+						const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * (24 + 48)));
+
+						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+						const senderPublicKey = window.parent.Base58.decode(publicKeys[0]) // Assuming the sender's public key is the first one
+
+						if (!privateKey || !senderPublicKey) {
+							data['error'] = "Unable to retrieve keys"
+							response = JSON.stringify(data);
+							break
+						}
+
+						const recipientPrivateKeyUint8Array = privateKey
+						const senderPublicKeyUint8Array = senderPublicKey
+
+						const convertedPrivateKey = ed2curve.convertSecretKey(recipientPrivateKeyUint8Array)
+						const convertedPublicKey = ed2curve.convertPublicKey(senderPublicKeyUint8Array)
+
+						const sharedSecret = new Uint8Array(32)
+						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+						console.log({ sharedSecret })
+						for (let i = 0; i < count; i++) {
+							const keyNonce = combinedKeys.slice(i * (24 + 48), i * (24 + 48) + 24);
+							const encryptedKey = combinedKeys.slice(i * (24 + 48) + 24, (i + 1) * (24 + 48));
+							console.log({ keyNonce, encryptedKey })
+							// Decrypt the symmetric key.
+							const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret);
+							console.log({ decryptedKey })
+
+							// If decryption was successful, decryptedKey will not be null.
+							if (decryptedKey) {
+								// Decrypt the data using the symmetric key.
+								const decryptedData = nacl.secretbox.open(encryptedData, nonce, decryptedKey);
+
+								// If decryption was successful, decryptedData will not be null.
+								if (decryptedData) {
+									console.log({ decryptedData })
+									const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
+									console.log({ decryptedDataToBase64 })
+
+									response = JSON.stringify(decryptedDataToBase64);
+
+									break;
+								}
+							}
+						}
+
+						if (!response) {
+							const data = {};
+							data['error'] = "Unable to decrypt data";
+							response = JSON.stringify(data);
+						}
+					} catch (error) {
+						console.log({ error })
+						const data = {};
+						const errorMsg = error.message || "Error in decrypting data"
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+					}
+					break;
+				}
+
 				case actions.GET_LIST_ITEMS: {
 					const requiredFields = ['list_name'];
 					const missingFields = [];
@@ -895,7 +1007,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 
-					if (data.encrypt) {
+					if (data.encrypt && (!data.type || data.type !== 'group')) {
 						try {
 							const encryptDataResponse = encryptData({
 								data64, recipientPublicKey: data.recipientPublicKey
@@ -913,6 +1025,25 @@ class WebBrowser extends LitElement {
 						}
 
 					}
+					if (data.encrypt && data.type && data.type === 'group') {
+						try {
+							const encryptDataResponse = encryptDataGroup({
+								data64, recipientPublicKeys: data.recipientPublicKeys
+							})
+							if (encryptDataResponse) {
+								data64 = encryptDataResponse
+							}
+
+						} catch (error) {
+							const obj = {};
+							const errorMsg = error.message || 'Upload failed due to failed encryption';
+							obj['error'] = errorMsg;
+							response = JSON.stringify(obj);
+							break
+						}
+
+					}
+
 
 
 					const res2 = await showModalAndWait(
