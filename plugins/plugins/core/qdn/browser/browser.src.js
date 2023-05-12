@@ -625,7 +625,7 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.DECRYPT_DATA_GROUP: {
-					const requiredFields = ['encryptedData', 'publicKeys'];
+					const requiredFields = ['encryptedData'];
 					const missingFields = [];
 
 					requiredFields.forEach((field) => {
@@ -643,11 +643,9 @@ class WebBrowser extends LitElement {
 						break
 					}
 
-					const { encryptedData: data64EncryptedData, publicKeys } = data
-					console.log({ publicKeys, data64EncryptedData })
+					const { encryptedData: data64EncryptedData } = data
 					try {
 						const allCombined = base64ToUint8Array(data64EncryptedData);
-						console.log('total length', allCombined.length)
 						const str = "qortalEncryptedData";
 						const strEncoder = new TextEncoder();
 						const strUint8Array = strEncoder.encode(str);
@@ -660,47 +658,35 @@ class WebBrowser extends LitElement {
 						// Calculate count first
 						const countStartPosition = allCombined.length - 4; // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
 						const countArray = allCombined.slice(countStartPosition, countStartPosition + 4);
-						console.log({ countArray })
 						const count = new Uint32Array(countArray.buffer)[0];
-						console.log({ count })
 
 						// Then use count to calculate encryptedData
 						const encryptedDataStartPosition = nonceEndPosition; // start position of encryptedData
-						console.log({ encryptedDataStartPosition })
 						const encryptedDataEndPosition = allCombined.length - ((count * (24 + 32 + 16)) + 4);
-						console.log({ encryptedDataEndPosition })
 						const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition);
-						console.log('back', { encryptedData })
-						console.log({ encryptedLength: encryptedData.length })
 
 						// Extract the encrypted keys
 						const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * (24 + 48)));
 
 						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const senderPublicKey = window.parent.Base58.decode(publicKeys[0]) // Assuming the sender's public key is the first one
+						const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
 
-						if (!privateKey || !senderPublicKey) {
+						if (!privateKey || !publicKey) {
 							data['error'] = "Unable to retrieve keys"
 							response = JSON.stringify(data);
 							break
 						}
 
-						const recipientPrivateKeyUint8Array = privateKey
-						const senderPublicKeyUint8Array = senderPublicKey
-
-						const convertedPrivateKey = ed2curve.convertSecretKey(recipientPrivateKeyUint8Array)
-						const convertedPublicKey = ed2curve.convertPublicKey(senderPublicKeyUint8Array)
+						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
+						const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
 
 						const sharedSecret = new Uint8Array(32)
 						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-						console.log({ sharedSecret })
 						for (let i = 0; i < count; i++) {
 							const keyNonce = combinedKeys.slice(i * (24 + 48), i * (24 + 48) + 24);
 							const encryptedKey = combinedKeys.slice(i * (24 + 48) + 24, (i + 1) * (24 + 48));
-							console.log({ keyNonce, encryptedKey })
 							// Decrypt the symmetric key.
 							const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret);
-							console.log({ decryptedKey })
 
 							// If decryption was successful, decryptedKey will not be null.
 							if (decryptedKey) {
@@ -709,12 +695,8 @@ class WebBrowser extends LitElement {
 
 								// If decryption was successful, decryptedData will not be null.
 								if (decryptedData) {
-									console.log({ decryptedData })
 									const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
-									console.log({ decryptedDataToBase64 })
-
 									response = JSON.stringify(decryptedDataToBase64);
-
 									break;
 								}
 							}
@@ -952,6 +934,7 @@ class WebBrowser extends LitElement {
 					return;
 
 				case actions.PUBLISH_QDN_RESOURCE: {
+					console.log({ data })
 					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name'];
 					const missingFields = [];
@@ -994,9 +977,9 @@ class WebBrowser extends LitElement {
 						identifier = 'default';
 					}
 
-					if (data.encrypt && !data.recipientPublicKey) {
+					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
 						let data = {};
-						data['error'] = "Encrypting data requires the recipient's public key";
+						data['error'] = "Encrypting data requires public keys";
 						response = JSON.stringify(data);
 						break
 					}
@@ -1007,28 +990,10 @@ class WebBrowser extends LitElement {
 						break
 					}
 
-					if (data.encrypt && (!data.type || data.type !== 'group')) {
-						try {
-							const encryptDataResponse = encryptData({
-								data64, recipientPublicKey: data.recipientPublicKey
-							})
-							if (encryptDataResponse.encryptedData) {
-								data64 = encryptDataResponse.encryptedData
-							}
-
-						} catch (error) {
-							const obj = {};
-							const errorMsg = error.message || 'Upload failed due to failed encryption';
-							obj['error'] = errorMsg;
-							response = JSON.stringify(obj);
-							break
-						}
-
-					}
-					if (data.encrypt && data.type && data.type === 'group') {
+					if (data.encrypt) {
 						try {
 							const encryptDataResponse = encryptDataGroup({
-								data64, recipientPublicKeys: data.recipientPublicKeys
+								data64, publicKeys: data.publicKeys
 							})
 							if (encryptDataResponse) {
 								data64 = encryptDataResponse
