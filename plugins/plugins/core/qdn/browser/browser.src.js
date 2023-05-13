@@ -1007,9 +1007,9 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-					if (data.encrypt && !data.recipientPublicKey) {
+					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
 						let data = {};
-						data['error'] = "Encrypting data requires the recipient's public key";
+						data['error'] = "Encrypting data requires public keys";
 						response = JSON.stringify(data);
 						break
 					}
@@ -1068,13 +1068,14 @@ class WebBrowser extends LitElement {
 							throw new Error("Only encrypted data can go into private services")
 						}
 
+
 						if (data.encrypt) {
 							try {
-								const encryptDataResponse = encryptData({
-									data64, recipientPublicKey: data.recipientPublicKey
+								const encryptDataResponse = encryptDataGroup({
+									data64, publicKeys: data.publicKeys
 								})
-								if (encryptDataResponse.encryptedData) {
-									data64 = encryptDataResponse.encryptedData
+								if (encryptDataResponse) {
+									data64 = encryptDataResponse
 								}
 
 							} catch (error) {
