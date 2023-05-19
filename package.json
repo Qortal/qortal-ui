@@ -60,8 +60,6 @@
 		"@hapi/hapi": "21.3.2",
 		"@hapi/inert": "7.1.0",
 		"@lit-labs/motion": "1.0.3",
-		"@material/mwc-list": "0.27.0",
-		"@material/mwc-select": "0.27.0",
 		"@tiptap/pm": "2.0.3",
 		"@tiptap/core": "2.0.3",
 		"@tiptap/extension-highlight": "2.0.3",
@@ -73,7 +71,7 @@
 	},
 	"devDependencies": {
 		"axios": "1.4.0",
-		"electron": "24.3.0",
+		"electron": "24.3.1",
 		"electron-builder": "23.6.0",
 		"electron-packager": "17.1.1",
 		"epml": "0.3.3",
@@ -87,7 +85,7 @@
 		"passive-events-support": "1.0.33",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.21.6",
+		"rollup": "3.22.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
@@ -140,7 +138,7 @@
 		"@vaadin/icons": "24.0.5",
 		"@vaadin/password-field": "24.0.5",
 		"@vaadin/tooltip": "24.0.5",
-		"@zip.js/zip.js": "2.7.13"
+		"@zip.js/zip.js": "2.7.14"
 	},
 	"engines": {
 		"node": ">=18.14.0"
