@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -2036,17 +2037,6 @@ class TradeBotPortal extends LitElement {
             setTimeout(getQortArrrPrice, 300000)
         }
 
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this._textMenu(event)},
-            { passive: true }
-        )
-
-        window.addEventListener('click', () => {
-            parentEpml.request('closeCopyTextMenu', null)},
-            { passive: true }
-        )
-
         window.addEventListener('storage', () => {
             this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.btcWallet) || "[]")
             this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.ltcWallet) || "[]")
@@ -2063,8 +2053,12 @@ class TradeBotPortal extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
@@ -2104,10 +2098,6 @@ class TradeBotPortal extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-
-            parentEpml.subscribe('copy_menu_switch', async (value) => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection()
             })
 
             let coinSelectionMenu = this.shadowRoot.getElementById("coinSelectionMenu")
@@ -3350,42 +3340,6 @@ class TradeBotPortal extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
-    }
-
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = {
-                    pageX: event.pageX,
-                    pageY: event.pageY,
-                    clientX: event.clientX,
-                    clientY: event.clientY,
-                }
-                let textMenuObject = {
-                    selectedText: selectedText,
-                    eventObject: _eve,
-                    isFrame: true,
-                }
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
     }
 
     clearTradeBotForm() {

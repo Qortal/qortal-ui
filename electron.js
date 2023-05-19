@@ -768,7 +768,7 @@ function createWindow() {
 		autoHideMenuBar: true,
 		webPreferences: {
 			partition: 'persist:webviewsession',
-			nodeIntegration: false,
+			nodeIntegration: true,
 			contextIsolation: true,
 			enableRemoteModule: false,
 			allowRunningInsecureContent: false,
@@ -932,6 +932,20 @@ if (!isLock) {
 	})
 	ipcMain.on('check-for-update', (event) => {
 		autoUpdater.checkForUpdatesAndNotify()
+	})
+	ipcMain.on('show-my-menu', (event) => {
+		log.info("RIGHT CLICKED")
+		let homePageOptions = Menu.buildFromTemplate([
+			{
+				label: 'Copy',
+				role: 'copy'
+			},
+			{
+				label: 'Paste',
+				role: 'paste'
+			}
+  		])
+  		homePageOptions.popup(myWindow)
 	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {

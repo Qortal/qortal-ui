@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -140,26 +141,16 @@ class Messaging extends LitElement {
 
         this.changeTheme()
 
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        setInterval(() => {
+            this.changeTheme();
+        }, 100)
 
-        window.addEventListener("contextmenu", (event) => {
-
-            event.preventDefault();
-            this._textMenu(event)
-        });
-
-        window.addEventListener("click", () => {
-
-            parentEpml.request('closeCopyTextMenu', null)
-        });
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         let configLoaded = false
@@ -176,13 +167,6 @@ class Messaging extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
-                }
             })
         })
         parentEpml.imReady()
@@ -205,40 +189,6 @@ class Messaging extends LitElement {
     onPageNavigation(pageUrl) {
         parentEpml.request('setPageUrl', pageUrl)
     }
-
-    _textMenu(event) {
-
-        const getSelectedText = () => {
-            var text = "";
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text;
-            }
-            return text;
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
-            if (selectedText && typeof selectedText === 'string') {
-
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-
-        checkSelectedTextAndShowMenu()
-    }
-
-    clearSelection() {
-
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
-    }
-
 }
 
 window.customElements.define('q-messaging', Messaging)

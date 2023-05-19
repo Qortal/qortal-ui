@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import isElectron from 'is-electron'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -562,15 +563,6 @@ class NameRegistration extends LitElement {
             setTimeout(fetchMarketSellNames, 180000)
         }
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault()
-            this._textMenu(event)
-        })
-
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        })
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -585,10 +577,12 @@ class NameRegistration extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         let configLoaded = false
@@ -607,11 +601,6 @@ class NameRegistration extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-                    this.clearSelection()
-                }
             })
         })
         parentEpml.imReady()
@@ -868,11 +857,6 @@ class NameRegistration extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         let apiKey = myNode.apiKey
         return apiKey
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     async registerName(e) {
@@ -1176,32 +1160,6 @@ class NameRegistration extends LitElement {
             }
         }
         validateReceiver()
-    }
-
-    _textMenu(event) {
-
-        const getSelectedText = () => {
-            var text = ""
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
-            if (selectedText && typeof selectedText === 'string') {
-
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
     }
 
     round(number) {

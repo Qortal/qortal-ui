@@ -1,31 +1,29 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { Epml } from '../../../../epml';
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../../epml'
+import isElectron from 'is-electron'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
+	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
+})
+
 import FileSaver from 'file-saver'
-import * as actions from '../../components/qdn-action-types';
-import '@material/mwc-button';
-import '@material/mwc-icon';
+import * as actions from '../../components/qdn-action-types'
+import '@material/mwc-button'
+import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
-import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
-import { publishData } from '../../../utils/publish-image.js';
+import WebWorker from 'web-worker:./computePowWorkerFile.src.js'
+import WebWorkerChat from 'web-worker:./computePowWorker.src.js'
+import { publishData } from '../../../utils/publish-image.js'
 import { Loader } from '../../../utils/loader.js';
-import { QORT_DECIMALS } from '../../../../../crypto/api/constants';
+import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
-import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, encryptData, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+import { mimeToExtensionMap } from '../../components/qdn-action-constants'
+import { base64ToUint8Array, encryptData, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class WebBrowser extends LitElement {
 	static get properties() {
@@ -233,14 +231,6 @@ class WebBrowser extends LitElement {
 					setTimeout(getFollowedNames, 1);
 					setTimeout(getBlockedNames, 1);
 					configLoaded = true;
-				}
-			})
-			parentEpml.subscribe('copy_menu_switch', async (value) => {
-				if (
-					value === 'false' &&
-					window.getSelection().toString().length !== 0
-				) {
-					this.clearSelection();
 				}
 			})
 		})
@@ -487,15 +477,6 @@ class WebBrowser extends LitElement {
 		this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
 		this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 
-		window.addEventListener('contextmenu', (event) => {
-			event.preventDefault();
-			this._textMenu(event);
-		});
-
-		window.addEventListener('click', () => {
-			parentEpml.request('closeCopyTextMenu', null);
-		});
-
 		window.addEventListener('storage', () => {
 			const checkLanguage = localStorage.getItem('qortalLanguage');
 			const checkTheme = localStorage.getItem('qortalTheme');
@@ -510,11 +491,13 @@ class WebBrowser extends LitElement {
 			document.querySelector('html').setAttribute('theme', this.theme);
 		});
 
-		window.onkeyup = (e) => {
-			if (e.keyCode === 27) {
-				parentEpml.request('closeCopyTextMenu', null);
-			}
-		};
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
 
 		window.addEventListener('message', async (event) => {
 			if (
@@ -2814,40 +2797,6 @@ class WebBrowser extends LitElement {
 		return ret;
 	}
 
-	_textMenu(event) {
-		const getSelectedText = () => {
-			var text = '';
-			if (typeof window.getSelection != 'undefined') {
-				text = window.getSelection().toString();
-			} else if (
-				typeof this.shadowRoot.selection != 'undefined' &&
-				this.shadowRoot.selection.type == 'Text'
-			) {
-				text = this.shadowRoot.selection.createRange().text;
-			}
-			return text;
-		};
-
-		const checkSelectedTextAndShowMenu = () => {
-			let selectedText = getSelectedText();
-			if (selectedText && typeof selectedText === 'string') {
-				let _eve = {
-					pageX: event.pageX,
-					pageY: event.pageY,
-					clientX: event.clientX,
-					clientY: event.clientY,
-				};
-				let textMenuObject = {
-					selectedText: selectedText,
-					eventObject: _eve,
-					isFrame: true,
-				};
-				parentEpml.request('openCopyTextMenu', textMenuObject);
-			}
-		};
-		checkSelectedTextAndShowMenu();
-	}
-
 	getApiKey() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
@@ -2855,11 +2804,6 @@ class WebBrowser extends LitElement {
 			];
 		let apiKey = myNode.apiKey;
 		return apiKey;
-	}
-
-	clearSelection() {
-		window.getSelection().removeAllRanges();
-		window.parent.getSelection().removeAllRanges();
 	}
 }
 

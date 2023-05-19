@@ -1,6 +1,6 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
 import { loadStateFromLocalStorage, saveStateToLocalStorage } from '../../localStorageHelpers.js'
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, COPY_MENU_SWITCH, PASTE_MENU_SWITCH, FRAME_PASTE_MENU_SWITCH, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS } from './app-action-types.js'
+import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS } from './app-action-types.js'
 import { initWorkersReducer } from './reducers/init-workers.js'
 import { loginReducer } from './reducers/login-reducer.js'
 import { setNode, addNode } from './reducers/manage-node.js'
@@ -43,12 +43,6 @@ const INITIAL_STATE = {
     nodeInfo: {},
     nodeStatus: {},
     pageUrl: '',
-    copyMenuSwitch: false,
-    pasteMenuSwitch: false,
-    framePasteMenuSwitch: {
-        isOpen: false,
-        elementId: ''
-    },
     autoLoadImageChats: loadStateFromLocalStorage('autoLoadImageChats') || [],
     qAPPAutoAuth: loadStateFromLocalStorage('qAPPAutoAuth') || false,
     qAPPAutoLists: loadStateFromLocalStorage('qAPPAutoLists') || false,
@@ -140,21 +134,6 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 networkIsConnected: action.payload
-            }
-        case COPY_MENU_SWITCH:
-            return {
-                ...state,
-                copyMenuSwitch: action.payload
-            }
-        case PASTE_MENU_SWITCH:
-            return {
-                ...state,
-                pasteMenuSwitch: action.payload
-            }
-        case FRAME_PASTE_MENU_SWITCH:
-            return {
-                ...state,
-                framePasteMenuSwitch: action.payload
             }
         case ADD_AUTO_LOAD_IMAGES_CHAT: {
             const findChat = state.autoLoadImageChats.findIndex((chat)=> chat === action.payload)

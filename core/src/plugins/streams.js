@@ -7,8 +7,6 @@ const SELECTED_ADDRESS_STREAM_NAME = 'selected_address'
 const APP_INFO_STATE = 'app_info_state'
 const CHAT_HEADS_STREAM_NAME = 'chat_heads'
 const NODE_CONFIG_STREAM_NAME = 'node_config'
-const COPY_MENU_SWITCH = 'copy_menu_switch'
-const FRAME_PASTE_MENU_SWITCH = 'frame_paste_menu_switch'
 const CHAT_LAST_SEEN = 'chat_last_seen'
 
 export const loggedInStream = new EpmlStream(LOGIN_STREAM_NAME, () => store.getState().app.loggedIn)
@@ -17,8 +15,6 @@ export const selectedAddressStream = new EpmlStream(SELECTED_ADDRESS_STREAM_NAME
 export const appInfoStateStream = new EpmlStream(APP_INFO_STATE, () => store.getState().app.appInfo)
 export const chatHeadsStateStream = new EpmlStream(CHAT_HEADS_STREAM_NAME, () => store.getState().app.chatHeads)
 export const nodeConfigStream = new EpmlStream(NODE_CONFIG_STREAM_NAME, () => store.getState().app.nodeConfig)
-export const copyMenuSwitchStream = new EpmlStream(COPY_MENU_SWITCH, () => store.getState().app.copyMenuSwitch)
-export const framePasteMenuSwitchStream = new EpmlStream(FRAME_PASTE_MENU_SWITCH, () => store.getState().app.framePasteMenuSwitch)
 export const chatLastSeenStream = new EpmlStream(CHAT_LAST_SEEN, () => store.getState().app.chatLastSeen)
 
 
@@ -32,7 +28,7 @@ store.subscribe(() => {
     if (oldState.app.loggedIn !== state.app.loggedIn) {
         loggedInStream.emit(state.app.loggedIn)
     }
-    // This one may be a little on the heavy side...AHHH, NEED TO MOVE STORAGE OF ENCRYPTED SEED. DONE <3
+
     if (oldState.config !== state.config) {
         configStream.emit(state.config)
     }
@@ -41,13 +37,6 @@ store.subscribe(() => {
         nodeConfigStream.emit(state.app.nodeConfig)
     }
 
-    if (oldState.app.copyMenuSwitch !== state.app.copyMenuSwitch) {
-        copyMenuSwitchStream.emit(state.app.copyMenuSwitch)
-    }
-
-    if (oldState.app.framePasteMenuSwitch !== state.app.framePasteMenuSwitch) {
-        framePasteMenuSwitchStream.emit(state.app.framePasteMenuSwitch)
-    }
     if (oldState.app.chatLastSeen !== state.app.chatLastSeen) {
         chatLastSeenStream.emit(state.app.chatLastSeen)
     }

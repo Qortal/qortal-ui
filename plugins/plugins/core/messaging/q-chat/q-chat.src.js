@@ -9,6 +9,7 @@ import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } fro
 import { qchatStyles } from './q-chat-css.src.js'
 import WebWorker from 'web-worker:./computePowWorker.src.js';
 import {repeat} from 'lit/directives/repeat.js';
+import isElectron from 'is-electron'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -419,8 +420,6 @@ class Chat extends LitElement {
 
         this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
 
-     
-
         const runFunctionsAfterPageLoad = () => {
             // Functions to exec after render while waiting for page info...
             // getDataFromURL()
@@ -443,16 +442,6 @@ class Chat extends LitElement {
 
         let runFunctionsAfterPageLoadInterval = setInterval(runFunctionsAfterPageLoad, 100);
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault()
-            this._textMenu(event)
-        })
-
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
-            parentEpml.request('closeFramePasteMenu', null)
-        })
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -467,11 +456,12 @@ class Chat extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-                parentEpml.request('closeFramePasteMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         let configLoaded = false
@@ -499,19 +489,10 @@ class Chat extends LitElement {
             }).then(res => {
                 this.balance = res
             })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
-                }
-            })
         })
         parentEpml.imReady()
      
     }
-
-    
 
     setOpenPrivateMessage(props) {
         this.openPrivateMessage = props.open;
@@ -548,8 +529,6 @@ class Chat extends LitElement {
     redirectToGroups() {
         window.location.href = `../../group-management/index.html`
     }
-
-
 
     async _sendMessage(outSideMsg, msg) { 
         this.isLoading = true;
@@ -914,42 +893,9 @@ class Chat extends LitElement {
         }
     }
 
-    _textMenu(event) {
-
-        const getSelectedText = () => {
-            var text = "";
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text;
-            }
-            return text;
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
-            if (selectedText && typeof selectedText === 'string') {
-
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-
-        checkSelectedTextAndShowMenu()
-    }
-
     _textArea(e) {
 
         if (e.keyCode === 13 && !e.shiftKey) this._sendMessage()
-    }
-
-    clearSelection() {
-
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     onPageNavigation(pageUrl) {

@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -445,15 +446,6 @@ class DataManagement extends LitElement {
         this.changeLanguage()
         this.showManagement()
 
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        })
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -468,10 +460,12 @@ class DataManagement extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         let configLoaded = false
@@ -496,13 +490,6 @@ class DataManagement extends LitElement {
                     setInterval(this.getSearchBlockedNames, 30 * 1000)
                     setInterval(this.getManagementDetails, 30 * 1000)
                     configLoaded = true
-                }
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-
-                    this.clearSelection()
                 }
             })
         })
@@ -980,29 +967,6 @@ class DataManagement extends LitElement {
         return ret
     }
 
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-
-        checkSelectedTextAndShowMenu()
-    }
-
     async getResourcesGrid() {
         this.resourcesGrid = this.shadowRoot.querySelector(`#resourcesGrid`)
         this.pagesControl = this.shadowRoot.querySelector('#pages')
@@ -1121,11 +1085,6 @@ class DataManagement extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     isEmptyArray(arr) {

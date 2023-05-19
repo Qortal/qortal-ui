@@ -1252,6 +1252,13 @@ class QortalInfoView extends LitElement {
         `
     }
 
+    firstUpdated() {
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault()
+            window.parent.electronAPI.showMyMenu()
+        })
+    }
+
     openUserInfo(userData) {
         if (userData.startsWith('Q') && userData.length == 34) {
             this.getAddressUserResult(userData)

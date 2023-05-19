@@ -11,12 +11,12 @@ const options = {
 }
 
 const aliases = {
-    'qortal-ui-crypto': 'node_modules/qortal-ui-crypto/api.js'
+    'qortal-ui-crypto': '../../crypto/api.js'
 }
 
 const apiComponents = {
     api: {
-        file: 'api/api.js',
+        file: '../../crypto/api.js',
         className: 'api'
     }
 }

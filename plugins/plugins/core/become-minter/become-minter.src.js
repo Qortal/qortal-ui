@@ -1,21 +1,22 @@
-import { LitElement, html } from 'lit';
-import { Epml } from '../../../epml.js';
-import '../components/ButtonIconCopy.js';
-import { use, translate, registerTranslateConfig } from 'lit-translate';
-import { blocksNeed } from '../../utils/blocks-needed.js';
+import { LitElement, html } from 'lit'
+import { Epml } from '../../../epml.js'
+import '../components/ButtonIconCopy.js'
+import { use, translate, registerTranslateConfig } from 'lit-translate'
+import { blocksNeed } from '../../utils/blocks-needed.js'
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
+})
 
-import '@polymer/paper-spinner/paper-spinner-lite.js';
-import '@material/mwc-button';
-import '@material/mwc-textfield';
-import '@vaadin/button';
-import { pageStyles } from './become-minter-css.src.js';
-import './components/not-sponsored.src';
-import './components/yes-sponsored.src';
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@material/mwc-button'
+import '@material/mwc-textfield'
+import '@vaadin/button'
+import { pageStyles } from './become-minter-css.src.js'
+import './components/not-sponsored.src'
+import './components/yes-sponsored.src'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class BecomeMinter extends LitElement {
 	static get properties() {
@@ -27,77 +28,77 @@ class BecomeMinter extends LitElement {
 			addressInfo: { type: Object },
 			rewardSharePublicKey: { type: String },
 			mintingAccountData: { type: Array },
-		};
+		}
 	}
 
-	static styles = [pageStyles];
+	static styles = [pageStyles]
 
 	constructor() {
-		super();
-		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
-		this.sponsorshipKeyValue = '';
-		this.isPageLoading = true;
-		this.nodeInfo = {};
-		this.addressInfo = {};
-		this.rewardSharePublicKey = '';
-		this.mintingAccountData = null;
+		super()
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+		this.sponsorshipKeyValue = ''
+		this.isPageLoading = true
+		this.nodeInfo = {}
+		this.addressInfo = {}
+		this.rewardSharePublicKey = ''
+		this.mintingAccountData = null
 	}
 
 	changeLanguage() {
-		const checkLanguage = localStorage.getItem('qortalLanguage');
+		const checkLanguage = localStorage.getItem('qortalLanguage')
 
 		if (checkLanguage === null || checkLanguage.length === 0) {
-			localStorage.setItem('qortalLanguage', 'us');
-			use('us');
+			localStorage.setItem('qortalLanguage', 'us')
+			use('us')
 		} else {
-			use(checkLanguage);
+			use(checkLanguage)
 		}
 	}
 
 	_handleStorage() {
-		const checkLanguage = localStorage.getItem('qortalLanguage');
-		const checkTheme = localStorage.getItem('qortalTheme');
+		const checkLanguage = localStorage.getItem('qortalLanguage')
+		const checkTheme = localStorage.getItem('qortalTheme')
 
-		use(checkLanguage);
+		use(checkLanguage)
 
 		if (checkTheme === 'dark') {
-			this.theme = 'dark';
+			this.theme = 'dark'
 		} else {
-			this.theme = 'light';
+			this.theme = 'light'
 		}
-		document.querySelector('html').setAttribute('theme', this.theme);
+		document.querySelector('html').setAttribute('theme', this.theme)
 	}
 
 	connectedCallback() {
-		super.connectedCallback();
-		window.addEventListener('storage', this._handleStorage);
+		super.connectedCallback()
+		window.addEventListener('storage', this._handleStorage)
 	}
 
 	disconnectedCallback() {
-		window.removeEventListener('storage', this._handleStorage);
-		super.disconnectedCallback();
+		window.removeEventListener('storage', this._handleStorage)
+		super.disconnectedCallback()
 	}
 
 	async getNodeInfo() {
 		const nodeInfo = await parentEpml.request('apiCall', {
 			url: `/admin/status`,
-		});
+		})
 
-		return nodeInfo;
+		return nodeInfo
 	}
 
 	async getMintingAcccounts() {
 		const mintingAccountData = await parentEpml.request('apiCall', {
 			url: `/admin/mintingaccounts`,
-		});
-		return mintingAccountData;
+		})
+		return mintingAccountData
 	}
 
 	async atMount() {
-		this.changeLanguage();
+		this.changeLanguage()
 
 
-		this.isPageLoading = true;
+		this.isPageLoading = true
 		try {
 			const [nodeInfo, myRewardShareArray, mintingaccounts] =
 				await Promise.all([
@@ -107,33 +108,33 @@ class BecomeMinter extends LitElement {
 							?.address
 					),
 					this.getMintingAcccounts(),
-				]);
+				])
 
-			this.nodeInfo = nodeInfo;
+			this.nodeInfo = nodeInfo
 			this.rewardSharePublicKey =
-				myRewardShareArray[0]?.rewardSharePublicKey;
-			this.isPageLoading = false;
-			this.mintingAccountData = mintingaccounts;
+				myRewardShareArray[0]?.rewardSharePublicKey
+			this.isPageLoading = false
+			this.mintingAccountData = mintingaccounts
 			this.addressInfo =
-				window.parent.reduxStore.getState().app.accountInfo.addressInfo;
+				window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		} catch (error) {
-			console.error(error);
+			console.error(error)
 
-			this.isPageLoading = false;
+			this.isPageLoading = false
 		}
 	}
 
 	async firstUpdated() {
-		await this.atMount();
+		await this.atMount()
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
 		const myRewardShareArray = await parentEpml.request('apiCall', {
 			type: 'api',
 			url: `/addresses/rewardshares?recipients=${recipientAddress}`,
-		});
+		})
 
-		return myRewardShareArray;
+		return myRewardShareArray
 	}
 
 	_levelUpBlocks() {
@@ -141,8 +142,8 @@ class BecomeMinter extends LitElement {
 			blocksNeed(0) -
 			(this.addressInfo?.blocksMinted +
 				this.addressInfo?.blocksMintedAdjustment)
-		).toString();
-		return countBlocksString;
+		).toString()
+		return countBlocksString
 	}
 
 	render() {
@@ -150,7 +151,7 @@ class BecomeMinter extends LitElement {
 		const findMintingAccount = this.mintingAccountData?.find(
 			(ma) => ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress
 				?.address
-		);
+		)
 
 		const isAlreadySponsored =
 			this.addressInfo?.error !== 124 &&
@@ -196,8 +197,8 @@ class BecomeMinter extends LitElement {
 					</yes-sponsored>
 				`}
 			</div>
-		`;
+		`
 	}
 }
 
-window.customElements.define('become-minter', BecomeMinter);
+window.customElements.define('become-minter', BecomeMinter)

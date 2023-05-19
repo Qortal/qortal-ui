@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -755,21 +756,6 @@ class MultiWallet extends LitElement {
                 this.wallets.get('dgb').wallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet
                 this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
                 this.wallets.get('arrr').wallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
-            })
-
-            parentEpml.subscribe('copy_menu_switch', async (value) => {
-                if (value === 'false' && this.isTextMenuOpen === true) {
-                    this.clearSelection()
-                    this.isTextMenuOpen = false
-                }
-            })
-
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
-                res = JSON.parse(res)
-                if (res.isOpen === false && this.isPasteMenuOpen === true) {
-                    this.pasteToTextBox(this.myElementId)
-                    this.isPasteMenuOpen = false
-                }
             })
         })
     }
@@ -2660,18 +2646,6 @@ class MultiWallet extends LitElement {
 
         this.showWallet()
 
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this.isTextMenuOpen = true
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            if (this.isTextMenuOpen) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        })
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -2686,386 +2660,13 @@ class MultiWallet extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
-
-        this.shadowRoot.getElementById('amountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'amountInput')
-                    this.myElementId = this.shadowRoot.getElementById('amountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('recipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'recipient')
-                    this.myElementId = this.shadowRoot.getElementById('recipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('btcAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'btcAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('btcAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('btcRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'btcRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('btcRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('ltcAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'ltcAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('ltcAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('ltcRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'ltcRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('ltcRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('dogeAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dogeAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('dogeAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('dogeRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dogeRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('dogeRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('dgbAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dgbAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('dgbAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('dgbRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dgbRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('dgbRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('rvnAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'rvnAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('rvnAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('rvnRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'rvnRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('rvnRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('arrrAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('arrrRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrMemo').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrMemo')
-                    this.myElementId = this.shadowRoot.getElementById('arrrMemo')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
     }
 
     renderWarning() {
@@ -4208,19 +3809,6 @@ class MultiWallet extends LitElement {
                 }
             }
         }
-    }
-
-    pasteToTextBox(elementId) {
-        window.focus()
-        navigator.clipboard.readText().then((clipboardText) => {
-            elementId.value += clipboardText
-            elementId.focus()
-        })
-    }
-
-    pasteMenu(event, elementId) {
-        let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY, elementId }
-        parentEpml.request('openFramePasteMenu', eventObject)
     }
 
     async sendQort() {
@@ -5649,39 +5237,10 @@ class MultiWallet extends LitElement {
         this.transactionsGrid.items = this.wallets.get(this._selectedWallet).transactions.slice(start, end)
     }
 
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
-    }
-
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     transactionItem(transactionObject) {

@@ -4,6 +4,7 @@ import "../components/ButtonIconCopy.js"
 import { use, get, translate, registerTranslateConfig } from "lit-translate"
 import { blocksNeed } from "../../utils/blocks-needed.js"
 import "../components/ButtonIconCopy.js"
+import isElectron from 'is-electron'
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -226,6 +227,13 @@ class SponsorshipList extends LitElement {
 
 	async firstUpdated() {
 		await this.atMount()
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
 	}
 
 	async getRewardShareRelationship(recipientAddress) {

@@ -10,7 +10,8 @@ class ShowPlugin extends connect(store)(LitElement) {
             app: { type: Object },
             pluginConfig: { type: Object },
             url: { type: String },
-            linkParam: { type: String }
+            linkParam: { type: String },
+            registeredUrls: { type: Array }
         }
     }
 
@@ -50,13 +51,19 @@ class ShowPlugin extends connect(store)(LitElement) {
         `
     }
 
+    constructor() {
+        super()
+        this.registeredUrls = []
+    }
+
     render() {
+        const plugArr = []
+
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
-        const plugArr = []
-        this.app.registeredUrls.forEach(myPlugArr => {
+        this.registeredUrls.forEach(myPlugArr => {
             myPlugArr.menus.length === 0 ? plugArr.push(myPlugArr) : myPlugArr.menus.forEach(i => plugArr.push(myPlugArr, i))
         })
 
@@ -75,6 +82,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             type: 'WINDOW',
             source: this.shadowRoot.getElementById('showPluginFrame').contentWindow
         })
+
         addPluginRoutes(showingPluginEpml)
         showingPluginEpml.imReady()
         this.showingPluginEpml = showingPluginEpml
@@ -94,23 +102,35 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     stateChanged(state) {
-        this.app = state.app
-        this.config = state.config
-
         const split = state.app.url.split('/')
+        const newRegisteredUrls = state.app.registeredUrls
+
+        let newUrl, newLinkParam
+
+        if (newRegisteredUrls !== this.registeredUrls) {
+            this.registeredUrls = newRegisteredUrls
+        }
 
         if (split[0] === '' && split[1] === 'app' && split[2] === undefined) {
-            this.url = 'wallet'
-            this.linkParam = ''
+            newUrl = 'wallet'
+            newLinkParam = ''
         } else if (split.length === 5 && split[1] === 'app') {
-            this.url = split[2]
-            this.linkParam = split[3] === undefined ? '' : '?' + split[3] + '/' + split[4]
+            newUrl = split[2]
+            newLinkParam = split[3] === undefined ? '' : '?' + split[3] + '/' + split[4]
         } else if (split[1] === 'app') {
-            this.url = split[2]
-            this.linkParam = ''
+            newUrl = split[2]
+            newLinkParam = ''
         } else {
-            this.url = '404'
-            this.linkParam = ''
+            newUrl = '404'
+            newLinkParam = ''
+        }
+
+        if (newUrl !== this.url) {
+            this.url = newUrl
+        }
+
+        if (newLinkParam !== this.linkParam) {
+            this.linkParam = newLinkParam
         }
     }
 }

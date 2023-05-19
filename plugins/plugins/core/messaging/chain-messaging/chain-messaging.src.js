@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit'
+import isElectron from 'is-electron'
 
 class ChainMessaging extends LitElement {
     static get properties() {
@@ -46,20 +47,16 @@ class ChainMessaging extends LitElement {
 
         this.changeTheme()
 
-	setInterval(() => {
-	    this.changeTheme();
-	}, 100)
+        setInterval(() => {
+            this.changeTheme();
+        }, 100)
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
-        });
-
-        window.addEventListener("click", () => {
-        });
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
     }
 
