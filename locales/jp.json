@@ -1,73 +1,73 @@
 {
 
-  "__locale_name__": "Japanese",
+  "__locale_name__": "日本語",
 
-  "electron_translate_1": "Show Qortal UI",
+  "electron_translate_1": "Qortal UI を表示",
 
-  "electron_translate_2": "Quit",
+  "electron_translate_2": "終了",
 
-  "electron_translate_3": "Update available",
+  "electron_translate_3": "アップデートが利用可能",
 
-  "electron_translate_4": "A new Qortal UI version is available. You want to download it ?",
+  "electron_translate_4": "Qortal UI の新しいバージョンが利用可能です。ダウンロードしますか?",
 
-  "electron_translate_5": "INSTALL NOW",
+  "electron_translate_5": "今すぐインストール",
 
-  "electron_translate_6": "MAYBE LATER",
+  "electron_translate_6": "後になるかもしれません",
 
-  "electron_translate_7": "Update ready to install",
+  "electron_translate_7": "アップデートをインストールする準備ができました",
 
-  "electron_translate_8": "A new Qortal UI version has been downloaded.",
+  "electron_translate_8": "新しい Qortal UI バージョンがダウンロードされました。",
 
-  "electron_translate_9": "Click INSTALL NOW to apply update, MAYBE LATER to not update the UI.",
+  "electron_translate_9": "今すぐインストールをクリックして更新を適用します。UI を更新しない場合は後で行うかもしれません。",
 
-  "electron_translate_10": "Temporary update failure, will try again later",
+  "electron_translate_10": "一時的な更新に失敗しました。後でもう一度試します",
 
-  "electron_translate_11": "DOWNLOAD UPDATE",
+  "electron_translate_11": "ダウンロード更新",
 
-  "electron_translate_12": "It will be downloaded ⌛️ in the background!",
+  "electron_translate_12": "バックグラウンドで ⌛️ がダウンロードされます!",
 
-  "electron_translate_13": "START QORTAL CORE",
+  "electron_translate_13": "QORTAL CORE を開始",
 
-  "electron_translate_14": "NO THANKS",
+  "electron_translate_14": "いいえ、ありがとう",
 
-  "electron_translate_15": "Qortal Core is NOT running on this system",
+  "electron_translate_15": "Qortal Core はこのシステムでは実行されていません",
 
-  "electron_translate_16": "Qortal UI has detected that Qortal Core is NOT running on this system",
+  "electron_translate_16": "Qortal UI は、Qortal Core がこのシステムで実行されていないことを検出しました",
 
-  "electron_translate_17": "Click START QORTAL CORE to start the Qortal Core on this system OR click NO THANKS to skip starting on this system",
+  "electron_translate_17": "このシステム上で Qortal Core を開始するには START QORTAL CORE をクリックするか、このシステムでの開始をスキップするには NO THANKS をクリックしてください",
 
-  "electron_translate_18": "DOWNLOAD QORTAL CORE",
+  "electron_translate_18": "QORTAL コアをダウンロード",
 
-  "electron_translate_19": "NO THANKS",
+  "electron_translate_19": "いいえ、ありがとう",
 
-  "electron_translate_20": "Qortal Core is NOT detected",
+  "electron_translate_20": "Qortal コアが検出されませんでした",
 
-  "electron_translate_21": "Qortal UI has detected that Qortal Core is NOT installed ( in default location ) on this system.",
+  "electron_translate_21": "Qortal UI は、Qortal Core がこのシステムに (デフォルトの場所に) インストールされていないことを検出しました。",
 
-  "electron_translate_22": "Click DOWNLOAD QORTAL CORE to download and install the core ( to default location ) OR click NO THANKS to skip download and install.",
+  "electron_translate_22": "「QORTAL CORE をダウンロード」をクリックしてコアをダウンロードして (デフォルトの場所に) インストールするか、「いいえ」をクリックしてダウンロードとインストールをスキップします。",
 
-  "electron_translate_23": "DOWNLOAD JAVA",
+  "electron_translate_23": "JAVA をダウンロード",
 
-  "electron_translate_24": "NO THANKS",
+  "electron_translate_24": "いいえ、ありがとう",
 
-  "electron_translate_25": "Java is not installed.",
+  "electron_translate_25": "Java がインストールされていません。",
 
-  "electron_translate_26": "Qortal UI has detected that java is not installed on your system.",
+  "electron_translate_26": "Qortal UI は、Java がシステムにインストールされていないことを検出しました。",
 
-  "electron_translate_27": "Click on DOWNLOAD JAVA to download and install java or on NO THANKS to not download and install it.",
+  "electron_translate_27": "Java をダウンロードしてインストールするには [JAVA をダウンロード] をクリックし、ダウンロードしてインストールしない場合は [いいえ] をクリックします。",
 
-  "electron_translate_28": "Never ask me again",
+  "electron_translate_28": "二度と質問しないでください",
 
-  "electron_translate_29": "CHANGE SETTING",
+  "electron_translate_29": "設定を変更",
 
-  "electron_translate_30": "CANCEL",
+  "electron_translate_30": "キャンセル",
 
-  "electron_translate_31": "Start Core Settings",
+  "electron_translate_31": "コア設定を開始",
 
-  "electron_translate_32": "Change the current status of asking to start the core if it is not running",
+  "electron_translate_32": "コアが実行されていない場合にコアの開始を求める現在のステータスを変更します",
 
-  "electron_translate_33": "(Check or Uncheck the never ask me again checkbox)",
+  "electron_translate_33": "(「二度と質問しない」チェックボックスをオンまたはオフにします)",
 
-  "electron_translate_34": "Settings"
+  "electron_translate_34": "設定"
 
 }

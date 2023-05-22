@@ -2,2129 +2,2129 @@
 
 	"selectmenu": {
 
-		"selectlanguage": "Select language",
+		"selectlanguage": "言語を選択",
 
-		"languageflag": "us",
+		"languageflag": "jp",
 
-		"english": "English",
+		"english": "英語",
 
-		"chinese1": "Chinese (Simplified)",
+		"chinese1": "中国語 (簡体字)",
 
-		"chinese2": "Chinese (Traditional)",
+		"chinese2": "中国語 (繁体字)",
 
-		"german": "German",
+		"german": "ドイツ語",
 
-		"french": "French",
+		"french": "フランス語",
 
-		"polish": "Polish",
+		"polish": "ポーランド語",
 
-		"spanish": "Spanish",
+		"spanish": "スペイン語",
 
-		"hindi": "Hindi",
+		"hindi": "ヒンディー語",
 
-		"croatian": "Croatian",
+		"croatian": "クロアチア語",
 
-		"portuguese": "Portuguese",
+		"portuguese": "ポルトガル語",
 
-		"hungarian": "Hungarian",
+		"hungarian": "ハンガリー語",
 
-		"serbian": "Serbian",
+		"serbian": "セルビア語",
 
-		"italian": "Italian",
+		"italian": "イタリア語",
 
-		"russian": "Russian",
+		"russian": "ロシア語",
 
-		"norwegian": "Norwegian",
+		"norwegian": "ノルウェー語",
 
-		"romanian": "Romanian",
+		"romanian": "ルーマニア語",
 
-		"korean": "Korean",
+		"korean": "韓国語",
 
-		"japanese": "Japanese"
-
+		"japanese": "日本語"
+		
 	},
 
 	"sidemenu": {
 
-		"minting": "MINTING",
+		"minting": "ミント",
 
-		"mintingdetails": "MINTING DETAILS",
+		"mintingdetails": "ミントの詳細",
 
-		"becomeAMinter": "BECOME A MINTER",
+		"becomeAMinter": "MINTER になる",
 
-		"wallets": "WALLETS",
+		"wallets": "財布",
 
-		"tradeportal": "TRADE PORTAL",
+		"tradeportal": "貿易ポータル",
 
-		"rewardshare": "REWARD SHARE",
+		"rewardshare": "報酬シェア",
 
-		"nameregistration": "NAME REGISTRATION",
+		"nameregistration": "名前登録",
 
-		"websites": "WEBSITES",
+		"websites": "ウェブサイト",
 
-		"management": "MANAGEMENT",
+		"management": "管理",
 
-		"datamanagement": "DATA MANAGEMENT",
+		"datamanagement": "データ管理",
 
-		"qchat": "Q-CHAT",
+		"qchat": "Qチャット",
 
-		"groupmanagement": "GROUP MANAGEMENT",
+		"groupmanagement": "グループ管理",
 
-		"puzzles": "PUZZLES",
+		"puzzles": "パズル",
 
-		"nodemanagement": "NODE MANAGEMENT",
+		"nodemanagement": "ノード管理",
 
-		"trading": "TRADING",
+		"trading": "取引",
 
-		"groups": "GROUPS",
+		"groups": "グループ",
 
-		"sm1": "NAMES",
+		"sm1": "名前",
 
-		"sm2": "NAME MANAGEMENT",
+		"sm2": "名前管理",
 
-		"sm3": "NAMES MARKET"
-
+		"sm3": "ネームズマーケット"
+		
 	},
 
 	"login": {
 
-		"login": "Login",
+		"login": "ログイン",
 
-		"createaccount": "Create Account",
+		"createaccount": "アカウントの作成",
 
-		"name": "Name",
+		"name": "名前",
 
-		"address": "Address",
+		"address": "住所",
 
-		"password": "Password",
+		"password": "パスワード",
 
-		"youraccounts": "Your accounts",
+		"youraccounts": "あなたのアカウント",
 
-		"clickto": "Click your account to login with it",
+		"clickto": "アカウントをクリックしてログインします",
 
-		"needcreate": "You need to create or save an account before you can log in!",
+		"needcreate": "ログインする前にアカウントを作成または保存する必要があります!",
 
-		"upload": "Upload your qortal backup",
+		"upload": "qortal バックアップをアップロードします",
 
-		"howlogin": "How would you like to login?",
+		"howlogin": "どのようにログインしますか?",
 
-		"seed": "Seedphrase",
+		"seed": "シードフレーズ",
 
-		"seedphrase": "seedphrase",
+		"seedphrase": "シードフレーズ",
 
-		"saved": "Saved account",
+		"saved": "保存されたアカウント",
 
-		"qora": "Qora address seed",
+		"qora": "Qora アドレス シード",
 
-		"backup": "Qortal wallet backup",
+		"backup": "Qortal ウォレットのバックアップ",
 
-		"decrypt": "Decrypt backup",
+		"decrypt": "バックアップを復号化",
 
-		"save": "Save in this browser.",
+		"save": "このブラウザに保存します。",
 
-		"prepare": "Preparing Your Account",
+		"prepare": "アカウントを準備しています",
 
-		"areyousure": "Are you sure you want to remove this wallet from saved wallets?",
+		"areyousure": "保存されたウォレットからこのウォレットを削除してもよろしいですか?",
 
-		"error1": "Backup must be valid JSON",
+		"error1": "バックアップは有効な JSON である必要があります",
 
-		"error2": "Login option not selected",
+		"error2": "ログイン オプションが選択されていません",
 
-		"createwelcome": "Welcome to Qortal, you will find it to be similar to that of an RPG game, you, as a minter on the Qortal network (if you choose to become one) will have the chance to level your account up, giving you both more of the QORT block reward and also larger influence over the network in terms of voting on decisions for the platform.",
+		"createwelcome": "Qortal へようこそ。これは RPG ゲームに似ていることがわかります。Qortal ネットワークの鋳造業者として (なりたいと選択した場合) アカウントをレベルアップする機会があります。 これにより、より多くの QORT ブロック報酬が得られるだけでなく、プラットフォームの決定に対する投票という点でネットワークに対する大きな影響力も得られます。」",
 
 		"createa": "A",
 
-		"click": "Click to view seedphrase",
+		"click": "クリックしてシードフレーズを表示",
 
-		"confirmpass": "Confirm Password",
+		"confirmpass": "パスワードの確認",
 
-		"willbe": "will be randomly generated in background. This is used as your private key generator for your blockchain account in Qortal.",
+		"willbe": "バックグラウンドでランダムに生成されます。これは、Qortal のブロックチェーン アカウントの秘密キー ジェネレーターとして使用されます。",
 
-		"clicknext": "Create your Qortal account by clicking NEXT below.",
+		"clicknext": "下の [次へ] をクリックして Qortal アカウントを作成します。",
 
-		"ready": "Your account is now ready to be created. It will be saved in this browser. If you do not want your new account to be saved in your browser, you can uncheck the box below. You will still be able to login with your new account(after logging out), using your wallet backup file that you MUST download once you create your account.",
+		"ready": "アカウントを作成する準備ができました。アカウントはこのブラウザに保存されます。新しいアカウントをブラウザに保存したくない場合は、下のボックスのチェックを外してください。引き続き、 アカウントを作成したらダウンロードする必要があるウォレットのバックアップ ファイルを使用して、(ログアウト後) 新しいアカウントでログインします。",
 
-		"welmessage": "Welcome to Qortal",
+		"welmessage": "Qortal へようこそ",
 
-		"pleaseenter": "Please enter a Password!",
+		"pleaseenter": "パスワードを入力してください!",
 
-		"notmatch": "Passwords not match!",
+		"notmatch": "パスワードが一致しません!",
 
-		"lessthen8": "Your password is less than 8 characters! This is not recommended. You can continue to ignore this warning.",
+		"lessthen8": "パスワードは 8 文字未満です。これはお勧めできません。この警告は無視して構いません。",
 
-		"lessthen8-2": "Your password is less than 8 characters!",
+		"lessthen8-2": "パスワードは 8 文字未満です!",
 
-		"entername": "Please enter a Name!",
+		"entername": "名前を入力してください!",
 
-		"downloaded": "Your Wallet BackUp file get downloaded!",
+		"downloaded": "ウォレットのバックアップ ファイルがダウンロードされました!",
 
-		"loading": "Loading, Please wait...",
+		"loading": "読み込み中です、お待ちください...",
 
-		"createdseed": "Your created Seedphrase",
+		"createdseed": "作成したシードフレーズ",
 
-		"saveseed": "Save Seedphrase",
+		"saveseed": "シードフレーズを保存",
 
-		"savein": "Save in browser",
+		"savein": "ブラウザに保存",
 
-		"backup2": "This file is the ONLY way to access your account on a system that doesn't have it saved to the app/browser. BE SURE TO BACKUP THIS FILE IN MULTIPLE PLACES. The file is encrypted very securely and decrypted with your local password you created in the previous step. You can save it anywhere securely, but be sure to do that in multiple locations.",
+		"backup2": "このファイルは、アプリ/ブラウザーに保存されていないシステムでアカウントにアクセスする唯一の方法です。必ずこのファイルを複数の場所にバックアップしてください。ファイルは非常に安全に暗号化され、次の方法で復号化されます。 前の手順で作成したローカル パスワード。どこにでも安全に保存できますが、必ず複数の場所に保存してください。",
 
-		"savewallet": "Save Wallet BackUp File",
+		"savewallet": "ウォレットのバックアップ ファイルを保存",
 
-		"created1": "Your account is now created",
+		"created1": "アカウントが作成されました",
 
-		"created2": " and will be saved in this browser.",
+		"created2": " このブラウザに保存されます。",
 
-		"downloadbackup": "Download Wallet BackUp File",
+		"downloadbackup": "ウォレットのバックアップ ファイルをダウンロード",
 
-		"passwordhint": "A password must be at least 8 characters."
-
+		"passwordhint": "パスワードは 8 文字以上である必要があります。"
+		
 	},
 
 	"logout": {
 
-		"logout": "LOGOUT",
+		"logout": "ログアウト",
 
-		"confirmlogout": "Are you sure you want to logout?"
-
+		"confirmlogout": "ログアウトしてもよろしいですか?"
+		
 	},
-
+		
 	"fragfile": {
+		
+		"selectfile": "ファイルを選択",
 
-		"selectfile": "Select file",
-
-		"dragfile": "Drag and drop backup here"
-
+		"dragfile": "バックアップをここにドラッグ アンド ドロップします"
+		
 	},
-
+		
 	"settings": {
+		
+		"generalinfo": "一般的なアカウント情報",
 
-		"generalinfo": "General Account Info",
+		"address": "住所",
 
-		"address": "Address",
+		"publickey": "公開キー",
 
-		"publickey": "Public Key",
+		"settings": "設定",
 
-		"settings": "Settings",
+		"account": "アカウント",
 
-		"account": "Account",
+		"security": "セキュリティ",
 
-		"security": "Security",
+		"qr_login_menu_item": "QR ログイン",
 
-		"qr_login_menu_item": "QR Login",
+		"qr_login_description_1": "ログインしたときと同じパスワードを使用して、他のデバイスでウォレットのロックを解除するには、このコードをスキャンします。",
 
-		"qr_login_description_1": "Scan this code to unlock your wallet on other device using the same password which you logged in with.",
+		"qr_login_description_2": "QR コードをスキャンした後、他のデバイスでウォレットのロックを解除するために使用するパスワードを選択してください。",
 
-		"qr_login_description_2": "Choose a password which you will use to unlock your wallet on other device after scanning the QR code.",
+		"qr_login_button_1": "ログイン QR コードを表示",
 
-		"qr_login_button_1": "Show login QR code",
+		"qr_login_button_2": "ログイン QR コードを生成",
 
-		"qr_login_button_2": "Generate login QR code",
+		"notifications": "通知",
 
-		"notifications": "Notifications",
+		"accountsecurity": "アカウントのセキュリティ",
 
-		"accountsecurity": "Account Security",
+		"password": "パスワード",
 
-		"password": "Password",
+		"download": "バックアップ ファイルをダウンロード",
 
-		"download": "Download Backup File",
+		"choose": "バックアップを暗号化するためのパスワードを選択してください。(ログインに使用したパスワードと同じでも、別のものでも構いません)",
 
-		"choose": "Please choose a password to encrypt your backup with. (This can be the same as the one you logged in with, or different)",
+		"block": "通知をブロックする (近日公開予定...)",
 
-		"block": "Block Notifications (Coming Soon...)",
+		"playsound": "サウンドを再生",
 
-		"playsound": "Play Sound",
+		"shownotifications": "通知を表示",
 
-		"shownotifications": "Show Notifications",
+		"nodeurl": "ノード URL",
 
-		"nodeurl": "Node Url",
+		"nodehint": "上のデフォルトのノード リストからノードを選択するか、下のボタンをクリックしてカスタム ノードを上のリストに追加します",
 
-		"nodehint": "Select a node from the default list of nodes above or add a custom node to the list above by clicking on the button below",
+		"addcustomnode": "カスタム ノードを追加",
 
-		"addcustomnode": "Add Custom Node",
+		"addandsave": "追加して保存",
 
-		"addandsave": "Add And Save",
+		"protocol": "プロトコル",
 
-		"protocol": "Protocol",
+		"domain": "ドメイン",
 
-		"domain": "Domain",
+		"port": "ポート",
 
-		"port": "Port",
+		"import": "ノードをインポート",
 
-		"import": "Import Nodes",
+		"export": "ノードのエクスポート",
 
-		"export": "Export Nodes",
+		"deletecustomnode": "すべてのカスタム ノードを削除",
 
-		"deletecustomnode": "Remove All Custom Nodes",
+		"warning": "既存のノードは削除され、バックアップから新しいノードが作成されます。",
 
-		"warning": "Your existing nodes will be deleted and from backup new created.",
+		"snack1": "標準ノードが正常に削除および追加されました",
 
-		"snack1": "Successfully deleted and added standard nodes",
+		"snack2": "UI がノードに接続されました",
 
-		"snack2": "UI conected to node",
+		"snack3": "カスタム ノードが正常に追加され、保存されました",
 
-		"snack3": "Successfully added and saved custom node",
+		"snack4": "ノードが次の名前で正常に保存されました",
 
-		"snack4": "Nodes successfully saved as",
+		"snack5": "ノードは正常にインポートされました",
 
-		"snack5": "Nodes successfully imported",
+		"exp1": "秘密マスターキーをエクスポート",
 
-		"exp1": "Export Private Master Key",
+		"exp2": "マスターキーのエクスポート",
 
-		"exp2": "Export Master Key",
+		"exp3": "エクスポート",
 
-		"exp3": "Export",
+		"exp4": "プライベートマスターキーをバックアップするウォレットを選択してください。",
 
-		"exp4": "Please choose a wallet to backup the private master key.",
-
-		"core": "Start Core Settings"
+		"core": "コア設定を開始"
 
 	},
 
 	"appinfo": {
 
-		"blockheight": "Block Height",
+		"blockheight": "ブロックの高さ",
 
-		"uiversion": "UI Version",
+		"uiversion": "UI バージョン",
 
-		"coreversion": "Core Version",
+		"coreversion": "コアバージョン",
 
-		"minting": "(Minting)",
+		"minting": "(鋳造)",
 
-		"synchronizing": "Synchronizing",
+		"synchronizing": "同期中",
 
-		"peers": "Connected Peers"
-
+		"peers": "接続されたピア"
+		
 	},
-
+		
 	"walletprofile": {
+		
+		"minterlevel": "ミンターレベル",
 
-		"minterlevel": "Minter Level",
-
-		"blocksminted": "Blocks Minted"
-
+		"blocksminted": "ブロックが鋳造されました"
+		
 	},
-
+		
 	"general": {
+		
+		"yes": "はい",
 
-		"yes": "Yes",
+		"no": "いいえ",
 
-		"no": "No",
+		"confirm": "確認",
 
-		"confirm": "Confirm",
+		"decline": "辞退",
 
-		"decline": "Decline",
+		"open": "開く",
 
-		"open": "Open",
+		"close": "閉じる",
 
-		"close": "Close",
+		"back": "バックバック",
 
-		"back": "Back",
+		"next": "次",
 
-		"next": "Next",
+		"create": "作成",
 
-		"create": "Create",
+		"continue": "続行",
 
-		"continue": "Continue",
+		"save": "保存",
 
-		"save": "Save",
+		"balance": "バランス",
 
-		"balance": "Balance",
+		"balances": "あなたのウォレット残高",
 
-		"balances": "YOUR WALLET BALANCES",
+		"update": "ウォレット残高を更新",
 
-		"update": "UPDATE WALLET BALANCES",
-
-		"view": "View"
+		"view": "表示"
 
 	},
 
 	"gifs": {
 
-		"gchange1": "Gif Explorer",
+		"gchange1": "GIF エクスプローラー",
 
-		"gchange2": "Explore Collections",
+		"gchange2": "コレクションを探索する",
 
-		"gchange3": "My Collections",
+		"gchange3": "私のコレクション",
 
-		"gchange4": "Subscribed Collections",
+		"gchange4": "サブスクライブされたコレクション",
 
-		"gchange5": "Upload your gif files",
+		"gchange5": "GIF ファイルをアップロードします",
 
-		"gchange6": "File should be .Gif",
+		"gchange6": "ファイルは .Gif である必要があります",
 
-		"gchange7": "Upload Collection",
+		"gchange7": "コレクションをアップロード",
 
-		"gchange8": "A collection name is required!",
+		"gchange8": "コレクション名が必要です!",
 
-		"gchange9": "Collection Name",
+		"gchange9": "コレクション名",
 
-		"gchange10": "Gif Collection Uploaded Successfully!",
+		"gchange10": "GIF コレクションが正常にアップロードされました!",
 
-		"gchange11": "Gifs uploading, please wait...",
+		"gchange11": "GIF をアップロードしています。しばらくお待ちください...",
 
-		"gchange12": "Something went wrong! Please try changing tabs and coming back.",
+		"gchange12": "問題が発生しました。タブを変更して戻ってみてください。",
 
-		"gchange13": "You currently have no collections.",
+		"gchange13": "現在コレクションはありません。",
 
-		"gchange14": "You currently have no subscribed collections.",
+		"gchange14": "現在購読しているコレクションはありません。",
 
-		"gchange15": "Error fetching GIF. Retrying...",
+		"gchange15": "GIF の取得中にエラーが発生しました。再試行しています...",
 
-		"gchange16": "Failed to fetch GIF! Please visit another collection and try again!",
+		"gchange16": "GIF の取得に失敗しました! 別のコレクションにアクセスして、もう一度お試しください!",
 
-		"gchange17": "Subscribe to this collection",
+		"gchange17": "このコレクションを購読します",
 
-		"gchange18": "Searching for collections...",
+		"gchange18": "コレクションを検索しています...",
 
-		"gchange19": "No collections found!",
+		"gchange19": "コレクションが見つかりません!",
 
-		"gchange20": "Subscribed to collection successfully!",
+		"gchange20": "コレクションに正常に登録されました!",
 
-		"gchange21": "Unsubscribed to collection successfully!",
+		"gchange21": "コレクションの登録が正常に解除されました!",
 
-		"gchange22": "Unsubscribe from this collection",
+		"gchange22": "このコレクションの購読を解除します",
 
-		"gchange23": "Your gif collection cannot contain two gifs with the same name!",
+		"gchange23": "GIF コレクションに同じ名前の 2 つの GIF を含めることはできません!",
 
-		"gchange24": "This collection name is already taken. Try another name!",
+		"gchange24": "このコレクション名はすでに使用されています。別の名前を試してください!",
 
-		"gchange25": "GIF (click to view)",
+		"gchange25": "GIF (クリックして表示)",
 
-		"gchange26": "A name is needed to access and send GIF files",
+		"gchange26": "GIF ファイルにアクセスして送信するには名前が必要です",
 
-		"gchange27": "The gif collection size is over 25mb! Please try again!",
+		"gchange27": "GIF コレクションのサイズが 25MB を超えています! もう一度お試しください!",
 
-		"gchange28": "Each gif in the collection cannot be over 0.7mb! Please try again!",
+		"gchange28": "コレクション内の各 gif は 0.7mb を超えることはできません。もう一度お試しください。",
 
-		"gchange29": "Filename"
+		"gchange29": "ファイル名"
 
 	},
 
 	"startminting": {
 
-		"smchange1": "Cannot fetch minting accounts",
+		"smchange1": "ミントアカウントを取得できません",
 
-		"smchange2": "Failed to remove key",
+		"smchange2": "キーの削除に失敗しました",
 
-		"smchange3": "Failed to add minting key",
+		"smchange3": "ミントキーの追加に失敗しました",
 
-		"smchange4": "Cannot create sponsorship key",
+		"smchange4": "スポンサーシップ キーを作成できません",
 
-		"smchange5": "Creating relationship",
+		"smchange5": "関係の作成",
 
-		"smchange6": "Awaiting confirmation on blockchain",
+		"smchange6": "ブロックチェーンでの確認を待っています",
 
-		"smchange7": "Finishing up relationship",
+		"smchange7": "関係を終わらせる",
 
-		"smchange8": "Adding minting key to node",
+		"smchange8": "ミントキーをノードに追加します",
 
-		"smchange9": "Complete",
+		"smchange9": "完了",
 
-		"smchange10": "Only 2 minting keys are allowed per node, you are attempting to assign 3 keys, please go to management - node management, and remove the key you do not want to assign to this node, thank you!"
-
+		"smchange10": "ノードごとに許可されるミント キーは 2 つだけです。3 つのキーを割り当てようとしています。管理 - ノード管理に移動して、このノードに割り当てたくないキーを削除してください。ありがとう!"
+		
 	},
-
+		
 	"mintingpage": {
+		
+		"mchange1": "一般的な鋳造の詳細",
 
-		"mchange1": "General Minting Details",
+		"mchange2": "ブロックチェーン統計",
 
-		"mchange2": "Blockchain Statistics",
+		"mchange3": "平均四半期ブロック時間",
 
-		"mchange3": "Avg. Qortal Blocktime",
+		"mchange4": "1 日あたりの平均ブロック数",
 
-		"mchange4": "Avg. Blocks Per Day",
+		"mchange5": "1 日あたりの平均作成 QORT",
 
-		"mchange5": "Avg. Created QORT Per Day",
+		"mchange6": "ミントアカウントの詳細",
 
-		"mchange6": "Minting Account Details",
+		"mchange7": "ミンターではありません",
 
-		"mchange7": "Not A Minter",
+		"mchange8": "ミント",
 
-		"mchange8": "Minting",
+		"mchange9": "鋳造しない",
 
-		"mchange9": "Not Minting",
+		"mchange10": "アカウントの詳細をアクティブ化",
 
-		"mchange10": "Activate Account Details",
+		"mchange11": "アクティブ化されていません",
 
-		"mchange11": "Not Activated",
+		"mchange12": "アカウントをアクティブ化します",
 
-		"mchange12": "Activate Your Account",
+		"mchange13": "はじめに",
 
-		"mchange13": "Introduction",
+		"mchange14": "アカウントを有効にするには、OUTGOING トランザクションを実行する必要があります。名前の登録が最も一般的な方法です。アカウントを有効にするために、Q-Chat 内の誰かに少額の QORT を送ってもらうように依頼できます。 または、Trade Portal 内で QORT を購入してから、あらゆる種類の OUTGOING トランザクションを実行し、ブロックチェーン上で公開キーを保護します。これを行うまでは、公開キーは UI 内であなただけが知っており、他の誰もあなたの公開キーを取得することはできません チェーンからキーを外してください。",
 
-		"mchange14": "To activate your account, an OUTGOING transaction needs to take place. Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account, or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain. Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.",
+		"mchange15": "現在のステータス",
 
-		"mchange15": "Current Status",
+		"mchange16": "現在のレベル",
 
-		"mchange16": "Current Level",
+		"mchange17": "次のレベルへのブロック",
 
-		"mchange17": "Blocks To Next Level",
+		"mchange18": "24 時間年中無休で鋳造し続けるとレベルに到達します",
 
-		"mchange18": "If you continue minting 24/7 you will reach level",
+		"mchange19": "報酬情報の鋳造",
 
-		"mchange19": "Minting Rewards Info",
+		"mchange20": "現在の層",
 
-		"mchange20": "Current Tier",
+		"mchange21": "ティア内の合計ミンター数",
 
-		"mchange21": "Total Minters in The Tier",
+		"mchange22": "ブロックごとの階層シェア",
 
-		"mchange22": "Tier Share Per Block",
+		"mchange23": "ブロックごとの推定報酬",
 
-		"mchange23": "Est. Reward Per Block",
+		"mchange24": "1 日あたりの推定報酬",
 
-		"mchange24": "Est. Reward Per Day",
+		"mchange25": "秒",
 
-		"mchange25": "Seconds",
+		"mchange26": "ブロック",
 
-		"mchange26": "Blocks",
+		"mchange27": "レベル",
 
-		"mchange27": "Level",
+		"mchange28": "階層",
 
-		"mchange28": "Tier",
+		"mchange29": "日",
 
-		"mchange29": "days",
+		"mchange30": "ミンターズ",
 
-		"mchange30": "Minters",
+		"mchange31": "ヘルプを表示するには押してください",
 
-		"mchange31": "Press for help",
+		"mchange32": "ミンターになる",
 
-		"mchange32": "Become A Minter",
+		"mchange33": "はじめに",
 
-		"mchange33": "Introduction",
+		"mchange34": "Qortal でミンターになり、ミンター レベルの上昇に応じて QORT 報酬を獲得し始めるには、まず「スポンサー」になる必要があります。Qortal のスポンサーとは、レベル 5 以上の他のミンター、または Qortal 創設者。スポンサーからスポンサー キーを取得し、そのキーを使用してレベル 1 に到達します。レベル 1 に到達すると、独自のミント キーを作成し、Qortal ブロックチェーンの安全確保に貢献して報酬を獲得できるようになります。 。」",
 
-		"mchange34": "In Qortal, in order to become a minter and begin earning QORT rewards with your increase in Minter Level, you must first become ‘sponsored’. A sponsor in Qortal is any other minter of level 5 or higher, or a Qortal Founder. You will obtain a sponsorship key from the sponsor, and use that key to get to level 1. Once you have reached level 1, you will be able to create your own minting key and start earning rewards for helping secure the Qortal Blockchain.",
+		"mchange35": "スポンサーシップ",
 
-		"mchange35": "Sponsorship",
+		"mchange36": "スポンサーは「スポンサーシップ キー」を発行します。これを使用してノードに追加し、鋳造を開始します (レベル 1 に到達するまで報酬はありません)。レベル 1 に到達したら、独自のを作成/割り当てます。 「キーを鋳造して報酬を獲得し始めます。」",
 
-		"mchange36": "Your sponsor will issue you a ‘Sponsorship Key’ which you will use to add to your node, and begin minting (for no rewards until reaching level 1.) Once you reach level 1, you create/assign your own ‘Minting Key’ and begin earning rewards.",
+		"mchange37": "スポンサーシップ キーを発行できる十分なレベルの Qortal の鋳造業者に連絡し、そのキーを取得してから、ここに戻ってキーを入力して鋳造の旅を始めてください。",
 
-		"mchange37": "Simply reach out to a minter in Qortal who is high enough level to issue a sponsorship key, obtain that key, then come back here and input the key to begin your minting journey !",
-
-		"mchange38": "in"
+		"mchange38": "で"
 
 	},
 
 	"becomeMinterPage": {
 
-		"bchange7": "Enter Sponsorship Key",
+		"bchange7": "スポンサーシップ キーを入力してください",
 
-		"bchange8": "Input key from your sponsor here",
+		"bchange8": "ここにスポンサーからのキーを入力してください",
 
-		"bchange10": "Current Sponsorship Status",
+		"bchange10": "現在のスポンサーシップステータス",
 
-		"bchange12": "Minting with sponsor key",
+		"bchange12": "スポンサー キーを使用したミント",
 
-		"bchange13": "Blocks Remaining in Sponsorship Period",
+		"bchange13": "スポンサー期間の残りのブロック",
 
-		"bchange15": "Sponsorship Relationship",
+		"bchange15": "スポンサー関係",
 
-		"bchange16": "Sponsor Account",
+		"bchange16": "スポンサー アカウント",
 
-		"bchange17": "Copy Sponsorship Key",
+		"bchange17": "スポンサーシップ キーをコピー",
 
-		"bchange18": "Start Minting",
+		"bchange18": "鋳造を開始",
 
-		"bchange19": "Success! You are currently minting."
+		"bchange19": "成功しました! 現在鋳造中です。"
 
 	},
 
 	"walletpage": {
 
-		"wchange1": "Fetching balance ...",
+		"wchange1": "残高を取得しています ...",
 
-		"wchange2": "Current Wallet",
+		"wchange2": "現在のウォレット",
 
-		"wchange3": "Copy wallet address to clipboard",
+		"wchange3": "ウォレットのアドレスをクリップボードにコピー",
 
-		"wchange4": "Address copied to clipboard",
+		"wchange4": "アドレスをクリップボードにコピーしました",
 
-		"wchange5": "Transaction Details",
+		"wchange5": "トランザクションの詳細",
 
-		"wchange6": "Transaction Type",
+		"wchange6": "トランザクションタイプ",
 
-		"wchange7": "OUT",
+		"wchange7": "アウト",
 
-		"wchange8": "IN",
+		"wchange8": "で",
 
-		"wchange9": "Sender",
+		"wchange9": "送信者",
 
-		"wchange10": "Receiver",
+		"wchange10": "受信者",
 
-		"wchange11": "Amount",
+		"wchange11": "金額",
 
-		"wchange12": "Transaction Fee",
+		"wchange12": "取引手数料",
 
-		"wchange13": "Block",
+		"wchange13": "ブロック",
 
-		"wchange14": "Time",
+		"wchange14": "時間",
 
-		"wchange15": "Transaction Signature",
+		"wchange15": "トランザクション署名",
 
-		"wchange16": "Transaction Hash",
+		"wchange16": "トランザクション ハッシュ",
 
-		"wchange17": "Send",
+		"wchange17": "送信",
 
-		"wchange18": "From address",
+		"wchange18": "送信元アドレス",
 
-		"wchange19": "Available balance",
+		"wchange19": "利用可能な残高",
 
-		"wchange20": "To (address or name)",
+		"wchange20": "宛先 (住所または名前)",
 
-		"wchange21": "Current static fee:",
+		"wchange21": "現在の固定料金:",
 
-		"wchange22": "Wallets",
+		"wchange22": "ウォレット",
 
-		"wchange23": "To (address)",
+		"wchange23": "宛先 (アドレス)",
 
-		"wchange24": "Current fee per byte",
+		"wchange24": "バイトあたりの現在の料金",
 
-		"wchange25": "Low fees may result in slow or unconfirmed transactions.",
+		"wchange25": "手数料が低いと、トランザクションが遅くなったり、未確認のトランザクションが発生したりする可能性があります。",
 
-		"wchange26": "Insufficient Funds!",
+		"wchange26": "資金が不足しています!",
 
-		"wchange27": "Invalid Amount!",
+		"wchange27": "金額が無効です!",
 
-		"wchange28": "Receiver cannot be empty!",
+		"wchange28": "受信機を空にすることはできません!",
 
-		"wchange29": "Invalid Receiver!",
+		"wchange29": "受信者が無効です!",
 
-		"wchange30": "Transaction Successful!",
+		"wchange30": "トランザクションは成功しました!",
 
-		"wchange31": "Transaction Failed!",
+		"wchange31": "トランザクションが失敗しました!",
 
-		"wchange32": "Failed to Fetch QORT Balance. Try again!",
+		"wchange32": "QORT 残高の取得に失敗しました。もう一度お試しください!",
 
-		"wchange33": "Failed to Fetch",
+		"wchange33": "取得に失敗しました",
 
-		"wchange34": "Balance. Try again!",
+		"wchange34": "残高。もう一度お試しください!",
 
-		"wchange35": "Type",
+		"wchange35": "タイプ",
 
-		"wchange36": "Fee",
+		"wchange36": "料金",
 
-		"wchange37": "Total Amount",
+		"wchange37": "合計金額",
 
-		"wchange38": "Address has no transactions yet.",
+		"wchange38": "アドレスにはまだトランザクションがありません。",
 
-		"wchange39": "Unable to copy address.",
+		"wchange39": "アドレスをコピーできません。",
 
-		"wchange40": "PAYMENT",
+		"wchange40": "支払い",
 
-		"wchange41": "Status",
+		"wchange41": "ステータス",
 
-		"wchange42": "Confirmations",
+		"wchange42": "確認",
 
-		"wchange43": "Your transaction will not show until confirmed, be patient...",
+		"wchange43": "トランザクションは確認されるまで表示されません。しばらくお待ちください...",
 
-		"wchange44": "Please try again...",
+		"wchange44": "もう一度試してください...",
 
-		"wchange45": "Send all",
+		"wchange45": "すべて送信",
 
-		"wchange46": "Send to this address",
+		"wchange46": "このアドレスに送信します",
 
-		"wchange47": "Address Book",
+		"wchange47": "アドレス帳",
 
-		"wchange48": "This Address Book is empty !",
+		"wchange48": "このアドレス帳は空です!",
 
-		"wchange49": "Add to Address Book",
+		"wchange49": "アドレス帳に追加",
 
-		"wchange50": "Name cannot be empty!",
+		"wchange50": "名前を空にすることはできません!",
 
-		"wchange51": "Address cannot be empty!",
+		"wchange51": "アドレスを空にすることはできません!",
 
-		"wchange52": "Successfully added!",
+		"wchange52": "正常に追加されました!",
 
-		"wchange53": "Import Address Book",
+		"wchange53": "アドレス帳をインポート",
 
-		"wchange54": "Export Address Book",
+		"wchange54": "アドレス帳のエクスポート",
 
-		"wchange55": "Your existing address book will be deleted and from backup new created.",
+		"wchange55": "既存のアドレス帳は削除され、バックアップから新しく作成されます。",
 
-		"wchange56": "WARNING!",
+		"wchange56": "警告!",
 
-		"wchange57": "Memo",
+		"wchange57": "メモ",
 
-		"wchange58": "New Address",
+		"wchange58": "新しいアドレス",
 
-		"wchange59": "Coin"
+		"wchange59": "コイン"
 
 	},
 
 	"tradepage": {
 
-		"tchange1": "Trade Portal",
+		"tchange1": "貿易ポータル",
 
-		"tchange2": "Select Trading Pair",
+		"tchange2": "取引ペアの選択",
 
-		"tchange3": "HISTORIC MARKET TRADES",
+		"tchange3": "歴史的な市場取引",
 
-		"tchange4": "MY TRADE HISTORY",
+		"tchange4": "私の取引履歴",
 
-		"tchange5": "OPEN MARKET SELL ORDERS",
+		"tchange5": "オープンマーケット売り注文",
 
-		"tchange6": "MY ORDERS",
+		"tchange6": "私の注文",
 
-		"tchange7": "Stuck Offers",
+		"tchange7": "スタックしたオファー",
 
-		"tchange8": "Amount",
+		"tchange8": "金額",
 
-		"tchange9": "Price",
+		"tchange9": "価格",
 
-		"tchange10": "Total",
+		"tchange10": "合計",
 
-		"tchange11": "Date",
+		"tchange11": "日付",
 
-		"tchange12": "Status",
+		"tchange12": "ステータス",
 
-		"tchange13": "Seller",
+		"tchange13": "販売者",
 
-		"tchange14": "Price Each",
+		"tchange14": "それぞれの価格",
 
-		"tchange15": "Clear Form",
+		"tchange15": "フォームをクリア",
 
-		"tchange16": "You have",
+		"tchange16": "持っています",
 
-		"tchange17": "Action",
+		"tchange17": "アクション",
 
-		"tchange18": "BUY",
+		"tchange18": "購入",
 
-		"tchange19": "SELL",
+		"tchange19": "販売",
 
-		"tchange20": "Failed to Create Trade. Try again!",
+		"tchange20": "取引の作成に失敗しました。もう一度お試しください!",
 
-		"tchange21": "Failed to Create Trade. Error Code",
+		"tchange21": "取引の作成に失敗しました。エラー コード",
 
-		"tchange22": "Insufficient Funds!",
+		"tchange22": "資金が不足しています!",
 
-		"tchange23": "Buy Request Successful!",
+		"tchange23": "購入リクエストが成功しました!",
 
-		"tchange24": "Buy Request Existing!",
+		"tchange24": "購入リクエストは存在します!",
 
-		"tchange25": "Failed to Create Trade. Error Code",
+		"tchange25": "取引の作成に失敗しました。エラー コード",
 
-		"tchange26": "Trade Cancelling In Progress!",
+		"tchange26": "取引キャンセル中!",
 
-		"tchange27": "Failed to Cancel Trade. Try again!",
+		"tchange27": "取引のキャンセルに失敗しました。もう一度お試しください!",
 
-		"tchange28": "Failed to Cancel Trade. Error Code",
+		"tchange28": "取引のキャンセルに失敗しました。エラー コード",
 
-		"tchange29": "CANCEL",
+		"tchange29": "キャンセル",
 
-		"tchange30": "Failed to Fetch Balance. Try again!",
+		"tchange30": "残高の取得に失敗しました。もう一度お試しください!",
 
-		"tchange31": "SOLD",
+		"tchange31": "販売済み",
 
-		"tchange32": "BOUGHT",
+		"tchange32": "購入しました",
 
-		"tchange33": "Average",
+		"tchange33": "平均",
 
-		"tchange34": "Amount can not be 0",
+		"tchange34": "金額を 0 にすることはできません",
 
-		"tchange35": "Price can not be 0",
+		"tchange35": "価格を 0 にすることはできません",
 
-		"tchange36": "PENDING AUTO BUY",
+		"tchange36": "自動購入を保留中",
 
-		"tchange37": "No auto buy order found !",
+		"tchange37": "自動買い注文が見つかりません!",
 
-		"tchange38": "ADD",
+		"tchange38": "追加",
 
-		"tchange39": "AUTO BUY ORDER",
+		"tchange39": "自動購入注文",
 
-		"tchange40": "Price",
+		"tchange40": "価格",
 
-		"tchange41": "Successfully removed auto buy order!",
+		"tchange41": "自動購入注文が正常に削除されました!",
 
-		"tchange42": "MARKET OPEN SELL ORDERS",
+		"tchange42": "市場公開売り注文",
 
-		"tchange43": "MY BUY HISTORY",
+		"tchange43": "私の購入履歴",
 
-		"tchange44": "Successfully added auto buy order!",
+		"tchange44": "自動購入注文が正常に追加されました!",
 
-		"tchange45": "AUTO BUY WITH",
+		"tchange45": "自動購入",
 
-		"tchange46": "AUTO BUY",
+		"tchange46": "自動購入",
 
-		"tchange47": "Sell for this price",
+		"tchange47": "この価格で販売します",
 
-		"tchange48": "NOT ENOUGH",
+		"tchange48": "不十分です",
 
-		"tchange49": "Price Chart"
+		"tchange49": "価格チャート"
 
 	},
 
 	"rewardsharepage": {
 
-		"rchange1": "Rewardshares",
+		"rchange1": "報酬シェア",
 
-		"rchange2": "Create reward share",
+		"rchange2": "報酬シェアを作成する",
 
-		"rchange3": "Rewardshares Involving In This Account",
+		"rchange3": "このアカウントに関係する報酬シェア",
 
-		"rchange4": "Minting Account",
+		"rchange4": "ミントアカウント",
 
-		"rchange5": "Share Percent",
+		"rchange5": "シェアパーセント",
 
-		"rchange6": "Recipient",
+		"rchange6": "受信者",
 
-		"rchange7": "Action",
+		"rchange7": "アクション",
 
-		"rchange8": "Type",
+		"rchange8": "タイプ",
 
-		"rchange9": "Level 1 - 4 can create a Self Share and Level 5 or above can create a Reward Share!",
+		"rchange9": "レベル 1 ～ 4 は自己シェアを作成でき、レベル 5 以上は報酬シェアを作成できます!",
 
-		"rchange10": "Recipient Public Key",
+		"rchange10": "受信者の公開キー",
 
-		"rchange11": "Reward share percentage",
+		"rchange11": "報酬シェア率",
 
-		"rchange12": "Doing something delicious",
+		"rchange12": "おいしいことをしています",
 
-		"rchange13": "Adding minting account",
+		"rchange13": "ミントアカウントの追加",
 
-		"rchange14": "Add",
+		"rchange14": "追加",
 
-		"rchange15": "Account is not involved in any reward shares",
+		"rchange15": "アカウントはいかなる報酬株式にも関与していません",
 
-		"rchange16": "Own Rewardshare",
+		"rchange16": "自身の報酬シェア",
 
-		"rchange17": "Remove",
+		"rchange17": "削除",
 
-		"rchange18": "Cannot Create Multiple Reward Shares!",
+		"rchange18": "複数の報酬シェアを作成できません!",
 
-		"rchange19": "Cannot Create Multiple Self Shares!",
+		"rchange19": "複数の自己共有を作成できません!",
 
-		"rchange20": "CANNOT CREATE REWARD SHARE! at level",
+		"rchange20": "レベルでは報酬シェアを作成できません!",
 
-		"rchange21": "Reward Share Successful!",
+		"rchange21": "報酬の共有が成功しました!",
 
-		"rchange22": "Reward Share Removed Successfully!"
+		"rchange22": "報酬シェアは正常に削除されました!"
 
 	},
 
 	"registernamepage": {
 
-		"nchange1": "Name Registration",
+		"nchange1": "名前の登録",
 
-		"nchange2": "Register Name",
+		"nchange2": "登録名",
 
-		"nchange3": "Registered Names",
+		"nchange3": "登録名",
 
-		"nchange4": "Avatar",
+		"nchange4": "アバター",
 
-		"nchange5": "Name",
+		"nchange5": "名前",
 
-		"nchange6": "Owner",
+		"nchange6": "所有者",
 
-		"nchange7": "Action",
+		"nchange7": "アクション",
 
-		"nchange8": "No names registered by this account!",
+		"nchange8": "このアカウントには名前が登録されていません!",
 
-		"nchange9": "Register a Name!",
+		"nchange9": "名前を登録してください!",
 
-		"nchange10": "Description (optional)",
+		"nchange10": "説明 (オプション)",
 
-		"nchange11": "Doing something delicious",
+		"nchange11": "おいしいことをしています",
 
-		"nchange12": "Registering Name",
+		"nchange12": "登録名",
 
-		"nchange13": "The current name registration fee is",
+		"nchange13": "現在の名前登録料金は",
 
-		"nchange14": "Register",
+		"nchange14": "登録",
 
-		"nchange15": "Set Avatar",
+		"nchange15": "アバターを設定",
 
-		"nchange16": "Need Core Update",
+		"nchange16": "コアのアップデートが必要です",
 
-		"nchange17": "Name Already Exists!",
+		"nchange17": "名前はすでに存在します!",
 
-		"nchange18": "Name Registration Successful!",
+		"nchange18": "名前の登録に成功しました!",
 
-		"nchange19": "Sell Name",
+		"nchange19": "販売名",
 
-		"nchange20": "Cancel Sell",
+		"nchange20": "販売をキャンセル",
 
-		"nchange21": "Buy Name",
+		"nchange21": "名前を購入",
 
-		"nchange22": "Names Market",
+		"nchange22": "ネームマーケット",
 
-		"nchange23": "Sell Price",
+		"nchange23": "売値",
 
-		"nchange24": "No Names To Sell",
+		"nchange24": "販売する名前はありません",
 
-		"nchange25": "Name To Sell",
+		"nchange25": "販売する名前",
 
-		"nchange26": "Are you sure to sell this name ?",
+		"nchange26": "この名前を販売してもよろしいですか?",
 
-		"nchange27": "For this price in QORT",
+		"nchange27": "QORT でこの価格",
 
-		"nchange28": "On pressing confirm, the sell name request will be sent!",
+		"nchange28": "確認を押すと、販売名リクエストが送信されます!",
 
-		"nchange29": "Name To Cancel",
+		"nchange29": "キャンセルする名前",
 
-		"nchange30": "Are you sure to cancel the sell for this name ?",
+		"nchange30": "この名前の販売をキャンセルしてもよろしいですか?",
 
-		"nchange31": "On pressing confirm, the cancel sell name request will be sent!",
+		"nchange31": "確認を押すと、販売名のキャンセル要求が送信されます!",
 
-		"nchange32": "Sell Name Request Successful!",
+		"nchange32": "名前販売リクエストが成功しました!",
 
-		"nchange33": "Cancel Sell Name Request Successful!",
+		"nchange33": "販売名リクエストのキャンセルが成功しました!",
 
-		"nchange34": "Buy Name Request Successful!",
+		"nchange34": "名前の購入リクエストが成功しました!",
 
-		"nchange35": "YOU HAVE A NAME!",
+		"nchange35": "あなたには名前があります!",
 
-		"nchange36": "Only accounts with no registered name can buy a name.",
+		"nchange36": "名前が登録されていないアカウントのみが名前を購入できます。",
 
-		"nchange37": "ATTENTION!",
+		"nchange37": "注意!",
 
-		"nchange38": "You not have enough qort to buy this name.",
+		"nchange38": "この名前を購入するのに十分なクォルトがありません。",
 
-		"nchange39": "Are you sure to buy this name ?",
+		"nchange39": "この名前を購入してもよろしいですか?",
 
-		"nchange40": "On pressing confirm, the buy name request will be sent!",
+		"nchange40": "確認を押すと、購入名のリクエストが送信されます!",
 
-		"nchange41": "Old Name",
+		"nchange41": "古い名前",
 
-		"nchange42": "New Name",
+		"nchange42": "新しい名前",
 
-		"nchange43": "Are you sure to change this name ?",
+		"nchange43": "この名前を変更してもよろしいですか?",
 
-		"nchange44": "To the new name",
+		"nchange44": "新しい名前に",
 
-		"nchange45": "On pressing confirm, the name update request will be sent!",
+		"nchange45": "確認を押すと、名前の更新リクエストが送信されます!",
 
-		"nchange46": "Name Sale History",
+		"nchange46": "名前の販売履歴",
 
-		"nchange47": "Name Update Successful!"
+		"nchange47": "名前の更新に成功しました!"
 
 	},
 
 	"websitespage": {
 
-		"schange1": "Browse Websites",
+		"schange1": "Web サイトを参照",
 
-		"schange2": "Followed Websites",
+		"schange2": "フォローしている Web サイト",
 
-		"schange3": "Blocked Websites",
+		"schange3": "ブロックされた Web サイト",
 
-		"schange4": "Search Websites",
+		"schange4": "Web サイトを検索",
 
-		"schange5": "Avatar",
+		"schange5": "アバター",
 
-		"schange6": "Details",
+		"schange6": "詳細",
 
-		"schange7": "Published by",
+		"schange7": "発行元",
 
-		"schange8": "Actions",
+		"schange8": "アクション",
 
-		"schange9": "Websites",
+		"schange9": "ウェブサイト",
 
-		"schange10": "No websites available",
+		"schange10": "利用可能な Web サイトがありません",
 
-		"schange11": "Your Followed Websites",
+		"schange11": "フォローしている Web サイト",
 
-		"schange12": "Followed Websites",
+		"schange12": "フォローしている Web サイト",
 
-		"schange13": "You aren't following any websites",
+		"schange13": "フォローしている Web サイトがありません",
 
-		"schange14": "Your Blocked Websites",
+		"schange14": "ブロックされた Web サイト",
 
-		"schange15": "Blocked Websites",
+		"schange15": "ブロックされた Web サイト",
 
-		"schange16": "You have not blocked any websites",
+		"schange16": "Web サイトをブロックしていません",
 
-		"schange17": "Name Not Found!",
+		"schange17": "名前が見つかりません!",
 
-		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+		"schange18": "リレー モードが有効です。これは、ピアが要求したときに、ノードが暗号化されたデータをネットワーク上で転送するのに役立つことを意味します。設定によってオプトアウトできます。",
 
-		"schange19": "in",
+		"schange19": "で",
 
-		"schange20": "Relay mode is disabled. You can enable it by setting",
+		"schange20": "リレー モードは無効になっています。設定によって有効にすることができます",
 
-		"schange21": "Publish Website",
+		"schange21": "Web サイトを公開",
 
-		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+		"schange22": "この登録名をフォローしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+		"schange23": "この登録された名前のフォローを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+		"schange24": "この登録名をブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+		"schange25": "この登録名のブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange26": "Uncategorized",
+		"schange26": "未分類",
 
-		"schange27": "Size",
+		"schange27": "サイズ",
 
-		"schange28": "Status",
+		"schange28": "ステータス",
 
-		"schange29": "Follow",
+		"schange29": "フォロー",
 
-		"schange30": "Unfollow",
+		"schange30": "フォローを解除",
 
-		"schange31": "Block",
+		"schange31": "ブロック",
 
-		"schange32": "Unblock",
+		"schange32": "ブロックを解除",
 
-		"schange33": "Name to search",
+		"schange33": "検索する名前",
 
-		"schange34": "Name can not be empty!",
+		"schange34": "名前を空にすることはできません!",
 
-		"schange35": "Search"
+		"schange35": "検索"
 
 	},
 
 	"appspage": {
 
-		"schange1": "Browse Q-Apps",
+		"schange1": "Q-Apps を参照",
 
-		"schange2": "Followed Q-Apps",
+		"schange2": "Q-Appsをフォローしました",
 
-		"schange3": "Blocked Q-Apps",
+		"schange3": "ブロックされた Q-App",
 
-		"schange4": "Search Q-Apps",
+		"schange4": "Q-Apps を検索",
 
-		"schange5": "Avatar",
+		"schange5": "アバター",
 
-		"schange6": "Details",
+		"schange6": "詳細",
 
-		"schange7": "Published by",
+		"schange7": "発行元",
 
-		"schange8": "Actions",
+		"schange8": "アクション",
 
 		"schange9": "Q-Apps",
 
-		"schange10": "No q-apps available",
+		"schange10": "利用可能な Q アプリはありません",
 
-		"schange11": "Your Followed Q-Apps",
+		"schange11": "フォローしている Q-App",
 
-		"schange12": "Followed Q-Apps",
+		"schange12": "Q-Appsをフォローしました",
 
-		"schange13": "You aren't following any q-apps",
+		"schange13": "どの Q-アプリもフォローしていません",
 
-		"schange14": "Your Blocked Q-Apps",
+		"schange14": "ブロックされた Q-Apps",
 
-		"schange15": "Blocked Q-Apps",
+		"schange15": "ブロックされた Q-App",
 
-		"schange16": "You have not blocked any q-apps",
+		"schange16": "Q-アプリをブロックしていません",
 
-		"schange17": "Name Not Found!",
+		"schange17": "名前が見つかりません!",
 
-		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+		"schange18": "リレー モードが有効です。これは、ピアが要求したときに、ノードが暗号化されたデータをネットワーク上で転送するのに役立つことを意味します。設定によってオプトアウトできます。",
 
-		"schange19": "in",
+		"schange19": "で",
 
-		"schange20": "Relay mode is disabled. You can enable it by setting",
+		"schange20": "リレー モードは無効になっています。設定によって有効にすることができます",
 
-		"schange21": "Publish Q-App",
+		"schange21": "Q-App を公開",
 
-		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+		"schange22": "この登録名をフォローしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+		"schange23": "この登録された名前のフォローを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+		"schange24": "この登録名をブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+		"schange25": "この登録名のブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange26": "Uncategorized",
+		"schange26": "未分類",
 
-		"schange27": "Size",
+		"schange27": "サイズ",
 
-		"schange28": "Status",
+		"schange28": "ステータス",
 
-		"schange29": "Follow",
+		"schange29": "フォロー",
 
-		"schange30": "Unfollow",
+		"schange30": "フォローを解除",
 
-		"schange31": "Block",
+		"schange31": "ブロック",
 
-		"schange32": "Unblock",
+		"schange32": "ブロックを解除",
 
-		"schange33": "Name to search",
+		"schange33": "検索する名前",
 
-		"schange34": "Name can not be empty!",
+		"schange34": "名前を空にすることはできません!",
 
-		"schange35": "Search",
+		"schange35": "検索",
 
-		"schange36": "Download",
+		"schange36": "ダウンロード",
 
-		"schange37": "Downloaded",
+		"schange37": "ダウンロード済み",
 
-		"schange38": "Update",
+		"schange38": "更新",
 
-		"schange39": "Open",
+		"schange39": "開く",
 
-		"schange40": "Preview",
+		"schange40": "プレビュー",
 
-		"schange41": "Downloading please wait...",
+		"schange41": "ダウンロード中です。しばらくお待ちください...",
 
-		"schange42": "Files downloaded"
+		"schange42": "ダウンロードされたファイル"
 
 	},
 
 	"tubespage": {
 
-		"schange1": "Browse Q-Tubes",
+		"schange1": "Q-Tube を参照",
 
-		"schange2": "Followed Q-Tubes",
+		"schange2": "フォローした Q-Tube",
 
-		"schange3": "Blocked Q-Tubes",
+		"schange3": "ブロックされた Q-Tube",
 
-		"schange4": "Search Q-Tubes",
+		"schange4": "Q-Tube を検索",
 
-		"schange5": "Cover",
+		"schange5": "カバー",
 
-		"schange6": "Details",
+		"schange6": "詳細",
 
-		"schange7": "Published by",
+		"schange7": "発行元",
 
-		"schange8": "Actions",
+		"schange8": "アクション",
 
 		"schange9": "Q-Tubes",
 
-		"schange10": "No q-tubes available",
+		"schange10": "利用可能な Q チューブがありません",
 
-		"schange11": "Your Followed Q-Tubes",
+		"schange11": "フォローしている Q-Tube",
 
-		"schange12": "Followed Q-Tubes",
+		"schange12": "フォローした Q-Tube",
 
-		"schange13": "You aren't following any q-tubes",
+		"schange13": "どの Q-Tube もフォローしていません",
 
-		"schange14": "Your Blocked Q-Tubes",
+		"schange14": "ブロックされた Q-Tube",
 
-		"schange15": "Blocked Q-Tubes",
+		"schange15": "ブロックされた Q-Tube",
 
-		"schange16": "You have not blocked any q-tubes",
+		"schange16": "Q-tube をブロックしていません",
 
-		"schange17": "Name Not Found!",
+		"schange17": "名前が見つかりません!",
 
-		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+		"schange18": "リレー モードが有効です。これは、ピアが要求したときに、ノードが暗号化されたデータをネットワーク上で転送するのに役立つことを意味します。設定によってオプトアウトできます。",
 
-		"schange19": "in",
+		"schange19": "で",
 
-		"schange20": "Relay mode is disabled. You can enable it by setting",
+		"schange20": "リレー モードは無効になっています。設定によって有効にすることができます",
 
-		"schange21": "Publish Video",
+		"schange21": "ビデオを公開",
 
-		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+		"schange22": "この登録名をフォローしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+		"schange23": "この登録された名前のフォローを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+		"schange24": "この登録名をブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+		"schange25": "この登録名のブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"schange26": "Uncategorized",
+		"schange26": "未分類",
 
-		"schange27": "Size",
+		"schange27": "サイズ",
 
-		"schange28": "Status",
+		"schange28": "ステータス",
 
-		"schange29": "Follow",
+		"schange29": "フォロー",
 
-		"schange30": "Unfollow",
+		"schange30": "フォローを解除",
 
-		"schange31": "Block",
+		"schange31": "ブロック",
 
-		"schange32": "Unblock",
+		"schange32": "ブロックを解除",
 
-		"schange33": "Name to search",
+		"schange33": "検索する名前",
 
-		"schange34": "Name can not be empty!",
+		"schange34": "名前を空にすることはできません!",
 
-		"schange35": "Search",
+		"schange35": "検索",
 
-		"schange36": "Download",
+		"schange36": "ダウンロード",
 
-		"schange37": "Downloaded",
+		"schange37": "ダウンロード済み",
 
-		"schange38": "Update",
+		"schange38": "更新",
 
-		"schange39": "Open",
+		"schange39": "開く",
 
-		"schange40": "Preview",
+		"schange40": "プレビュー",
 
-		"schange41": "Downloading please wait...",
+		"schange41": "ダウンロード中です。しばらくお待ちください...",
 
-		"schange42": "Files downloaded",
+		"schange42": "ダウンロードされたファイル",
 
-		"schange43": "Open please wait..."
+		"schange43": "開いてお待ちください..."
 
 	},
 
 	"publishpage": {
 
-		"pchange1": "Publish",
+		"pchange1": "公開",
 
-		"pchange2": "Update",
+		"pchange2": "更新",
 
-		"pchange3": "Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.",
+		"pchange3": "注: データをホストする前に、ネットワーク上のピアがより簡単にアクセスできるように、ポート転送を設定することをお勧めします。",
 
-		"pchange4": "Select Name",
+		"pchange4": "名前を選択",
 
-		"pchange5": "Title",
+		"pchange5": "タイトル",
 
-		"pchange6": "Description",
+		"pchange6": "説明",
 
-		"pchange7": "Select Category",
+		"pchange7": "カテゴリーを選択",
 
-		"pchange8": "Tag",
+		"pchange8": "タグ",
 
-		"pchange9": "Service",
+		"pchange9": "サービス",
 
-		"pchange10": "Identifier",
+		"pchange10": "識別子",
 
-		"pchange11": "Publish",
+		"pchange11": "公開",
 
-		"pchange12": "Select zip file containing static content",
+		"pchange12": "静的コンテンツを含む zip ファイルを選択",
 
-		"pchange13": "Local path to static files",
+		"pchange13": "静的ファイルへのローカル パス",
 
-		"pchange14": "Please select a registered name to publish data for",
+		"pchange14": "データを公開する登録名を選択してください",
 
-		"pchange15": "Please select a file to host",
+		"pchange15": "ホストするファイルを選択してください",
 
-		"pchange16": "Please select a zip file to host",
+		"pchange16": "ホストする zip ファイルを選択してください",
 
-		"pchange17": "Please enter the directory path containing the static content",
+		"pchange17": "静的コンテンツを含むディレクトリ パスを入力してください",
 
-		"pchange18": "Please enter a service name",
+		"pchange18": "サービス名を入力してください",
 
-		"pchange19": "Processing data... this can take some time...",
+		"pchange19": "データを処理しています...これには時間がかかる場合があります...",
 
-		"pchange20": "Error:",
+		"pchange20": "エラー:",
 
-		"pchange21": "Internal Server Error when publishing data",
+		"pchange21": "データ公開時の内部サーバー エラー",
 
-		"pchange22": "Computing proof of work... this can take some time...",
+		"pchange22": "プルーフ・オブ・ワークを計算しています...これには時間がかかる場合があります...",
 
-		"pchange23": "Transaction successful!",
+		"pchange23": "トランザクションは成功しました!",
 
-		"pchange24": "Unable to sign and process transaction",
+		"pchange24": "トランザクションに署名して処理できません",
 
-		"pchange25": "Choose File",
+		"pchange25": "ファイルを選択",
 
-		"pchange26": "Uploading data... this can take some time..."
+		"pchange26": "データをアップロードしています...これには時間がかかる場合があります..."
 
 	},
 
 	"browserpage": {
 
-		"bchange1": "Forward",
+		"bchange1": "転送",
 
-		"bchange2": "Reload",
+		"bchange2": "リロード",
 
-		"bchange3": "Back to list",
+		"bchange3": "リストに戻る",
 
-		"bchange4": "Delete",
+		"bchange4": "削除",
 
-		"bchange5": "from node",
+		"bchange5": "ノードから",
 
-		"bchange6": "Your browser doesn't support iframes",
+		"bchange6": "お使いのブラウザは iframe をサポートしていません",
 
-		"bchange7": "Follow",
+		"bchange7": "フォロー",
 
-		"bchange8": "Unfollow",
+		"bchange8": "フォローを解除",
 
-		"bchange9": "Block",
+		"bchange9": "ブロック",
 
-		"bchange10": "Unblock",
+		"bchange10": "ブロックを解除する",
 
-		"bchange11": "Error occurred when trying to follow this registered name. Please try again!",
+		"bchange11": "この登録名をフォローしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bchange12": "Error occurred when trying to unfollow this registered name. Please try again!",
+		"bchange12": "この登録された名前のフォローを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bchange13": "Error occurred when trying to block this registered name. Please try again!",
+		"bchange13": "この登録名をブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bchange14": "Error occurred when trying to unblock this registered name. Please try again!",
+		"bchange14": "この登録名のブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bchange15": "Can't delete data from followed names. Please unfollow first.",
+		"bchange15": "フォローされている名前のデータは削除できません。まずフォローを解除してください。",
 
-		"bchange16": "Error occurred when trying to delete this resource. Please try again!",
+		"bchange16": "このリソースを削除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bchange17": "User declined to share account details",
+		"bchange17": "ユーザーはアカウント詳細の共有を拒否しました",
 
-		"bchange18": "has requested authentication. Would you like to authenticate?",
+		"bchange18": "認証を要求しました。認証しますか?",
 
-		"bchange19": "Do you give this application permission to publish to QDN?",
+		"bchange19": "このアプリケーションに QDN への公開権限を与えますか?",
 
-		"bchange20": "Do you give this application permission to get your wallet balance?",
+		"bchange20": "ウォレット残高を取得する許可をこのアプリケーションに与えますか?",
 
-		"bchange21": "Fetch Wallet Failed. Please try again!",
+		"bchange21": "ウォレットの取得に失敗しました。もう一度お試しください。",
 
-		"bchange22": "Do you give this application permission to send a chat message?",
+		"bchange22": "このアプリケーションにチャット メッセージを送信する許可を与えますか?",
 
-		"bchange23": "Message Sent!",
+		"bchange23": "メッセージを送信しました!",
 
-		"bchange24": "This shares your QORT address and allows your account to interact with the",
+		"bchange24": "これにより QORT アドレスが共有され、アカウントが とやり取りできるようになります。",
 
-		"bchange25": "No sensitive data is shared.",
+		"bchange25": "機密データは共有されません。",
 
-		"bchange26": "Always authenticate automatically",
+		"bchange26": "常に自動的に認証する",
 
-		"bchange27": "Reject",
+		"bchange27": "拒否",
 
-		"bchange28": "Accept",
+		"bchange28": "受け入れる",
 
-		"bchange29": "Instant publish (requires 0.001 QORT fee)",
+		"bchange29": "インスタント公開 (0.001 QORT 料金が必要)",
 
-		"bchange30": "Service",
+		"bchange30": "サービス",
 
-		"bchange31": "Name",
+		"bchange31": "名前",
 
-		"bchange32": "Identifier",
+		"bchange32": "識別子",
 
-		"bchange33": "Instant publish",
+		"bchange33": "インスタント公開",
 
-		"bchange34": "Filename",
+		"bchange34": "ファイル名",
 
-		"bchange35": "Do you give this application permission to send coins?",
+		"bchange35": "このアプリケーションにコインを送信する許可を与えますか?",
 
-		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?",
+		"bchange36": "Proof-of-Work を計算せずにインスタントを QDN に公開しますか?",
 
-		"bchange37": "Enter Fullscreen",
+		"bchange37": "全画面表示にする",
 
-		"bchange38": "Exit Fullscreen",
+		"bchange38": "全画面表示を終了",
 
-		"bchange39": "Always allow lists to be retrieved automatically",
+		"bchange39": "リストの自動取得を常に許可します",
 
-		"bchange40": "List",
+		"bchange40": "リスト",
 
-		"bchange41": "Do you give this application permission to access this list?",
+		"bchange41": "このアプリケーションにこのリストへのアクセス許可を与えますか?",
 
-		"bchange42": "Items",
+		"bchange42": "アイテム",
 
-		"bchange43": "Do you give this application permission to add to this list?",
+		"bchange43": "このアプリケーションにこのリストに追加する権限を与えますか?",
 
-		"bchange44": "Do you give this application permission to delete from this list?",
+		"bchange44": "このアプリケーションにこのリストから削除する権限を与えますか?",
 
-		"bchange45": "Encrypt",
+		"bchange45": "暗号化",
 
-		"bchange46": "Do you give this application permission to save the following file"
+		"bchange46": "このアプリケーションに次のファイルを保存する権限を与えますか?"
 
 	},
 
 	"datapage": {
 
-		"dchange1": "Data Management",
+		"dchange1": "データ管理",
 
-		"dchange2": "Search in hosted data by this node",
+		"dchange2": "このノードでホストされたデータを検索",
 
-		"dchange3": "Data to search",
+		"dchange3": "検索するデータ",
 
-		"dchange4": "Search",
+		"dchange4": "検索",
 
-		"dchange5": "Registered Name",
+		"dchange5": "登録名",
 
-		"dchange6": "Service",
+		"dchange6": "サービス",
 
-		"dchange7": "Identifier",
+		"dchange7": "識別子",
 
-		"dchange8": "Actions",
+		"dchange8": "アクション",
 
-		"dchange9": "Data hosted by this node",
+		"dchange9": "このノードによってホストされるデータ",
 
-		"dchange10": "Data name can not be empty!",
+		"dchange10": "データ名を空にすることはできません!",
 
-		"dchange11": "Data not found!",
+		"dchange11": "データが見つかりません!",
 
-		"dchange12": "Couldn't fetch hosted data list from node",
+		"dchange12": "ホストされたデータ リストをノードから取得できませんでした",
 
-		"dchange13": "This node isn't hosting any data",
+		"dchange13": "このノードはデータをホストしていません",
 
-		"dchange14": "Unfollow",
+		"dchange14": "フォローを解除",
 
-		"dchange15": "Delete",
+		"dchange15": "削除",
 
-		"dchange16": "Block",
+		"dchange16": "ブロック",
 
-		"dchange17": "Unblock",
+		"dchange17": "ブロックを解除",
 
-		"dchange18": "Error occurred when trying to block this registered name. Please try again!",
+		"dchange18": "この登録名をブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"dchange19": "Error occurred when trying to unfollow this registered name. Please try again!",
+		"dchange19": "この登録された名前のフォローを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"dchange20": "Error occurred when trying to unblock this registered name. Please try again!",
+		"dchange20": "この登録名のブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"dchange21": "Error occurred when trying to delete this resource. Please try again!"
+		"dchange21": "このリソースを削除しようとしたときにエラーが発生しました。もう一度お試しください。"
 
 	},
 
 	"chatpage": {
 
-		"cchange1": "New Private Message",
+		"cchange1": "新しいプライベート メッセージ",
 
-		"cchange2": "Loading...",
+		"cchange2": "読み込み中...",
 
-		"cchange3": "Blocked Users",
+		"cchange3": "ブロックされたユーザー",
 
-		"cchange4": "New Message",
+		"cchange4": "新しいメッセージ",
 
-		"cchange5": "(Click to scroll down)",
+		"cchange5": "(クリックして下にスクロール)",
 
-		"cchange6": "Type the name or address of who you want to chat with to send a private message! You can validate the person's name by clicking on the book icon.",
+		"cchange6": "プライベート メッセージを送信するためにチャットしたい人の名前またはアドレスを入力してください。本のアイコンをクリックすると、その人の名前を確認できます。",
 
-		"cchange7": "Username / Address",
+		"cchange7": "ユーザー名 / アドレス",
 
-		"cchange8": "Message...",
+		"cchange8": "メッセージ...",
 
-		"cchange9": "Send",
+		"cchange9": "送信",
 
-		"cchange10": "Blocked Users List",
+		"cchange10": "ブロックされたユーザーのリスト",
 
-		"cchange11": "Name",
+		"cchange11": "名前",
 
-		"cchange12": "Owner",
+		"cchange12": "所有者",
 
-		"cchange13": "Action",
+		"cchange13": "アクション",
 
-		"cchange14": "This account has not blocked any users.",
+		"cchange14": "このアカウントはユーザーをブロックしていません。",
 
-		"cchange15": "No registered name",
+		"cchange15": "名前が登録されていません",
 
-		"cchange16": "Successfully unblocked this user.",
+		"cchange16": "このユーザーのブロックが正常に解除されました。",
 
-		"cchange17": "Error occurred when trying to unblock this user. Please try again!",
+		"cchange17": "このユーザーのブロックを解除しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"cchange18": "unblock",
+		"cchange18": "ブロックを解除",
 
-		"cchange19": "Invalid Username / Address, Check the name / address and retry...",
+		"cchange19": "ユーザー名/アドレスが無効です。名前/アドレスを確認して再試行してください...",
 
-		"cchange20": "Message Sent Successfully!",
+		"cchange20": "メッセージは正常に送信されました!",
 
-		"cchange21": "Sending failed, Please retry...",
+		"cchange21": "送信に失敗しました。再試行してください...",
 
-		"cchange22": "Loading Messages...",
+		"cchange22": "メッセージを読み込み中...",
 
-		"cchange23": "Cannot Decrypt Message!",
+		"cchange23": "メッセージを復号化できません!",
 
-		"cchange24": "Maximum Characters per message is 255",
+		"cchange24": "メッセージあたりの最大文字数は 255 です",
 
-		"cchange25": "Edit Message",
+		"cchange25": "メッセージを編集",
 
-		"cchange26": "File size exceeds 0.5 MB",
+		"cchange26": "ファイル サイズが 0.5 MB を超えています",
 
-		"cchange27": "A registered name is required to send images",
+		"cchange27": "画像を送信するには登録名が必要です",
 
-		"cchange28": "This file is not an image",
+		"cchange28": "このファイルは画像ではありません",
 
-		"cchange29": "Maximum message size is 1000 bytes",
+		"cchange29": "最大メッセージ サイズは 1000 バイトです",
 
-		"cchange30": "Uploading image. This may take up to one minute.",
+		"cchange30": "画像をアップロードしています。これには最大 1 分かかる場合があります。",
 
-		"cchange31": "Deleting image. This may take up to one minute.",
+		"cchange31": "画像を削除しています。これには最大 1 分かかる場合があります。",
 
-		"cchange33": "Cancel",
+		"cchange33": "キャンセル",
 
-		"cchange34": "This chat message is using an older message version and cannot use this feature.",
+		"cchange34": "このチャット メッセージは古いメッセージ バージョンを使用しているため、この機能は使用できません。",
 
-		"cchange35": "Error when trying to fetch the user's name. Please try again!",
+		"cchange35": "ユーザー名を取得しようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"cchange36": "Search Results",
+		"cchange36": "検索結果",
 
-		"cchange37": "No Results Found",
+		"cchange37": "結果が見つかりませんでした",
 
-		"cchange38": "User Verified",
+		"cchange38": "ユーザー認証済み",
 
-		"cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain.",
+		"cchange39": "このユーザーはチェーン上に公開鍵を持っていないため、暗号化されたメッセージを送信できません。",
 
-		"cchange40": "IMAGE (click to view)",
+		"cchange40": "画像 (クリックして表示)",
 
-		"cchange41": "Your Balance Is Under 4 QORT",
+		"cchange41": "残高が 4 QORT 未満です",
 
-		"cchange42": "Out of the need to combat spam, accounts with under 4 QORT balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!",
+		"cchange42": "スパム対策の必要性から、残高が 4 QORT 未満のアカウントは、Q-Chat でメッセージを送信するのに時間がかかります。Q-Chat メッセージの送信速度をすぐに上げたい場合は、4 QORT 以上の残高を取得してください。 QORT をあなたのアドレスに送信します。これは、Trade Portal での取引、または QORT を提供する別の QORT 経由で行うことができます。アカウントに 4 QORT を超えると、Q-Chat メッセージは即座に送信され、このダイアログは表示されなくなります 表示。必要なスパム防止方法をご理解いただき、Qortal をお楽しみいただければ幸いです。」",
 
-		"cchange43": "Tip QORT to",
+		"cchange43": "QORT を次の宛先に送信します",
 
-		"cchange44": "SEND MESSAGE",
+		"cchange44": "メッセージを送信",
 
-		"cchange45": "TIP USER",
+		"cchange45": "ヒントユーザー",
 
-		"cchange46": "Tip Amount",
+		"cchange46": "チップ金額",
 
-		"cchange47": "Available Balance",
+		"cchange47": "利用可能な残高",
 
-		"cchange48": "Failed to Fetch QORT Balance. Try again!",
+		"cchange48": "QORT 残高の取得に失敗しました。もう一度お試しください!",
 
-		"cchange49": "Current static fee",
+		"cchange49": "現在の固定料金",
 
-		"cchange50": "Send",
+		"cchange50": "送信",
 
-		"cchange51": "Insufficient Funds!",
+		"cchange51": "資金が不足しています!",
 
-		"cchange52": "Invalid Amount!",
+		"cchange52": "金額が無効です!",
 
-		"cchange53": "Receiver cannot be empty!",
+		"cchange53": "レシーバーを空にすることはできません!",
 
-		"cchange54": "Invalid Receiver!",
+		"cchange54": "受信者が無効です!",
 
-		"cchange55": "Transaction Successful!",
+		"cchange55": "トランザクションは成功しました!",
 
-		"cchange56": "Transaction Failed!",
+		"cchange56": "トランザクションが失敗しました!",
 
-		"cchange57": "User Info",
+		"cchange57": "ユーザー情報",
 
-		"cchange58": "SEND MESSAGE",
+		"cchange58": "メッセージを送信",
 
-		"cchange59": "TIP USER",
+		"cchange59": "チップユーザー",
 
-		"cchange60": "Group Invites Pending",
+		"cchange60": "グループの招待が保留中",
 
-		"cchange61": "Error when fetching group invites. Please try again!",
+		"cchange61": "グループ招待の取得中にエラーが発生しました。もう一度お試しください。",
 
-		"cchange62": "Wrong Username and Address Inputted! Please try again!",
+		"cchange62": "入力されたユーザー名とアドレスが間違っています。もう一度お試しください。",
 
-		"cchange63": "Enter Enabled",
+		"cchange63": "入力が有効になりました",
 
-		"cchange64": "Enter Disabled",
+		"cchange64": "無効と入力",
 
-		"cchange65": "Please enter a recipient",
+		"cchange65": "受信者を入力してください",
 
-		"cchange66": "Cannot fetch replied-to message. Message is too old.",
+		"cchange66": "返信済みメッセージを取得できません。メッセージが古すぎます。",
 
-		"cchange68": "edited",
+		"cchange68": "編集済み",
 
-		"cchange69": "Auto-view images",
+		"cchange69": "画像の自動表示",
 
-		"cchange70": "This image type is not supported",
+		"cchange70": "この画像タイプはサポートされていません",
 
-		"cchange71": "and",
+		"cchange71": "そして",
 
-		"cchange72": "other",
+		"cchange72": "その他",
 
 		"cchange73": "s",
 
-		"cchange74": "reacted with",
+		"cchange74": "反応しました",
 
-		"cchange75": "Uploading attachment. This may take up to one minute.",
+		"cchange75": "添付ファイルをアップロードしています。これには最大 1 分かかる場合があります。",
 
-		"cchange76": "Deleting attachment. This may take up to one minute.",
+		"cchange76": "添付ファイルを削除しています。これには最大 1 分かかる場合があります。",
 
-		"cchange77": "Attachment size exceeds 1 MB",
+		"cchange77": "添付ファイルのサイズが 1 MB を超えています",
 
-		"cchange78": "Are you sure you want to delete this image?",
+		"cchange78": "この画像を削除してもよろしいですか?",
 
-		"cchange79": "Are you sure you want to delete this attachment?",
+		"cchange79": "この添付ファイルを削除してもよろしいですか?",
 
-		"cchange80": "This image has been deleted",
+		"cchange80": "この画像は削除されました",
 
-		"cchange81": "This image type is not supported",
+		"cchange81": "この画像タイプはサポートされていません",
 
-		"cchange82": "This attachment has been deleted",
+		"cchange82": "この添付ファイルは削除されました",
 
-		"cchange90": "No messages"
+		"cchange90": "メッセージはありません"
 
 	},
 
 	"welcomepage": {
 
-		"wcchange1": "Welcome to Q-Chat",
+		"wcchange1": "Q-Chat へようこそ",
 
-		"wcchange2": "New Private Message",
+		"wcchange2": "新しいプライベート メッセージ",
 
-		"wcchange3": "Type the name or address of who you want to chat with to send a private message!",
+		"wcchange3": "プライベート メッセージを送信するためにチャットしたい人の名前またはアドレスを入力してください!",
 
-		"wcchange4": "Name / Address",
+		"wcchange4": "名前/住所",
 
-		"wcchange5": "Message...",
+		"wcchange5": "メッセージ...",
 
-		"wcchange6": "Send",
+		"wcchange6": "送信",
 
-		"wcchange7": "Invalid Name / Address, Check the name / address and retry...",
+		"wcchange7": "名前/アドレスが無効です。名前/アドレスを確認して再試行してください...",
 
-		"wcchange8": "Message Sent Successfully!",
+		"wcchange8": "メッセージは正常に送信されました!",
 
-		"wcchange9": "Sending failed, Please retry..."
+		"wcchange9": "送信に失敗しました。再試行してください..."
 
 	},
 
 	"blockpage": {
 
-		"bcchange1": "Block User",
+		"bcchange1": "ユーザーをブロック",
 
-		"bcchange2": "Successfully blocked this user!",
+		"bcchange2": "このユーザーは正常にブロックされました!",
 
-		"bcchange3": "Error occurred when trying to block this user. Please try again!",
+		"bcchange3": "このユーザーをブロックしようとしたときにエラーが発生しました。もう一度お試しください。",
 
-		"bcchange4": "No registered name",
+		"bcchange4": "名前が登録されていません",
 
-		"bcchange5": "Block User Request",
+		"bcchange5": "ユーザーリクエストをブロック",
 
-		"bcchange6": "Are you sure to block this user ?",
+		"bcchange6": "このユーザーをブロックしてもよろしいですか?",
 
-		"bcchange7": "MENU",
+		"bcchange7": "メニュー",
 
-		"bcchange8": "Copy Address",
+		"bcchange8": "アドレスをコピー",
 
-		"bcchange9": "Private Message",
+		"bcchange9": "プライベートメッセージ",
 
-		"bcchange10": "More",
+		"bcchange10": "詳細",
 
-		"bcchange11": "Reply",
+		"bcchange11": "返信",
 
-		"bcchange12": "Edit",
+		"bcchange12": "編集",
 
-		"bcchange13": "Reaction",
+		"bcchange13": "反応",
 
-		"bcchange14": "Forward",
+		"bcchange14": "転送",
 
-		"bcchange15": "Message Forwarded",
+		"bcchange15": "メッセージが転送されました",
 
-		"bcchange16": "Choose Recipient or Search for One Below",
+		"bcchange16": "受信者を選択するか、以下で受信者を検索します",
 
-		"bcchange17": "FORWARDED",
+		"bcchange17": "転送されました",
 
-		"bcchange18": "Tip User"
+		"bcchange18": "ユーザーにチップを送信"
 
 	},
 
 	"grouppage": {
 
-		"gchange1": "Qortal Groups",
+		"gchange1": "Qortal グループ",
 
-		"gchange2": "Create Group",
+		"gchange2": "グループの作成",
 
-		"gchange3": "Your Joined Groups",
+		"gchange3": "参加しているグループ",
 
-		"gchange4": "Group Name",
+		"gchange4": "グループ名",
 
-		"gchange5": "Description",
+		"gchange5": "説明",
 
-		"gchange6": "Role",
+		"gchange6": "役割",
 
-		"gchange7": "Action",
+		"gchange7": "アクション",
 
-		"gchange8": "Not a member of any group!",
+		"gchange8": "どのグループのメンバーでもありません!",
 
-		"gchange9": "Public Groups",
+		"gchange9": "パブリック グループ",
 
-		"gchange10": "Owner",
+		"gchange10": "所有者",
 
-		"gchange11": "No Open Public Groups available!",
+		"gchange11": "利用可能な公開パブリック グループがありません!",
 
-		"gchange12": "Create a New Group",
+		"gchange12": "新しいグループを作成",
 
-		"gchange13": "Group Type",
+		"gchange13": "グループタイプ",
 
-		"gchange14": "This Field is Required",
+		"gchange14": "このフィールドは必須です",
 
-		"gchange15": "Select an option",
+		"gchange15": "オプションを選択してください",
 
-		"gchange16": "Public",
+		"gchange16": "パブリック",
 
-		"gchange17": "Private",
+		"gchange17": "プライベート",
 
-		"gchange18": "Group Approval Threshold (number / percentage of Admins that must approve a transaction):",
+		"gchange18": "グループ承認のしきい値 (トランザクションを承認する必要がある管理者の数 / 割合):",
 
-		"gchange19": "NONE",
+		"gchange19": "なし",
 
-		"gchange20": "ONE",
+		"gchange20": "1",
 
-		"gchange21": "Minimum Block delay for Group Transaction Approvals:",
+		"gchange21": "グループ トランザクション承認の最小ブロック遅延:",
 
-		"gchange22": "minutes",
+		"gchange22": "分",
 
-		"gchange23": "hour",
+		"gchange23": "時間",
 
-		"gchange24": "hours",
+		"gchange24": "時間",
 
-		"gchange25": "day",
+		"gchange25": "日",
 
-		"gchange26": "days",
+		"gchange26": "日",
 
-		"gchange27": "Maximum Block delay for Group Transaction Approvals:",
+		"gchange27": "グループ トランザクション承認の最大ブロック遅延:",
 
-		"gchange28": "Creating Group",
+		"gchange28": "グループの作成",
 
-		"gchange29": "Create Group",
+		"gchange29": "グループの作成",
 
-		"gchange30": "Join Group Request",
+		"gchange30": "グループへの参加リクエスト",
 
-		"gchange31": "Date Created",
+		"gchange31": "作成日",
 
-		"gchange32": "Date Updated",
+		"gchange32": "更新日",
 
-		"gchange33": "Joining",
+		"gchange33": "参加中",
 
-		"gchange34": "Join Group",
+		"gchange34": "グループに参加",
 
-		"gchange35": "Leave Group Request",
+		"gchange35": "グループ脱退リクエスト",
 
-		"gchange36": "Leaving",
+		"gchange36": "退出",
 
-		"gchange37": "Leave Group",
+		"gchange37": "グループから脱退",
 
-		"gchange38": "Manage Group Owner:",
+		"gchange38": "グループ所有者の管理:",
 
-		"gchange39": "Manage Group Admin:",
+		"gchange39": "グループ管理者の管理:",
 
-		"gchange40": "Manage Group",
+		"gchange40": "グループの管理",
 
-		"gchange41": "Group Creation Successful!",
+		"gchange41": "グループの作成に成功しました!",
 
-		"gchange42": "Invalid Group Name",
+		"gchange42": "無効なグループ名",
 
-		"gchange43": "Invalid Group Description",
+		"gchange43": "グループの説明が無効です",
 
-		"gchange44": "Select a Group Typ",
+		"gchange44": "グループの種類を選択します",
 
-		"gchange45": "Select a Group Approval Threshold",
+		"gchange45": "グループ承認のしきい値を選択します",
 
-		"gchange46": "Select a Minimum Block delay for Group Transaction Approvals",
+		"gchange46": "グループ トランザクション承認の最小ブロック遅延を選択します",
 
-		"gchange47": "Select a Maximum Block delay for Group Transaction Approvals",
+		"gchange47": "グループ トランザクション承認の最大ブロック遅延を選択します",
 
-		"gchange48": "Join Group Request Sent Successfully!",
+		"gchange48": "グループへの参加リクエストが正常に送信されました!",
 
-		"gchange49": "Leave Group Request Sent Successfully!",
+		"gchange49": "グループ脱退要求が正常に送信されました!",
 
-		"gchange50": "Leave",
+		"gchange50": "離れる",
 
-		"gchange51": "Join",
+		"gchange51": "参加",
 
-		"gchange52": "Admin",
+		"gchange52": "管理者",
 
-		"gchange53": "Member",
+		"gchange53": "メンバー",
 
-		"gchange54": "Members",
+		"gchange54": "メンバー",
 
-		"gchange55": "Search Private Group",
+		"gchange55": "プライベートグループを検索",
 
-		"gchange56": "Group Name To Search",
+		"gchange56": "検索するグループ名",
 
-		"gchange57": "Private Group Name Not Found",
+		"gchange57": "プライベート グループ名が見つかりません",
 
-		"gchange58": "Note that group name must exact match.",
+		"gchange58": "グループ名は完全に一致する必要があることに注意してください。",
 
-		"gchange59": "Show / Hide Ticker"
+		"gchange59": "ティッカーの表示/非表示"
 
 	},
 
 	"puzzlepage": {
 
-		"pchange1": "Puzzles",
+		"pchange1": "パズル",
 
-		"pchange2": "Reward",
+		"pchange2": "報酬",
 
-		"pchange3": "SOLVED by",
+		"pchange3": "解決済み",
 
-		"pchange4": "Name",
+		"pchange4": "名前",
 
-		"pchange5": "Description",
+		"pchange5": "説明",
 
-		"pchange6": "Clue / Answer",
+		"pchange6": "手がかり/答え",
 
-		"pchange7": "Action",
+		"pchange7": "アクション",
 
-		"pchange8": "Guess",
+		"pchange8": "推測",
 
-		"pchange9": "Enter your guess to solve this puzzle and win",
+		"pchange9": "このパズルを解くための推測を入力すると勝ちます",
 
-		"pchange10": "Your guess needs to be 43 or 44 characters and",
+		"pchange10": "推測は 43 文字または 44 文字である必要があります。",
 
-		"pchange11": "not",
+		"pchange11": "そうではありません",
 
-		"pchange12": "include 0 (zero), I (upper i), O (upper o) or l (lower L).",
+		"pchange12": "0 (ゼロ)、I (上の i)、O (上の o) または l (下の L) を含みます。",
 
-		"pchange13": "Your Guess",
+		"pchange13": "あなたの推測",
 
-		"pchange14": "Checking your guess...",
+		"pchange14": "推測を確認しています...",
 
-		"pchange15": "Submit",
+		"pchange15": "送信",
 
-		"pchange16": "Guess incorrect!",
+		"pchange16": "推測は間違っています!",
 
-		"pchange17": "Reward claim submitted - check wallet for reward!"
+		"pchange17": "報酬請求が送信されました - ウォレットに報酬がないか確認してください!"
 
 	},
 
 	"nodepage": {
 
-		"nchange1": "Node management for:",
+		"nchange1": "ノード管理:",
 
-		"nchange2": "Node has been online for:",
+		"nchange2": "ノードがオンラインになっている期間:",
 
-		"nchange3": "Node's minting accounts",
+		"nchange3": "ノードのミントアカウント",
 
-		"nchange4": "Add minting account",
+		"nchange4": "ミントアカウントを追加",
 
-		"nchange5": "If you would like to mint with your own account you will need to create a rewardshare transaction to yourself (with rewardshare percent set to 0), and then mint with the rewardshare key it gives you.",
+		"nchange5": "自分のアカウントでミントを作成したい場合は、自分自身に対するリワードシェア トランザクションを作成する必要があります (リワードシェア パーセントを 0 に設定)。その後、それが提供するリワードシェア キーを使ってミントを作成します。",
 
-		"nchange6": "Rewardshare key",
+		"nchange6": "報酬シェアキー",
 
-		"nchange7": "Adding minting account",
+		"nchange7": "ミントアカウントの追加",
 
-		"nchange8": "Add",
+		"nchange8": "追加",
 
-		"nchange9": "Minting Account",
+		"nchange9": "ミントアカウント",
 
-		"nchange10": "Recipient Account",
+		"nchange10": "受信者のアカウント",
 
-		"nchange11": "Action",
+		"nchange11": "アクション",
 
-		"nchange12": "Remove",
+		"nchange12": "削除",
 
-		"nchange13": "No minting accounts found for this node",
+		"nchange13": "このノードのミント アカウントが見つかりません",
 
-		"nchange14": "Peers connected to this node",
+		"nchange14": "このノードに接続されているピア",
 
-		"nchange15": "Add peer",
+		"nchange15": "ピアを追加",
 
-		"nchange16": "Type the peer you wish to add's address below",
+		"nchange16": "追加するピアのアドレスを以下に入力します",
 
-		"nchange17": "Peer Address",
+		"nchange17": "ピアアドレス",
 
-		"nchange18": "Address",
+		"nchange18": "アドレス",
 
-		"nchange19": "Last Height",
+		"nchange19": "最後の高さ",
 
-		"nchange20": "Build Version",
+		"nchange20": "ビルドバージョン",
 
-		"nchange21": "Connected for",
+		"nchange21": "接続先",
 
-		"nchange22": "Action",
+		"nchange22": "アクション",
 
-		"nchange23": "Force Sync",
+		"nchange23": "強制同期",
 
-		"nchange24": "Node has no connected peers",
+		"nchange24": "ノードには接続されたピアがありません",
 
-		"nchange25": "Starting Sync with Peer: ",
+		"nchange25": "ピアとの同期を開始しています: ",
 
-		"nchange26": "Successfully removed Peer: ",
+		"nchange26": "ピアが正常に削除されました: ",
 
-		"nchange27": "Minting Node Added Successfully!",
+		"nchange27": "ミントノードが正常に追加されました!",
 
-		"nchange28": "Failed to Add Minting Node!",
+		"nchange28": "ミント ノードの追加に失敗しました!",
 
-		"nchange29": "Successfully Removed Minting Account!",
+		"nchange29": "ミントアカウントが正常に削除されました!",
 
-		"nchange30": "Failed to Remove Minting Account!",
+		"nchange30": "ミントアカウントの削除に失敗しました!",
 
-		"nchange31": "Stop Node",
+		"nchange31": "ノードを停止",
 
-		"nchange32": "Successfully Sent Stop Request!"
+		"nchange32": "停止リクエストが正常に送信されました!"
 
 	},
 
 	"transpage": {
 
-		"tchange1": "Transaction request",
+		"tchange1": "トランザクションリクエスト",
 
-		"tchange2": "Decline",
+		"tchange2": "拒否",
 
-		"tchange3": "Confirm",
+		"tchange3": "確認",
 
-		"tchange4": "To",
+		"tchange4": "宛先",
 
-		"tchange5": "Amount"
+		"tchange5": "金額"
 
 	},
 
 	"apipage": {
 
-		"achange1": "Add API key",
+		"achange1": "API キーを追加",
 
-		"achange2": "API key",
+		"achange2": "API キー",
 
-		"achange3": "Please enter the API key for this node. It can be found in a file called “apikey.txt“ in the directory where the core is installed. Alternatively, click Cancel to use the core with reduced functionality.",
+		"achange3": "このノードの API キーを入力してください。このキーは、コアがインストールされているディレクトリの「apikey.txt」というファイルにあります。または、[キャンセル] をクリックして、機能が制限されたコアを使用します。",
 
-		"achange4": "Cancel",
+		"achange4": "キャンセル",
 
-		"achange5": "Add",
+		"achange5": "追加",
 
-		"achange6": "Successfully added API Key",
+		"achange6": "API キーが正常に追加されました",
 
-		"achange7": "API key wrong, no API key added"
+		"achange7": "API キーが間違っています。API キーが追加されていません"
 
 	},
 
 	"transactions": {
 
-		"amount": "Amount",
+		"amount": "金額",
 
-		"to": "To",
+		"to": "へ",
 
-		"declined": "User declined transaction!",
+		"declined": "ユーザーは取引を拒否しました!",
 
-		"namedialog1": "You are registering the name below:",
+		"namedialog1": "以下の名前を登録しています:",
 
-		"namedialog2": "On pressing confirm, the name will be registered!",
+		"namedialog2": "確認を押すと名前が登録されます!",
 
-		"groupdialog1": "You are requesting to join the group below:",
+		"groupdialog1": "以下のグループへの参加をリクエストしています:",
 
-		"groupdialog2": "On pressing confirm, the group join request will be sent!",
+		"groupdialog2": "確認を押すと、グループ参加リクエストが送信されます!",
 
-		"groupdialog3": "You are requesting to leave the group below:",
+		"groupdialog3": "以下のグループからの退会をリクエストしています:",
 
-		"groupdialog4": "On pressing confirm, the leave group request will be sent!",
+		"groupdialog4": "確認を押すと、グループ脱退リクエストが送信されます!",
 
-		"groupdialog5": "You are requesting to creating the group below:",
+		"groupdialog5": "以下のグループの作成をリクエストしています:",
 
-		"groupdialog6": "On pressing confirm, the group creating request will be sent!",
+		"groupdialog6": "確認を押すと、グループ作成リクエストが送信されます!",
 
-		"rewarddialog1": "Would you like to create a reward share transaction, sharing",
+		"rewarddialog1": "報酬シェアトランザクションを作成しますか、共有します",
 
-		"rewarddialog2": "of your minting rewards with",
+		"rewarddialog2": "あなたの鋳造報酬の",
 
-		"rewarddialog3": "If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.",
+		"rewarddialog3": "はいの場合、ミントを作成するには以下のキーを保存する必要があります。キーは任意のノードに提供して、ユーザーに代わってミントを行うことができます。",
 
-		"rewarddialog4": "On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.",
+		"rewarddialog4": "確認を押すと報酬シェアが作成されますが、アカウントでミントするためには上記のキーをノードに提供する必要があります。",
 
-		"rewarddialog5": "You are removing a reward share transaction associated with account:",
+		"rewarddialog5": "アカウントに関連付けられた報酬シェア トランザクションを削除しています:",
 
-		"rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
+		"rewarddialog6": "確認を押すと、報酬シェアが削除され、ミントキーが無効になります。"
 
 	},
 
 	"sponsorshipspage": {
 
-		"schange1": "Active Sponsorships",
+		"schange1": "アクティブなスポンサーシップ",
 
-		"schange2": "Account Address",
+		"schange2": "アカウントアドレス",
 
-		"schange3": "Total Sponsorships active",
+		"schange3": "アクティブなスポンサーシップの合計",
 
-		"schange4": "Next sponsorship ending in",
+		"schange4": "次のスポンサーシップは次で終了します",
 
-		"schange5": "Sponsor New Minter",
+		"schange5": "スポンサー New Minter",
 
-		"schange6": "Finished Sponsorships",
+		"schange6": "終了したスポンサーシップ",
 
-		"schange7": "Completed",
+		"schange7": "完了",
 
-		"schange8": "Addresses",
+		"schange8": "アドレス",
 
-		"schange9": "You currently have no active sponsorships",
+		"schange9": "現在アクティブなスポンサーシップはありません",
 
-		"schange10": "Public Key Lookup",
+		"schange10": "公開キーの検索",
 
-		"schange11": "Copy",
+		"schange11": "コピー",
 
-		"schange12": "Address to Public Key Converter",
+		"schange12": "アドレスから公開鍵へのコンバーター",
 
-		"schange13": "Enter address",
+		"schange13": "アドレスを入力してください",
 
-		"schange14": "In progress",
+		"schange14": "進行中",
 
-		"schange15": "Finishing up",
+		"schange15": "仕上げ中",
 
-		"schange16": "Copy the key below and share it with your sponsored person.",
+		"schange16": "以下のキーをコピーし、スポンサーと共有してください。",
 
-		"schange17": "Copied to clipboard",
+		"schange17": "クリップボードにコピーされました",
 
-		"schange18": "Warning: do not leave this plugin or close the Qortal UI until completion!",
+		"schange18": "警告: 完了するまで、このプラグインを終了したり、Qortal UI を閉じたりしないでください。",
 
-		"schange19": "Copy Sponsorship Key",
+		"schange19": "スポンサーシップ キーをコピー",
 
-		"schange20": "Creating relationship",
+		"schange20": "関係の作成",
 
-		"schange21": "Remove Sponsorship Key"
+		"schange21": "スポンサーシップ キーを削除"
 
 	},
 
 	"explorerpage": {
 
-		"exp1": "Address or name to search",
+		"exp1": "検索する住所または名前",
 
-		"exp2": "Account Balance",
+		"exp2": "アカウント残高",
 
-		"exp3": "More Info",
+		"exp3": "詳細情報",
 
-		"exp4": "Address or Name not found !",
+		"exp4": "住所または名前が見つかりません!",
 
-		"exp5": "Note that registered names are case-sensitive.",
+		"exp5": "登録名では大文字と小文字が区別されることに注意してください。",
 
-		"exp6": "Founder",
+		"exp6": "創設者",
 
-		"exp7": "Info",
+		"exp7": "情報",
 
-		"exp8": "Show all buy trades",
+		"exp8": "すべての買い取引を表示",
 
-		"exp9": "Show all sell trades",
+		"exp9": "すべての売り取引を表示",
 
-		"exp10": "BUY HISTORY",
+		"exp10": "購入履歴",
 
-		"exp11": "SELL HISTORY",
+		"exp11": "販売履歴",
 
-		"exp12": "No buy trades made yet.",
+		"exp12": "まだ購入取引は行われていません。",
 
-		"exp13": "No sell trades made yet.",
+		"exp13": "まだ売り取引は行われていません。",
 
-		"exp14": "Show complete info",
+		"exp14": "完全な情報を表示",
 
-		"exp15": "Minting Since",
+		"exp15": "鋳造以来",
 
-		"exp16": "Not Minting",
+		"exp16": "鋳造しない",
 
-		"exp17": "ALL PAYMENTS",
+		"exp17": "すべての支払い",
 
-		"exp18": "Payments",
+		"exp18": "支払い",
 
-		"exp19": "Sent",
+		"exp19": "送信済み",
 
-		"exp20": "Received",
+		"exp20": "受信しました",
 
-		"exp21": "Trades"
+		"exp21": "取引"
 
 	},
 
 	"managegroup": {
 
-		"mg1": "Group Members",
+		"mg1": "グループメンバー",
 
-		"mg2": "Invite To Group",
+		"mg2": "グループに招待",
 
-		"mg3": "Group Admins",
+		"mg3": "グループ管理者",
 
-		"mg4": "Update Group",
+		"mg4": "アップデートグループ",
 
-		"mg5": "Close Manage Group",
+		"mg5": "グループの管理を閉じる",
 
-		"mg6": "BAN",
+		"mg6": "禁止",
 
-		"mg7": "KICK",
+		"mg7": "キック",
 
-		"mg8": "Group ID",
+		"mg8": "グループID",
 
-		"mg9": "Joined",
+		"mg9": "参加しました",
 
-		"mg10": "Add Group Admin",
+		"mg10": "グループ管理者の追加",
 
-		"mg11": "Are you sure to add this member to admins ?",
+		"mg11": "このメンバーを管理者に追加してもよろしいですか?",
 
-		"mg12": "On pressing confirm, add admin request will be sent!",
+		"mg12": "確認を押すと、管理者の追加リクエストが送信されます!",
 
-		"mg13": "Remove Group Admin",
+		"mg13": "グループ管理者の削除",
 
-		"mg14": "Remove Admin Address",
+		"mg14": "管理者アドレスを削除",
 
-		"mg15": "Are you sure to remove this member from admins ?",
+		"mg15": "このメンバーを管理者から削除してもよろしいですか?",
 
-		"mg16": "On pressing confirm, remove admin request will be sent!",
+		"mg16": "確認を押すと、管理者の削除リクエストが送信されます!",
 
-		"mg17": "Ban Member From Group",
+		"mg17": "メンバーをグループから追放",
 
-		"mg18": "Member Name",
+		"mg18": "メンバー名",
 
-		"mg19": "Member Address",
+		"mg19": "メンバーアドレス",
 
-		"mg20": "How Long To Ban",
+		"mg20": "禁止期間",
 
-		"mg21": "Reason For Ban",
+		"mg21": "禁止の理由",
 
-		"mg22": "Are you sure to ban this member from the group ?",
+		"mg22": "このメンバーをグループから禁止してもよろしいですか?",
 
-		"mg23": "On pressing confirm, the ban request will be sent!",
+		"mg23": "確認を押すと、禁止リクエストが送信されます!",
 
-		"mg24": "FOREVER",
+		"mg24": "永遠に",
 
-		"mg25": "Banned Members",
+		"mg25": "禁止されたメンバー",
 
-		"mg26": "CANCEL BAN",
+		"mg26": "禁止をキャンセル",
 
-		"mg27": "Ban Expiry",
+		"mg27": "禁止期限切れ",
 
-		"mg28": "Cancel Ban Member From Group",
+		"mg28": "グループからのメンバーの禁止をキャンセル",
 
-		"mg29": "Are you sure to cancel the ban for this member from the group ?",
+		"mg29": "このメンバーのグループからの禁止を解除してもよろしいですか?",
 
-		"mg30": "On pressing confirm, the cancel ban request will be sent!",
+		"mg30": "確認を押すと、キャンセル禁止リクエストが送信されます!",
 
-		"mg31": "Kick Member From Group",
+		"mg31": "グループからメンバーをキック",
 
-		"mg32": "Reason For Kick",
+		"mg32": "キックの理由",
 
-		"mg33": "Are you sure to kick this member from the group ?",
+		"mg33": "このメンバーをグループから除外してもよろしいですか?",
 
-		"mg34": "On pressing confirm, the kick request will be sent!",
+		"mg34": "確認を押すと、キック要求が送信されます!",
 
-		"mg35": "No Open Group Invites",
+		"mg35": "開いているグループへの招待はありません",
 
-		"mg36": "Your Open Group Invites",
+		"mg36": "あなたのオープングループを招待します",
 
-		"mg37": "Address or name to invite",
+		"mg37": "招待する住所または名前",
 
-		"mg38": "Invite Expiry Time",
+		"mg38": "招待の有効期限",
 
-		"mg39": "All Fields Are Required",
+		"mg39": "すべてのフィールドは必須です",
 
-		"mg40": "Are you sure to invite this member to the group ?",
+		"mg40": "このメンバーをグループに招待してもよろしいですか?",
 
-		"mg41": "On pressing confirm, the invite request will be sent!",
+		"mg41": "確認を押すと、招待リクエストが送信されます!",
 
-		"mg42": "Group Type",
+		"mg42": "グループタイプ",
 
-		"mg43": "Invite Expiry",
+		"mg43": "招待の有効期限",
 
-		"mg44": "Public Group",
+		"mg44": "パブリックグループ",
 
-		"mg45": "Private Group",
+		"mg45": "プライベートグループ",
 
-		"mg46": "Cancel Invite",
+		"mg46": "招待をキャンセル",
 
-		"mg47": "Cancel Invite To Group",
+		"mg47": "グループへの招待をキャンセル",
 
-		"mg48": "Are you sure to cancel the invite for this member ?",
+		"mg48": "このメンバーの招待をキャンセルしてもよろしいですか?",
 
-		"mg49": "On pressing confirm, the cancel invite request will be sent!",
+		"mg49": "確認を押すと、招待キャンセルのリクエストが送信されます!",
 
-		"mg50": "Coming Soon...",
+		"mg50": "近日公開予定...",
 
-		"mg51": "Minimum 3 Characters / Maximum 32 Characters",
+		"mg51": "最小 3 文字 / 最大 32 文字",
 
-		"mg52": "Maximum 128 Characters",
+		"mg52": "最大 128 文字",
 
-		"mg53": "Your Open Join Requests",
+		"mg53": "オープンな参加リクエスト",
 
-		"mg54": "No Open Join Requests",
+		"mg54": "オープンな参加リクエストはありません",
 
-		"mg55": "Are you sure to accept the join request from this member ?",
+		"mg55": "このメンバーからの参加リクエストを承認してもよろしいですか?",
 
-		"mg56": "On pressing confirm, the accept join request will be sent!",
+		"mg56": "確認を押すと、参加承認リクエストが送信されます!",
 
-		"mg57": "Join Request Successfully Accepted",
+		"mg57": "参加リクエストは正常に受け入れられました",
 
-		"mg58": "SOMETHING WENT WRONG",
+		"mg58": "何か問題が発生しました",
 
-		"mg59": "Cancel Join Request Successfully Accepted",
+		"mg59": "参加キャンセル要求が正常に受け入れられました",
 
-		"mg60": "Are you sure to cancel the join request from this member ?",
+		"mg60": "このメンバーからの参加リクエストをキャンセルしてもよろしいですか?",
 
-		"mg61": "On pressing confirm, the cancel join request will be sent!"
+		"mg61": "確認を押すと、参加キャンセル要求が送信されます。"
 
 	},
 
 	"info": {
 
-		"inf1": "Trade Portal Information",
+		"inf1": "貿易ポータル情報",
 
-		"inf2": "Close Trade Portal Info",
+		"inf2": "貿易ポータル情報を閉じる",
 
-		"inf3": "This is a market to BUY QORT with",
+		"inf3": "これは QORT を購入するための市場です",
 
-		"inf4": "- 'open market sells' are QORT SELL ORDERS.",
+		"inf4": "- 「公開市場の売り」は QORT 売り注文です。",
 
-		"inf5": "You can only buy ONE order at a time simply click an order that you wish to buy with",
+		"inf5": "一度に購入できる注文は 1 つだけです。購入したい注文をクリックするだけです。",
 
-		"inf6": "and it will populate the 'BUY QORT' box with the details, then click BUY.",
+		"inf6": "[QORT を購入] ボックスに詳細が入力され、[購入] をクリックします。",
 
-		"inf7": "Auto Buy Information",
+		"inf7": "自動購入情報",
 
-		"inf8": "Close Auto Buy Info",
+		"inf8": "自動購入情報を閉じる",
 
-		"inf9": "'Auto Buy' is a feature that allows 'buy orders' to be placed on the Trade Portal. These 'buy orders' are only visible by the person placing them. They are not 'public' buy orders like the 'open market sells' are, and are NOT stored on the Qortal blockchain. Auto Buy is a UI feature, and as such requires that the UI is RUNNING.",
+		"inf9": "「自動購入」は、貿易ポータルで「買い注文」を発注できるようにする機能です。これらの「買い注文」は、発注者のみが表示されます。これらは、 「公開市場での販売」は Qortal ブロックチェーンに保存されており、保存されていません。自動購入は UI 機能であるため、UI が実行中であることが必要です。",
 
-		"inf10": "To place an Auto Buy order click 'Add Auto Buy Order' button and fill out the box that comes up. Input the AMOUNT OF QORT you wish to BUY, and the PRICE you are willing to BUY UP TO. Once the order is active, Auto Buy will buy UP TO that amount of QORT for you, at UP TO the price you set (starting at the lowest order and moving up the books.)",
+		"inf10": "自動購入注文を行うには、[自動購入注文を追加] ボタンをクリックし、表示されるボックスに記入します。購入したい QORT の金額と、最大購入価格を入力します。1 回 注文はアクティブです。自動購入は、設定した価格まで、その量の QORT まで購入します (最低注文から開始して、書籍を増やしていきます)。」",
 
-		"inf11": "Simply LEAVE YOUR UI RUNNING and Auto Buy does the rest, automatically!",
+		"inf11": "UI を実行したままにしておくと、自動購入が残りの作業を自動的に実行します!",
 
-		"inf12": "You CAN browse other plugins in the UI (Q-Chat, wallets, etc.) but you CANNOT CLOSE THE UI if you want your Auto Buy to complete. Leaving the UI 'minimized' on the 'taskbar' or 'panel' is just fine, as long as the UI remains OPEN Auto Buy will function.",
+		"inf12": "UI で他のプラグイン (Q-Chat、ウォレットなど) を参照することはできますが、自動購入を完了したい場合は UI を閉じることはできません。UI を「タスクバー」上で「最小化」したままにするか、 「パネル」は、UI が開いたままである限り、自動購入が機能するので問題ありません。",
 
-		"inf13": "Automatically buy",
+		"inf13": "自動的に購入",
 
-		"inf14": "with",
+		"inf14": "付き",
 
-		"inf15": "Active Auto Buy Orders",
+		"inf15": "アクティブな自動車購入注文",
 
-		"inf16": "Auto Buy"
+		"inf16": "自動購入"
 
 	}
 
