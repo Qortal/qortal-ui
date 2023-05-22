@@ -830,7 +830,7 @@
 		"gchange41": "Group Creation Successful!",
 		"gchange42": "Invalid Group Name",
 		"gchange43": "Invalid Group Description",
-		"gchange44": "Select a Group Typ",
+		"gchange44": "Select a Group Type",
 		"gchange45": "Select a Group Approval Threshold",
 		"gchange46": "Select a Minimum Block delay for Group Transaction Approvals",
 		"gchange47": "Select a Maximum Block delay for Group Transaction Approvals",
