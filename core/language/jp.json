@@ -1,1066 +1,2131 @@
 {
+
 	"selectmenu": {
+
 		"selectlanguage": "Select language",
+
 		"languageflag": "us",
+
 		"english": "English",
+
 		"chinese1": "Chinese (Simplified)",
+
 		"chinese2": "Chinese (Traditional)",
+
 		"german": "German",
+
 		"french": "French",
+
 		"polish": "Polish",
+
 		"spanish": "Spanish",
+
 		"hindi": "Hindi",
+
 		"croatian": "Croatian",
+
 		"portuguese": "Portuguese",
+
 		"hungarian": "Hungarian",
+
 		"serbian": "Serbian",
+
 		"italian": "Italian",
+
 		"russian": "Russian",
+
 		"norwegian": "Norwegian",
+
 		"romanian": "Romanian",
+
 		"korean": "Korean",
+
 		"japanese": "Japanese"
+
 	},
+
 	"sidemenu": {
+
 		"minting": "MINTING",
+
 		"mintingdetails": "MINTING DETAILS",
+
 		"becomeAMinter": "BECOME A MINTER",
+
 		"wallets": "WALLETS",
+
 		"tradeportal": "TRADE PORTAL",
+
 		"rewardshare": "REWARD SHARE",
+
 		"nameregistration": "NAME REGISTRATION",
+
 		"websites": "WEBSITES",
+
 		"management": "MANAGEMENT",
+
 		"datamanagement": "DATA MANAGEMENT",
+
 		"qchat": "Q-CHAT",
+
 		"groupmanagement": "GROUP MANAGEMENT",
+
 		"puzzles": "PUZZLES",
+
 		"nodemanagement": "NODE MANAGEMENT",
+
 		"trading": "TRADING",
+
 		"groups": "GROUPS",
+
 		"sm1": "NAMES",
+
 		"sm2": "NAME MANAGEMENT",
+
 		"sm3": "NAMES MARKET"
+
 	},
+
 	"login": {
+
 		"login": "Login",
+
 		"createaccount": "Create Account",
+
 		"name": "Name",
+
 		"address": "Address",
+
 		"password": "Password",
+
 		"youraccounts": "Your accounts",
+
 		"clickto": "Click your account to login with it",
+
 		"needcreate": "You need to create or save an account before you can log in!",
+
 		"upload": "Upload your qortal backup",
+
 		"howlogin": "How would you like to login?",
+
 		"seed": "Seedphrase",
+
 		"seedphrase": "seedphrase",
+
 		"saved": "Saved account",
+
 		"qora": "Qora address seed",
+
 		"backup": "Qortal wallet backup",
+
 		"decrypt": "Decrypt backup",
+
 		"save": "Save in this browser.",
+
 		"prepare": "Preparing Your Account",
+
 		"areyousure": "Are you sure you want to remove this wallet from saved wallets?",
+
 		"error1": "Backup must be valid JSON",
+
 		"error2": "Login option not selected",
+
 		"createwelcome": "Welcome to Qortal, you will find it to be similar to that of an RPG game, you, as a minter on the Qortal network (if you choose to become one) will have the chance to level your account up, giving you both more of the QORT block reward and also larger influence over the network in terms of voting on decisions for the platform.",
+
 		"createa": "A",
+
 		"click": "Click to view seedphrase",
+
 		"confirmpass": "Confirm Password",
+
 		"willbe": "will be randomly generated in background. This is used as your private key generator for your blockchain account in Qortal.",
+
 		"clicknext": "Create your Qortal account by clicking NEXT below.",
+
 		"ready": "Your account is now ready to be created. It will be saved in this browser. If you do not want your new account to be saved in your browser, you can uncheck the box below. You will still be able to login with your new account(after logging out), using your wallet backup file that you MUST download once you create your account.",
+
 		"welmessage": "Welcome to Qortal",
+
 		"pleaseenter": "Please enter a Password!",
+
 		"notmatch": "Passwords not match!",
+
 		"lessthen8": "Your password is less than 8 characters! This is not recommended. You can continue to ignore this warning.",
+
 		"lessthen8-2": "Your password is less than 8 characters!",
+
 		"entername": "Please enter a Name!",
+
 		"downloaded": "Your Wallet BackUp file get downloaded!",
+
 		"loading": "Loading, Please wait...",
+
 		"createdseed": "Your created Seedphrase",
+
 		"saveseed": "Save Seedphrase",
+
 		"savein": "Save in browser",
+
 		"backup2": "This file is the ONLY way to access your account on a system that doesn't have it saved to the app/browser. BE SURE TO BACKUP THIS FILE IN MULTIPLE PLACES. The file is encrypted very securely and decrypted with your local password you created in the previous step. You can save it anywhere securely, but be sure to do that in multiple locations.",
+
 		"savewallet": "Save Wallet BackUp File",
+
 		"created1": "Your account is now created",
+
 		"created2": " and will be saved in this browser.",
+
 		"downloadbackup": "Download Wallet BackUp File",
+
 		"passwordhint": "A password must be at least 8 characters."
+
 	},
+
 	"logout": {
+
 		"logout": "LOGOUT",
+
 		"confirmlogout": "Are you sure you want to logout?"
+
 	},
+
 	"fragfile": {
+
 		"selectfile": "Select file",
+
 		"dragfile": "Drag and drop backup here"
+
 	},
+
 	"settings": {
+
 		"generalinfo": "General Account Info",
+
 		"address": "Address",
+
 		"publickey": "Public Key",
+
 		"settings": "Settings",
+
 		"account": "Account",
+
 		"security": "Security",
+
 		"qr_login_menu_item": "QR Login",
+
 		"qr_login_description_1": "Scan this code to unlock your wallet on other device using the same password which you logged in with.",
+
 		"qr_login_description_2": "Choose a password which you will use to unlock your wallet on other device after scanning the QR code.",
+
 		"qr_login_button_1": "Show login QR code",
+
 		"qr_login_button_2": "Generate login QR code",
+
 		"notifications": "Notifications",
+
 		"accountsecurity": "Account Security",
+
 		"password": "Password",
+
 		"download": "Download Backup File",
+
 		"choose": "Please choose a password to encrypt your backup with. (This can be the same as the one you logged in with, or different)",
+
 		"block": "Block Notifications (Coming Soon...)",
+
 		"playsound": "Play Sound",
+
 		"shownotifications": "Show Notifications",
+
 		"nodeurl": "Node Url",
+
 		"nodehint": "Select a node from the default list of nodes above or add a custom node to the list above by clicking on the button below",
+
 		"addcustomnode": "Add Custom Node",
+
 		"addandsave": "Add And Save",
+
 		"protocol": "Protocol",
+
 		"domain": "Domain",
+
 		"port": "Port",
+
 		"import": "Import Nodes",
+
 		"export": "Export Nodes",
+
 		"deletecustomnode": "Remove All Custom Nodes",
+
 		"warning": "Your existing nodes will be deleted and from backup new created.",
+
 		"snack1": "Successfully deleted and added standard nodes",
+
 		"snack2": "UI conected to node",
+
 		"snack3": "Successfully added and saved custom node",
+
 		"snack4": "Nodes successfully saved as",
+
 		"snack5": "Nodes successfully imported",
+
 		"exp1": "Export Private Master Key",
+
 		"exp2": "Export Master Key",
+
 		"exp3": "Export",
+
 		"exp4": "Please choose a wallet to backup the private master key.",
+
 		"core": "Start Core Settings"
+
 	},
+
 	"appinfo": {
+
 		"blockheight": "Block Height",
+
 		"uiversion": "UI Version",
+
 		"coreversion": "Core Version",
+
 		"minting": "(Minting)",
+
 		"synchronizing": "Synchronizing",
+
 		"peers": "Connected Peers"
+
 	},
+
 	"walletprofile": {
+
 		"minterlevel": "Minter Level",
+
 		"blocksminted": "Blocks Minted"
+
 	},
+
 	"general": {
+
 		"yes": "Yes",
+
 		"no": "No",
+
 		"confirm": "Confirm",
+
 		"decline": "Decline",
+
 		"open": "Open",
+
 		"close": "Close",
+
 		"back": "Back",
+
 		"next": "Next",
+
 		"create": "Create",
+
 		"continue": "Continue",
+
 		"save": "Save",
+
 		"balance": "Balance",
+
 		"balances": "YOUR WALLET BALANCES",
+
 		"update": "UPDATE WALLET BALANCES",
+
 		"view": "View"
+
 	},
+
 	"gifs": {
+
 		"gchange1": "Gif Explorer",
+
 		"gchange2": "Explore Collections",
+
 		"gchange3": "My Collections",
+
 		"gchange4": "Subscribed Collections",
+
 		"gchange5": "Upload your gif files",
+
 		"gchange6": "File should be .Gif",
+
 		"gchange7": "Upload Collection",
+
 		"gchange8": "A collection name is required!",
+
 		"gchange9": "Collection Name",
+
 		"gchange10": "Gif Collection Uploaded Successfully!",
+
 		"gchange11": "Gifs uploading, please wait...",
+
 		"gchange12": "Something went wrong! Please try changing tabs and coming back.",
+
 		"gchange13": "You currently have no collections.",
+
 		"gchange14": "You currently have no subscribed collections.",
+
 		"gchange15": "Error fetching GIF. Retrying...",
+
 		"gchange16": "Failed to fetch GIF! Please visit another collection and try again!",
+
 		"gchange17": "Subscribe to this collection",
+
 		"gchange18": "Searching for collections...",
+
 		"gchange19": "No collections found!",
+
 		"gchange20": "Subscribed to collection successfully!",
+
 		"gchange21": "Unsubscribed to collection successfully!",
+
 		"gchange22": "Unsubscribe from this collection",
+
 		"gchange23": "Your gif collection cannot contain two gifs with the same name!",
+
 		"gchange24": "This collection name is already taken. Try another name!",
+
 		"gchange25": "GIF (click to view)",
+
 		"gchange26": "A name is needed to access and send GIF files",
+
 		"gchange27": "The gif collection size is over 25mb! Please try again!",
+
 		"gchange28": "Each gif in the collection cannot be over 0.7mb! Please try again!",
+
 		"gchange29": "Filename"
+
 	},
+
 	"startminting": {
+
 		"smchange1": "Cannot fetch minting accounts",
+
 		"smchange2": "Failed to remove key",
+
 		"smchange3": "Failed to add minting key",
+
 		"smchange4": "Cannot create sponsorship key",
+
 		"smchange5": "Creating relationship",
+
 		"smchange6": "Awaiting confirmation on blockchain",
+
 		"smchange7": "Finishing up relationship",
+
 		"smchange8": "Adding minting key to node",
+
 		"smchange9": "Complete",
+
 		"smchange10": "Only 2 minting keys are allowed per node, you are attempting to assign 3 keys, please go to management - node management, and remove the key you do not want to assign to this node, thank you!"
+
 	},
+
 	"mintingpage": {
+
 		"mchange1": "General Minting Details",
+
 		"mchange2": "Blockchain Statistics",
+
 		"mchange3": "Avg. Qortal Blocktime",
+
 		"mchange4": "Avg. Blocks Per Day",
+
 		"mchange5": "Avg. Created QORT Per Day",
+
 		"mchange6": "Minting Account Details",
+
 		"mchange7": "Not A Minter",
+
 		"mchange8": "Minting",
+
 		"mchange9": "Not Minting",
+
 		"mchange10": "Activate Account Details",
+
 		"mchange11": "Not Activated",
+
 		"mchange12": "Activate Your Account",
+
 		"mchange13": "Introduction",
+
 		"mchange14": "To activate your account, an OUTGOING transaction needs to take place. Name Registration is the most common method. You can ask someone in Q-Chat to send you a small amount of QORT so that you may activate your account, or buy QORT within the Trade Portal then make an OUTGOING transaction of any kind and secure your public key on the blockchain. Until you do this, your public key is only known by you, in your UI, and no one else can pull your public key from the chain.",
+
 		"mchange15": "Current Status",
+
 		"mchange16": "Current Level",
+
 		"mchange17": "Blocks To Next Level",
+
 		"mchange18": "If you continue minting 24/7 you will reach level",
+
 		"mchange19": "Minting Rewards Info",
+
 		"mchange20": "Current Tier",
+
 		"mchange21": "Total Minters in The Tier",
+
 		"mchange22": "Tier Share Per Block",
+
 		"mchange23": "Est. Reward Per Block",
+
 		"mchange24": "Est. Reward Per Day",
+
 		"mchange25": "Seconds",
+
 		"mchange26": "Blocks",
+
 		"mchange27": "Level",
+
 		"mchange28": "Tier",
+
 		"mchange29": "days",
+
 		"mchange30": "Minters",
+
 		"mchange31": "Press for help",
+
 		"mchange32": "Become A Minter",
+
 		"mchange33": "Introduction",
+
 		"mchange34": "In Qortal, in order to become a minter and begin earning QORT rewards with your increase in Minter Level, you must first become ‘sponsored’. A sponsor in Qortal is any other minter of level 5 or higher, or a Qortal Founder. You will obtain a sponsorship key from the sponsor, and use that key to get to level 1. Once you have reached level 1, you will be able to create your own minting key and start earning rewards for helping secure the Qortal Blockchain.",
+
 		"mchange35": "Sponsorship",
+
 		"mchange36": "Your sponsor will issue you a ‘Sponsorship Key’ which you will use to add to your node, and begin minting (for no rewards until reaching level 1.) Once you reach level 1, you create/assign your own ‘Minting Key’ and begin earning rewards.",
+
 		"mchange37": "Simply reach out to a minter in Qortal who is high enough level to issue a sponsorship key, obtain that key, then come back here and input the key to begin your minting journey !",
+
 		"mchange38": "in"
+
 	},
+
 	"becomeMinterPage": {
+
 		"bchange7": "Enter Sponsorship Key",
+
 		"bchange8": "Input key from your sponsor here",
+
 		"bchange10": "Current Sponsorship Status",
+
 		"bchange12": "Minting with sponsor key",
+
 		"bchange13": "Blocks Remaining in Sponsorship Period",
+
 		"bchange15": "Sponsorship Relationship",
+
 		"bchange16": "Sponsor Account",
+
 		"bchange17": "Copy Sponsorship Key",
+
 		"bchange18": "Start Minting",
+
 		"bchange19": "Success! You are currently minting."
+
 	},
+
 	"walletpage": {
+
 		"wchange1": "Fetching balance ...",
+
 		"wchange2": "Current Wallet",
+
 		"wchange3": "Copy wallet address to clipboard",
+
 		"wchange4": "Address copied to clipboard",
+
 		"wchange5": "Transaction Details",
+
 		"wchange6": "Transaction Type",
+
 		"wchange7": "OUT",
+
 		"wchange8": "IN",
+
 		"wchange9": "Sender",
+
 		"wchange10": "Receiver",
+
 		"wchange11": "Amount",
+
 		"wchange12": "Transaction Fee",
+
 		"wchange13": "Block",
+
 		"wchange14": "Time",
+
 		"wchange15": "Transaction Signature",
+
 		"wchange16": "Transaction Hash",
+
 		"wchange17": "Send",
+
 		"wchange18": "From address",
+
 		"wchange19": "Available balance",
+
 		"wchange20": "To (address or name)",
+
 		"wchange21": "Current static fee:",
+
 		"wchange22": "Wallets",
+
 		"wchange23": "To (address)",
+
 		"wchange24": "Current fee per byte",
+
 		"wchange25": "Low fees may result in slow or unconfirmed transactions.",
+
 		"wchange26": "Insufficient Funds!",
+
 		"wchange27": "Invalid Amount!",
+
 		"wchange28": "Receiver cannot be empty!",
+
 		"wchange29": "Invalid Receiver!",
+
 		"wchange30": "Transaction Successful!",
+
 		"wchange31": "Transaction Failed!",
+
 		"wchange32": "Failed to Fetch QORT Balance. Try again!",
+
 		"wchange33": "Failed to Fetch",
+
 		"wchange34": "Balance. Try again!",
+
 		"wchange35": "Type",
+
 		"wchange36": "Fee",
+
 		"wchange37": "Total Amount",
+
 		"wchange38": "Address has no transactions yet.",
+
 		"wchange39": "Unable to copy address.",
+
 		"wchange40": "PAYMENT",
+
 		"wchange41": "Status",
+
 		"wchange42": "Confirmations",
+
 		"wchange43": "Your transaction will not show until confirmed, be patient...",
+
 		"wchange44": "Please try again...",
+
 		"wchange45": "Send all",
+
 		"wchange46": "Send to this address",
+
 		"wchange47": "Address Book",
+
 		"wchange48": "This Address Book is empty !",
+
 		"wchange49": "Add to Address Book",
+
 		"wchange50": "Name cannot be empty!",
+
 		"wchange51": "Address cannot be empty!",
+
 		"wchange52": "Successfully added!",
+
 		"wchange53": "Import Address Book",
+
 		"wchange54": "Export Address Book",
+
 		"wchange55": "Your existing address book will be deleted and from backup new created.",
+
 		"wchange56": "WARNING!",
+
 		"wchange57": "Memo",
+
 		"wchange58": "New Address",
+
 		"wchange59": "Coin"
+
 	},
+
 	"tradepage": {
+
 		"tchange1": "Trade Portal",
+
 		"tchange2": "Select Trading Pair",
+
 		"tchange3": "HISTORIC MARKET TRADES",
+
 		"tchange4": "MY TRADE HISTORY",
+
 		"tchange5": "OPEN MARKET SELL ORDERS",
+
 		"tchange6": "MY ORDERS",
+
 		"tchange7": "Stuck Offers",
+
 		"tchange8": "Amount",
+
 		"tchange9": "Price",
+
 		"tchange10": "Total",
+
 		"tchange11": "Date",
+
 		"tchange12": "Status",
+
 		"tchange13": "Seller",
+
 		"tchange14": "Price Each",
+
 		"tchange15": "Clear Form",
+
 		"tchange16": "You have",
+
 		"tchange17": "Action",
+
 		"tchange18": "BUY",
+
 		"tchange19": "SELL",
+
 		"tchange20": "Failed to Create Trade. Try again!",
+
 		"tchange21": "Failed to Create Trade. Error Code",
+
 		"tchange22": "Insufficient Funds!",
+
 		"tchange23": "Buy Request Successful!",
+
 		"tchange24": "Buy Request Existing!",
+
 		"tchange25": "Failed to Create Trade. Error Code",
+
 		"tchange26": "Trade Cancelling In Progress!",
+
 		"tchange27": "Failed to Cancel Trade. Try again!",
+
 		"tchange28": "Failed to Cancel Trade. Error Code",
+
 		"tchange29": "CANCEL",
+
 		"tchange30": "Failed to Fetch Balance. Try again!",
+
 		"tchange31": "SOLD",
+
 		"tchange32": "BOUGHT",
+
 		"tchange33": "Average",
+
 		"tchange34": "Amount can not be 0",
+
 		"tchange35": "Price can not be 0",
+
 		"tchange36": "PENDING AUTO BUY",
+
 		"tchange37": "No auto buy order found !",
+
 		"tchange38": "ADD",
+
 		"tchange39": "AUTO BUY ORDER",
+
 		"tchange40": "Price",
+
 		"tchange41": "Successfully removed auto buy order!",
+
 		"tchange42": "MARKET OPEN SELL ORDERS",
+
 		"tchange43": "MY BUY HISTORY",
+
 		"tchange44": "Successfully added auto buy order!",
+
 		"tchange45": "AUTO BUY WITH",
+
 		"tchange46": "AUTO BUY",
+
 		"tchange47": "Sell for this price",
+
 		"tchange48": "NOT ENOUGH",
+
 		"tchange49": "Price Chart"
+
 	},
+
 	"rewardsharepage": {
+
 		"rchange1": "Rewardshares",
+
 		"rchange2": "Create reward share",
+
 		"rchange3": "Rewardshares Involving In This Account",
+
 		"rchange4": "Minting Account",
+
 		"rchange5": "Share Percent",
+
 		"rchange6": "Recipient",
+
 		"rchange7": "Action",
+
 		"rchange8": "Type",
+
 		"rchange9": "Level 1 - 4 can create a Self Share and Level 5 or above can create a Reward Share!",
+
 		"rchange10": "Recipient Public Key",
+
 		"rchange11": "Reward share percentage",
+
 		"rchange12": "Doing something delicious",
+
 		"rchange13": "Adding minting account",
+
 		"rchange14": "Add",
+
 		"rchange15": "Account is not involved in any reward shares",
+
 		"rchange16": "Own Rewardshare",
+
 		"rchange17": "Remove",
+
 		"rchange18": "Cannot Create Multiple Reward Shares!",
+
 		"rchange19": "Cannot Create Multiple Self Shares!",
+
 		"rchange20": "CANNOT CREATE REWARD SHARE! at level",
+
 		"rchange21": "Reward Share Successful!",
+
 		"rchange22": "Reward Share Removed Successfully!"
+
 	},
+
 	"registernamepage": {
+
 		"nchange1": "Name Registration",
+
 		"nchange2": "Register Name",
+
 		"nchange3": "Registered Names",
+
 		"nchange4": "Avatar",
+
 		"nchange5": "Name",
+
 		"nchange6": "Owner",
+
 		"nchange7": "Action",
+
 		"nchange8": "No names registered by this account!",
+
 		"nchange9": "Register a Name!",
+
 		"nchange10": "Description (optional)",
+
 		"nchange11": "Doing something delicious",
+
 		"nchange12": "Registering Name",
+
 		"nchange13": "The current name registration fee is",
+
 		"nchange14": "Register",
+
 		"nchange15": "Set Avatar",
+
 		"nchange16": "Need Core Update",
+
 		"nchange17": "Name Already Exists!",
+
 		"nchange18": "Name Registration Successful!",
+
 		"nchange19": "Sell Name",
+
 		"nchange20": "Cancel Sell",
+
 		"nchange21": "Buy Name",
+
 		"nchange22": "Names Market",
+
 		"nchange23": "Sell Price",
+
 		"nchange24": "No Names To Sell",
+
 		"nchange25": "Name To Sell",
+
 		"nchange26": "Are you sure to sell this name ?",
+
 		"nchange27": "For this price in QORT",
+
 		"nchange28": "On pressing confirm, the sell name request will be sent!",
+
 		"nchange29": "Name To Cancel",
+
 		"nchange30": "Are you sure to cancel the sell for this name ?",
+
 		"nchange31": "On pressing confirm, the cancel sell name request will be sent!",
+
 		"nchange32": "Sell Name Request Successful!",
+
 		"nchange33": "Cancel Sell Name Request Successful!",
+
 		"nchange34": "Buy Name Request Successful!",
+
 		"nchange35": "YOU HAVE A NAME!",
+
 		"nchange36": "Only accounts with no registered name can buy a name.",
+
 		"nchange37": "ATTENTION!",
+
 		"nchange38": "You not have enough qort to buy this name.",
+
 		"nchange39": "Are you sure to buy this name ?",
+
 		"nchange40": "On pressing confirm, the buy name request will be sent!",
+
 		"nchange41": "Old Name",
+
 		"nchange42": "New Name",
+
 		"nchange43": "Are you sure to change this name ?",
+
 		"nchange44": "To the new name",
+
 		"nchange45": "On pressing confirm, the name update request will be sent!",
+
 		"nchange46": "Name Sale History",
+
 		"nchange47": "Name Update Successful!"
+
 	},
+
 	"websitespage": {
+
 		"schange1": "Browse Websites",
+
 		"schange2": "Followed Websites",
+
 		"schange3": "Blocked Websites",
+
 		"schange4": "Search Websites",
+
 		"schange5": "Avatar",
+
 		"schange6": "Details",
+
 		"schange7": "Published by",
+
 		"schange8": "Actions",
+
 		"schange9": "Websites",
+
 		"schange10": "No websites available",
+
 		"schange11": "Your Followed Websites",
+
 		"schange12": "Followed Websites",
+
 		"schange13": "You aren't following any websites",
+
 		"schange14": "Your Blocked Websites",
+
 		"schange15": "Blocked Websites",
+
 		"schange16": "You have not blocked any websites",
+
 		"schange17": "Name Not Found!",
+
 		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+
 		"schange19": "in",
+
 		"schange20": "Relay mode is disabled. You can enable it by setting",
+
 		"schange21": "Publish Website",
+
 		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+
 		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+
 		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+
 		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+
 		"schange26": "Uncategorized",
+
 		"schange27": "Size",
+
 		"schange28": "Status",
+
 		"schange29": "Follow",
+
 		"schange30": "Unfollow",
+
 		"schange31": "Block",
+
 		"schange32": "Unblock",
+
 		"schange33": "Name to search",
+
 		"schange34": "Name can not be empty!",
+
 		"schange35": "Search"
+
 	},
+
 	"appspage": {
+
 		"schange1": "Browse Q-Apps",
+
 		"schange2": "Followed Q-Apps",
+
 		"schange3": "Blocked Q-Apps",
+
 		"schange4": "Search Q-Apps",
+
 		"schange5": "Avatar",
+
 		"schange6": "Details",
+
 		"schange7": "Published by",
+
 		"schange8": "Actions",
+
 		"schange9": "Q-Apps",
+
 		"schange10": "No q-apps available",
+
 		"schange11": "Your Followed Q-Apps",
+
 		"schange12": "Followed Q-Apps",
+
 		"schange13": "You aren't following any q-apps",
+
 		"schange14": "Your Blocked Q-Apps",
+
 		"schange15": "Blocked Q-Apps",
+
 		"schange16": "You have not blocked any q-apps",
+
 		"schange17": "Name Not Found!",
+
 		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+
 		"schange19": "in",
+
 		"schange20": "Relay mode is disabled. You can enable it by setting",
+
 		"schange21": "Publish Q-App",
+
 		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+
 		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+
 		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+
 		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+
 		"schange26": "Uncategorized",
+
 		"schange27": "Size",
+
 		"schange28": "Status",
+
 		"schange29": "Follow",
+
 		"schange30": "Unfollow",
+
 		"schange31": "Block",
+
 		"schange32": "Unblock",
+
 		"schange33": "Name to search",
+
 		"schange34": "Name can not be empty!",
+
 		"schange35": "Search",
+
 		"schange36": "Download",
+
 		"schange37": "Downloaded",
+
 		"schange38": "Update",
+
 		"schange39": "Open",
+
 		"schange40": "Preview",
+
 		"schange41": "Downloading please wait...",
+
 		"schange42": "Files downloaded"
+
 	},
+
 	"tubespage": {
+
 		"schange1": "Browse Q-Tubes",
+
 		"schange2": "Followed Q-Tubes",
+
 		"schange3": "Blocked Q-Tubes",
+
 		"schange4": "Search Q-Tubes",
+
 		"schange5": "Cover",
+
 		"schange6": "Details",
+
 		"schange7": "Published by",
+
 		"schange8": "Actions",
+
 		"schange9": "Q-Tubes",
+
 		"schange10": "No q-tubes available",
+
 		"schange11": "Your Followed Q-Tubes",
+
 		"schange12": "Followed Q-Tubes",
+
 		"schange13": "You aren't following any q-tubes",
+
 		"schange14": "Your Blocked Q-Tubes",
+
 		"schange15": "Blocked Q-Tubes",
+
 		"schange16": "You have not blocked any q-tubes",
+
 		"schange17": "Name Not Found!",
+
 		"schange18": "Relay mode is enabled. This means that your node will help to transport encrypted data around the network when a peer requests it. You can opt out by setting",
+
 		"schange19": "in",
+
 		"schange20": "Relay mode is disabled. You can enable it by setting",
+
 		"schange21": "Publish Video",
+
 		"schange22": "Error occurred when trying to follow this registered name. Please try again!",
+
 		"schange23": "Error occurred when trying to unfollow this registered name. Please try again!",
+
 		"schange24": "Error occurred when trying to block this registered name. Please try again!",
+
 		"schange25": "Error occurred when trying to unblock this registered name. Please try again!",
+
 		"schange26": "Uncategorized",
+
 		"schange27": "Size",
+
 		"schange28": "Status",
+
 		"schange29": "Follow",
+
 		"schange30": "Unfollow",
+
 		"schange31": "Block",
+
 		"schange32": "Unblock",
+
 		"schange33": "Name to search",
+
 		"schange34": "Name can not be empty!",
+
 		"schange35": "Search",
+
 		"schange36": "Download",
+
 		"schange37": "Downloaded",
+
 		"schange38": "Update",
+
 		"schange39": "Open",
+
 		"schange40": "Preview",
+
 		"schange41": "Downloading please wait...",
+
 		"schange42": "Files downloaded",
+
 		"schange43": "Open please wait..."
+
 	},
+
 	"publishpage": {
+
 		"pchange1": "Publish",
+
 		"pchange2": "Update",
+
 		"pchange3": "Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.",
+
 		"pchange4": "Select Name",
+
 		"pchange5": "Title",
+
 		"pchange6": "Description",
+
 		"pchange7": "Select Category",
+
 		"pchange8": "Tag",
+
 		"pchange9": "Service",
+
 		"pchange10": "Identifier",
+
 		"pchange11": "Publish",
+
 		"pchange12": "Select zip file containing static content",
+
 		"pchange13": "Local path to static files",
+
 		"pchange14": "Please select a registered name to publish data for",
+
 		"pchange15": "Please select a file to host",
+
 		"pchange16": "Please select a zip file to host",
+
 		"pchange17": "Please enter the directory path containing the static content",
+
 		"pchange18": "Please enter a service name",
+
 		"pchange19": "Processing data... this can take some time...",
+
 		"pchange20": "Error:",
+
 		"pchange21": "Internal Server Error when publishing data",
+
 		"pchange22": "Computing proof of work... this can take some time...",
+
 		"pchange23": "Transaction successful!",
+
 		"pchange24": "Unable to sign and process transaction",
+
 		"pchange25": "Choose File",
+
 		"pchange26": "Uploading data... this can take some time..."
+
 	},
+
 	"browserpage": {
+
 		"bchange1": "Forward",
+
 		"bchange2": "Reload",
+
 		"bchange3": "Back to list",
+
 		"bchange4": "Delete",
+
 		"bchange5": "from node",
+
 		"bchange6": "Your browser doesn't support iframes",
+
 		"bchange7": "Follow",
+
 		"bchange8": "Unfollow",
+
 		"bchange9": "Block",
+
 		"bchange10": "Unblock",
+
 		"bchange11": "Error occurred when trying to follow this registered name. Please try again!",
+
 		"bchange12": "Error occurred when trying to unfollow this registered name. Please try again!",
+
 		"bchange13": "Error occurred when trying to block this registered name. Please try again!",
+
 		"bchange14": "Error occurred when trying to unblock this registered name. Please try again!",
+
 		"bchange15": "Can't delete data from followed names. Please unfollow first.",
+
 		"bchange16": "Error occurred when trying to delete this resource. Please try again!",
+
 		"bchange17": "User declined to share account details",
+
 		"bchange18": "has requested authentication. Would you like to authenticate?",
+
 		"bchange19": "Do you give this application permission to publish to QDN?",
+
 		"bchange20": "Do you give this application permission to get your wallet balance?",
+
 		"bchange21": "Fetch Wallet Failed. Please try again!",
+
 		"bchange22": "Do you give this application permission to send a chat message?",
+
 		"bchange23": "Message Sent!",
+
 		"bchange24": "This shares your QORT address and allows your account to interact with the",
+
 		"bchange25": "No sensitive data is shared.",
+
 		"bchange26": "Always authenticate automatically",
+
 		"bchange27": "Reject",
+
 		"bchange28": "Accept",
+
 		"bchange29": "Instant publish (requires 0.001 QORT fee)",
+
 		"bchange30": "Service",
+
 		"bchange31": "Name",
+
 		"bchange32": "Identifier",
+
 		"bchange33": "Instant publish",
+
 		"bchange34": "Filename",
+
 		"bchange35": "Do you give this application permission to send coins?",
+
 		"bchange36": "Do you want to publish instant to QDN without computing proof-of-work?",
+
 		"bchange37": "Enter Fullscreen",
+
 		"bchange38": "Exit Fullscreen",
+
 		"bchange39": "Always allow lists to be retrieved automatically",
+
 		"bchange40": "List",
+
 		"bchange41": "Do you give this application permission to access this list?",
+
 		"bchange42": "Items",
+
 		"bchange43": "Do you give this application permission to add to this list?",
+
 		"bchange44": "Do you give this application permission to delete from this list?",
+
 		"bchange45": "Encrypt",
+
 		"bchange46": "Do you give this application permission to save the following file"
+
 	},
+
 	"datapage": {
+
 		"dchange1": "Data Management",
+
 		"dchange2": "Search in hosted data by this node",
+
 		"dchange3": "Data to search",
+
 		"dchange4": "Search",
+
 		"dchange5": "Registered Name",
+
 		"dchange6": "Service",
+
 		"dchange7": "Identifier",
+
 		"dchange8": "Actions",
+
 		"dchange9": "Data hosted by this node",
+
 		"dchange10": "Data name can not be empty!",
+
 		"dchange11": "Data not found!",
+
 		"dchange12": "Couldn't fetch hosted data list from node",
+
 		"dchange13": "This node isn't hosting any data",
+
 		"dchange14": "Unfollow",
+
 		"dchange15": "Delete",
+
 		"dchange16": "Block",
+
 		"dchange17": "Unblock",
+
 		"dchange18": "Error occurred when trying to block this registered name. Please try again!",
+
 		"dchange19": "Error occurred when trying to unfollow this registered name. Please try again!",
+
 		"dchange20": "Error occurred when trying to unblock this registered name. Please try again!",
+
 		"dchange21": "Error occurred when trying to delete this resource. Please try again!"
+
 	},
+
 	"chatpage": {
+
 		"cchange1": "New Private Message",
+
 		"cchange2": "Loading...",
+
 		"cchange3": "Blocked Users",
+
 		"cchange4": "New Message",
+
 		"cchange5": "(Click to scroll down)",
+
 		"cchange6": "Type the name or address of who you want to chat with to send a private message! You can validate the person's name by clicking on the book icon.",
+
 		"cchange7": "Username / Address",
+
 		"cchange8": "Message...",
+
 		"cchange9": "Send",
+
 		"cchange10": "Blocked Users List",
+
 		"cchange11": "Name",
+
 		"cchange12": "Owner",
+
 		"cchange13": "Action",
+
 		"cchange14": "This account has not blocked any users.",
+
 		"cchange15": "No registered name",
+
 		"cchange16": "Successfully unblocked this user.",
+
 		"cchange17": "Error occurred when trying to unblock this user. Please try again!",
+
 		"cchange18": "unblock",
+
 		"cchange19": "Invalid Username / Address, Check the name / address and retry...",
+
 		"cchange20": "Message Sent Successfully!",
+
 		"cchange21": "Sending failed, Please retry...",
+
 		"cchange22": "Loading Messages...",
+
 		"cchange23": "Cannot Decrypt Message!",
+
 		"cchange24": "Maximum Characters per message is 255",
+
 		"cchange25": "Edit Message",
+
 		"cchange26": "File size exceeds 0.5 MB",
+
 		"cchange27": "A registered name is required to send images",
+
 		"cchange28": "This file is not an image",
+
 		"cchange29": "Maximum message size is 1000 bytes",
+
 		"cchange30": "Uploading image. This may take up to one minute.",
+
 		"cchange31": "Deleting image. This may take up to one minute.",
+
 		"cchange33": "Cancel",
+
 		"cchange34": "This chat message is using an older message version and cannot use this feature.",
+
 		"cchange35": "Error when trying to fetch the user's name. Please try again!",
+
 		"cchange36": "Search Results",
+
 		"cchange37": "No Results Found",
+
 		"cchange38": "User Verified",
+
 		"cchange39": "Cannot send an encrypted message to this user since they do not have their publickey on chain.",
+
 		"cchange40": "IMAGE (click to view)",
+
 		"cchange41": "Your Balance Is Under 4 QORT",
+
 		"cchange42": "Out of the need to combat spam, accounts with under 4 QORT balance will take a long time to SEND messages in Q-Chat. If you wish to immediately increase the send speed for Q-Chat messages, obtain over 4 QORT to your address. This can be done with trades in the Trade Portal, or by way of another Qortian giving you the QORT. Once you have over 4 QORT in your account, Q-Chat messages will be instant and this dialog will no more show. Thank you for your understanding of this necessary spam prevention method, and we hope you enjoy Qortal!",
+
 		"cchange43": "Tip QORT to",
+
 		"cchange44": "SEND MESSAGE",
+
 		"cchange45": "TIP USER",
+
 		"cchange46": "Tip Amount",
+
 		"cchange47": "Available Balance",
+
 		"cchange48": "Failed to Fetch QORT Balance. Try again!",
+
 		"cchange49": "Current static fee",
+
 		"cchange50": "Send",
+
 		"cchange51": "Insufficient Funds!",
+
 		"cchange52": "Invalid Amount!",
+
 		"cchange53": "Receiver cannot be empty!",
+
 		"cchange54": "Invalid Receiver!",
+
 		"cchange55": "Transaction Successful!",
+
 		"cchange56": "Transaction Failed!",
+
 		"cchange57": "User Info",
+
 		"cchange58": "SEND MESSAGE",
+
 		"cchange59": "TIP USER",
+
 		"cchange60": "Group Invites Pending",
+
 		"cchange61": "Error when fetching group invites. Please try again!",
+
 		"cchange62": "Wrong Username and Address Inputted! Please try again!",
+
 		"cchange63": "Enter Enabled",
+
 		"cchange64": "Enter Disabled",
+
 		"cchange65": "Please enter a recipient",
+
 		"cchange66": "Cannot fetch replied-to message. Message is too old.",
+
 		"cchange68": "edited",
+
 		"cchange69": "Auto-view images",
+
 		"cchange70": "This image type is not supported",
+
 		"cchange71": "and",
+
 		"cchange72": "other",
+
 		"cchange73": "s",
+
 		"cchange74": "reacted with",
+
 		"cchange75": "Uploading attachment. This may take up to one minute.",
+
 		"cchange76": "Deleting attachment. This may take up to one minute.",
+
 		"cchange77": "Attachment size exceeds 1 MB",
+
 		"cchange78": "Are you sure you want to delete this image?",
+
 		"cchange79": "Are you sure you want to delete this attachment?",
+
 		"cchange80": "This image has been deleted",
+
 		"cchange81": "This image type is not supported",
+
 		"cchange82": "This attachment has been deleted",
+
 		"cchange90": "No messages"
+
 	},
+
 	"welcomepage": {
+
 		"wcchange1": "Welcome to Q-Chat",
+
 		"wcchange2": "New Private Message",
+
 		"wcchange3": "Type the name or address of who you want to chat with to send a private message!",
+
 		"wcchange4": "Name / Address",
+
 		"wcchange5": "Message...",
+
 		"wcchange6": "Send",
+
 		"wcchange7": "Invalid Name / Address, Check the name / address and retry...",
+
 		"wcchange8": "Message Sent Successfully!",
+
 		"wcchange9": "Sending failed, Please retry..."
+
 	},
+
 	"blockpage": {
+
 		"bcchange1": "Block User",
+
 		"bcchange2": "Successfully blocked this user!",
+
 		"bcchange3": "Error occurred when trying to block this user. Please try again!",
+
 		"bcchange4": "No registered name",
+
 		"bcchange5": "Block User Request",
+
 		"bcchange6": "Are you sure to block this user ?",
+
 		"bcchange7": "MENU",
+
 		"bcchange8": "Copy Address",
+
 		"bcchange9": "Private Message",
+
 		"bcchange10": "More",
+
 		"bcchange11": "Reply",
+
 		"bcchange12": "Edit",
+
 		"bcchange13": "Reaction",
+
 		"bcchange14": "Forward",
+
 		"bcchange15": "Message Forwarded",
+
 		"bcchange16": "Choose Recipient or Search for One Below",
+
 		"bcchange17": "FORWARDED",
+
 		"bcchange18": "Tip User"
+
 	},
+
 	"grouppage": {
+
 		"gchange1": "Qortal Groups",
+
 		"gchange2": "Create Group",
+
 		"gchange3": "Your Joined Groups",
+
 		"gchange4": "Group Name",
+
 		"gchange5": "Description",
+
 		"gchange6": "Role",
+
 		"gchange7": "Action",
+
 		"gchange8": "Not a member of any group!",
+
 		"gchange9": "Public Groups",
+
 		"gchange10": "Owner",
+
 		"gchange11": "No Open Public Groups available!",
+
 		"gchange12": "Create a New Group",
+
 		"gchange13": "Group Type",
+
 		"gchange14": "This Field is Required",
+
 		"gchange15": "Select an option",
+
 		"gchange16": "Public",
+
 		"gchange17": "Private",
+
 		"gchange18": "Group Approval Threshold (number / percentage of Admins that must approve a transaction):",
+
 		"gchange19": "NONE",
+
 		"gchange20": "ONE",
+
 		"gchange21": "Minimum Block delay for Group Transaction Approvals:",
+
 		"gchange22": "minutes",
+
 		"gchange23": "hour",
+
 		"gchange24": "hours",
+
 		"gchange25": "day",
+
 		"gchange26": "days",
+
 		"gchange27": "Maximum Block delay for Group Transaction Approvals:",
+
 		"gchange28": "Creating Group",
+
 		"gchange29": "Create Group",
+
 		"gchange30": "Join Group Request",
+
 		"gchange31": "Date Created",
+
 		"gchange32": "Date Updated",
+
 		"gchange33": "Joining",
+
 		"gchange34": "Join Group",
+
 		"gchange35": "Leave Group Request",
+
 		"gchange36": "Leaving",
+
 		"gchange37": "Leave Group",
+
 		"gchange38": "Manage Group Owner:",
+
 		"gchange39": "Manage Group Admin:",
+
 		"gchange40": "Manage Group",
+
 		"gchange41": "Group Creation Successful!",
+
 		"gchange42": "Invalid Group Name",
+
 		"gchange43": "Invalid Group Description",
+
 		"gchange44": "Select a Group Typ",
+
 		"gchange45": "Select a Group Approval Threshold",
+
 		"gchange46": "Select a Minimum Block delay for Group Transaction Approvals",
+
 		"gchange47": "Select a Maximum Block delay for Group Transaction Approvals",
+
 		"gchange48": "Join Group Request Sent Successfully!",
+
 		"gchange49": "Leave Group Request Sent Successfully!",
+
 		"gchange50": "Leave",
+
 		"gchange51": "Join",
+
 		"gchange52": "Admin",
+
 		"gchange53": "Member",
+
 		"gchange54": "Members",
+
 		"gchange55": "Search Private Group",
+
 		"gchange56": "Group Name To Search",
+
 		"gchange57": "Private Group Name Not Found",
+
 		"gchange58": "Note that group name must exact match.",
+
 		"gchange59": "Show / Hide Ticker"
+
 	},
+
 	"puzzlepage": {
+
 		"pchange1": "Puzzles",
+
 		"pchange2": "Reward",
+
 		"pchange3": "SOLVED by",
+
 		"pchange4": "Name",
+
 		"pchange5": "Description",
+
 		"pchange6": "Clue / Answer",
+
 		"pchange7": "Action",
+
 		"pchange8": "Guess",
+
 		"pchange9": "Enter your guess to solve this puzzle and win",
+
 		"pchange10": "Your guess needs to be 43 or 44 characters and",
+
 		"pchange11": "not",
+
 		"pchange12": "include 0 (zero), I (upper i), O (upper o) or l (lower L).",
+
 		"pchange13": "Your Guess",
+
 		"pchange14": "Checking your guess...",
+
 		"pchange15": "Submit",
+
 		"pchange16": "Guess incorrect!",
+
 		"pchange17": "Reward claim submitted - check wallet for reward!"
+
 	},
+
 	"nodepage": {
+
 		"nchange1": "Node management for:",
+
 		"nchange2": "Node has been online for:",
+
 		"nchange3": "Node's minting accounts",
+
 		"nchange4": "Add minting account",
+
 		"nchange5": "If you would like to mint with your own account you will need to create a rewardshare transaction to yourself (with rewardshare percent set to 0), and then mint with the rewardshare key it gives you.",
+
 		"nchange6": "Rewardshare key",
+
 		"nchange7": "Adding minting account",
+
 		"nchange8": "Add",
+
 		"nchange9": "Minting Account",
+
 		"nchange10": "Recipient Account",
+
 		"nchange11": "Action",
+
 		"nchange12": "Remove",
+
 		"nchange13": "No minting accounts found for this node",
+
 		"nchange14": "Peers connected to this node",
+
 		"nchange15": "Add peer",
+
 		"nchange16": "Type the peer you wish to add's address below",
+
 		"nchange17": "Peer Address",
+
 		"nchange18": "Address",
+
 		"nchange19": "Last Height",
+
 		"nchange20": "Build Version",
+
 		"nchange21": "Connected for",
+
 		"nchange22": "Action",
+
 		"nchange23": "Force Sync",
+
 		"nchange24": "Node has no connected peers",
+
 		"nchange25": "Starting Sync with Peer: ",
+
 		"nchange26": "Successfully removed Peer: ",
+
 		"nchange27": "Minting Node Added Successfully!",
+
 		"nchange28": "Failed to Add Minting Node!",
+
 		"nchange29": "Successfully Removed Minting Account!",
+
 		"nchange30": "Failed to Remove Minting Account!",
+
 		"nchange31": "Stop Node",
+
 		"nchange32": "Successfully Sent Stop Request!"
+
 	},
+
 	"transpage": {
+
 		"tchange1": "Transaction request",
+
 		"tchange2": "Decline",
+
 		"tchange3": "Confirm",
+
 		"tchange4": "To",
+
 		"tchange5": "Amount"
+
 	},
+
 	"apipage": {
+
 		"achange1": "Add API key",
+
 		"achange2": "API key",
+
 		"achange3": "Please enter the API key for this node. It can be found in a file called “apikey.txt“ in the directory where the core is installed. Alternatively, click Cancel to use the core with reduced functionality.",
+
 		"achange4": "Cancel",
+
 		"achange5": "Add",
+
 		"achange6": "Successfully added API Key",
+
 		"achange7": "API key wrong, no API key added"
+
 	},
+
 	"transactions": {
+
 		"amount": "Amount",
+
 		"to": "To",
+
 		"declined": "User declined transaction!",
+
 		"namedialog1": "You are registering the name below:",
+
 		"namedialog2": "On pressing confirm, the name will be registered!",
+
 		"groupdialog1": "You are requesting to join the group below:",
+
 		"groupdialog2": "On pressing confirm, the group join request will be sent!",
+
 		"groupdialog3": "You are requesting to leave the group below:",
+
 		"groupdialog4": "On pressing confirm, the leave group request will be sent!",
+
 		"groupdialog5": "You are requesting to creating the group below:",
+
 		"groupdialog6": "On pressing confirm, the group creating request will be sent!",
+
 		"rewarddialog1": "Would you like to create a reward share transaction, sharing",
+
 		"rewarddialog2": "of your minting rewards with",
+
 		"rewarddialog3": "If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.",
+
 		"rewarddialog4": "On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.",
+
 		"rewarddialog5": "You are removing a reward share transaction associated with account:",
+
 		"rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
+
 	},
+
 	"sponsorshipspage": {
+
 		"schange1": "Active Sponsorships",
+
 		"schange2": "Account Address",
+
 		"schange3": "Total Sponsorships active",
+
 		"schange4": "Next sponsorship ending in",
+
 		"schange5": "Sponsor New Minter",
+
 		"schange6": "Finished Sponsorships",
+
 		"schange7": "Completed",
+
 		"schange8": "Addresses",
+
 		"schange9": "You currently have no active sponsorships",
+
 		"schange10": "Public Key Lookup",
+
 		"schange11": "Copy",
+
 		"schange12": "Address to Public Key Converter",
+
 		"schange13": "Enter address",
+
 		"schange14": "In progress",
+
 		"schange15": "Finishing up",
+
 		"schange16": "Copy the key below and share it with your sponsored person.",
+
 		"schange17": "Copied to clipboard",
+
 		"schange18": "Warning: do not leave this plugin or close the Qortal UI until completion!",
+
 		"schange19": "Copy Sponsorship Key",
+
 		"schange20": "Creating relationship",
+
 		"schange21": "Remove Sponsorship Key"
+
 	},
+
 	"explorerpage": {
+
 		"exp1": "Address or name to search",
+
 		"exp2": "Account Balance",
+
 		"exp3": "More Info",
+
 		"exp4": "Address or Name not found !",
+
 		"exp5": "Note that registered names are case-sensitive.",
+
 		"exp6": "Founder",
+
 		"exp7": "Info",
+
 		"exp8": "Show all buy trades",
+
 		"exp9": "Show all sell trades",
+
 		"exp10": "BUY HISTORY",
+
 		"exp11": "SELL HISTORY",
+
 		"exp12": "No buy trades made yet.",
+
 		"exp13": "No sell trades made yet.",
+
 		"exp14": "Show complete info",
+
 		"exp15": "Minting Since",
+
 		"exp16": "Not Minting",
+
 		"exp17": "ALL PAYMENTS",
+
 		"exp18": "Payments",
+
 		"exp19": "Sent",
+
 		"exp20": "Received",
+
 		"exp21": "Trades"
+
 	},
+
 	"managegroup": {
+
 		"mg1": "Group Members",
+
 		"mg2": "Invite To Group",
+
 		"mg3": "Group Admins",
+
 		"mg4": "Update Group",
+
 		"mg5": "Close Manage Group",
+
 		"mg6": "BAN",
+
 		"mg7": "KICK",
+
 		"mg8": "Group ID",
+
 		"mg9": "Joined",
+
 		"mg10": "Add Group Admin",
+
 		"mg11": "Are you sure to add this member to admins ?",
+
 		"mg12": "On pressing confirm, add admin request will be sent!",
+
 		"mg13": "Remove Group Admin",
+
 		"mg14": "Remove Admin Address",
+
 		"mg15": "Are you sure to remove this member from admins ?",
+
 		"mg16": "On pressing confirm, remove admin request will be sent!",
+
 		"mg17": "Ban Member From Group",
+
 		"mg18": "Member Name",
+
 		"mg19": "Member Address",
+
 		"mg20": "How Long To Ban",
+
 		"mg21": "Reason For Ban",
+
 		"mg22": "Are you sure to ban this member from the group ?",
+
 		"mg23": "On pressing confirm, the ban request will be sent!",
+
 		"mg24": "FOREVER",
+
 		"mg25": "Banned Members",
+
 		"mg26": "CANCEL BAN",
+
 		"mg27": "Ban Expiry",
+
 		"mg28": "Cancel Ban Member From Group",
+
 		"mg29": "Are you sure to cancel the ban for this member from the group ?",
+
 		"mg30": "On pressing confirm, the cancel ban request will be sent!",
+
 		"mg31": "Kick Member From Group",
+
 		"mg32": "Reason For Kick",
+
 		"mg33": "Are you sure to kick this member from the group ?",
+
 		"mg34": "On pressing confirm, the kick request will be sent!",
+
 		"mg35": "No Open Group Invites",
+
 		"mg36": "Your Open Group Invites",
+
 		"mg37": "Address or name to invite",
+
 		"mg38": "Invite Expiry Time",
+
 		"mg39": "All Fields Are Required",
+
 		"mg40": "Are you sure to invite this member to the group ?",
+
 		"mg41": "On pressing confirm, the invite request will be sent!",
+
 		"mg42": "Group Type",
+
 		"mg43": "Invite Expiry",
+
 		"mg44": "Public Group",
+
 		"mg45": "Private Group",
+
 		"mg46": "Cancel Invite",
+
 		"mg47": "Cancel Invite To Group",
+
 		"mg48": "Are you sure to cancel the invite for this member ?",
+
 		"mg49": "On pressing confirm, the cancel invite request will be sent!",
+
 		"mg50": "Coming Soon...",
+
 		"mg51": "Minimum 3 Characters / Maximum 32 Characters",
+
 		"mg52": "Maximum 128 Characters",
+
 		"mg53": "Your Open Join Requests",
+
 		"mg54": "No Open Join Requests",
+
 		"mg55": "Are you sure to accept the join request from this member ?",
+
 		"mg56": "On pressing confirm, the accept join request will be sent!",
+
 		"mg57": "Join Request Successfully Accepted",
+
 		"mg58": "SOMETHING WENT WRONG",
+
 		"mg59": "Cancel Join Request Successfully Accepted",
+
 		"mg60": "Are you sure to cancel the join request from this member ?",
+
 		"mg61": "On pressing confirm, the cancel join request will be sent!"
+
 	},
+
 	"info": {
+
 		"inf1": "Trade Portal Information",
+
 		"inf2": "Close Trade Portal Info",
+
 		"inf3": "This is a market to BUY QORT with",
+
 		"inf4": "- 'open market sells' are QORT SELL ORDERS.",
+
 		"inf5": "You can only buy ONE order at a time simply click an order that you wish to buy with",
+
 		"inf6": "and it will populate the 'BUY QORT' box with the details, then click BUY.",
+
 		"inf7": "Auto Buy Information",
+
 		"inf8": "Close Auto Buy Info",
+
 		"inf9": "'Auto Buy' is a feature that allows 'buy orders' to be placed on the Trade Portal. These 'buy orders' are only visible by the person placing them. They are not 'public' buy orders like the 'open market sells' are, and are NOT stored on the Qortal blockchain. Auto Buy is a UI feature, and as such requires that the UI is RUNNING.",
+
 		"inf10": "To place an Auto Buy order click 'Add Auto Buy Order' button and fill out the box that comes up. Input the AMOUNT OF QORT you wish to BUY, and the PRICE you are willing to BUY UP TO. Once the order is active, Auto Buy will buy UP TO that amount of QORT for you, at UP TO the price you set (starting at the lowest order and moving up the books.)",
+
 		"inf11": "Simply LEAVE YOUR UI RUNNING and Auto Buy does the rest, automatically!",
+
 		"inf12": "You CAN browse other plugins in the UI (Q-Chat, wallets, etc.) but you CANNOT CLOSE THE UI if you want your Auto Buy to complete. Leaving the UI 'minimized' on the 'taskbar' or 'panel' is just fine, as long as the UI remains OPEN Auto Buy will function.",
+
 		"inf13": "Automatically buy",
+
 		"inf14": "with",
+
 		"inf15": "Active Auto Buy Orders",
+
 		"inf16": "Auto Buy"
+
 	}
+
 }

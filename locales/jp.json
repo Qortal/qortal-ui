@@ -1,0 +1,73 @@
+{
+
+  "__locale_name__": "Japanese",
+
+  "electron_translate_1": "Show Qortal UI",
+
+  "electron_translate_2": "Quit",
+
+  "electron_translate_3": "Update available",
+
+  "electron_translate_4": "A new Qortal UI version is available. You want to download it ?",
+
+  "electron_translate_5": "INSTALL NOW",
+
+  "electron_translate_6": "MAYBE LATER",
+
+  "electron_translate_7": "Update ready to install",
+
+  "electron_translate_8": "A new Qortal UI version has been downloaded.",
+
+  "electron_translate_9": "Click INSTALL NOW to apply update, MAYBE LATER to not update the UI.",
+
+  "electron_translate_10": "Temporary update failure, will try again later",
+
+  "electron_translate_11": "DOWNLOAD UPDATE",
+
+  "electron_translate_12": "It will be downloaded ⌛️ in the background!",
+
+  "electron_translate_13": "START QORTAL CORE",
+
+  "electron_translate_14": "NO THANKS",
+
+  "electron_translate_15": "Qortal Core is NOT running on this system",
+
+  "electron_translate_16": "Qortal UI has detected that Qortal Core is NOT running on this system",
+
+  "electron_translate_17": "Click START QORTAL CORE to start the Qortal Core on this system OR click NO THANKS to skip starting on this system",
+
+  "electron_translate_18": "DOWNLOAD QORTAL CORE",
+
+  "electron_translate_19": "NO THANKS",
+
+  "electron_translate_20": "Qortal Core is NOT detected",
+
+  "electron_translate_21": "Qortal UI has detected that Qortal Core is NOT installed ( in default location ) on this system.",
+
+  "electron_translate_22": "Click DOWNLOAD QORTAL CORE to download and install the core ( to default location ) OR click NO THANKS to skip download and install.",
+
+  "electron_translate_23": "DOWNLOAD JAVA",
+
+  "electron_translate_24": "NO THANKS",
+
+  "electron_translate_25": "Java is not installed.",
+
+  "electron_translate_26": "Qortal UI has detected that java is not installed on your system.",
+
+  "electron_translate_27": "Click on DOWNLOAD JAVA to download and install java or on NO THANKS to not download and install it.",
+
+  "electron_translate_28": "Never ask me again",
+
+  "electron_translate_29": "CHANGE SETTING",
+
+  "electron_translate_30": "CANCEL",
+
+  "electron_translate_31": "Start Core Settings",
+
+  "electron_translate_32": "Change the current status of asking to start the core if it is not running",
+
+  "electron_translate_33": "(Check or Uncheck the never ask me again checkbox)",
+
+  "electron_translate_34": "Settings"
+
+}
