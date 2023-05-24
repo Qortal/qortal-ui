@@ -576,7 +576,7 @@
 	"publishpage": {
 		"pchange1": "Publish",
 		"pchange2": "Update",
-		"pchange3": "Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily accessed by peers on the network.",
+		"pchange3": "Note: it is recommended that you set up port forwarding before hosting data, so that it can more easily be accessed by peers on the network.",
 		"pchange4": "Select Name",
 		"pchange5": "Title",
 		"pchange6": "Description",
