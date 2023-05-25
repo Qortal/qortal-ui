@@ -31,20 +31,21 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 
 Adding via binary package mirror will only work if you have set the package path. You can do a node or java build via ports instead by downloading ports with portsnap fetch method.
 
-Verify your installtion with node --version <br/>
-- ``` If you have an older installation of npm, please do not forget to update that with npm update -g. ```
+Verify your installation with ``` node --version ``` <br/>
+ - If you have an older installation of npm, please do not forget to update that with ``` npm update -g ```
 
 Clone the main UI repo
  - ``` git clone https://github.com/Qortal/qortal-ui.git ```
 
 Installation
 ------------------------
- In `qortal-ui/` npm install
-
+In `qortal-ui` directory, run:
+```
+npm install
+```
 
 Build UI server and files
 -------------------------
-In `qortal-ui` directory, run:
 ```
 npm run build
 ```
