@@ -479,16 +479,12 @@ class QApps extends LitElement {
                                     render(html`${this.renderPublishedBy(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
                                     render(html`${this.renderDownload(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderFollowUnfollowButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -521,16 +517,8 @@ class QApps extends LitElement {
                                     render(html`${this.renderPublishedBy(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderDownload(data.item)}`, root)
-                                }}>
-                                </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
-                                <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderBlockUnblockButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -666,9 +654,25 @@ class QApps extends LitElement {
         const tabBrowseContent = this.shadowRoot.getElementById('tab-browse-content')
         const tabFollowedContent = this.shadowRoot.getElementById('tab-followed-content')
         const tabBlockedContent = this.shadowRoot.getElementById('tab-blocked-content')
-        tabBrowseContent.style.display = (tab === 'browse') ? 'block' : 'none'
-        tabFollowedContent.style.display = (tab === 'followed') ? 'block' : 'none'
-        tabBlockedContent.style.display = (tab === 'blocked') ? 'block' : 'none'
+        if (tab === 'browse') {
+            this.refreshapps()
+            tabBrowseContent.style.display = 'block'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'followed') {
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'block'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'blocked') {
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'block'
+        } else {
+        }
     }
 
     searchListener(e) {
@@ -936,6 +940,8 @@ class QApps extends LitElement {
                 this.textProgress = ''
                 this.shadowRoot.getElementById('downloadProgressDialog').close()
                 this.getData(0)
+                this.getFollowedNamesRefresh()
+                this.getFollowedNamesResource()
                 this.updateComplete.then(() => this.requestUpdate())
             } else if (status.id === "BUILDING") {
                 this.btnDisabled = true
@@ -1003,8 +1009,6 @@ class QApps extends LitElement {
             this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("appspage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
@@ -1030,12 +1034,35 @@ class QApps extends LitElement {
 
         if (ret === true) {
             this.followedNames = this.followedNames.filter(item => item != name)
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("appspage.schange23")
+            parentEpml.request('showSnackBar', `${err4string}`)
+        }
+        return ret
+    }
+
+    async unfollowNameTab(appObj) {
+        let name = appObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.followedNames = this.followedNames.filter(item => item != name)
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
+        } else {
+            let err4string = get("websitespage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
         }
         return ret
@@ -1060,10 +1087,6 @@ class QApps extends LitElement {
         if (ret === true) {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("appspage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
@@ -1089,12 +1112,35 @@ class QApps extends LitElement {
 
         if (ret === true) {
             this.blockedNames = this.blockedNames.filter(item => item != name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("appspage.schange25")
+            parentEpml.request('showSnackBar', `${err6string}`)
+        }
+        return ret
+    }
+
+    async unblockNameTab(appObj) {
+        let name = appObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.blockedNames = this.blockedNames.filter(item => item != name)
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
+        } else {
+            let err6string = get("websitespage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
         }
         return ret
@@ -1165,6 +1211,21 @@ class QApps extends LitElement {
         }
     }
 
+    renderFollowUnfollowButtonTab(appObj) {
+        let name = appObj.name
+
+        if (this.followedNames == null || !Array.isArray(this.followedNames)) {
+            return html``
+        }
+
+        if (this.followedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.followNameTab(appObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;${translate("appspage.schange29")}</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.unfollowNameTab(appObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("appspage.schange30")}</mwc-button>`
+        }
+    }
+
     renderBlockUnblockButton(appObj) {
         let name = appObj.name
 
@@ -1176,6 +1237,24 @@ class QApps extends LitElement {
             return html`<mwc-button @click=${() => this.blockName(appObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("appspage.schange31")}</mwc-button>`
         } else {
             return html`<mwc-button @click=${() => this.unblockName(appObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("appspage.schange32")}</mwc-button>`
+        }
+    }
+
+    renderBlockUnblockButtonTab(appObj) {
+        let name = appObj.name
+
+        // Only show the block/unblock button if we have permission to modify the list on this node
+        if (this.blockedNames == null || !Array.isArray(this.blockedNames)) {
+            return html``
+        }
+
+        if (this.blockedNames.indexOf(name) === -1) {
+            // render block button
+            return html`<mwc-button @click=${() => this.blockNameTab(websiteObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("appspage.schange31")}</mwc-button>`
+        }
+        else {
+            // render unblock button
+            return html`<mwc-button @click=${() => this.unblockNameTab(websiteObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("appspage.schange32")}</mwc-button>`
         }
     }
 
