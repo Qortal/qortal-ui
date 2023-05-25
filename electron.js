@@ -937,11 +937,11 @@ if (!isLock) {
 		log.info("RIGHT CLICKED")
 		let homePageOptions = Menu.buildFromTemplate([
 			{
-				label: 'Copy',
+				label: i18n.__("electron_translate_35"),
 				role: 'copy'
 			},
 			{
-				label: 'Paste',
+				label: i18n.__("electron_translate_36"),
 				role: 'paste'
 			}
   		])

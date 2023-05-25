@@ -24,7 +24,7 @@ import '@vaadin/tooltip'
 import './wallet-profile.js'
 import './app-info.js'
 import './show-plugin.js'
-import './qort-theme-toggle.js'
+import './theme-toggle.js'
 import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
@@ -480,8 +480,8 @@ class AppView extends connect(store)(LitElement) {
                             <div>&nbsp;&nbsp;</div>
                             <language-selector></language-selector>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
-                            <qort-theme-toggle></qort-theme-toggle>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <theme-toggle></theme-toggle>
+                            <div>&nbsp;&nbsp;</div>
                             <search-modal></search-modal>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
