@@ -1878,6 +1878,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.btcWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.btcFeePerByte
 
 						const btcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`,
@@ -1900,7 +1901,7 @@ class WebBrowser extends LitElement {
 						const btcWalletBalanceDecimals = Number(btcWalletBalance)
 						const btcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(btcWalletBalance) / 1e8).toFixed(8)
-						const fee = 50000
+						const fee = feePerByte * 500 // default 50000
 
 						if (btcAmountDecimals + fee > btcWalletBalanceDecimals) {
 							this.loader.hide()
@@ -1942,7 +1943,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								bitcoinAmount: amount,
-								feePerByte: (this.btcFeePerByte / 1e8).toFixed(8)
+								feePerByte: (feePerByte / 1e8).toFixed(8)
 							}
 							const response = await parentEpml.request('sendBtc', opts)
 							return response
@@ -1984,6 +1985,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.ltcWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.ltcFeePerByte
 
 						const ltcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2006,7 +2008,7 @@ class WebBrowser extends LitElement {
 						const ltcWalletBalanceDecimals = Number(ltcWalletBalance)
 						const ltcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(ltcWalletBalance) / 1e8).toFixed(8)
-						const fee = 30000
+						const fee = feePerByte * 1000 // default 30000
 
 						if (ltcAmountDecimals + fee > ltcWalletBalanceDecimals) {
 							this.loader.hide()
@@ -2048,7 +2050,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								litecoinAmount: amount,
-								feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8)
+								feePerByte: (feePerByte / 1e8).toFixed(8)
 							}
 							const response = await parentEpml.request('sendLtc', opts)
 							return response
@@ -2090,6 +2092,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.dogeWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.dogeFeePerByte
 
 						const dogeWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2112,7 +2115,7 @@ class WebBrowser extends LitElement {
 						const dogeWalletBalanceDecimals = Number(dogeWalletBalance)
 						const dogeAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dogeWalletBalance) / 1e8).toFixed(8)
-						const fee = 5000000
+						const fee = feePerByte * 5000 // default 5000000
 
 						if (dogeAmountDecimals + fee > dogeWalletBalanceDecimals) {
 							this.loader.hide()
@@ -2154,7 +2157,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								dogecoinAmount: amount,
-								feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8)
+								feePerByte: (feePerByte / 1e8).toFixed(8)
 							}
 							const response = await parentEpml.request('sendDoge', opts)
 							return response
@@ -2196,6 +2199,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.dgbWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.dgbFeePerByte
 
 						const dgbWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2218,7 +2222,7 @@ class WebBrowser extends LitElement {
 						const dgbWalletBalanceDecimals = Number(dgbWalletBalance)
 						const dgbAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dgbWalletBalance) / 1e8).toFixed(8)
-						const fee = 5000
+						const fee = feePerByte * 500 // default 5000
 
 						if (dgbAmountDecimals + fee > dgbWalletBalanceDecimals) {
 							this.loader.hide()
@@ -2260,7 +2264,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								digibyteAmount: amount,
-								feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8)
+								feePerByte: (feePerByte / 1e8).toFixed(8)
 							}
 							const response = await parentEpml.request('sendDgb', opts)
 							return response
@@ -2302,6 +2306,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.rvnWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.rvnFeePerByte
 
 						const rvnWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2324,7 +2329,7 @@ class WebBrowser extends LitElement {
 						const rvnWalletBalanceDecimals = Number(rvnWalletBalance)
 						const rvnAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(rvnWalletBalance) / 1e8).toFixed(8)
-						const fee = 562500
+						const fee = feePerByte * 500 // default 562500
 
 						if (rvnAmountDecimals + fee > rvnWalletBalanceDecimals) {
 							this.loader.hide()
@@ -2366,7 +2371,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								ravencoinAmount: amount,
-								feePerByte: (this.rvnFeePerByte / 1e8).toFixed(8)
+								feePerByte: (feePerByte / 1e8).toFixed(8)
 							}
 							const response = await parentEpml.request('sendRvn', opts)
 							return response
