@@ -33,5 +33,8 @@
   "electron_translate_30": "취소",
   "electron_translate_31": "핵심 설정 시작",
   "electron_translate_32": "코어가 실행 중이 아닌 경우 코어 시작을 요청하는 현재 상태 변경",
-  "electron_translate_33": "(다시 묻지 않음 확인란 선택 또는 선택 취소)"
+  "electron_translate_33": "(다시 묻지 않음 확인란 선택 또는 선택 취소)",
+  "electron_translate_34": "설정",
+  "electron_translate_35": "복사",
+  "electron_translate_36": "붙여넣기"
 }

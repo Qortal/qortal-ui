@@ -33,5 +33,8 @@
   "electron_translate_30": "ANNULLA",
   "electron_translate_31": "Avvia impostazioni di base",
   "electron_translate_32": "Cambia lo stato attuale della richiesta di avvio del core se non è in esecuzione",
-  "electron_translate_33": "(Seleziona o deseleziona la casella di controllo Non chiedermelo più)"
+  "electron_translate_33": "(Seleziona o deseleziona la casella di controllo Non chiedermelo più)",
+  "electron_translate_34": "Impostazioni",
+  "electron_translate_35": "Copia",
+  "electron_translate_36": "Incolla"
 }

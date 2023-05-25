@@ -34,5 +34,7 @@
   "electron_translate_31": "Start Core Settings",
   "electron_translate_32": "Change the current status of asking to start the core if it is not running",
   "electron_translate_33": "(Check or Uncheck the never ask me again checkbox)",
-  "electron_translate_34": "Settings"
+  "electron_translate_34": "Settings",
+  "electron_translate_35": "Copy",
+  "electron_translate_36": "Paste"
 }

@@ -33,5 +33,8 @@
   "electron_translate_30": "ANNULER",
   "electron_translate_31": "Démarrer les paramètres de base",
   "electron_translate_32": "Modifier l'état actuel de la demande de démarrage du noyau s'il n'est pas en cours d'exécution",
-  "electron_translate_33": "(Cochez ou décochez la case Ne plus jamais me demander)"
+  "electron_translate_33": "(Cochez ou décochez la case Ne plus jamais me demander)",
+  "electron_translate_34": "Paramètres",
+  "electron_translate_35": "Copier",
+  "electron_translate_36": "Coller"
 }

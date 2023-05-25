@@ -33,5 +33,8 @@
   "electron_translate_30": "ОТМЕНИТЬ",
   "electron_translate_31": "Начать основные настройки",
   "electron_translate_32": "Изменить текущий статус запроса на запуск ядра, если оно не запущено",
-  "electron_translate_33": "(Установите или снимите флажок Больше не спрашивать)"
+  "electron_translate_33": "(Установите или снимите флажок Больше не спрашивать)",
+  "electron_translate_34": "Настройки",
+  "electron_translate_35": "Копировать",
+  "electron_translate_36": "Вставить"
 }

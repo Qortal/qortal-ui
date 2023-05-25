@@ -34,5 +34,7 @@
   "electron_translate_31": "Core-Einstellungen starten",
   "electron_translate_32": "Ändern Sie den aktuellen Status der Aufforderung, den Core zu starten, wenn er nicht läuft",
   "electron_translate_33": "(Aktivieren oder deaktivieren Sie das Kontrollkästchen Frag mich nie wieder)",
-  "electron_translate_34": "Einstellungen"
+  "electron_translate_34": "Einstellungen",
+  "electron_translate_35": "Kopieren",
+  "electron_translate_36": "Einfügen"
 }

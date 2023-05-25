@@ -33,5 +33,8 @@
   "electron_translate_30": "CANCELAR",
   "electron_translate_31": "Iniciar configurações do núcleo",
   "electron_translate_32": "Alterar o status atual de pedir para iniciar o núcleo se não estiver em execução",
-  "electron_translate_33": "(Marque ou desmarque a caixa de seleção para nunca mais me perguntar)"
+  "electron_translate_33": "(Marque ou desmarque a caixa de seleção para nunca mais me perguntar)",
+  "electron_translate_34": "Configurações",
+  "electron_translate_35": "Copiar",
+  "electron_translate_36": "Colar"
 }

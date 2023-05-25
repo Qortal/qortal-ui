@@ -33,5 +33,8 @@
   "electron_translate_30": "AVBRYT",
   "electron_translate_31": "Start kjerneinnstillinger",
   "electron_translate_32": "Endre gjeldende status for å spørre om å starte kjernen hvis den ikke kjører",
-  "electron_translate_33": "(Merk av eller fjern merket for aldri spør meg igjen)"
+  "electron_translate_33": "(Merk av eller fjern merket for aldri spør meg igjen)",
+  "electron_translate_34": "Innstillinger",
+  "electron_translate_35": "Kopier",
+  "electron_translate_36": "Lim inn"
 }

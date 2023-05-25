@@ -33,5 +33,8 @@
   "electron_translate_30": "取消",
   "electron_translate_31": "开始核心设置",
   "electron_translate_32": "更改核心未运行时要求启动的当前状态",
-  "electron_translate_33": "（选中或取消选中不再询问复选框）"
+  "electron_translate_33": "（选中或取消选中不再询问复选框）",
+  "electron_translate_34": "设置",
+  "electron_translate_35": "复制",
+  "electron_translate_36": "粘贴"
 }

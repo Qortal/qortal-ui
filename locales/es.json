@@ -33,5 +33,8 @@
   "electron_translate_30": "CANCELAR",
   "electron_translate_31": "Iniciar configuración básica",
   "electron_translate_32": "Cambiar el estado actual de solicitar iniciar el núcleo si no se está ejecutando",
-  "electron_translate_33": "(Marque o desmarque la casilla de verificación Nunca volver a preguntarme)"
+  "electron_translate_33": "(Marque o desmarque la casilla de verificación Nunca volver a preguntarme)",
+  "electron_translate_34": "Configuración",
+  "electron_translate_35": "Copiar",
+  "electron_translate_36": "Pegar"
 }
