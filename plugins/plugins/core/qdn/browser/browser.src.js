@@ -1585,6 +1585,10 @@ class WebBrowser extends LitElement {
 						 	let _body = null
 
 						 	switch (coin) {
+						 		case 'BTC':
+						 			_url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
+						 			_body = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+						 			break
 						 		case 'LTC':
 						 			_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
 						 			_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
@@ -1704,7 +1708,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -1903,7 +1907,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2009,7 +2013,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2115,7 +2119,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2221,7 +2225,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2327,7 +2331,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2434,7 +2438,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3025,7 +3029,7 @@ async function showErrorAndWait(type, data, data1) {
 						</div>
 					` : ''}
 
-					${type === "INSSUFFICIENT_FUNDS" ? `
+					${type === "INSUFFICIENT_FUNDS" ? `
 						<div class="modal-subcontainer-error">
 							<p class="modal-paragraph-error">${data}</p>
 							<p class="modal-paragraph-error">${data1}</p>
