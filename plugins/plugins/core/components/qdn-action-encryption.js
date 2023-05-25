@@ -104,11 +104,12 @@ export const encryptData = ({ data64, recipientPublicKey }) => {
 }
 
 export const encryptDataGroup = ({ data64, publicKeys }) => {
-    const userPublicKey = window.parent.Base58.decode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey)
+    const userPublicKey = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
     let combinedPublicKeys = publicKeys
     if (userPublicKey) {
         combinedPublicKeys = [...publicKeys, userPublicKey]
     }
+
     const publicKeysDuplicateFree = [...new Set(combinedPublicKeys)];
     const Uint8ArrayData = base64ToUint8Array(data64)
 
