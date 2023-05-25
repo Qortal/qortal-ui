@@ -71,7 +71,7 @@
 	},
 	"devDependencies": {
 		"axios": "1.4.0",
-		"electron": "24.3.1",
+		"electron": "24.4.0",
 		"electron-builder": "23.6.0",
 		"electron-packager": "17.1.1",
 		"epml": "0.3.3",
@@ -132,12 +132,12 @@
 		"@rollup/plugin-node-resolve": "15.0.2",
 		"@rollup/plugin-replace": "5.0.2",
 		"@rollup/plugin-terser": "0.4.3",
-		"@vaadin/avatar": "24.0.5",
-		"@vaadin/button": "24.0.5",
-		"@vaadin/grid": "24.0.5",
-		"@vaadin/icons": "24.0.5",
-		"@vaadin/password-field": "24.0.5",
-		"@vaadin/tooltip": "24.0.5",
+		"@vaadin/avatar": "24.0.6",
+		"@vaadin/button": "24.0.6",
+		"@vaadin/grid": "24.0.6",
+		"@vaadin/icons": "24.0.6",
+		"@vaadin/password-field": "24.0.6",
+		"@vaadin/tooltip": "24.0.6",
 		"@zip.js/zip.js": "2.7.14"
 	},
 	"engines": {
