@@ -604,7 +604,7 @@ class GroupManagement extends LitElement {
                         </select>
                     </p>
                     <div style="margin-bottom: 10px;">
-                        <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.addGroupAdminFee} QORT<span></p>
+                        <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.createBanFee} QORT<span></p>
                         <br>
                     </div>
                     ${this.renderClearSuccess()}
@@ -1500,6 +1500,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.createFee} QORT.</b>
                         </span>
                     </div>
                     
@@ -1557,6 +1560,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.joinFee} QORT.</b>
                         </span>
                     </div>
                     
@@ -1619,6 +1625,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.leaveFee} QORT.</b>
                         </span>
                     </div>
                     
