@@ -34,5 +34,7 @@
   "electron_translate_31": "Core設定を開始",
   "electron_translate_32": "Coreが実行されていない場合にCoreの開始を求める現在のステータスを変更します",
   "electron_translate_33": "(「二度と表示しない」チェックボックスをオンまたはオフにします)",
-  "electron_translate_34": "設定"
+  "electron_translate_34": "設定",
+  "electron_translate_35": "コピー",
+  "electron_translate_36": "貼り付け"
 }
