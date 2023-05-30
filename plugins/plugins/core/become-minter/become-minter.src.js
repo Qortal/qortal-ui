@@ -3,6 +3,7 @@ import { Epml } from '../../../epml.js'
 import '../components/ButtonIconCopy.js'
 import { use, translate, registerTranslateConfig } from 'lit-translate'
 import { blocksNeed } from '../../utils/blocks-needed.js'
+import isElectron from 'is-electron'
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -13,8 +14,8 @@ import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@vaadin/button'
 import { pageStyles } from './become-minter-css.src.js'
-import './components/not-sponsored.src'
-import './components/yes-sponsored.src'
+import './components/not-sponsored.js'
+import './components/yes-sponsored.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -126,6 +127,13 @@ class BecomeMinter extends LitElement {
 
 	async firstUpdated() {
 		await this.atMount()
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
