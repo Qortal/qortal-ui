@@ -7,7 +7,7 @@
   "electron_translate_4": "新しいバージョンのQortal UIが利用可能です。ダウンロードしますか?",
   "electron_translate_5": "今すぐインストール",
   "electron_translate_6": "後で",
-  "electron_translate_7": "アップデートをインストールする準備ができました",
+  "electron_translate_7": "アップデートをインストールする準備が出来ました",
   "electron_translate_8": "新しいバージョンのQortal UIをダウンロードしました。",
   "electron_translate_9": "更新を適用する場合は［今すぐインストール］を、UI を更新しない場合は［後で］をクリックして下さい。",
   "electron_translate_10": "更新に失敗しました。後で再試行します",
@@ -36,5 +36,5 @@
   "electron_translate_33": "(「二度と表示しない」チェックボックスをオンまたはオフにします)",
   "electron_translate_34": "設定",
   "electron_translate_35": "コピー",
-  "electron_translate_36": "貼り付け"
+  "electron_translate_36": "ペースト"
 }
