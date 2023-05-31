@@ -1,5 +1,5 @@
 {
-  "__locale_name__": "Romania",
+  "__locale_name__": "Română",
 
   "electron_translate_1": "Afișați Qortal UI",
   "electron_translate_2": "Ieși",
@@ -36,5 +36,11 @@
   "electron_translate_33": "(Bifează sau debifează caseta de selectare niciodată să nu mă mai întrebe)",
   "electron_translate_34": "Setări",
   "electron_translate_35": "Copiați",
-  "electron_translate_36": "Inserați"
+  "electron_translate_36": "Inserați",
+  "electron_translate_37": "Vizualizare",
+  "electron_translate_38": "Măriți",
+  "electron_translate_39": "Măriți mic",
+  "electron_translate_40": "Dimensiunea reală",
+  "electron_translate_41": "Comutați ecranul complet",
+  "electron_translate_42": "Instanță nouă UI"
 }

@@ -800,6 +800,51 @@ function createWindow() {
 	})
 }
 
+let newWindow = null
+
+function createNewWindow() {
+	newWindow = new BrowserWindow({
+		backgroundColor: '#eee',
+		width: 1280,
+		height: 720,
+		minWidth: 700,
+		minHeight: 640,
+		icon: path.join(__dirname + '/img/icons/png/256x256.png'),
+		title: "Qortal UI New Instance",
+		autoHideMenuBar: true,
+		webPreferences: {
+			partition: 'persist:webviewsession',
+			nodeIntegration: true,
+			contextIsolation: true,
+			enableRemoteModule: false,
+			allowRunningInsecureContent: false,
+			experimentalFeatures: false,
+			preload: path.join(__dirname, '/lib/preload.js')
+		},
+		show: false
+	})
+	newWindow.show()
+	newWindow.loadURL('http://localhost:12388/app/wallet')
+	newWindow.on('closed', function () {
+		newWindow = null
+	})
+	newWindow.on('minimize', function (event) {
+		event.preventDefault()
+		newWindow.hide()
+	})
+	ipcMain.handle('dark-mode:toggle', () => {
+		if (nativeTheme.shouldUseDarkColors) {
+			nativeTheme.themeSource = 'light'
+		} else {
+			nativeTheme.themeSource = 'dark'
+		}
+		return nativeTheme.shouldUseDarkColors
+	})
+	ipcMain.handle('dark-mode:system', () => {
+		nativeTheme.themeSource = 'system'
+	})
+}
+
 const createTray = () => {
 	let myTray = new Tray(path.join(__dirname + '/img/icons/png/tray/tray.png'))
 	const contextMenu = Menu.buildFromTemplate([
@@ -934,7 +979,6 @@ if (!isLock) {
 		autoUpdater.checkForUpdatesAndNotify()
 	})
 	ipcMain.on('show-my-menu', (event) => {
-		log.info("RIGHT CLICKED")
 		let homePageOptions = Menu.buildFromTemplate([
 			{
 				label: i18n.__("electron_translate_35"),
@@ -943,6 +987,42 @@ if (!isLock) {
 			{
 				label: i18n.__("electron_translate_36"),
 				role: 'paste'
+			},
+			{
+				type: "separator"
+			},
+			{
+				label: i18n.__("electron_translate_37"),
+				submenu: [
+					{
+						label: i18n.__("electron_translate_38"),
+						role: 'zoomIn'
+					},
+					{
+						label: i18n.__("electron_translate_39"),
+						role: 'zoomOut'
+					},
+					{
+						label: i18n.__("electron_translate_40"),
+						role: 'resetZoom'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						label: i18n.__("electron_translate_41"),
+						role: 'togglefullscreen'
+					}
+				]
+			},
+			{
+				type: "separator"
+			},
+			{
+				label: i18n.__("electron_translate_42"),
+				click: function () {
+					createNewWindow()
+				},
 			}
   		])
   		homePageOptions.popup(myWindow)

@@ -36,5 +36,11 @@
   "electron_translate_33": "(Cochez ou décochez la case Ne plus jamais me demander)",
   "electron_translate_34": "Paramètres",
   "electron_translate_35": "Copier",
-  "electron_translate_36": "Coller"
+  "electron_translate_36": "Coller",
+  "electron_translate_37": "Voir",
+  "electron_translate_38": "Zoom avant",
+  "electron_translate_39": "Zoom arrière",
+  "electron_translate_40": "Taille réelle",
+  "electron_translate_41": "Basculer en plein écran",
+  "electron_translate_42": "Nouvelle instance d' UI"
 }
