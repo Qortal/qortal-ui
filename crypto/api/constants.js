@@ -161,7 +161,7 @@ const PROXY_URL = "/proxy/"
 // Chat reference timestamp
 const CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP = 1674316800000
 
-// Used as a salt for all qora addresses. Salts used for storing your private keys in local storage will be randomly generated
+// Used as a salt for all Qora addresses. Salts used for storing your private keys in local storage will be randomly generated
 const STATIC_SALT = new Uint8Array([54, 190, 201, 206, 65, 29, 123, 129, 147, 231, 180, 166, 171, 45, 95, 165, 78, 200, 208, 194, 44, 207, 221, 146, 45, 238, 68, 68, 69, 102, 62, 6])
 const BCRYPT_ROUNDS = 10 // Remember that the total work spent on key derivation is BCRYPT_ROUNDS * KDF_THREADS
 const BCRYPT_VERSION = "2a"
