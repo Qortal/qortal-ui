@@ -898,7 +898,9 @@
 		"nchange29": "Prägekonto erfolgreich entfernt!",
 		"nchange30": "Fehler beim Entfernen des Prägekontos!",
 		"nchange31": "Knoten stoppen",
-		"nchange32": "Stoppanforderung erfolgreich gesendet!"
+		"nchange32": "Stoppanforderung erfolgreich gesendet!",
+		"nchange33": "Knoten neu starten",
+		"nchange34": "Neustartanforderung erfolgreich gesendet!"
 	},
 	"transpage": {
 		"tchange1": "Transaktionsanfrage",

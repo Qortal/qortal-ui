@@ -898,7 +898,9 @@
 		"nchange29": "Uspješno uklonjen minter račun!",
 		"nchange30": "Neuspješno uklanjanje minter računa!",
 		"nchange31": "Zaustavi čvor",
-		"nchange32": "Uspješno poslan zahtjev za zaustavljenje!"
+		"nchange32": "Uspješno poslan zahtjev za zaustavljenje!",
+		"nchange33": "Ponovo pokreni čvor",
+		"nchange34": "Uspješno poslan zahtjev za ponovnim pokretanjem!"
 	},
 	"transpage": {
 		"tchange1": "Zahtjev za transakciju",

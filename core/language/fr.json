@@ -897,8 +897,10 @@
 		"nchange28": "Échec de l’ajout d’un noeud de frappe!",
 		"nchange29": "Suppression réussie du compte de frappe!",
 		"nchange30": "Echec de la suppression du compte de frappe!",
-		"nchange31": "Arreter le noeud",
-		"nchange32": "Demande d’arrêt envoyée avec succès!"
+		"nchange31": "Arrêter le noeud",
+		"nchange32": "Demande d’arrêt envoyée avec succès!",
+		"nchange33": "Redémarrer le noeud",
+		"nchange34": "Demande de redémarrage envoyée avec succès!"
 	},
 	"transpage": {
 		"tchange1": "Demande de transaction",
