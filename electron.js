@@ -1048,11 +1048,7 @@ if (!isLock) {
 		})
 	})
 	autoUpdater.on('update-not-available', (event) => {
-		const noUpdate = new Notification({
-			title: 'Checking for update',
-			body: 'No update available, you are on latest version.'
-		})
-		noUpdate.show()
+		log.info("NO UPDATE")
 	})
 	autoUpdater.on('download-progress', (progressObj) => {
 		myWindow.webContents.send('downloadProgress', progressObj)
