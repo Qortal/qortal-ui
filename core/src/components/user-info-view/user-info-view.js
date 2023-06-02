@@ -332,8 +332,9 @@ class UserInfoView extends connect(store)(LitElement) {
 
 		.border-wrapper {
 			border: 1px var(--tradeborder) solid;
-			overflow: hidden;
+			overflow: hidden; 
 		}
+
 
 		#first-explorer-section {
 			display: grid;
@@ -1109,7 +1110,7 @@ class UserInfoView extends connect(store)(LitElement) {
                         <header>${translate("explorerpage.exp17")}</header>
                         <div class="border-wrapper">
                             <div class="loadingContainer" id="loadingExplorerTrades" style="display:${this.isLoadingCompleteInfo ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
-                            <vaadin-grid theme="compact" id="allQortPaymentsGrid" ?hidden="${this.isEmptyArray(this.allPayments)}" .items="${this.allPayments}">
+                            <vaadin-grid theme="compact" id="allQortPaymentsGrid" style="height: 250px;" ?hidden="${this.isEmptyArray(this.allPayments)}" .items="${this.allPayments}">
                                 <vaadin-grid-column
                                     auto-width
                                     header="${translate("walletpage.wchange35")}"
