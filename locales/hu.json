@@ -8,8 +8,8 @@
   "electron_translate_5": "TELEPÍTÉS MOST",
   "electron_translate_6": "TALÁN KÉSŐBB",
   "electron_translate_7": "Frissítés készen áll a telepítésre",
-  "electron_translate_8": "A Qortal felhasználói felület új verziója letöltődött."
-  "electron_translate_9": "Kattintson a TELEPÍTÉS MOST gombra a frissítés alkalmazásához, TALÁN KÉSŐBB, ha nem szeretné frissíteni a felhasználói felületet."
+  "electron_translate_8": "A Qortal felhasználói felület új verziója letöltődött.",
+  "electron_translate_9": "Kattintson a TELEPÍTÉS MOST gombra a frissítés alkalmazásához, TALÁN KÉSŐBB, ha nem szeretné frissíteni a felhasználói felületet.",
   "electron_translate_10": "Ideiglenes frissítési hiba, később újra megpróbálom",
   "electron_translate_11": "FRISSÍTÉS LETÖLTÉSE",
   "electron_translate_12": "A háttérben lesz letöltve ⌛️!",
@@ -21,13 +21,13 @@
   "electron_translate_18": "QORTAL CORE LETÖLTÉSE",
   "electron_translate_19": "NO KÖSZÖNÖM",
   "electron_translate_20": "Nincs észlelve a Qortal Core",
-  "electron_translate_21": "A Qortal UI azt észlelte, hogy a Qortal Core NINCS telepítve (az alapértelmezett helyen) ezen a rendszeren."
-  "electron_translate_22": "Kattintson a QORTAL CORE LETÖLTÉSE lehetőségre a mag letöltéséhez és telepítéséhez (az alapértelmezett helyre), VAGY kattintson a NEM KÖSZÖNÖM gombra a letöltés és telepítés kihagyásához."
+  "electron_translate_21": "A Qortal UI azt észlelte, hogy a Qortal Core NINCS telepítve (az alapértelmezett helyen) ezen a rendszeren.",
+  "electron_translate_22": "Kattintson a QORTAL CORE LETÖLTÉSE lehetőségre a mag letöltéséhez és telepítéséhez (az alapértelmezett helyre), VAGY kattintson a NEM KÖSZÖNÖM gombra a letöltés és telepítés kihagyásához.",
   "electron_translate_23": "JAVA LETÖLTÉSE",
   "electron_translate_24": "KÖSZÖNÖM NEM",
-  "electron_translate_25": "A Java nincs telepítve."
-  "electron_translate_26": "A Qortal UI azt észlelte, hogy a java nincs telepítve az Ön rendszerére."
-  "electron_translate_27": "Kattintson a JAVA LETÖLTÉSE gombra a java letöltéséhez és telepítéséhez, vagy a NEM KÖSZÖNÖM gombra, ha nem szeretné letölteni és telepíteni."
+  "electron_translate_25": "A Java nincs telepítve.",
+  "electron_translate_26": "A Qortal UI azt észlelte, hogy a java nincs telepítve az Ön rendszerére.",
+  "electron_translate_27": "Kattintson a JAVA LETÖLTÉSE gombra a java letöltéséhez és telepítéséhez, vagy a NEM KÖSZÖNÖM gombra, ha nem szeretné letölteni és telepíteni.",
   "electron_translate_28": "Soha többé ne kérdezz",
   "electron_translate_29": "BEÁLLÍTÁS MÓDOSÍTÁSA",
   "electron_translate_30": "MÉGSEM",

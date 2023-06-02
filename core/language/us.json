@@ -899,7 +899,9 @@
 		"nchange29": "Successfully Removed Minting Account!",
 		"nchange30": "Failed to Remove Minting Account!",
 		"nchange31": "Stop Node",
-		"nchange32": "Successfully Sent Stop Request!"
+		"nchange32": "Successfully Sent Stop Request!",
+		"nchange33": "Restart Node",
+		"nchange34": "Successfully Sent Restart Request!"
 	},
 	"transpage": {
 		"tchange1": "Transaction request",
