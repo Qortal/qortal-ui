@@ -157,7 +157,7 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
             encryptedKeys.push(encryptedKey);
         });
 
-        const str = "qortalEncryptedData";
+        const str = "qortalGroupEncryptedData";
         const strEncoder = new TextEncoder();
         const strUint8Array = strEncoder.encode(str);
 
@@ -247,7 +247,7 @@ export function decryptDeprecatedSingle(uint8Array, publicKey) {
 
 export function decryptGroupData(data64EncryptedData) {
     const allCombined = base64ToUint8Array(data64EncryptedData);
-    const str = "qortalEncryptedData";
+    const str = "qortalGroupEncryptedData";
     const strEncoder = new TextEncoder();
     const strUint8Array = strEncoder.encode(str);
 

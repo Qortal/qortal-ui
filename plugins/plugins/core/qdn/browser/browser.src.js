@@ -566,7 +566,6 @@ class WebBrowser extends LitElement {
 
 					const { encryptedData, publicKey } = data
 
-
 					try {
 						let data = {};
 						if (!encryptedData) {
@@ -579,7 +578,6 @@ class WebBrowser extends LitElement {
 						}
 						const uint8Array = base64ToUint8Array(encryptedData)
 						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData");
-
 						if (startsWithQortalEncryptedData) {
 
 							if (!publicKey) {
@@ -598,7 +596,6 @@ class WebBrowser extends LitElement {
 
 						}
 						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
-
 						if (startsWithQortalGroupEncryptedData) {
 
 							const decryptedData = decryptGroupData(encryptedData)
@@ -893,6 +890,9 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					if (data.file) {
+						data64 = await fileToBase64(data.file)
+					}
 
 					if (data.encrypt) {
 						try {
@@ -1067,10 +1067,14 @@ class WebBrowser extends LitElement {
 						if (!data.encrypt && service.endsWith("_PRIVATE")) {
 							throw new Error("Only encrypted data can go into private services")
 						}
+						if (data.file) {
+							data64 = await fileToBase64(data.file)
+						}
 
 
 						if (data.encrypt) {
 							try {
+
 								const encryptDataResponse = encryptDataGroup({
 									data64, publicKeys: data.publicKeys
 								})
