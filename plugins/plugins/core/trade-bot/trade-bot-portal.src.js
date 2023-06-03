@@ -1557,10 +1557,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyBTCTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1632,10 +1632,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyLTCTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1707,10 +1707,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyDOGETotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1782,10 +1782,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyDGBTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1857,10 +1857,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyRVNTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1932,10 +1932,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyARRRTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -2708,8 +2708,10 @@ class TradeBotPortal extends LitElement {
     checkTradeBotValues() {
         const checkTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
         const checkTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+        const checkTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
         const checkAmount = this.round(parseFloat(checkTradeBotAmountInput))
         const checkPrice = this.round(parseFloat(checkTradeBotPriceInput))
+        const checkTotal = this.round(parseFloat(checkTradeBotTotalInput))
 
         if (Number(checkAmount) === 0) {
             let amountString = get("tradepage.tchange34")
@@ -2717,6 +2719,9 @@ class TradeBotPortal extends LitElement {
         } else if (Number(checkPrice) === 0) {
             let priceString = get("tradepage.tchange35")
             parentEpml.request('showSnackBar', `${priceString}`)
+        } else if (Number(checkTotal) === 0) {
+            let totalString = get("tradepage.tchange35")
+            parentEpml.request('showSnackBar', `${totalString}`)
         } else {
             this.showAddToAutoBuyStore()
         }
@@ -3270,6 +3275,7 @@ class TradeBotPortal extends LitElement {
         } else {
             const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
             const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+            const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
             const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
             const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
             if (Number(myFunds) > Number(checkFunds)) {
@@ -3302,6 +3308,7 @@ class TradeBotPortal extends LitElement {
                     } else {
                         const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
                         const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                        const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
                         const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
                         const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
                         if (Number(myFunds) > Number(checkFunds)) {
@@ -3321,6 +3328,7 @@ class TradeBotPortal extends LitElement {
             } else {
                 const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
                 const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
                 const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
                 const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
                 if (Number(myFunds) > Number(checkFunds)) {
@@ -3329,6 +3337,90 @@ class TradeBotPortal extends LitElement {
                     this.autoBuyWarning = false
                 } else {
                     this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+                    this.autoBuyBtnDisable = true
+                    this.autoBuyWarning = true
+                }
+            }
+        }
+    }
+
+    checkTradeBotTotalAmount(e) {
+        const targetAmount = e.target.value
+        const target = e.target
+        this.autoBuyWarning = false
+
+        if (targetAmount.length === 0) {
+            this.isValidAmount = false
+            this.autoBuyBtnDisable = true
+            this.autoBuyWarning = false
+            e.target.blur()
+            e.target.focus()
+            e.target.invalid = true
+        } else {
+            const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+            const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+            const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+            const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+            const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+            if (Number(myFunds) > Number(checkFunds)) {
+                this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                this.autoBuyBtnDisable = false
+                this.autoBuyWarning = false
+            } else {
+                this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                this.autoBuyBtnDisable = true
+                this.autoBuyWarning = true
+            }
+        }
+
+        e.target.blur()
+        e.target.focus()
+
+        e.target.validityTransform = (newValue, nativeValidity) => {
+            if (newValue.includes('-') === true) {
+                this.autoBuyBtnDisable = true
+                this.autoBuyWarning = false
+                return {
+                    valid: false,
+                }
+            } else if (!nativeValidity.valid) {
+                if (newValue.includes('.') === true) {
+                    let myAmount = newValue.split('.')
+                    if (myAmount[1].length > 8) {
+                        this.autoBuyBtnDisable = true
+                        this.autoBuyWarning = false
+                    } else {
+                        const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+                        const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                        const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+                        const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+                        const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+                        if (Number(myFunds) > Number(checkFunds)) {
+                            this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                            this.autoBuyBtnDisable = false
+                            this.autoBuyWarning = false
+                        } else {
+                            this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                            this.autoBuyBtnDisable = true
+                            this.autoBuyWarning = true
+                        }
+                        return {
+                            valid: true,
+                        }
+                    }
+                }
+            } else {
+                const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+                const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+                const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+                const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+                if (Number(myFunds) > Number(checkFunds)) {
+                    this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                    this.autoBuyBtnDisable = false
+                    this.autoBuyWarning = false
+                } else {
+                    this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
                     this.autoBuyBtnDisable = true
                     this.autoBuyWarning = true
                 }
