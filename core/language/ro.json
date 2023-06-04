@@ -898,9 +898,7 @@
 		"nchange29": "S-a eliminat cu succes contul de producator de moneda (minting)!",
 		"nchange30": "Nu a reusit eliminare contulului de recompensare (minting)!",
 		"nchange31": "Opreste Nodul",
-		"nchange32": "Cerere de Oprire Trimisă cu Succes!",
-		"nchange33": "Reporniți Nodul",
-		"nchange34": "Cerere de Repornire a Fost Trimisă cu Succes!"
+		"nchange32": "Cerere de Oprire Trimisa cu Succes!"
 	},
 	"transpage": {
 		"tchange1": "Cerere de tranzactionare",
@@ -981,7 +979,9 @@
 		"exp18": "Plăti",
 		"exp19": "Trimis",
 		"exp20": "Primit",
-		"exp21": "Meserii"
+		"exp21": "Meserii",
+		"exp22": "ULTIMELE 5 PĂȚI",
+		"exp23": "Afișați toate plățile"
 	},
 	"managegroup": {
 		"mg1": "Membrii grupului",

@@ -899,9 +899,7 @@
 		"nchange29": "Successfully Removed Minting Account!",
 		"nchange30": "Failed to Remove Minting Account!",
 		"nchange31": "Stop Node",
-		"nchange32": "Successfully Sent Stop Request!",
-		"nchange33": "Restart Node",
-		"nchange34": "Successfully Sent Restart Request!"
+		"nchange32": "Successfully Sent Stop Request!"
 	},
 	"transpage": {
 		"tchange1": "Transaction request",
@@ -982,7 +980,9 @@
 		"exp18": "Payments",
 		"exp19": "Sent",
 		"exp20": "Received",
-		"exp21": "Trades"
+		"exp21": "Trades",
+		"exp22": "LAST 5 PAYMENTS",
+		"exp23": "Show All Payments"
 	},
 	"managegroup": {
 		"mg1": "Group Members",

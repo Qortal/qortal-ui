@@ -898,9 +898,7 @@
 		"nchange29": "Pomyślnie usunięto konto mintowania!",
 		"nchange30": "Nie udało się usunąć konta mintowania!",
 		"nchange31": "Zatrzymaj węzeł",
-		"nchange32": "Pomyślnie wysłane żądanie zatrzymania!",
-		"nchange33": "Uruchom ponownie węzeł",
-		"nchange34": "Pomyślnie wysłane żądanie ponownego uruchomienia!"
+		"nchange32": "Pomyślnie wysłane żądanie zatrzymania!"
 	},
 	"transpage": {
 		"tchange1": "Żądanie transakcji",
@@ -981,7 +979,9 @@
 		"exp18": "Płatności",
 		"exp19": "Wysłane",
 		"exp20": "Otrzymano",
-		"exp21": "Transakcji"
+		"exp21": "Transakcji",
+		"exp22": "OSTATNIE 5 PŁATNOŚCI",
+		"exp23": "Pokaż wszystkie płatności"
 	},
 	"managegroup": {
 		"mg1": "Członkowie grupy",

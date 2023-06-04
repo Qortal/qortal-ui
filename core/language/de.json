@@ -898,9 +898,7 @@
 		"nchange29": "Prägekonto erfolgreich entfernt!",
 		"nchange30": "Fehler beim Entfernen des Prägekontos!",
 		"nchange31": "Knoten stoppen",
-		"nchange32": "Stoppanforderung erfolgreich gesendet!",
-		"nchange33": "Knoten neu starten",
-		"nchange34": "Neustartanforderung erfolgreich gesendet!"
+		"nchange32": "Stoppanforderung erfolgreich gesendet!"
 	},
 	"transpage": {
 		"tchange1": "Transaktionsanfrage",
@@ -981,7 +979,9 @@
 		"exp18": "Zahlungen",
 		"exp19": "Gesendet",
 		"exp20": "Empfangen",
-		"exp21": "Trades"
+		"exp21": "Trades",
+		"exp22": "LETZTE 5 ZAHLUNGEN",
+		"exp23": "Alle Zahlungen anzeigen"
 	},
 	"managegroup": {
 		"mg1": "Gruppenmitglieder",

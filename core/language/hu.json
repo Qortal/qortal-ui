@@ -898,9 +898,7 @@
 		"nchange29": "Sikerült eltávolítani a verési fiókot!",
 		"nchange30": "Nem sikerült eltávolítani a verési fiókot!",
 		"nchange31": "Csomópont Leállítás",
-		"nchange32": "Sikeresen Elküldött Stop Kérés!",
-		"nchange33": "Csomópont Újraindítása",
-		"nchange34": "Sikeresen Elküldött Újraindítási Kérés!"
+		"nchange32": "Sikeresen Elküldött Stop Kérés!"
 	},
 	"transpage": {
 		"tchange1": "Tranzakciós Kérelem",
@@ -981,7 +979,9 @@
 		"exp18": "Kifizetések",
 		"exp19": "Elküldve",
 		"exp20": "Fogadott",
-		"exp21": "Passzátszelek"
+		"exp21": "Passzátszelek",
+		"exp22": "UTOLSÓ 5 FIZETÉS",
+		"exp23": "Minden kifizetés megjelenítése"
 	},
 	"managegroup": {
 		"mg1": "Csoporttagok",

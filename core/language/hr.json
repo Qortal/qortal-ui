@@ -898,9 +898,7 @@
 		"nchange29": "Uspješno uklonjen minter račun!",
 		"nchange30": "Neuspješno uklanjanje minter računa!",
 		"nchange31": "Zaustavi čvor",
-		"nchange32": "Uspješno poslan zahtjev za zaustavljenje!",
-		"nchange33": "Ponovo pokreni čvor",
-		"nchange34": "Uspješno poslan zahtjev za ponovnim pokretanjem!"
+		"nchange32": "Uspješno poslan zahtjev za zaustavljenje!"
 	},
 	"transpage": {
 		"tchange1": "Zahtjev za transakciju",
@@ -981,7 +979,9 @@
 		"exp18": "Plaćanja",
 		"exp19": "Poslano",
 		"exp20": "Primljeno",
-		"exp21": "Obrta"
+		"exp21": "Obrta",
+		"exp22": "ZADNJIH 5 UPLATA",
+		"exp23": "Prikaži sva plaćanja"
 	},
 	"managegroup": {
 		"mg1": "Članovi grupe",

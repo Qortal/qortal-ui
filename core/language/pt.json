@@ -898,9 +898,7 @@
 		"nchange29": "Conta de Mineração removida com sucesso!",
 		"nchange30": "Falha em remover a conta de mineração",
 		"nchange31": "Parar Nódulo",
-		"nchange32": "Pedido de parada enviado com sucesso!",
-		"nchange33": "Reiniciar Nódulo",
-		"nchange34": "Pedido de reinicialização enviado com sucesso!"
+		"nchange32": "Pedido de parada enviado com sucesso!"
 	},
 	"transpage": {
 		"tchange1": "Pedido de transação",
@@ -981,7 +979,9 @@
 		"exp18": "Pagamentos",
 		"exp19": "Enviado",
 		"exp20": "Recebido",
-		"exp21": "Comércios"
+		"exp21": "Comércios",
+		"exp22": "ÚLTIMOS 5 PAGAMENTOS",
+		"exp23": "Mostrar todos os pagamentos"
 	},
 	"managegroup": {
 		"mg1": "Membros do grupo",

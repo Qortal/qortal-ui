@@ -898,9 +898,7 @@
 		"nchange29": "Mintekontoen ble fjernet!",
 		"nchange30": "Kunne ikke fjerne mintekontoen!",
 		"nchange31": "Stopp noden",
-		"nchange32": "Stoppforespørsel sendt!",
-		"nchange33": "Omstart noden",
-		"nchange34": "Omstartsforespørsel sendt!"
+		"nchange32": "Stoppforespørsel sendt!"
 	},
 	"transpage": {
 		"tchange1": "Transaksjonsforespørsel",
@@ -981,7 +979,9 @@
 		"exp18": "Betalinger",
 		"exp19": "Sendt",
 		"exp20": "Motta",
-		"exp21": "Handler"
+		"exp21": "Handler",
+		"exp22": "SISTE 5 BETALINGER",
+		"exp23": "Vis alle betalinger"
 	},
 	"managegroup": {
 		"mg1": "Gruppemedlemmer",
