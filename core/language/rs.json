@@ -898,7 +898,9 @@
 		"nchange29": "Minting nalog uspešno uklonjen!",
 		"nchange30": "Minting nalog neuspešno uklonjen!",
 		"nchange31": "Zaustavite čvor",
-		"nchange32": "Zahtev za zaustavljanje uspešno poslat!"
+		"nchange32": "Zahtev za zaustavljanje uspešno poslat!",
+		"nchange33": "Ponovo pokreni čvor",
+		"nchange34": "Zahtev za ponovno pokretanje uspešno poslat!"
 	},
 	"transpage": {
 		"tchange1": "Zahtev za transakcijom",

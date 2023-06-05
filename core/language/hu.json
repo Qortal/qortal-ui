@@ -898,7 +898,9 @@
 		"nchange29": "Sikerült eltávolítani a verési fiókot!",
 		"nchange30": "Nem sikerült eltávolítani a verési fiókot!",
 		"nchange31": "Csomópont Leállítás",
-		"nchange32": "Sikeresen Elküldött Stop Kérés!"
+		"nchange32": "Sikeresen Elküldött Stop Kérés!",
+		"nchange33": "Csomópont Újraindítása",
+		"nchange34": "Sikeresen Elküldött Újraindítási Kérés!"
 	},
 	"transpage": {
 		"tchange1": "Tranzakciós Kérelem",

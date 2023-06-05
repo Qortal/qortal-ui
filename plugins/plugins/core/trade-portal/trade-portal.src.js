@@ -30,6 +30,7 @@ import chartsdoge from './charts/doge-charts.js'
 import chartsdgb from './charts/dgb-charts.js'
 import chartsrvn from './charts/rvn-charts.js'
 import chartsarrr from './charts/arrr-charts.js'
+import '../components/TraderInfoView.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -77,13 +78,7 @@ class TradePortal extends LitElement {
             dgbqort: { type: Number },
             rvnqort: { type: Number },
             arrrqort: { type: Number },
-            tradeInfoAccountName: { type: String },
-            tradeImageUrl: { type: String },
-            tradeAddressResult: { type: Array },
-            displayTradeAddress: { type: String },
-            displayTradeLevel: { type: String },
-            displayTradeBalance: { type: String },
-		qortRatio: {type: Number}
+            qortRatio: {type: Number}
         }
     }
 
@@ -919,7 +914,7 @@ class TradePortal extends LitElement {
 							resizable
 							header="${translate("explorerpage.exp7")}"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.getAllForAddress(data.item.qortalCreator)}"><mwc-icon class="btn-info">info</mwc-icon></span>`, root)
+								render(html`<span @click="${() => this.requestTraderInfo(data.item.qortalCreator)}"><mwc-icon class="btn-info">info</mwc-icon></span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
@@ -1262,30 +1257,19 @@ class TradePortal extends LitElement {
 			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
 		</mwc-dialog>
 
-		<mwc-dialog style="background: var(--white);" id="sellerDialog">
-			<div class="card-container">
-				<span class="level">${translate("mintingpage.mchange27")} ${this.displayTradeLevel}</span>
-				${this.tradeFounderBadge()}
-				${this.tradeAvatarImage()}
-				<h2>${this.tradeInfoAccountName}</h2>
-				<h4>${this.displayTradeAddress}</h4>
-				<p>${translate("explorerpage.exp2")}: ${this.displayTradeBalance} QORT</p>
+		<paper-dialog id="tradeInfoDialog" class="info" modal>
+			<div class="actions">
+				<h3></h3>
+				<mwc-icon class="close-icon" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').close()} title="${translate("info.inf2")}">highlight_off</mwc-icon>
 			</div>
-			<mwc-button slot="primaryAction" dialogAction="cancel" class="cancel">${translate("general.close")}</mwc-button>
-		</mwc-dialog>
-
-            <paper-dialog id="tradeInfoDialog" class="info" modal>
-                <div class="actions">
-                    <h3></h3>
-                    <mwc-icon class="close-icon" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').close()} title="${translate("info.inf2")}">highlight_off</mwc-icon>
-                </div>
-                <div class="container">
-                    <h1 style="color: #03a9f4; text-align: center;">${translate("info.inf1")}</h1>
-                    <h1 style="text-align: center;">${translate("info.inf3")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("info.inf4")}</h1>
-                    <h1 style="text-align: center;">${translate("info.inf5")} ${this.listedCoins.get(this.selectedCoin).coinCode}</h1>
-                    <h1 style="text-align: center;">${translate("info.inf6")}</h1>
-                </div>
-            </paper-dialog>
+			<div class="container">
+				<h1 style="color: #03a9f4; text-align: center;">${translate("info.inf1")}</h1>
+				<h1 style="text-align: center;">${translate("info.inf3")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("info.inf4")}</h1>
+				<h1 style="text-align: center;">${translate("info.inf5")} ${this.listedCoins.get(this.selectedCoin).coinCode}</h1>
+				<h1 style="text-align: center;">${translate("info.inf6")}</h1>
+			</div>
+		</paper-dialog>
+		<trader-info-view></trader-info-view>
         `
     }
 
@@ -1448,6 +1432,12 @@ class TradePortal extends LitElement {
         parentEpml.imReady()
 
         setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+    }
+
+    requestTraderInfo(traderAddress) {
+        let getAddress = traderAddress
+        const theInfoView = this.shadowRoot.querySelector('trader-info-view')
+        theInfoView.openTraderInfo(getAddress)
     }
 
     changeTheme() {
@@ -1725,73 +1715,6 @@ class TradePortal extends LitElement {
             this.displayTabContent('buy')
         }
 
-    }
-
-    async getAllForAddress(tradeAddress) {
-        await this.getAddressTradeInfo(tradeAddress)
-        await this.getAddressTradeAvatar(tradeAddress)
-        await this.getAddressTradeBalance(tradeAddress)
-        this.displayTradeAddress = this.tradeAddressResult.address
-        this.displayTradeLevel = this.tradeAddressResult.level
-        this.shadowRoot.querySelector('#sellerDialog').show()
-    }
-
-    async getAddressTradeInfo(tradeInfoAddress) {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const tradeInfoAddressUrl = `${nodeUrl}/addresses/${tradeInfoAddress}`
-
-        const qortalTradeAddressInfo = await fetch(tradeInfoAddressUrl).then(response => {
-            return response.json()
-        })
-
-        this.tradeAddressResult = qortalTradeAddressInfo
-    }
-
-    async getAddressTradeAvatar(tradeAvatarAddress) {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const tradeNameUrl = `${nodeUrl}/names/address/${tradeAvatarAddress}?limit=0&reverse=true`
-
-        await fetch(tradeNameUrl).then(res => {
-            return res.json()
-        }).then(jsonRes => {
-            if(jsonRes.length) {
-                jsonRes.map (item => {
-                    this.tradeInfoAccountName = item.name
-                    this.tradeImageName = item.name
-                })
-            } else {
-                this.tradeInfoAccountName = "No registered name"
-                this.tradeImageName = tradeAvatarAddress
-            }
-        })
-
-        const myTradeImageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.tradeImageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        this.tradeImageUrl = myTradeImageUrl
-    }
-
-    async getAddressTradeBalance(tradeBalanceAddress) {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const tradeBalanceAddressUrl = `${nodeUrl}/addresses/balance/${tradeBalanceAddress}`
-
-        const qortalTradeBalanceInfo = await fetch(tradeBalanceAddressUrl).then(res => {
-            return res.json()
-        })
-        this.displayTradeBalance = qortalTradeBalanceInfo
-    }
-
-    tradeAvatarImage() {
-       return html`<img class="round" src="${this.tradeImageUrl}" onerror="this.src='/img/incognito.png';" />`
-    }
-
-    tradeFounderBadge() {
-       if (this.tradeAddressResult.flags === 1) {
-           return html`<span class="founder">${translate("explorerpage.exp6")}</span>`
-       } else {
-           return html``
-       }
     }
 
     processOfferingTrade(offer) {

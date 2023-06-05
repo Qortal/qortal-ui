@@ -898,7 +898,9 @@
 		"nchange29": "Conto di minting rimosso con successo!",
 		"nchange30": "Impossibile rimuovere l'account di minting!",
 		"nchange31": "Arresta nodo",
-		"nchange32": "Richiesta di arresto inviata con successo!"
+		"nchange32": "Richiesta di arresto inviata con successo!",
+		"nchange33": "Riavvia nodo",
+		"nchange34": "Richiesta di riavvio inviata con successo!"
 	},
 	"transpage": {
 		"tchange1": "Richiesta di transazione",

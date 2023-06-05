@@ -898,7 +898,9 @@
 		"nchange29": "Pomyślnie usunięto konto mintowania!",
 		"nchange30": "Nie udało się usunąć konta mintowania!",
 		"nchange31": "Zatrzymaj węzeł",
-		"nchange32": "Pomyślnie wysłane żądanie zatrzymania!"
+		"nchange32": "Pomyślnie wysłane żądanie zatrzymania!",
+		"nchange33": "Uruchom ponownie węzeł",
+		"nchange34": "Pomyślnie wysłane żądanie ponownego uruchomienia!"
 	},
 	"transpage": {
 		"tchange1": "Żądanie transakcji",

@@ -898,7 +898,9 @@
 		"nchange29": "Eliminación exitosa de la cuenta de acuñación!",
 		"nchange30": "Fallo en la eliminación de la cuenta de acuñación!",
 		"nchange31": "Detener Nodo",
-		"nchange32": "Solicitud de detención enviada con éxito!"
+		"nchange32": "Solicitud de detención enviada con éxito!",
+		"nchange33": "Reiniciar Nodo",
+		"nchange34": "Solicitud de reinicio enviada con éxito!"
 	},
 	"transpage": {
 		"tchange1": "Solicitud de transacción",

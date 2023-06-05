@@ -898,7 +898,9 @@
 		"nchange29": "Mintekontoen ble fjernet!",
 		"nchange30": "Kunne ikke fjerne mintekontoen!",
 		"nchange31": "Stopp noden",
-		"nchange32": "Stoppforespørsel sendt!"
+		"nchange32": "Stoppforespørsel sendt!",
+		"nchange33": "Omstart noden",
+		"nchange34": "Omstartsforespørsel sendt!"
 	},
 	"transpage": {
 		"tchange1": "Transaksjonsforespørsel",
