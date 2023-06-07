@@ -2,20 +2,29 @@ import nacl from '../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../crypto/api/deps/ed2curve.js'
 
 
+let reader = new FileReader();
 export const fileToBase64 = (file) =>
     new Promise((resolve, reject) => {
-        const reader = new FileReader();
+        if (!reader) {
+            reader = new FileReader();
+        }
         reader.readAsDataURL(file);
         reader.onload = () => {
             const dataUrl = reader.result;
             if (typeof dataUrl === "string") {
                 const base64String = dataUrl.split(',')[1];
+                reader.onload = null;
+                reader.onerror = null;
                 resolve(base64String);
             } else {
+                reader.onload = null;
+                reader.onerror = null;
                 reject(new Error('Invalid data URL'));
             }
         };
         reader.onerror = (error) => {
+            reader.onload = null;
+            reader.onerror = null;
             reject(error);
         };
     });
