@@ -4,7 +4,9 @@ import { UI_VERSION } from '../version.js'
 
 const nodeConfigUrl = '/getConfig'
 
-const checkNodes = JSON.parse(localStorage.getItem('myQortalNodes'));
+const checkNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
+
+const checkMyNode = localStorage.getItem('mySelectedNode')
 
 export const doLoadNodeConfig = () => {
 
@@ -19,7 +21,13 @@ export const doLoadNodeConfig = () => {
                     knownNodes: [{}],
                     version: ''
                 }
-                nodeConfig.node = data.config.user.node
+
+                if (checkMyNode === null || checkMyNode.length === 0) {
+                    localStorage.setItem('mySelectedNode', 0)
+                    nodeConfig.node = localStorage.getItem('mySelectedNode')
+                } else {
+                    nodeConfig.node = localStorage.getItem('mySelectedNode')
+                }
 
                 if (checkNodes === null || checkNodes.length === 0) {
                     var saveNode = [];

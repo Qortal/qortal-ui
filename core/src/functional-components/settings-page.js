@@ -184,7 +184,12 @@ class SettingsPage extends connect(store)(LitElement) {
     }
 
     firstUpdated() {
-        // ...
+        const checkNode = localStorage.getItem('mySelectedNode')
+        if (checkNode === null || checkNode.length === 0) {
+            localStorage.setItem('mySelectedNode', 0)
+        } else {
+        }
+        console.log("NODE", localStorage.getItem('mySelectedNode'))
     }
 
     show() {
@@ -224,6 +229,9 @@ class SettingsPage extends connect(store)(LitElement) {
             dismiss: true
         })
 
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', 0)
+
         store.dispatch(doLoadNodeConfig())
     }
 
@@ -237,12 +245,15 @@ class SettingsPage extends connect(store)(LitElement) {
 
         store.dispatch(doSetNode(selectedNodeIndex))
 
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', selectedNodeIndex)
+
         let snack2string = get("settings.snack2")
         snackbar.add({
             labelText: `${snack2string} : ${selectedNodeUrl}`,
             dismiss: true
         })
-
+        console.log("NODE", localStorage.getItem('mySelectedNode'))
         this.shadowRoot.querySelector('#settingsDialog').close()
     }
 
@@ -373,6 +384,9 @@ class SettingsPage extends connect(store)(LitElement) {
             labelText: `${snack5string}`,
             dismiss: true
         })
+
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', 0)
 
         store.dispatch(doLoadNodeConfig())
     }
