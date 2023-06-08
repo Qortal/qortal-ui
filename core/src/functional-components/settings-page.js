@@ -22,7 +22,8 @@ class SettingsPage extends connect(store)(LitElement) {
         return {
             lastSelected: { type: Number },
             nodeConfig: { type: Object },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            nodeIndex: { type: Number }
         }
     }
 
@@ -83,6 +84,7 @@ class SettingsPage extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nodeConfig = {}
+        this.nodeIndex = localStorage.getItem('mySelectedNode')
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -95,7 +97,7 @@ class SettingsPage extends connect(store)(LitElement) {
                 </div>
                 <br>
                 <div style="min-height: 250px; min-width: 500px; box-sizing: border-box; position: relative;">
-                    <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
+                    <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="${this.nodeIndex}" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
                             <mwc-list-item value="${index}">
                                 <span class="name">${n.name}</span>
@@ -117,9 +119,9 @@ class SettingsPage extends connect(store)(LitElement) {
                 <div style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;">
                     <hr><br>
                     <center>
-                    <div id="main">
-                        <mwc-icon class="globe">language</mwc-icon>&nbsp;<language-selector></language-selector>
-                    </div>
+                        <div id="main">
+                            <mwc-icon class="globe">language</mwc-icon>&nbsp;<language-selector></language-selector>
+                        </div>
                     </center>
                 </div>
                 <mwc-button
@@ -189,7 +191,6 @@ class SettingsPage extends connect(store)(LitElement) {
             localStorage.setItem('mySelectedNode', 0)
         } else {
         }
-        console.log("NODE", localStorage.getItem('mySelectedNode'))
     }
 
     show() {
@@ -253,7 +254,7 @@ class SettingsPage extends connect(store)(LitElement) {
             labelText: `${snack2string} : ${selectedNodeUrl}`,
             dismiss: true
         })
-        console.log("NODE", localStorage.getItem('mySelectedNode'))
+
         this.shadowRoot.querySelector('#settingsDialog').close()
     }
 
