@@ -429,7 +429,7 @@ class AppView extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-laptop')}' fullbleed>
+            <app-drawer-layout fullbleed force-narrow>
                 <app-drawer swipe-open slot="drawer" id="appdrawer">
                     <app-header-layout>
                         <div id="sideBar">
@@ -466,7 +466,8 @@ class AppView extends connect(store)(LitElement) {
                 <app-header-layout style="height: var(--window-height);">
                     <app-header id='appHeader' slot="header" fixed>
                         <app-toolbar>
-                            <paper-icon-button class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
+                            <paper-icon-button id="mb" class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
+                            <vaadin-tooltip text="${translate("general.update")}" for="mb" position="bottom"></vaadin-tooltip>
                             <div main-title>
                                 <span class="qora-title">
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">

@@ -15,7 +15,8 @@ class ShowPlugin extends connect(store)(LitElement) {
             linkParam: { type: String },
             registeredUrls: { type: Array },
             currentTab: { type: Number },
-            tabs: { type: Array }
+            tabs: { type: Array },
+            theme: { type: String, reflect: true },
         }
     }
 
@@ -45,12 +46,10 @@ class ShowPlugin extends connect(store)(LitElement) {
                 border: 3px solid var(--scrollbarBG);
             }
             
-
             .hideIframe  {
                 visibility: hidden;
                 position: absolute;
-                zIndex: -10;
-                
+                zIndex: -10;  
             }
 
             .showIframe  {
@@ -60,61 +59,78 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tabs {
-        display: flex;
-        justify-content: flex-start;
-        gap: 1em;
-        padding: 0.5em;
-        background: #F6F8FA;
-        border-bottom: 1px solid #E1E4E8;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.075);
-      }
-      .tab {
-        padding: 0.5em 1em;
-        background: #fafbfc;
-        border: 1px solid #E1E4E8;
-        border-radius: 3px;
-        color: #586069;
-        cursor: pointer;
-        transition: background 0.3s;
-        position: relative;
-    width: 120px;
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-      }
-      .tab:hover {
-        background: #F3F4F6;
-      }
-      .tab.active {
-        background: #FFFFFF;
-        color: #24292E;
-        border: 1px solid #E1E4E8;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-      .close {
-            color: #999;
-            font-weight: bold;
-            font-size: 20px;
-            line-height: 20px;
-            position: absolute;
-            top: 5px;
-            right: 5px;
-        }
+                display: flex;
+                justify-content: flex-start;
+                height: 35px
+                max-height: 35px
+                gap: 1em;
+                padding-top: 0.5em;
+                padding-left: 0.5em;
+                background: var(--sidetopbar);
+                border-bottom: 1px solid var(--black);
+            }
 
-        .close:hover {
-            color: red;
-        }
-      .add-tab-button {
-      background: none;
-      border: none;
-      color: #586069;
-      font-size: 1.5em;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .add-tab-button:hover {
-      color: #24292E;
-    }
+            .tab {
+                padding: 0.5em;
+                background: var(--white);
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                border-top: 1px solid grey;
+                border-left: 1px solid grey;
+                border-right: 1px solid grey;
+                color: grey;
+                cursor: pointer;
+                transition: background 0.3s;
+                position: relative;
+                min-width: 120px;
+                max-width: 200px;
+
+                text-overflow: ellipsis;
+            }
+
+            .tab:hover {
+                background: #F3F4F6;
+            }
+
+            .tab.active {
+                margin-bottom: -1px;
+                background: var(--white);
+                color: var(--black);
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                border-top: 1px solid var(--black);
+                border-left: 1px solid var(--black);
+                border-right: 1px solid var(--black);
+                border-bottom: 1px solid var(--white);
+            }
+
+            .close {
+                color: #999;
+                font-weight: bold;
+                font-size: 20px;
+                line-height: 20px;
+                position: absolute;
+                top: 7px;
+                right: 8px;
+            }
+
+            .close:hover {
+                color: red;
+            }
+
+            .add-tab-button {
+                font-weight: bold;
+                background: none;
+                border: none;
+                color: #03a9f4;
+                font-size: 2em;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+
+            .add-tab-button:hover {
+                color: var(--black);
+            }
         `
     }
 
@@ -124,119 +140,99 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.currentTab = 0
         this.tabs = []
         this.uid = new ShortUniqueId()
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     async getUpdateComplete() {
-        await super.getUpdateComplete();
-        return true;
+        await super.getUpdateComplete()
+        return true
     }
 
     async addTab(tab) {
-
         this.tabs = [...this.tabs, tab]
         await this.getUpdateComplete();
+
         // add the new tab to the tabs array
-        const newIndex = this.tabs.length - 1;
+        const newIndex = this.tabs.length - 1
 
         // render the tab and wait for it to be added to the DOM
-
-        const frame = this.shadowRoot.getElementById(`showPluginFrame${newIndex}`);
-        this.createEpmlInstance(frame, newIndex);
-
+        const frame = this.shadowRoot.getElementById(`showPluginFrame${newIndex}`)
+        this.createEpmlInstance(frame, newIndex)
     }
 
-
-
-
-
-
     render() {
-
-
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
-
-
         return html`
-       
-      <div class="tabs">
-        ${this.tabs.map((tab, index) => html`
-          <div 
-          class="tab ${this.currentTab === index ? 'active' : ''}"
-            @click=${() => this.currentTab = index}
-          >
-            ${tab.url}
-                    <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
-          </div>
-        `)}
-        <button 
-        class="add-tab-button" 
-        title="Add Tab"
-        @click=${() => this.addTab(
-            {
-                url: "",
-                id: this.uid()
-            }
-        )}
-      >
-        ➕
-      </button>
-      </div>
+            <div class="tabs">
+                ${this.tabs.map((tab, index) => html`
+                    <div 
+                        class="tab ${this.currentTab === index ? 'active' : ''}"
+                        @click=${() => this.currentTab = index}
+                    >
+                        ${tab.url}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
+                    </div>
+                `)}&nbsp;&nbsp;&nbsp;
+                <button 
+                    class="add-tab-button" 
+                    title="Add Tab"
+                    @click=${() => this.addTab({
+                        url: "",
+                        id: this.uid()
+                    })}
+                >
+                    +
+                </button>
+            </div>
 
-      ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
-      <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
-          <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
-                height:calc(var(--window-height) - 64px);
-                border:0;
-                padding:0;
-                margin:0"></iframe>
-        </div>
-        `)}
-     
-       
-      
+            ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
+                <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
+                    <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
+                        height:calc(var(--window-height) - 64px);
+                        border:0;
+                        padding:0;
+                        margin:0"
+                    >
+                    </iframe>
+                </div>
+            `)}     
         `
     }
 
     removeTab(index) {
-
-
         // Remove tab from array
         this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
-
-
     }
 
     createEpmlInstance(frame, index) {
         const showingPluginEpml = new Epml({
             type: 'WINDOW',
             source: frame.contentWindow
-        });
+        })
 
         addPluginRoutes(showingPluginEpml);
         showingPluginEpml.imReady();
 
         // store Epml instance in tab for later use
-        this.tabs[index].epmlInstance = showingPluginEpml;
+        this.tabs[index].epmlInstance = showingPluginEpml
 
         // Register each instance with a unique identifier
-        Epml.registerProxyInstance(`visible-plugin-${index}`, showingPluginEpml);
+        Epml.registerProxyInstance(`visible-plugin-${index}`, showingPluginEpml)
     }
 
     firstUpdated() {
         this.tabs.forEach((tab, index) => {
-            const frame = this.shadowRoot.getElementById(`showPluginFrame${index}`);
-            this.createEpmlInstance(frame, index);
-        });
+            const frame = this.shadowRoot.getElementById(`showPluginFrame${index}`)
+            this.createEpmlInstance(frame, index)
+        })
     }
 
     updated(changedProps) {
-
         if (changedProps.has('url') || changedProps.has('registeredUrls')) {
             const plugArr = []
-
 
             this.registeredUrls.forEach(myPlugArr => {
                 myPlugArr.menus.length === 0 ? plugArr.push(myPlugArr) : myPlugArr.menus.forEach(i => plugArr.push(myPlugArr, i))
@@ -247,14 +243,12 @@ class ShowPlugin extends connect(store)(LitElement) {
             })
 
             if (this.tabs.length === 0) {
-
                 this.addTab({
                     url: this.url,
                     myPlugObj,
                     id: this.uid()
                 })
             } else {
-
                 const copiedTabs = [...this.tabs]
                 copiedTabs[this.currentTab] = {
                     ...copiedTabs[this.currentTab],
@@ -262,11 +256,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                     myPlugObj
                 }
                 this.tabs = copiedTabs
-
-
-
             }
-
             this.requestUpdate()
         }
 
@@ -312,5 +302,3 @@ class ShowPlugin extends connect(store)(LitElement) {
 }
 
 window.customElements.define('show-plugin', ShowPlugin)
-
-
