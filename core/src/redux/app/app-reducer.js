@@ -1,6 +1,6 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
 import { loadStateFromLocalStorage, saveStateToLocalStorage } from '../../localStorageHelpers.js'
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS } from './app-action-types.js'
+import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS, SET_NEW_TAB } from './app-action-types.js'
 import { initWorkersReducer } from './reducers/init-workers.js'
 import { loginReducer } from './reducers/login-reducer.js'
 import { setNode, addNode } from './reducers/manage-node.js'
@@ -46,7 +46,8 @@ const INITIAL_STATE = {
     autoLoadImageChats: loadStateFromLocalStorage('autoLoadImageChats') || [],
     qAPPAutoAuth: loadStateFromLocalStorage('qAPPAutoAuth') || false,
     qAPPAutoLists: loadStateFromLocalStorage('qAPPAutoLists') || false,
-    chatLastSeen: []
+    chatLastSeen: [],
+    newTab: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -136,25 +137,25 @@ export default (state = INITIAL_STATE, action) => {
                 networkIsConnected: action.payload
             }
         case ADD_AUTO_LOAD_IMAGES_CHAT: {
-            const findChat = state.autoLoadImageChats.findIndex((chat)=> chat === action.payload)
-            console.log({findChat})
-            if(findChat !== -1) return state
+            const findChat = state.autoLoadImageChats.findIndex((chat) => chat === action.payload)
+
+            if (findChat !== -1) return state
             const updatedState = [...state.autoLoadImageChats, action.payload]
 
-            saveStateToLocalStorage('autoLoadImageChats', updatedState) 
+            saveStateToLocalStorage('autoLoadImageChats', updatedState)
             return {
                 ...state,
                 autoLoadImageChats: updatedState
             }
         }
-           
+
         case REMOVE_AUTO_LOAD_IMAGES_CHAT: {
-            const updatedState = state.autoLoadImageChats.filter((chat)=> chat !== action.payload)
-            saveStateToLocalStorage('autoLoadImageChats', updatedState) 
+            const updatedState = state.autoLoadImageChats.filter((chat) => chat !== action.payload)
+            saveStateToLocalStorage('autoLoadImageChats', updatedState)
             return {
                 ...state,
                 autoLoadImageChats: updatedState
-         }
+            }
         }
 
         case ALLOW_QAPP_AUTO_AUTH: {
@@ -192,23 +193,23 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 chatLastSeen: action.payload
-         }
+            }
         }
         case ADD_CHAT_LAST_SEEN: {
             const chatId = action.payload.key
             const timestamp = action.payload.timestamp
-            if(!chatId || !timestamp) return state
+            if (!chatId || !timestamp) return state
             let newChatLastSeen = [...state.chatLastSeen]
-            const findChatIndex = state.chatLastSeen.findIndex((chat)=> chat.key === chatId)
-            if(findChatIndex !== -1){
-               
+            const findChatIndex = state.chatLastSeen.findIndex((chat) => chat.key === chatId)
+            if (findChatIndex !== -1) {
+
                 newChatLastSeen[findChatIndex] = {
                     key: chatId,
                     timestamp,
                 }
             }
-            if(findChatIndex === -1){
-               
+            if (findChatIndex === -1) {
+
                 newChatLastSeen = [...newChatLastSeen, {
                     key: chatId,
                     timestamp,
@@ -218,9 +219,16 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 chatLastSeen: newChatLastSeen
-         }
+            }
         }
-                
+
+        case SET_NEW_TAB: {
+            return {
+                ...state,
+                newTab: action.payload
+            }
+        }
+
         default:
             return state
     }

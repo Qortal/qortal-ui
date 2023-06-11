@@ -29,7 +29,7 @@ autoUpdater.autoInstallOnAppQuit = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 
-if(!store.has('askingCore')) {
+if (!store.has('askingCore')) {
 	store.set('askingCore', false)
 }
 
@@ -77,6 +77,8 @@ const macjavaaarch64url = "https://download.qortal.online/openjdk-17.0.2_macos-a
 const macjavaaarch64file = homePath + "/openjdk-17.0.2_macos-aarch64_bin.zip"
 const macjavaaarch64bindir = homePath + "/jdk-17.0.2/Contents/Home/bin"
 const macjavaaarch64binfile = homePath + "/jdk-17.0.2/Contents/Home/bin/java"
+
+let win = BrowserWindow.getFocusedWindow();
 
 const isRunning = (query, cb) => {
 	let platform = process.platform
@@ -203,29 +205,29 @@ async function checkResponseStatus(res) {
 
 async function javaversion() {
 	var stderrChunks = []
-	let checkJava = await spawn('java', ['-version'],{shell: true})
+	let checkJava = await spawn('java', ['-version'], { shell: true })
 	if (process.platform === 'linux') {
 		if (process.arch === 'x64') {
 			if (fs.existsSync(linjavax64bindir)) {
-				checkJava = await spawn(linjavax64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavax64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else if (process.arch === 'arm64') {
 			if (fs.existsSync(linjavaarm64bindir)) {
-				checkJava = await spawn(linjavaarm64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavaarm64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else if (process.arch === 'arm') {
 			if (fs.existsSync(linjavaarmbindir)) {
-				checkJava = await spawn(linjavaarmbinfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavaarmbinfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		}
 	} else if (process.platform === 'darwin') {
 		if (process.arch === 'x64') {
 			if (fs.existsSync(macjavax64bindir)) {
-				checkJava = await spawn(macjavax64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(macjavax64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else {
 			if (fs.existsSync(macjavaaarch64bindir)) {
-				checkJava = await spawn(macjavaaarch64file, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(macjavaaarch64file, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		}
 	}
@@ -706,7 +708,7 @@ const editMenu = Menu.buildFromTemplate([
 	{
 		label: "Qortal",
 		submenu: [
-			{ label: "Quit", click() {app.quit()}}
+			{ label: "Quit", click() { app.quit() } }
 		]
 	},
 	{
@@ -748,7 +750,7 @@ const editMenu = Menu.buildFromTemplate([
 		]
 	},
 	{
-		label: "Check for update", click() {autoUpdater.checkForUpdatesAndNotify()}
+		label: "Check for update", click() { autoUpdater.checkForUpdatesAndNotify() }
 	}
 ])
 
@@ -1024,8 +1026,8 @@ if (!isLock) {
 					createNewWindow()
 				},
 			}
-  		])
-  		homePageOptions.popup(myWindow)
+		])
+		homePageOptions.popup(myWindow)
 	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {
@@ -1076,7 +1078,15 @@ if (!isLock) {
 		})
 		n.show()
 	})
+	ipcMain.on('focus-app', (event) => {
+		if (win.isMinimized()) {
+			win.restore(); // If the window is minimized restore it, then maximize it
+		}
+		win.maximize();
+		win.focus(); // This will bring your window to the front
+	})
 	process.on('uncaughtException', function (err) {
 		log.info("*** WHOOPS TIME ***" + err)
 	})
+
 }

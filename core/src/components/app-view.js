@@ -34,9 +34,10 @@ import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
 import './start-minting.js'
+import './notification-view/notification-bell.js'
 import { setChatLastSeen } from '../redux/app/app-actions.js'
 
-const parentEpml = new Epml({type: 'WINDOW', source: window.parent})
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class AppView extends connect(store)(LitElement) {
     static get properties() {
@@ -473,6 +474,7 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+                            <notification-bell></notification-bell>
                             <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
@@ -1393,16 +1395,16 @@ class AppView extends connect(store)(LitElement) {
             }
         }
 
-       const getChatLastSeen=async() => {
+        const getChatLastSeen = async () => {
             let items = [];
-          
-            await chatLastSeen.iterate(function(value, key, iterationNumber) {
-               
-                items.push({key, timestamp: value});
-              })
-              store.dispatch(setChatLastSeen(items))
+
+            await chatLastSeen.iterate(function (value, key, iterationNumber) {
+
+                items.push({ key, timestamp: value });
+            })
+            store.dispatch(setChatLastSeen(items))
             return items;
-          }
+        }
 
         await getOpenTradesBTC()
         await appDelay(1000)
@@ -2153,7 +2155,7 @@ class AppView extends connect(store)(LitElement) {
         this.addressInfo = state.app.accountInfo.addressInfo
 
         if (sideurl === "minting") {
-            this.shadowRoot.getElementById('qminter').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qminter').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
@@ -2186,7 +2188,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "become-minter") {
-            this.shadowRoot.getElementById('qbminter').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qbminter').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
@@ -2219,7 +2221,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "sponsorship-list") {
-            this.shadowRoot.getElementById('qiminter').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qiminter').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2252,7 +2254,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "wallet") {
-            this.shadowRoot.getElementById('qwallet').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qwallet').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2285,7 +2287,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "trade-portal") {
-            this.shadowRoot.getElementById('qtrade').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qtrade').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2318,7 +2320,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "trade-bot-portal") {
-            this.shadowRoot.getElementById('qbot').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qbot').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2351,7 +2353,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "reward-share") {
-            this.shadowRoot.getElementById('qrewardshare').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qrewardshare').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2384,7 +2386,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "q-chat") {
-            this.shadowRoot.getElementById('qchat').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qchat').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2417,7 +2419,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "name-registration") {
-            this.shadowRoot.getElementById('qnamereg').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qnamereg').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2450,7 +2452,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "names-market") {
-            this.shadowRoot.getElementById('qnamemarket').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qnamemarket').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2483,7 +2485,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "websites") {
-            this.shadowRoot.getElementById('qweb').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qweb').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2516,7 +2518,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "qapps") {
-            this.shadowRoot.getElementById('qapp').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qapp').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2549,7 +2551,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "group-management") {
-            this.shadowRoot.getElementById('qgroupmange').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qgroupmange').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2582,7 +2584,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "puzzles") {
-            this.shadowRoot.getElementById('qpuzzles').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qpuzzles').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2615,7 +2617,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "data-management") {
-            this.shadowRoot.getElementById('qdata').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qdata').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
@@ -2648,7 +2650,7 @@ class AppView extends connect(store)(LitElement) {
                 this.shadowRoot.getElementById('qnode').removeAttribute('selected')
             }
         } else if (sideurl === "node-management") {
-            this.shadowRoot.getElementById('qnode').setAttribute('selected','selected')
+            this.shadowRoot.getElementById('qnode').setAttribute('selected', 'selected')
             if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
                 this.shadowRoot.getElementById('qminter').removeAttribute('selected')
             } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {

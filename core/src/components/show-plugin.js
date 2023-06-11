@@ -5,6 +5,7 @@ import { Epml } from '../epml.js'
 import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
+import { setNewTab } from '../redux/app/app-actions.js'
 
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
@@ -61,13 +62,12 @@ class ShowPlugin extends connect(store)(LitElement) {
             .tabs {
                 display: flex;
                 justify-content: flex-start;
-                height: 35px
-                max-height: 35px
-                gap: 1em;
                 padding-top: 0.5em;
                 padding-left: 0.5em;
                 background: var(--sidetopbar);
                 border-bottom: 1px solid var(--black);
+                height: 48px;
+    box-sizing: border-box;
             }
 
             .tab {
@@ -84,7 +84,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                 position: relative;
                 min-width: 120px;
                 max-width: 200px;
-
+                overflow: hidden;
+                text-wrap: nowrap;
+                text-overflow: ellipsis;
                 text-overflow: ellipsis;
             }
 
@@ -165,6 +167,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
+
         return html`
             <div class="tabs">
                 ${this.tabs.map((tab, index) => html`
@@ -172,7 +175,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                         class="tab ${this.currentTab === index ? 'active' : ''}"
                         @click=${() => this.currentTab = index}
                     >
-                        ${tab.url}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        ${tab.myPlugObj && tab.myPlugObj.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
                     </div>
                 `)}&nbsp;&nbsp;&nbsp;
@@ -180,9 +183,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                     class="add-tab-button" 
                     title="Add Tab"
                     @click=${() => this.addTab({
-                        url: "",
-                        id: this.uid()
-                    })}
+            url: "",
+            id: this.uid()
+        })}
                 >
                     +
                 </button>
@@ -191,7 +194,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
                 <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
                     <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
-                        height:calc(var(--window-height) - 64px);
+                        height:calc(var(--window-height) - 102px);
                         border:0;
                         padding:0;
                         margin:0"
@@ -297,6 +300,28 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         if (newLinkParam !== this.linkParam) {
             this.linkParam = newLinkParam
+        }
+
+        if (state.app.newTab) {
+            const newTab = state.app.newTab
+            if (!this.tabs.find((tab) => tab.id === newTab.id)) {
+                this.addTab(newTab)
+                this.currentTab = this.tabs.length - 1
+                store.dispatch(setNewTab(null))
+                //clear newTab
+            } else {
+                const findIndex = this.tabs.findIndex((tab) => tab.id === newTab.id)
+                if (findIndex !== -1) {
+                    const copiedTabs = [...this.tabs]
+                    copiedTabs[findIndex] = newTab
+                    this.tabs = copiedTabs
+                    this.currentTab = findIndex
+                }
+
+                store.dispatch(setNewTab(null))
+                //clear newTab
+            }
+
         }
     }
 }
