@@ -11,6 +11,10 @@ import '@vaadin/icons'
 
 
 
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@material/mwc-icon'
+
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
         return {
@@ -71,7 +75,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 background: var(--sidetopbar);
                 border-bottom: 1px solid var(--black);
                 height: 48px;
-    box-sizing: border-box;
+                box-sizing: border-box;
             }
 
             .tab {
@@ -96,6 +100,8 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .tab:hover {
                 background: #F3F4F6;
+                color: #03a9f4;
+                font-weight: bold;
             }
 
             .tab.active {
@@ -120,6 +126,10 @@ class ShowPlugin extends connect(store)(LitElement) {
                 right: 8px;
             }
 
+            .title {
+                display: inline;
+            }
+
             .close:hover {
                 color: red;
             }
@@ -136,6 +146,19 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .add-tab-button:hover {
                 color: var(--black);
+            }
+
+            .iconActive {
+                position: absolute;
+                top: 7px;
+                color: #03a9f4;
+                --mdc-icon-size: 20px;
+            }
+            .iconInactive {
+                position: absolute;
+                top: 7px;
+                color: #999;
+                --mdc-icon-size: 20px;
             }
         `
     }
@@ -171,7 +194,6 @@ class ShowPlugin extends connect(store)(LitElement) {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
-
         return html`
             <div class="tabs">
                 ${this.tabs.map((tab, index) => html`
@@ -179,8 +201,17 @@ class ShowPlugin extends connect(store)(LitElement) {
                         class="tab ${this.currentTab === index ? 'active' : ''}"
                         @click=${() => this.currentTab = index}
                     >
-                        ${tab.myPlugObj && tab.myPlugObj.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
+                        <div class="title">
+                            <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
+                                <mwc-icon>${tab.myPlugObj && tab.myPlugObj.mwcicon}</mwc-icon>
+                            </div>
+                            <div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                ${tab.myPlugObj && tab.myPlugObj.title}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
+                        </div>
                     </div>
                 `)}&nbsp;&nbsp;&nbsp;
                 <button 
