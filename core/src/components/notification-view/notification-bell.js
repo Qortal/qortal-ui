@@ -1,55 +1,53 @@
-import { LitElement, html, css } from 'lit';
-import { connect } from 'pwa-helpers';
+import { LitElement, html, css } from 'lit'
+import { connect } from 'pwa-helpers'
 
-import '@vaadin/button';
-import '@vaadin/item';
-import '@vaadin/list-box';
-import '@vaadin/icon';
-import '@vaadin/icons';
-import { store } from '../../store.js';
-import { setNewTab } from '../../redux/app/app-actions.js';
-import { routes } from '../../plugins/routes.js';
-import config from '../../notifications/config.js';
+import '@vaadin/item'
+import '@vaadin/list-box'
+import '@polymer/paper-icon-button/paper-icon-button.js'
+import '@polymer/iron-icons/iron-icons.js'
+import { store } from '../../store.js'
+import { setNewTab } from '../../redux/app/app-actions.js'
+import { routes } from '../../plugins/routes.js'
+import config from '../../notifications/config.js'
 import '../../../../plugins/plugins/core/components/TimeAgo.js'
+
 class NotificationBell extends connect(store)(LitElement) {
-
-
-
 
     static properties = {
         notifications: { type: Array },
         showNotifications: { type: Boolean },
-    };
+        notificationCount: { type: Boolean },
+        theme: { type: String, reflect: true },
+    }
 
     constructor() {
-        super();
-        this.notifications = [];
-        this.showNotifications = false;
+        super()
+        this.notifications = []
+        this.showNotifications = false
+        this.notificationCount = false
         this.initialFetch = false
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     firstUpdated() {
         this.getNotifications();
         document.addEventListener('click', (event) => {
-            const path = event.composedPath();
+            const path = event.composedPath()
             if (!path.includes(this)) {
-                this.showNotifications = false;
+                this.showNotifications = false
             }
-        });
+        })
     }
 
     getApiKey() {
-        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = apiNode.apiKey;
-        return apiKey;
+        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
     }
 
     async getNotifications() {
-        const myNode =
-            store.getState().app.nodeConfig.knownNodes[
-            store.getState().app.nodeConfig.node
-            ];
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
         let interval = null
         let stop = false
@@ -69,18 +67,18 @@ class NotificationBell extends connect(store)(LitElement) {
                     }
                 })
 
-                const data = await response.json();
+                const data = await response.json()
                 return data;
-            };
+            }
 
             if (!stop && !this.showNotifications) {
-                stop = true;
+                stop = true
                 try {
                     const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
                     const name = window.parent.reduxStore.getState().app?.accountInfo?.names[0]?.name
 
                     if (!name || !address) return
-                    const mailArray = await getMail(name, address);
+                    const mailArray = await getMail(name, address)
                     let notificationsToShow = []
                     if (mailArray.length > 0) {
                         const lastVisited = localStorage.getItem("Q-Mail-last-visited")
@@ -110,76 +108,85 @@ class NotificationBell extends connect(store)(LitElement) {
                         }
                     }
                     this.notifications = notificationsToShow
+
+                    if (this.notifications.length === 0) {
+                        this.notificationCount = false
+                    } else {
+                        this.notificationCount = true
+                    }
+
                     if (!this.initialFetch) this.initialFetch = true
                 } catch (error) {
                     console.error(error)
                 }
                 stop = false
             }
-        };
+        }
         try {
 
             setTimeout(() => {
                 getNewMail()
-
             }, 5000)
 
-
-            interval = setInterval(getNewMail, 30000);
+            interval = setInterval(getNewMail, 30000)
         } catch (error) {
             console.error(error)
         }
-
     }
+
     render() {
-
         return html`
-          <div class="layout">
-            <vaadin-button theme="icon" aria-label="Notifications" @click=${this._toggleNotifications}>
-              <vaadin-icon icon="vaadin:bell"></vaadin-icon>
-              <span class="count">${this.notifications.length}</span>
-            </vaadin-button>
-            <div class="popover-panel" ?hidden=${!this.showNotifications}>
-              <div class="notifications-list">
-                ${this.notifications.map(notification => html`
-                  <div class="notification-item" @click=${() => {
+            <div class="layout">
+                ${this.notificationCount ? html`
+                    <paper-icon-button style="color: green;" icon="icons:mail" @click=${() => this._toggleNotifications()} title="Q-Mail"></paper-icon-button>
+                ` : html`
+                    <paper-icon-button icon="icons:mail" @click=${() => this._toggleNotifications()} title="Q-Mail"></paper-icon-button>
+                `}
 
-                const query = `?service=APP&name=Q-Mail`
-                store.dispatch(setNewTab({
-                    url: `qdn/browser/index.html${query}`,
-                    id: 'q-mail-notification',
-                    myPlugObj: {
-                        "url": "qapps",
-                        "domain": "core",
-                        "page": `qdn/browser/index.html${query}`,
-                        "title": "Q-Mail",
-                        "icon": "vaadin:desktop",
-                        "menus": [],
-                        "parent": false
-                    }
-                }))
-                this.showNotifications = false
-                this.notifications = []
-            }}>
-            <div>
-            <p>Q-Mail</p>
-            <message-time timestamp=${notification.created} style="color:red;font-size:12px"></message-time>
+                ${this.notificationCount ? html`
+                    <span class="count">${this.notifications.length}</span>
+                ` : ''}
+
+                <div class="popover-panel" ?hidden=${!this.showNotifications}>
+                    <div class="notifications-list">
+                        ${this.notifications.map(notification => html`
+                            <div class="notification-item" @click=${() => {
+                                const query = `?service=APP&name=Q-Mail`
+                                store.dispatch(setNewTab({
+                                    url: `qdn/browser/index.html${query}`,
+                                    id: 'q-mail-notification',
+                                    myPlugObj: {
+                                        "url": "qapps",
+                                        "domain": "core",
+                                        "page": `qdn/browser/index.html${query}`,
+                                        "title": "Q-Mail",
+                                        "icon": "vaadin:mailbox",
+			                "mwcicon": "mail_outline",
+                                        "menus": [],
+                                        "parent": false
+                                    }
+                                }))
+                                this.showNotifications = false
+                                this.notifications = []
+                            }}>
+                                <div>
+                                    <p>Q-Mail</p>
+                                    <message-time timestamp=${notification.created} style="color:red;font-size:12px"></message-time>
+                                </div>
+                                <div> 
+                                    <p>${notification.name}</p>
+                                </div>
+                            </div>
+                        `)}
+                    </div>
+                </div>
             </div>
-            <div> 
-            <p>${notification.name}</p>
-            </div>
-           
-            </div>
-                `)}
-        </div>
-            </div>
-          </div>
-        `;
+        `
     }
 
     _toggleNotifications() {
         if (this.notifications.length === 0) return
-        this.showNotifications = !this.showNotifications;
+        this.showNotifications = !this.showNotifications
     }
 
     static styles = css`
@@ -190,76 +197,80 @@ class NotificationBell extends connect(store)(LitElement) {
           align-items: center;
           position: relative;
         }
+
         .count {
           position: absolute;
-          top: 0;
-          right: 0;
+          top: 2px;
+          right: 32px;
+          font-size: 12px;
           background-color: red;
           color: white;
           border-radius: 50%;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
+
+        .nocount {
+          display: none;
+        }
+
         .popover-panel {
           position: absolute;
           width: 200px;
           padding: 10px;
-          background-color: #f5f5f5;
-          border: 1px solid #ccc;
+          background-color: var(--white);
+          border: 1px solid var(--black);
           border-radius: 4px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           top: 40px;
           max-height: 350px;
-    overflow: auto;
-    scrollbar-width: thin;
-            scrollbar-color: #6a6c75 #a1a1a1;
+          overflow: auto;
+          scrollbar-width: thin;
+          scrollbar-color: #6a6c75 #a1a1a1;
         }
 
         .popover-panel::-webkit-scrollbar {
-            width: 11px;
+          width: 11px;
         }
 
-    
-
         .popover-panel::-webkit-scrollbar-track {
-            background: #a1a1a1;
+          background: #a1a1a1;
         }
 
         .popover-panel::-webkit-scrollbar-thumb {
-            background-color: #6a6c75;
-            border-radius: 6px;
-            border: 3px solid #a1a1a1;
+          background-color: #6a6c75;
+          border-radius: 6px;
+          border: 3px solid #a1a1a1;
         }
 
         .notifications-list {
-    display: flex;
-    flex-direction: column;
-  }
-  .notification-item {
-    padding: 5px;
-    border-bottom: 1px solid;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: 0.2s all;
-  }
-  .notification-item:hover {
-    background: #c9d2d9;
-  }
-   p {
-    font-size: 14px;
-    color: #444444;
-    margin: 0px;
-    padding: 0px;
+          display: flex;
+          flex-direction: column;
+        }
 
-  }
-      `;
+        .notification-item {
+          padding: 5px;
+          border-bottom: 1px solid;
+          display: flex;
+          justify-content: space-between;
+          cursor: pointer;
+          transition: 0.2s all;
+        }
+
+        .notification-item:hover {
+          background: var(--nav-color-hover);
+        }
+
+        p {
+          font-size: 14px;
+          color: var(--black);
+          margin: 0px;
+          padding: 0px;
+        }
+    `
 }
 
-customElements.define('notification-bell', NotificationBell);
-
-
-
+customElements.define('notification-bell', NotificationBell)
