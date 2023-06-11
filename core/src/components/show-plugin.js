@@ -182,10 +182,14 @@ class ShowPlugin extends connect(store)(LitElement) {
                 <button 
                     class="add-tab-button" 
                     title="Add Tab"
-                    @click=${() => this.addTab({
-            url: "",
-            id: this.uid()
-        })}
+                    @click=${() => {
+                const lengthOfTabs = this.tabs.length
+                this.addTab({
+                    url: "",
+                    id: this.uid()
+                })
+                this.currentTab = lengthOfTabs
+            }}
                 >
                     +
                 </button>
