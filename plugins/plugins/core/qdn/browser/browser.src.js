@@ -112,6 +112,10 @@ class WebBrowser extends LitElement {
 				font-size: 16px;
 				background-color: var(--white);
 			}
+			input {
+    			outline: none
+			}
+			
 
 			paper-progress {
 				--paper-progress-active-color: var(--mdc-theme-primary);
@@ -236,7 +240,75 @@ class WebBrowser extends LitElement {
 		})
 	}
 
+	async extractComponents(url) {
+		if (!url.startsWith("qortal://")) {
+			return null;
+		}
+
+		url = url.replace(/^(qortal\:\/\/)/, "");
+		if (url.includes("/")) {
+			let parts = url.split("/");
+			const service = parts[0].toUpperCase();
+			parts.shift();
+			const name = parts[0];
+			parts.shift();
+			let identifier;
+
+			if (parts.length > 0) {
+				identifier = parts[0]; // Do not shift yet
+				// Check if a resource exists with this service, name and identifier combination
+				let responseObj = await parentEpml.request('apiCall', {
+					url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
+				})
+
+				if (responseObj.totalChunkCount > 0) {
+					// Identifier exists, so don't include it in the path
+					parts.shift();
+				}
+				else {
+					identifier = null;
+				}
+			}
+
+			const path = parts.join("/");
+
+			const components = {};
+			components["service"] = service;
+			components["name"] = name;
+			components["identifier"] = identifier;
+			components["path"] = path;
+			return components;
+		}
+
+		return null;
+	}
+
+	async _handleKeyDown(e) {
+		if (e.key === 'Enter') {
+			const value = e.target.value
+			let newQuery = value;
+			if (newQuery.endsWith('/')) {
+				newQuery = newQuery.slice(0, -1);
+			}
+			const res = await this.extractComponents(newQuery)
+			if (!res) return
+			const { service, name, identifier, path } = res
+			let query = `?service=${service}`
+			if (name) {
+				query = query + `&name=${name}`
+			}
+			if (identifier) {
+				query = query + `&identifier=${identifier}`
+			}
+			if (path) {
+				query = query + `&path=${path}`
+			}
+			window.location = window.location.origin + window.location.pathname + query
+		}
+	}
+
 	render() {
+
 		return html`
     			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     				<div class="layout horizontal center">
@@ -245,7 +317,7 @@ class WebBrowser extends LitElement {
     						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
     						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
     						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-    						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
+    						<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
     						${this.renderFullScreen()}
     						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
     						${this.renderBlockUnblockButton()}

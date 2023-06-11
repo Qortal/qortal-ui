@@ -6,6 +6,10 @@ import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import { setNewTab } from '../redux/app/app-actions.js'
+import '@vaadin/icon'
+import '@vaadin/icons'
+
+
 
 import '@vaadin/icon'
 import '@vaadin/icons'
@@ -213,10 +217,14 @@ class ShowPlugin extends connect(store)(LitElement) {
                 <button 
                     class="add-tab-button" 
                     title="Add Tab"
-                    @click=${() => this.addTab({
-                        url: "",
-                        id: this.uid()
-                    })}
+                    @click=${() => {
+                const lengthOfTabs = this.tabs.length
+                this.addTab({
+                    url: "",
+                    id: this.uid()
+                })
+                this.currentTab = lengthOfTabs
+            }}
                 >
                     +
                 </button>
@@ -224,13 +232,19 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
                 <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
-                    <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
+          
+                <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
                         height:calc(var(--window-height) - 102px);
                         border:0;
                         padding:0;
                         margin:0"
+                        class=${!tab.myPlugObj ? "hideIframe" : ""}
                     >
                     </iframe>
+        
+                <nav-bar  class=${!tab.myPlugObj ? "showIframe" : "hideIframe"} .registeredUrls=${this.registeredUrls} .changePage=${(val) => this.changePage(val)}></nav-bar>
+            
+                   
                 </div>
             `)}     
         `
@@ -239,6 +253,9 @@ class ShowPlugin extends connect(store)(LitElement) {
     removeTab(index) {
         // Remove tab from array
         this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+        if (this.tabs.length !== 0) {
+            this.currentTab = 0
+        }
     }
 
     createEpmlInstance(frame, index) {
@@ -294,11 +311,25 @@ class ShowPlugin extends connect(store)(LitElement) {
             this.requestUpdate()
         }
 
+
         if (changedProps.has('computerUrl')) {
             if (this.computedUrl !== 'about:blank') {
                 this.loading = true
             }
         }
+    }
+
+    changePage(page) {
+
+        const copiedTabs = [...this.tabs]
+        copiedTabs[this.currentTab] = {
+            ...copiedTabs[this.currentTab],
+            myPlugObj: page,
+            url: page.url
+        }
+        this.tabs = copiedTabs
+
+
     }
 
     stateChanged(state) {
@@ -358,3 +389,195 @@ class ShowPlugin extends connect(store)(LitElement) {
 }
 
 window.customElements.define('show-plugin', ShowPlugin)
+
+class NavBar extends LitElement {
+    static get properties() {
+        return {
+            registeredUrls: { type: Array },
+            changePage: { attribute: false },
+        }
+    }
+    constructor() {
+        super()
+        this.registeredUrls = []
+
+    }
+    static styles = css`
+    .parent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        padding: 10px 20px;
+        max-width: 750px;
+        width: 80%;
+      }
+      .navbar input {
+        font-size: 16px;
+        padding: 5px;
+        flex-grow: 1;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+      }
+      .navbar button {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .navbar button:hover {
+        background-color: #45a049;
+      }
+      .app-list {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .app-list .app-icon {
+      text-align: center;
+      font-size: 24px;
+      width: 150px;
+    height: 150px;
+    background: white;
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    }
+    .app-list .app-icon span {
+      display: block;
+    }
+    `;
+
+    async extractComponents(url) {
+        if (!url.startsWith("qortal://")) {
+            return null;
+        }
+
+        url = url.replace(/^(qortal\:\/\/)/, "");
+        if (url.includes("/")) {
+            let parts = url.split("/");
+            const service = parts[0].toUpperCase();
+            parts.shift();
+            const name = parts[0];
+            parts.shift();
+            let identifier;
+
+            if (parts.length > 0) {
+                identifier = parts[0]; // Do not shift yet
+                // Check if a resource exists with this service, name and identifier combination
+                const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
+                const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+                let responseObj = await parentEpml.request('apiCall', {
+                    url: `${nodeUrl}/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${myNode.apiKey}}`
+                })
+
+                if (responseObj.totalChunkCount > 0) {
+                    // Identifier exists, so don't include it in the path
+                    parts.shift();
+                }
+                else {
+                    identifier = null;
+                }
+            }
+
+            const path = parts.join("/");
+
+            const components = {};
+            components["service"] = service;
+            components["name"] = name;
+            components["identifier"] = identifier;
+            components["path"] = path;
+            return components;
+        }
+
+        return null;
+    }
+
+    async getQuery(value) {
+        let newQuery = value;
+        if (newQuery.endsWith('/')) {
+            newQuery = newQuery.slice(0, -1);
+        }
+        const res = await this.extractComponents(newQuery)
+        if (!res) return
+        const { service, name, identifier, path } = res
+        let query = `?service=${service}`
+        if (name) {
+            query = query + `&name=${name}`
+        }
+        if (identifier) {
+            query = query + `&identifier=${identifier}`
+        }
+        if (path) {
+            query = query + `&path=${path}`
+        }
+
+        this.changePage({
+
+            "url": "qapp",
+            "domain": "core",
+            "page": `qdn/browser/index.html${query}`,
+            "title": "Q-App",
+            "icon": "vaadin:desktop",
+            "menus": [],
+            "parent": false
+
+        })
+    }
+
+    async handlePasteLink(e) {
+        const value = this.shadowRoot.getElementById('linkInput').value
+        this.getQuery(value)
+    }
+
+    async _handleKeyDown(e) {
+        if (e.key === 'Enter') {
+            const value = this.shadowRoot.getElementById('linkInput').value
+            this.getQuery(value)
+
+        }
+    }
+
+    render() {
+        return html`
+        <div class="parent">
+        <div class="navbar">
+          <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://" />
+          <button @click="${this.handlePasteLink}">Go</button>
+        </div>
+        <div>
+        <div class="app-list">
+       
+            ${repeat(this.registeredUrls, (plugin) => plugin.url, (plugin, index) => html`
+            <div class="app-icon" @click=${() => {
+                this.changePage(plugin)
+            }}>
+            <vaadin-icon icon=${plugin.icon} slot="icon"></vaadin-icon>
+          <span>${plugin.title}</span>
+        </div>
+            
+            `)}
+      
+      
+      </div>
+    </div>
+    </div>
+      `;
+    }
+}
+
+customElements.define('nav-bar', NavBar);
