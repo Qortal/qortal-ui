@@ -1,7 +1,7 @@
 import config from './config'
 import { dispatcher } from './dispatcher'
 import snackbar from '../functional-components/snackbar.js'
-import { NEW_MESSAGE } from './types'
+import { NEW_MESSAGE, NEW_MESSAGE_NOTIFICATION_QAPP } from './types'
 
 let initial = 0
 let _state
@@ -43,10 +43,13 @@ const notificationCheck = function () {
 */
 
 export const doNewMessage = function (req) {
+
     const newMessage = () => {
         let data
+        if (req.type && req.type === 'qapp') {
+            data = req
 
-        if (req.groupId) {
+        } else if (req.groupId) {
             const title = `${req.groupName}`
             const body = `New Message from ${req.senderName === undefined ? req.sender : req.senderName}`
             data = { title, sound: config.messageAlert, options: { body, icon: config.default.icon, badge: config.default.icon }, req }
@@ -57,11 +60,16 @@ export const doNewMessage = function (req) {
         }
 
         const notificationState = { type: NEW_MESSAGE, data: data }
-
+        const notificationStateQapp = { type: NEW_MESSAGE_NOTIFICATION_QAPP, data: data }
         const canI = notificationCheck()
 
         if (canI === true) {
-            dispatcher(notificationState)
+            if (req.type && req.type === 'qapp') {
+                dispatcher(notificationStateQapp)
+            } else {
+                dispatcher(notificationState)
+            }
+
         } else {
             _state = notificationState
         }
