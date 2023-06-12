@@ -47,7 +47,7 @@ export const chatStyles = css`
 	.chat-list {
 		overflow-y: auto;
 		overflow-x: hidden;
-		height: 100%;
+		height: 96%;
 		box-sizing: border-box;
 	}
 
