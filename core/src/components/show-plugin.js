@@ -213,13 +213,13 @@ class ShowPlugin extends connect(store)(LitElement) {
                     class="add-tab-button" 
                     title="Add Tab"
                     @click=${() => {
-                        const lengthOfTabs = this.tabs.length
-                        this.addTab({
-                            url: "",
-                            id: this.uid()
-                        })
-                        this.currentTab = lengthOfTabs
-                    }}
+                const lengthOfTabs = this.tabs.length
+                this.addTab({
+                    url: "",
+                    id: this.uid()
+                })
+                this.currentTab = lengthOfTabs
+            }}
                 >
                     +
                 </button>
@@ -490,6 +490,12 @@ class NavBar extends connect(store)(LitElement) {
         }
     `
 
+    getApiKey() {
+        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
+    }
+
     async extractComponents(url) {
         if (!url.startsWith("qortal://")) {
             return null
@@ -509,11 +515,11 @@ class NavBar extends connect(store)(LitElement) {
                 // Check if a resource exists with this service, name and identifier combination
                 const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
                 const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-                let responseObj = await parentEpml.request('apiCall', {
-                    url: `${nodeUrl}/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${myNode.apiKey}}`
-                })
+                const url = `${nodeUrl}/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${myNode.apiKey}}`
 
-                if (responseObj.totalChunkCount > 0) {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.totalChunkCount > 0) {
                     // Identifier exists, so don't include it in the path
                     parts.shift()
                 }
@@ -536,6 +542,11 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     async getQuery(value) {
+        try {
+
+        } catch (error) {
+
+        }
         let newQuery = value
         if (newQuery.endsWith('/')) {
             newQuery = newQuery.slice(0, -1)
@@ -554,27 +565,50 @@ class NavBar extends connect(store)(LitElement) {
             query = query + `&path=${path}`
         }
 
-        this.changePage({
-            "url": "qapp",
-            "domain": "core",
-            "page": `qdn/browser/index.html${query}`,
-            "title": "Q-App",
-            "icon": "vaadin:external-browser",
-            "mwcicon": "open_in_browser",
-            "menus": [],
-            "parent": false
-        })
+        if (service === "APP") {
+            this.changePage({
+                "url": "qapp",
+                "domain": "core",
+                "page": `qdn/browser/index.html${query}`,
+                "title": "Q-App",
+                "icon": "vaadin:external-browser",
+                "mwcicon": "open_in_browser",
+                "menus": [],
+                "parent": false
+            })
+        } else if (service === "WEBSITE") {
+            this.changePage({
+                "url": "websites",
+                "domain": "core",
+                "page": `qdn/browser/index.html${query}`,
+                "title": "Website",
+                "icon": "vaadin:desktop",
+                "mwcicon": "desktop_mac",
+                "menus": [],
+                "parent": false
+            })
+        }
     }
 
     async handlePasteLink(e) {
-        const value = this.shadowRoot.getElementById('linkInput').value
-        this.getQuery(value)
+        try {
+            const value = this.shadowRoot.getElementById('linkInput').value
+            this.getQuery(value)
+        } catch (error) {
+
+        }
+
     }
 
     async _handleKeyDown(e) {
         if (e.key === 'Enter') {
-            const value = this.shadowRoot.getElementById('linkInput').value
-            this.getQuery(value)
+            try {
+                const value = this.shadowRoot.getElementById('linkInput').value
+                this.getQuery(value)
+            } catch (error) {
+
+            }
+
         }
     }
 
