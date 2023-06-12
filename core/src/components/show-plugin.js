@@ -6,13 +6,7 @@ import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import { setNewTab } from '../redux/app/app-actions.js'
-import '@vaadin/icon'
-import '@vaadin/icons'
 
-
-
-import '@vaadin/icon'
-import '@vaadin/icons'
 import '@material/mwc-icon'
 
 class ShowPlugin extends connect(store)(LitElement) {
@@ -99,7 +93,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tab:hover {
-                background: #F3F4F6;
+                background: var(--nav-color-hover);
                 color: #03a9f4;
                 font-weight: bold;
             }
@@ -154,6 +148,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 color: #03a9f4;
                 --mdc-icon-size: 20px;
             }
+
             .iconInactive {
                 position: absolute;
                 top: 7px;
@@ -218,13 +213,13 @@ class ShowPlugin extends connect(store)(LitElement) {
                     class="add-tab-button" 
                     title="Add Tab"
                     @click=${() => {
-                const lengthOfTabs = this.tabs.length
-                this.addTab({
-                    url: "",
-                    id: this.uid()
-                })
-                this.currentTab = lengthOfTabs
-            }}
+                        const lengthOfTabs = this.tabs.length
+                        this.addTab({
+                            url: "",
+                            id: this.uid()
+                        })
+                        this.currentTab = lengthOfTabs
+                    }}
                 >
                     +
                 </button>
@@ -232,8 +227,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
                 <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
-          
-                <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
+                    <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
                         height:calc(var(--window-height) - 102px);
                         border:0;
                         padding:0;
@@ -241,10 +235,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                         class=${!tab.myPlugObj ? "hideIframe" : ""}
                     >
                     </iframe>
-        
-                <nav-bar  class=${!tab.myPlugObj ? "showIframe" : "hideIframe"} .registeredUrls=${this.registeredUrls} .changePage=${(val) => this.changePage(val)}></nav-bar>
-            
-                   
+                    <nav-bar class=${!tab.myPlugObj ? "showIframe" : "hideIframe"} .registeredUrls=${this.registeredUrls} .changePage=${(val) => this.changePage(val)}>
+                    </nav-bar>
                 </div>
             `)}     
         `
@@ -320,7 +312,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     changePage(page) {
-
         const copiedTabs = [...this.tabs]
         copiedTabs[this.currentTab] = {
             ...copiedTabs[this.currentTab],
@@ -328,8 +319,6 @@ class ShowPlugin extends connect(store)(LitElement) {
             url: page.url
         }
         this.tabs = copiedTabs
-
-
     }
 
     stateChanged(state) {
@@ -390,127 +379,166 @@ class ShowPlugin extends connect(store)(LitElement) {
 
 window.customElements.define('show-plugin', ShowPlugin)
 
-class NavBar extends LitElement {
+class NavBar extends connect(store)(LitElement) {
     static get properties() {
         return {
-            registeredUrls: { type: Array },
-            changePage: { attribute: false },
+            menuList: { type: Array },
+            newMenuList: { type: Array },
+            myMenuList: { type: Array },
+            addressInfo: { type: Object },
+            changePage: { attribute: false }
         }
     }
+
     constructor() {
         super()
-        this.registeredUrls = []
+        this.menuList = []
+        this.newMenuList = []
+        this.myMenuList = []
+        this.addressInfo = {}
+    }
 
-    }
     static styles = css`
-    .parent {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-    }
-      .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #f8f8f8;
-        padding: 10px 20px;
-        max-width: 750px;
-        width: 80%;
-      }
-      .navbar input {
-        font-size: 16px;
-        padding: 5px;
-        flex-grow: 1;
-        margin-right: 10px;
-        border: 1px solid #ddd;
-      }
-      .navbar button {
-        padding: 5px 10px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-      }
-      .navbar button:hover {
-        background-color: #45a049;
-      }
-      .app-list {
-      display: flex;
-      justify-content: space-around;
-      padding: 20px 0;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .app-list .app-icon {
-      text-align: center;
-      font-size: 24px;
-      width: 150px;
-    height: 150px;
-    background: white;
-    border-radius: 5px;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    }
-    .app-list .app-icon span {
-      display: block;
-    }
-    `;
+        .parent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: color: var(--white);
+            padding: 10px 20px;
+            max-width: 750px;
+            width: 80%;
+        }
+
+        .navbar input {
+            font-size: 16px;
+            color: #000;
+            padding: 5px;
+            flex-grow: 1;
+            margin-right: 10px;
+            border: 1px solid var(--black);
+        }
+
+        .navbar button {
+            padding: 5px 10px;
+            font-size: 18px;
+            background-color: var(--app-background-1);
+            background-image: linear-gradient(315deg, var(--app-background-1) 0%, var(--app-background-2) 74%);
+            color: var(--app-icon);
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .navbar button:hover {
+            background-color: #45a049;
+        }
+
+        .app-list {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .app-list .app-icon {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--black);
+            width: 150px;
+            height: 110px;
+            background: transparent;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .app-list .app-icon span {
+            display: block;
+        }
+
+        .app-icon-box {
+            display: flex;
+            align-items: center;
+            padding-left: 14px;
+            width: 80px;
+            height: 80px;
+            background-color: var(--app-background-1);
+            background-image: linear-gradient(315deg, var(--app-background-1) 0%, var(--app-background-2) 74%);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .menuIcon {
+            color: var(--app-icon);
+            --mdc-icon-size: 64px;
+        }
+    `
 
     async extractComponents(url) {
         if (!url.startsWith("qortal://")) {
-            return null;
+            return null
         }
 
-        url = url.replace(/^(qortal\:\/\/)/, "");
+        url = url.replace(/^(qortal\:\/\/)/, "")
         if (url.includes("/")) {
-            let parts = url.split("/");
-            const service = parts[0].toUpperCase();
-            parts.shift();
-            const name = parts[0];
-            parts.shift();
-            let identifier;
+            let parts = url.split("/")
+            const service = parts[0].toUpperCase()
+            parts.shift()
+            const name = parts[0]
+            parts.shift()
+            let identifier
 
             if (parts.length > 0) {
-                identifier = parts[0]; // Do not shift yet
+                identifier = parts[0] // Do not shift yet
                 // Check if a resource exists with this service, name and identifier combination
-                const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
-                const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+                const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+                const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
                 let responseObj = await parentEpml.request('apiCall', {
                     url: `${nodeUrl}/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${myNode.apiKey}}`
                 })
 
                 if (responseObj.totalChunkCount > 0) {
                     // Identifier exists, so don't include it in the path
-                    parts.shift();
+                    parts.shift()
                 }
                 else {
-                    identifier = null;
+                    identifier = null
                 }
             }
 
-            const path = parts.join("/");
+            const path = parts.join("/")
 
-            const components = {};
-            components["service"] = service;
-            components["name"] = name;
-            components["identifier"] = identifier;
-            components["path"] = path;
-            return components;
+            const components = {}
+            components["service"] = service
+            components["name"] = name
+            components["identifier"] = identifier
+            components["path"] = path
+            return components
         }
 
-        return null;
+        return null
     }
 
     async getQuery(value) {
-        let newQuery = value;
+        let newQuery = value
         if (newQuery.endsWith('/')) {
-            newQuery = newQuery.slice(0, -1);
+            newQuery = newQuery.slice(0, -1)
         }
         const res = await this.extractComponents(newQuery)
         if (!res) return
@@ -527,15 +555,14 @@ class NavBar extends LitElement {
         }
 
         this.changePage({
-
             "url": "qapp",
             "domain": "core",
             "page": `qdn/browser/index.html${query}`,
             "title": "Q-App",
-            "icon": "vaadin:desktop",
+            "icon": "vaadin:external-browser",
+            "mwcicon": "open_in_browser",
             "menus": [],
             "parent": false
-
         })
     }
 
@@ -548,36 +575,62 @@ class NavBar extends LitElement {
         if (e.key === 'Enter') {
             const value = this.shadowRoot.getElementById('linkInput').value
             this.getQuery(value)
-
         }
     }
 
     render() {
         return html`
-        <div class="parent">
-        <div class="navbar">
-          <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://" />
-          <button @click="${this.handlePasteLink}">Go</button>
-        </div>
-        <div>
-        <div class="app-list">
-       
-            ${repeat(this.registeredUrls, (plugin) => plugin.url, (plugin, index) => html`
-            <div class="app-icon" @click=${() => {
-                this.changePage(plugin)
-            }}>
-            <vaadin-icon icon=${plugin.icon} slot="icon"></vaadin-icon>
-          <span>${plugin.title}</span>
-        </div>
-            
-            `)}
-      
-      
-      </div>
-    </div>
-    </div>
-      `;
+            <div class="parent">
+                <div class="navbar">
+                    <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://" />
+                    <button @click="${this.handlePasteLink}">Go</button>
+                </div>
+                <div>
+                    <div class="app-list">
+                        ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
+                            <div class="app-icon" @click=${() => {
+                                this.changePage(plugin)
+                            }}>
+                                <div class="app-icon-box">
+                                    <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
+                                </div>
+                                <span>${plugin.title}</span>
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            </div>
+        `
+    }
+
+    firstUpdated() {
+        const addressInfo = this.addressInfo
+        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
+        const isSponsor = +addressInfo?.level >= 5
+
+        if (!isMinter) {
+            this.newMenuList = this.menuList.filter((minter) => {
+                return minter.url !== 'minting'
+            })
+        } else {
+            this.newMenuList = this.menuList.filter((minter) => {
+                return minter.url !== 'become-minter'
+            })
+        }
+
+        if (!isSponsor) {
+            this.myMenuList = this.newMenuList.filter((sponsor) => {
+                return sponsor.url !== 'sponsorship-list'
+            })
+        } else {
+            this.myMenuList = this.newMenuList
+        }
+    }
+
+    stateChanged(state) {
+        this.menuList = state.app.registeredUrls
+        this.addressInfo = state.app.accountInfo.addressInfo
     }
 }
 
-customElements.define('nav-bar', NavBar);
+customElements.define('nav-bar', NavBar)

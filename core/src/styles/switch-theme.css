@@ -29,6 +29,7 @@ html {
   --relaynodetxt: #646464;
   --menuhover: #eeeeee;
   --menuactive: #ebebeb;
+  --menuactivergb: 235, 235, 235;
   --mainmenutext: #080808;
   --mainmenutexthover: #080808;
   --switchbackground: #666666;
@@ -42,11 +43,13 @@ html {
   --nav-icon-color: #080808;
   --nav-border-color: #eeeeee;
   --nav-border-selected-color: #03a9f4;
+  --error: #d50000;
   --background: url("/img/qortal_background_light_.jpg");
   --chatHeadBg: #ebebeb;
   --chatHeadBgActive: #ebebeb;
   --chatHeadText: #080808;
   --chatHeadTextActive: #080808;
+  --lightChatHeadHover: #1e1f201a;
   --group-header: #929292;
   --group-drop-shadow: rgb(17 17 26 / 10%) 0px 1px 0px;
   --reactions-tooltip-bg: #ffffff;
@@ -57,6 +60,9 @@ html {
   --gif-button-row-bg: #eaeaef;
   --gif-button-row-color: #464040;
   --gif-collection-hover-bg: #eaeaefa3;
+  --app-background-1: #045de9;
+  --app-background-2: #09c6f9;
+  --app-icon: #ffffff;
 }
 
 html[theme="dark"] {
@@ -90,6 +96,7 @@ html[theme="dark"] {
   --relaynodetxt: #d4d4d4;
   --menuhover: #008fd5;
   --menuactive: #008fd5;
+  --menuactivergb: 0, 143, 213;
   --mainmenutext: #008fd5;
   --mainmenutexthover: #0f1a2e;
   --switchbackground: #eeeeee;
@@ -103,11 +110,13 @@ html[theme="dark"] {
   --nav-icon-color: #008fd5;
   --nav-border-color: #0b305e;
   --nav-border-selected-color: #76c8f5;
+  --error: #d50000;
   --background: url("/img/qortal_background_dark_.jpg");
   --chatHeadBg: #008fd5;
   --chatHeadBgActive: #0f1a2e;
   --chatHeadText: #ffffff;
   --chatHeadTextActive: #ffffff;
+  --lightChatHeadHover: #e0e1e31a;
   --group-header: #c8c8c8;
   --group-drop-shadow: rgb(191 191 191 / 32%) 0px 1px 0px;
   --reactions-tooltip-bg: #161515;
@@ -118,4 +127,7 @@ html[theme="dark"] {
   --gif-button-row-bg: #82899c;
   --gif-button-row-color: #151212;
   --gif-collection-hover-bg: #ffffff26;
+  --app-background-1: #7f5a83;
+  --app-background-2: #0d324d;
+  --app-icon: #03a9f4;
 }

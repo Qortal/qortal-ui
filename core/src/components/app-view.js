@@ -119,9 +119,9 @@ class AppView extends connect(store)(LitElement) {
         return [
             css`
                 * {
-		        --mdc-theme-primary: rgb(3, 169, 244);
-		        --mdc-theme-secondary: var(--mdc-theme-primary);
-		        --mdc-theme-error: rgb(255, 89, 89);
+		    --mdc-theme-primary: rgb(3, 169, 244);
+		    --mdc-theme-secondary: var(--mdc-theme-primary);
+		    --mdc-theme-error: rgb(255, 89, 89);
                     --lumo-primary-text-color: rgb(0, 167, 245);
                     --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                     --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
@@ -468,7 +468,6 @@ class AppView extends connect(store)(LitElement) {
                     <app-header id='appHeader' slot="header" fixed>
                         <app-toolbar>
                             <paper-icon-button id="mb" class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
-                            <vaadin-tooltip text="${translate("general.update")}" for="mb" position="bottom"></vaadin-tooltip>
                             <div main-title>
                                 <span class="qora-title">
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
@@ -512,6 +511,12 @@ class AppView extends connect(store)(LitElement) {
 
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
+
+        var drawerTog = this.shadowRoot.getElementById("mb")
+
+        drawerTog.addEventListener('mouseover', function() {
+            drawerTog.click()
+        })
 
         this.getNodeType()
 

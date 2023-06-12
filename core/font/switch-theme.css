@@ -60,6 +60,9 @@ html {
   --gif-button-row-bg: #eaeaef;
   --gif-button-row-color: #464040;
   --gif-collection-hover-bg: #eaeaefa3;
+  --app-background-1: #045de9;
+  --app-background-2: #09c6f9;
+  --app-icon: #ffffff;
 }
 
 html[theme="dark"] {
@@ -124,4 +127,7 @@ html[theme="dark"] {
   --gif-button-row-bg: #82899c;
   --gif-button-row-color: #151212;
   --gif-collection-hover-bg: #ffffff26;
+  --app-background-1: #7f5a83;
+  --app-background-2: #0d324d;
+  --app-icon: #03a9f4;
 }
