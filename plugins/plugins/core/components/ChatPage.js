@@ -1459,6 +1459,7 @@ class ChatPage extends LitElement {
                             this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
                             .scrollIntoView({
                                 behavior: 'smooth',
+                                block: 'nearest',
                             });
                         }}>
                         </vaadin-icon>
