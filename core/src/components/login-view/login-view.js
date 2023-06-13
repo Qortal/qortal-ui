@@ -15,7 +15,7 @@ import './login-section.js'
 import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
-import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen, allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
+import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen, allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists, addTabInfo, setTabNotifications, setNewTab } from '../../redux/app/app-actions.js'
 
 window.reduxStore = store
 window.reduxAction = {
@@ -25,7 +25,10 @@ window.reduxAction = {
     allowQAPPAutoAuth: allowQAPPAutoAuth,
     removeQAPPAutoAuth: removeQAPPAutoAuth,
     allowQAPPAutoLists: allowQAPPAutoLists,
-    removeQAPPAutoLists: removeQAPPAutoLists
+    removeQAPPAutoLists: removeQAPPAutoLists,
+    addTabInfo: addTabInfo,
+    setTabNotifications: setTabNotifications,
+    setNewTab: setNewTab
 }
 
 const animationDuration = 0.7 // Seconds
