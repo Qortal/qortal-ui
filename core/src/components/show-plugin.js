@@ -124,6 +124,12 @@ class ShowPlugin extends connect(store)(LitElement) {
                 position: absolute;
                 top: 7px;
                 right: 8px;
+                visibility: hidden;
+            }
+            
+            .tab:hover .close,
+            .tab.active .close {
+                visibility: visible;
             }
 
             .title {
@@ -301,11 +307,11 @@ class ShowPlugin extends connect(store)(LitElement) {
 
                     return html`
                         <div 
-                            class="tab ${this.currentTab === index ? 'active' : ''}"
-                            @click=${() => this.currentTab = index}
+                        class="tab ${this.currentTab === index ? 'active' : ''}"
+                        @click=${() => this.currentTab = index}
                         >
                             <div class="title">
-                                <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
+                                <div class="${this.currentTab === index ? 'iconActive' : 'iconInactive'}">
                                     <mwc-icon>${icon}</mwc-icon>
                                 </div>
                             
