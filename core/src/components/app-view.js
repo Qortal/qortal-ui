@@ -432,7 +432,7 @@ class AppView extends connect(store)(LitElement) {
         return html`
             <app-drawer-layout fullbleed force-narrow>
                 <app-drawer swipe-open slot="drawer" id="appdrawer">
-                    <app-header-layout>
+                    <app-header-layout id="appsidebar">
                         <div id="sideBar">
                             <wallet-profile></wallet-profile>
                             <div class="sideBarMenu">
@@ -513,8 +513,13 @@ class AppView extends connect(store)(LitElement) {
         parentEpml.imReady()
 
         var drawerTog = this.shadowRoot.getElementById("mb")
+        var drawerOut = this.shadowRoot.getElementById("appsidebar")
 
         drawerTog.addEventListener('mouseover', function() {
+            drawerTog.click()
+        })
+
+        drawerOut.addEventListener('mouseleave', function() {
             drawerTog.click()
         })
 
