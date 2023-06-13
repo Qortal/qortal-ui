@@ -6,9 +6,13 @@ import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import { setNewTab } from '../redux/app/app-actions.js'
+import localForage from "localforage";
 
 import '@material/mwc-icon'
 
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+});
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
         return {
@@ -20,6 +24,9 @@ class ShowPlugin extends connect(store)(LitElement) {
             currentTab: { type: Number },
             tabs: { type: Array },
             theme: { type: String, reflect: true },
+            tabInfo: { type: Object },
+            chatLastSeen: { type: Array },
+            chatHeads: { type: Array }
         }
     }
 
@@ -50,7 +57,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
             
             .hideIframe  {
-                visibility: hidden;
+                display: none;
                 position: absolute;
                 zIndex: -10;  
             }
@@ -58,7 +65,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             .showIframe  {
                 zIndex: 1;
                 position: relative;
-                visibility: visible;
+                display: block;
             }
 
             .tabs {
@@ -155,6 +162,20 @@ class ShowPlugin extends connect(store)(LitElement) {
                 color: #999;
                 --mdc-icon-size: 20px;
             }
+
+            .count {
+                position: absolute;
+                background: red;
+                color: white;
+                padding: 5px;
+                font-size: 12px;
+                border-radius: 50%;
+                height: 10px;
+                width: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         `
     }
 
@@ -165,6 +186,9 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.tabs = []
         this.uid = new ShortUniqueId()
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.tabInfo = {}
+        this.chatLastSeen = []
+        this.chatHeads = []
     }
 
     async getUpdateComplete() {
@@ -189,9 +213,44 @@ class ShowPlugin extends connect(store)(LitElement) {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
+
         return html`
             <div class="tabs">
-                ${this.tabs.map((tab, index) => html`
+                ${this.tabs.map((tab, index) => {
+            let title = ''
+            let count = 0
+            if (tab.myPlugObj && tab.myPlugObj.title) {
+                title = tab.myPlugObj.title
+            }
+            if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
+                title = this.tabInfo[tab.id].name
+            }
+            if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
+                count = this.tabInfo[tab.id].count
+            }
+
+            if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
+                for (const chat of this.chatHeads) {
+
+                    const lastReadMessage = this.chatLastSeen.find((ch) => {
+                        let id
+                        if (chat.groupId === 0) {
+                            id = chat.groupId
+                        } else if (chat.groupId) {
+                            id = chat.groupId
+                        } else {
+                            id = chat.address
+                        }
+
+                        return ch.key.includes(id)
+                    })
+                    if (lastReadMessage && lastReadMessage.timestamp < chat.timestamp) {
+                        count = count + 1
+                    }
+                }
+
+            }
+            return html`
                     <div 
                         class="tab ${this.currentTab === index ? 'active' : ''}"
                         @click=${() => this.currentTab = index}
@@ -200,15 +259,20 @@ class ShowPlugin extends connect(store)(LitElement) {
                             <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${tab.myPlugObj && tab.myPlugObj.mwcicon}</mwc-icon>
                             </div>
+                            ${count ? html`
+                            <div class="count">${count}</div>
+                            ` : ''}
+                            
                             <div>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ${tab.myPlugObj && tab.myPlugObj.title}
+                                ${title}
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
                             <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
                         </div>
                     </div>
-                `)}&nbsp;&nbsp;&nbsp;
+                `
+        })}&nbsp;&nbsp;&nbsp;
                 <button 
                     class="add-tab-button" 
                     title="Add Tab"
@@ -227,7 +291,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
                 <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
-                    <iframe src="${plugSrc(tab.myPlugObj)}" id="showPluginFrame${index}" style="width:100%;
+                    <iframe src="${plugSrc(tab.myPlugObj)}" data-id=${tab.id} id="showPluginFrame${index}" style="width:100%;
                         height:calc(var(--window-height) - 102px);
                         border:0;
                         padding:0;
@@ -321,7 +385,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.tabs = copiedTabs
     }
 
-    stateChanged(state) {
+    async stateChanged(state) {
         const split = state.app.url.split('/')
         const newRegisteredUrls = state.app.registeredUrls
 
@@ -351,6 +415,23 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         if (newLinkParam !== this.linkParam) {
             this.linkParam = newLinkParam
+        }
+        if (this.tabInfo !== state.app.tabInfo) {
+            this.tabInfo = state.app.tabInfo
+        }
+        if (this.chatLastSeen !== state.app.chatLastSeen) {
+            this.chatLastSeen = state.app.chatLastSeen
+        }
+        if (state.app.chatHeads !== this.unModifiedChatHeads) {
+            let chatHeads = []
+            if (state.app.chatHeads && state.app.chatHeads.groups) {
+                chatHeads = [...chatHeads, ...state.app.chatHeads.groups]
+            }
+            if (state.app.chatHeads && state.app.chatHeads.direct) {
+                chatHeads = [...chatHeads, ...state.app.chatHeads.direct]
+            }
+            this.chatHeads = chatHeads
+            this.unModifiedChatHeads = state.app.chatHeads
         }
 
         if (state.app.newTab) {
@@ -623,8 +704,8 @@ class NavBar extends connect(store)(LitElement) {
                     <div class="app-list">
                         ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
                             <div class="app-icon" @click=${() => {
-                                this.changePage(plugin)
-                            }}>
+                this.changePage(plugin)
+            }}>
                                 <div class="app-icon-box">
                                     <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
                                 </div>

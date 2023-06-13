@@ -892,10 +892,42 @@ class WebBrowser extends LitElement {
 					this.service = data.service;
 					this.identifier = data.identifier;
 					this.displayUrl = url;
+
+					const frame = window.frameElement
+					let tabId = ""
+					if (frame && frame.dataset.id) {
+						tabId = frame.dataset.id
+					}
+
 					if (data.name === 'Q-Mail') {
 						localStorage.setItem("Q-Mail-last-visited", Date.now())
+
 					}
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.addTabInfo({
+						name: data.name,
+						service: data.service,
+						id: tabId ? tabId : ""
+					}))
 					return;
+				case actions.SET_TAB_NOTIFICATIONS: {
+					const { count } = data
+					if (isNaN(count)) {
+						response['error'] = 'count is not a number'
+						break
+					}
+					if (count === undefined) {
+						response['error'] = 'missing count'
+						break
+					}
+
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.setTabNotifications({
+						name: this.name,
+						count: count
+					}))
+					response = true
+					break
+
+				}
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string

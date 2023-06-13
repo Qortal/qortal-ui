@@ -115,6 +115,7 @@ let closeGracefully = false
 let onceLoggedIn = false
 let retryOnClose = false
 let canPing = false
+let timeoutId
 
 parentEpml.subscribe('logged_in', async isLoggedIn => {
 
@@ -127,18 +128,16 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
         if (window.parent.location.protocol === "https:") {
 
-            activeChatSocketLink = `wss://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}`;
+            activeChatSocketLink = `wss://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`;
         } else {
 
-            activeChatSocketLink = `ws://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}`;
+            activeChatSocketLink = `ws://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`;
         }
 
         const activeChatSocket = new WebSocket(activeChatSocketLink);
 
         // Open Connection
         activeChatSocket.onopen = () => {
-
-            console.log(`[SOCKET]: Connected.`);
             socketObject = activeChatSocket
 
             initial = initial + 1
@@ -147,28 +146,26 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
         // Message Event
         activeChatSocket.onmessage = (e) => {
+            if (e.data === 'pong') {
+                clearTimeout(timeoutId);
+                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 45000)
+                return
+            }
+            try {
+                chatHeadWatcher(JSON.parse(e.data))
+            } catch (error) {
 
-            chatHeadWatcher(JSON.parse(e.data))
+            }
+
         }
 
         // Closed Event
         activeChatSocket.onclose = () => {
-
-            console.log(`[SOCKET]: CLOSED`);
             clearInterval(activeChatSocketTimeout)
 
-            if (closeGracefully === false && initial <= 52) {
-
-                if (initial <= 52) {
-
-                    parentEpml.request('showSnackBar', "Connection to the Qortal Core was lost, is your Core running ?")
-                    retryOnClose = true
-                    setTimeout(pingActiveChatSocket, 10000)
-                    initial = initial + 1
-                } else {
-
-                    parentEpml.request('showSnackBar', "Cannot connect to the Qortal Core, restart UI and Core!")
-                }
+            if (closeGracefully === false) {
+                retryOnClose = true
+                setTimeout(pingActiveChatSocket, 10000)
             }
         }
 
@@ -188,18 +185,21 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
                 initChatHeadSocket()
                 onceLoggedIn = true
-                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 295000)
+                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 45000)
             } else if (retryOnClose) {
 
                 retryOnClose = false
                 clearTimeout(activeChatSocketTimeout)
                 initChatHeadSocket()
                 onceLoggedIn = true
-                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 295000)
+                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 45000)
             } else if (canPing) {
 
                 socketObject.send('ping')
-                activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 295000)
+                timeoutId = setTimeout(() => {
+                    socketObject.close();
+                    clearTimeout(activeChatSocketTimeout)
+                }, 5000);
             }
 
         } else {
