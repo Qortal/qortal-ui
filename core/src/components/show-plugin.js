@@ -198,7 +198,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
     async addTab(tab) {
         this.tabs = [...this.tabs, tab]
-        await this.getUpdateComplete();
+        await this.getUpdateComplete()
 
         // add the new tab to the tabs array
         const newIndex = this.tabs.length - 1
@@ -299,7 +299,11 @@ class ShowPlugin extends connect(store)(LitElement) {
                         class=${!tab.myPlugObj ? "hideIframe" : ""}
                     >
                     </iframe>
-                    <nav-bar class=${!tab.myPlugObj ? "showIframe" : "hideIframe"} .registeredUrls=${this.registeredUrls} .changePage=${(val) => this.changePage(val)}>
+                    <nav-bar
+                        class=${!tab.myPlugObj ? "showIframe" : "hideIframe"}
+                        .registeredUrls=${this.registeredUrls}
+                        .changePage=${(val) => this.changePage(val)}
+                    >
                     </nav-bar>
                 </div>
             `)}     
@@ -453,7 +457,6 @@ class ShowPlugin extends connect(store)(LitElement) {
                 store.dispatch(setNewTab(null))
                 //clear newTab
             }
-
         }
     }
 }
@@ -623,11 +626,6 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     async getQuery(value) {
-        try {
-
-        } catch (error) {
-
-        }
         let newQuery = value
         if (newQuery.endsWith('/')) {
             newQuery = newQuery.slice(0, -1)
@@ -697,7 +695,7 @@ class NavBar extends connect(store)(LitElement) {
         return html`
             <div class="parent">
                 <div class="navbar">
-                    <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://" />
+                    <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
                     <button @click="${this.handlePasteLink}">Go</button>
                 </div>
                 <div>

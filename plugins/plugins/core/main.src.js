@@ -41,7 +41,7 @@ parentEpml.ready().then(() => {
 			url: 'wallet',
 			domain: 'core',
 			page: 'wallet/index.html',
-			title: 'Wallet',
+			title: 'Wallets',
 			icon: 'vaadin:wallet',
 			mwcicon: 'account_balance_wallet',
 			menus: [],
