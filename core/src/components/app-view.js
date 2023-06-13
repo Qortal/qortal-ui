@@ -1457,19 +1457,19 @@ class AppView extends connect(store)(LitElement) {
 
         if (this.nodeType === 'lite') {
             return html`
-                <side-menu-item drawer-toggle label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
+                <side-menu-item label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
                     <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
+                <side-menu-item label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
                     <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                <side-menu-item label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
                     <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                <side-menu-item label="${translate('sidemenu.qchat')}" href="/app/q-chat">
                     <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
@@ -1480,51 +1480,51 @@ class AppView extends connect(store)(LitElement) {
                 <side-menu-item label="${translate('sidemenu.minting')}" expanded>
                     <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle id="qminter" label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
+                    <side-menu-item id="qminter" label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
                         <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle id="qbminter" label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
+                    <side-menu-item id="qbminter" label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
                         <vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
                     </side-menu-item>
 				
-                    <side-menu-item drawer-toggle id="qiminter" label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
+                    <side-menu-item id="qiminter" label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
                         <vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle id="qwallet" label="${translate('sidemenu.wallets')}" href="/app/wallet">
+                <side-menu-item id="qwallet" label="${translate('sidemenu.wallets')}" href="/app/wallet">
                     <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.trading')}" expanded>
                     <vaadin-icon icon="vaadin:cash" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle id="qtrade" label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
+                    <side-menu-item id="qtrade" label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
                         <vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle id="qbot" label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
+                    <side-menu-item id="qbot" label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
                         <vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle id="qrewardshare" label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
+                <side-menu-item id="qrewardshare" label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
                     <vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle id="qchat" label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                <side-menu-item id="qchat" label="${translate('sidemenu.qchat')}" href="/app/q-chat">
                     <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.sm1')}" expanded>
                     <vaadin-icon icon="vaadin:user-card" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle id="qnamereg" label="${translate('sidemenu.sm2')}" href="/app/name-registration">
+                    <side-menu-item id="qnamereg" label="${translate('sidemenu.sm2')}" href="/app/name-registration">
                         <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle id="qnamemarket" label="${translate('sidemenu.sm3')}" href="/app/names-market">
+                    <side-menu-item id="qnamemarket" label="${translate('sidemenu.sm3')}" href="/app/names-market">
                         <vaadin-icon icon="vaadin:shop" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
@@ -1532,27 +1532,27 @@ class AppView extends connect(store)(LitElement) {
                 <side-menu-item label="QDN" expanded>
                     <vaadin-icon icon="vaadin:cluster" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle id="qweb" label="${translate('sidemenu.websites')}" href="/app/websites">
+                    <side-menu-item id="qweb" label="${translate('sidemenu.websites')}" href="/app/websites">
                         <vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle id="qapp" label="Q-Apps" href="/app/qapps">
+                    <side-menu-item id="qapp" label="Q-Apps" href="/app/qapps">
                         <vaadin-icon icon="vaadin:external-browser" slot="icon" ></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle id="qgroupmange" label="${translate('sidemenu.groups')}" href="/app/group-management">
+                <side-menu-item id="qgroupmange" label="${translate('sidemenu.groups')}" href="/app/group-management">
                     <vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle id="qpuzzles" label="${translate('sidemenu.puzzles')}" href="/app/puzzles">
+                <side-menu-item id="qpuzzles" label="${translate('sidemenu.puzzles')}" href="/app/puzzles">
                     <vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.management')}" expanded>
                     <vaadin-icon icon="vaadin:cogs" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle id="qdata" label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                    <side-menu-item id="qdata" label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
                         <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
@@ -1570,7 +1570,7 @@ class AppView extends connect(store)(LitElement) {
         const checkNodeManagement = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         if ((checkNodeManagement.enableManagement = true)) {
             return html`
-                <side-menu-item drawer-toggle id="qnode" label="${translate('sidemenu.nodemanagement')}" href="/app/node-management">
+                <side-menu-item id="qnode" label="${translate('sidemenu.nodemanagement')}" href="/app/node-management">
                     <vaadin-icon icon="vaadin:cloud" slot="icon"></vaadin-icon>
                 </side-menu-item>
             `
