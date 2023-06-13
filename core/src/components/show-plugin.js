@@ -63,9 +63,9 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .showIframe  {
-                zIndex: 1;
-                position: relative;
                 display: block;
+                position: relative;
+                zIndex: 1;
             }
 
             .tabs {
@@ -95,7 +95,6 @@ class ShowPlugin extends connect(store)(LitElement) {
                 max-width: 200px;
                 overflow: hidden;
                 text-wrap: nowrap;
-                text-overflow: ellipsis;
                 text-overflow: ellipsis;
             }
 
@@ -136,6 +135,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .add-tab-button {
+                margin-left: 10px;
                 font-weight: bold;
                 background: none;
                 border: none;
@@ -164,17 +164,45 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .count {
-                position: absolute;
-                background: red;
+                font-weight: bold;
+                background-color: red;
                 color: white;
-                padding: 5px;
                 font-size: 12px;
-                border-radius: 50%;
-                height: 10px;
-                width: 10px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                padding: 2px 6px;
+                text-align: center;
+                border-radius: 5px;
+            }
+
+            .ml-5 {
+                margin-left: 5px;
+            }
+
+            .ml-10 {
+                margin-left: 10px;
+            }
+
+            .ml-15 {
+                margin-left: 15px;
+            }
+
+            .ml-20 {
+                margin-left: 20px;
+            }
+
+            .ml-25 {
+                margin-left: 25px;
+            }
+
+            .mr-10 {
+                margin-right: 10px;
+            }
+
+            .mr-15 {
+                margin-right: 15px;
+            }
+
+            .mr-20 {
+                margin-right: 20px;
             }
         `
     }
@@ -213,77 +241,91 @@ class ShowPlugin extends connect(store)(LitElement) {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
 
-
         return html`
             <div class="tabs">
                 ${this.tabs.map((tab, index) => {
-            let title = ''
-            let count = 0
-            if (tab.myPlugObj && tab.myPlugObj.title) {
-                title = tab.myPlugObj.title
-            }
-            if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                title = this.tabInfo[tab.id].name
-            }
-            if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                count = this.tabInfo[tab.id].count
-            }
+                    let title = ''
+                    let icon = ''
+                    let count = 0
 
-            if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
-                for (const chat of this.chatHeads) {
-
-                    const lastReadMessage = this.chatLastSeen.find((ch) => {
-                        let id
-                        if (chat.groupId === 0) {
-                            id = chat.groupId
-                        } else if (chat.groupId) {
-                            id = chat.groupId
-                        } else {
-                            id = chat.address
-                        }
-
-                        return ch.key.includes(id)
-                    })
-                    if (lastReadMessage && lastReadMessage.timestamp < chat.timestamp) {
-                        count = count + 1
+                    if (tab.myPlugObj && tab.myPlugObj.title) {
+                        title = tab.myPlugObj.title
+                    } else {
+                        title = 'New Tab'
                     }
-                }
 
-            }
-            return html`
-                    <div 
-                        class="tab ${this.currentTab === index ? 'active' : ''}"
-                        @click=${() => this.currentTab = index}
-                    >
-                        <div class="title">
-                            <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
-                                <mwc-icon>${tab.myPlugObj && tab.myPlugObj.mwcicon}</mwc-icon>
-                            </div>
-                            ${count ? html`
-                            <div class="count">${count}</div>
-                            ` : ''}
+                    if (tab.myPlugObj && tab.myPlugObj.mwcicon) {
+                        icon = tab.myPlugObj.mwcicon
+                    } else {
+                        icon = 'tab'
+                    }
+
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
+                        title = this.tabInfo[tab.id].name
+                    }
+
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
+                        count = this.tabInfo[tab.id].count
+                    }
+
+                    if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
+                        for (const chat of this.chatHeads) {
+
+                            const lastReadMessage = this.chatLastSeen.find((ch) => {
+                                let id
+                                if (chat.groupId === 0) {
+                                    id = chat.groupId
+                                } else if (chat.groupId) {
+                                    id = chat.groupId
+                                } else {
+                                    id = chat.address
+                                }
+                                return ch.key.includes(id)
+                            })
+                            if (lastReadMessage && lastReadMessage.timestamp < chat.timestamp) {
+                                count = count + 1
+                            }
+                        }
+                    }
+
+                    return html`
+                        <div 
+                            class="tab ${this.currentTab === index ? 'active' : ''}"
+                            @click=${() => this.currentTab = index}
+                        >
+                            <div class="title">
+                                <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
+                                    <mwc-icon>${icon}</mwc-icon>
+                                </div>
                             
-                            <div>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ${title}
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="title">
+                                    ${count ? html`
+                                        <div class="ml-25">
+                                            ${title}
+                                            <span class="count ml-5">${count}</span>
+                                        </div>
+                                    ` : html`
+                                        <div class="ml-25">
+                                            ${title}
+                                        </div>
+                                    `}
+                                </div>
+                                <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
                             </div>
-                            <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
                         </div>
-                    </div>
-                `
-        })}&nbsp;&nbsp;&nbsp;
+                    `
+                })}
                 <button 
                     class="add-tab-button" 
-                    title="Add Tab"
+                    title="Add New Tab"
                     @click=${() => {
-                const lengthOfTabs = this.tabs.length
-                this.addTab({
-                    url: "",
-                    id: this.uid()
-                })
-                this.currentTab = lengthOfTabs
-            }}
+                        const lengthOfTabs = this.tabs.length
+                        this.addTab({
+                            url: "",
+                            id: this.uid()
+                        })
+                        this.currentTab = lengthOfTabs
+                    }}
                 >
                     +
                 </button>
@@ -292,10 +334,10 @@ class ShowPlugin extends connect(store)(LitElement) {
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
                 <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
                     <iframe src="${plugSrc(tab.myPlugObj)}" data-id=${tab.id} id="showPluginFrame${index}" style="width:100%;
-                        height:calc(var(--window-height) - 102px);
-                        border:0;
-                        padding:0;
-                        margin:0"
+                        height: calc(var(--window-height) - 102px);
+                        border: 0;
+                        padding: 0;
+                        margin: 0"
                         class=${!tab.myPlugObj ? "hideIframe" : ""}
                     >
                     </iframe>
