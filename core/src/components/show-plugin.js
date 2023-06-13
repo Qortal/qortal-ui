@@ -165,12 +165,14 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .count {
                 font-weight: bold;
-                background-color: red;
+                background-color: #C6011F;
                 color: white;
                 font-size: 12px;
                 padding: 2px 6px;
                 text-align: center;
                 border-radius: 5px;
+	        animation: pulse 1500ms infinite;
+                animation-duration: 6s;
             }
 
             .ml-5 {
@@ -203,6 +205,15 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .mr-20 {
                 margin-right: 20px;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow:#C6011F 0 0 0 0;
+                }
+                75% {
+                    box-shadow:#ff69b400 0 0 0 16px;
+                }
             }
         `
     }
@@ -744,8 +755,8 @@ class NavBar extends connect(store)(LitElement) {
                     <div class="app-list">
                         ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
                             <div class="app-icon" @click=${() => {
-                this.changePage(plugin)
-            }}>
+                                this.changePage(plugin)
+                            }}>
                                 <div class="app-icon-box">
                                     <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
                                 </div>
