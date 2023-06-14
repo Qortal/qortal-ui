@@ -91,7 +91,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 cursor: pointer;
                 transition: background 0.3s;
                 position: relative;
-                min-width: 120px;
+                min-width: 100px;
                 max-width: 200px;
                 overflow: hidden;
                 text-wrap: nowrap;
@@ -119,15 +119,11 @@ class ShowPlugin extends connect(store)(LitElement) {
             .close {
                 color: #999;
                 font-weight: bold;
-                font-size: 20px;
-                line-height: 20px;
-                position: absolute;
-                top: 7px;
-                right: 8px;
+                font-size: 16px;
             }
 
             .title {
-                display: inline;
+                display: inline-block;
             }
 
             .close:hover {
@@ -151,16 +147,16 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .iconActive {
                 position: absolute;
-                top: 7px;
+                top: 5px;
                 color: #03a9f4;
-                --mdc-icon-size: 20px;
+                --mdc-icon-size: 24px;
             }
 
             .iconInactive {
                 position: absolute;
-                top: 7px;
+                top: 5px;
                 color: #999;
-                --mdc-icon-size: 20px;
+                --mdc-icon-size: 24px;
             }
 
             .count {
@@ -195,6 +191,10 @@ class ShowPlugin extends connect(store)(LitElement) {
                 margin-left: 25px;
             }
 
+            .ml-30 {
+                margin-left: 30px;
+            }
+
             .mr-10 {
                 margin-right: 10px;
             }
@@ -205,6 +205,30 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .mr-20 {
                 margin-right: 20px;
+            }
+
+            .mt-10 {
+                margin-top: 10px;
+            }
+
+            .mt-15 {
+                margin-top: 15px;
+            }
+
+            .mt-20 {
+                margin-top: 20px;
+            }
+
+            .mb-10 {
+                margin-bottom: 10px;
+            }
+
+            .mb-15 {
+                margin-bottom: 15px;
+            }
+
+            .mb-20 {
+                margin-bottom: 20px;
             }
 
             @keyframes pulse {
@@ -304,24 +328,18 @@ class ShowPlugin extends connect(store)(LitElement) {
                             class="tab ${this.currentTab === index ? 'active' : ''}"
                             @click=${() => this.currentTab = index}
                         >
+                            <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
+                                <mwc-icon>${icon}</mwc-icon>
+                            </div>
                             <div class="title">
-                                <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
-                                    <mwc-icon>${icon}</mwc-icon>
-                                </div>
-                            
-                                <div class="title">
-                                    ${count ? html`
-                                        <div class="ml-25">
-                                            ${title}
-                                            <span class="count ml-5">${count}</span>
-                                        </div>
-                                    ` : html`
-                                        <div class="ml-25">
-                                            ${title}
-                                        </div>
-                                    `}
-                                </div>
-                                <div class="close" @click=${() => { this.removeTab(index) }}>x</div>
+                                ${count ? html`
+                                    <span class="ml-30">${title}</span>
+                                    <span class="count ml-5">${count}</span>
+                                    <span class="close ml-15" @click=${() => {this.removeTab(index)}}>X</span>
+                                ` : html`
+                                    <span class="ml-25">${title}</span>
+                                    <span class="close ml-15" @click=${() => {this.removeTab(index)}}>X</span>
+                                `}
                             </div>
                         </div>
                     `
