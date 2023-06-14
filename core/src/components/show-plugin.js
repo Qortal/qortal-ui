@@ -59,7 +59,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             .hideIframe  {
                 display: none;
                 position: absolute;
-                zIndex: -10;  
+                zIndex: -10;
             }
 
             .showIframe  {
@@ -91,11 +91,13 @@ class ShowPlugin extends connect(store)(LitElement) {
                 cursor: pointer;
                 transition: background 0.3s;
                 position: relative;
-                min-width: 100px;
+                width: auto;
+                min-width: 80px;
                 max-width: 200px;
                 overflow: hidden;
                 text-wrap: nowrap;
                 text-overflow: ellipsis;
+                zIndex: 2;
             }
 
             .tab:hover {
@@ -105,6 +107,9 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tab.active {
+                display: inline-block;
+                min-width: fit-content;
+                max-width: 200px;
                 margin-bottom: -1px;
                 background: var(--white);
                 color: var(--black);
@@ -114,6 +119,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 border-left: 1px solid var(--black);
                 border-right: 1px solid var(--black);
                 border-bottom: 1px solid var(--white);
+                zIndex: 1;
             }
 
             .close {
@@ -324,9 +330,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                     }
 
                     return html`
-                        <div 
+                        <div
                             class="tab ${this.currentTab === index ? 'active' : ''}"
-                            @click=${() => this.currentTab = index}
+                            @click="${() => this.currentTab = index}"
                         >
                             <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${icon}</mwc-icon>
@@ -384,9 +390,14 @@ class ShowPlugin extends connect(store)(LitElement) {
     removeTab(index) {
         // Remove tab from array
         this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
-        if (this.tabs.length !== 0) {
+
+        if (this.tabs.length === 0) {
             this.currentTab = 0
+        } else {
+            this.currentTab = this.tabs.length - 1
         }
+
+        this.requestUpdate()
     }
 
     createEpmlInstance(frame, index) {
