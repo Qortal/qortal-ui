@@ -42,5 +42,7 @@
   "electron_translate_39": "Uzaklaştır",
   "electron_translate_40": "Gerçek Boyut",
   "electron_translate_41": "Tam Ekranı Değiştir",
-  "electron_translate_42": "Yeni Kullanıcı Arayüzü Örneği"
+  "electron_translate_42": "Yeni Kullanıcı Arayüzü Örneği",
+  "electron_translate_43": "Güncelleme kontrol ediliyor!",
+  "electron_translate_44": "UI arka planda yeni bir sürüm olup olmadığını kontrol ediyor ve indiriyor."
 }

@@ -978,6 +978,11 @@ if (!isLock) {
 		})
 	})
 	ipcMain.on('check-for-update', (event) => {
+		const check = new Notification({
+			title: i18n.__("electron_translate_43"),
+			body: i18n.__("electron_translate_44")
+		})
+		check.show()
 		autoUpdater.checkForUpdatesAndNotify()
 	})
 	ipcMain.on('show-my-menu', (event) => {
@@ -1079,11 +1084,11 @@ if (!isLock) {
 		n.show()
 	})
 	ipcMain.on('focus-app', (event) => {
-		if (win.isMinimized()) {
-			win.restore(); // If the window is minimized restore it, then maximize it
+		if (myWindow.isMinimized()) {
+			myWindow.restore()
 		}
-		win.maximize();
-		win.focus(); // This will bring your window to the front
+		myWindow.maximize()
+		myWindow.focus()
 	})
 	process.on('uncaughtException', function (err) {
 		log.info("*** WHOOPS TIME ***" + err)

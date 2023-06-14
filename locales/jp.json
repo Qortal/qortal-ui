@@ -42,5 +42,7 @@
   "electron_translate_39": "ズームアウト",
   "electron_translate_40": "実際のサイズ",
   "electron_translate_41": "全画面表示を切り替える",
-  "electron_translate_42": "新しい UI インスタンス"
+  "electron_translate_42": "新しい UI インスタンス"、
+  "electron_translate_43": "アップデートをチェックしています!",
+  "electron_translate_44": "新しいバージョンが利用可能かどうかを UI がバックグラウンドでチェックしており、ダウンロードします。"
 }
