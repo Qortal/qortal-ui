@@ -55,7 +55,7 @@
 		"prosemirror-state": "1.4.3",
 		"prosemirror-transform": "1.7.2",
 		"prosemirror-view": "1.31.3",
-		"sass": "1.63.3",
+		"sass": "1.63.4",
 		"short-unique-id": "4.4.4",
 		"@hapi/hapi": "21.3.2",
 		"@hapi/inert": "7.1.0",
@@ -71,8 +71,8 @@
 	},
 	"devDependencies": {
 		"axios": "1.4.0",
-		"electron": "25.1.0",
-		"electron-builder": "23.6.0",
+		"electron": "25.1.1",
+		"electron-builder": "24.4.0",
 		"electron-packager": "17.1.1",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
@@ -85,7 +85,7 @@
 		"passive-events-support": "1.1.0",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "3.24.1",
+		"rollup": "3.25.1",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
@@ -138,7 +138,7 @@
 		"@vaadin/icons": "24.1.0",
 		"@vaadin/password-field": "24.1.0",
 		"@vaadin/tooltip": "24.1.0",
-		"@zip.js/zip.js": "2.7.15"
+		"@zip.js/zip.js": "2.7.16"
 	},
 	"engines": {
 		"node": ">=18.14.0"

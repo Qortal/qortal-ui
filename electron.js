@@ -14,6 +14,7 @@ const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 
 app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+app.commandLine.appendSwitch('disable-http-cache')
 app.disableHardwareAcceleration()
 app.enableSandbox()
 electronDl()
