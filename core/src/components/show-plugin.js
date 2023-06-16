@@ -260,23 +260,6 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.chatHeads = []
     }
 
-    async getUpdateComplete() {
-        await super.getUpdateComplete()
-        return true
-    }
-
-    async addTab(tab) {
-        this.tabs = [...this.tabs, tab]
-        await this.getUpdateComplete()
-
-        // add the new tab to the tabs array
-        const newIndex = this.tabs.length - 1
-
-        // render the tab and wait for it to be added to the DOM
-        const frame = this.shadowRoot.getElementById(`showPluginFrame${newIndex}`)
-        this.createEpmlInstance(frame, newIndex)
-    }
-
     render() {
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
@@ -331,20 +314,21 @@ class ShowPlugin extends connect(store)(LitElement) {
 
                     return html`
                         <div
+                            id="tab-${tab.id}"
                             class="tab ${this.currentTab === index ? 'active' : ''}"
                             @click="${() => this.currentTab = index}"
                         >
-                            <div class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
+                            <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${icon}</mwc-icon>
                             </div>
                             <div class="title">
                                 ${count ? html`
                                     <span class="ml-30">${title}</span>
                                     <span class="count ml-5">${count}</span>
-                                    <span class="close ml-15" @click=${() => {this.removeTab(index)}}>X</span>
+                                    <span class="close ml-15" @click=${() => {this.removeTab(index, tab.id)}}>X</span>
                                 ` : html`
                                     <span class="ml-25">${title}</span>
-                                    <span class="close ml-15" @click=${() => {this.removeTab(index)}}>X</span>
+                                    <span class="close ml-15" @click=${() => {this.removeTab(index, tab.id)}}>X</span>
                                 `}
                             </div>
                         </div>
@@ -367,7 +351,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             </div>
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
-                <div class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
+                <div id="frame-${tab.id}" class=${this.currentTab === index ? "showIframe" : "hideIframe"}>
                     <iframe src="${plugSrc(tab.myPlugObj)}" data-id=${tab.id} id="showPluginFrame${index}" style="width:100%;
                         height: calc(var(--window-height) - 102px);
                         border: 0;
@@ -377,6 +361,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                     >
                     </iframe>
                     <nav-bar
+                        id="plug-${tab.id}"
                         class=${!tab.myPlugObj ? "showIframe" : "hideIframe"}
                         .registeredUrls=${this.registeredUrls}
                         .changePage=${(val) => this.changePage(val)}
@@ -387,17 +372,113 @@ class ShowPlugin extends connect(store)(LitElement) {
         `
     }
 
-    removeTab(index) {
-        // Remove tab from array
-        this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+    async getUpdateComplete() {
+        await super.getUpdateComplete()
+        return true
+    }
 
-        if (this.tabs.length === 0) {
-            this.currentTab = 0
+    async addTab(tab) {
+        if (this.tabs == []) {
+            // ...Nothing to do
         } else {
-            this.currentTab = this.tabs.length - 1
+            this.tabs.forEach((rac, index) => {
+                let racId = ''
+                let tabRacId = ''
+                let frameRacId = ''
+                let plugRacId = ''
+                let iconRacId = ''
+
+                racId = rac.id
+                tabRacId = 'tab-' + racId
+                frameRacId = 'frame-' + racId
+                plugRacId = 'plug-' + racId
+                iconRacId = 'icon-' + racId
+
+                const plugObjRac = rac.url
+
+                var tabActiveRac = this.shadowRoot.getElementById(tabRacId)
+                var frameActiveRac = this.shadowRoot.getElementById(frameRacId)
+                var plugActiveRac = this.shadowRoot.getElementById(plugRacId)
+                var iconActiveRac = this.shadowRoot.getElementById(iconRacId)
+
+                if (plugObjRac === undefined || "") {
+                    tabActiveRac.classList.remove("active")
+                    iconActiveRac.classList.remove("iconActive")
+                    iconActiveRac.classList.add("iconInactive")
+                    plugActiveRac.classList.remove("showIframe")
+                    plugActiveRac.classList.add("hideIframe")
+                } else {
+                    tabActiveRac.classList.remove("active")
+                    iconActiveRac.classList.remove("iconActive")
+                    iconActiveRac.classList.add("iconInactive")
+                    frameActiveRac.classList.remove("showIframe")
+                    frameActiveRac.classList.add("hideIframe")
+                }
+            })
         }
 
-        this.requestUpdate()
+        this.tabs = [...this.tabs, tab]
+        await this.getUpdateComplete()
+
+        // add the new tab to the tabs array
+        const newIndex = this.tabs.length - 1
+
+        // render the tab and wait for it to be added to the DOM
+        const frame = this.shadowRoot.getElementById(`showPluginFrame${newIndex}`)
+        this.createEpmlInstance(frame, newIndex)
+    }
+
+    removeTab(index, tabA) {
+        const tabB = this.tabs.length - 1
+        const tabC = this.tabs[tabB].id
+
+        if (tabC === tabA) {
+            let theId = ''
+            let tabId = ''
+            let frameId = ''
+            let plugId = ''
+            let iconId = ''
+
+            this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+
+            const tabD = this.tabs.length - 1
+            const plugObj = this.tabs[tabD].url
+
+            theId = this.tabs[tabD].id
+            tabId = 'tab-' + theId
+            frameId = 'frame-' + theId
+            plugId = 'plug-' + theId
+            iconId = 'plug-' + theId
+
+            var tabActive = this.shadowRoot.getElementById(tabId)
+            var frameActive = this.shadowRoot.getElementById(frameId)
+            var plugActive = this.shadowRoot.getElementById(plugId)
+            var iconActive = this.shadowRoot.getElementById(iconId)
+
+            if (plugObj === undefined || "") {
+                tabActive.classList.add("active")
+                iconActive.classList.remove("iconInactive")
+                iconActive.classList.add("iconActive")
+                plugActive.classList.remove("hideIframe")
+                plugActive.classList.add("showIframe")
+            } else {
+                tabActive.classList.add("active")
+                iconActive.classList.remove("iconInactive")
+                iconActive.classList.add("iconActive")
+                frameActive.classList.remove("hideIframe")
+                frameActive.classList.add("showIframe")
+            }
+
+            this.requestUpdate()
+        } else {
+            // Remove tab from array
+            this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+
+            if (this.tabs.length !== 0) {
+                this.currentTab = 0
+            }
+            this.requestUpdate()
+        }
     }
 
     createEpmlInstance(frame, index) {
@@ -407,7 +488,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         })
 
         addPluginRoutes(showingPluginEpml);
-        showingPluginEpml.imReady();
+        showingPluginEpml.imReady()
 
         // store Epml instance in tab for later use
         this.tabs[index].epmlInstance = showingPluginEpml
