@@ -58,7 +58,9 @@
 		"tm13": "Gruppeadministrasjon",
 		"tm14": "Databehandling",
 		"tm15": "Puslespill",
-		"tm16": "Nodeadministrasjon"
+		"tm16": "Nodeadministrasjon",
+		"tm17": "Ny fane",
+		"tm18": "Legg til ny fane"
 	},
 	"login": {
 		"login": "Logg på",

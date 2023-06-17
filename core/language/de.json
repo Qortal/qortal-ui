@@ -58,7 +58,9 @@
 		"tm13": "Gruppenverwaltung",
 		"tm14": "Datenverwaltung",
 		"tm15": "Rätsel",
-		"tm16": "Knotenverwaltung"
+		"tm16": "Knotenverwaltung",
+		"tm17": "Neuer Tab",
+		"tm18": "Neuen Tab hinzufügen"
 	},
 	"login": {
 		"login": "Einloggen",

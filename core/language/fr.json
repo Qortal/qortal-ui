@@ -58,7 +58,9 @@
 		"tm13": "Gestion du groupe",
 		"tm14": "Gestion des données",
 		"tm15": "Puzzles",
-		"tm16": "Gestion des nœuds"
+		"tm16": "Gestion des nœuds",
+		"tm17": "Nouvel onglet",
+		"tm18": "Ajouter un nouvel onglet"
 	},
 	"login": {
 		"login": "Connexion",

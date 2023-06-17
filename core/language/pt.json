@@ -58,7 +58,9 @@
 		"tm13": "Gestão de Grupo",
 		"tm14": "Gerenciamento de dados",
 		"tm15": "Quebra-cabeças",
-		"tm16": "Gerenciamento de nós"
+		"tm16": "Gerenciamento de nós",
+		"tm17": "Nova guia",
+		"tm18": "Adicionar nova guia"
 	},
 	"login": {
 		"login": "Login",

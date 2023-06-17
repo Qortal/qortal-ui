@@ -58,7 +58,9 @@
 		"tm13": "Zarządzanie grupą",
 		"tm14": "Zarządzanie danymi",
 		"tm15": "Zagadki",
-		"tm16": "Zarządzanie węzłami"
+		"tm16": "Zarządzanie węzłami",
+		"tm17": "Nowa karta",
+		"tm18": "Dodaj nową kartę"
 	},
 	"login": {
 		"login": "Zaloguj się",

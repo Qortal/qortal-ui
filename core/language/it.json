@@ -58,7 +58,9 @@
 		"tm13": "Gestione gruppo",
 		"tm14": "Gestione dati",
 		"tm15": "Puzzle",
-		"tm16": "Gestione nodi"
+		"tm16": "Gestione nodi",
+		"tm17": "Nuova scheda",
+		"tm18": "Aggiungi nuova scheda"
 	},
 	"login": {
 		"login": "Login",

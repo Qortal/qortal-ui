@@ -58,7 +58,9 @@
 		"tm13": "Group Management",
 		"tm14": "Data Management",
 		"tm15": "Puzzles",
-		"tm16": "Node Management"
+		"tm16": "Node Management",
+		"tm17": "New Tab",
+		"tm18": "Add New Tab"
 	},
 	"login": {
 		"login": "Log In",

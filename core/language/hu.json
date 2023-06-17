@@ -58,7 +58,9 @@
 		"tm13": "Csoportkezelés",
 		"tm14": "Adatkezelés",
 		"tm15": "Rejtvények",
-		"tm16": "Csomópontkezelés"
+		"tm16": "Csomópontkezelés",
+		"tm17": "Új lap",
+		"tm18": "Új lap hozzáadása"
 	},
 	"login": {
 		"login": "Bejelentkezés",

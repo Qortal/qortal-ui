@@ -58,7 +58,9 @@
 		"tm13": "Administración de grupos",
 		"tm14": "Administración de datos",
 		"tm15": "Rompecabezas",
-		"tm16": "Administración de nodos"
+		"tm16": "Administración de nodos",
+		"tm17": "Nueva pestaña",
+		"tm18": "Agregar nueva pestaña"
 	},
 	"login": {
 		"login": "Iniciar sesión",
