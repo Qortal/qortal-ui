@@ -42,6 +42,24 @@
 		"sm2": "GESTION DES NOM",
 		"sm3": "MARCHÉ DES NOMS"
 	},
+	"tabmenu": {
+		"tm1": "Détails de la frappe",
+		"tm2": "Devenir Miner",
+		"tm3": "Liste de parrainage",
+		"tm4": "Portefeuilles",
+		"tm5": "Portail commercial",
+		"tm6": "Achat automatique",
+		"tm7": "Partage de récompense",
+		"tm8": "Q-Chat",
+		"tm9": "Enregistrement du nom",
+		"tm10": "Marché des noms",
+		"tm11": "Sites Web",
+		"tm12": "Q-Apps",
+		"tm13": "Gestion du groupe",
+		"tm14": "Gestion des données",
+		"tm15": "Puzzles",
+		"tm16": "Gestion des nœuds"
+	},
 	"login": {
 		"login": "Connexion",
 		"createaccount": "Créer un compte",

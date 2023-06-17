@@ -42,6 +42,24 @@
 		"sm2": "GESTÃO DE NOME",
 		"sm3": "MERCADO DE NOMES"
 	},
+	"tabmenu": {
+		"tm1": "Detalhes de cunhagem",
+		"tm2": "Torne-se um Minter",
+		"tm3": "Lista de Patrocínios",
+		"tm4": "Carteiras",
+		"tm5": "Portal Comercial",
+		"tm6": "Compra automática",
+		"tm7": "Recompensa",
+		"tm8": "Q-Chat",
+		"tm9": "Registro de Nome",
+		"tm10": "Mercado de Nomes",
+		"tm11": "Sites",
+		"tm12": "Q-Apps",
+		"tm13": "Gestão de Grupo",
+		"tm14": "Gerenciamento de dados",
+		"tm15": "Quebra-cabeças",
+		"tm16": "Gerenciamento de nós"
+	},
 	"login": {
 		"login": "Login",
 		"createaccount": "Criar Conta",

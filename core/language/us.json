@@ -42,6 +42,24 @@
 		"sm2": "NAME MANAGEMENT",
 		"sm3": "NAMES MARKET"
 	},
+	"tabmenu": {
+		"tm1": "Minting Details",
+		"tm2": "Become a Minter",
+		"tm3": "Sponsorship List",
+		"tm4": "Wallets",
+		"tm5": "Trade Portal",
+		"tm6": "Auto Buy",
+		"tm7": "Reward Share",
+		"tm8": "Q-Chat",
+		"tm9": "Name Registration",
+		"tm10": "Names Market",
+		"tm11": "Websites",
+		"tm12": "Q-Apps",
+		"tm13": "Group Management",
+		"tm14": "Data Management",
+		"tm15": "Puzzles",
+		"tm16": "Node Management"
+	},
 	"login": {
 		"login": "Log In",
 		"createaccount": "Create Account",

@@ -42,6 +42,24 @@
 		"sm2": "ZARZĄDZANIE NAZWAMI",
 		"sm3": "RYNEK NAZW"
 	},
+	"tabmenu": {
+		"tm1": "Szczegóły bicia",
+		"tm2": "Zostań Mincerzem",
+		"tm3": "Lista sponsorów",
+		"tm4": "Portfele",
+		"tm5": "Portal handlowy",
+		"tm6": "Automatyczny zakup",
+		"tm7": "Podział nagrody",
+		"tm8": "Q-czat",
+		"tm9": "Rejestracja nazwy",
+		"tm10": "Rynek nazw",
+		"tm11": "Strony internetowe",
+		"tm12": "Q-Aplikacje",
+		"tm13": "Zarządzanie grupą",
+		"tm14": "Zarządzanie danymi",
+		"tm15": "Zagadki",
+		"tm16": "Zarządzanie węzłami"
+	},
 	"login": {
 		"login": "Zaloguj się",
 		"createaccount": "Utwórz konto",

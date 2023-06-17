@@ -42,6 +42,24 @@
 		"sm2": "NAMENSVERWALTUNG",
 		"sm3": "NAMENSMARKT"
 	},
+	"tabmenu": {
+		"tm1": "Prägedetails",
+		"tm2": "Minter werden",
+		"tm3": "Sponsoring-Liste",
+		"tm4": "Geldbörsen",
+		"tm5": "Handelsportal",
+		"tm6": "Automatischer Kauf",
+		"tm7": "Belohnungsanteil",
+		"tm8": "Q-Chat",
+		"tm9": "Namensregistrierung",
+		"tm10": "Namensmarkt",
+		"tm11": "Websites",
+		"tm12": "Q-Apps",
+		"tm13": "Gruppenverwaltung",
+		"tm14": "Datenverwaltung",
+		"tm15": "Rätsel",
+		"tm16": "Knotenverwaltung"
+	},
 	"login": {
 		"login": "Einloggen",
 		"createaccount": "Benutzerkonto erstellen",

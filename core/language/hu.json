@@ -42,6 +42,24 @@
 		"sm2": "NÉVKEZELÉS",
 		"sm3": "NAMES PIAC"
 	},
+	"tabmenu": {
+		"tm1": "A pénzverés részletei",
+		"tm2": "Legyen pénzverés",
+		"tm3": "Szponzori lista",
+		"tm4": "pénztárcák",
+		"tm5": "Kereskedelmi portál",
+		"tm6": "Automatikus vásárlás",
+		"tm7": "Jutalommegosztás",
+		"tm8": "Q-Chat",
+		"tm9": "Név regisztráció",
+		"tm10": "Names Market",
+		"tm11": "Webhelyek",
+		"tm12": "Q-apps",
+		"tm13": "Csoportkezelés",
+		"tm14": "Adatkezelés",
+		"tm15": "Rejtvények",
+		"tm16": "Csomópontkezelés"
+	},
 	"login": {
 		"login": "Bejelentkezés",
 		"createaccount": "Fiók Létrehozása",

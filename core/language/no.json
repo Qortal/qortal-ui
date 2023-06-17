@@ -42,6 +42,24 @@
 		"sm2": "NAVNEBEHANDLING",
 		"sm3": "NAMES MARKET"
 	},
+	"tabmenu": {
+		"tm1": "Pregedetaljer",
+		"tm2": "Bli mynter",
+		"tm3": "Sponsorliste",
+		"tm4": "Lommebøker",
+		"tm5": "Handelsportal",
+		"tm6": "Autokjøp",
+		"tm7": "Belønningsdeling",
+		"tm8": "Q-Chat",
+		"tm9": "Navneregistrering",
+		"tm10": "Navnmarked",
+		"tm11": "Nettsteder",
+		"tm12": "Q-Apps",
+		"tm13": "Gruppeadministrasjon",
+		"tm14": "Databehandling",
+		"tm15": "Puslespill",
+		"tm16": "Nodeadministrasjon"
+	},
 	"login": {
 		"login": "Logg på",
 		"createaccount": "Opprett konto",

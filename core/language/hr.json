@@ -42,6 +42,24 @@
 		"sm2": "UPRAVLJANJE IMENIMA",
 		"sm3": "TRŽIŠTE IMENA"
 	},
+	"tabmenu": {
+		"tm1": "Detalji o kovanju",
+		"tm2": "Postanite kovač",
+		"tm3": "Popis sponzora",
+		"tm4": "Novčanici",
+		"tm5": "Trgovački portal",
+		"tm6": "Automatska kupnja",
+		"tm7": "Udio nagrade",
+		"tm8": "Q-Chat",
+		"tm9": "Registracija imena",
+		"tm10": "Tržište imena",
+		"tm11": "Web stranice",
+		"tm12": "Q-Apps",
+		"tm13": "Upravljanje grupom",
+		"tm14": "Upravljanje podacima",
+		"tm15": "Zagonetke",
+		"tm16": "Upravljanje čvorom"
+	},
 	"login": {
 		"login": "Prijavi se",
 		"createaccount": "Stvori račun",

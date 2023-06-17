@@ -42,6 +42,24 @@
 		"sm2": "GESTIONE NOMI",
 		"sm3": "MERCATO DEI NOMI"
 	},
+	"tabmenu": {
+		"tm1": "Dettagli conio",
+		"tm2": "Diventa un minatore",
+		"tm3": "Elenco sponsorizzazioni",
+		"tm4": "Portafogli",
+		"tm5": "Portale commerciale",
+		"tm6": "Acquisto automatico",
+		"tm7": "Condivisione ricompensa",
+		"tm8": "Q-Chat",
+		"tm9": "Registrazione nome",
+		"tm10": "Mercato nomi",
+		"tm11": "Siti web",
+		"tm12": "Q-Apps",
+		"tm13": "Gestione gruppo",
+		"tm14": "Gestione dati",
+		"tm15": "Puzzle",
+		"tm16": "Gestione nodi"
+	},
 	"login": {
 		"login": "Login",
 		"createaccount": "Crea account",

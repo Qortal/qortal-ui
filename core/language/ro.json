@@ -42,6 +42,24 @@
 		"sm2": "GESTIONAREA NUMELE",
 		"sm3": "PIAȚA NUMELOR"
 	},
+	"tabmenu": {
+		"tm1": "Detalii de batere",
+		"tm2": "Deveniți un Minter",
+		"tm3": "Lista de sponsorizări",
+		"tm4": "Portofele",
+		"tm5": "Portal comercial",
+		"tm6": "Cumpărare automată",
+		"tm7": "Partajarea recompensei",
+		"tm8": "Q-Chat",
+		"tm9": "Înregistrare nume",
+		"tm10": "Piata de nume",
+		"tm11": "Site-uri web",
+		"tm12": "Q-Apps",
+		"tm13": "Gestionarea grupului",
+		"tm14": "Gestionarea datelor",
+		"tm15": "Puzzle-uri",
+		"tm16": "Gestionarea nodurilor"
+	},
 	"login": {
 		"login": "Login",
 		"createaccount": "Creare Cont",
