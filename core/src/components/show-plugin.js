@@ -6,13 +6,19 @@ import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import { setNewTab } from '../redux/app/app-actions.js'
-import localForage from "localforage";
+import localForage from 'localforage'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 import '@material/mwc-icon'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
-});
+})
+
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
         return {
@@ -70,6 +76,8 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             .tabs {
                 display: flex;
+                width: 100%;
+                max-width: 100%;
                 justify-content: flex-start;
                 padding-top: 0.5em;
                 padding-left: 0.5em;
@@ -92,7 +100,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 transition: background 0.3s;
                 position: relative;
                 width: auto;
-                min-width: 80px;
+                min-width: 50px;
                 max-width: 200px;
                 overflow: hidden;
                 text-wrap: nowrap;
@@ -372,6 +380,40 @@ class ShowPlugin extends connect(store)(LitElement) {
         `
     }
 
+    firstUpdated() {
+        this.changeLanguage()
+
+        this.tabs.forEach((tab, index) => {
+            const frame = this.shadowRoot.getElementById(`showPluginFrame${index}`)
+            this.createEpmlInstance(frame, index)
+        })
+
+        window.addEventListener('storage', () => {
+            const checkLanguage = localStorage.getItem('qortalLanguage')
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            use(checkLanguage)
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+    }
+
+    changeLanguage() {
+        const checkLanguage = localStorage.getItem('qortalLanguage')
+
+        if (checkLanguage === null || checkLanguage.length === 0) {
+            localStorage.setItem('qortalLanguage', 'us')
+            use('us')
+        } else {
+            use(checkLanguage)
+        }
+    }
+
     async getUpdateComplete() {
         await super.getUpdateComplete()
         return true
@@ -468,7 +510,6 @@ class ShowPlugin extends connect(store)(LitElement) {
                 frameActive.classList.remove("hideIframe")
                 frameActive.classList.add("showIframe")
             }
-
             this.requestUpdate()
         } else {
             // Remove tab from array
@@ -495,13 +536,6 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         // Register each instance with a unique identifier
         Epml.registerProxyInstance(`visible-plugin-${index}`, showingPluginEpml)
-    }
-
-    firstUpdated() {
-        this.tabs.forEach((tab, index) => {
-            const frame = this.shadowRoot.getElementById(`showPluginFrame${index}`)
-            this.createEpmlInstance(frame, index)
-        })
     }
 
     updated(changedProps) {
@@ -533,7 +567,6 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
             this.requestUpdate()
         }
-
 
         if (changedProps.has('computerUrl')) {
             if (this.computedUrl !== 'about:blank') {
@@ -637,20 +670,14 @@ class NavBar extends connect(store)(LitElement) {
         }
     }
 
-    constructor() {
-        super()
-        this.menuList = []
-        this.newMenuList = []
-        this.myMenuList = []
-        this.addressInfo = {}
-    }
-
     static styles = css`
         .parent {
             display: flex;
             flex-direction: column;
+            flex-flow: column;
             align-items: center;
             padding: 20px;
+            height: 100vh;
             overflow-y: auto;
         }
 
@@ -691,17 +718,17 @@ class NavBar extends connect(store)(LitElement) {
         .app-list {
             display: flex;
             justify-content: space-between;
-            padding: 20px 0;
-            gap: 20px;
+            padding: 10px 0;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .app-list .app-icon {
             text-align: center;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: var(--black);
-            width: 150px;
+            width: 175px;
             height: 110px;
             background: transparent;
             padding: 5px;
@@ -722,7 +749,9 @@ class NavBar extends connect(store)(LitElement) {
             align-items: center;
             padding-left: 14px;
             width: 80px;
+            min-width: 80px;
             height: 80px;
+            min-height: 80px;
             background-color: var(--app-background-1);
             background-image: linear-gradient(315deg, var(--app-background-1) 0%, var(--app-background-2) 74%);
             border-top-left-radius: 10px;
@@ -736,11 +765,97 @@ class NavBar extends connect(store)(LitElement) {
             --mdc-icon-size: 64px;
         }
     `
+    constructor() {
+        super()
+        this.menuList = []
+        this.newMenuList = []
+        this.myMenuList = []
+        this.addressInfo = {}
+    }
 
-    getApiKey() {
-        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+    render() {
+        return html`
+            <div class="parent">
+                <div class="navbar">
+                    <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
+                    <button @click="${this.handlePasteLink}">${translate('general.view')}</button>
+                </div>
+                <div>
+                    <div class="app-list">
+                        ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
+                            <div class="app-icon" @click=${() => {
+                                this.changePage(plugin)
+                            }}>
+                                <div class="app-icon-box">
+                                    <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
+                                </div>
+                                ${this.renderTitle(plugin.url)}
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            </div>
+        `
+    }
+
+    firstUpdated() {
+        const addressInfo = this.addressInfo
+        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
+        const isSponsor = +addressInfo?.level >= 5
+
+        if (!isMinter) {
+            this.newMenuList = this.menuList.filter((minter) => {
+                return minter.url !== 'minting'
+            })
+        } else {
+            this.newMenuList = this.menuList.filter((minter) => {
+                return minter.url !== 'become-minter'
+            })
+        }
+
+        if (!isSponsor) {
+            this.myMenuList = this.newMenuList.filter((sponsor) => {
+                return sponsor.url !== 'sponsorship-list'
+            })
+        } else {
+            this.myMenuList = this.newMenuList
+        }
+    }
+
+    renderTitle(theUrl) {
+        if (theUrl === 'minting') {
+            return html`<span>${translate('tabmenu.tm1')}</span>`
+        } else if (theUrl === 'become-minter') {
+            return html`<span>${translate('tabmenu.tm2')}</span>`
+        } else if (theUrl === 'sponsorship-list') {
+            return html`<span>${translate('tabmenu.tm3')}</span>`
+        } else if (theUrl === 'wallet') {
+            return html`<span>${translate('tabmenu.tm4')}</span>`
+        } else if (theUrl === 'trade-portal') {
+            return html`<span>${translate('tabmenu.tm5')}</span>`
+        } else if (theUrl === 'trade-bot-portal') {
+            return html`<span>${translate('tabmenu.tm6')}</span>`
+        } else if (theUrl === 'reward-share') {
+            return html`<span>${translate('tabmenu.tm7')}</span>`
+        } else if (theUrl === 'q-chat') {
+            return html`<span>${translate('tabmenu.tm8')}</span>`
+        } else if (theUrl === 'name-registration') {
+            return html`<span>${translate('tabmenu.tm9')}</span>`
+        } else if (theUrl === 'names-market') {
+            return html`<span>${translate('tabmenu.tm10')}</span>`
+        } else if (theUrl === 'websites') {
+            return html`<span>${translate('tabmenu.tm11')}</span>`
+        } else if (theUrl === 'qapps') {
+            return html`<span>${translate('tabmenu.tm12')}</span>`
+        } else if (theUrl === 'group-management') {
+            return html`<span>${translate('tabmenu.tm13')}</span>`
+        } else if (theUrl === 'data-management') {
+            return html`<span>${translate('tabmenu.tm14')}</span>`
+        } else if (theUrl === 'puzzles') {
+            return html`<span>${translate('tabmenu.tm15')}</span>`
+        } else if (theUrl === 'node-management') {
+            return html`<span>${translate('tabmenu.tm16')}</span>`
+        }
     }
 
     async extractComponents(url) {
@@ -784,7 +899,6 @@ class NavBar extends connect(store)(LitElement) {
             components["path"] = path
             return components
         }
-
         return null
     }
 
@@ -854,53 +968,10 @@ class NavBar extends connect(store)(LitElement) {
         }
     }
 
-    render() {
-        return html`
-            <div class="parent">
-                <div class="navbar">
-                    <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
-                    <button @click="${this.handlePasteLink}">Go</button>
-                </div>
-                <div>
-                    <div class="app-list">
-                        ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
-                            <div class="app-icon" @click=${() => {
-                                this.changePage(plugin)
-                            }}>
-                                <div class="app-icon-box">
-                                    <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
-                                </div>
-                                <span>${plugin.title}</span>
-                            </div>
-                        `)}
-                    </div>
-                </div>
-            </div>
-        `
-    }
-
-    firstUpdated() {
-        const addressInfo = this.addressInfo
-        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
-        const isSponsor = +addressInfo?.level >= 5
-
-        if (!isMinter) {
-            this.newMenuList = this.menuList.filter((minter) => {
-                return minter.url !== 'minting'
-            })
-        } else {
-            this.newMenuList = this.menuList.filter((minter) => {
-                return minter.url !== 'become-minter'
-            })
-        }
-
-        if (!isSponsor) {
-            this.myMenuList = this.newMenuList.filter((sponsor) => {
-                return sponsor.url !== 'sponsorship-list'
-            })
-        } else {
-            this.myMenuList = this.newMenuList
-        }
+    getApiKey() {
+        const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
     }
 
     stateChanged(state) {
