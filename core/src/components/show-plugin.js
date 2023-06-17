@@ -280,10 +280,40 @@ class ShowPlugin extends connect(store)(LitElement) {
                     let icon = ''
                     let count = 0
 
-                    if (tab.myPlugObj && tab.myPlugObj.title) {
-                        title = tab.myPlugObj.title
+                    if (tab.myPlugObj && tab.myPlugObj.title === "Minting Details") {
+                        title = html`${translate('tabmenu.tm1')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Become a Minter") {
+                        title = html`${translate('tabmenu.tm2')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Sponsorship List") {
+                        title = html`${translate('tabmenu.tm3')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Wallets") {
+                        title = html`${translate('tabmenu.tm4')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Trade Portal") {
+                        title = html`${translate('tabmenu.tm5')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Auto Buy") {
+                        title = html`${translate('tabmenu.tm6')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Reward Share") {
+                        title = html`${translate('tabmenu.tm7')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Q-Chat") {
+                        title = html`${translate('tabmenu.tm8')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Name Registration") {
+                        title = html`${translate('tabmenu.tm9')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Names Market") {
+                        title = html`${translate('tabmenu.tm10')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Websites") {
+                        title = html`${translate('tabmenu.tm11')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Q-Apps") {
+                        title = html`${translate('tabmenu.tm12')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Group Management") {
+                        title = html`${translate('tabmenu.tm13')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Data Management") {
+                        title = html`${translate('tabmenu.tm14')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Puzzles") {
+                        title = html`${translate('tabmenu.tm15')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Node Management") {
+                        title = html`${translate('tabmenu.tm16')}`
                     } else {
-                        title = 'New Tab'
+                        title = html`${translate('tabmenu.tm17')}`
                     }
 
                     if (tab.myPlugObj && tab.myPlugObj.mwcicon) {
@@ -344,7 +374,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 })}
                 <button 
                     class="add-tab-button" 
-                    title="Add New Tab"
+                    title="${translate('tabmenu.tm18')}"
                     @click=${() => {
                         const lengthOfTabs = this.tabs.length
                         this.addTab({
@@ -490,7 +520,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             tabId = 'tab-' + theId
             frameId = 'frame-' + theId
             plugId = 'plug-' + theId
-            iconId = 'plug-' + theId
+            iconId = 'icon-' + theId
 
             var tabActive = this.shadowRoot.getElementById(tabId)
             var frameActive = this.shadowRoot.getElementById(frameId)
@@ -778,7 +808,7 @@ class NavBar extends connect(store)(LitElement) {
             <div class="parent">
                 <div class="navbar">
                     <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
-                    <button @click="${this.handlePasteLink}">${translate('general.view')}</button>
+                    <button @click="${this.handlePasteLink}">${translate('general.open')}</button>
                 </div>
                 <div>
                     <div class="app-list">
