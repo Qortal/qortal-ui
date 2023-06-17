@@ -123,7 +123,8 @@ function processText(input) {
                                         "domain": "core",
                                         "page": `qdn/browser/index.html${query}`,
                                         "title": name,
-                                        "mwcicon": service === 'WEBSITE' ? 'vaadin:desktop' : 'open_in_browser',
+                                        "icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
+                                        "mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
                                         "menus": [],
                                         "parent": false
                                     }
