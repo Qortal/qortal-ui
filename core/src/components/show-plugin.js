@@ -103,15 +103,27 @@ class ShowPlugin extends connect(store)(LitElement) {
                 min-width: 50px;
                 max-width: 200px;
                 overflow: hidden;
-                text-wrap: nowrap;
-                text-overflow: ellipsis;
                 zIndex: 2;
+            }
+
+            .tabCard {
+                display: inline-block;
+            }
+
+            .tabTitle {
+                display: inline-block;
+                position: relative;
+                width: auto;
+                min-width: 25px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             .tab:hover {
                 background: var(--nav-color-hover);
-                color: #03a9f4;
-                font-weight: bold;
+                color: var(--black);
+                min-width: fit-content;
             }
 
             .tab.active {
@@ -131,17 +143,39 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .close {
-                color: #999;
-                font-weight: bold;
-                font-size: 16px;
-            }
-
-            .title {
-                display: inline-block;
+                position: absolute;
+                top: 8px;
+                right: 5px;
+                color: var(--black);
+                --mdc-icon-size: 20px;
             }
 
             .close:hover {
-                color: red;
+                color: #C6011F;
+                font-weight: bold;
+            }
+
+            .tab .close,
+            .tab .show {
+                display: none;
+            }
+
+            .tab.active .close,
+            .tab.active .show {
+                display: inline-block;
+                color: var(--black);
+            }
+
+            .tab:hover .close,
+            .tab:hover .show {
+                display: inline-block;
+                color: var(--black);
+            }
+
+            .tab .close:hover,
+            .tab.active .close:hover {
+                color: #C6011F;
+                font-weight: bold;
             }
 
             .add-tab-button {
@@ -171,6 +205,10 @@ class ShowPlugin extends connect(store)(LitElement) {
                 top: 5px;
                 color: #999;
                 --mdc-icon-size: 24px;
+            }
+
+            .tab:hover .iconInactive {
+                color: #03a9f4;
             }
 
             .count {
@@ -209,40 +247,12 @@ class ShowPlugin extends connect(store)(LitElement) {
                 margin-left: 30px;
             }
 
-            .mr-10 {
-                margin-right: 10px;
+            .ml-35 {
+                margin-left: 35px;
             }
 
-            .mr-15 {
-                margin-right: 15px;
-            }
-
-            .mr-20 {
-                margin-right: 20px;
-            }
-
-            .mt-10 {
-                margin-top: 10px;
-            }
-
-            .mt-15 {
-                margin-top: 15px;
-            }
-
-            .mt-20 {
-                margin-top: 20px;
-            }
-
-            .mb-10 {
-                margin-bottom: 10px;
-            }
-
-            .mb-15 {
-                margin-bottom: 15px;
-            }
-
-            .mb-20 {
-                margin-bottom: 20px;
+            .ml-40 {
+                margin-left: 40px;
             }
 
             @keyframes pulse {
@@ -359,21 +369,21 @@ class ShowPlugin extends connect(store)(LitElement) {
                             <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${icon}</mwc-icon>
                             </div>
-                            <div class="title">
+                            <div class="tabCard">
                                 ${count ? html`
-                                    <span class="ml-30">${title}</span>
+                                    <span class="tabTitle ml-30">${title}</span>
                                     <span class="count ml-5">${count}</span>
-                                    <span class="close ml-15" @click=${() => {this.removeTab(index, tab.id)}}>X</span>
+                                    <span class="ml-25 show"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 ` : html`
-                                    <span class="ml-25">${title}</span>
-                                    <span class="close ml-15" @click=${() => {this.removeTab(index, tab.id)}}>X</span>
+                                    <span class="tabTitle ml-30">${title}</span>
+                                    <span class="ml-25 show"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 `}
                             </div>
                         </div>
                     `
                 })}
                 <button 
-                    class="add-tab-button" 
+                    class="add-tab-button"
                     title="${translate('tabmenu.tm18')}"
                     @click=${() => {
                         const lengthOfTabs = this.tabs.length
@@ -383,9 +393,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                         })
                         this.currentTab = lengthOfTabs
                     }}
-                >
-                    +
-                </button>
+                >+</button>
             </div>
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
