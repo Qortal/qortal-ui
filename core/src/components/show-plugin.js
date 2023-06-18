@@ -134,6 +134,12 @@ class ShowPlugin extends connect(store)(LitElement) {
                 color: #999;
                 font-weight: bold;
                 font-size: 16px;
+                display: none;
+            }
+
+            .tab:hover .close,
+            .tab.active .close {
+                display: inline;
             }
 
             .title {
