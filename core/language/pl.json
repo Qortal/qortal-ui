@@ -60,7 +60,16 @@
 		"tm15": "Zagadki",
 		"tm16": "Zarządzanie węzłami",
 		"tm17": "Nowa karta",
-		"tm18": "Dodaj nową kartę"
+		"tm18": "Dodaj nową kartę",
+		"tm19": "Dodaj nową wtyczkę",
+		"tm20": "Q-Aplikacja",
+		"tm21": "Strona internetowa",
+		"tm22": "Usuń wtyczkę",
+		"tm23": "Czy na pewno chcesz usunąć tę wtyczkę?",
+		"tm24": "Typ wtyczki:",
+		"tm25": "Proszę wybrać typ wtyczki!",
+		"tm26": "Dodaj nową wtyczkę do menu",
+		"tm27": "Usuń wtyczkę z menu"
 	},
 	"login": {
 		"login": "Zaloguj się",

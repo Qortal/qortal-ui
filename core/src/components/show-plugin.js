@@ -13,11 +13,16 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import '@material/mwc-button'
+import '@material/mwc-dialog'
 import '@material/mwc-icon'
+import '@material/mwc-textfield'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 })
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
@@ -322,6 +327,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                         title = html`${translate('tabmenu.tm15')}`
                     } else if (tab.myPlugObj && tab.myPlugObj.title === "Node Management") {
                         title = html`${translate('tabmenu.tm16')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.url === "myapp") {
+                        title = tab.myPlugObj && tab.myPlugObj.title
                     } else {
                         title = html`${translate('tabmenu.tm17')}`
                     }
@@ -703,12 +710,30 @@ class NavBar extends connect(store)(LitElement) {
             menuList: { type: Array },
             newMenuList: { type: Array },
             myMenuList: { type: Array },
+            myMenuPlugins: { type: Array },
+            myApps: { type: Array },
             addressInfo: { type: Object },
-            changePage: { attribute: false }
+            changePage: { attribute: false },
+            pluginName: { type: String },
+            pluginType: { type: String },
+            mwcIcon: { type: String },
+            pluginNameToDelete: { type: String }
         }
     }
 
     static styles = css`
+        * {
+            --mdc-theme-primary: rgb(3, 169, 244);
+            --mdc-theme-surface: var(--white);
+            --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+            --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+            --mdc-text-field-label-ink-color: var(--black);
+            --mdc-text-field-ink-color: var(--black);
+            --mdc-dialog-content-ink-color: var(--black);
+            --mdc-dialog-min-width: 300px;
+            --mdc-dialog-max-width: 700px;
+        }
+
         .parent {
             display: flex;
             flex-direction: column;
@@ -775,7 +800,15 @@ class NavBar extends connect(store)(LitElement) {
             align-items: center;
             justify-content: center;
             gap: 10px;
-            cursor: pointer;
+        }
+
+        .text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            width: 100%;
+            min-width: 1px;
         }
 
         .app-list .app-icon span {
@@ -801,6 +834,42 @@ class NavBar extends connect(store)(LitElement) {
         .menuIcon {
             color: var(--app-icon);
             --mdc-icon-size: 64px;
+            cursor: pointer;
+        }
+
+        .menuIconPos {
+            position: relative;
+            right: 26px;
+        }
+
+        .removeIcon {
+            color: var(--black);
+            --mdc-icon-size: 28px;
+            cursor: pointer;
+        }
+
+        .removeIcon:hover {
+            color: #C6011F;
+            font-weight: bold;
+        }
+
+        .removeIconPos {
+            position: relative;
+            top: -36px;
+            left: 62px;
+        }
+
+        .red {
+            --mdc-theme-primary: #F44336;
+        }
+
+        select {
+            padding: 10px 10px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            background: var(--white);
+            color: var(--black);
         }
     `
     constructor() {
@@ -808,7 +877,13 @@ class NavBar extends connect(store)(LitElement) {
         this.menuList = []
         this.newMenuList = []
         this.myMenuList = []
+        this.myMenuPlugins = []
         this.addressInfo = {}
+        this.pluginName = ''
+        this.pluginType = ''
+        this.myApps = ''
+        this.mwcIcon = ''
+        this.pluginNameToDelete = ''
     }
 
     render() {
@@ -821,32 +896,103 @@ class NavBar extends connect(store)(LitElement) {
                 <div>
                     <div class="app-list">
                         ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
-                            <div class="app-icon" @click=${() => {
-                                this.changePage(plugin)
-                            }}>
+                            <div class="app-icon">
                                 <div class="app-icon-box">
-                                    <mwc-icon class="menuIcon">${plugin.mwcicon}</mwc-icon>
+                                    ${this.renderRemoveIcon(plugin.url, plugin.mwcicon, plugin.title, plugin)}
                                 </div>
-                                ${this.renderTitle(plugin.url)}
+                                ${this.renderTitle(plugin.url, plugin.title)}
                             </div>
                         `)}
+                        <div class="app-icon" @click="${() => this.openAddNewPlugin()}">
+                            <div class="app-icon-box">
+                                <mwc-icon class="menuIcon">add</mwc-icon>
+                            </div>
+                            <span class="text">${translate("tabmenu.tm19")}</span>
+                        </div>
                     </div>
                 </div>
             </div>
+            <mwc-dialog id="addNewPlugin" scrimClickAction="" escapeKeyAction="">
+                <div style="text-align:center">
+                    <h2>${translate("tabmenu.tm26")}</h2>
+                    <hr><br>
+                </div>
+                <p>
+                    ${translate("tabmenu.tm24")}
+                    <select required validationMessage="${translate("grouppage.gchange14")}" id="pluginTypeInput" label="${translate("tabmenu.tm24")}">
+                        <option value="reject" selected>${translate("grouppage.gchange15")}</option>
+                        <option value="0">${translate("tabmenu.tm20")}</option>
+                        <option value="1">${translate("tabmenu.tm21")}</option>
+                    </select>
+                </p>
+                <p>
+                    <mwc-textfield
+                        style="width: 100%; color: var(--black);"
+                        required
+                        outlined
+                        id="pluginNameInput"
+                        label="${translate("login.name")}"
+                        type="text"
+                    >
+                    </mwc-textfield>
+                </p>
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${this.addToMyMenuPlugins}
+                >
+                    ${translate("tabmenu.tm19")}
+                </mwc-button>
+                <mwc-button
+                    slot="secondaryAction"
+                    dialogAction="cancel"
+                    class="red"
+                >
+                    ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+            <mwc-dialog id="removePlugin" scrimClickAction="" escapeKeyAction="">
+                <div style="text-align:center">
+                    <h2>${translate("tabmenu.tm27")}</h2>
+                    <hr><br>
+                </div>
+                <p style="text-align:center">${translate("tabmenu.tm23")}</p>
+                <h3 style="text-align:center">${this.pluginNameToDelete}</h3>
+                <mwc-button
+                    slot="primaryAction"
+                    @click=${this.removeAppFromArray}
+                >
+                    ${translate("general.yes")}
+                </mwc-button>
+                <mwc-button
+                    slot="secondaryAction"
+                    dialogAction="cancel"
+                    class="red"
+                >
+                    ${translate("general.no")}
+                </mwc-button>
+            </mwc-dialog>
         `
     }
 
-    firstUpdated() {
+    async firstUpdated() {
+        addPluginRoutes(parentEpml)
+        parentEpml.imReady()
+
         const addressInfo = this.addressInfo
         const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
         const isSponsor = +addressInfo?.level >= 5
+        const appDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        await appDelay(50)
+
+        await this.checkMyMenuPlugins()
 
         if (!isMinter) {
-            this.newMenuList = this.menuList.filter((minter) => {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
                 return minter.url !== 'minting'
             })
         } else {
-            this.newMenuList = this.menuList.filter((minter) => {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
                 return minter.url !== 'become-minter'
             })
         }
@@ -860,7 +1006,165 @@ class NavBar extends connect(store)(LitElement) {
         }
     }
 
-    renderTitle(theUrl) {
+    async checkMyMenuPlugins() {
+        const appDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (localStorage.getItem("myMenuPlugs") === null) {
+            await appDelay(1000)
+            const myObj = JSON.stringify(this.menuList)
+            localStorage.setItem("myMenuPlugs", myObj)
+        } else {
+            this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+        }
+    }
+
+    openAddNewPlugin() {
+        this.shadowRoot.getElementById("pluginTypeInput").value = 'reject'
+        this.shadowRoot.getElementById("pluginNameInput").value = ''
+        this.shadowRoot.querySelector('#addNewPlugin').show()
+    }
+
+    async addToMyMenuPlugins() {
+        this.mwcIcon = ''
+        this.pluginType = this.shadowRoot.getElementById("pluginTypeInput").value
+        this.pluginName = this.shadowRoot.getElementById('pluginNameInput').value
+
+        var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+
+        if (this.pluginType === "reject") {
+            let myplugerr = get("tabmenu.tm25")
+            parentEpml.request('showSnackBar', `${myplugerr}`)
+            return false
+        } else if (this.pluginType === "0") {
+            if (this.pluginName === "Q-Blog") {
+                this.mwcIcon = 'rss_feed'
+            } else if (this.pluginName === "Q-Mail") {
+                this.mwcIcon = 'mail'
+            } else {
+                this.mwcIcon = 'apps'
+            }
+
+            const newMenuPlugsItem = {
+                "url": "myapp",
+                "domain": "core",
+                "page": `qdn/browser/index.html?name=${this.pluginName}&service=APP`,
+                "title": this.pluginName,
+                "icon": "vaadin:external-browser",
+                "mwcicon": this.mwcIcon,
+                "menus": [],
+                "parent": false
+            }
+
+            const validatePluginName = async () => {
+                if (this.pluginName.length === 0) {
+                    let myplugstring1 = get("walletpage.wchange50")
+                    parentEpml.request('showSnackBar', `${myplugstring1}`)
+                    return false
+                }
+
+                let myPluginName = false
+                this.myPluginNameRes = []
+
+                await parentEpml.request('apiCall', {
+                    url: `/arbitrary/resources/search?service=APP&query=${this.pluginName}&exactmatchnames=true&limit=1`
+                }).then(res => {
+                    this.myPluginNameRes = res
+                })
+
+                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0 ) {
+                    myPluginName = false
+                } else {
+                    myPluginName = true
+                }
+                return myPluginName
+            }
+
+            let myNameRes = await validatePluginName()
+
+            if (myNameRes !== false) {
+                oldMenuPlugs.push(newMenuPlugsItem)
+
+                localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
+
+                let myplugstring2 = get("walletpage.wchange52")
+                parentEpml.request('showSnackBar', `${myplugstring2}`)
+
+                this.closeAddNewPlugin()
+
+                this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+                this.firstUpdated()
+            } else {
+                let myplugstring3 = get("websitespage.schange17")
+                parentEpml.request('showSnackBar', `${myplugstring3}`)
+                return false
+            }
+        } else if (this.pluginType === "1") {
+            this.mwcIcon = 'web'
+
+            const newMenuPlugsItem = {
+                "url": "myapp",
+                "domain": "core",
+                "page": `qdn/browser/index.html?name=${this.pluginName}&service=WEBSITE`,
+                "title": this.pluginName,
+                "icon": "vaadin:external-browser",
+                "mwcicon": this.mwcIcon,
+                "menus": [],
+                "parent": false
+            }
+
+            const validatePluginName = async () => {
+                if (this.pluginName.length === 0) {
+                    let myplugstring1 = get("walletpage.wchange50")
+                    parentEpml.request('showSnackBar', `${myplugstring1}`)
+                    return false
+                }
+
+                let myPluginName = false
+                this.myPluginNameRes = []
+
+                await parentEpml.request('apiCall', {
+                    url: `/arbitrary/resources/search?service=WEBSITE&query=${this.pluginName}&exactmatchnames=true&limit=1`
+                }).then(res => {
+                    this.myPluginNameRes = res
+                })
+
+                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0 ) {
+                    myPluginName = false
+                } else {
+                    myPluginName = true
+                }
+                return myPluginName
+            }
+
+            let myNameRes = await validatePluginName()
+
+            if (myNameRes !== false) {
+                oldMenuPlugs.push(newMenuPlugsItem)
+
+                localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
+
+                let myplugstring2 = get("walletpage.wchange52")
+                parentEpml.request('showSnackBar', `${myplugstring2}`)
+
+                this.closeAddNewPlugin()
+
+                this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+                this.firstUpdated()
+            } else {
+                let myplugstring3 = get("websitespage.schange17")
+                parentEpml.request('showSnackBar', `${myplugstring3}`)
+                return false
+            }
+        }
+    }
+
+    closeAddNewPlugin() {
+        this.shadowRoot.querySelector('#addNewPlugin').close()
+        this.shadowRoot.getElementById("pluginTypeInput").value = 'reject'
+        this.shadowRoot.getElementById("pluginNameInput").value = ''
+    }
+
+    renderTitle(theUrl, theName) {
         if (theUrl === 'minting') {
             return html`<span>${translate('tabmenu.tm1')}</span>`
         } else if (theUrl === 'become-minter') {
@@ -893,7 +1197,47 @@ class NavBar extends connect(store)(LitElement) {
             return html`<span>${translate('tabmenu.tm15')}</span>`
         } else if (theUrl === 'node-management') {
             return html`<span>${translate('tabmenu.tm16')}</span>`
+        } else {
+            return html`<span>${theName}</span>`
         }
+    }
+
+    renderRemoveIcon(appurl, appicon, appname, appplugin) {
+        if (appurl === 'myapp') {
+            return html`
+                <div class="removeIconPos" @click="${() => this.openRemoveApp(appname)}">
+                    <mwc-icon class="removeIcon">backspace</mwc-icon>
+                </div>
+                <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
+                    <mwc-icon class="menuIcon">${appicon}</mwc-icon>
+                </div>
+            `
+        } else {
+            return html`<mwc-icon class="menuIcon" @click="${() => this.changePage(appplugin)}">${appicon}</mwc-icon>`
+        }
+    }
+
+    openRemoveApp(pluginNameTD) {
+        this.pluginNameToDelete = ''
+        this.pluginNameToDelete = pluginNameTD
+        this.shadowRoot.querySelector('#removePlugin').show()
+    }
+
+    removeAppFromArray() {
+        const pluginToRemove = this.pluginNameToDelete
+        this.newMenuFilter = []
+        this.newMenuFilter = this.myMenuList.filter((item) => item.title !== pluginToRemove)
+        const myNewObj = JSON.stringify(this.newMenuFilter)
+        localStorage.removeItem("myMenuPlugs")
+        localStorage.setItem("myMenuPlugs", myNewObj)
+        this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+        this.firstUpdated()
+        this.closeRemoveApp()
+    }
+
+    closeRemoveApp() {
+        this.shadowRoot.querySelector('#removePlugin').close()
+        this.pluginNameToDelete = ''
     }
 
     async extractComponents(url) {
@@ -989,9 +1333,7 @@ class NavBar extends connect(store)(LitElement) {
             const value = this.shadowRoot.getElementById('linkInput').value
             this.getQuery(value)
         } catch (error) {
-
         }
-
     }
 
     async _handleKeyDown(e) {
@@ -1000,9 +1342,7 @@ class NavBar extends connect(store)(LitElement) {
                 const value = this.shadowRoot.getElementById('linkInput').value
                 this.getQuery(value)
             } catch (error) {
-
             }
-
         }
     }
 

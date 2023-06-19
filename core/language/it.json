@@ -60,7 +60,16 @@
 		"tm15": "Puzzle",
 		"tm16": "Gestione nodi",
 		"tm17": "Nuova scheda",
-		"tm18": "Aggiungi nuova scheda"
+		"tm18": "Aggiungi nuova scheda",
+		"tm19": "Aggiungi nuovo plugin",
+		"tm20": "Q-App",
+		"tm21": "Sito web",
+		"tm22": "Rimuovi plugin",
+		"tm23": "Sei sicuro di voler rimuovere questo plugin?",
+		"tm24": "Tipo di plug-in:",
+		"tm25": "Seleziona un tipo di plugin!",
+		"tm26": "Aggiungi nuovo plugin al menu",
+		"tm27": "Rimuovi plugin dal menu"
 	},
 	"login": {
 		"login": "Login",

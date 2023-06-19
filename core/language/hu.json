@@ -60,7 +60,16 @@
 		"tm15": "Rejtvények",
 		"tm16": "Csomópontkezelés",
 		"tm17": "Új lap",
-		"tm18": "Új lap hozzáadása"
+		"tm18": "Új lap hozzáadása",
+		"tm19": "Új beépülő modul hozzáadása",
+		"tm20": "Q-App",
+		"tm21": "Webhely",
+		"tm22": "Plugin eltávolítása",
+		"tm23": "Biztosan eltávolítja ezt a bővítményt?",
+		"tm24": "Plugin Type:",
+		"tm25": "Kérjük, válasszon beépülő modul típust!",
+		"tm26": "Új beépülő modul hozzáadása a menühöz",
+		"tm27": "Plugin eltávolítása a menüből"
 	},
 	"login": {
 		"login": "Bejelentkezés",

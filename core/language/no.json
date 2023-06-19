@@ -60,7 +60,16 @@
 		"tm15": "Puslespill",
 		"tm16": "Nodeadministrasjon",
 		"tm17": "Ny fane",
-		"tm18": "Legg til ny fane"
+		"tm18": "Legg til ny fane",
+		"tm19": "Legg til ny plugin",
+		"tm20": "Q-App",
+		"tm21": "Nettsted",
+		"tm22": "Fjern plugin",
+		"tm23": "Er du sikker på at du vil fjerne denne plugin?",
+		"tm24": "Plugin Type:",
+		"tm25": "Vennligst velg en plugin-type !",
+		"tm26": "Legg til ny plugin til menyen",
+		"tm27": "Fjern plugin fra menyen"
 	},
 	"login": {
 		"login": "Logg på",

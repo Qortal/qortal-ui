@@ -60,7 +60,16 @@
 		"tm15": "Rompecabezas",
 		"tm16": "Administración de nodos",
 		"tm17": "Nueva pestaña",
-		"tm18": "Agregar nueva pestaña"
+		"tm18": "Agregar nueva pestaña",
+		"tm19": "Agregar nuevo complemento",
+		"tm20": "Q-Aplicación",
+		"tm21": "Sitio web",
+		"tm22": "Eliminar complemento",
+		"tm23": "¿Está seguro de eliminar este complemento?",
+		"tm24": "Tipo de complemento:",
+		"tm25": "¡Seleccione un tipo de complemento!",
+		"tm26": "Agregar nuevo complemento al menú",
+		"tm27": "Eliminar complemento del menú"
 	},
 	"login": {
 		"login": "Iniciar sesión",

@@ -60,7 +60,16 @@
 		"tm15": "Puzzles",
 		"tm16": "Node Management",
 		"tm17": "New Tab",
-		"tm18": "Add New Tab"
+		"tm18": "Add New Tab",
+		"tm19": "Add New Plugin",
+		"tm20": "Q-App",
+		"tm21": "Website",
+		"tm22": "Remove Plugin",
+		"tm23": "Are you sure to remove this plugin ?",
+		"tm24": "Plugin Type:",
+		"tm25": "Please select a plugin type !",
+		"tm26": "Add New Plugin To Menu",
+		"tm27": "Remove Plugin From Menu"
 	},
 	"login": {
 		"login": "Log In",

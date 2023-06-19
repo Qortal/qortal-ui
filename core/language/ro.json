@@ -60,7 +60,16 @@
 		"tm15": "Puzzle-uri",
 		"tm16": "Gestionarea nodurilor",
 		"tm17": "Filă nouă",
-		"tm18": "Adăugați o filă nouă"
+		"tm18": "Adăugați o filă nouă",
+		"tm19": "Adăugați un plugin nou",
+		"tm20": "Q-App",
+		"tm21": "Site web",
+		"tm22": "Elimină pluginul",
+		"tm23": "Sunteți sigur că veți elimina acest plugin?",
+		"tm24": "Tip de plugin:",
+		"tm25": "Vă rugăm să selectați un tip de plugin !",
+		"tm26": "Adăugați un nou plugin la meniu",
+		"tm27": "Eliminați pluginul din meniu"
 	},
 	"login": {
 		"login": "Login",

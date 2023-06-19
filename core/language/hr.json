@@ -60,7 +60,16 @@
 		"tm15": "Zagonetke",
 		"tm16": "Upravljanje čvorom",
 		"tm17": "Nova kartica",
-		"tm18": "Dodaj novu karticu"
+		"tm18": "Dodaj novu karticu",
+		"tm19": "Dodaj novi dodatak",
+		"tm20": "Q-App",
+		"tm21": "Web stranica",
+		"tm22": "Ukloni dodatak",
+		"tm23": "Jeste li sigurni da želite ukloniti ovaj dodatak?",
+		"tm24": "Vrsta dodatka:",
+		"tm25": "Molimo odaberite vrstu dodatka!",
+		"tm26": "Dodaj novi dodatak u izbornik",
+		"tm27": "Ukloni dodatak iz izbornika"
 	},
 	"login": {
 		"login": "Prijavi se",

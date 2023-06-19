@@ -60,7 +60,16 @@
 		"tm15": "Puzzles",
 		"tm16": "Gestion des nœuds",
 		"tm17": "Nouvel onglet",
-		"tm18": "Ajouter un nouvel onglet"
+		"tm18": "Ajouter un nouvel onglet",
+		"tm19": "Ajouter un nouveau plugin",
+		"tm20": "Q-App",
+		"tm21": "Site Web",
+		"tm22": "Supprimer le plugin",
+		"tm23": "Êtes-vous sûr de vouloir supprimer ce plugin ?",
+		"tm24": "Type de plug-in :",
+		"tm25": "Veuillez sélectionner un type de plugin !",
+		"tm26": "Ajouter un nouveau plugin au menu",
+		"tm27": "Supprimer le plugin du menu"
 	},
 	"login": {
 		"login": "Connexion",

@@ -60,7 +60,16 @@
 		"tm15": "Quebra-cabeças",
 		"tm16": "Gerenciamento de nós",
 		"tm17": "Nova guia",
-		"tm18": "Adicionar nova guia"
+		"tm18": "Adicionar nova guia",
+		"tm19": "Adicionar novo plug-in",
+		"tm20": "Q-App",
+		"tm21": "Site",
+		"tm22": "Remover plug-in",
+		"tm23": "Tem certeza que deseja remover este plugin?",
+		"tm24": "Tipo de plug-in:",
+		"tm25": "Por favor, selecione um tipo de plugin!",
+		"tm26": "Adicionar novo plug-in ao menu",
+		"tm27": "Remover plug-in do menu"
 	},
 	"login": {
 		"login": "Login",

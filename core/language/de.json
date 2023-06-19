@@ -60,7 +60,16 @@
 		"tm15": "Rätsel",
 		"tm16": "Knotenverwaltung",
 		"tm17": "Neuer Tab",
-		"tm18": "Neuen Tab hinzufügen"
+		"tm18": "Neuen Tab hinzufügen",
+		"tm19": "Neues Plugin hinzufügen",
+		"tm20": "Q-App",
+		"tm21": "Website",
+		"tm22": "Plugin entfernen",
+		"tm23": "Sind Sie sicher, dass Sie dieses Plugin entfernen?",
+		"tm24": "Plugin-Typ:",
+		"tm25": "Bitte wählen Sie einen Plugin-Typ aus!",
+		"tm26": "Neues Plugin zum Menü hinzufügen",
+		"tm27": "Plugin aus Menü entfernen"
 	},
 	"login": {
 		"login": "Einloggen",
