@@ -132,12 +132,12 @@
 		"@rollup/plugin-node-resolve": "15.1.0",
 		"@rollup/plugin-replace": "5.0.2",
 		"@rollup/plugin-terser": "0.4.3",
-		"@vaadin/avatar": "24.1.0",
-		"@vaadin/button": "24.1.0",
-		"@vaadin/grid": "24.1.0",
-		"@vaadin/icons": "24.1.0",
-		"@vaadin/password-field": "24.1.0",
-		"@vaadin/tooltip": "24.1.0",
+		"@vaadin/avatar": "24.1.1",
+		"@vaadin/button": "24.1.1",
+		"@vaadin/grid": "24.1.1",
+		"@vaadin/icons": "24.1.1",
+		"@vaadin/password-field": "24.1.1",
+		"@vaadin/tooltip": "24.1.1",
 		"@zip.js/zip.js": "2.7.16"
 	},
 	"engines": {
