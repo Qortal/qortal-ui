@@ -907,7 +907,7 @@ class NavBar extends connect(store)(LitElement) {
                             <div class="app-icon-box">
                                 <mwc-icon class="menuIcon">add</mwc-icon>
                             </div>
-                            <span class="text">${translate("tabmenu.tm19")}</span>
+                            <span class="text" title="${translate("tabmenu.tm19")}">${translate("tabmenu.tm19")}</span>
                         </div>
                     </div>
                 </div>
@@ -1025,17 +1025,16 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     async addToMyMenuPlugins() {
-        this.mwcIcon = ''
         this.pluginType = this.shadowRoot.getElementById("pluginTypeInput").value
-        this.pluginName = this.shadowRoot.getElementById('pluginNameInput').value
-
-        var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
 
         if (this.pluginType === "reject") {
             let myplugerr = get("tabmenu.tm25")
             parentEpml.request('showSnackBar', `${myplugerr}`)
             return false
         } else if (this.pluginType === "0") {
+            this.mwcIcon = ''
+            this.pluginName = this.shadowRoot.getElementById('pluginNameInput').value
+
             if (this.pluginName === "Q-Blog") {
                 this.mwcIcon = 'rss_feed'
             } else if (this.pluginName === "Q-Mail") {
@@ -1043,6 +1042,8 @@ class NavBar extends connect(store)(LitElement) {
             } else {
                 this.mwcIcon = 'apps'
             }
+
+            var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
 
             const newMenuPlugsItem = {
                 "url": "myapp",
@@ -1056,7 +1057,7 @@ class NavBar extends connect(store)(LitElement) {
             }
 
             const validatePluginName = async () => {
-                if (this.pluginName.length === 0) {
+                if (this.pluginType === "0" && this.pluginName.length == 0) {
                     let myplugstring1 = get("walletpage.wchange50")
                     parentEpml.request('showSnackBar', `${myplugstring1}`)
                     return false
@@ -1071,7 +1072,7 @@ class NavBar extends connect(store)(LitElement) {
                     this.myPluginNameRes = res
                 })
 
-                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0 ) {
+                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0) {
                     myPluginName = false
                 } else {
                     myPluginName = true
@@ -1099,7 +1100,12 @@ class NavBar extends connect(store)(LitElement) {
                 return false
             }
         } else if (this.pluginType === "1") {
+            this.mwcIcon = ''
+            this.pluginName = this.shadowRoot.getElementById('pluginNameInput').value
+
             this.mwcIcon = 'web'
+
+            var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
 
             const newMenuPlugsItem = {
                 "url": "myapp",
@@ -1113,7 +1119,7 @@ class NavBar extends connect(store)(LitElement) {
             }
 
             const validatePluginName = async () => {
-                if (this.pluginName.length === 0) {
+                if (this.pluginType === "1" && this.pluginName.length == 0) {
                     let myplugstring1 = get("walletpage.wchange50")
                     parentEpml.request('showSnackBar', `${myplugstring1}`)
                     return false
@@ -1205,7 +1211,7 @@ class NavBar extends connect(store)(LitElement) {
     renderRemoveIcon(appurl, appicon, appname, appplugin) {
         if (appurl === 'myapp') {
             return html`
-                <div class="removeIconPos" @click="${() => this.openRemoveApp(appname)}">
+                <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname)}">
                     <mwc-icon class="removeIcon">backspace</mwc-icon>
                 </div>
                 <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
