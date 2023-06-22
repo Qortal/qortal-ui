@@ -69,7 +69,8 @@
 		"tm24": "Plugin Type:",
 		"tm25": "Vennligst velg en plugin-type !",
 		"tm26": "Legg til ny plugin til menyen",
-		"tm27": "Fjern plugin fra menyen"
+		"tm27": "Fjern plugin fra menyen",
+		"tm28": "Oversiktsside"
 	},
 	"login": {
 		"login": "Logg på",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Minternivå",
-		"blocksminted": "Antall blokker mintet"
+		"blocksminted": "Antall blokker mintet",
+		"wp1": "Minting",
+		"wp2": "Ikke preging",
+		"wp3": "Kjerneinformasjon",
+		"wp4": "Synkronisert"
 	},
 	"general": {
 		"yes": "Ja",

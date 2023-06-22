@@ -69,7 +69,8 @@
 		"tm24": "Tipo de complemento:",
 		"tm25": "¡Seleccione un tipo de complemento!",
 		"tm26": "Agregar nuevo complemento al menú",
-		"tm27": "Eliminar complemento del menú"
+		"tm27": "Eliminar complemento del menú",
+		"tm28": "Página de inicio"
 	},
 	"login": {
 		"login": "Iniciar sesión",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Nivel del acuñador",
-		"blocksminted": "Bloques acuñados"
+		"blocksminted": "Bloques acuñados",
+		"wp1": "Acuñación",
+		"wp2": "Sin acuñar",
+		"wp3": "Información básica",
+		"wp4": "Sincronizado"
 	},
 	"general": {
 		"yes": "Sí",

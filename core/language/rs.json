@@ -69,7 +69,8 @@
 		"tm24": "Tip dodatka:",
 		"tm25": "Molimo izaberite tip dodatka!",
 		"tm26": "Dodaj novi dodatak u meni",
-		"tm27": "Ukloni dodatak iz menija"
+		"tm27": "Ukloni dodatak iz menija",
+		"tm28": "Stranica sa pregledom"
 	},
 	"login": {
 		"login": "Prijava",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Novi Mintera",
-		"blocksminted": "Izmintovano Blokova"
+		"blocksminted": "Izmintovano Blokova",
+		"wp1": "Kovanje",
+		"wp2": "Ne kuje",
+		"wp3": "Osnovne informacije",
+		"wp4": "Sinhronizovano"
 	},
 	"general": {
 		"yes": "Da",

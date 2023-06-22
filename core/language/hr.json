@@ -69,7 +69,8 @@
 		"tm24": "Vrsta dodatka:",
 		"tm25": "Molimo odaberite vrstu dodatka!",
 		"tm26": "Dodaj novi dodatak u izbornik",
-		"tm27": "Ukloni dodatak iz izbornika"
+		"tm27": "Ukloni dodatak iz izbornika",
+		"tm28": "Stranica pregleda"
 	},
 	"login": {
 		"login": "Prijavi se",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Minter Level",
-		"blocksminted": "Mintani blokovi"
+		"blocksminted": "Mintani blokovi",
+		"wp1": "Kovanje",
+		"wp2": "Nije kovano",
+		"wp3": "Osnovne informacije",
+		"wp4": "Sinkronizirano"
 	},
 	"general": {
 		"yes": "Da",

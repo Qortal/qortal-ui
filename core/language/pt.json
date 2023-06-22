@@ -69,7 +69,8 @@
 		"tm24": "Tipo de plug-in:",
 		"tm25": "Por favor, selecione um tipo de plugin!",
 		"tm26": "Adicionar novo plug-in ao menu",
-		"tm27": "Remover plug-in do menu"
+		"tm27": "Remover plug-in do menu",
+		"tm28": "Página de visão geral"
 	},
 	"login": {
 		"login": "Login",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Nível do Minerador",
-		"blocksminted": "Blocos Minerados"
+		"blocksminted": "Blocos Minerados",
+		"wp1": "Criação",
+		"wp2": "Não está cunhando",
+		"wp3": "Informações essenciais",
+		"wp4": "Sincronizado"
 	},
 	"general": {
 		"yes": "Sim",

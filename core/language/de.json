@@ -69,7 +69,8 @@
 		"tm24": "Plugin-Typ:",
 		"tm25": "Bitte wählen Sie einen Plugin-Typ aus!",
 		"tm26": "Neues Plugin zum Menü hinzufügen",
-		"tm27": "Plugin aus Menü entfernen"
+		"tm27": "Plugin aus Menü entfernen",
+		"tm28": "Übersichtsseite"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Minter Level",
-		"blocksminted": "Blöcke Geprägt"
+		"blocksminted": "Blöcke Geprägt",
+		"wp1": "Prägung",
+		"wp2": "Nicht am Prägen",
+		"wp3": "Kerninformationen",
+		"wp4": "Synchronisiert"
 	},
 	"general": {
 		"yes": "Ja",

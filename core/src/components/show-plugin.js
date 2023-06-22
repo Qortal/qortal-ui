@@ -105,8 +105,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                 transition: background 0.3s;
                 position: relative;
                 width: auto;
-                min-width: 50px;
-                max-width: 200px;
+                min-width: 110px;
+                max-width: 220px;
                 overflow: hidden;
                 zIndex: 2;
             }
@@ -119,7 +119,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 display: inline-block;
                 position: relative;
                 width: auto;
-                min-width: 25px;
+                min-width: 1px;
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -217,6 +217,8 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .count {
+                position: relative;
+                top: -5px;
                 font-weight: bold;
                 background-color: #C6011F;
                 color: white;
@@ -295,7 +297,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                     let icon = ''
                     let count = 0
 
-                    if (tab.myPlugObj && tab.myPlugObj.title === "Minting Details") {
+                    if (tab.myPlugObj && tab.myPlugObj.title === "Overview Page") {
+                        title = html`${translate('tabmenu.tm28')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Minting Details") {
                         title = html`${translate('tabmenu.tm1')}`
                     } else if (tab.myPlugObj && tab.myPlugObj.title === "Become a Minter") {
                         title = html`${translate('tabmenu.tm2')}`
@@ -380,10 +384,10 @@ class ShowPlugin extends connect(store)(LitElement) {
                                 ${count ? html`
                                     <span class="tabTitle ml-30">${title}</span>
                                     <span class="count ml-5">${count}</span>
-                                    <span class="ml-25 show"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 ` : html`
                                     <span class="tabTitle ml-30">${title}</span>
-                                    <span class="ml-25 show"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 `}
                             </div>
                         </div>
@@ -716,8 +720,14 @@ class NavBar extends connect(store)(LitElement) {
             changePage: { attribute: false },
             pluginName: { type: String },
             pluginType: { type: String },
+            pluginPage: { type: String },
             mwcIcon: { type: String },
-            pluginNameToDelete: { type: String }
+            pluginNameToDelete: { type: String },
+            pluginNumberToDelete: { type: String },
+            textFieldDisabled: { type: Boolean },
+            initialName: { type: String },
+            newId: { type: String },
+            removeTitle: { type: String }
         }
     }
 
@@ -730,6 +740,7 @@ class NavBar extends connect(store)(LitElement) {
             --mdc-text-field-label-ink-color: var(--black);
             --mdc-text-field-ink-color: var(--black);
             --mdc-dialog-content-ink-color: var(--black);
+            --mdc-dialog-shape-radius: 25px;
             --mdc-dialog-min-width: 300px;
             --mdc-dialog-max-width: 700px;
         }
@@ -864,12 +875,33 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         select {
-            padding: 10px 10px;
+            padding: 10px 10px 10px 10px;
             width: 100%;
             font-size: 16px;
             font-weight: 500;
             background: var(--white);
             color: var(--black);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('/img/arrow.png');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+        }
+
+        .resetIcon {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            color: #666;
+            --mdc-icon-size: 32px;
+            cursor: pointer;
+        }
+
+        .resetIcon:hover {
+            color: #03a9f4;
+            font-weight: bold;
         }
     `
     constructor() {
@@ -881,34 +913,39 @@ class NavBar extends connect(store)(LitElement) {
         this.addressInfo = {}
         this.pluginName = ''
         this.pluginType = ''
+        this.pluginPage = ''
         this.myApps = ''
         this.mwcIcon = ''
         this.pluginNameToDelete = ''
+        this.pluginNumberToDelete = ''
+        this.textFieldDisabled = false
+        this.initialName = ''
+        this.newId = ''
+        this.removeTitle = ''
     }
 
     render() {
         return html`
             <div class="parent">
+                <mwc-icon class="resetIcon" @click="${() => this.resetMenu()}" title="Reset Tab Menu">reset_tv</mwc-icon>
                 <div class="navbar">
                     <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
                     <button @click="${this.handlePasteLink}">${translate('general.open')}</button>
                 </div>
-                <div>
-                    <div class="app-list">
-                        ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
-                            <div class="app-icon">
-                                <div class="app-icon-box">
-                                    ${this.renderRemoveIcon(plugin.url, plugin.mwcicon, plugin.title, plugin)}
-                                </div>
-                                ${this.renderTitle(plugin.url, plugin.title)}
-                            </div>
-                        `)}
-                        <div class="app-icon" @click="${() => this.openAddNewPlugin()}">
+                <div class="app-list">
+                    ${repeat(this.myMenuList, (plugin) => plugin.url, (plugin, index) => html`
+                        <div class="app-icon">
                             <div class="app-icon-box">
-                                <mwc-icon class="menuIcon">add</mwc-icon>
+                                ${this.renderRemoveIcon(plugin.url, plugin.mwcicon, plugin.title, plugin.pluginNumber, plugin)}
                             </div>
-                            <span class="text" title="${translate("tabmenu.tm19")}">${translate("tabmenu.tm19")}</span>
+                            ${this.renderTitle(plugin.url, plugin.title)}
                         </div>
+                    `)}
+                    <div class="app-icon" @click="${() => this.openAddNewPlugin()}">
+                        <div class="app-icon-box">
+                            <mwc-icon class="menuIcon">add</mwc-icon>
+                        </div>
+                        <span class="text" title="${translate("tabmenu.tm19")}">${translate("tabmenu.tm19")}</span>
                     </div>
                 </div>
             </div>
@@ -919,20 +956,31 @@ class NavBar extends connect(store)(LitElement) {
                 </div>
                 <p>
                     ${translate("tabmenu.tm24")}
-                    <select required validationMessage="${translate("grouppage.gchange14")}" id="pluginTypeInput" label="${translate("tabmenu.tm24")}">
+                    <select
+                        required
+                        @change="${() => this.val()}"
+                        validationMessage="${translate("grouppage.gchange14")}"
+                        id="pluginTypeInput"
+                        label="${translate("tabmenu.tm24")}"
+                    >
                         <option value="reject" selected>${translate("grouppage.gchange15")}</option>
-                        <option value="0">${translate("tabmenu.tm20")}</option>
-                        <option value="1">${translate("tabmenu.tm21")}</option>
+                        <option style="margin-top: 10px;" value="0">${translate("tabmenu.tm20")}</option>
+                        <option style="margin-top: 10px;" value="1">${translate("tabmenu.tm21")}</option>
+                        <option disabled style="font-size: 0.25em;"></option>>
+                        <option disabled style="background: #666; font-size: 0.1px;"></option>
+                        <option disabled style="font-size: 0.50em;"></option>>
+                        ${this.filterSelectMenu()}
                     </select>
                 </p>
                 <p>
                     <mwc-textfield
+                        ?disabled="${this.textFieldDisabled}"
                         style="width: 100%; color: var(--black);"
-                        required
                         outlined
                         id="pluginNameInput"
                         label="${translate("login.name")}"
                         type="text"
+                        value="${this.initialName}"
                     >
                     </mwc-textfield>
                 </p>
@@ -956,7 +1004,7 @@ class NavBar extends connect(store)(LitElement) {
                     <hr><br>
                 </div>
                 <p style="text-align:center">${translate("tabmenu.tm23")}</p>
-                <h3 style="text-align:center">${this.pluginNameToDelete}</h3>
+                <h3 style="text-align:center">${this.removeTitle}</h3>
                 <mwc-button
                     slot="primaryAction"
                     @click=${this.removeAppFromArray}
@@ -1013,18 +1061,213 @@ class NavBar extends connect(store)(LitElement) {
             await appDelay(1000)
             const myObj = JSON.stringify(this.menuList)
             localStorage.setItem("myMenuPlugs", myObj)
+            this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         } else {
             this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+        }
+    }
+
+    resetMenu() {
+        localStorage.removeItem("myMenuPlugs")
+        this.firstUpdated()
+    }
+
+    val() {
+        const theValue = this.shadowRoot.getElementById("pluginTypeInput").value
+
+        if (theValue === "reject") {
+            this.textFieldDisabled = false
+            this.initialName = ''
+            this.mwcIcon = ''
+        } else if (theValue === "0") {
+            this.textFieldDisabled = false
+            this.initialName = ''
+            this.mwcIcon = ''
+        } else if (theValue === "1") {
+            this.textFieldDisabled = false
+            this.initialName = ''
+            this.mwcIcon = ''
+        } else if (theValue === 'overview-page') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Overview Page'
+            this.mwcIcon = 'home'
+        } else if (theValue === 'minting') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Minting Details'
+            this.mwcIcon = 'info_outline'
+        } else if (theValue === 'become-minter') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Become a Minter'
+            this.mwcIcon = 'thumb_up'
+        } else if (theValue === 'sponsorship-list') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Sponsorship List'
+            this.mwcIcon = 'format_list_numbered'
+        } else if (theValue === 'wallet') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Wallets'
+            this.mwcIcon = 'account_balance_wallet'
+        } else if (theValue === 'trade-portal') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Trade Portal'
+            this.mwcIcon = 'format_list_bulleted'
+        } else if (theValue === 'trade-bot-portal') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Auto Buy'
+            this.mwcIcon = 'shop'
+        } else if (theValue === 'reward-share') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Reward Share'
+            this.mwcIcon = 'ios_share'
+        } else if (theValue === 'q-chat') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Q-Chat'
+            this.mwcIcon = 'forum'
+        } else if (theValue === 'name-registration') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Name Registration'
+            this.mwcIcon = 'manage_accounts'
+        } else if (theValue === 'names-market') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Names Market'
+            this.mwcIcon = 'store'
+        } else if (theValue === 'websites') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Websites'
+            this.mwcIcon = 'desktop_mac'
+        } else if (theValue === 'qapps') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Q-Apps'
+            this.mwcIcon = 'apps'
+        } else if (theValue === 'group-management') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Group Management'
+            this.mwcIcon = 'group'
+        } else if (theValue === 'data-management') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Data Management'
+            this.mwcIcon = 'storage'
+        } else if (theValue === 'puzzles') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Puzzles'
+            this.mwcIcon = 'extension'
+        } else if (theValue === 'node-management') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Node Management'
+            this.mwcIcon = 'cloud'
+        }
+    }
+
+    filterSelectMenu() {
+        const addressInfoSelect = this.addressInfo
+        const isMinterSelect = addressInfoSelect?.error !== 124 && +addressInfoSelect?.level > 0
+        const isSponsorSelect = +addressInfoSelect?.level >= 5
+
+        if (!isMinterSelect) {
+            return html`
+                <option value="overview-page">${translate("tabmenu.tm28")}</option>
+                <option style="padding-top: 10px;" value="become-minter">${translate("tabmenu.tm2")}</option>
+                <option style="padding-top: 10px;" value="wallet">${translate("tabmenu.tm4")}</option>
+                <option style="padding-top: 10px;" value="trade-portal">${translate("tabmenu.tm5")}</option>
+                <option style="padding-top: 10px;" value="trade-bot-portal">${translate("tabmenu.tm6")}</option>
+                <option style="padding-top: 10px;" value="reward-share">${translate("tabmenu.tm7")}</option>
+                <option style="padding-top: 10px;" value="q-chat">${translate("tabmenu.tm8")}</option>
+                <option style="padding-top: 10px;" value="name-registration">${translate("tabmenu.tm9")}</option>
+                <option style="padding-top: 10px;" value="names-market">${translate("tabmenu.tm10")}</option>
+                <option style="padding-top: 10px;" value="websites">${translate("tabmenu.tm11")}</option>
+                <option style="padding-top: 10px;" value="qapps">${translate("tabmenu.tm12")}</option>
+                <option style="padding-top: 10px;" value="group-management">${translate("tabmenu.tm13")}</option>
+                <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
+                <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
+                <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+            `
+        } else if (isMinterSelect && isSponsorSelect) {
+            return html`
+                <option value="overview-page">${translate("tabmenu.tm28")}</option>
+                <option style="padding-top: 10px;" value="minting">${translate("tabmenu.tm1")}</option>
+                <option style="padding-top: 10px;" value="sponsorship-list">${translate("tabmenu.tm3")}</option>
+                <option style="padding-top: 10px;" value="wallet">${translate("tabmenu.tm4")}</option>
+                <option style="padding-top: 10px;" value="trade-portal">${translate("tabmenu.tm5")}</option>
+                <option style="padding-top: 10px;" value="trade-bot-portal">${translate("tabmenu.tm6")}</option>
+                <option style="padding-top: 10px;" value="reward-share">${translate("tabmenu.tm7")}</option>
+                <option style="padding-top: 10px;" value="q-chat">${translate("tabmenu.tm8")}</option>
+                <option style="padding-top: 10px;" value="name-registration">${translate("tabmenu.tm9")}</option>
+                <option style="padding-top: 10px;" value="names-market">${translate("tabmenu.tm10")}</option>
+                <option style="padding-top: 10px;" value="websites">${translate("tabmenu.tm11")}</option>
+                <option style="padding-top: 10px;" value="qapps">${translate("tabmenu.tm12")}</option>
+                <option style="padding-top: 10px;" value="group-management">${translate("tabmenu.tm13")}</option>
+                <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
+                <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
+                <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+            `
+        } else {
+            return html`
+                <option value="overview-page">${translate("tabmenu.tm28")}</option>
+                <option style="padding-top: 10px;" value="minting">${translate("tabmenu.tm1")}</option>
+                <option style="padding-top: 10px;" value="wallet">${translate("tabmenu.tm4")}</option>
+                <option style="padding-top: 10px;" value="trade-portal">${translate("tabmenu.tm5")}</option>
+                <option style="padding-top: 10px;" value="trade-bot-portal">${translate("tabmenu.tm6")}</option>
+                <option style="padding-top: 10px;" value="reward-share">${translate("tabmenu.tm7")}</option>
+                <option style="padding-top: 10px;" value="q-chat">${translate("tabmenu.tm8")}</option>
+                <option style="padding-top: 10px;" value="name-registration">${translate("tabmenu.tm9")}</option>
+                <option style="padding-top: 10px;" value="names-market">${translate("tabmenu.tm10")}</option>
+                <option style="padding-top: 10px;" value="websites">${translate("tabmenu.tm11")}</option>
+                <option style="padding-top: 10px;" value="qapps">${translate("tabmenu.tm12")}</option>
+                <option style="padding-top: 10px;" value="group-management">${translate("tabmenu.tm13")}</option>
+                <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
+                <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
+                <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+            `
         }
     }
 
     openAddNewPlugin() {
         this.shadowRoot.getElementById("pluginTypeInput").value = 'reject'
         this.shadowRoot.getElementById("pluginNameInput").value = ''
+        this.initialName = ''
+        this.textFieldDisabled = false
         this.shadowRoot.querySelector('#addNewPlugin').show()
     }
 
     async addToMyMenuPlugins() {
+        this.newId = ''
+        const newUid = new ShortUniqueId({ length: 10 })
+        this.newId = 'plugin-' + newUid()
+
         this.pluginType = this.shadowRoot.getElementById("pluginTypeInput").value
 
         if (this.pluginType === "reject") {
@@ -1052,6 +1295,7 @@ class NavBar extends connect(store)(LitElement) {
                 "title": this.pluginName,
                 "icon": "vaadin:external-browser",
                 "mwcicon": this.mwcIcon,
+                "pluginNumber": this.newId,
                 "menus": [],
                 "parent": false
             }
@@ -1114,6 +1358,7 @@ class NavBar extends connect(store)(LitElement) {
                 "title": this.pluginName,
                 "icon": "vaadin:external-browser",
                 "mwcicon": this.mwcIcon,
+                "pluginNumber": this.newId,
                 "menus": [],
                 "parent": false
             }
@@ -1161,6 +1406,69 @@ class NavBar extends connect(store)(LitElement) {
                 parentEpml.request('showSnackBar', `${myplugstring3}`)
                 return false
             }
+        } else {
+            this.pluginPage = ''
+            if (this.pluginType === 'overview-page') {
+                this.pluginPage = 'overview-page/index.html'
+            } else if (this.pluginType === 'minting') {
+                this.pluginPage = 'minting/index.html'
+            } else if (this.pluginType === 'become-minter') {
+                this.pluginPage = 'become-minter/index.html'
+            } else if (this.pluginType === 'sponsorship-list') {
+                this.pluginPage = 'sponsorship-list/index.html'
+            } else if (this.pluginType === 'wallet') {
+                this.pluginPage = 'wallet/index.html'
+            } else if (this.pluginType === 'trade-portal') {
+                this.pluginPage = 'trade-portal/index.html'
+            } else if (this.pluginType === 'trade-bot-portal') {
+                this.pluginPage = 'trade-bot/index.html'
+            } else if (this.pluginType === 'reward-share') {
+                this.pluginPage = 'reward-share/index.html'
+            } else if (this.pluginType === 'q-chat') {
+                this.pluginPage = 'messaging/q-chat/index.html'
+            } else if (this.pluginType === 'name-registration') {
+                this.pluginPage = 'name-registration/index.html'
+            } else if (this.pluginType === 'names-market') {
+                this.pluginPage = 'names-market/index.html'
+            } else if (this.pluginType === 'websites') {
+                this.pluginPage = 'qdn/index.html'
+            } else if (this.pluginType === 'qapps') {
+                this.pluginPage = 'q-app/index.html'
+            } else if (this.pluginType === 'group-management') {
+                this.pluginPage = 'group-management/index.html'
+            } else if (this.pluginType === 'data-management') {
+                this.pluginPage = 'qdn/data-management/index.html'
+            } else if (this.pluginType === 'puzzles') {
+                this.pluginPage = 'puzzles/index.html'
+            } else if (this.pluginType === 'node-management') {
+                this.pluginPage = 'node-management/index.html'
+            }
+
+            var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+
+            const newMenuPlugsItem = {
+                "url": this.pluginType,
+                "domain": "core",
+                "page": this.pluginPage,
+                "title": this.initialName,
+                "icon": "vaadin:external-browser",
+                "mwcicon": this.mwcIcon,
+                "pluginNumber": this.newId,
+                "menus": [],
+                "parent": false
+            }
+
+            oldMenuPlugs.push(newMenuPlugsItem)
+
+            localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
+
+            let myplugstring2 = get("walletpage.wchange52")
+            parentEpml.request('showSnackBar', `${myplugstring2}`)
+
+            this.closeAddNewPlugin()
+
+            this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+            this.firstUpdated()
         }
     }
 
@@ -1168,10 +1476,14 @@ class NavBar extends connect(store)(LitElement) {
         this.shadowRoot.querySelector('#addNewPlugin').close()
         this.shadowRoot.getElementById("pluginTypeInput").value = 'reject'
         this.shadowRoot.getElementById("pluginNameInput").value = ''
+        this.initialName = ''
+        this.textFieldDisabled = false
     }
 
     renderTitle(theUrl, theName) {
-        if (theUrl === 'minting') {
+        if (theUrl === 'overview-page') {
+            return html`<span>${translate('tabmenu.tm28')}</span>`
+        } else if (theUrl === 'minting') {
             return html`<span>${translate('tabmenu.tm1')}</span>`
         } else if (theUrl === 'become-minter') {
             return html`<span>${translate('tabmenu.tm2')}</span>`
@@ -1208,31 +1520,67 @@ class NavBar extends connect(store)(LitElement) {
         }
     }
 
-    renderRemoveIcon(appurl, appicon, appname, appplugin) {
-        if (appurl === 'myapp') {
-            return html`
-                <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname)}">
-                    <mwc-icon class="removeIcon">backspace</mwc-icon>
-                </div>
-                <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
-                    <mwc-icon class="menuIcon">${appicon}</mwc-icon>
-                </div>
-            `
-        } else {
-            return html`<mwc-icon class="menuIcon" @click="${() => this.changePage(appplugin)}">${appicon}</mwc-icon>`
-        }
+    renderRemoveIcon(appurl, appicon, appname, appid, appplugin) {
+        return html`
+            <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname, appid, appurl)}">
+                <mwc-icon class="removeIcon">backspace</mwc-icon>
+            </div>
+            <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
+                <mwc-icon class="menuIcon">${appicon}</mwc-icon>
+            </div>
+        `
     }
 
-    openRemoveApp(pluginNameTD) {
+    openRemoveApp(pluginNameTD, pluginNumberTD, pluginUrlTD) {
         this.pluginNameToDelete = ''
         this.pluginNameToDelete = pluginNameTD
+        this.pluginNumberToDelete = ''
+        this.pluginNumberToDelete = pluginNumberTD
+        this.removeTitle = ''
+        if (pluginUrlTD === 'overview-page') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm28')}</span>`
+        } else if (pluginUrlTD === 'minting') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm1')}</span>`
+        } else if (pluginUrlTD === 'become-minter') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm2')}</span>`
+        } else if (pluginUrlTD === 'sponsorship-list') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm3')}</span>`
+        } else if (pluginUrlTD === 'wallet') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm4')}</span>`
+        } else if (pluginUrlTD === 'trade-portal') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm5')}</span>`
+        } else if (pluginUrlTD === 'trade-bot-portal') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm6')}</span>`
+        } else if (pluginUrlTD === 'reward-share') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm7')}</span>`
+        } else if (pluginUrlTD === 'q-chat') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm8')}</span>`
+        } else if (pluginUrlTD === 'name-registration') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm9')}</span>`
+        } else if (pluginUrlTD === 'names-market') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm10')}</span>`
+        } else if (pluginUrlTD === 'websites') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm11')}</span>`
+        } else if (pluginUrlTD === 'qapps') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm12')}</span>`
+        } else if (pluginUrlTD === 'group-management') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm13')}</span>`
+        } else if (pluginUrlTD === 'data-management') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm14')}</span>`
+        } else if (pluginUrlTD === 'puzzles') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm15')}</span>`
+        } else if (pluginUrlTD === 'node-management') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm16')}</span>`
+        } else {
+            this.removeTitle = html`<span>${pluginNameTD}</span>`
+        }
         this.shadowRoot.querySelector('#removePlugin').show()
     }
 
     removeAppFromArray() {
-        const pluginToRemove = this.pluginNameToDelete
+        const pluginToRemove = this.pluginNumberToDelete
         this.newMenuFilter = []
-        this.newMenuFilter = this.myMenuList.filter((item) => item.title !== pluginToRemove)
+        this.newMenuFilter = this.myMenuList.filter((item) => item.pluginNumber !== pluginToRemove)
         const myNewObj = JSON.stringify(this.newMenuFilter)
         localStorage.removeItem("myMenuPlugs")
         localStorage.setItem("myMenuPlugs", myNewObj)
@@ -1244,6 +1592,7 @@ class NavBar extends connect(store)(LitElement) {
     closeRemoveApp() {
         this.shadowRoot.querySelector('#removePlugin').close()
         this.pluginNameToDelete = ''
+        this.pluginNumberToDelete = ''
     }
 
     async extractComponents(url) {

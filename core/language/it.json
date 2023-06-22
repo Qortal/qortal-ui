@@ -69,7 +69,8 @@
 		"tm24": "Tipo di plug-in:",
 		"tm25": "Seleziona un tipo di plugin!",
 		"tm26": "Aggiungi nuovo plugin al menu",
-		"tm27": "Rimuovi plugin dal menu"
+		"tm27": "Rimuovi plugin dal menu",
+		"tm28": "Pagina panoramica"
 	},
 	"login": {
 		"login": "Login",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Livello Minter",
-		"blocksminted": "Blocchi Minati"
+		"blocksminted": "Blocchi Minati",
+		"wp1": "Conio",
+		"wp2": "Non conio",
+		"wp3": "Informazioni principali",
+		"wp4": "Sincronizzato"
 	},
 	"general": {
 		"yes": "Yes",

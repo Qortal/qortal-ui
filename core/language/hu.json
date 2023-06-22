@@ -69,7 +69,8 @@
 		"tm24": "Plugin Type:",
 		"tm25": "Kérjük, válasszon beépülő modul típust!",
 		"tm26": "Új beépülő modul hozzáadása a menühöz",
-		"tm27": "Plugin eltávolítása a menüből"
+		"tm27": "Plugin eltávolítása a menüből",
+		"tm28": "Áttekintő oldal"
 	},
 	"login": {
 		"login": "Bejelentkezés",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Pénzverő Szint",
-		"blocksminted": "Vert blokkok"
+		"blocksminted": "Vert blokkok",
+		"wp1": "verés",
+		"wp2": "Nem pénzverés",
+		"wp3": "Alapinformációk",
+		"wp4": "Szinkronizált"
 	},
 	"general": {
 		"yes": "Igen",

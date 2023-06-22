@@ -69,7 +69,8 @@
 		"tm24": "Type de plug-in :",
 		"tm25": "Veuillez sélectionner un type de plugin !",
 		"tm26": "Ajouter un nouveau plugin au menu",
-		"tm27": "Supprimer le plugin du menu"
+		"tm27": "Supprimer le plugin du menu",
+		"tm28": "Page de présentation"
 	},
 	"login": {
 		"login": "Connexion",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Niveau de frappeur",
-		"blocksminted": "Blocs frappés"
+		"blocksminted": "Blocs frappés",
+		"wp1": "Monnaie",
+		"wp2": "Pas de frappe",
+		"wp3": "Informations de base",
+		"wp4": "Synchronisé"
 	},
 	"general": {
 		"yes": "Oui",

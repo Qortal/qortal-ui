@@ -69,7 +69,8 @@
 		"tm24": "Typ wtyczki:",
 		"tm25": "Proszę wybrać typ wtyczki!",
 		"tm26": "Dodaj nową wtyczkę do menu",
-		"tm27": "Usuń wtyczkę z menu"
+		"tm27": "Usuń wtyczkę z menu",
+		"tm28": "Strona przeglądu"
 	},
 	"login": {
 		"login": "Zaloguj się",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Poziom Mintera",
-		"blocksminted": "Bloki Zmintowane"
+		"blocksminted": "Bloki Zmintowane",
+		"wp1": "Bicie",
+		"wp2": "Nie bije",
+		"wp3": "Podstawowe informacje",
+		"wp4": "Zsynchronizowany"
 	},
 	"general": {
 		"yes": "Tak",

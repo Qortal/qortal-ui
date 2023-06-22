@@ -69,7 +69,8 @@
 		"tm24": "Tip de plugin:",
 		"tm25": "Vă rugăm să selectați un tip de plugin !",
 		"tm26": "Adăugați un nou plugin la meniu",
-		"tm27": "Eliminați pluginul din meniu"
+		"tm27": "Eliminați pluginul din meniu",
+		"tm28": "Pagina de pornire"
 	},
 	"login": {
 		"login": "Login",
@@ -178,7 +179,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Nivelul Minter-ului",
-		"blocksminted": "Blocuri descoperite"
+		"blocksminted": "Blocuri descoperite",
+		"wp1": "Battering",
+		"wp2": "Nu se bate",
+		"wp3": "Informații de bază",
+		"wp4": "Sincronizat"
 	},
 	"general": {
 		"yes": "Da",
