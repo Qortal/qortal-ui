@@ -69,6 +69,10 @@ const generateForPlugins = () => {
 			out: 'plugins/core/main.js',
 		},
 		{
+			in: 'plugins/core/overview-page/overview-page.src.js',
+			out: 'plugins/core/overview-page/overview-page.js',
+		},
+		{
 			in: 'plugins/core/trade-portal/trade-portal.src.js',
 			out: 'plugins/core/trade-portal/trade-portal.js',
 		},
