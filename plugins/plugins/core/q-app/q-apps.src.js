@@ -1250,11 +1250,11 @@ class QApps extends LitElement {
 
         if (this.blockedNames.indexOf(name) === -1) {
             // render block button
-            return html`<mwc-button @click=${() => this.blockNameTab(websiteObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("appspage.schange31")}</mwc-button>`
+            return html`<mwc-button @click=${() => this.blockNameTab(appObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("appspage.schange31")}</mwc-button>`
         }
         else {
             // render unblock button
-            return html`<mwc-button @click=${() => this.unblockNameTab(websiteObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("appspage.schange32")}</mwc-button>`
+            return html`<mwc-button @click=${() => this.unblockNameTab(appObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("appspage.schange32")}</mwc-button>`
         }
     }
 
