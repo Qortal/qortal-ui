@@ -10,6 +10,7 @@ const chatLastSeen = localForage.createInstance({
 });
 
 
+
 const INITIAL_STATE = {
     loggedIn: false,
     drawerOpen: false,
@@ -63,7 +64,8 @@ export default (state = INITIAL_STATE, action) => {
                 pin: '',
                 loggedIn: false,
                 loggingIn: false,
-                wallet: INITIAL_STATE.wallet
+                wallet: INITIAL_STATE.wallet,
+                selectedAddress: INITIAL_STATE.selectedAddress
             }
         case ADD_PLUGIN:
             return {
