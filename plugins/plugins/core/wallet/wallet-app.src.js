@@ -3,6 +3,8 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import Base58 from '../../../../crypto/api/deps/Base58.js'
+import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -21,6 +23,7 @@ import '@material/mwc-icon'
 import '@material/mwc-icon-button'
 import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-progress/paper-progress.js'
 import '@polymer/paper-slider/paper-slider.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
@@ -30,6 +33,7 @@ import '@vaadin/button'
 import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
+import '@vaadin/password-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -97,7 +101,16 @@ class MultiWallet extends LitElement {
             dgbBookAddress: { type: String },
             rvnBookAddress: { type: String },
             arrrBookAddress: { type: String },
-            myElementId: { type: String }
+            myElementId: { type: String },
+            walletSalt: { type: String },
+            walletStorageData: { type: String },
+            walletLockScreenPass: { type: String },
+            walletLockScreenSet: { type: String },
+            walletLockPass: { type: String },
+            walletLockSet: { type: String },
+            myWalletLockScreenPass: { type: String },
+            myWalletLockScreenSet: { type: String },
+            walletHelperMessage: { type: String }
         }
     }
 
@@ -112,6 +125,7 @@ class MultiWallet extends LitElement {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --mdc-theme-surface: var(--white);
+		--mdc-theme-error: rgb(255, 89, 89);
                 --mdc-dialog-content-ink-color: var(--black);
                 --mdc-dialog-min-width: 400px;
                 --mdc-dialog-max-width: 1024px;
@@ -121,6 +135,8 @@ class MultiWallet extends LitElement {
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
                 --lumo-base-color: var(--white);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
                 --lumo-body-text-color: var(--black);
                 --_lumo-grid-border-color: var(--border);
                 --_lumo-grid-secondary-border-color: var(--border2);
@@ -217,6 +233,18 @@ class MultiWallet extends LitElement {
 
             .sans {
                 font-family: 'Open Sans', sans-serif;
+            }
+
+            .magistral {
+                font-family: 'magistralbold';
+            }
+
+            .montserrat {
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .maven {
+                font-family: 'MavenPro', sans-serif;
             }
 
             .weight-100 {
@@ -318,6 +346,7 @@ class MultiWallet extends LitElement {
             }
 
             .header-title {
+                display: inlinr;
                 font-size: 32px;
                 color: var(--black);
                 font-weight: 600;
@@ -592,18 +621,18 @@ class MultiWallet extends LitElement {
                 cursor: pointer;
             }
 
-		.warning-text {
-			animation: blinker 1.5s linear infinite;
-			text-align: center;
-			margin-top: 10px;
-			color: rgb(255, 89, 89);
-		}
+            .warning-text {
+                animation: blinker 1.5s linear infinite;
+                text-align: center;
+                margin-top: 10px;
+                color: rgb(255, 89, 89);
+            }
 
-		@keyframes blinker {
-			50% {
-				opacity: 0;
-			}
-		}
+            @keyframes blinker {
+                50% {
+                    opacity: 0;
+                 }
+             }
 
             @media (max-width: 764px) {
                 .wallet {
@@ -640,6 +669,61 @@ class MultiWallet extends LitElement {
                 h2 {
                     font: 18px/24px 'Open Sans', sans-serif;
                 }
+            }
+
+            .setpass-wrapper {
+                width: 100%;
+                min-width: 400px;
+                max-width: 450px;
+                text-align: center;
+                background: var(--white);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                padding: 10px 10px 0px;
+                box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+             }
+
+             .lock-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 600px;
+                 max-width: 600px;
+                 min-height: 400px;
+                 max-height: 400px;
+                 text-align: center;
+                 background: url("/img/qortal-lock.jpg");
+                 border: 1px solid var(--black);
+                 border-radius: 25px;
+                 padding: 10px 10px 0px;
+             }
+
+             .text-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 280px;
+                 max-width: 280px;
+                 min-height: 64px;
+                 max-height: 64px;
+                 text-align: center;
+                 margin-left: 35px;
+                 margin-top: 125px;
+                 overflow: hidden;
+             }
+
+            .lock-title-white {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #ffffff;
+            }
+
+            .lock-title-red {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #df3636;
             }
         `
     }
@@ -719,6 +803,15 @@ class MultiWallet extends LitElement {
         this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
+        this.walletSalt = ''
+        this.walletStorageData = ''
+        this.walletLockScreenPass = ''
+        this.walletLockScreenSet = ''
+        this.walletLockPass = ''
+        this.walletLockSet = ''
+        this.myWalletLockScreenPass = ''
+        this.myWalletLockScreenSet = ''
+        this.walletHelperMessage = ''
 
         this.wallets = new Map()
 
@@ -764,7 +857,7 @@ class MultiWallet extends LitElement {
         return html`
             <div class="wrapper">
                 <div class="header-title sans">
-                    ${translate("walletpage.wchange22")}
+                    ${translate("walletpage.wchange22")} ${this.renderWalletLockButton()}
                 </div>
 
                 <div class="fullWidth">
@@ -2627,6 +2720,59 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
             </div>
+            <paper-dialog class="setpass-wrapper" id="setWalletLockScreenPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm5")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                    <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="walletLockPassword" autofocus></vaadin-password-field>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="walletLockPasswordConfirm"></vaadin-password-field>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closewWalletSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.walletCheckPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="walletExtraConfirmPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm5")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closWalletExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.setWalletNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="lock-wrapper" id="walletLockScreenActive" modal>
+                <div class="text-wrapper">
+                    <span class="lock-title-white">${translate("sidemenu.wallets")}</span><br/>
+                    <span class="lock-title-white">${translate("login.lp9")} </span>
+                    <span class="lock-title-red">${translate("login.lp10")}</span>
+                </div>
+                <div style="display:flex; margin-top: 5px;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="walletUnlockPassword" @keydown="${this.walletPassKeyListener}" autofocus>
+                        <div slot="helper">
+                            ${this.walletHelperMessage}
+                        </div>
+                    </vaadin-password-field>
+                </div>
+                <div style="display: flex; margin-top: 35px;">
+                    <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeWalletLockScreenActive()}"></mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -2634,6 +2780,45 @@ class MultiWallet extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+
+        this.walletHelperMessage = this.renderWalletHelperPass()
+
+        this.walletSalt = ''
+        this.walletSalt = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.walletStorageData = ''
+        this.walletStorageData = window.parent.reduxStore.getState().app.selectedAddress.address
+
+        this.walletLockScreenPass = ''
+        this.walletLockScreenPass = 'walletLockScreenPass-' + this.walletStorageData
+
+        this.walletLockScreenSet = ''
+        this.walletLockScreenSet = 'walletLockScreenSet-' + this.walletStorageData
+
+        this.walletLockPass = ''
+        this.walletLockPass = encryptData(false, this.walletSalt)
+
+        this.walletLockSet = ''
+        this.walletLockSet = encryptData(false, this.walletSalt)
+
+        if (localStorage.getItem(this.walletLockScreenPass) === null && localStorage.getItem(this.walletLockScreenSet) === null) {
+            localStorage.setItem(this.walletLockScreenPass, this.walletLockPass)
+            localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+            this.myWalletLockScreenPass = ''
+            this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        } else {
+            this.myWalletLockScreenPass = ''
+            this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        }
+
+        if (this.myWalletLockScreenSet === true) {
+            this.shadowRoot.getElementById('walletLockScreenActive').open()
+        }
+
         this.qortAddressbook()
         this.btcAddressbook()
         this.ltcAddressbook()
@@ -2667,6 +2852,137 @@ class MultiWallet extends LitElement {
                 window.parent.electronAPI.showMyMenu()
             })
         }
+    }
+
+    renderWalletLockButton() {
+        if (this.myWalletLockScreenPass === false && this.myWalletLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.openWalletSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myWalletLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.setWalletLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myWalletLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openWalletSetScreenLockPass() {
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setWalletLockScreenPass').open()
+    }
+
+    closewWalletSetScreenLockPass() {
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+    }
+
+    walletCheckPass() {
+        const walletPassword = this.shadowRoot.getElementById('walletLockPassword').value
+        const walletRePassword = this.shadowRoot.getElementById('walletLockPasswordConfirm').value
+
+        if (walletPassword === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
+        }
+
+        if (walletPassword != walletRePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
+
+        if (walletPassword.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.walletExtraConfirm()
+        }
+
+        if (walletPassword.length >= 8) {
+            this.setWalletNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
+
+    walletExtraConfirm() {
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+        this.shadowRoot.getElementById('walletExtraConfirmPass').open()
+    }
+
+    closWalletExtraConfirmPass() {
+        this.shadowRoot.getElementById('walletExtraConfirmPass').close()
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+    }
+
+    setWalletNewScreenPass() {
+        const walletRawPassword = this.shadowRoot.getElementById('walletLockPassword').value
+        const walletCryptPassword = encryptData(walletRawPassword, this.walletSalt)
+        localStorage.setItem(this.walletLockScreenPass, walletCryptPassword)
+        this.myWalletLockScreenPass = ''
+        this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+        this.shadowRoot.getElementById('walletExtraConfirmPass').close()
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+    }
+
+    setWalletLockQortal() {
+        this.walletHelperMessage = this.renderWalletHelperPass()
+        this.walletLockSet = ''
+        this.walletLockSet = encryptData(true, this.walletSalt)
+        localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+        this.myWalletLockScreenSet = ''
+        this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        this.shadowRoot.getElementById('walletLockScreenActive').open()
+    }
+
+    walletPassKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeWalletLockScreenActive()
+        }
+    }
+
+    async closeWalletLockScreenActive() {
+        const myWalletPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+        const walletCheckPass = this.shadowRoot.getElementById('walletUnlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (walletCheckPass === myWalletPass) {
+            this.walletLockSet = ''
+            this.walletLockSet = encryptData(false, this.walletSalt)
+            localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+            this.shadowRoot.getElementById('walletLockScreenActive').close()
+            this.shadowRoot.getElementById('walletUnlockPassword').value = ''
+            this.walletHelperMessage = this.renderWalletHelperPass()
+        } else {
+            this.shadowRoot.getElementById('walletUnlockPassword').value = ''
+            this.walletHelperMessage = this.renderWalletHelperErr()
+            await errDelay(3000)
+            this.walletHelperMessage = this.renderWalletHelperPass()
+            return
+        }
+    }
+
+    renderWalletHelperPass() {
+        return html`<span style="color: #fff; font-weight: bold; font-size: 13px; float: left;">${translate("login.pleaseenter")}</span>`
+    }
+
+    renderWalletHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-weight: bold;  font-size: 13px; float: right;">${translate("login.lp8")}</span>`
     }
 
     renderWarning() {

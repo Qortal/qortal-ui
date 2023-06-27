@@ -4,20 +4,26 @@ import { store } from '../store.js'
 import { Epml } from '../epml.js'
 import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
-import localForage from "localforage";
+import localForage from 'localforage'
+import { encryptData, decryptData } from '../lockScreen.js'
+import { setChatLastSeen } from '../redux/app/app-actions.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 })
 
+import '@material/mwc-button'
+import '@material/mwc-icon'
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-progress/paper-progress.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
 import '@vaadin/button'
 import '@vaadin/icon'
 import '@vaadin/icons'
+import '@vaadin/password-field'
 import '@vaadin/text-field'
 import '@vaadin/tooltip'
 
@@ -35,7 +41,6 @@ import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
 import './start-minting.js'
 import './notification-view/notification-bell.js'
-import { setChatLastSeen } from '../redux/app/app-actions.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -111,7 +116,16 @@ class AppView extends connect(store)(LitElement) {
             botDgbBuyAtAddress: { type: String },
             botRvnBuyAtAddress: { type: String },
             botArrrBuyAtAddress: { type: String },
-            balanceTicker: { type: String }
+            balanceTicker: { type: String },
+            salt: { type: String },
+            storageData: { type: String },
+            lockScreenPass: { type: String },
+            lockScreenSet: { type: String },
+            lockPass: { type: String },
+            lockSet: { type: String },
+            myLockScreenPass: { type: String },
+            myLockScreenSet: { type: String },
+            helperMessage: { type: String }
         }
     }
 
@@ -347,6 +361,65 @@ class AppView extends connect(store)(LitElement) {
                     padding-top: 5px;
                     padding-bottom: 5px;
                 }
+
+                .red {
+                    --mdc-theme-primary: #C6011F;
+                }
+
+		.setpass-wrapper {
+			width: 100%;
+			min-width: 400px;
+			max-width: 450px;
+			text-align: center;
+			background: var(--white);
+                        border: 1px solid var(--black);
+			border-radius: 15px;
+			padding: 10px 10px 0px;
+			box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+		}
+
+		.lock-wrapper {
+			width: 100%;
+			height: 100%;
+			min-width: 600px;
+			max-width: 600px;
+			min-height: 400px;
+			max-height: 400px;
+			text-align: center;
+			background: url("/img/qortal-lock.jpg");
+                        border: 1px solid var(--black);
+			border-radius: 25px;
+			padding: 10px 10px 0px;
+		}
+
+		.text-wrapper {
+			width: 100%;
+			height: 100%;
+			min-width: 280px;
+			max-width: 280px;
+			min-height: 64px;
+			max-height: 64px;
+			text-align: center;
+			margin-left: 35px;
+			margin-top: 125px;
+			overflow: hidden;
+		}
+
+		.lock-title-white {
+			font-family: 'magistralbold';
+			font-weight: 700;
+			font-size: 26px;
+			line-height: 32px;
+			color: #ffffff;
+		}
+
+		.lock-title-red {
+			font-family: 'magistralbold';
+			font-weight: 700;
+			font-size: 26px;
+			line-height: 32px;
+			color: #df3636;
+		}
             `
         ]
     }
@@ -426,6 +499,15 @@ class AppView extends connect(store)(LitElement) {
                 <div class="balancelist"></div>
             </div>
         `
+        this.salt = ''
+        this.storageData = ''
+        this.lockScreenPass = ''
+        this.lockScreenSet = ''
+        this.lockPass = ''
+        this.lockSet = ''
+        this.myLockScreenPass = ''
+        this.myLockScreenSet = ''
+        this.helperMessage = ''
     }
 
     render() {
@@ -484,6 +566,8 @@ class AppView extends connect(store)(LitElement) {
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <theme-toggle></theme-toggle>
                             <div>&nbsp;&nbsp;</div>
+                            ${this.renderLockButton()}
+                            <div>&nbsp;&nbsp;</div>
                             <search-modal></search-modal>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
@@ -504,6 +588,59 @@ class AppView extends connect(store)(LitElement) {
             <user-info-view></user-info-view>
             <user-settings></user-settings>
             <logout-view></logout-view>
+            <paper-dialog class="setpass-wrapper" id="setLockScreenPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal UI ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                    <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="lockPassword" autofocus></vaadin-password-field>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="lockPasswordConfirm"></vaadin-password-field>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closeSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.checkPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="extraConfirmPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal UI ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.setNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="lock-wrapper" id="lockScreenActive" modal>
+                <div class="text-wrapper">
+                    <span class="lock-title-white">UI </span><br/>
+                    <span class="lock-title-white">${translate("login.lp9")} </span>
+                    <span class="lock-title-red">${translate("login.lp10")}</span>
+                </div>
+                <div style="display:flex; margin-top: 5px;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="unlockPassword" @keydown="${this.passKeyListener}" autofocus>
+                        <div slot="helper">
+                            ${this.helperMessage}
+                        </div>
+                    </vaadin-password-field>
+                </div>
+                <div style="display: flex; margin-top: 35px;">
+                    <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeLockScreenActive()}"></mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -511,6 +648,44 @@ class AppView extends connect(store)(LitElement) {
 
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
+
+        this.helperMessage = this.renderHelperPass()
+
+        this.salt = ''
+        this.salt = Base58.encode(store.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.storageData = ''
+        this.storageData = store.getState().app.selectedAddress.address
+
+        this.lockScreenPass = ''
+        this.lockScreenPass = 'lockScreenPass-' + this.storageData
+
+        this.lockScreenSet = ''
+        this.lockScreenSet = 'lockScreenSet-' + this.storageData
+
+        this.lockPass = ''
+        this.lockPass = encryptData(false, this.salt)
+
+        this.lockSet = ''
+        this.lockSet = encryptData(false, this.salt)
+
+        if (localStorage.getItem(this.lockScreenPass) === null && localStorage.getItem(this.lockScreenSet) === null) {
+            localStorage.setItem(this.lockScreenPass, this.lockPass)
+            localStorage.setItem(this.lockScreenSet, this.lockSet)
+            this.myLockScreenPass = ''
+            this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        } else {
+            this.myLockScreenPass = ''
+            this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        }
+
+        if (this.myLockScreenSet === true) {
+            this.shadowRoot.getElementById('lockScreenActive').open()
+        }
 
         var drawerTog = this.shadowRoot.getElementById("mb")
         var drawerOut = this.shadowRoot.getElementById("appsidebar")
@@ -1564,6 +1739,139 @@ class AppView extends connect(store)(LitElement) {
                 </div>
             `
         }
+    }
+
+    renderLockButton() {
+        if (this.myLockScreenPass === false && this.myLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock-open" @click=${() => this.openSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock-open" @click=${() => this.setLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openSetScreenLockPass() {
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setLockScreenPass').open()
+    }
+
+    closeSetScreenLockPass() {
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+    }
+
+    checkPass() {
+        const password = this.shadowRoot.getElementById('lockPassword').value
+        const rePassword = this.shadowRoot.getElementById('lockPasswordConfirm').value
+
+        if (password === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
+        }
+
+        if (password != rePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
+
+        if (password.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.lowPass = ''
+            this.lowPass = password
+            this.extraConfirm()
+        }
+
+        if (password.length >= 8) {
+            this.setNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
+
+    extraConfirm() {
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+        this.shadowRoot.getElementById('extraConfirmPass').open()
+    }
+
+    closExtraConfirmPass() {
+        this.shadowRoot.getElementById('extraConfirmPass').close()
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+    }
+
+    setNewScreenPass() {
+        const rawPassword = this.shadowRoot.getElementById('lockPassword').value
+        const cryptPassword = encryptData(rawPassword, this.salt)
+        localStorage.setItem(this.lockScreenPass, cryptPassword)
+        this.myLockScreenPass = ''
+        this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+        this.shadowRoot.getElementById('extraConfirmPass').close()
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+    }
+
+    setLockQortal() {
+        this.helperMessage = this.renderHelperPass()
+        this.lockSet = ''
+        this.lockSet = encryptData(true, this.salt)
+        localStorage.setItem(this.lockScreenSet, this.lockSet)
+        this.myLockScreenSet = ''
+        this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        this.shadowRoot.getElementById('lockScreenActive').open()
+    }
+
+    passKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeLockScreenActive()
+        }
+    }
+
+    async closeLockScreenActive() {
+        const myPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+        const checkPass = this.shadowRoot.getElementById('unlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (checkPass === myPass) {
+            this.lockSet = ''
+            this.lockSet = encryptData(false, this.salt)
+            localStorage.setItem(this.lockScreenSet, this.lockSet)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+            this.shadowRoot.getElementById('lockScreenActive').close()
+            this.shadowRoot.getElementById('unlockPassword').value = ''
+            this.helperMessage = this.renderHelperPass()
+        } else {
+            this.shadowRoot.getElementById('unlockPassword').value = ''
+            this.helperMessage = this.renderHelperErr()
+            await errDelay(3000)
+            this.helperMessage = this.renderHelperPass()
+            return
+        }
+    }
+
+    renderHelperPass() {
+        return html`<span style="color: #fff; font-size: 13px; font-weight: bold; float: left;">${translate("login.pleaseenter")}</span>`
+    }
+
+    renderHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-size: 13px; font-weight: bold; float: right;">${translate("login.lp8")}</span>`
     }
 
     renderNodeManagement() {

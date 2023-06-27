@@ -3,6 +3,8 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import Base58 from '../../../../crypto/api/deps/Base58.js'
+import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -24,6 +26,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
+import '@vaadin/password-field'
 import chartsbtc from './charts/btc-charts.js'
 import chartsltc from './charts/ltc-charts.js'
 import chartsdoge from './charts/doge-charts.js'
@@ -78,7 +81,16 @@ class TradePortal extends LitElement {
             dgbqort: { type: Number },
             rvnqort: { type: Number },
             arrrqort: { type: Number },
-            qortRatio: {type: Number}
+            qortRatio: {type: Number},
+            tradeSalt: { type: String },
+            tradeStorageData: { type: String },
+            tradeLockScreenPass: { type: String },
+            tradeLockScreenSet: { type: String },
+            tradeLockPass: { type: String },
+            tradeLockSet: { type: String },
+            myTradeLockScreenPass: { type: String },
+            myTradeLockScreenSet: { type: String },
+            tradeHelperMessage: { type: String }
         }
     }
 
@@ -88,17 +100,17 @@ class TradePortal extends LitElement {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
 			--mdc-theme-error: rgb(255, 89, 89);
-                  --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                        --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-text-field-label-ink-color: var(--black);
 			--mdc-text-field-ink-color: var(--black);
-                  --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+                        --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-select-label-ink-color: var(--black);
 			--mdc-select-ink-color: var(--black);
 			--mdc-theme-surface: var(--white);
 			--mdc-dialog-content-ink-color: var(--black);
-                  --mdc-dialog-shape-radius: 25px;
+                        --mdc-dialog-shape-radius: 25px;
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
 			--lumo-primary-text-color: rgb(0, 167, 245);
 			--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -585,41 +597,97 @@ class TradePortal extends LitElement {
                 cursor: pointer;
                 opacity: .6;
             }
-		@media (min-width: 701px) {
-			* {
-			}
-			#trade-portal {}
-			#first-trade-section {
-				display: grid;
-				grid-template-columns:1fr 1fr 2fr;
-				grid-auto-rows: max(450px);
-				column-gap: 0.5em;
-				row-gap: 0.4em;
-				justify-items: stretch;
-				align-items: stretch;
-				margin-bottom: 10px;
-			}
-			#second-trade-section {
-				display: grid;
-				grid-template-columns: 2fr 1fr;
-				grid-auto-rows: max(450px);
-				column-gap: 0.5em;
-				row-gap: 0.4em;
-				justify-items: stretch;
-				align-items: stretch;
-				margin-bottom: 10px;
-			}
-			#third-trade-section {
-				display: grid;
-				grid-template-columns: 1fr 2fr 1fr;
-				grid-auto-rows: max(200px);
-				column-gap: 0.5em;
-				row-gap: 0.4em;
-				justify-items: stretch;
-				align-items: stretch;
-				margin-bottom: 10px;
-			}
-		}
+
+            .setpass-wrapper {
+                width: 100%;
+                min-width: 400px;
+                max-width: 450px;
+                text-align: center;
+                background: var(--white);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                padding: 10px 10px 0px;
+                box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+             }
+
+             .lock-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 600px;
+                 max-width: 600px;
+                 min-height: 400px;
+                 max-height: 400px;
+                 text-align: center;
+                 background: url("/img/qortal-lock.jpg");
+                 border: 1px solid var(--black);
+                 border-radius: 25px;
+                 padding: 10px 10px 0px;
+             }
+
+             .text-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 280px;
+                 max-width: 280px;
+                 min-height: 64px;
+                 max-height: 64px;
+                 text-align: center;
+                 margin-left: 35px;
+                 margin-top: 125px;
+                 overflow: hidden;
+             }
+
+            .lock-title-white {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #ffffff;
+            }
+
+            .lock-title-red {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #df3636;
+            }
+
+            @media (min-width: 701px) {
+                * {
+                }
+                #trade-portal {}
+                #first-trade-section {
+                    display: grid;
+                    grid-template-columns:1fr 1fr 2fr;
+                    grid-auto-rows: max(450px);
+                    column-gap: 0.5em;
+                    row-gap: 0.4em;
+                    justify-items: stretch;
+                    align-items: stretch;
+                    margin-bottom: 10px;
+                }
+                #second-trade-section {
+                    display: grid;
+                    grid-template-columns: 2fr 1fr;
+                    grid-auto-rows: max(450px);
+                    column-gap: 0.5em;
+                    row-gap: 0.4em;
+                    justify-items: stretch;
+                    align-items: stretch;
+                    margin-bottom: 10px;
+                }
+                #third-trade-section {
+                    display: grid;
+                    grid-template-columns: 1fr 2fr 1fr;
+                    grid-auto-rows: max(200px);
+                    column-gap: 0.5em;
+                    row-gap: 0.4em;
+                    justify-items: stretch;
+                    align-items: stretch;
+                    margin-bottom: 10px;
+                }
+            }
         `
     }
 
@@ -817,6 +885,15 @@ class TradePortal extends LitElement {
         this.displayTradeAddress = ''
         this.displayTradeLevel = ''
         this.displayTradeBalance = ''
+        this.tradeSalt = ''
+        this.tradeStorageData = ''
+        this.tradeLockScreenPass = ''
+        this.tradeLockScreenSet = ''
+        this.tradeLockPass = ''
+        this.tradeLockSet = ''
+        this.myTradeLockScreenPass = ''
+        this.myTradeLockScreenSet = ''
+        this.tradeHelperMessage = ''
     }
 
     historicTradesTemplate() {
@@ -1211,13 +1288,16 @@ class TradePortal extends LitElement {
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">QORT / RVN</span></mwc-list-item>
 					<mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">QORT / ARRR</span></mwc-list-item>
 				</mwc-select>
-                        <div style="padding-left: 20px; padding-top: 5px;">
-					<mwc-fab mini icon="info" title="${translate("info.inf1")}" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').open()}></mwc-fab>
-			      </div>
-                        <div style="padding-left: 20px; padding-top: 15px;">
-                              ${this.chartShowCoin()}
-			      </div>
-
+                                <div style="padding-left: 20px; padding-top: 5px;">
+				    <mwc-fab mini icon="info" title="${translate("info.inf1")}" @click=${() => this.shadowRoot.getElementById('tradeInfoDialog').open()}></mwc-fab>
+			        </div>
+                                <div style="padding-left: 20px; padding-top: 15px;">
+                                    ${this.chartShowCoin()}
+			        </div>
+                                <div style="padding-left: 10px; padding-top: 12px; color: var(--black);">
+                                   ${this.renderTradeLockButton()}
+			        </div>
+                                
 			</div>
 			<div id="trade-portal">
 				<div id="first-trade-section">
@@ -1269,6 +1349,59 @@ class TradePortal extends LitElement {
 				<h1 style="text-align: center;">${translate("info.inf6")}</h1>
 			</div>
 		</paper-dialog>
+                <paper-dialog class="setpass-wrapper" id="setTradeLockScreenPass" modal>
+                    <div style="text-align: center;">
+                        <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm4")} ${translate("login.lp1")}</h2>
+                        <hr>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                        <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                    </div>
+                    <div style="display:flex;">
+                        <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                        <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="tradeLockPassword" autofocus></vaadin-password-field>
+                    </div>
+                    <div style="display:flex;">
+                        <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                        <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="tradeLockPasswordConfirm"></vaadin-password-field>
+                    </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <mwc-button class="red" @click="${() => this.closewTradeSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                        <mwc-button @click="${() => this.tradeCheckPass()}">${translate("login.lp5")}</mwc-button>
+                    </div>
+                </paper-dialog>
+                <paper-dialog class="setpass-wrapper" id="tradeExtraConfirmPass" modal>
+                    <div style="text-align: center;">
+                        <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm4")} ${translate("login.lp1")}</h2>
+                        <hr>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <mwc-button class="red" @click="${() => this.closTradeExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                        <mwc-button @click="${() => this.setTradeNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                    </div>
+                </paper-dialog>
+                <paper-dialog class="lock-wrapper" id="tradeLockScreenActive" modal>
+                    <div class="text-wrapper">
+                        <span class="lock-title-white">${translate("sidemenu.tradeportal")}</span><br/>
+                        <span class="lock-title-white">${translate("login.lp9")} </span>
+                        <span class="lock-title-red">${translate("login.lp10")}</span>
+                    </div>
+                    <div style="display:flex; margin-top: 5px;">
+                        <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                        <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="tradeUnlockPassword" @keydown="${this.tradePassKeyListener}" autofocus>
+                            <div slot="helper">
+                                ${this.tradeHelperMessage}
+                            </div>
+                        </vaadin-password-field>
+                    </div>
+                    <div style="display: flex; margin-top: 35px;">
+                        <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeTradeLockScreenActive()}"></mwc-button>
+                    </div>
+                </paper-dialog>
 		<trader-info-view></trader-info-view>
         `
     }
@@ -1279,6 +1412,45 @@ class TradePortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+
+        this.tradeHelperMessage = this.renderTradeHelperPass()
+
+        this.tradeSalt = ''
+        this.tradeSalt = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.tradeStorageData = ''
+        this.tradeStorageData = window.parent.reduxStore.getState().app.selectedAddress.address
+
+        this.tradeLockScreenPass = ''
+        this.tradeLockScreenPass = 'tradeLockScreenPass-' + this.tradeStorageData
+
+        this.tradeLockScreenSet = ''
+        this.tradeLockScreenSet = 'tradeLockScreenSet-' + this.tradeStorageData
+
+        this.tradeLockPass = ''
+        this.tradeLockPass = encryptData(false, this.tradeSalt)
+
+        this.tradeLockSet = ''
+        this.tradeLockSet = encryptData(false, this.tradeSalt)
+
+        if (localStorage.getItem(this.tradeLockScreenPass) === null && localStorage.getItem(this.tradeLockScreenSet) === null) {
+            localStorage.setItem(this.tradeLockScreenPass, this.tradeLockPass)
+            localStorage.setItem(this.tradeLockScreenSet, this.tradeLockSet)
+            this.myTradeLockScreenPass = ''
+            this.myTradeLockScreenPass = decryptData(localStorage.getItem(this.tradeLockScreenPass), this.tradeSalt)
+            this.myTradeLockScreenSet = ''
+            this.myTradeLockScreenSet = decryptData(localStorage.getItem(this.tradeLockScreenSet), this.tradeSalt)
+        } else {
+            this.myTradeLockScreenPass = ''
+            this.myTradeLockScreenPass = decryptData(localStorage.getItem(this.tradeLockScreenPass), this.tradeSalt)
+            this.myTradeLockScreenSet = ''
+            this.myTradeLockScreenSet = decryptData(localStorage.getItem(this.tradeLockScreenSet), this.tradeSalt)
+        }
+
+        if (this.myTradeLockScreenSet === true) {
+            this.shadowRoot.getElementById('tradeLockScreenActive').open()
+        }
+
         this.updateWalletBalance()
         this.fetchWalletAddress(this.selectedCoin)
 
@@ -1432,6 +1604,137 @@ class TradePortal extends LitElement {
         parentEpml.imReady()
 
         setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+    }
+
+    renderTradeLockButton() {
+        if (this.myTradeLockScreenPass === false && this.myTradeLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.openTradeSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myTradeLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.setTradeLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myTradeLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openTradeSetScreenLockPass() {
+        this.shadowRoot.getElementById('tradeLockPassword').value = ''
+        this.shadowRoot.getElementById('tradeLockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setTradeLockScreenPass').open()
+    }
+
+    closewTradeSetScreenLockPass() {
+        this.shadowRoot.getElementById('setTradeLockScreenPass').close()
+    }
+
+    tradeCheckPass() {
+        const tradePassword = this.shadowRoot.getElementById('tradeLockPassword').value
+        const tradeRePassword = this.shadowRoot.getElementById('tradeLockPasswordConfirm').value
+
+        if (tradePassword === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
+        }
+
+        if (tradePassword != tradeRePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
+
+        if (tradePassword.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.tradeExtraConfirm()
+        }
+
+        if (tradePassword.length >= 8) {
+            this.setTradeNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
+
+    tradeExtraConfirm() {
+        this.shadowRoot.getElementById('setTradeLockScreenPass').close()
+        this.shadowRoot.getElementById('tradeExtraConfirmPass').open()
+    }
+
+    closTradeExtraConfirmPass() {
+        this.shadowRoot.getElementById('tradeExtraConfirmPass').close()
+        this.shadowRoot.getElementById('tradeLockPassword').value = ''
+        this.shadowRoot.getElementById('tradeLockPasswordConfirm').value = ''
+    }
+
+    setTradeNewScreenPass() {
+        const tradeRawPassword = this.shadowRoot.getElementById('tradeLockPassword').value
+        const tradeCryptPassword = encryptData(tradeRawPassword, this.tradeSalt)
+        localStorage.setItem(this.tradeLockScreenPass, tradeCryptPassword)
+        this.myTradeLockScreenPass = ''
+        this.myTradeLockScreenPass = decryptData(localStorage.getItem(this.tradeLockScreenPass), this.tradeSalt)
+        this.shadowRoot.getElementById('setTradeLockScreenPass').close()
+        this.shadowRoot.getElementById('tradeExtraConfirmPass').close()
+        this.shadowRoot.getElementById('tradeLockPassword').value = ''
+        this.shadowRoot.getElementById('tradeLockPasswordConfirm').value = ''
+    }
+
+    setTradeLockQortal() {
+        this.tradeHelperMessage = this.renderTradeHelperPass()
+        this.tradeLockSet = ''
+        this.tradeLockSet = encryptData(true, this.tradeSalt)
+        localStorage.setItem(this.tradeLockScreenSet, this.tradeLockSet)
+        this.myTradeLockScreenSet = ''
+        this.myTradeLockScreenSet = decryptData(localStorage.getItem(this.tradeLockScreenSet), this.tradeSalt)
+        this.shadowRoot.getElementById('tradeLockScreenActive').open()
+    }
+
+    tradePassKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeTradeLockScreenActive()
+        }
+    }
+
+    async closeTradeLockScreenActive() {
+        const myTradePass = decryptData(localStorage.getItem(this.tradeLockScreenPass), this.tradeSalt)
+        const tradeCheckPass = this.shadowRoot.getElementById('tradeUnlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (tradeCheckPass === myTradePass) {
+            this.tradeLockSet = ''
+            this.tradeLockSet = encryptData(false, this.tradeSalt)
+            localStorage.setItem(this.tradeLockScreenSet, this.tradeLockSet)
+            this.myTradeLockScreenSet = ''
+            this.myTradeLockScreenSet = decryptData(localStorage.getItem(this.tradeLockScreenSet), this.tradeSalt)
+            this.shadowRoot.getElementById('tradeLockScreenActive').close()
+            this.shadowRoot.getElementById('tradeUnlockPassword').value = ''
+            this.tradeHelperMessage = this.renderTradeHelperPass()
+        } else {
+            this.shadowRoot.getElementById('tradeUnlockPassword').value = ''
+            this.tradeHelperMessage = this.renderTradeHelperErr()
+            await errDelay(3000)
+            this.tradeHelperMessage = this.renderTradeHelperPass()
+            return
+        }
+    }
+
+    renderTradeHelperPass() {
+        return html`<span style="color: #fff; font-weight: bold; font-size: 13px; float: left;">${translate("login.pleaseenter")}</span>`
+    }
+
+    renderTradeHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-weight: bold;  font-size: 13px; float: right;">${translate("login.lp8")}</span>`
     }
 
     requestTraderInfo(traderAddress) {
