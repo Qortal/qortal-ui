@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { Epml } from '../epml.js'
@@ -17,6 +18,11 @@ import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-textfield'
+import '@polymer/paper-icon-button/paper-icon-button.js'
+import '@polymer/iron-icons/iron-icons.js'
+import '@polymer/paper-dialog/paper-dialog.js'
+import '@vaadin/grid'
+import '@vaadin/text-field'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -727,7 +733,11 @@ class NavBar extends connect(store)(LitElement) {
             textFieldDisabled: { type: Boolean },
             initialName: { type: String },
             newId: { type: String },
-            removeTitle: { type: String }
+            removeTitle: { type: String },
+            myFollowedNames: { type: Array },
+            myFollowedNamesList: { type: Array },
+            searchNameContentString: { type: String },
+            searchNameResources: { type: Array }
         }
     }
 
@@ -891,9 +901,9 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .resetIcon {
-            position: absolute;
+            position: fixed;
             right: 16px;
-            top: 16px;
+            top: 116px;
             color: #666;
             --mdc-icon-size: 32px;
             cursor: pointer;
@@ -903,7 +913,76 @@ class NavBar extends connect(store)(LitElement) {
             color: #03a9f4;
             font-weight: bold;
         }
+
+        .searchIcon {
+            position: fixed;
+            left: 16px;
+            top: 116px;
+            color: #666;
+            --mdc-icon-size: 32px;
+            cursor: pointer;
+        }
+
+        .searchIcon:hover {
+            color: #03a9f4;
+            font-weight: bold;
+        }
+
+        paper-dialog.searchSettings {
+            width: 100%;
+            max-width: 550px;
+            height: auto;
+            max-height: 600px;
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            overflow: hidden;
+            border: 1px solid var(--black);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        paper-dialog button {
+            padding: 5px 10px;
+            font-size: 18px;
+            background-color: #03a9f4;
+            color: white;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        paper-dialog button:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        .search {
+            display: inline;
+            width: 50%;
+            align-items: center;
+        }
+
+        .divCard {
+            height: auto;
+            max-height: 500px;
+            border: 1px solid var(--border);
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+
+        img {
+            border-radius: 25%;
+            max-width: 32px;
+            height: 100%;
+            max-height: 32px;
+        }
+
+        vaadin-text-field[focused]::part(input-field) {
+            border-color: #03a9f4;
+        }
     `
+
     constructor() {
         super()
         this.menuList = []
@@ -922,12 +1001,17 @@ class NavBar extends connect(store)(LitElement) {
         this.initialName = ''
         this.newId = ''
         this.removeTitle = ''
+        this.myFollowedNames = []
+        this.myFollowedNamesList = []
+        this.searchContentString = ''
+        this.searchNameResources = []
     }
 
     render() {
         return html`
             <div class="parent">
-                <mwc-icon class="resetIcon" @click="${() => this.resetMenu()}" title="Reset Tab Menu">reset_tv</mwc-icon>
+                <mwc-icon class="resetIcon" @click="${() => this.resetMenu()}" title="${translate("tabmenu.tm29")}">reset_tv</mwc-icon>
+                <mwc-icon class="searchIcon" @click="${() => this.openNameSearch()}" title="${translate("tabmenu.tm30")}">person_search</mwc-icon>
                 <div class="navbar">
                     <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
                     <button @click="${this.handlePasteLink}">${translate('general.open')}</button>
@@ -1019,6 +1103,115 @@ class NavBar extends connect(store)(LitElement) {
                     ${translate("general.no")}
                 </mwc-button>
             </mwc-dialog>
+            <paper-dialog id="searchNameDialog" class="searchSettings" vertical-align="top" horizontal-align="center" dynamic-align>
+                <div style="display: inline;">
+                    <div class="search">
+                        <vaadin-text-field
+                            style="width: 350px"
+                            id="searchNameContent"
+                            placeholder="${translate("appspage.schange33")}"
+                            value="${this.searchNameContentString}"
+                            @keydown="${this.searchNameKeyListener}"
+                            clear-button-visible
+                            autofocus
+                        >
+                        </vaadin-text-field>
+                        <paper-icon-button icon="icons:search" @click="${() => this.searchNameResult()}" title="${translate("websitespage.schange35")}"></paper-icon-button>
+                        <paper-icon-button icon="icons:close" @click="${() => this.closeNameSearch()}" title="${translate("general.close")}"></paper-icon-button>
+                    </div>
+                </div><br>
+                <div class="divCard">
+                    <vaadin-grid
+                        theme="wrap-cell-content"
+                        id="searchNameGrid"
+                        ?hidden="${this.isEmptyArray(this.searchNameResources)}"
+                        .items="${this.searchNameResources}"
+                        aria-label="Search Name"
+                    >
+                        <vaadin-grid-column
+                            width="6rem"
+                            flex-grow="0" header="${translate("appspage.schange5")}"
+                            .renderer=${(root, column, data) => {
+                                render(html`${this.renderNameAvatar(data.item)}`, root)
+                            }}
+                        >
+                        </vaadin-grid-column>
+                        <vaadin-grid-column
+                            width="12rem"
+                            flex-grow="0"
+                            header="${translate("datapage.dchange5")}"
+                            .renderer=${(root, column, data) => {
+	                        render(html`${data.item.name}`, root)
+	                    }}
+                        >
+                        </vaadin-grid-column>
+	                <vaadin-grid-column
+                            width="10rem"
+                            flex-grow="0"
+                            header="${translate("appspage.schange8")}"
+                            .renderer=${(root, column, data) => {
+	                        render(html`${this.renderMyFollowUnfollowButton(data.item)}`, root)
+	                    }}
+                        >
+	                </vaadin-grid-column>
+	            </vaadin-grid>
+                    ${this.isEmptyArray(this.searchNameResources) ? html`
+                        <span style="color: var(--black); text-align: center; font-size: 16px;">${translate("login.entername")}</span>
+                    `: ''}
+	        </div>
+	        <div style="text-align: right;">
+                    <button @click="${this.openMyFollowedNames}">${translate("tabmenu.tm31")}</button>
+	        </div>
+            </paper-dialog>
+            <paper-dialog id="myFollowedNamesDialog" class="searchSettings" vertical-align="top" horizontal-align="center" dynamic-align>
+                <div style="text-align:center">
+                    <h2>${translate("tabmenu.tm31")}</h2>
+                    <hr>
+                </div>
+                <div class="divCard">
+                    <vaadin-grid
+                        theme="wrap-cell-content"
+                        id="followedNameGrid"
+                        ?hidden="${this.isEmptyArray(this.myFollowedNamesList)}"
+                        .items="${this.myFollowedNamesList}"
+                        aria-label="My Followed Bames"
+                    >
+                        <vaadin-grid-column
+                            width="6rem"
+                            flex-grow="0" header="${translate("appspage.schange5")}"
+                            .renderer=${(root, column, data) => {
+                                render(html`${this.renderNameAvatar(data.item)}`, root)
+                            }}
+                        >
+                        </vaadin-grid-column>
+                        <vaadin-grid-column
+                            width="12rem"
+                            flex-grow="0"
+                            header="${translate("datapage.dchange5")}"
+                            .renderer=${(root, column, data) => {
+	                        render(html`${data.item.name}`, root)
+	                    }}
+                        >
+                        </vaadin-grid-column>
+	                <vaadin-grid-column
+                            width="10rem"
+                            flex-grow="0"
+                            header="${translate("appspage.schange8")}"
+                            .renderer=${(root, column, data) => {
+	                        render(html`${this.renderMyFollowUnfollowButton(data.item)}`, root)
+	                    }}
+                        >
+	                </vaadin-grid-column>
+	            </vaadin-grid>
+                    ${this.isEmptyArray(this.myFollowedNamesList) ? html`
+                        <span style="color: var(--black); text-align: center; font-size: 16px;">${translate("tabmenu.tm32")}</span>
+                    `: ''}
+	        </div>
+	        <div style="display: flex; justify-content: space-between;">
+                    <button @click="${this.openNameSearch}">${translate("websitespage.schange35")}</button>
+                    <button style="background-color: red;" @click="${this.closeMyFollowedNames}">${translate("general.close")}</button>
+	        </div>
+            </paper-dialog>
         `
     }
 
@@ -1052,6 +1245,165 @@ class NavBar extends connect(store)(LitElement) {
         } else {
             this.myMenuList = this.newMenuList
         }
+
+        await this.getMyFollowedNames()
+        await this.getMyFollowedNamesList()
+    }
+
+    openNameSearch() {
+        this.searchNameResources = []
+        this.shadowRoot.getElementById('searchNameContent').value = ''
+        this.shadowRoot.getElementById('myFollowedNamesDialog').close()
+        this.shadowRoot.getElementById('searchNameDialog').open()
+    }
+
+    closeNameSearch() {
+        this.shadowRoot.getElementById('searchNameDialog').close()
+    }
+
+    openMyFollowedNames() {
+        this.shadowRoot.getElementById('searchNameDialog').close()
+        this.shadowRoot.getElementById('myFollowedNamesDialog').open()
+        this.getMyFollowedNamesList()
+    }
+
+    closeMyFollowedNames() {
+        this.shadowRoot.getElementById('myFollowedNamesDialog').close()
+    }
+
+    async getMyFollowedNames() {
+        let myFollowedNames = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+        })
+
+        this.myFollowedNames = myFollowedNames
+    }
+
+    searchNameKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.searchNameResult()
+        }
+    }
+
+    async getMyFollowedNamesList() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const myNodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const followedNamesUrl = `${myNodeUrl}/lists/followedNames?apiKey=${this.getApiKey()}`
+
+        var myFollowedNamesNew = []
+
+        this.myFollowedNamesList = []
+
+        await fetch(followedNamesUrl).then(response => {
+            return response.json()
+        }).then(data => {
+            return data.map(item => {
+                const addListName = {
+                    name: item
+                }
+                myFollowedNamesNew.push(addListName)
+            })
+        })
+        this.myFollowedNamesList = myFollowedNamesNew
+        if(this.shadowRoot.getElementById('myFollowedNamesDialog').opened) {
+            this.shadowRoot.getElementById('myFollowedNamesDialog').notifyResize()
+        }
+    }
+
+    async searchNameResult() {
+        let searchMyName = this.shadowRoot.getElementById('searchNameContent').value
+        if (searchMyName.length === 0) {
+            let err1string = get("appspage.schange34")
+            parentEpml.request('showSnackBar', `${err1string}`)
+        } else {
+            let searchNameResources = await parentEpml.request('apiCall', {
+                url: `/names/search?query=${searchMyName}&prefix=true&limit=0&reverse=true`
+            })
+            if (this.isEmptyArray(searchNameResources)) {
+                let err2string = get("appspage.schange17")
+                parentEpml.request('showSnackBar', `${err2string}`)
+            } else {
+                this.searchNameResources = searchNameResources
+                if(this.shadowRoot.getElementById('searchNameDialog').opened) {
+                    this.shadowRoot.getElementById('searchNameDialog').notifyResize()
+                }
+            }
+        }
+    }
+
+    renderNameAvatar(nameObj) {
+        let myName = nameObj.name
+        const myNameNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const myNodeUrl = myNameNode.protocol + '://' + myNameNode.domain + ':' + myNameNode.port
+        const nameUrl = `${myNodeUrl}/arbitrary/THUMBNAIL/${myName}/qortal_avatar?async=true`
+        return html`<img src="${nameUrl}" onerror="this.src='/img/incognito.png';">`
+    }
+
+    renderMyFollowUnfollowButton(nameObj) {
+        let name = nameObj.name
+
+        if (this.myFollowedNames == null || !Array.isArray(this.myFollowedNames)) {
+            return html``
+        }
+
+        if (this.myFollowedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.myFollowName(nameObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;${translate("appspage.schange29")}</mwc-button>`
+        } else {
+            return html`<mwc-button @click=${() => this.myUnfollowName(nameObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("appspage.schange30")}</mwc-button>`
+        }
+    }
+
+    async myFollowName(nameObj) {
+        let name = nameObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.myFollowedNames = this.myFollowedNames.filter(item => item != name)
+            this.myFollowedNames.push(name)
+        } else {
+            let err3string = get("appspage.schange22")
+            parentEpml.request('showSnackBar', `${err3string}`)
+        }
+        this.getMyFollowedNamesList()
+        return ret
+    }
+
+    async myUnfollowName(nameObj) {
+        let name = nameObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.myFollowedNames = this.myFollowedNames.filter(item => item != name)
+        } else {
+            let err4string = get("appspage.schange23")
+            parentEpml.request('showSnackBar', `${err4string}`)
+        }
+        this.getMyFollowedNamesList()
+        return ret
     }
 
     async checkMyMenuPlugins() {
@@ -1705,6 +2057,11 @@ class NavBar extends connect(store)(LitElement) {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         let apiKey = apiNode.apiKey
         return apiKey
+    }
+
+    isEmptyArray(arr) {
+        if (!arr) { return true }
+        return arr.length === 0
     }
 
     stateChanged(state) {
