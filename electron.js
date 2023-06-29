@@ -5,6 +5,7 @@ const log = require('electron-log')
 const path = require('path')
 const i18n = require('./lib/i18n.js')
 const fs = require('fs')
+const os = require("os")
 const electronDl = require('electron-dl')
 const Store = require('electron-store')
 const extract = require('extract-zip')
@@ -13,7 +14,19 @@ const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 
+const myMemory = os.totalmem()
+
 app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+if (myMemory > 16000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
+        log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
+} else if (myMemory > 12000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=6144')
+        log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
+} else {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
+        log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
+}
 app.commandLine.appendSwitch('disable-http-cache')
 app.disableHardwareAcceleration()
 app.enableSandbox()
@@ -37,7 +50,8 @@ if (!store.has('askingCore')) {
 log.info('App starting...')
 log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
-log.info("ASKING CORE", store.get('askingCore'))
+log.info("Asking Core", store.get('askingCore'))
+log.info("Memory Size", os.totalmem())
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
 const winurl = "https://github.com/Qortal/qortal/releases/latest/download/qortal.exe"
