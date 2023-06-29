@@ -70,7 +70,11 @@
 		"tm25": "¡Seleccione un tipo de complemento!",
 		"tm26": "Agregar nuevo complemento al menú",
 		"tm27": "Eliminar complemento del menú",
-		"tm28": "Página de inicio"
+		"tm28": "Página de inicio",
+		"tm29": "Menú Restablecer pestaña",
+		"tm30": "Buscar nombre de Qortal",
+		"tm31": "Mis nombres seguidos",
+		"tm32": "Esta cuenta no sigue a ningún usuario"
 	},
 	"login": {
 		"login": "Iniciar sesión",

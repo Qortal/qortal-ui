@@ -70,7 +70,11 @@
 		"tm25": "Proszę wybrać typ wtyczki!",
 		"tm26": "Dodaj nową wtyczkę do menu",
 		"tm27": "Usuń wtyczkę z menu",
-		"tm28": "Strona przeglądu"
+		"tm28": "Strona przeglądu",
+		"tm29": "Menu zakładki Resetuj",
+		"tm30": "Wyszukaj nazwę kwartalu",
+		"tm31": "Moje obserwowane nazwy",
+		"tm32": "To konto nie obserwuje żadnego użytkownika"
 	},
 	"login": {
 		"login": "Zaloguj się",

@@ -70,7 +70,11 @@
 		"tm25": "Vennligst velg en plugin-type !",
 		"tm26": "Legg til ny plugin til menyen",
 		"tm27": "Fjern plugin fra menyen",
-		"tm28": "Oversiktsside"
+		"tm28": "Oversiktsside",
+		"tm29": "Tilbakestill fanemenyen",
+		"tm30": "Søk etter Qortal-navn",
+		"tm31": "Mine fulgte navn",
+		"tm32": "Denne kontoen følger ikke noen bruker"
 	},
 	"login": {
 		"login": "Logg på",

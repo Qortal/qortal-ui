@@ -70,7 +70,11 @@
 		"tm25": "Kérjük, válasszon beépülő modul típust!",
 		"tm26": "Új beépülő modul hozzáadása a menühöz",
 		"tm27": "Plugin eltávolítása a menüből",
-		"tm28": "Áttekintő oldal"
+		"tm28": "Áttekintő oldal",
+		"tm29": "Reset Tab Menu",
+		"tm30": "Qortal név keresése",
+		"tm31": "Követett neveim",
+		"tm32": "Ez a fiók nem követ egyetlen felhasználót sem"
 	},
 	"login": {
 		"login": "Bejelentkezés",

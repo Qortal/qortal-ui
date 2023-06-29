@@ -70,7 +70,11 @@
 		"tm25": "Molimo odaberite vrstu dodatka!",
 		"tm26": "Dodaj novi dodatak u izbornik",
 		"tm27": "Ukloni dodatak iz izbornika",
-		"tm28": "Stranica pregleda"
+		"tm28": "Stranica pregleda",
+		"tm29": "Poništi izbornik kartice",
+		"tm30": "Traži Qortal naziv",
+		"tm31": "Moja praćena imena",
+		"tm32": "Ovaj račun ne prati nijednog korisnika"
 	},
 	"login": {
 		"login": "Prijavi se",

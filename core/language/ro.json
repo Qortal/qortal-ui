@@ -70,7 +70,11 @@
 		"tm25": "Vă rugăm să selectați un tip de plugin !",
 		"tm26": "Adăugați un nou plugin la meniu",
 		"tm27": "Eliminați pluginul din meniu",
-		"tm28": "Pagina de pornire"
+		"tm28": "Pagina de pornire",
+		"tm29": "Resetează meniul filei",
+		"tm30": "Căutați numele Qortal",
+		"tm31": "Numele mele urmărite",
+		"tm32": "Acest cont nu urmărește niciun utilizator"
 	},
 	"login": {
 		"login": "Login",

@@ -70,7 +70,11 @@
 		"tm25": "Molimo izaberite tip dodatka!",
 		"tm26": "Dodaj novi dodatak u meni",
 		"tm27": "Ukloni dodatak iz menija",
-		"tm28": "Stranica sa pregledom"
+		"tm28": "Stranica sa pregledom",
+		"tm29": "Resetuj meni kartice",
+		"tm30": "Pretraži ime četvrta",
+		"tm31": "Moja praćena imena",
+		"tm32": "Ovaj nalog ne prati nijednog korisnika"
 	},
 	"login": {
 		"login": "Prijava",

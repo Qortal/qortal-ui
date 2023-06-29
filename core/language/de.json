@@ -70,7 +70,11 @@
 		"tm25": "Bitte wählen Sie einen Plugin-Typ aus!",
 		"tm26": "Neues Plugin zum Menü hinzufügen",
 		"tm27": "Plugin aus Menü entfernen",
-		"tm28": "Übersichtsseite"
+		"tm28": "Übersichtsseite",
+		"tm29": "Registerkartenmenü zurücksetzen",
+		"tm30": "Qortalnamen suchen",
+		"tm31": "Meine verfolgten Namen",
+		"tm32": "Diesem Konto folgt keinem Benutzer"
 	},
 	"login": {
 		"login": "Einloggen",

@@ -70,7 +70,11 @@
 		"tm25": "Seleziona un tipo di plugin!",
 		"tm26": "Aggiungi nuovo plugin al menu",
 		"tm27": "Rimuovi plugin dal menu",
-		"tm28": "Pagina panoramica"
+		"tm28": "Pagina panoramica",
+		"tm29": "Ripristina menu scheda",
+		"tm30": "Cerca nome Qortal",
+		"tm31": "I miei nomi seguiti",
+		"tm32": "Questo account non segue nessun utente"
 	},
 	"login": {
 		"login": "Login",

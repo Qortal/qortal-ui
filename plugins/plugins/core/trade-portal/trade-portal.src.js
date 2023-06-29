@@ -124,17 +124,27 @@ class TradePortal extends LitElement {
 			--_lumo-grid-secondary-border-color: var(--border2);
 		}
 
-		.myhover vaadin-grid::part(first-column-cell):hover {
-			background-color: var(--black);
-			color: var(--white);
+                .myhover vaadin-grid-cell-content {
+			cursor: pointer;
 		}
-		.myfocused vaadin-grid::part(focused-cell) {
-			background-color: var(--black);
-			color: var(--white);
+		.myhover vaadin-grid::part(selected-row) {
+			color: green;
+			cursor: pointer;
 		}
-		vaadin-grid::part(selected-row) {
-			background-color: var(--black);
-			color: var(--white);
+		.myhover vaadin-grid::part(focused-selected-row) {
+			color: green;
+			cursor: pointer;
+		}
+		.myhover vaadin-grid::part(cell):hover {
+			cursor: pointer;
+		}
+		.myhover vaadin-grid::part(row):hover {
+			color: green;
+			cursor: pointer;
+		}
+                .myhover vaadin-grid::part(selected-row-cell) {
+			color: green;
+			cursor: pointer;
 		}
 		paper-spinner-lite {
 			height: 30px;
@@ -573,10 +583,10 @@ class TradePortal extends LitElement {
 			}
 		}
             paper-dialog.info {
-                width: 75%;
+                width: 100%;
                 max-width: 75vw;
-                height: 35%;
-                max-height: 35vh;
+                height: 100%;
+                max-height: 50vh;
                 background-color: var(--white);
                 color: var(--black);
                 border: 1px solid var(--black);
@@ -933,7 +943,7 @@ class TradePortal extends LitElement {
 
     openTradesTemplate() {
         return html`
-		<div class="open-trades myhover myfocused">
+		<div class="open-trades myhover">
 			<div class="box">
 				<header><span>${translate("tradepage.tchange5")}</span></header>
 				<div class="border-wrapper">
@@ -962,7 +972,7 @@ class TradePortal extends LitElement {
 							header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							id="priceColumn"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.fillBuyForm(data)}">${this.round(data.item.price)}</span>`, root)
+								render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${this.round(data.item.price)}</span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
@@ -972,7 +982,7 @@ class TradePortal extends LitElement {
 							header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 							id="foreignAmountColumn"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.fillBuyForm(data)}">${data.item.foreignAmount}</span>`, root)
+								render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${data.item.foreignAmount}</span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
@@ -982,7 +992,7 @@ class TradePortal extends LitElement {
 							header="${translate("tradepage.tchange13")}"
 							id="qortalCreatorColumn"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.fillBuyForm(data)}">${data.item.qortalCreator}</span>`, root)
+								render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${data.item.qortalCreator}</span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
@@ -991,7 +1001,7 @@ class TradePortal extends LitElement {
 							resizable
 							header="${translate("explorerpage.exp7")}"
 							.renderer=${(root, column, data) => {
-								render(html`<span @click="${() => this.requestTraderInfo(data.item.qortalCreator)}"><mwc-icon class="btn-info">info</mwc-icon></span>`, root)
+								render(html`<span style="cursor: pointer;" @click="${() => this.requestTraderInfo(data.item.qortalCreator)}"><mwc-icon class="btn-info">info</mwc-icon></span>`, root)
 							}}
 						>
 						</vaadin-grid-column>
@@ -1344,9 +1354,9 @@ class TradePortal extends LitElement {
 			</div>
 			<div class="container">
 				<h1 style="color: #03a9f4; text-align: center;">${translate("info.inf1")}</h1>
-				<h1 style="text-align: center;">${translate("info.inf3")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("info.inf4")}</h1>
-				<h1 style="text-align: center;">${translate("info.inf5")} ${this.listedCoins.get(this.selectedCoin).coinCode}</h1>
-				<h1 style="text-align: center;">${translate("info.inf6")}</h1>
+				<h2 style="text-align: center;">${translate("info.inf3")} ${this.listedCoins.get(this.selectedCoin).coinCode} ${translate("info.inf4")}</h2>
+				<h2 style="text-align: center;">${translate("info.inf5")} ${this.listedCoins.get(this.selectedCoin).coinCode}</h2>
+				<h2 style="text-align: center;">${translate("info.inf6")}</h2>
 			</div>
 		</paper-dialog>
                 <paper-dialog class="setpass-wrapper" id="setTradeLockScreenPass" modal>

@@ -70,8 +70,11 @@
 		"tm25": "Please select a plugin type !",
 		"tm26": "Add New Plugin To Menu",
 		"tm27": "Remove Plugin From Menu",
-		"tm28": "Overview Page"
-
+		"tm28": "Overview Page",
+		"tm29": "Reset Tab Menu",
+		"tm30": "Search Qortal Name",
+		"tm31": "My Followed Names",
+		"tm32": "This account not follow any user"
 	},
 	"login": {
 		"login": "Log In",
