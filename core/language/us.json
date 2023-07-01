@@ -74,7 +74,12 @@
 		"tm29": "Reset Tab Menu",
 		"tm30": "Search Qortal Name",
 		"tm31": "My Followed Names",
-		"tm32": "This account not follow any user"
+		"tm32": "This account not follow any user",
+		"tm33": "Import Tab Menu",
+		"tm34": "Export Tab Menu",
+		"tm35": "Your existing tab menu will be deleted and set to uploaded tab menu.",
+		"tm36": "Tab Menu Successfully Restored",
+                "tm37": "Tab Menu Successfully Saved As"
 	},
 	"login": {
 		"login": "Log In",

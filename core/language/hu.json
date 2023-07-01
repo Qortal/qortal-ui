@@ -74,7 +74,12 @@
 		"tm29": "Reset Tab Menu",
 		"tm30": "Qortal név keresése",
 		"tm31": "Követett neveim",
-		"tm32": "Ez a fiók nem követ egyetlen felhasználót sem"
+		"tm32": "Ez a fiók nem követ egyetlen felhasználót sem",
+		"tm33": "Importálás lap menü",
+		"tm34": "Exportálás lap menü",
+		"tm35": "Meglévő lapmenüje törlésre kerül, és a feltöltött lapok menüje lesz.",
+		"tm36": "A lap menüje sikeresen visszaállítva",
+		"tm37": "A lap menüje sikeresen mentve másként"
 	},
 	"login": {
 		"login": "Bejelentkezés",

@@ -74,7 +74,12 @@
 		"tm29": "Resetuj meni kartice",
 		"tm30": "Pretraži ime četvrta",
 		"tm31": "Moja praćena imena",
-		"tm32": "Ovaj nalog ne prati nijednog korisnika"
+		"tm32": "Ovaj nalog ne prati nijednog korisnika",
+		"tm33": "Meni kartice za uvoz",
+		"tm34": "Izvoz meni kartice",
+		"tm35": "Vaš postojeći meni kartica će biti obrisan i postavljen na meni za otpremljene kartice.",
+		"tm36": "Meni kartice je uspešno vraćen",
+		"tm37": "Meni kartice je uspešno sačuvan kao"
 	},
 	"login": {
 		"login": "Prijava",

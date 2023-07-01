@@ -74,7 +74,12 @@
 		"tm29": "Redefinir menu da guia",
 		"tm30": "Pesquisar Nome Qortal",
 		"tm31": "Meus nomes seguidos",
-		"tm32": "Esta conta não segue nenhum usuário"
+		"tm32": "Esta conta não segue nenhum usuário",
+		"tm33": "Menu da Aba Importar",
+		"tm34": "Menu da guia Exportar",
+		"tm35": "Seu menu de guia existente será excluído e definido como menu de guia carregado.",
+		"tm36": "Menu de abas restaurado com sucesso",
+		"tm37": "Menu da guia salvo com sucesso como"
 	},
 	"login": {
 		"login": "Login",

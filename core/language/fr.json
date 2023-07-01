@@ -74,7 +74,12 @@
 		"tm29": "Menu Réinitialiser l'onglet",
 		"tm30": "Rechercher le nom Qortal",
 		"tm31": "Mes noms suivis",
-		"tm32": "Ce compte ne suit aucun utilisateur"
+		"tm32": "Ce compte ne suit aucun utilisateur",
+		"tm33": "Menu de l'onglet Importer",
+		"tm34": "Menu de l'onglet Exporter",
+		"tm35": "Votre menu d'onglets existant sera supprimé et défini sur le menu d'onglets téléchargé.",
+		"tm36": "Le menu des onglets a été restauré avec succès",
+		"tm37": "Le menu des onglets a été enregistré avec succès sous"
 	},
 	"login": {
 		"login": "Connexion",

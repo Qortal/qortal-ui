@@ -74,7 +74,12 @@
 		"tm29": "Registerkartenmenü zurücksetzen",
 		"tm30": "Qortalnamen suchen",
 		"tm31": "Meine verfolgten Namen",
-		"tm32": "Diesem Konto folgt keinem Benutzer"
+		"tm32": "Diesem Konto folgt keinem Benutzer",
+		"tm33": "Registerkartenmenü importieren",
+		"tm34": "Registerkartenmenü Exportieren",
+		"tm35": "Ihr vorhandenes Tab-Menü wird gelöscht und auf das hochgeladene Tab-Menü gesetzt.",
+		"tm36": "Tab-Menü erfolgreich wiederhergestellt",
+		"tm37": "Tab-Menü erfolgreich gespeichert als"
 	},
 	"login": {
 		"login": "Einloggen",

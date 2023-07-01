@@ -74,7 +74,12 @@
 		"tm29": "Menú Restablecer pestaña",
 		"tm30": "Buscar nombre de Qortal",
 		"tm31": "Mis nombres seguidos",
-		"tm32": "Esta cuenta no sigue a ningún usuario"
+		"tm32": "Esta cuenta no sigue a ningún usuario",
+		"tm33": "Menú de pestaña Importar",
+		"tm34": "Menú de pestaña Exportar",
+		"tm35": "Tu menú de pestañas existente se eliminará y se establecerá en el menú de pestañas cargado.",
+		"tm36": "Menú de pestañas restaurado con éxito",
+		"tm37": "Menú de pestañas guardado correctamente como"
 	},
 	"login": {
 		"login": "Iniciar sesión",

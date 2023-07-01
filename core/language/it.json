@@ -74,7 +74,12 @@
 		"tm29": "Ripristina menu scheda",
 		"tm30": "Cerca nome Qortal",
 		"tm31": "I miei nomi seguiti",
-		"tm32": "Questo account non segue nessun utente"
+		"tm32": "Questo account non segue nessun utente",
+		"tm33": "Menu scheda Importa",
+		"tm34": "Menu scheda Esporta",
+		"tm35": "Il menu della scheda esistente verrà eliminato e impostato sul menu della scheda caricato.",
+		"tm36": "Menu scheda ripristinato con successo",
+		"tm37": "Menu scheda salvato con successo con nome"
 	},
 	"login": {
 		"login": "Login",

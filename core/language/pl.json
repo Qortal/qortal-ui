@@ -74,7 +74,12 @@
 		"tm29": "Menu zakładki Resetuj",
 		"tm30": "Wyszukaj nazwę kwartalu",
 		"tm31": "Moje obserwowane nazwy",
-		"tm32": "To konto nie obserwuje żadnego użytkownika"
+		"tm32": "To konto nie obserwuje żadnego użytkownika",
+		"tm33": "Menu zakładki Importuj",
+		"tm34": "Menu zakładki Eksportuj",
+		"tm35": "Twoje istniejące menu kart zostanie usunięte i ustawione na przesłane menu kart.",
+		"tm36": "Menu zakładki pomyślnie przywrócone",
+		"tm37": "Menu zakładki pomyślnie zapisane jako"
 	},
 	"login": {
 		"login": "Zaloguj się",

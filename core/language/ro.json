@@ -74,7 +74,12 @@
 		"tm29": "Resetează meniul filei",
 		"tm30": "Căutați numele Qortal",
 		"tm31": "Numele mele urmărite",
-		"tm32": "Acest cont nu urmărește niciun utilizator"
+		"tm32": "Acest cont nu urmărește niciun utilizator",
+		"tm33": "Meniu Filă Import",
+		"tm34": "Meniu File Export",
+		"tm35": "Meniul de file existent va fi șters și setat la meniul de file încărcat.",
+		"tm36": "Meniul Tab a fost restaurat cu succes",
+		"tm37": "Meniul Tab a fost salvat cu succes ca"
 	},
 	"login": {
 		"login": "Login",
