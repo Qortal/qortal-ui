@@ -8,6 +8,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import { setNewTab } from '../redux/app/app-actions.js'
 import localForage from 'localforage'
+import FileSaver from 'file-saver'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -23,6 +24,7 @@ import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/grid'
 import '@vaadin/text-field'
+import '../custom-elements/frag-file-input.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -902,7 +904,7 @@ class NavBar extends connect(store)(LitElement) {
 
         .resetIcon {
             position: fixed;
-            right: 16px;
+            right: 20px;
             top: 116px;
             color: #666;
             --mdc-icon-size: 32px;
@@ -916,7 +918,7 @@ class NavBar extends connect(store)(LitElement) {
 
         .searchIcon {
             position: fixed;
-            left: 16px;
+            left: 20px;
             top: 116px;
             color: #666;
             --mdc-icon-size: 32px;
@@ -924,6 +926,34 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .searchIcon:hover {
+            color: #03a9f4;
+            font-weight: bold;
+        }
+
+        .importIcon {
+            position: fixed;
+            left: 20px;
+            bottom: 16px;
+            color: #666;
+            --mdc-icon-size: 32px;
+            cursor: pointer;
+        }
+
+        .importIcon:hover {
+            color: #03a9f4;
+            font-weight: bold;
+        }
+
+        .exportIcon {
+            position: fixed;
+            right: 20px;
+            bottom: 16px;
+            color: #666;
+            --mdc-icon-size: 32px;
+            cursor: pointer;
+        }
+
+        .exportIcon:hover {
             color: #03a9f4;
             font-weight: bold;
         }
@@ -1012,6 +1042,8 @@ class NavBar extends connect(store)(LitElement) {
             <div class="parent">
                 <mwc-icon class="resetIcon" @click="${() => this.resetMenu()}" title="${translate("tabmenu.tm29")}">reset_tv</mwc-icon>
                 <mwc-icon class="searchIcon" @click="${() => this.openNameSearch()}" title="${translate("tabmenu.tm30")}">person_search</mwc-icon>
+                <mwc-icon class="importIcon" @click="${() => this.openImportDialog()}" title="${translate("tabmenu.tm33")}">upload</mwc-icon>
+                <mwc-icon class="exportIcon" @click="${() => this.exportTabMenu()}" title="${translate("tabmenu.tm34")}">download</mwc-icon>
                 <div class="navbar">
                     <input @keydown=${this._handleKeyDown} id="linkInput" type="text" placeholder="qortal://">
                     <button @click="${this.handlePasteLink}">${translate('general.open')}</button>
@@ -1212,6 +1244,25 @@ class NavBar extends connect(store)(LitElement) {
                     <button style="background-color: red;" @click="${this.closeMyFollowedNames}">${translate("general.close")}</button>
 	        </div>
             </paper-dialog>
+            <mwc-dialog id="importTabMenutDialog">
+                <div style="text-align:center">
+                    <h2>${translate("tabmenu.tm33")}</h2>
+                    <hr>
+                    <br>
+                </div>
+                <div style="min-height: 150px; min-width: 500px; box-sizing: border-box; position: relative;">
+                    <frag-file-input accept=".tabmenu" @file-read-success="${(e) => this.importTabMenu(e.detail.result)}"></frag-file-input>
+                    <h4 style="color: #F44336; text-align: center;">${translate("walletpage.wchange56")}</h4>
+                    <h5 style="text-align: center;">${translate("tabmenu.tm35")}</h5>
+                </div>
+                <mwc-button
+                    slot="primaryAction"
+                    dialogAction="cancel"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
         `
     }
 
@@ -1248,6 +1299,60 @@ class NavBar extends connect(store)(LitElement) {
 
         await this.getMyFollowedNames()
         await this.getMyFollowedNamesList()
+    }
+
+    openImportDialog() {
+        this.shadowRoot.getElementById('importTabMenutDialog').show()
+    }
+
+    importTabMenu(file) {
+        this.myMenuPlugins = []
+        let myFile = ''
+        localStorage.removeItem("myMenuPlugs")
+        myFile = file
+        const newTabMenu = JSON.parse((myFile) || "[]")
+        localStorage.setItem("myMenuPlugs", JSON.stringify(newTabMenu))
+        this.shadowRoot.getElementById('importTabMenutDialog').close()
+        this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
+        this.firstUpdated()
+
+        let success5string = get("tabmenu.tm36")
+        parentEpml.request('showSnackBar', `${success5string}`)
+    }
+
+    exportTabMenu() {
+        let tabMenu = ""
+        const qortalTabMenu = JSON.stringify(localStorage.getItem("myMenuPlugs"))
+        const qortalTabMenuSave = JSON.parse((qortalTabMenu) || "[]")
+        const blob = new Blob([qortalTabMenuSave ], { type: 'text/plain;charset=utf-8' })
+        tabMenu = "qortal.tabmenu"
+        this.saveFileToDisk(blob, tabMenu)
+    }
+
+    async saveFileToDisk(blob, fileName) {
+        try {
+            const fileHandle = await self.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                        description: "File",
+                }]
+            })
+            const writeFile = async (fileHandle, contents) => {
+                const writable = await fileHandle.createWritable()
+                await writable.write(contents)
+                await writable.close()
+            }
+            writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+            let snack4string = get("tabmenu.tm37")
+            parentEpml.request('showSnackBar', `${snack4string} ${fileName}`)
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                return
+            }
+            FileSaver.saveAs(blob, fileName)
+            let snack4string = get("tabmenu.tm37")
+            parentEpml.request('showSnackBar', `${snack4string} ${fileName}`)
+        }
     }
 
     openNameSearch() {
