@@ -1,6 +1,4 @@
 import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
 import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -16,10 +14,9 @@ if (checkLanguage === null || checkLanguage.length === 0) {
     use(checkLanguage)
 }
 
-class LanguageSelector extends connect(store)(LitElement) {
+class LanguageSelector extends LitElement {
     static get properties() {
         return {
-            config: { type: Object },
             theme: { type: String, reflect: true }
         }
     }
@@ -57,8 +54,7 @@ class LanguageSelector extends connect(store)(LitElement) {
     render() {
         return html`
             <div style="display: inline;">
-                <select @change="${this.changeLanguage}">
-                    <option value="us">${translate("selectmenu.selectlanguage")}</option>
+                <select id="languageSelect" @change="${this.changeLanguage}">
                     <option value="us">US - ${translate("selectmenu.english")}</option>
                     <option value="de">DE - ${translate("selectmenu.german")}</option>
                     <option value="es">ES - ${translate("selectmenu.spanish")}</option>
@@ -83,16 +79,24 @@ class LanguageSelector extends connect(store)(LitElement) {
     }
 
     firstUpdated() {
-        // ...
+        const myElement = this.shadowRoot.getElementById('languageSelect')
+
+        myElement.addEventListener("change", () => {
+            this.selectElement()
+        })
+
+        this.selectElement()
+    }
+
+    selectElement() {
+        const selectedLanguage = localStorage.getItem('qortalLanguage')
+        let element = this.shadowRoot.getElementById('languageSelect')
+        element.value = selectedLanguage
     }
 
     changeLanguage(event) {
        use(event.target.value)
        localStorage.setItem('qortalLanguage', event.target.value)
-    }
-
-    stateChanged(state) {
-        this.config = state.config
     }
 }
 

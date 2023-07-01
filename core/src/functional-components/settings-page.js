@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { doAddNode, doSetNode, doLoadNodeConfig } from '../redux/app/app-actions.js'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import snackbar from './snackbar.js'
 import '../components/language-selector.js'
 import '../custom-elements/frag-file-input.js'
@@ -14,6 +14,19 @@ import '@material/mwc-select'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@material/mwc-list/mwc-list-item.js'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
+
+const checkLanguage = localStorage.getItem('qortalLanguage')
+
+if (checkLanguage === null || checkLanguage.length === 0) {
+    localStorage.setItem('qortalLanguage', 'us')
+    use('us')
+} else {
+    use(checkLanguage)
+}
 
 let settingsDialog
 
