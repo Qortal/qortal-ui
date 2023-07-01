@@ -32,7 +32,24 @@ class LanguageSelector extends LitElement {
                     border: 1px solid var(--black);
                     border-radius: 3px;
                     color: var(--black);
-                    background: var(--white);
+                    background:
+                        linear-gradient(45deg, transparent 50%, white 50%),
+                        linear-gradient(135deg, white 50%, transparent 50%),
+                        linear-gradient(to right, #03a9f4, #03a9f4);
+                    background-position:
+                        calc(100% - 17px) calc(0.5em + 4px),
+                        calc(100% - 7px) calc(0.5em + 4px),
+                        100% 0;
+                    background-size:
+                        10px 10px,
+                        10px 10px,
+                        2.2em 2.2em;
+                    background-repeat: no-repeat;
+                    -webkit-box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                    box-sizing: border-box;
+                    -webkit-appearance:none;
+                    -moz-appearance:none;
                 }
 
                 *:focus {
@@ -40,6 +57,8 @@ class LanguageSelector extends LitElement {
                 }
 
                 select option { 
+                    color: var(--black);
+                    background: var(--white);
                     line-height: 34px;
                 }
             `
