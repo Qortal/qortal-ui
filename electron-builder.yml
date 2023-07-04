@@ -34,6 +34,68 @@ files:
       - "core/"
       - "plugins/"
 
+# Mac OS configuration
+mac:
+  icon: "./img/icons/icns/256x256.icns"
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: "./build/entitlements.mac.plist"
+  entitlementsInherit: "./build/entitlements.mac.plist"
+  category: "public.app-category.utilities"
+  asarUnpack: "**/*.node"
+  target:
+    - { target: dmg }
+    - { target: pkg }
+
+# Config for OSX dmg
+dmg:
+  sign: false
+  artifactName: "Qortal-Setup-macOS.${ext}"
+  icon: "./img/icons/icns/256x256.icns"
+  iconSize: 100
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: "link"
+      path: "/Applications"
+
+# Config for OSX pkg
+pkg:
+  artifactName: "Qortal-Setup-macOS.${ext}"
+  installLocation: "/Applications"
+  background: {
+    file: "./build/logo.png",
+    alignment: "bottomleft",
+    scaling: "none"
+  }
+  allowAnywhere: true
+  allowCurrentUserHome: true
+  allowRootDirectory: true
+  isVersionChecked: true
+  isRelocatable: false
+  overwriteAction: "upgrade"
+
+# Windows configuration
+win:
+  legalTrademarks: "QORTAL.ORG"
+  icon: "./img/icons/ico/256x256.ico"
+  target:
+    - "nsis"
+
+# Config for the windows installer
+nsis:
+  artifactName: "Qortal-Setup-win64.${ext}"
+  oneClick: false
+  perMachine: false
+  installerSidebar: "./img/win-installer-sidebar.bmp"
+  uninstallerSidebar: "./img/win-uninstaller-sidebar.bmp"
+  runAfterFinish: true
+  deleteAppDataOnUninstall: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
 # Linux configuration
 linux:
   icon: "./img/icons/png/"
@@ -46,15 +108,24 @@ linux:
   target:
     - "deb"
     - "AppImage"
+    - "snap"
+    - "rpm"
 
 deb:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
   synopsis: "Qortal UI for Linux"
   afterInstall: "./scripts/add-debian-apt-repo.sh"
   afterRemove: "./scripts/uninstall-debian-conf.sh"
 
 appImage:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
+
+snap:
+  artifactName: "Qortal-Setup-amd64.${ext}"
+  synopsis: "Qortal UI for Linux"
+
+rpm:
+  artifactName: "Qortal-Setup-amd64.${ext}"
 
 directories:
   output: dist
