@@ -54,7 +54,6 @@ if (myMemory > 16000000000) {
 
 app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
-app.commandLine.appendSwitch('enable-gpu-rasterization', true)
 app.commandLine.appendSwitch('disable-http-cache')
 app.commandLine.appendSwitch('log-file', 'qortal-ui.log')
 app.commandLine.appendSwitch('enable-logging')
