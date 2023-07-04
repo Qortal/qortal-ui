@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui",
-	"version": "4.2.2",
+	"version": "4.2.3",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -19,11 +19,11 @@
 		"dev": "node server.js",
 		"prebuild": "node -p \"'export const UI_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > core/src/redux/app/version.js",
 		"build-dev": "node --max-old-space-size=8192 build.js",
-		"build": "NODE_ENV=production node --max-old-space-size=8192 build.js",
+		"build": "NODE_ENV=production node build.js",
 		"server": "NODE_ENV=production node --max-old-space-size=8192 server.js",
 		"watch": "node --max-old-space-size=8192 watch.js",
 		"watch-inline": "node --max-old-space-size=8192 watch-inline.js",
-		"start-electron": "NODE_ENV=production electron --js-flags=--max-old-space-size=8192 .",
+		"start-electron": "NODE_ENV=production electron .",
 		"build-electron": "electron-builder build  --publish never",
 		"deploy-electron": "electron-builder build --win --publish never",
 		"release": "NODE_ENV=production electron-builder build --publish never",

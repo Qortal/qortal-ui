@@ -1,4 +1,18 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer, Menu, Notification, Tray, nativeImage, dialog, webContents, nativeTheme } = require('electron')
+const {
+    app,
+    BrowserWindow,
+    ipcMain,
+    ipcRenderer,
+    Menu,
+    Notification,
+    Tray,
+    nativeImage,
+    dialog,
+    webContents,
+    nativeTheme,
+    crashReporter
+} = require('electron')
+
 const { autoUpdater } = require('electron-updater')
 const server = require('./server.js')
 const log = require('electron-log')
@@ -13,30 +27,41 @@ const fetch = require('node-fetch')
 const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
+const homePath = app.getPath('home')
+const downloadPath = app.getPath('downloads')
+const store = new Store()
+
+crashReporter.start({
+	productName: 'Qortal-UI',
+	uploadToServer: false
+})
 
 const myMemory = os.totalmem()
 
-app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 if (myMemory > 16000000000) {
 	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
         log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
 } else if (myMemory > 12000000000) {
 	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=6144')
         log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
-} else {
+} else if (myMemory > 7000000000) {
 	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
         log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
+} else {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048')
+        log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
 }
+
+app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+app.commandLine.appendSwitch('disable-renderer-backgrounding')
+app.commandLine.appendSwitch('enable-gpu-rasterization', true)
 app.commandLine.appendSwitch('disable-http-cache')
-app.disableHardwareAcceleration()
+app.commandLine.appendSwitch('log-file', 'qortal-ui.log')
+app.commandLine.appendSwitch('enable-logging')
 app.enableSandbox()
 electronDl()
 
 process.env['APP_PATH'] = app.getAppPath()
-
-const homePath = app.getPath('home')
-const downloadPath = app.getPath('downloads')
-const store = new Store()
 
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
