@@ -29,14 +29,16 @@ const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 const homePath = app.getPath('home')
 const downloadPath = app.getPath('downloads')
+const logPath = app.getPath('logs')
+const debugFileUnix = logPath + '/qortal-ui.log'
+const debugFileWin = logPath + '\\qortal-ui.log'
+const myMemory = os.totalmem()
 const store = new Store()
 
 crashReporter.start({
 	productName: 'Qortal-UI',
 	uploadToServer: false
 })
-
-const myMemory = os.totalmem()
 
 if (myMemory > 16000000000) {
 	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
@@ -52,11 +54,27 @@ if (myMemory > 16000000000) {
         log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
 }
 
-app.commandLine.appendSwitch('enable-experimental-web-platform-features')
-app.commandLine.appendSwitch('disable-renderer-backgrounding')
-app.commandLine.appendSwitch('disable-http-cache')
-app.commandLine.appendSwitch('log-file', 'qortal-ui.log')
-app.commandLine.appendSwitch('enable-logging')
+if (process.platform === 'linux') {
+	if (process.arch === 'arm') {
+		app.disableHardwareAcceleration()
+		app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+		log.info('We are on 32bit. Hardware Acceleration is disabled !')
+	} else {
+		app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+		app.commandLine.appendSwitch('disable-renderer-backgrounding')
+		app.commandLine.appendSwitch('disable-http-cache')
+		log.info('We are on 64bit. Hardware Acceleration is enabled !')
+	}
+}
+
+if (process.platform === 'win32') {
+	app.commandLine.appendSwitch('log-file', debugFileWin)
+	app.commandLine.appendSwitch('enable-logging')
+} else {
+	app.commandLine.appendSwitch('log-file', debugFileUnix)
+	app.commandLine.appendSwitch('enable-logging')
+}
+
 app.enableSandbox()
 electronDl()
 
@@ -74,7 +92,6 @@ if (!store.has('askingCore')) {
 log.info('App starting...')
 log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
-log.info("Asking Core", store.get('askingCore'))
 log.info("Memory Size", os.totalmem())
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
