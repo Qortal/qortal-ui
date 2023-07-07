@@ -98,7 +98,6 @@ export const encryptData = ({ data64, recipientPublicKey }) => {
             recipientPublicKey
         }
     } catch (error) {
-        console.log({ error })
         throw new Error("Error in encrypting data")
     }
 }
@@ -156,14 +155,16 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
 
             encryptedKeys.push(encryptedKey);
         });
-
         const str = "qortalGroupEncryptedData";
         const strEncoder = new TextEncoder();
         const strUint8Array = strEncoder.encode(str);
 
+        // Convert sender's public key to Uint8Array and add to the message
+        const senderPublicKeyUint8Array = window.parent.Base58.decode(userPublicKey);
+
         // Combine all data into a single Uint8Array.
         // Calculate size of combinedData
-        let combinedDataSize = strUint8Array.length + nonce.length + keyNonce.length + encryptedData.length + 4;
+        let combinedDataSize = strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length + encryptedData.length + 4;
         let encryptedKeysSize = 0;
 
         encryptedKeys.forEach((key) => {
@@ -177,10 +178,11 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
         combinedData.set(strUint8Array);
         combinedData.set(nonce, strUint8Array.length);
         combinedData.set(keyNonce, strUint8Array.length + nonce.length);
-        combinedData.set(encryptedData, strUint8Array.length + nonce.length + keyNonce.length);
+        combinedData.set(senderPublicKeyUint8Array, strUint8Array.length + nonce.length + keyNonce.length);
+        combinedData.set(encryptedData, strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length);
 
         // Initialize offset for encryptedKeys
-        let encryptedKeysOffset = strUint8Array.length + nonce.length + encryptedData.length + keyNonce.length;
+        let encryptedKeysOffset = strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length + encryptedData.length;
         encryptedKeys.forEach((key) => {
             combinedData.set(key, encryptedKeysOffset);
             encryptedKeysOffset += key.length;
@@ -261,13 +263,18 @@ export function decryptGroupData(data64EncryptedData) {
     const keyNonceEndPosition = keyNonceStartPosition + 24; // Nonce is 24 bytes
     const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition);
 
+    // Extract the sender's public key
+    const senderPublicKeyStartPosition = keyNonceEndPosition;
+    const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32; // Public keys are 32 bytes
+    const senderPublicKey = allCombined.slice(senderPublicKeyStartPosition, senderPublicKeyEndPosition);
+
     // Calculate count first
     const countStartPosition = allCombined.length - 4; // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
     const countArray = allCombined.slice(countStartPosition, countStartPosition + 4);
     const count = new Uint32Array(countArray.buffer)[0];
 
     // Then use count to calculate encryptedData
-    const encryptedDataStartPosition = keyNonceEndPosition; // start position of encryptedData
+    const encryptedDataStartPosition = senderPublicKeyEndPosition; // start position of encryptedData
     const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4);
     const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition);
 
@@ -275,20 +282,21 @@ export function decryptGroupData(data64EncryptedData) {
     // 32+16 = 48
     const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * 48));
     const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-    const publicKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey
 
-    if (!privateKey || !publicKey) {
+    if (!privateKey) {
         throw new Error("Unable to retrieve keys")
     }
 
     const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-    const convertedPublicKey = ed2curve.convertPublicKey(publicKey)
+    const convertedSenderPublicKey = ed2curve.convertPublicKey(senderPublicKey)
     const sharedSecret = new Uint8Array(32)
-    nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+    nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedSenderPublicKey)
     for (let i = 0; i < count; i++) {
         const encryptedKey = combinedKeys.slice(i * 48, (i + 1) * 48);
+
         // Decrypt the symmetric key.
         const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret);
+
         // If decryption was successful, decryptedKey will not be null.
         if (decryptedKey) {
             // Decrypt the data using the symmetric key.
@@ -296,15 +304,11 @@ export function decryptGroupData(data64EncryptedData) {
 
             // If decryption was successful, decryptedData will not be null.
             if (decryptedData) {
-                console.log({ decryptedData })
-                return decryptedData
 
+                return decryptedData
             }
         }
     }
 
-    if (!response) {
-        throw new Erorr("Unable to decrypt data")
-
-    }
+    throw new Error("Unable to decrypt data")
 }
