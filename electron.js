@@ -54,17 +54,15 @@ if (myMemory > 16000000000) {
         log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
 }
 
-if (process.platform === 'linux') {
-	if (process.arch === 'arm') {
-		app.disableHardwareAcceleration()
-		app.commandLine.appendSwitch('enable-experimental-web-platform-features')
-		log.info('We are on 32bit. Hardware Acceleration is disabled !')
-	} else {
-		app.commandLine.appendSwitch('enable-experimental-web-platform-features')
-		app.commandLine.appendSwitch('disable-renderer-backgrounding')
-		app.commandLine.appendSwitch('disable-http-cache')
-		log.info('We are on 64bit. Hardware Acceleration is enabled !')
-	}
+if (process.arch === 'arm') {
+	app.disableHardwareAcceleration()
+	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+	log.info('We are on 32bit. Hardware Acceleration is disabled !')
+} else {
+	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+	app.commandLine.appendSwitch('disable-renderer-backgrounding')
+	app.commandLine.appendSwitch('disable-http-cache')
+	log.info('We are on 64bit. Hardware Acceleration is enabled !')
 }
 
 if (process.platform === 'win32') {
