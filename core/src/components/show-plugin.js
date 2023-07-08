@@ -810,6 +810,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .app-list .app-icon {
+            position: relative;
             text-align: center;
             font-size: 15px;
             font-weight: bold;
@@ -854,32 +855,45 @@ class NavBar extends connect(store)(LitElement) {
             border-bottom-right-radius: 10px;
         }
 
+        .app-list .app-icon:hover .removeIcon {
+            display: inline;
+        }
+
         .menuIcon {
             color: var(--app-icon);
             --mdc-icon-size: 64px;
             cursor: pointer;
         }
-
+          
         .menuIconPos {
             position: relative;
-            right: 26px;
+            right: -2px;
         }
-
+          
+        .removeIconPos {
+            position: absolute;
+            top: -36px;
+            left: 0;
+        }
+          
+        .menuIconPos:hover .removeIcon {
+            display: inline;
+        }
+          
         .removeIcon {
+            display: none;
             color: var(--black);
             --mdc-icon-size: 28px;
             cursor: pointer;
+            position: absolute;
+            top: 30px;
+            left: 123px;
+            z-index: 1;
         }
-
+                     
         .removeIcon:hover {
             color: #C6011F;
             font-weight: bold;
-        }
-
-        .removeIconPos {
-            position: relative;
-            top: -36px;
-            left: 62px;
         }
 
         .red {
