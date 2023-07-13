@@ -110,7 +110,14 @@ class MultiWallet extends LitElement {
             walletLockSet: { type: String },
             myWalletLockScreenPass: { type: String },
             myWalletLockScreenSet: { type: String },
-            walletHelperMessage: { type: String }
+            walletHelperMessage: { type: String },
+            bookQortalAddress: { type: String },
+            bookBitcoinAddress: { type: String },
+            bookLitecoinAddress: { type: String },
+            bookDogecoinAddress: { type: String },
+            bookDigibyteAddress: { type: String },
+            bookRavencoinAddress: { type: String },
+            bookPiratechainAddress: { type: String }
         }
     }
 
@@ -127,7 +134,7 @@ class MultiWallet extends LitElement {
                 --mdc-theme-surface: var(--white);
 		--mdc-theme-error: rgb(255, 89, 89);
                 --mdc-dialog-content-ink-color: var(--black);
-                --mdc-dialog-min-width: 400px;
+                --mdc-dialog-min-width: 500px;
                 --mdc-dialog-max-width: 1024px;
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
@@ -812,6 +819,13 @@ class MultiWallet extends LitElement {
         this.myWalletLockScreenPass = ''
         this.myWalletLockScreenSet = ''
         this.walletHelperMessage = ''
+        this.bookQortalAddress = ''
+        this.bookBitcoinAddress = ''
+        this.bookLitecoinAddress = ''
+        this.bookDogecoinAddress = ''
+        this.bookDigibyteAddress = ''
+        this.bookRavencoinAddress = ''
+        this.bookPiratechainAddress = ''
 
         this.wallets = new Map()
 
@@ -1836,10 +1850,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="qortBookGrid" ?hidden="${this.isEmptyArray(this.qortBook)}" aria-label="QORT Addressbook" .items="${this.qortBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromQortAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeQortAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1870,10 +1888,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="btcBookGrid" ?hidden="${this.isEmptyArray(this.btcBook)}" aria-label="BTC Addressbook" .items="${this.btcBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromBtcAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeBtcAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1904,10 +1926,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="ltcBookGrid" ?hidden="${this.isEmptyArray(this.ltcBook)}" aria-label="LTC Addressbook" .items="${this.ltcBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromLtcAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeLtcAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1938,10 +1964,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dogeBookGrid" ?hidden="${this.isEmptyArray(this.dogeBook)}" aria-label="DOGE Addressbook" .items="${this.dogeBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromDogeAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeDogeAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1972,10 +2002,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dgbBookGrid" ?hidden="${this.isEmptyArray(this.dgbBook)}" aria-label="DGB Addressbook" .items="${this.dgbBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromDgbAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeDgbAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -2006,10 +2040,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="rvnBookGrid" ?hidden="${this.isEmptyArray(this.rvnBook)}" aria-label="RVN Addressbook" .items="${this.rvnBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromRvnAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeRvnAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -2040,10 +2078,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="arrrBookGrid" ?hidden="${this.isEmptyArray(this.arrrBook)}" aria-label="ARRR Addressbook" .items="${this.arrrBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromArrrAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeArrrAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -2781,6 +2823,14 @@ class MultiWallet extends LitElement {
         this.changeTheme()
         this.changeLanguage()
 
+        this.bookQortalAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.bookBitcoinAddress = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
+        this.bookLitecoinAddress = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+        this.bookDogecoinAddress = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
+        this.bookDigibyteAddress = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
+        this.bookRavencoinAddress = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
+        this.bookPiratechainAddress = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.address
+
         this.walletHelperMessage = this.renderWalletHelperPass()
 
         this.walletSalt = ''
@@ -3059,58 +3109,72 @@ class MultiWallet extends LitElement {
     }
 
     qortAddressbook() {
-        if (localStorage.getItem("addressbookQort") === null) {
-            localStorage.setItem("addressbookQort", "")
+        const storedQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        console.log(storedQortalAddressBook)
+        if (localStorage.getItem(storedQortalAddressBook) === null) {
+            localStorage.setItem(storedQortalAddressBook, "")
         } else {
-            this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+            this.qortBook = JSON.parse(localStorage.getItem(storedQortalAddressBook) || "[]")
         }
     }
 
     btcAddressbook() {
-        if (localStorage.getItem("addressbookBtc") === null) {
-            localStorage.setItem("addressbookBtc", "")
+        const storedBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        console.log(storedBitcoinAddressBook)
+        if (localStorage.getItem(storedBitcoinAddressBook) === null) {
+            localStorage.setItem(storedBitcoinAddressBook, "")
         } else {
-            this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+            this.btcBook = JSON.parse(localStorage.getItem(storedBitcoinAddressBook) || "[]")
         }
     }
 
     ltcAddressbook() {
-        if (localStorage.getItem("addressbookLtc") === null) {
-            localStorage.setItem("addressbookLtc", "")
+        const storedLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        console.log(storedLitecoinAddressBook)
+        if (localStorage.getItem(storedLitecoinAddressBook) === null) {
+            localStorage.setItem(storedLitecoinAddressBook, "")
         } else {
-            this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+            this.ltcBook = JSON.parse(localStorage.getItem(storedLitecoinAddressBook) || "[]")
         }
     }
 
     dogeAddressbook() {
-        if (localStorage.getItem("addressbookDoge") === null) {
-            localStorage.setItem("addressbookDoge", "")
+        const storedDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        console.log(storedDogecoinAddressBook)
+        if (localStorage.getItem(storedDogecoinAddressBook) === null) {
+            localStorage.setItem(storedDogecoinAddressBook, "")
         } else {
-            this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+            this.dogeBook = JSON.parse(localStorage.getItem(storedDogecoinAddressBook) || "[]")
         }
     }
 
     dgbAddressbook() {
-        if (localStorage.getItem("addressbookDgb") === null) {
-            localStorage.setItem("addressbookDgb", "")
+        const storedDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        console.log(storedDigibyteAddressBook)
+        if (localStorage.getItem(storedDigibyteAddressBook) === null) {
+            localStorage.setItem(storedDigibyteAddressBook, "")
         } else {
-            this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+            this.dgbBook = JSON.parse(localStorage.getItem(storedDigibyteAddressBook) || "[]")
         }
     }
 
     rvnAddressbook() {
-        if (localStorage.getItem("addressbookRvn") === null) {
-            localStorage.setItem("addressbookRvn", "")
+        const storedRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        console.log(storedRavencoinAddressBook)
+        if (localStorage.getItem(storedRavencoinAddressBook) === null) {
+            localStorage.setItem(storedRavencoinAddressBook, "")
         } else {
-            this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+            this.rvnBook = JSON.parse(localStorage.getItem(storedRavencoinAddressBook) || "[]")
         }
     }
 
     arrrAddressbook() {
-        if (localStorage.getItem("addressbookArrr") === null) {
-            localStorage.setItem("addressbookArrr", "")
+        const storedPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        console.log(storedPiratechainAddressBook)
+        if (localStorage.getItem(storedPiratechainAddressBook) === null) {
+            localStorage.setItem(storedPiratechainAddressBook, "")
         } else {
-            this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+            this.arrrBook = JSON.parse(localStorage.getItem(storedPiratechainAddressBook) || "[]")
         }
     }
 
@@ -3325,10 +3389,12 @@ class MultiWallet extends LitElement {
     }
 
     addToQortalAddressbook() {
+        const myQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+
         let name = this.shadowRoot.getElementById('qortNameInput').value
         let address = this.shadowRoot.getElementById('qortAddressInput').value
 
-        var oldQortalBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        var oldQortalBook = JSON.parse(localStorage.getItem(myQortalAddressBook) || "[]")
 
         if (name.length === 0) {
             let qortbookstring1 = get("walletpage.wchange50")
@@ -3349,20 +3415,22 @@ class MultiWallet extends LitElement {
 
         oldQortalBook.push(newQortalBookItem)
 
-        localStorage.setItem("addressbookQort", JSON.stringify(oldQortalBook))
+        localStorage.setItem(myQortalAddressBook, JSON.stringify(oldQortalBook))
 
         let qortbookstring2 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${qortbookstring2}`)
 
         this.closeQortAddressDialog()
-        this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        this.qortBook = JSON.parse(localStorage.getItem(myQortalAddressBook) || "[]")
     }
 
     addToBitcoinAddressbook() {
+        const myBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+
         let name = this.shadowRoot.getElementById('btcNameInput').value
         let address = this.shadowRoot.getElementById('btcAddressInput').value
 
-        var oldBitcoinBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        var oldBitcoinBook = JSON.parse(localStorage.getItem(myBitcoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let btcbookstring1 = get("walletpage.wchange50")
@@ -3383,20 +3451,22 @@ class MultiWallet extends LitElement {
 
         oldBitcoinBook.push(newBitcoinBookItem)
 
-        localStorage.setItem("addressbookBtc", JSON.stringify(oldBitcoinBook))
+        localStorage.setItem(myBitcoinAddressBook, JSON.stringify(oldBitcoinBook))
 
         let btcbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${btcbookstring3}`)
 
         this.closeBtcAddressDialog()
-        this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        this.btcBook = JSON.parse(localStorage.getItem(myBitcoinAddressBook) || "[]")
     }
 
     addToLitecoinAddressbook() {
+        const myLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+
         let name = this.shadowRoot.getElementById('ltcNameInput').value
         let address = this.shadowRoot.getElementById('ltcAddressInput').value
 
-        var oldLitecoinBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        var oldLitecoinBook = JSON.parse(localStorage.getItem(myLitecoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let ltcbookstring1 = get("walletpage.wchange50")
@@ -3417,20 +3487,22 @@ class MultiWallet extends LitElement {
 
         oldLitecoinBook.push(newLitecoinBookItem)
 
-        localStorage.setItem("addressbookLtc", JSON.stringify(oldLitecoinBook))
+        localStorage.setItem(myLitecoinAddressBook, JSON.stringify(oldLitecoinBook))
 
         let ltcbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${ltcbookstring3}`)
 
         this.closeLtcAddressDialog()
-        this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        this.ltcBook = JSON.parse(localStorage.getItem(myLitecoinAddressBook) || "[]")
     }
 
     addToDogecoinAddressbook() {
+        const myDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+
         let name = this.shadowRoot.getElementById('dogeNameInput').value
         let address = this.shadowRoot.getElementById('dogeAddressInput').value
 
-        var oldDogecoinBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        var oldDogecoinBook = JSON.parse(localStorage.getItem(myDogecoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let dogebookstring1 = get("walletpage.wchange50")
@@ -3451,20 +3523,22 @@ class MultiWallet extends LitElement {
 
         oldDogecoinBook.push(newDogecoinBookItem)
 
-        localStorage.setItem("addressbookDoge", JSON.stringify(oldDogecoinBook))
+        localStorage.setItem(myDogecoinAddressBook, JSON.stringify(oldDogecoinBook))
 
         let dogebookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${dogebookstring3}`)
 
         this.closeDogeAddressDialog()
-        this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        this.dogeBook = JSON.parse(localStorage.getItem(myDogecoinAddressBook) || "[]")
     }
 
     addToDigibyteAddressbook() {
+        const myDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+
         let name = this.shadowRoot.getElementById('dgbNameInput').value
         let address = this.shadowRoot.getElementById('dgbAddressInput').value
 
-        var oldDigibyteBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        var oldDigibyteBook = JSON.parse(localStorage.getItem(myDigibyteAddressBook) || "[]")
 
         if (name.length === 0) {
             let dgbbookstring1 = get("walletpage.wchange50")
@@ -3485,20 +3559,22 @@ class MultiWallet extends LitElement {
 
         oldDigibyteBook.push(newDigibyteBookItem)
 
-        localStorage.setItem("addressbookDgb", JSON.stringify(oldDigibyteBook))
+        localStorage.setItem(myDigibyteAddressBook, JSON.stringify(oldDigibyteBook))
 
         let dgbbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${dgbbookstring3}`)
 
         this.closeDgbAddressDialog()
-        this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        this.dgbBook = JSON.parse(localStorage.getItem(myDigibyteAddressBook) || "[]")
     }
 
     addToRavencoinAddressbook() {
+        const myRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+
         let name = this.shadowRoot.getElementById('rvnNameInput').value
         let address = this.shadowRoot.getElementById('rvnAddressInput').value
 
-        var oldRavencoinBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        var oldRavencoinBook = JSON.parse(localStorage.getItem(myRavencoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let rvnbookstring1 = get("walletpage.wchange50")
@@ -3519,20 +3595,22 @@ class MultiWallet extends LitElement {
 
         oldRavencoinBook.push(newRavencoinBookItem)
 
-        localStorage.setItem("addressbookRvn", JSON.stringify(oldRavencoinBook))
+        localStorage.setItem(myRavencoinAddressBook, JSON.stringify(oldRavencoinBook))
 
         let rvnbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${rvnbookstring3}`)
 
         this.closeRvnAddressDialog()
-        this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        this.rvnBook = JSON.parse(localStorage.getItem(myRavencoinAddressBook) || "[]")
     }
 
     addToPiratechainAddressbook() {
+        const myPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+
         let name = this.shadowRoot.getElementById('arrrNameInput').value
         let address = this.shadowRoot.getElementById('arrrAddressInput').value
 
-        var oldPiratechainBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        var oldPiratechainBook = JSON.parse(localStorage.getItem(myPiratechainAddressBook) || "[]")
 
         if (name.length === 0) {
             let arrrbookstring1 = get("walletpage.wchange50")
@@ -3553,13 +3631,13 @@ class MultiWallet extends LitElement {
 
         oldPiratechainBook.push(newPiratechainBookItem)
 
-        localStorage.setItem("addressbookArrr", JSON.stringify(oldPiratechainBook))
+        localStorage.setItem(myPiratechainAddressBook, JSON.stringify(oldPiratechainBook))
 
         let arrrbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${arrrbookstring3}`)
 
         this.closeArrrAddressDialog()
-        this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        this.arrrBook = JSON.parse(localStorage.getItem(myPiratechainAddressBook) || "[]")
     }
 
     sendFromQortAddressbook(websiteObj) {
@@ -3611,6 +3689,83 @@ class MultiWallet extends LitElement {
         this.shadowRoot.querySelector('#arrrBookDialog').close()
     }
 
+    removeQortAddress(adressObj) {
+        const theQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        const addressToRemove = adressObj
+        this.newQortBookFilter = []
+        this.newQortBookFilter = this.qortBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newQortBookFilter)
+        localStorage.removeItem(theQortalAddressBook)
+        localStorage.setItem(theQortalAddressBook, myNewObj)
+        this.qortBook = JSON.parse(localStorage.getItem(theQortalAddressBook) || "[]")
+    }
+
+    removeBtcAddress(adressObj) {
+        const theBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        const addressToRemove = adressObj
+        this.newBtcBookFilter = []
+        this.newBtcBookFilter = this.btcBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newBtcBookFilter)
+        localStorage.removeItem(theBitcoinAddressBook)
+        localStorage.setItem(theBitcoinAddressBook, myNewObj)
+        this.btcBook = JSON.parse(localStorage.getItem(theBitcoinAddressBook) || "[]")
+    }
+
+    removeLtcAddress(adressObj) {
+        const theLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        const addressToRemove = adressObj
+        this.newLtcBookFilter = []
+        this.newLtcBookFilter = this.ltcBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newLtcBookFilter)
+        localStorage.removeItem(theLitecoinAddressBook)
+        localStorage.setItem(theLitecoinAddressBook, myNewObj)
+        this.ltcBook = JSON.parse(localStorage.getItem(theLitecoinAddressBook) || "[]")
+    }
+
+    removeDogeAddress(adressObj) {
+        const theDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        const addressToRemove = adressObj
+        this.newDogeBookFilter = []
+        this.newDogeBookFilter = this.dogeBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newDogeBookFilter)
+        localStorage.removeItem(theDogecoinAddressBook)
+        localStorage.setItem(theDogecoinAddressBook, myNewObj)
+        this.dogeBook = JSON.parse(localStorage.getItem(theDogecoinAddressBook) || "[]")
+    }
+
+    removeDgbAddress(adressObj) {
+        const theDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        const addressToRemove = adressObj
+        this.newDgbBookFilter = []
+        this.newDgbBookFilter = this.dgbBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newDgbBookFilter)
+        localStorage.removeItem(theDigibyteAddressBook)
+        localStorage.setItem(theDigibyteAddressBook, myNewObj)
+        this.dgbBook = JSON.parse(localStorage.getItem(theDigibyteAddressBook) || "[]")
+    }
+
+    removeRvnAddress(adressObj) {
+        const theRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        const addressToRemove = adressObj
+        this.newRvnBookFilter = []
+        this.newRvnBookFilter = this.rvnBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newRvnBookFilter)
+        localStorage.removeItem(theRavencoinAddressBook)
+        localStorage.setItem(theRavencoinAddressBook, myNewObj)
+        this.rvnBook = JSON.parse(localStorage.getItem(theRavencoinAddressBook) || "[]")
+    }
+
+    removeArrrAddress(adressObj) {
+        const thePiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        const addressToRemove = adressObj
+        this.newArrrBookFilter = []
+        this.newArrrBookFilter = this.arrrBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newArrrBookFilter)
+        localStorage.removeItem(thePiratechainAddressBook)
+        localStorage.setItem(thePiratechainAddressBook, myNewObj)
+        this.arrrBook = JSON.parse(localStorage.getItem(thePiratechainAddressBook) || "[]")
+    }
+
     renderSendFromQortAddressbookButton(websiteObj) {
         return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} QORT" icon="send" @click="${() => this.sendFromQortAddressbook(websiteObj)}"></mwc-button>`
     }
@@ -3640,121 +3795,135 @@ class MultiWallet extends LitElement {
     }
 
     exportQortAddressbook() {
+        const expQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
         let bookname = ""
-        const qortBookData = JSON.stringify(localStorage.getItem("addressbookQort"))
+        const qortBookData = JSON.stringify(localStorage.getItem(expQortalAddressBook))
         const qortBookSave = JSON.parse((qortBookData) || "[]")
         const blob = new Blob([qortBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "qortal_addressbook.qort.json"
+        bookname = "qortal_addressbook." + this.bookQortalAddress + ".qort.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportBtcAddressbook() {
+        const expBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
         let bookname = ""
-        const btcBookData = JSON.stringify(localStorage.getItem("addressbookBtc"))
+        const btcBookData = JSON.stringify(localStorage.getItem(expBitcoinAddressBook))
         const btcBookSave = JSON.parse((btcBookData) || "[]")
         const blob = new Blob([btcBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "bitcoin_addressbook.btc.json"
+        bookname = "bitcoin_addressbook." + this.bookBitcoinAddress + ".btc.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportLtcAddressbook() {
+        const expLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
         let bookname = ""
-        const ltcBookData = JSON.stringify(localStorage.getItem("addressbookLtc"))
+        const ltcBookData = JSON.stringify(localStorage.getItem(expLitecoinAddressBook))
         const ltcBookSave = JSON.parse((ltcBookData) || "[]")
         const blob = new Blob([ltcBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "litecoin_addressbook.ltc.json"
+        bookname = "litecoin_addressbook." + this.bookLitecoinAddress + ".ltc.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportDogeAddressbook() {
+        const expDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
         let bookname = ""
-        const dogeBookData = JSON.stringify(localStorage.getItem("addressbookDoge"))
+        const dogeBookData = JSON.stringify(localStorage.getItem(expDogecoinAddressBook))
         const dogeBookSave = JSON.parse((dogeBookData) || "[]")
         const blob = new Blob([dogeBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "dogecoin_addressbook.doge.json"
+        bookname = "dogecoin_addressbook." + this.bookDogecoinAddress + ".doge.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportDgbAddressbook() {
+        const expDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
         let bookname = ""
-        const dgbBookData = JSON.stringify(localStorage.getItem("addressbookDgb"))
+        const dgbBookData = JSON.stringify(localStorage.getItem(expDigibyteAddressBook))
         const dgbBookSave = JSON.parse((dgbBookData) || "[]")
         const blob = new Blob([dgbBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "digibyte_addressbook.dgb.json"
+        bookname = "digibyte_addressbook." + this.bookDigibyteAddress + ".dgb.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportRvnAddressbook() {
+        const expRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
         let bookname = ""
-        const rvnBookData = JSON.stringify(localStorage.getItem("addressbookRvn"))
+        const rvnBookData = JSON.stringify(localStorage.getItem(expRavencoinAddressBook))
         const rvnBookSave = JSON.parse((rvnBookData) || "[]")
         const blob = new Blob([rvnBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "ravencoin_addressbook.rvn.json"
+        bookname = "ravencoin_addressbook." + this.bookRavencoinAddress + ".rvn.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportArrrAddressbook() {
+        const expPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
         let bookname = ""
-        const arrrBookData = JSON.stringify(localStorage.getItem("addressbookArrr"))
+        const arrrBookData = JSON.stringify(localStorage.getItem(expPiratechainAddressBook))
         const arrrBookSave = JSON.parse((arrrBookData) || "[]")
         const blob = new Blob([arrrBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "piratechain_addressbook.arrr.json"
+        bookname = "piratechain_addressbook." + this.bookPiratechainAddress + ".arrr.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     importQortAddressbook(file) {
-        localStorage.removeItem("addressbookQort")
+        const impQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        localStorage.removeItem(impQortalAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookQort", JSON.stringify(newItems))
-        this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        localStorage.setItem(impQortalAddressBook, JSON.stringify(newItems))
+        this.qortBook = JSON.parse(localStorage.getItem(impQortalAddressBook) || "[]")
         this.shadowRoot.querySelector('#importQortAddressbookDialog').close()
     }
 
     importBtcAddressbook(file) {
-        localStorage.removeItem("addressbookBtc")
+        const impBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        localStorage.removeItem(impBitcoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookBtc", JSON.stringify(newItems))
-        this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        localStorage.setItem(impBitcoinAddressBook, JSON.stringify(newItems))
+        this.btcBook = JSON.parse(localStorage.getItem(impBitcoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importBtcAddressbookDialog').close()
     }
 
     importLtcAddressbook(file) {
-        localStorage.removeItem("addressbookLtc")
+        const impLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        localStorage.removeItem(impLitecoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookLtc", JSON.stringify(newItems))
-        this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        localStorage.setItem(impLitecoinAddressBook, JSON.stringify(newItems))
+        this.ltcBook = JSON.parse(localStorage.getItem(impLitecoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importLtcAddressbookDialog').close()
     }
 
     importDogeAddressbook(file) {
-        localStorage.removeItem("addressbookDoge")
+        const impDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        localStorage.removeItem(impDogecoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookDoge", JSON.stringify(newItems))
-        this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        localStorage.setItem(impDogecoinAddressBook, JSON.stringify(newItems))
+        this.dogeBook = JSON.parse(localStorage.getItem(impDogecoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importDogeAddressbookDialog').close()
     }
 
     importDgbAddressbook(file) {
-        localStorage.removeItem("addressbookDgb")
+        const impDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        localStorage.removeItem(impDigibyteAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookDgb", JSON.stringify(newItems))
-        this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        localStorage.setItem(impDigibyteAddressBook, JSON.stringify(newItems))
+        this.dgbBook = JSON.parse(localStorage.getItem(impDigibyteAddressBook) || "[]")
         this.shadowRoot.querySelector('#importDgbAddressbookDialog').close()
     }
 
     importRvnAddressbook(file) {
-        localStorage.removeItem("addressbookRvn")
+        const impRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        localStorage.removeItem(impRavencoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookRvn", JSON.stringify(newItems))
-        this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        localStorage.setItem(impRavencoinAddressBook, JSON.stringify(newItems))
+        this.rvnBook = JSON.parse(localStorage.getItem(impRavencoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importRvnAddressbookDialog').close()
     }
 
     importArrrAddressbook(file) {
-        localStorage.removeItem("addressbookArrr")
+        const impPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        localStorage.removeItem(impPiratechainAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookArrr", JSON.stringify(newItems))
-        this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        localStorage.setItem(impPiratechainAddressBook, JSON.stringify(newItems))
+        this.arrrBook = JSON.parse(localStorage.getItem(impPiratechainAddressBook) || "[]")
         this.shadowRoot.querySelector('#importArrrAddressbookDialog').close()
     }
 
