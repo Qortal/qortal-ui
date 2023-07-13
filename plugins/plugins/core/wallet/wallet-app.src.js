@@ -3110,7 +3110,6 @@ class MultiWallet extends LitElement {
 
     qortAddressbook() {
         const storedQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
-        console.log(storedQortalAddressBook)
         if (localStorage.getItem(storedQortalAddressBook) === null) {
             localStorage.setItem(storedQortalAddressBook, "")
         } else {
@@ -3120,7 +3119,6 @@ class MultiWallet extends LitElement {
 
     btcAddressbook() {
         const storedBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
-        console.log(storedBitcoinAddressBook)
         if (localStorage.getItem(storedBitcoinAddressBook) === null) {
             localStorage.setItem(storedBitcoinAddressBook, "")
         } else {
@@ -3130,7 +3128,6 @@ class MultiWallet extends LitElement {
 
     ltcAddressbook() {
         const storedLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
-        console.log(storedLitecoinAddressBook)
         if (localStorage.getItem(storedLitecoinAddressBook) === null) {
             localStorage.setItem(storedLitecoinAddressBook, "")
         } else {
@@ -3140,7 +3137,6 @@ class MultiWallet extends LitElement {
 
     dogeAddressbook() {
         const storedDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
-        console.log(storedDogecoinAddressBook)
         if (localStorage.getItem(storedDogecoinAddressBook) === null) {
             localStorage.setItem(storedDogecoinAddressBook, "")
         } else {
@@ -3150,7 +3146,6 @@ class MultiWallet extends LitElement {
 
     dgbAddressbook() {
         const storedDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
-        console.log(storedDigibyteAddressBook)
         if (localStorage.getItem(storedDigibyteAddressBook) === null) {
             localStorage.setItem(storedDigibyteAddressBook, "")
         } else {
@@ -3160,7 +3155,6 @@ class MultiWallet extends LitElement {
 
     rvnAddressbook() {
         const storedRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
-        console.log(storedRavencoinAddressBook)
         if (localStorage.getItem(storedRavencoinAddressBook) === null) {
             localStorage.setItem(storedRavencoinAddressBook, "")
         } else {
@@ -3170,7 +3164,6 @@ class MultiWallet extends LitElement {
 
     arrrAddressbook() {
         const storedPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
-        console.log(storedPiratechainAddressBook)
         if (localStorage.getItem(storedPiratechainAddressBook) === null) {
             localStorage.setItem(storedPiratechainAddressBook, "")
         } else {
