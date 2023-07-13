@@ -72,7 +72,7 @@
 	},
 	"devDependencies": {
 		"axios": "1.4.0",
-		"electron": "25.2.0",
+		"electron": "25.3.0",
 		"electron-builder": "24.4.0",
 		"electron-packager": "17.1.1",
 		"epml": "0.3.3",
@@ -91,7 +91,7 @@
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
 		"shelljs": "0.8.5",
-		"@babel/core": "7.22.8",
+		"@babel/core": "7.22.9",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
@@ -140,7 +140,7 @@
 		"@vaadin/icons": "24.1.3",
 		"@vaadin/password-field": "24.1.3",
 		"@vaadin/tooltip": "24.1.3",
-		"@zip.js/zip.js": "2.7.17"
+		"@zip.js/zip.js": "2.7.20"
 	},
 	"engines": {
 		"node": ">=18.14.0"

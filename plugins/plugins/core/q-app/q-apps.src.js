@@ -9,6 +9,7 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-tab-bar'
@@ -50,7 +51,16 @@ class QApps extends LitElement {
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-button-disabled-fill-color: rgba(3, 169, 244, 0.5);
-
+                --mdc-theme-surface: var(--white);
+                --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+                --mdc-text-field-label-ink-color: var(--black);
+                --mdc-text-field-ink-color: var(--black);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-dialog-shape-radius: 25px;
+                --mdc-dialog-min-width: 300px;
+                --mdc-dialog-max-width: auto;
+                --mdc-dialog-max-height: 700px;
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -380,49 +390,10 @@ class QApps extends LitElement {
                 <div id="tabs-1-content">
                     <div id="tab-browse-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange1")}</h2>
-                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+        	                <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange1")}</h2>
+                	        <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	        <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-        	            <div class="divCard">
-                    	    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("appspage.schange4")}</h3>
-	                      <div id="search">
-	                          <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("appspage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
-	                              <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
-	                          </vaadin-text-field>&nbsp;&nbsp;<br>
-	                          <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
-	                              <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
-	                              ${translate("appspage.schange35")}
-	                          </vaadin-button>
-	                      </div><br />
-	                      <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search apps" all-rows-visible>
-	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderAvatar(data.item)}`, root)
-    	                          }}>
-	                          </vaadin-grid-column>
-	                          <vaadin-grid-column header="${translate("appspage.schange6")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderInfo(data.item)}`, root)
-	                          }}>
-	                          </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("appspage.schange7")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderPublishedBy(data.item)}`, root)
-	                          }}>
-	                          </vaadin-grid-column>
-                               <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderDownload(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
-	                          <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-	                          }}>
-	                          </vaadin-grid-column>
-	                          <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-	                          }}>
-	                          </vaadin-grid-column>
-	                      </vaadin-grid><br />
-	                  </div>
-	                  <div class="divCard">
-	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange9")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.pageRes)}" .items="${this.pageRes}" aria-label="apps" all-rows-visible>
 	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
 	                              render(html`${this.renderAvatar(data.item)}`, root)
@@ -456,15 +427,14 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.pageRes) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange10")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}<br>
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange11")}</h2>
-              	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+                              <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange11")}</h2>
+                	      <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	      <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-	                  <div class="divCard">
 	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange12")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="followedResourcesGrid" ?hidden="${this.isEmptyArray(this.followedResources)}" .items="${this.followedResources}" aria-label="Followed apps" all-rows-visible>
                                 <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
@@ -494,15 +464,14 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.followedResources) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange13")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}
 	              </div>
                     <div id="tab-blocked-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange14")}</h2>
-                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+        	                <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange14")}</h2>
+                	        <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	        <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-	                  <div class="divCard">
 	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange15")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="blockedResourcesGrid" ?hidden="${this.isEmptyArray(this.blockedResources)}" .items="${this.blockedResources}" aria-label="Blocked apps" all-rows-visible>
                                 <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
@@ -528,12 +497,44 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.blockedResources) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange16")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}
 	              </div>
 	          </div>
 	      </div>
-
+            <mwc-dialog id="searchAppDialog">
+                <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("appspage.schange4")}</h3>
+	        <div id="search">
+                    <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("appspage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
+                        <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	            </vaadin-text-field>&nbsp;&nbsp;<br>
+	            <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+	                <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                ${translate("appspage.schange35")}
+                    </vaadin-button>
+	        </div><br />
+	        <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search apps" all-rows-visible>
+	            <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderAvatar(data.item)}`, root)
+                    }}>
+	            </vaadin-grid-column>
+                    <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("appspage.schange7")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderPublishedBy(data.item)}`, root)
+	            }}>
+	            </vaadin-grid-column>
+                    <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                        render(html`${this.renderDownload(data.item)}`, root)
+                    }}>
+                    </vaadin-grid-column>
+	            <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+	            }}>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+	            }}>
+	            </vaadin-grid-column>
+	        </vaadin-grid>
+            </mwc-dialog>
            <paper-dialog id="downloadProgressDialog" class="progress" modal>
                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                <h2>${translate("appspage.schange41")}</h2>
@@ -875,6 +876,16 @@ class QApps extends LitElement {
             return html``
         }
         return html`<mwc-button style="float:right;" @click=${() => this.publishApp()}><mwc-icon>add</mwc-icon>${translate("appspage.schange21")}</mwc-button>`
+    }
+
+    renderSearchButton() {
+        return html`<mwc-button style="float:right;" @click=${() =>  this.openSearchDialog()}><mwc-icon>search</mwc-icon>${translate("appspage.schange4")}</mwc-button>`
+    }
+
+    openSearchDialog() {
+        this.searchResources = []
+        this.shadowRoot.getElementById('searchName').value = ''
+        this.shadowRoot.getElementById('searchAppDialog').show()
     }
 
     renderDownload(downObj) {
