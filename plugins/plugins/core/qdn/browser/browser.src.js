@@ -160,13 +160,13 @@ class WebBrowser extends LitElement {
 		if (this.dev === 'FRAMEWORK') {
 			displayUrl = 'qortal://app/development'
 		} else {
-		    displayUrl = 'qortal://' + this.service + '/' + this.name
-		    if ( this.identifier && this.identifier != 'null' && this.identifier != 'default' ) {
-		      	displayUrl = displayUrl.concat('/' + this.identifier)
-		    }
-		    if (this.path != null && this.path != '/') {
-			displayUrl = displayUrl.concat(this.path)
-		    }
+			displayUrl = 'qortal://' + this.service + '/' + this.name
+			if (this.identifier && this.identifier != 'null' && this.identifier != 'default') {
+				displayUrl = displayUrl.concat('/' + this.identifier)
+			}
+			if (this.path != null && this.path != '/') {
+				displayUrl = displayUrl.concat(this.path)
+			}
 		}
 
 		this.displayUrl = displayUrl
@@ -2756,7 +2756,7 @@ class WebBrowser extends LitElement {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		if (this.dev === 'FRAMEWORK') {
-			this.url = `${this.link}`
+			this.url = `${this.link}?time=${new Date().getMilliseconds()}`
 		} else {
 			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
 				}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
