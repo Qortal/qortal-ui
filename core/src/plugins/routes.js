@@ -17,8 +17,6 @@ import {
 	loadStateFromLocalStorage,
 	saveStateToLocalStorage,
 } from '../localStorageHelpers.js'
-import copyTextMenu from '../functional-components/copy-text-menu.js'
-import framePasteMenu from '../functional-components/frame-paste-menu.js'
 
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
@@ -39,10 +37,6 @@ const sendRvn = api.sendRvn
 const sendArrr = api.sendArrr
 
 export const routes = {
-	hello: async (req) => {
-		return 'Hello from awesomeness'
-	},
-
 	registerUrl: async (req) => {
 		store.dispatch(doAddPluginUrl(req.data))
 	},
@@ -93,27 +87,6 @@ export const routes = {
 
 	setLocalStorage: async (req) => {
 		return saveStateToLocalStorage(req.data.key, req.data.dataObj)
-	},
-
-	openCopyTextMenu: async (req) => {
-		const textMenuObject = {
-			selectedText: req.data.selectedText,
-			eventObject: req.data.eventObject,
-			isFrame: req.data.isFrame,
-		}
-		copyTextMenu.open(textMenuObject)
-	},
-
-	closeCopyTextMenu: async (req) => {
-		copyTextMenu.close()
-	},
-
-	openFramePasteMenu: async (req) => {
-		framePasteMenu.open(req.data)
-	},
-
-	closeFramePasteMenu: async (req) => {
-		framePasteMenu.close()
 	},
 
 	apiCall: async (req) => {

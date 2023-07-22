@@ -3,11 +3,13 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import { columnBodyRenderer, gridRowDetailsRenderer } from '@vaadin/grid/lit.js'
+import isElectron from 'is-electron'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
+import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-tab-bar'
@@ -49,7 +51,16 @@ class QApps extends LitElement {
             * {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-button-disabled-fill-color: rgba(3, 169, 244, 0.5);
-
+                --mdc-theme-surface: var(--white);
+                --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+                --mdc-text-field-label-ink-color: var(--black);
+                --mdc-text-field-ink-color: var(--black);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-dialog-shape-radius: 25px;
+                --mdc-dialog-min-width: 300px;
+                --mdc-dialog-max-width: auto;
+                --mdc-dialog-max-height: 700px;
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -379,49 +390,10 @@ class QApps extends LitElement {
                 <div id="tabs-1-content">
                     <div id="tab-browse-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange1")}</h2>
-                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+        	                <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange1")}</h2>
+                	        <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	        <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-        	            <div class="divCard">
-                    	    <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("appspage.schange4")}</h3>
-	                      <div id="search">
-	                          <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("appspage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
-	                              <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
-	                          </vaadin-text-field>&nbsp;&nbsp;<br>
-	                          <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
-	                              <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
-	                              ${translate("appspage.schange35")}
-	                          </vaadin-button>
-	                      </div><br />
-	                      <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search apps" all-rows-visible>
-	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderAvatar(data.item)}`, root)
-    	                          }}>
-	                          </vaadin-grid-column>
-	                          <vaadin-grid-column header="${translate("appspage.schange6")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderInfo(data.item)}`, root)
-	                          }}>
-	                          </vaadin-grid-column>
-                               <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("appspage.schange7")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderPublishedBy(data.item)}`, root)
-	                          }}>
-	                          </vaadin-grid-column>
-                               <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                   render(html`${this.renderDownload(data.item)}`, root)
-                               }}>
-                               </vaadin-grid-column>
-	                          <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-	                          }}>
-	                          </vaadin-grid-column>
-	                          <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-	                              render(html`${this.renderBlockUnblockButton(data.item)}`, root);
-	                          }}>
-	                          </vaadin-grid-column>
-	                      </vaadin-grid><br />
-	                  </div>
-	                  <div class="divCard">
-	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange9")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="resourcesGrid" ?hidden="${this.isEmptyArray(this.pageRes)}" .items="${this.pageRes}" aria-label="apps" all-rows-visible>
 	                          <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
 	                              render(html`${this.renderAvatar(data.item)}`, root)
@@ -455,15 +427,14 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.pageRes) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange10")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}<br>
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-                            <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange11")}</h2>
-              	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+                              <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange11")}</h2>
+                	      <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	      <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-	                  <div class="divCard">
 	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange12")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="followedResourcesGrid" ?hidden="${this.isEmptyArray(this.followedResources)}" .items="${this.followedResources}" aria-label="Followed apps" all-rows-visible>
                                 <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
@@ -478,16 +449,12 @@ class QApps extends LitElement {
                                     render(html`${this.renderPublishedBy(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                                <vaadin-grid-column width="14rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
                                     render(html`${this.renderDownload(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderFollowUnfollowButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -497,15 +464,14 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.followedResources) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange13")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}
 	              </div>
                     <div id="tab-blocked-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
-        	                <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${translate("appspage.schange14")}</h2>
-                	          <h2 style="margin: 0; flex: 1; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
+        	                <h2 style="margin: 0; padding-top: .5em; display: inline;">${translate("appspage.schange14")}</h2>
+                	        <h2 style="margin: 0; flex: 6; padding-top: .5em; display: inline;">${this.renderSearchButton()}</h2>
+                	        <h2 style="margin: 0; padding-top: .5em; display: inline;">${this.renderPublishButton()}</h2>
 	                  </div>
-	                  <div class="divCard">
 	                      <h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("appspage.schange15")}</h3>
 	                      <vaadin-grid theme="wrap-cell-content" id="blockedResourcesGrid" ?hidden="${this.isEmptyArray(this.blockedResources)}" .items="${this.blockedResources}" aria-label="Blocked apps" all-rows-visible>
                                 <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
@@ -520,16 +486,8 @@ class QApps extends LitElement {
                                     render(html`${this.renderPublishedBy(data.item)}`, root)
                                 }}>
                                 </vaadin-grid-column>
-                                <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderDownload(data.item)}`, root)
-                                }}>
-                                </vaadin-grid-column>
                                 <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
-                                }}>
-                                </vaadin-grid-column>
-                                <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
-                                    render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+                                    render(html`${this.renderBlockUnblockButtonTab(data.item)}`, root);
                                 }}>
                                 </vaadin-grid-column>
 	                      </vaadin-grid>
@@ -539,12 +497,44 @@ class QApps extends LitElement {
 	                      ${this.isEmptyArray(this.blockedResources) ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange16")}</span>
 	                      ` : ''}
-	                  </div>
 	                  ${this.renderRelayModeText()}
 	              </div>
 	          </div>
 	      </div>
-
+            <mwc-dialog id="searchAppDialog">
+                <h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("appspage.schange4")}</h3>
+	        <div id="search">
+                    <vaadin-text-field theme="medium" id="searchName" placeholder="${translate("appspage.schange33")}" value="${this.searchName}" @keydown="${this.searchListener}" clear-button-visible>
+                        <vaadin-icon slot="prefix" icon="vaadin:user"></vaadin-icon>
+	            </vaadin-text-field>&nbsp;&nbsp;<br>
+	            <vaadin-button theme="medium" @click="${(e) => this.doSearch(e)}">
+	                <vaadin-icon icon="vaadin:search" slot="prefix"></vaadin-icon>
+	                ${translate("appspage.schange35")}
+                    </vaadin-button>
+	        </div><br />
+	        <vaadin-grid theme="wrap-cell-content" id="searchResourcesGrid" ?hidden="${this.isEmptyArray(this.searchResources)}" .items="${this.searchResources}" aria-label="Search apps" all-rows-visible>
+	            <vaadin-grid-column width="7rem" flex-grow="0" header="${translate("appspage.schange5")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderAvatar(data.item)}`, root)
+                    }}>
+	            </vaadin-grid-column>
+                    <vaadin-grid-column width="12rem" flex-grow="0" header="${translate("appspage.schange7")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderPublishedBy(data.item)}`, root)
+	            }}>
+	            </vaadin-grid-column>
+                    <vaadin-grid-column width="14rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+                        render(html`${this.renderDownload(data.item)}`, root)
+                    }}>
+                    </vaadin-grid-column>
+	            <vaadin-grid-column width="10rem" flex-grow="0" header="${translate("appspage.schange8")}" .renderer=${(root, column, data) => {
+	                render(html`${this.renderFollowUnfollowButton(data.item)}`, root);
+	            }}>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+	                render(html`${this.renderBlockUnblockButton(data.item)}`, root);
+	            }}>
+	            </vaadin-grid-column>
+	        </vaadin-grid>
+            </mwc-dialog>
            <paper-dialog id="downloadProgressDialog" class="progress" modal>
                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                <h2>${translate("appspage.schange41")}</h2>
@@ -589,21 +579,6 @@ class QApps extends LitElement {
             setTimeout(getRelayMode, 600000)
         }
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
-            this._textMenu(event)
-        });
-
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        });
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
-
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -617,6 +592,14 @@ class QApps extends LitElement {
             }
             document.querySelector('html').setAttribute('theme', this.theme)
         })
+
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
+        }
 
         let configLoaded = false
 
@@ -638,11 +621,6 @@ class QApps extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-                    this.clearSelection()
-                }
             })
         })
         parentEpml.imReady()
@@ -677,9 +655,25 @@ class QApps extends LitElement {
         const tabBrowseContent = this.shadowRoot.getElementById('tab-browse-content')
         const tabFollowedContent = this.shadowRoot.getElementById('tab-followed-content')
         const tabBlockedContent = this.shadowRoot.getElementById('tab-blocked-content')
-        tabBrowseContent.style.display = (tab === 'browse') ? 'block' : 'none'
-        tabFollowedContent.style.display = (tab === 'followed') ? 'block' : 'none'
-        tabBlockedContent.style.display = (tab === 'blocked') ? 'block' : 'none'
+        if (tab === 'browse') {
+            this.refreshapps()
+            tabBrowseContent.style.display = 'block'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'followed') {
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'block'
+            tabBlockedContent.style.display = 'none'
+        } else if (tab === 'blocked') {
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
+            tabBrowseContent.style.display = 'none'
+            tabFollowedContent.style.display = 'none'
+            tabBlockedContent.style.display = 'block'
+        } else {
+        }
     }
 
     searchListener(e) {
@@ -884,6 +878,16 @@ class QApps extends LitElement {
         return html`<mwc-button style="float:right;" @click=${() => this.publishApp()}><mwc-icon>add</mwc-icon>${translate("appspage.schange21")}</mwc-button>`
     }
 
+    renderSearchButton() {
+        return html`<mwc-button style="float:right;" @click=${() =>  this.openSearchDialog()}><mwc-icon>search</mwc-icon>${translate("appspage.schange4")}</mwc-button>`
+    }
+
+    openSearchDialog() {
+        this.searchResources = []
+        this.shadowRoot.getElementById('searchName').value = ''
+        this.shadowRoot.getElementById('searchAppDialog').show()
+    }
+
     renderDownload(downObj) {
         if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
             return html`<mwc-button ?disabled="${this.btnDisabled}" dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
@@ -947,6 +951,8 @@ class QApps extends LitElement {
                 this.textProgress = ''
                 this.shadowRoot.getElementById('downloadProgressDialog').close()
                 this.getData(0)
+                this.getFollowedNamesRefresh()
+                this.getFollowedNamesResource()
                 this.updateComplete.then(() => this.requestUpdate())
             } else if (status.id === "BUILDING") {
                 this.btnDisabled = true
@@ -1014,8 +1020,6 @@ class QApps extends LitElement {
             this.followedNames.push(name)
             this.getFollowedNamesRefresh()
             this.getFollowedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err3string = get("appspage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
@@ -1041,12 +1045,35 @@ class QApps extends LitElement {
 
         if (ret === true) {
             this.followedNames = this.followedNames.filter(item => item != name)
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err4string = get("appspage.schange23")
+            parentEpml.request('showSnackBar', `${err4string}`)
+        }
+        return ret
+    }
+
+    async unfollowNameTab(appObj) {
+        let name = appObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.followedNames = this.followedNames.filter(item => item != name)
+            this.getFollowedNamesRefresh()
+            this.getFollowedNamesResource()
+        } else {
+            let err4string = get("websitespage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
         }
         return ret
@@ -1071,10 +1098,6 @@ class QApps extends LitElement {
         if (ret === true) {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err5string = get("appspage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
@@ -1100,12 +1123,35 @@ class QApps extends LitElement {
 
         if (ret === true) {
             this.blockedNames = this.blockedNames.filter(item => item != name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
-            this.refreshapps()
-            this.updateComplete.then(() => this.requestUpdate())
         } else {
             let err6string = get("appspage.schange25")
+            parentEpml.request('showSnackBar', `${err6string}`)
+        }
+        return ret
+    }
+
+    async unblockNameTab(appObj) {
+        let name = appObj.name
+        let items = [
+            name
+        ]
+        let namesJsonString = JSON.stringify({ "items": items })
+
+        let ret = await parentEpml.request('apiCall', {
+            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `${namesJsonString}`
+        })
+
+        if (ret === true) {
+            this.blockedNames = this.blockedNames.filter(item => item != name)
+            this.getBlockedNamesRefresh()
+            this.getBlockedNamesResource()
+        } else {
+            let err6string = get("websitespage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
         }
         return ret
@@ -1176,6 +1222,21 @@ class QApps extends LitElement {
         }
     }
 
+    renderFollowUnfollowButtonTab(appObj) {
+        let name = appObj.name
+
+        if (this.followedNames == null || !Array.isArray(this.followedNames)) {
+            return html``
+        }
+
+        if (this.followedNames.indexOf(name) === -1) {
+            return html`<mwc-button @click=${() => this.followNameTab(appObj)}><mwc-icon>add_to_queue</mwc-icon>&nbsp;${translate("appspage.schange29")}</mwc-button>`
+        }
+        else {
+            return html`<mwc-button @click=${() => this.unfollowNameTab(appObj)}><mwc-icon>remove_from_queue</mwc-icon>&nbsp;${translate("appspage.schange30")}</mwc-button>`
+        }
+    }
+
     renderBlockUnblockButton(appObj) {
         let name = appObj.name
 
@@ -1190,6 +1251,24 @@ class QApps extends LitElement {
         }
     }
 
+    renderBlockUnblockButtonTab(appObj) {
+        let name = appObj.name
+
+        // Only show the block/unblock button if we have permission to modify the list on this node
+        if (this.blockedNames == null || !Array.isArray(this.blockedNames)) {
+            return html``
+        }
+
+        if (this.blockedNames.indexOf(name) === -1) {
+            // render block button
+            return html`<mwc-button @click=${() => this.blockNameTab(appObj)}><mwc-icon>block</mwc-icon>&nbsp;${translate("appspage.schange31")}</mwc-button>`
+        }
+        else {
+            // render unblock button
+            return html`<mwc-button @click=${() => this.unblockNameTab(appObj)}><mwc-icon>radio_button_unchecked</mwc-icon>&nbsp;${translate("appspage.schange32")}</mwc-button>`
+        }
+    }
+
     bytesToSize(bytes) {
         var sizes = ['bytes', 'KB', 'MB', 'GB', 'TB']
         if (bytes == 0) return '0 bytes'
@@ -1197,37 +1276,10 @@ class QApps extends LitElement {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i]
     }
 
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = "";
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text;
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
-    }
-
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         let apiKey = myNode.apiKey
         return apiKey
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     isEmptyArray(arr) {

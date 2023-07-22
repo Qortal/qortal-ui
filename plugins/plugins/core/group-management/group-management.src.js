@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -603,7 +604,7 @@ class GroupManagement extends LitElement {
                         </select>
                     </p>
                     <div style="margin-bottom: 10px;">
-                        <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.addGroupAdminFee} QORT<span></p>
+                        <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.createBanFee} QORT<span></p>
                         <br>
                     </div>
                     ${this.renderClearSuccess()}
@@ -1499,6 +1500,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.createFee} QORT.</b>
                         </span>
                     </div>
                     
@@ -1556,6 +1560,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.joinFee} QORT.</b>
                         </span>
                     </div>
                     
@@ -1618,6 +1625,9 @@ class GroupManagement extends LitElement {
                         </span>
                         <span ?hidden=${this.message === ''} style="${this.error ? 'color:red;' : ''}">
                             ${this.message}
+                        </span><br>
+                        <span>
+                            <b>${translate("walletpage.wchange21")} ${this.leaveFee} QORT.</b>
                         </span>
                     </div>
                     
@@ -1798,14 +1808,13 @@ class GroupManagement extends LitElement {
             setTimeout(getOpen_JoinedGroups, 600000)
         }
 
-        window.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
-            this._textMenu(event)
-        })
-
-        window.addEventListener("click", () => {
-            parentEpml.request('closeCopyTextMenu', null)
-        })
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
+        }
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -1820,12 +1829,6 @@ class GroupManagement extends LitElement {
             }
             document.querySelector('html').setAttribute('theme', this.theme)
         })
-
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        }
 
         let configLoaded = false
 
@@ -1843,11 +1846,6 @@ class GroupManagement extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) {
-                    this.clearSelection()
-                }
             })
         })
         parentEpml.imReady()
@@ -2730,28 +2728,6 @@ class GroupManagement extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
         return html`<img src="${url}" onerror="this.src='/img/incognito.png';">`
-    }
-
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = "";
-            if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof this.shadowRoot.selection != "undefined" && this.shadowRoot.selection.type == "Text") {
-                text = this.shadowRoot.selection.createRange().text;
-            }
-            return text;
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText();
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
     }
 
     async createGroup(e) {
@@ -3648,11 +3624,6 @@ class GroupManagement extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         let apiKey = myNode.apiKey
         return apiKey
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     isEmptyArray(arr) {

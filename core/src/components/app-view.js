@@ -4,27 +4,33 @@ import { store } from '../store.js'
 import { Epml } from '../epml.js'
 import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
-import localForage from "localforage";
+import localForage from 'localforage'
+import { encryptData, decryptData } from '../lockScreen.js'
+import { setChatLastSeen } from '../redux/app/app-actions.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 })
 
+import '@material/mwc-button'
+import '@material/mwc-icon'
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-progress/paper-progress.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/app-layout/app-layout.js'
 import '@polymer/paper-ripple'
 import '@vaadin/button'
 import '@vaadin/icon'
 import '@vaadin/icons'
+import '@vaadin/password-field'
 import '@vaadin/text-field'
 import '@vaadin/tooltip'
 
 import './wallet-profile.js'
 import './app-info.js'
 import './show-plugin.js'
-import './qort-theme-toggle.js'
+import './theme-toggle.js'
 import './language-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
@@ -34,9 +40,9 @@ import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
 import './start-minting.js'
-import { setChatLastSeen } from '../redux/app/app-actions.js'
+import './notification-view/notification-bell.js'
 
-const parentEpml = new Epml({type: 'WINDOW', source: window.parent})
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class AppView extends connect(store)(LitElement) {
     static get properties() {
@@ -110,7 +116,16 @@ class AppView extends connect(store)(LitElement) {
             botDgbBuyAtAddress: { type: String },
             botRvnBuyAtAddress: { type: String },
             botArrrBuyAtAddress: { type: String },
-            balanceTicker: { type: String }
+            balanceTicker: { type: String },
+            salt: { type: String },
+            storageData: { type: String },
+            lockScreenPass: { type: String },
+            lockScreenSet: { type: String },
+            lockPass: { type: String },
+            lockSet: { type: String },
+            myLockScreenPass: { type: String },
+            myLockScreenSet: { type: String },
+            helperMessage: { type: String }
         }
     }
 
@@ -118,9 +133,9 @@ class AppView extends connect(store)(LitElement) {
         return [
             css`
                 * {
-		        --mdc-theme-primary: rgb(3, 169, 244);
-		        --mdc-theme-secondary: var(--mdc-theme-primary);
-		        --mdc-theme-error: rgb(255, 89, 89);
+		    --mdc-theme-primary: rgb(3, 169, 244);
+		    --mdc-theme-secondary: var(--mdc-theme-primary);
+		    --mdc-theme-error: rgb(255, 89, 89);
                     --lumo-primary-text-color: rgb(0, 167, 245);
                     --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                     --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
@@ -346,6 +361,65 @@ class AppView extends connect(store)(LitElement) {
                     padding-top: 5px;
                     padding-bottom: 5px;
                 }
+
+                .red {
+                    --mdc-theme-primary: #C6011F;
+                }
+
+		.setpass-wrapper {
+			width: 100%;
+			min-width: 400px;
+			max-width: 450px;
+			text-align: center;
+			background: var(--white);
+                        border: 1px solid var(--black);
+			border-radius: 15px;
+			padding: 10px 10px 0px;
+			box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+		}
+
+		.lock-wrapper {
+			width: 100%;
+			height: 100%;
+			min-width: 600px;
+			max-width: 600px;
+			min-height: 400px;
+			max-height: 400px;
+			text-align: center;
+			background: url("/img/qortal-lock.jpg");
+                        border: 1px solid var(--black);
+			border-radius: 25px;
+			padding: 10px 10px 0px;
+		}
+
+		.text-wrapper {
+			width: 100%;
+			height: 100%;
+			min-width: 280px;
+			max-width: 280px;
+			min-height: 64px;
+			max-height: 64px;
+			text-align: center;
+			margin-left: 35px;
+			margin-top: 125px;
+			overflow: hidden;
+		}
+
+		.lock-title-white {
+			font-family: 'magistralbold';
+			font-weight: 700;
+			font-size: 26px;
+			line-height: 32px;
+			color: #ffffff;
+		}
+
+		.lock-title-red {
+			font-family: 'magistralbold';
+			font-weight: 700;
+			font-size: 26px;
+			line-height: 32px;
+			color: #df3636;
+		}
             `
         ]
     }
@@ -425,13 +499,22 @@ class AppView extends connect(store)(LitElement) {
                 <div class="balancelist"></div>
             </div>
         `
+        this.salt = ''
+        this.storageData = ''
+        this.lockScreenPass = ''
+        this.lockScreenSet = ''
+        this.lockPass = ''
+        this.lockSet = ''
+        this.myLockScreenPass = ''
+        this.myLockScreenSet = ''
+        this.helperMessage = ''
     }
 
     render() {
         return html`
-            <app-drawer-layout responsive-width='${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-laptop')}' fullbleed>
+            <app-drawer-layout fullbleed force-narrow>
                 <app-drawer swipe-open slot="drawer" id="appdrawer">
-                    <app-header-layout>
+                    <app-header-layout id="appsidebar">
                         <div id="sideBar">
                             <wallet-profile></wallet-profile>
                             <div class="sideBarMenu">
@@ -466,12 +549,13 @@ class AppView extends connect(store)(LitElement) {
                 <app-header-layout style="height: var(--window-height);">
                     <app-header id='appHeader' slot="header" fixed>
                         <app-toolbar>
-                            <paper-icon-button class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
+                            <paper-icon-button id="mb" class="menu-toggle-button" drawer-toggle icon="menu"></paper-icon-button>
                             <div main-title>
                                 <span class="qora-title">
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+                            <notification-bell></notification-bell>
                             <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
@@ -480,8 +564,10 @@ class AppView extends connect(store)(LitElement) {
                             <div>&nbsp;&nbsp;</div>
                             <language-selector></language-selector>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
-                            <qort-theme-toggle></qort-theme-toggle>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <theme-toggle></theme-toggle>
+                            <div>&nbsp;&nbsp;</div>
+                            ${this.renderLockButton()}
+                            <div>&nbsp;&nbsp;</div>
                             <search-modal></search-modal>
                             <div>&nbsp;&nbsp;</div>
                             <div style="display: inline;">
@@ -502,6 +588,59 @@ class AppView extends connect(store)(LitElement) {
             <user-info-view></user-info-view>
             <user-settings></user-settings>
             <logout-view></logout-view>
+            <paper-dialog class="setpass-wrapper" id="setLockScreenPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal UI ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                    <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="lockPassword" autofocus></vaadin-password-field>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="lockPasswordConfirm"></vaadin-password-field>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closeSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.checkPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="extraConfirmPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal UI ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.setNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="lock-wrapper" id="lockScreenActive" modal>
+                <div class="text-wrapper">
+                    <span class="lock-title-white">UI </span><br/>
+                    <span class="lock-title-white">${translate("login.lp9")} </span>
+                    <span class="lock-title-red">${translate("login.lp10")}</span>
+                </div>
+                <div style="display:flex; margin-top: 5px;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="unlockPassword" @keydown="${this.passKeyListener}" autofocus>
+                        <div slot="helper">
+                            ${this.helperMessage}
+                        </div>
+                    </vaadin-password-field>
+                </div>
+                <div style="display: flex; margin-top: 35px;">
+                    <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeLockScreenActive()}"></mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -509,6 +648,55 @@ class AppView extends connect(store)(LitElement) {
 
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
+
+        this.helperMessage = this.renderHelperPass()
+
+        this.salt = ''
+        this.salt = Base58.encode(store.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.storageData = ''
+        this.storageData = store.getState().app.selectedAddress.address
+
+        this.lockScreenPass = ''
+        this.lockScreenPass = 'lockScreenPass-' + this.storageData
+
+        this.lockScreenSet = ''
+        this.lockScreenSet = 'lockScreenSet-' + this.storageData
+
+        this.lockPass = ''
+        this.lockPass = encryptData(false, this.salt)
+
+        this.lockSet = ''
+        this.lockSet = encryptData(false, this.salt)
+
+        if (localStorage.getItem(this.lockScreenPass) === null && localStorage.getItem(this.lockScreenSet) === null) {
+            localStorage.setItem(this.lockScreenPass, this.lockPass)
+            localStorage.setItem(this.lockScreenSet, this.lockSet)
+            this.myLockScreenPass = ''
+            this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        } else {
+            this.myLockScreenPass = ''
+            this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        }
+
+        if (this.myLockScreenSet === true) {
+            this.shadowRoot.getElementById('lockScreenActive').open()
+        }
+
+        var drawerTog = this.shadowRoot.getElementById("mb")
+        var drawerOut = this.shadowRoot.getElementById("appsidebar")
+
+        drawerTog.addEventListener('mouseover', function() {
+            drawerTog.click()
+        })
+
+        drawerOut.addEventListener('mouseleave', function() {
+            drawerTog.click()
+        })
 
         this.getNodeType()
 
@@ -1392,16 +1580,16 @@ class AppView extends connect(store)(LitElement) {
             }
         }
 
-       const getChatLastSeen=async() => {
+        const getChatLastSeen = async () => {
             let items = [];
-          
-            await chatLastSeen.iterate(function(value, key, iterationNumber) {
-               
-                items.push({key, timestamp: value});
-              })
-              store.dispatch(setChatLastSeen(items))
+
+            await chatLastSeen.iterate(function (value, key, iterationNumber) {
+
+                items.push({ key, timestamp: value });
+            })
+            store.dispatch(setChatLastSeen(items))
             return items;
-          }
+        }
 
         await getOpenTradesBTC()
         await appDelay(1000)
@@ -1444,19 +1632,19 @@ class AppView extends connect(store)(LitElement) {
 
         if (this.nodeType === 'lite') {
             return html`
-                <side-menu-item drawer-toggle label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
+                <side-menu-item label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
                     <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
+                <side-menu-item label="${translate('sidemenu.nameregistration')}" href="/app/name-registration">
                     <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                <side-menu-item label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
                     <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                <side-menu-item label="${translate('sidemenu.qchat')}" href="/app/q-chat">
                     <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
@@ -1467,51 +1655,51 @@ class AppView extends connect(store)(LitElement) {
                 <side-menu-item label="${translate('sidemenu.minting')}" expanded>
                     <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
+                    <side-menu-item id="qminter" label="${translate('sidemenu.mintingdetails')}" href="/app/minting" ?hide=${!isMinter}>
                         <vaadin-icon icon="vaadin:info-circle" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
+                    <side-menu-item id="qbminter" label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
                         <vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
                     </side-menu-item>
 				
-                    <side-menu-item drawer-toggle label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
+                    <side-menu-item id="qiminter" label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
                         <vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.wallets')}" href="/app/wallet" selected>
+                <side-menu-item id="qwallet" label="${translate('sidemenu.wallets')}" href="/app/wallet">
                     <vaadin-icon icon="vaadin:wallet" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.trading')}" expanded>
                     <vaadin-icon icon="vaadin:cash" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
+                    <side-menu-item id="qtrade" label="${translate('sidemenu.tradeportal')}" href="/app/trade-portal">
                         <vaadin-icon icon="vaadin:bullets" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
+                    <side-menu-item id="qbot" label="${translate('tradepage.tchange46')}" href="/app/trade-bot-portal">
                         <vaadin-icon icon="vaadin:calc-book" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
+                <side-menu-item id="qrewardshare" label="${translate('sidemenu.rewardshare')}" href="/app/reward-share">
                     <vaadin-icon icon="vaadin:share-square" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.qchat')}" href="/app/q-chat">
+                <side-menu-item id="qchat" label="${translate('sidemenu.qchat')}" href="/app/q-chat">
                     <vaadin-icon icon="vaadin:chat" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.sm1')}" expanded>
                     <vaadin-icon icon="vaadin:user-card" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.sm2')}" href="/app/name-registration">
+                    <side-menu-item id="qnamereg" label="${translate('sidemenu.sm2')}" href="/app/name-registration">
                         <vaadin-icon icon="vaadin:user-check" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.sm3')}" href="/app/names-market">
+                    <side-menu-item id="qnamemarket" label="${translate('sidemenu.sm3')}" href="/app/names-market">
                         <vaadin-icon icon="vaadin:shop" slot="icon"></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
@@ -1519,27 +1707,27 @@ class AppView extends connect(store)(LitElement) {
                 <side-menu-item label="QDN" expanded>
                     <vaadin-icon icon="vaadin:cluster" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.websites')}" href="/app/websites">
+                    <side-menu-item id="qweb" label="${translate('sidemenu.websites')}" href="/app/websites">
                         <vaadin-icon icon="vaadin:desktop" slot="icon" ></vaadin-icon>
                     </side-menu-item>
 
-                    <side-menu-item drawer-toggle label="Q-Apps" href="/app/qapps">
+                    <side-menu-item id="qapp" label="Q-Apps" href="/app/qapps">
                         <vaadin-icon icon="vaadin:external-browser" slot="icon" ></vaadin-icon>
                     </side-menu-item>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.groups')}" href="/app/group-management">
+                <side-menu-item id="qgroupmange" label="${translate('sidemenu.groups')}" href="/app/group-management">
                     <vaadin-icon icon="vaadin:group" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
-                <side-menu-item drawer-toggle label="${translate('sidemenu.puzzles')}" href="/app/puzzles">
+                <side-menu-item id="qpuzzles" label="${translate('sidemenu.puzzles')}" href="/app/puzzles">
                     <vaadin-icon icon="vaadin:puzzle-piece" slot="icon"></vaadin-icon>
                 </side-menu-item>
 
                 <side-menu-item label="${translate('sidemenu.management')}" expanded>
                     <vaadin-icon icon="vaadin:cogs" slot="icon"></vaadin-icon>
 
-                    <side-menu-item drawer-toggle label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
+                    <side-menu-item id="qdata" label="${translate('sidemenu.datamanagement')}" href="/app/data-management">
                         <vaadin-icon icon="vaadin:database" slot="icon"></vaadin-icon>
                     </side-menu-item>
 
@@ -1553,11 +1741,144 @@ class AppView extends connect(store)(LitElement) {
         }
     }
 
+    renderLockButton() {
+        if (this.myLockScreenPass === false && this.myLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock-open" @click=${() => this.openSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock-open" @click=${() => this.setLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openSetScreenLockPass() {
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setLockScreenPass').open()
+    }
+
+    closeSetScreenLockPass() {
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+    }
+
+    checkPass() {
+        const password = this.shadowRoot.getElementById('lockPassword').value
+        const rePassword = this.shadowRoot.getElementById('lockPasswordConfirm').value
+
+        if (password === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
+        }
+
+        if (password != rePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
+
+        if (password.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.lowPass = ''
+            this.lowPass = password
+            this.extraConfirm()
+        }
+
+        if (password.length >= 8) {
+            this.setNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
+
+    extraConfirm() {
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+        this.shadowRoot.getElementById('extraConfirmPass').open()
+    }
+
+    closExtraConfirmPass() {
+        this.shadowRoot.getElementById('extraConfirmPass').close()
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+    }
+
+    setNewScreenPass() {
+        const rawPassword = this.shadowRoot.getElementById('lockPassword').value
+        const cryptPassword = encryptData(rawPassword, this.salt)
+        localStorage.setItem(this.lockScreenPass, cryptPassword)
+        this.myLockScreenPass = ''
+        this.myLockScreenPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+        this.shadowRoot.getElementById('setLockScreenPass').close()
+        this.shadowRoot.getElementById('extraConfirmPass').close()
+        this.shadowRoot.getElementById('lockPassword').value = ''
+        this.shadowRoot.getElementById('lockPasswordConfirm').value = ''
+    }
+
+    setLockQortal() {
+        this.helperMessage = this.renderHelperPass()
+        this.lockSet = ''
+        this.lockSet = encryptData(true, this.salt)
+        localStorage.setItem(this.lockScreenSet, this.lockSet)
+        this.myLockScreenSet = ''
+        this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+        this.shadowRoot.getElementById('lockScreenActive').open()
+    }
+
+    passKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeLockScreenActive()
+        }
+    }
+
+    async closeLockScreenActive() {
+        const myPass = decryptData(localStorage.getItem(this.lockScreenPass), this.salt)
+        const checkPass = this.shadowRoot.getElementById('unlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (checkPass === myPass) {
+            this.lockSet = ''
+            this.lockSet = encryptData(false, this.salt)
+            localStorage.setItem(this.lockScreenSet, this.lockSet)
+            this.myLockScreenSet = ''
+            this.myLockScreenSet = decryptData(localStorage.getItem(this.lockScreenSet), this.salt)
+            this.shadowRoot.getElementById('lockScreenActive').close()
+            this.shadowRoot.getElementById('unlockPassword').value = ''
+            this.helperMessage = this.renderHelperPass()
+        } else {
+            this.shadowRoot.getElementById('unlockPassword').value = ''
+            this.helperMessage = this.renderHelperErr()
+            await errDelay(3000)
+            this.helperMessage = this.renderHelperPass()
+            return
+        }
+    }
+
+    renderHelperPass() {
+        return html`<span style="color: #fff; font-size: 13px; font-weight: bold; float: left;">${translate("login.pleaseenter")}</span>`
+    }
+
+    renderHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-size: 13px; font-weight: bold; float: right;">${translate("login.lp8")}</span>`
+    }
+
     renderNodeManagement() {
         const checkNodeManagement = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         if ((checkNodeManagement.enableManagement = true)) {
             return html`
-                <side-menu-item drawer-toggle label="${translate('sidemenu.nodemanagement')}" href="/app/node-management">
+                <side-menu-item id="qnode" label="${translate('sidemenu.nodemanagement')}" href="/app/node-management">
                     <vaadin-icon icon="vaadin:cloud" slot="icon"></vaadin-icon>
                 </side-menu-item>
             `
@@ -2145,9 +2466,541 @@ class AppView extends connect(store)(LitElement) {
     }
 
     stateChanged(state) {
+        const split = state.app.url.split('/')
+        const sideurl = split[2]
         this.config = state.config
         this.urls = state.app.registeredUrls
         this.addressInfo = state.app.accountInfo.addressInfo
+
+        if (sideurl === "minting") {
+            this.shadowRoot.getElementById('qminter').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "become-minter") {
+            this.shadowRoot.getElementById('qbminter').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "sponsorship-list") {
+            this.shadowRoot.getElementById('qiminter').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "wallet") {
+            this.shadowRoot.getElementById('qwallet').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "trade-portal") {
+            this.shadowRoot.getElementById('qtrade').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "trade-bot-portal") {
+            this.shadowRoot.getElementById('qbot').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "reward-share") {
+            this.shadowRoot.getElementById('qrewardshare').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "q-chat") {
+            this.shadowRoot.getElementById('qchat').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "name-registration") {
+            this.shadowRoot.getElementById('qnamereg').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "names-market") {
+            this.shadowRoot.getElementById('qnamemarket').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "websites") {
+            this.shadowRoot.getElementById('qweb').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "qapps") {
+            this.shadowRoot.getElementById('qapp').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "group-management") {
+            this.shadowRoot.getElementById('qgroupmange').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "puzzles") {
+            this.shadowRoot.getElementById('qpuzzles').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "data-management") {
+            this.shadowRoot.getElementById('qdata').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnode').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnode').removeAttribute('selected')
+            }
+        } else if (sideurl === "node-management") {
+            this.shadowRoot.getElementById('qnode').setAttribute('selected', 'selected')
+            if (this.shadowRoot.getElementById('qminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qiminter').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qiminter').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qwallet').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qwallet').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qtrade').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qtrade').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qbot').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qbot').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qrewardshare').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qrewardshare').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qchat').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qchat').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamereg').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamereg').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qnamemarket').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qnamemarket').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qweb').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qweb').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qapp').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qapp').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qgroupmange').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qgroupmange').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qpuzzles').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qpuzzles').removeAttribute('selected')
+            } else if (this.shadowRoot.getElementById('qdata').hasAttribute('selected')) {
+                this.shadowRoot.getElementById('qdata').removeAttribute('selected')
+            }
+        }
     }
 
     openSettings() {

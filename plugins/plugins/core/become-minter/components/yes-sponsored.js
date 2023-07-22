@@ -6,8 +6,8 @@ import { use, translate, registerTranslateConfig } from 'lit-translate';
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
 });
-import '@polymer/paper-spinner/paper-spinner-lite.js';
 
+import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@vaadin/button';

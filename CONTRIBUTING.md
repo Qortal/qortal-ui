@@ -5,4 +5,4 @@
 3) Push changes to your repository
 4) Push changes to parent repository (make a pull request)
 
-As long the code change is good we will merge it.
+As long as the code change is good we will merge it.

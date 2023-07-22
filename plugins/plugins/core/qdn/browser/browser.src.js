@@ -1,30 +1,27 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { Epml } from '../../../../epml';
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../../epml'
+import isElectron from 'is-electron'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
+	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
+})
+
 import FileSaver from 'file-saver'
-import * as actions from '../../components/qdn-action-types';
-import '@material/mwc-button';
-import '@material/mwc-icon';
+import * as actions from '../../components/qdn-action-types'
+import '@material/mwc-button'
+import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
-import WebWorkerChat from 'web-worker:./computePowWorker.src.js';
-import { publishData } from '../../../utils/publish-image.js';
+import WebWorker from 'web-worker:./computePowWorkerFile.src.js'
+import WebWorkerChat from 'web-worker:./computePowWorker.src.js'
+import { publishData } from '../../../utils/publish-image.js'
 import { Loader } from '../../../utils/loader.js';
-import { QORT_DECIMALS } from '../../../../../crypto/api/constants';
+import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, decryptDeprecatedSingle, decryptGroupData, encryptData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import { base64ToUint8Array, decryptDeprecatedSingle, decryptGroupData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -114,6 +111,10 @@ class WebBrowser extends LitElement {
 				font-size: 16px;
 				background-color: var(--white);
 			}
+			input {
+    			outline: none
+			}
+			
 
 			paper-progress {
 				--paper-progress-active-color: var(--mdc-theme-primary);
@@ -204,11 +205,11 @@ class WebBrowser extends LitElement {
 		}
 
 		this.selectedAddress = {}
-		this.btcFeePerByte = 100
-		this.ltcFeePerByte = 30
-		this.dogeFeePerByte = 1000
-		this.dgbFeePerByte = 10
-		this.rvnFeePerByte = 1125
+		this.btcFeePerByte = 0.00000100
+		this.ltcFeePerByte = 0.00000030
+		this.dogeFeePerByte = 0.00001000
+		this.dgbFeePerByte = 0.00000010
+		this.rvnFeePerByte = 0.00001125
 		this.arrrWalletAddress = ''
 
 		let configLoaded = false;
@@ -235,18 +236,78 @@ class WebBrowser extends LitElement {
 					configLoaded = true;
 				}
 			})
-			parentEpml.subscribe('copy_menu_switch', async (value) => {
-				if (
-					value === 'false' &&
-					window.getSelection().toString().length !== 0
-				) {
-					this.clearSelection();
-				}
-			})
 		})
 	}
 
+	async extractComponents(url) {
+		if (!url.startsWith("qortal://")) {
+			return null;
+		}
+
+		url = url.replace(/^(qortal\:\/\/)/, "");
+		if (url.includes("/")) {
+			let parts = url.split("/");
+			const service = parts[0].toUpperCase();
+			parts.shift();
+			const name = parts[0];
+			parts.shift();
+			let identifier;
+
+			if (parts.length > 0) {
+				identifier = parts[0]; // Do not shift yet
+				// Check if a resource exists with this service, name and identifier combination
+				let responseObj = await parentEpml.request('apiCall', {
+					url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
+				})
+
+				if (responseObj.totalChunkCount > 0) {
+					// Identifier exists, so don't include it in the path
+					parts.shift();
+				}
+				else {
+					identifier = null;
+				}
+			}
+
+			const path = parts.join("/");
+
+			const components = {};
+			components["service"] = service;
+			components["name"] = name;
+			components["identifier"] = identifier;
+			components["path"] = path;
+			return components;
+		}
+
+		return null;
+	}
+
+	async _handleKeyDown(e) {
+		if (e.key === 'Enter') {
+			const value = e.target.value
+			let newQuery = value;
+			if (newQuery.endsWith('/')) {
+				newQuery = newQuery.slice(0, -1);
+			}
+			const res = await this.extractComponents(newQuery)
+			if (!res) return
+			const { service, name, identifier, path } = res
+			let query = `?service=${service}`
+			if (name) {
+				query = query + `&name=${name}`
+			}
+			if (identifier) {
+				query = query + `&identifier=${identifier}`
+			}
+			if (path) {
+				query = query + `&path=${path}`
+			}
+			window.location = window.location.origin + window.location.pathname + query
+		}
+	}
+
 	render() {
+
 		return html`
     			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     				<div class="layout horizontal center">
@@ -255,7 +316,7 @@ class WebBrowser extends LitElement {
     						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
     						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
     						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
-    						<input disabled style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
+    						<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
     						${this.renderFullScreen()}
     						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
     						${this.renderBlockUnblockButton()}
@@ -487,15 +548,6 @@ class WebBrowser extends LitElement {
 		this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
 		this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 
-		window.addEventListener('contextmenu', (event) => {
-			event.preventDefault();
-			this._textMenu(event);
-		});
-
-		window.addEventListener('click', () => {
-			parentEpml.request('closeCopyTextMenu', null);
-		});
-
 		window.addEventListener('storage', () => {
 			const checkLanguage = localStorage.getItem('qortalLanguage');
 			const checkTheme = localStorage.getItem('qortalTheme');
@@ -510,11 +562,13 @@ class WebBrowser extends LitElement {
 			document.querySelector('html').setAttribute('theme', this.theme);
 		});
 
-		window.onkeyup = (e) => {
-			if (e.keyCode === 27) {
-				parentEpml.request('closeCopyTextMenu', null);
-			}
-		};
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
 
 		window.addEventListener('message', async (event) => {
 			if (
@@ -610,7 +664,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					} catch (error) {
-						console.log({ error })
+
 						const data = {};
 						const errorMsg = error.message || "Error in decrypting data"
 						data['error'] = errorMsg;
@@ -833,7 +887,42 @@ class WebBrowser extends LitElement {
 					this.service = data.service;
 					this.identifier = data.identifier;
 					this.displayUrl = url;
+
+					const frame = window.frameElement
+					let tabId = ""
+					if (frame && frame.dataset.id) {
+						tabId = frame.dataset.id
+					}
+
+					if (data.name === 'Q-Mail') {
+						localStorage.setItem("Q-Mail-last-visited", Date.now())
+
+					}
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.addTabInfo({
+						name: data.name,
+						service: data.service,
+						id: tabId ? tabId : ""
+					}))
 					return;
+				case actions.SET_TAB_NOTIFICATIONS: {
+					const { count } = data
+					if (isNaN(count)) {
+						response['error'] = 'count is not a number'
+						break
+					}
+					if (count === undefined) {
+						response['error'] = 'missing count'
+						break
+					}
+
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.setTabNotifications({
+						name: this.name,
+						count: count
+					}))
+					response = true
+					break
+
+				}
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
@@ -1602,62 +1691,65 @@ class WebBrowser extends LitElement {
 							} finally {
 								this.loader.hide();
 							}
-						}
-						// else {
-						// 	let _url = ``
-						// 	let _body = null
+						} else {
+							let _url = ``
+							let _body = null
 
-						// 	switch (coin) {
-						// 		case 'LTC':
-						// 			_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
-						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
-						// 			break
-						// 		case 'DOGE':
-						// 			_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
-						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
-						// 			break
-						// 		case 'DGB':
-						// 			_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
-						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
-						// 			break
-						// 		case 'RVN':
-						// 			_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
-						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
-						// 			break
-						// 		case 'ARRR':
-						// 			_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
-						// 			_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
-						// 			break
-						// 		default:
-						// 			break
-						// 	}
-						// 	try {
-						// 		this.loader.show();
-						// 		const res = await parentEpml.request('apiCall', {
-						// 			url: _url,
-						// 			method: 'POST',
-						// 			body: _body,
-						// 		})
-						// 		if (isNaN(Number(res))) {
-						// 			const data = {};
-						// 			const errorMsg = error.message || get("browserpage.bchange21");
-						// 			data['error'] = errorMsg;
-						// 			response = JSON.stringify(data);
-						// 			return;
-						// 		} else {
-						// 			response = (Number(res) / 1e8).toFixed(8);
-						// 		}
-						// 	} catch (error) {
-						// 		console.error(error);
-						// 		const data = {};
-						// 		const errorMsg = error.message || get("browserpage.bchange21");
-						// 		data['error'] = errorMsg;
-						// 		response = JSON.stringify(data);
-						// 		return;
-						// 	} finally {
-						// 		this.loader.hide()
-						// 	}
-						// }
+							switch (coin) {
+								case 'BTC':
+									_url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+									break
+								case 'LTC':
+									_url = `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+									break
+								case 'DOGE':
+									_url = `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+									break
+								case 'DGB':
+									_url = `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+									break
+								case 'RVN':
+									_url = `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+									break
+								case 'ARRR':
+									_url = `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+									break
+								default:
+									break
+							}
+							try {
+								this.loader.show();
+								const res = await parentEpml.request('apiCall', {
+									url: _url,
+									method: 'POST',
+									body: _body,
+								})
+								if (isNaN(Number(res))) {
+									const data = {};
+									const errorMsg = error.message || get("browserpage.bchange21");
+									data['error'] = errorMsg;
+									response = JSON.stringify(data);
+									return;
+								} else {
+									response = (Number(res) / 1e8).toFixed(8);
+								}
+							} catch (error) {
+								console.error(error);
+								const data = {};
+								const errorMsg = error.message || get("browserpage.bchange21");
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								return;
+							} finally {
+								this.loader.hide()
+							}
+						}
 					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}';
 					}
@@ -1727,7 +1819,7 @@ class WebBrowser extends LitElement {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -1758,7 +1850,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -1897,6 +1990,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.btcWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.btcFeePerByte
 
 						const btcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`,
@@ -1919,14 +2013,14 @@ class WebBrowser extends LitElement {
 						const btcWalletBalanceDecimals = Number(btcWalletBalance)
 						const btcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(btcWalletBalance) / 1e8).toFixed(8)
-						const fee = 50000
+						const fee = feePerByte * 500 // default 0.00050000
 
-						if (btcAmountDecimals + fee > btcWalletBalanceDecimals) {
+						if (btcAmountDecimals + (fee * QORT_DECIMALS) > btcWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -1941,7 +2035,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -1961,7 +2056,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								bitcoinAmount: amount,
-								feePerByte: (this.btcFeePerByte / 1e8).toFixed(8)
+								feePerByte: feePerByte * QORT_DECIMALS
 							}
 							const response = await parentEpml.request('sendBtc', opts)
 							return response
@@ -2003,6 +2098,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.ltcWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.ltcFeePerByte
 
 						const ltcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2025,14 +2121,14 @@ class WebBrowser extends LitElement {
 						const ltcWalletBalanceDecimals = Number(ltcWalletBalance)
 						const ltcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(ltcWalletBalance) / 1e8).toFixed(8)
-						const fee = 30000
+						const fee = feePerByte * 1000 // default 0.00030000
 
-						if (ltcAmountDecimals + fee > ltcWalletBalanceDecimals) {
+						if (ltcAmountDecimals + (fee * QORT_DECIMALS) > ltcWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2047,7 +2143,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -2067,7 +2164,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								litecoinAmount: amount,
-								feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8)
+								feePerByte: feePerByte * QORT_DECIMALS
 							}
 							const response = await parentEpml.request('sendLtc', opts)
 							return response
@@ -2109,6 +2206,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.dogeWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.dogeFeePerByte
 
 						const dogeWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2131,14 +2229,14 @@ class WebBrowser extends LitElement {
 						const dogeWalletBalanceDecimals = Number(dogeWalletBalance)
 						const dogeAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dogeWalletBalance) / 1e8).toFixed(8)
-						const fee = 5000000
+						const fee = feePerByte * 5000 // default 0.05000000
 
-						if (dogeAmountDecimals + fee > dogeWalletBalanceDecimals) {
+						if (dogeAmountDecimals + (fee * QORT_DECIMALS) > dogeWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2153,7 +2251,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -2173,7 +2272,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								dogecoinAmount: amount,
-								feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8)
+								feePerByte: feePerByte * QORT_DECIMALS
 							}
 							const response = await parentEpml.request('sendDoge', opts)
 							return response
@@ -2215,6 +2314,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.dgbWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.dgbFeePerByte
 
 						const dgbWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2237,14 +2337,14 @@ class WebBrowser extends LitElement {
 						const dgbWalletBalanceDecimals = Number(dgbWalletBalance)
 						const dgbAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dgbWalletBalance) / 1e8).toFixed(8)
-						const fee = 5000
+						const fee = feePerByte * 500 // default 0.00005000
 
-						if (dgbAmountDecimals + fee > dgbWalletBalanceDecimals) {
+						if (dgbAmountDecimals + (fee * QORT_DECIMALS) > dgbWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2259,7 +2359,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -2279,7 +2380,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								digibyteAmount: amount,
-								feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8)
+								feePerByte: feePerByte * QORT_DECIMALS
 							}
 							const response = await parentEpml.request('sendDgb', opts)
 							return response
@@ -2321,6 +2422,7 @@ class WebBrowser extends LitElement {
 						const recipient = data.destinationAddress
 						const coin = data.coin
 						const xprv58 = this.rvnWallet.derivedMasterPrivateKey
+						const feePerByte = data.fee ? data.fee : this.rvnFeePerByte
 
 						const rvnWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`,
@@ -2343,14 +2445,14 @@ class WebBrowser extends LitElement {
 						const rvnWalletBalanceDecimals = Number(rvnWalletBalance)
 						const rvnAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(rvnWalletBalance) / 1e8).toFixed(8)
-						const fee = 562500
+						const fee = feePerByte * 500 // default 0.00562500
 
-						if (rvnAmountDecimals + fee > rvnWalletBalanceDecimals) {
+						if (rvnAmountDecimals + (fee * QORT_DECIMALS) > rvnWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2365,7 +2467,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -2385,7 +2488,7 @@ class WebBrowser extends LitElement {
 								xprv58: xprv58,
 								receivingAddress: recipient,
 								ravencoinAmount: amount,
-								feePerByte: (this.rvnFeePerByte / 1e8).toFixed(8)
+								feePerByte: feePerByte * QORT_DECIMALS
 							}
 							const response = await parentEpml.request('sendRvn', opts)
 							return response
@@ -2450,14 +2553,14 @@ class WebBrowser extends LitElement {
 						const arrrWalletBalanceDecimals = Number(arrrWalletBalance)
 						const arrrAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(arrrWalletBalance) / 1e8).toFixed(8)
-						const fee = 10000
+						const fee = 0.00010000
 
-						if (arrrAmountDecimals + fee > arrrWalletBalanceDecimals) {
+						if (arrrAmountDecimals + (fee * QORT_DECIMALS) > arrrWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
 							let pleaseMsg = get("walletpage.wchange44")
-							showErrorAndWait("INSSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2472,7 +2575,8 @@ class WebBrowser extends LitElement {
 								amount,
 								recipient,
 								coin,
-								balance
+								balance,
+								fee
 							}
 						)
 
@@ -2819,40 +2923,6 @@ class WebBrowser extends LitElement {
 		return ret;
 	}
 
-	_textMenu(event) {
-		const getSelectedText = () => {
-			var text = '';
-			if (typeof window.getSelection != 'undefined') {
-				text = window.getSelection().toString();
-			} else if (
-				typeof this.shadowRoot.selection != 'undefined' &&
-				this.shadowRoot.selection.type == 'Text'
-			) {
-				text = this.shadowRoot.selection.createRange().text;
-			}
-			return text;
-		};
-
-		const checkSelectedTextAndShowMenu = () => {
-			let selectedText = getSelectedText();
-			if (selectedText && typeof selectedText === 'string') {
-				let _eve = {
-					pageX: event.pageX,
-					pageY: event.pageY,
-					clientX: event.clientX,
-					clientY: event.clientY,
-				};
-				let textMenuObject = {
-					selectedText: selectedText,
-					eventObject: _eve,
-					isFrame: true,
-				};
-				parentEpml.request('openCopyTextMenu', textMenuObject);
-			}
-		};
-		checkSelectedTextAndShowMenu();
-	}
-
 	getApiKey() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
@@ -2860,11 +2930,6 @@ class WebBrowser extends LitElement {
 			];
 		let apiKey = myNode.apiKey;
 		return apiKey;
-	}
-
-	clearSelection() {
-		window.getSelection().removeAllRanges();
-		window.parent.getSelection().removeAllRanges();
 	}
 }
 
@@ -2942,6 +3007,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange19")}:</span> ${data.balance} ${data.coin}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange10")}:</span> ${data.recipient}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange11")}:</span> ${data.amount} ${data.coin}</p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("walletpage.wchange36")}:</span> ~${data.fee} ${data.coin}</p>
 							</div>
 						` : ''}
 
@@ -3087,7 +3153,7 @@ async function showErrorAndWait(type, data, data1) {
 						</div>
 					` : ''}
 
-					${type === "INSSUFFICIENT_FUNDS" ? `
+					${type === "INSUFFICIENT_FUNDS" ? `
 						<div class="modal-subcontainer-error">
 							<p class="modal-paragraph-error">${data}</p>
 							<p class="modal-paragraph-error">${data1}</p>

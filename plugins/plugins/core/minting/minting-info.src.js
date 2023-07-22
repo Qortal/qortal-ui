@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -396,7 +397,15 @@ class MintingInfo extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        let configLoaded = false;
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
+        }
+
+        let configLoaded = false
 
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
@@ -417,9 +426,6 @@ class MintingInfo extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
-            })
-            parentEpml.subscribe('copy_menu_switch', async value => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection()
             })
         })
         parentEpml.imReady()

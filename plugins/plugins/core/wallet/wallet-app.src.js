@@ -1,7 +1,10 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import Base58 from '../../../../crypto/api/deps/Base58.js'
+import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -20,6 +23,7 @@ import '@material/mwc-icon'
 import '@material/mwc-icon-button'
 import '@material/mwc-tab-bar'
 import '@material/mwc-textfield'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-progress/paper-progress.js'
 import '@polymer/paper-slider/paper-slider.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
@@ -29,6 +33,7 @@ import '@vaadin/button'
 import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
+import '@vaadin/password-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -96,7 +101,23 @@ class MultiWallet extends LitElement {
             dgbBookAddress: { type: String },
             rvnBookAddress: { type: String },
             arrrBookAddress: { type: String },
-            myElementId: { type: String }
+            myElementId: { type: String },
+            walletSalt: { type: String },
+            walletStorageData: { type: String },
+            walletLockScreenPass: { type: String },
+            walletLockScreenSet: { type: String },
+            walletLockPass: { type: String },
+            walletLockSet: { type: String },
+            myWalletLockScreenPass: { type: String },
+            myWalletLockScreenSet: { type: String },
+            walletHelperMessage: { type: String },
+            bookQortalAddress: { type: String },
+            bookBitcoinAddress: { type: String },
+            bookLitecoinAddress: { type: String },
+            bookDogecoinAddress: { type: String },
+            bookDigibyteAddress: { type: String },
+            bookRavencoinAddress: { type: String },
+            bookPiratechainAddress: { type: String }
         }
     }
 
@@ -111,8 +132,9 @@ class MultiWallet extends LitElement {
                 --mdc-theme-primary: rgb(3, 169, 244);
                 --mdc-theme-secondary: var(--mdc-theme-primary);
                 --mdc-theme-surface: var(--white);
+		--mdc-theme-error: rgb(255, 89, 89);
                 --mdc-dialog-content-ink-color: var(--black);
-                --mdc-dialog-min-width: 400px;
+                --mdc-dialog-min-width: 500px;
                 --mdc-dialog-max-width: 1024px;
                 --paper-input-container-focus-color: var(--mdc-theme-primary);
                 --lumo-primary-text-color: rgb(0, 167, 245);
@@ -120,6 +142,8 @@ class MultiWallet extends LitElement {
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
                 --lumo-primary-color: hsl(199, 100%, 48%);
                 --lumo-base-color: var(--white);
+                --lumo-secondary-text-color: var(--sectxt);
+                --lumo-contrast-60pct: var(--vdicon);
                 --lumo-body-text-color: var(--black);
                 --_lumo-grid-border-color: var(--border);
                 --_lumo-grid-secondary-border-color: var(--border2);
@@ -216,6 +240,18 @@ class MultiWallet extends LitElement {
 
             .sans {
                 font-family: 'Open Sans', sans-serif;
+            }
+
+            .magistral {
+                font-family: 'magistralbold';
+            }
+
+            .montserrat {
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .maven {
+                font-family: 'MavenPro', sans-serif;
             }
 
             .weight-100 {
@@ -317,6 +353,7 @@ class MultiWallet extends LitElement {
             }
 
             .header-title {
+                display: inlinr;
                 font-size: 32px;
                 color: var(--black);
                 font-weight: 600;
@@ -591,18 +628,18 @@ class MultiWallet extends LitElement {
                 cursor: pointer;
             }
 
-		.warning-text {
-			animation: blinker 1.5s linear infinite;
-			text-align: center;
-			margin-top: 10px;
-			color: rgb(255, 89, 89);
-		}
+            .warning-text {
+                animation: blinker 1.5s linear infinite;
+                text-align: center;
+                margin-top: 10px;
+                color: rgb(255, 89, 89);
+            }
 
-		@keyframes blinker {
-			50% {
-				opacity: 0;
-			}
-		}
+            @keyframes blinker {
+                50% {
+                    opacity: 0;
+                 }
+             }
 
             @media (max-width: 764px) {
                 .wallet {
@@ -639,6 +676,61 @@ class MultiWallet extends LitElement {
                 h2 {
                     font: 18px/24px 'Open Sans', sans-serif;
                 }
+            }
+
+            .setpass-wrapper {
+                width: 100%;
+                min-width: 400px;
+                max-width: 450px;
+                text-align: center;
+                background: var(--white);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                padding: 10px 10px 0px;
+                box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+             }
+
+             .lock-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 600px;
+                 max-width: 600px;
+                 min-height: 400px;
+                 max-height: 400px;
+                 text-align: center;
+                 background: url("/img/qortal-lock.jpg");
+                 border: 1px solid var(--black);
+                 border-radius: 25px;
+                 padding: 10px 10px 0px;
+             }
+
+             .text-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 280px;
+                 max-width: 280px;
+                 min-height: 64px;
+                 max-height: 64px;
+                 text-align: center;
+                 margin-left: 35px;
+                 margin-top: 125px;
+                 overflow: hidden;
+             }
+
+            .lock-title-white {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #ffffff;
+            }
+
+            .lock-title-red {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #df3636;
             }
         `
     }
@@ -718,6 +810,22 @@ class MultiWallet extends LitElement {
         this.rvnFeePerByte = 1125
         this.rvnSatMinFee = 1000
         this.rvnSatMaxFee = 10000
+        this.walletSalt = ''
+        this.walletStorageData = ''
+        this.walletLockScreenPass = ''
+        this.walletLockScreenSet = ''
+        this.walletLockPass = ''
+        this.walletLockSet = ''
+        this.myWalletLockScreenPass = ''
+        this.myWalletLockScreenSet = ''
+        this.walletHelperMessage = ''
+        this.bookQortalAddress = ''
+        this.bookBitcoinAddress = ''
+        this.bookLitecoinAddress = ''
+        this.bookDogecoinAddress = ''
+        this.bookDigibyteAddress = ''
+        this.bookRavencoinAddress = ''
+        this.bookPiratechainAddress = ''
 
         this.wallets = new Map()
 
@@ -756,21 +864,6 @@ class MultiWallet extends LitElement {
                 this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
                 this.wallets.get('arrr').wallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
             })
-
-            parentEpml.subscribe('copy_menu_switch', async (value) => {
-                if (value === 'false' && this.isTextMenuOpen === true) {
-                    this.clearSelection()
-                    this.isTextMenuOpen = false
-                }
-            })
-
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
-                res = JSON.parse(res)
-                if (res.isOpen === false && this.isPasteMenuOpen === true) {
-                    this.pasteToTextBox(this.myElementId)
-                    this.isPasteMenuOpen = false
-                }
-            })
         })
     }
 
@@ -778,7 +871,7 @@ class MultiWallet extends LitElement {
         return html`
             <div class="wrapper">
                 <div class="header-title sans">
-                    ${translate("walletpage.wchange22")}
+                    ${translate("walletpage.wchange22")} ${this.renderWalletLockButton()}
                 </div>
 
                 <div class="fullWidth">
@@ -1757,10 +1850,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="qortBookGrid" ?hidden="${this.isEmptyArray(this.qortBook)}" aria-label="QORT Addressbook" .items="${this.qortBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromQortAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeQortAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1791,10 +1888,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="btcBookGrid" ?hidden="${this.isEmptyArray(this.btcBook)}" aria-label="BTC Addressbook" .items="${this.btcBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromBtcAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeBtcAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1825,10 +1926,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="ltcBookGrid" ?hidden="${this.isEmptyArray(this.ltcBook)}" aria-label="LTC Addressbook" .items="${this.ltcBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromLtcAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeLtcAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1859,10 +1964,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dogeBookGrid" ?hidden="${this.isEmptyArray(this.dogeBook)}" aria-label="DOGE Addressbook" .items="${this.dogeBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromDogeAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeDogeAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1893,10 +2002,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="dgbBookGrid" ?hidden="${this.isEmptyArray(this.dgbBook)}" aria-label="DGB Addressbook" .items="${this.dgbBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromDgbAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeDgbAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1927,10 +2040,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="rvnBookGrid" ?hidden="${this.isEmptyArray(this.rvnBook)}" aria-label="RVN Addressbook" .items="${this.rvnBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromRvnAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeRvnAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -1961,10 +2078,14 @@ class MultiWallet extends LitElement {
                     <hr>
                     <br>
                     <vaadin-grid theme="compact" id="arrrBookGrid" ?hidden="${this.isEmptyArray(this.arrrBook)}" aria-label="ARRR Addressbook" .items="${this.arrrBook}" all-rows-visible>
-                        <vaadin-grid-column auto-width header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
+                        <vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
                         <vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
                         <vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
                             render(html`${this.renderSendFromArrrAddressbookButton(data.item)}`, root);
+                        }}>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
+                            render(html`<mwc-button class="red" @click=${() => this.removeArrrAddress(data.item.address)}><mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}</mwc-button>`, root)
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -2641,6 +2762,59 @@ class MultiWallet extends LitElement {
                     </mwc-button>
                 </mwc-dialog>
             </div>
+            <paper-dialog class="setpass-wrapper" id="setWalletLockScreenPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm5")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                    <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="walletLockPassword" autofocus></vaadin-password-field>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="walletLockPasswordConfirm"></vaadin-password-field>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closewWalletSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.walletCheckPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="walletExtraConfirmPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm5")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closWalletExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.setWalletNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="lock-wrapper" id="walletLockScreenActive" modal>
+                <div class="text-wrapper">
+                    <span class="lock-title-white">${translate("sidemenu.wallets")}</span><br/>
+                    <span class="lock-title-white">${translate("login.lp9")} </span>
+                    <span class="lock-title-red">${translate("login.lp10")}</span>
+                </div>
+                <div style="display:flex; margin-top: 5px;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="walletUnlockPassword" @keydown="${this.walletPassKeyListener}" autofocus>
+                        <div slot="helper">
+                            ${this.walletHelperMessage}
+                        </div>
+                    </vaadin-password-field>
+                </div>
+                <div style="display: flex; margin-top: 35px;">
+                    <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeWalletLockScreenActive()}"></mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -2648,6 +2822,53 @@ class MultiWallet extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+
+        this.bookQortalAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.bookBitcoinAddress = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
+        this.bookLitecoinAddress = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+        this.bookDogecoinAddress = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
+        this.bookDigibyteAddress = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
+        this.bookRavencoinAddress = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
+        this.bookPiratechainAddress = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.address
+
+        this.walletHelperMessage = this.renderWalletHelperPass()
+
+        this.walletSalt = ''
+        this.walletSalt = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.walletStorageData = ''
+        this.walletStorageData = window.parent.reduxStore.getState().app.selectedAddress.address
+
+        this.walletLockScreenPass = ''
+        this.walletLockScreenPass = 'walletLockScreenPass-' + this.walletStorageData
+
+        this.walletLockScreenSet = ''
+        this.walletLockScreenSet = 'walletLockScreenSet-' + this.walletStorageData
+
+        this.walletLockPass = ''
+        this.walletLockPass = encryptData(false, this.walletSalt)
+
+        this.walletLockSet = ''
+        this.walletLockSet = encryptData(false, this.walletSalt)
+
+        if (localStorage.getItem(this.walletLockScreenPass) === null && localStorage.getItem(this.walletLockScreenSet) === null) {
+            localStorage.setItem(this.walletLockScreenPass, this.walletLockPass)
+            localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+            this.myWalletLockScreenPass = ''
+            this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        } else {
+            this.myWalletLockScreenPass = ''
+            this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        }
+
+        if (this.myWalletLockScreenSet === true) {
+            this.shadowRoot.getElementById('walletLockScreenActive').open()
+        }
+
         this.qortAddressbook()
         this.btcAddressbook()
         this.ltcAddressbook()
@@ -2659,18 +2880,6 @@ class MultiWallet extends LitElement {
         this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
 
         this.showWallet()
-
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this.isTextMenuOpen = true
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            if (this.isTextMenuOpen) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        })
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -2686,386 +2895,144 @@ class MultiWallet extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
+        }
+    }
+
+    renderWalletLockButton() {
+        if (this.myWalletLockScreenPass === false && this.myWalletLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.openWalletSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myWalletLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.setWalletLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myWalletLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openWalletSetScreenLockPass() {
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setWalletLockScreenPass').open()
+    }
+
+    closewWalletSetScreenLockPass() {
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+    }
+
+    walletCheckPass() {
+        const walletPassword = this.shadowRoot.getElementById('walletLockPassword').value
+        const walletRePassword = this.shadowRoot.getElementById('walletLockPasswordConfirm').value
+
+        if (walletPassword === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
         }
 
-        this.shadowRoot.getElementById('amountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'amountInput')
-                    this.myElementId = this.shadowRoot.getElementById('amountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+        if (walletPassword != walletRePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
 
-        this.shadowRoot.getElementById('recipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'recipient')
-                    this.myElementId = this.shadowRoot.getElementById('recipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+        if (walletPassword.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.walletExtraConfirm()
+        }
 
-        this.shadowRoot.getElementById('btcAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'btcAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('btcAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+        if (walletPassword.length >= 8) {
+            this.setWalletNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
 
-        this.shadowRoot.getElementById('btcRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'btcRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('btcRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    walletExtraConfirm() {
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+        this.shadowRoot.getElementById('walletExtraConfirmPass').open()
+    }
 
-        this.shadowRoot.getElementById('ltcAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'ltcAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('ltcAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    closWalletExtraConfirmPass() {
+        this.shadowRoot.getElementById('walletExtraConfirmPass').close()
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+    }
 
-        this.shadowRoot.getElementById('ltcRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'ltcRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('ltcRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    setWalletNewScreenPass() {
+        const walletRawPassword = this.shadowRoot.getElementById('walletLockPassword').value
+        const walletCryptPassword = encryptData(walletRawPassword, this.walletSalt)
+        localStorage.setItem(this.walletLockScreenPass, walletCryptPassword)
+        this.myWalletLockScreenPass = ''
+        this.myWalletLockScreenPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+        this.shadowRoot.getElementById('setWalletLockScreenPass').close()
+        this.shadowRoot.getElementById('walletExtraConfirmPass').close()
+        this.shadowRoot.getElementById('walletLockPassword').value = ''
+        this.shadowRoot.getElementById('walletLockPasswordConfirm').value = ''
+    }
 
-        this.shadowRoot.getElementById('dogeAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dogeAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('dogeAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    setWalletLockQortal() {
+        this.walletHelperMessage = this.renderWalletHelperPass()
+        this.walletLockSet = ''
+        this.walletLockSet = encryptData(true, this.walletSalt)
+        localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+        this.myWalletLockScreenSet = ''
+        this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+        this.shadowRoot.getElementById('walletLockScreenActive').open()
+    }
 
-        this.shadowRoot.getElementById('dogeRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dogeRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('dogeRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    walletPassKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeWalletLockScreenActive()
+        }
+    }
 
-        this.shadowRoot.getElementById('dgbAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dgbAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('dgbAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    async closeWalletLockScreenActive() {
+        const myWalletPass = decryptData(localStorage.getItem(this.walletLockScreenPass), this.walletSalt)
+        const walletCheckPass = this.shadowRoot.getElementById('walletUnlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
 
-        this.shadowRoot.getElementById('dgbRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'dgbRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('dgbRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+        if (walletCheckPass === myWalletPass) {
+            this.walletLockSet = ''
+            this.walletLockSet = encryptData(false, this.walletSalt)
+            localStorage.setItem(this.walletLockScreenSet, this.walletLockSet)
+            this.myWalletLockScreenSet = ''
+            this.myWalletLockScreenSet = decryptData(localStorage.getItem(this.walletLockScreenSet), this.walletSalt)
+            this.shadowRoot.getElementById('walletLockScreenActive').close()
+            this.shadowRoot.getElementById('walletUnlockPassword').value = ''
+            this.walletHelperMessage = this.renderWalletHelperPass()
+        } else {
+            this.shadowRoot.getElementById('walletUnlockPassword').value = ''
+            this.walletHelperMessage = this.renderWalletHelperErr()
+            await errDelay(3000)
+            this.walletHelperMessage = this.renderWalletHelperPass()
+            return
+        }
+    }
 
-        this.shadowRoot.getElementById('rvnAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'rvnAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('rvnAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    renderWalletHelperPass() {
+        return html`<span style="color: #fff; font-weight: bold; font-size: 13px; float: left;">${translate("login.pleaseenter")}</span>`
+    }
 
-        this.shadowRoot.getElementById('rvnRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'rvnRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('rvnRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrAmountInput').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrAmountInput')
-                    this.myElementId = this.shadowRoot.getElementById('arrrAmountInput')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrRecipient').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrRecipient')
-                    this.myElementId = this.shadowRoot.getElementById('arrrRecipient')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
-
-        this.shadowRoot.getElementById('arrrMemo').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'arrrMemo')
-                    this.myElementId = this.shadowRoot.getElementById('arrrMemo')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
+    renderWalletHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-weight: bold;  font-size: 13px; float: right;">${translate("login.lp8")}</span>`
     }
 
     renderWarning() {
@@ -3142,58 +3109,65 @@ class MultiWallet extends LitElement {
     }
 
     qortAddressbook() {
-        if (localStorage.getItem("addressbookQort") === null) {
-            localStorage.setItem("addressbookQort", "")
+        const storedQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        if (localStorage.getItem(storedQortalAddressBook) === null) {
+            localStorage.setItem(storedQortalAddressBook, "")
         } else {
-            this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+            this.qortBook = JSON.parse(localStorage.getItem(storedQortalAddressBook) || "[]")
         }
     }
 
     btcAddressbook() {
-        if (localStorage.getItem("addressbookBtc") === null) {
-            localStorage.setItem("addressbookBtc", "")
+        const storedBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        if (localStorage.getItem(storedBitcoinAddressBook) === null) {
+            localStorage.setItem(storedBitcoinAddressBook, "")
         } else {
-            this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+            this.btcBook = JSON.parse(localStorage.getItem(storedBitcoinAddressBook) || "[]")
         }
     }
 
     ltcAddressbook() {
-        if (localStorage.getItem("addressbookLtc") === null) {
-            localStorage.setItem("addressbookLtc", "")
+        const storedLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        if (localStorage.getItem(storedLitecoinAddressBook) === null) {
+            localStorage.setItem(storedLitecoinAddressBook, "")
         } else {
-            this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+            this.ltcBook = JSON.parse(localStorage.getItem(storedLitecoinAddressBook) || "[]")
         }
     }
 
     dogeAddressbook() {
-        if (localStorage.getItem("addressbookDoge") === null) {
-            localStorage.setItem("addressbookDoge", "")
+        const storedDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        if (localStorage.getItem(storedDogecoinAddressBook) === null) {
+            localStorage.setItem(storedDogecoinAddressBook, "")
         } else {
-            this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+            this.dogeBook = JSON.parse(localStorage.getItem(storedDogecoinAddressBook) || "[]")
         }
     }
 
     dgbAddressbook() {
-        if (localStorage.getItem("addressbookDgb") === null) {
-            localStorage.setItem("addressbookDgb", "")
+        const storedDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        if (localStorage.getItem(storedDigibyteAddressBook) === null) {
+            localStorage.setItem(storedDigibyteAddressBook, "")
         } else {
-            this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+            this.dgbBook = JSON.parse(localStorage.getItem(storedDigibyteAddressBook) || "[]")
         }
     }
 
     rvnAddressbook() {
-        if (localStorage.getItem("addressbookRvn") === null) {
-            localStorage.setItem("addressbookRvn", "")
+        const storedRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        if (localStorage.getItem(storedRavencoinAddressBook) === null) {
+            localStorage.setItem(storedRavencoinAddressBook, "")
         } else {
-            this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+            this.rvnBook = JSON.parse(localStorage.getItem(storedRavencoinAddressBook) || "[]")
         }
     }
 
     arrrAddressbook() {
-        if (localStorage.getItem("addressbookArrr") === null) {
-            localStorage.setItem("addressbookArrr", "")
+        const storedPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        if (localStorage.getItem(storedPiratechainAddressBook) === null) {
+            localStorage.setItem(storedPiratechainAddressBook, "")
         } else {
-            this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+            this.arrrBook = JSON.parse(localStorage.getItem(storedPiratechainAddressBook) || "[]")
         }
     }
 
@@ -3408,10 +3382,12 @@ class MultiWallet extends LitElement {
     }
 
     addToQortalAddressbook() {
+        const myQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+
         let name = this.shadowRoot.getElementById('qortNameInput').value
         let address = this.shadowRoot.getElementById('qortAddressInput').value
 
-        var oldQortalBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        var oldQortalBook = JSON.parse(localStorage.getItem(myQortalAddressBook) || "[]")
 
         if (name.length === 0) {
             let qortbookstring1 = get("walletpage.wchange50")
@@ -3432,20 +3408,22 @@ class MultiWallet extends LitElement {
 
         oldQortalBook.push(newQortalBookItem)
 
-        localStorage.setItem("addressbookQort", JSON.stringify(oldQortalBook))
+        localStorage.setItem(myQortalAddressBook, JSON.stringify(oldQortalBook))
 
         let qortbookstring2 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${qortbookstring2}`)
 
         this.closeQortAddressDialog()
-        this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        this.qortBook = JSON.parse(localStorage.getItem(myQortalAddressBook) || "[]")
     }
 
     addToBitcoinAddressbook() {
+        const myBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+
         let name = this.shadowRoot.getElementById('btcNameInput').value
         let address = this.shadowRoot.getElementById('btcAddressInput').value
 
-        var oldBitcoinBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        var oldBitcoinBook = JSON.parse(localStorage.getItem(myBitcoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let btcbookstring1 = get("walletpage.wchange50")
@@ -3466,20 +3444,22 @@ class MultiWallet extends LitElement {
 
         oldBitcoinBook.push(newBitcoinBookItem)
 
-        localStorage.setItem("addressbookBtc", JSON.stringify(oldBitcoinBook))
+        localStorage.setItem(myBitcoinAddressBook, JSON.stringify(oldBitcoinBook))
 
         let btcbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${btcbookstring3}`)
 
         this.closeBtcAddressDialog()
-        this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        this.btcBook = JSON.parse(localStorage.getItem(myBitcoinAddressBook) || "[]")
     }
 
     addToLitecoinAddressbook() {
+        const myLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+
         let name = this.shadowRoot.getElementById('ltcNameInput').value
         let address = this.shadowRoot.getElementById('ltcAddressInput').value
 
-        var oldLitecoinBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        var oldLitecoinBook = JSON.parse(localStorage.getItem(myLitecoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let ltcbookstring1 = get("walletpage.wchange50")
@@ -3500,20 +3480,22 @@ class MultiWallet extends LitElement {
 
         oldLitecoinBook.push(newLitecoinBookItem)
 
-        localStorage.setItem("addressbookLtc", JSON.stringify(oldLitecoinBook))
+        localStorage.setItem(myLitecoinAddressBook, JSON.stringify(oldLitecoinBook))
 
         let ltcbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${ltcbookstring3}`)
 
         this.closeLtcAddressDialog()
-        this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        this.ltcBook = JSON.parse(localStorage.getItem(myLitecoinAddressBook) || "[]")
     }
 
     addToDogecoinAddressbook() {
+        const myDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+
         let name = this.shadowRoot.getElementById('dogeNameInput').value
         let address = this.shadowRoot.getElementById('dogeAddressInput').value
 
-        var oldDogecoinBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        var oldDogecoinBook = JSON.parse(localStorage.getItem(myDogecoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let dogebookstring1 = get("walletpage.wchange50")
@@ -3534,20 +3516,22 @@ class MultiWallet extends LitElement {
 
         oldDogecoinBook.push(newDogecoinBookItem)
 
-        localStorage.setItem("addressbookDoge", JSON.stringify(oldDogecoinBook))
+        localStorage.setItem(myDogecoinAddressBook, JSON.stringify(oldDogecoinBook))
 
         let dogebookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${dogebookstring3}`)
 
         this.closeDogeAddressDialog()
-        this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        this.dogeBook = JSON.parse(localStorage.getItem(myDogecoinAddressBook) || "[]")
     }
 
     addToDigibyteAddressbook() {
+        const myDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+
         let name = this.shadowRoot.getElementById('dgbNameInput').value
         let address = this.shadowRoot.getElementById('dgbAddressInput').value
 
-        var oldDigibyteBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        var oldDigibyteBook = JSON.parse(localStorage.getItem(myDigibyteAddressBook) || "[]")
 
         if (name.length === 0) {
             let dgbbookstring1 = get("walletpage.wchange50")
@@ -3568,20 +3552,22 @@ class MultiWallet extends LitElement {
 
         oldDigibyteBook.push(newDigibyteBookItem)
 
-        localStorage.setItem("addressbookDgb", JSON.stringify(oldDigibyteBook))
+        localStorage.setItem(myDigibyteAddressBook, JSON.stringify(oldDigibyteBook))
 
         let dgbbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${dgbbookstring3}`)
 
         this.closeDgbAddressDialog()
-        this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        this.dgbBook = JSON.parse(localStorage.getItem(myDigibyteAddressBook) || "[]")
     }
 
     addToRavencoinAddressbook() {
+        const myRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+
         let name = this.shadowRoot.getElementById('rvnNameInput').value
         let address = this.shadowRoot.getElementById('rvnAddressInput').value
 
-        var oldRavencoinBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        var oldRavencoinBook = JSON.parse(localStorage.getItem(myRavencoinAddressBook) || "[]")
 
         if (name.length === 0) {
             let rvnbookstring1 = get("walletpage.wchange50")
@@ -3602,20 +3588,22 @@ class MultiWallet extends LitElement {
 
         oldRavencoinBook.push(newRavencoinBookItem)
 
-        localStorage.setItem("addressbookRvn", JSON.stringify(oldRavencoinBook))
+        localStorage.setItem(myRavencoinAddressBook, JSON.stringify(oldRavencoinBook))
 
         let rvnbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${rvnbookstring3}`)
 
         this.closeRvnAddressDialog()
-        this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        this.rvnBook = JSON.parse(localStorage.getItem(myRavencoinAddressBook) || "[]")
     }
 
     addToPiratechainAddressbook() {
+        const myPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+
         let name = this.shadowRoot.getElementById('arrrNameInput').value
         let address = this.shadowRoot.getElementById('arrrAddressInput').value
 
-        var oldPiratechainBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        var oldPiratechainBook = JSON.parse(localStorage.getItem(myPiratechainAddressBook) || "[]")
 
         if (name.length === 0) {
             let arrrbookstring1 = get("walletpage.wchange50")
@@ -3636,13 +3624,13 @@ class MultiWallet extends LitElement {
 
         oldPiratechainBook.push(newPiratechainBookItem)
 
-        localStorage.setItem("addressbookArrr", JSON.stringify(oldPiratechainBook))
+        localStorage.setItem(myPiratechainAddressBook, JSON.stringify(oldPiratechainBook))
 
         let arrrbookstring3 = get("walletpage.wchange52")
         parentEpml.request('showSnackBar', `${arrrbookstring3}`)
 
         this.closeArrrAddressDialog()
-        this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        this.arrrBook = JSON.parse(localStorage.getItem(myPiratechainAddressBook) || "[]")
     }
 
     sendFromQortAddressbook(websiteObj) {
@@ -3694,6 +3682,83 @@ class MultiWallet extends LitElement {
         this.shadowRoot.querySelector('#arrrBookDialog').close()
     }
 
+    removeQortAddress(adressObj) {
+        const theQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        const addressToRemove = adressObj
+        this.newQortBookFilter = []
+        this.newQortBookFilter = this.qortBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newQortBookFilter)
+        localStorage.removeItem(theQortalAddressBook)
+        localStorage.setItem(theQortalAddressBook, myNewObj)
+        this.qortBook = JSON.parse(localStorage.getItem(theQortalAddressBook) || "[]")
+    }
+
+    removeBtcAddress(adressObj) {
+        const theBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        const addressToRemove = adressObj
+        this.newBtcBookFilter = []
+        this.newBtcBookFilter = this.btcBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newBtcBookFilter)
+        localStorage.removeItem(theBitcoinAddressBook)
+        localStorage.setItem(theBitcoinAddressBook, myNewObj)
+        this.btcBook = JSON.parse(localStorage.getItem(theBitcoinAddressBook) || "[]")
+    }
+
+    removeLtcAddress(adressObj) {
+        const theLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        const addressToRemove = adressObj
+        this.newLtcBookFilter = []
+        this.newLtcBookFilter = this.ltcBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newLtcBookFilter)
+        localStorage.removeItem(theLitecoinAddressBook)
+        localStorage.setItem(theLitecoinAddressBook, myNewObj)
+        this.ltcBook = JSON.parse(localStorage.getItem(theLitecoinAddressBook) || "[]")
+    }
+
+    removeDogeAddress(adressObj) {
+        const theDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        const addressToRemove = adressObj
+        this.newDogeBookFilter = []
+        this.newDogeBookFilter = this.dogeBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newDogeBookFilter)
+        localStorage.removeItem(theDogecoinAddressBook)
+        localStorage.setItem(theDogecoinAddressBook, myNewObj)
+        this.dogeBook = JSON.parse(localStorage.getItem(theDogecoinAddressBook) || "[]")
+    }
+
+    removeDgbAddress(adressObj) {
+        const theDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        const addressToRemove = adressObj
+        this.newDgbBookFilter = []
+        this.newDgbBookFilter = this.dgbBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newDgbBookFilter)
+        localStorage.removeItem(theDigibyteAddressBook)
+        localStorage.setItem(theDigibyteAddressBook, myNewObj)
+        this.dgbBook = JSON.parse(localStorage.getItem(theDigibyteAddressBook) || "[]")
+    }
+
+    removeRvnAddress(adressObj) {
+        const theRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        const addressToRemove = adressObj
+        this.newRvnBookFilter = []
+        this.newRvnBookFilter = this.rvnBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newRvnBookFilter)
+        localStorage.removeItem(theRavencoinAddressBook)
+        localStorage.setItem(theRavencoinAddressBook, myNewObj)
+        this.rvnBook = JSON.parse(localStorage.getItem(theRavencoinAddressBook) || "[]")
+    }
+
+    removeArrrAddress(adressObj) {
+        const thePiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        const addressToRemove = adressObj
+        this.newArrrBookFilter = []
+        this.newArrrBookFilter = this.arrrBook.filter((item) => item.address !== addressToRemove)
+        const myNewObj = JSON.stringify(this.newArrrBookFilter)
+        localStorage.removeItem(thePiratechainAddressBook)
+        localStorage.setItem(thePiratechainAddressBook, myNewObj)
+        this.arrrBook = JSON.parse(localStorage.getItem(thePiratechainAddressBook) || "[]")
+    }
+
     renderSendFromQortAddressbookButton(websiteObj) {
         return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} QORT" icon="send" @click="${() => this.sendFromQortAddressbook(websiteObj)}"></mwc-button>`
     }
@@ -3723,121 +3788,135 @@ class MultiWallet extends LitElement {
     }
 
     exportQortAddressbook() {
+        const expQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
         let bookname = ""
-        const qortBookData = JSON.stringify(localStorage.getItem("addressbookQort"))
+        const qortBookData = JSON.stringify(localStorage.getItem(expQortalAddressBook))
         const qortBookSave = JSON.parse((qortBookData) || "[]")
         const blob = new Blob([qortBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "qortal_addressbook.qort.json"
+        bookname = "qortal_addressbook." + this.bookQortalAddress + ".qort.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportBtcAddressbook() {
+        const expBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
         let bookname = ""
-        const btcBookData = JSON.stringify(localStorage.getItem("addressbookBtc"))
+        const btcBookData = JSON.stringify(localStorage.getItem(expBitcoinAddressBook))
         const btcBookSave = JSON.parse((btcBookData) || "[]")
         const blob = new Blob([btcBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "bitcoin_addressbook.btc.json"
+        bookname = "bitcoin_addressbook." + this.bookBitcoinAddress + ".btc.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportLtcAddressbook() {
+        const expLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
         let bookname = ""
-        const ltcBookData = JSON.stringify(localStorage.getItem("addressbookLtc"))
+        const ltcBookData = JSON.stringify(localStorage.getItem(expLitecoinAddressBook))
         const ltcBookSave = JSON.parse((ltcBookData) || "[]")
         const blob = new Blob([ltcBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "litecoin_addressbook.ltc.json"
+        bookname = "litecoin_addressbook." + this.bookLitecoinAddress + ".ltc.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportDogeAddressbook() {
+        const expDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
         let bookname = ""
-        const dogeBookData = JSON.stringify(localStorage.getItem("addressbookDoge"))
+        const dogeBookData = JSON.stringify(localStorage.getItem(expDogecoinAddressBook))
         const dogeBookSave = JSON.parse((dogeBookData) || "[]")
         const blob = new Blob([dogeBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "dogecoin_addressbook.doge.json"
+        bookname = "dogecoin_addressbook." + this.bookDogecoinAddress + ".doge.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportDgbAddressbook() {
+        const expDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
         let bookname = ""
-        const dgbBookData = JSON.stringify(localStorage.getItem("addressbookDgb"))
+        const dgbBookData = JSON.stringify(localStorage.getItem(expDigibyteAddressBook))
         const dgbBookSave = JSON.parse((dgbBookData) || "[]")
         const blob = new Blob([dgbBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "digibyte_addressbook.dgb.json"
+        bookname = "digibyte_addressbook." + this.bookDigibyteAddress + ".dgb.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportRvnAddressbook() {
+        const expRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
         let bookname = ""
-        const rvnBookData = JSON.stringify(localStorage.getItem("addressbookRvn"))
+        const rvnBookData = JSON.stringify(localStorage.getItem(expRavencoinAddressBook))
         const rvnBookSave = JSON.parse((rvnBookData) || "[]")
         const blob = new Blob([rvnBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "ravencoin_addressbook.rvn.json"
+        bookname = "ravencoin_addressbook." + this.bookRavencoinAddress + ".rvn.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     exportArrrAddressbook() {
+        const expPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
         let bookname = ""
-        const arrrBookData = JSON.stringify(localStorage.getItem("addressbookArrr"))
+        const arrrBookData = JSON.stringify(localStorage.getItem(expPiratechainAddressBook))
         const arrrBookSave = JSON.parse((arrrBookData) || "[]")
         const blob = new Blob([arrrBookSave], { type: 'text/plain;charset=utf-8' })
-        bookname = "piratechain_addressbook.arrr.json"
+        bookname = "piratechain_addressbook." + this.bookPiratechainAddress + ".arrr.json"
         this.saveFileToDisk(blob, bookname)
     }
 
     importQortAddressbook(file) {
-        localStorage.removeItem("addressbookQort")
+        const impQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
+        localStorage.removeItem(impQortalAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookQort", JSON.stringify(newItems))
-        this.qortBook = JSON.parse(localStorage.getItem("addressbookQort") || "[]")
+        localStorage.setItem(impQortalAddressBook, JSON.stringify(newItems))
+        this.qortBook = JSON.parse(localStorage.getItem(impQortalAddressBook) || "[]")
         this.shadowRoot.querySelector('#importQortAddressbookDialog').close()
     }
 
     importBtcAddressbook(file) {
-        localStorage.removeItem("addressbookBtc")
+        const impBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
+        localStorage.removeItem(impBitcoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookBtc", JSON.stringify(newItems))
-        this.btcBook = JSON.parse(localStorage.getItem("addressbookBtc") || "[]")
+        localStorage.setItem(impBitcoinAddressBook, JSON.stringify(newItems))
+        this.btcBook = JSON.parse(localStorage.getItem(impBitcoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importBtcAddressbookDialog').close()
     }
 
     importLtcAddressbook(file) {
-        localStorage.removeItem("addressbookLtc")
+        const impLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
+        localStorage.removeItem(impLitecoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookLtc", JSON.stringify(newItems))
-        this.ltcBook = JSON.parse(localStorage.getItem("addressbookLtc") || "[]")
+        localStorage.setItem(impLitecoinAddressBook, JSON.stringify(newItems))
+        this.ltcBook = JSON.parse(localStorage.getItem(impLitecoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importLtcAddressbookDialog').close()
     }
 
     importDogeAddressbook(file) {
-        localStorage.removeItem("addressbookDoge")
+        const impDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
+        localStorage.removeItem(impDogecoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookDoge", JSON.stringify(newItems))
-        this.dogeBook = JSON.parse(localStorage.getItem("addressbookDoge") || "[]")
+        localStorage.setItem(impDogecoinAddressBook, JSON.stringify(newItems))
+        this.dogeBook = JSON.parse(localStorage.getItem(impDogecoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importDogeAddressbookDialog').close()
     }
 
     importDgbAddressbook(file) {
-        localStorage.removeItem("addressbookDgb")
+        const impDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
+        localStorage.removeItem(impDigibyteAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookDgb", JSON.stringify(newItems))
-        this.dgbBook = JSON.parse(localStorage.getItem("addressbookDgb") || "[]")
+        localStorage.setItem(impDigibyteAddressBook, JSON.stringify(newItems))
+        this.dgbBook = JSON.parse(localStorage.getItem(impDigibyteAddressBook) || "[]")
         this.shadowRoot.querySelector('#importDgbAddressbookDialog').close()
     }
 
     importRvnAddressbook(file) {
-        localStorage.removeItem("addressbookRvn")
+        const impRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
+        localStorage.removeItem(impRavencoinAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookRvn", JSON.stringify(newItems))
-        this.rvnBook = JSON.parse(localStorage.getItem("addressbookRvn") || "[]")
+        localStorage.setItem(impRavencoinAddressBook, JSON.stringify(newItems))
+        this.rvnBook = JSON.parse(localStorage.getItem(impRavencoinAddressBook) || "[]")
         this.shadowRoot.querySelector('#importRvnAddressbookDialog').close()
     }
 
     importArrrAddressbook(file) {
-        localStorage.removeItem("addressbookArrr")
+        const impPiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
+        localStorage.removeItem(impPiratechainAddressBook)
         const newItems = JSON.parse((file) || "[]")
-        localStorage.setItem("addressbookArrr", JSON.stringify(newItems))
-        this.arrrBook = JSON.parse(localStorage.getItem("addressbookArrr") || "[]")
+        localStorage.setItem(impPiratechainAddressBook, JSON.stringify(newItems))
+        this.arrrBook = JSON.parse(localStorage.getItem(impPiratechainAddressBook) || "[]")
         this.shadowRoot.querySelector('#importArrrAddressbookDialog').close()
     }
 
@@ -4208,19 +4287,6 @@ class MultiWallet extends LitElement {
                 }
             }
         }
-    }
-
-    pasteToTextBox(elementId) {
-        window.focus()
-        navigator.clipboard.readText().then((clipboardText) => {
-            elementId.value += clipboardText
-            elementId.focus()
-        })
-    }
-
-    pasteMenu(event, elementId) {
-        let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY, elementId }
-        parentEpml.request('openFramePasteMenu', eventObject)
     }
 
     async sendQort() {
@@ -5649,39 +5715,10 @@ class MultiWallet extends LitElement {
         this.transactionsGrid.items = this.wallets.get(this._selectedWallet).transactions.slice(start, end)
     }
 
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
-    }
-
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     transactionItem(transactionObject) {

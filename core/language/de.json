@@ -18,7 +18,8 @@
 		"russian": "Russisch",
 		"norwegian": "Norwegisch",
 		"romanian": "Rumänisch",
-		"korean": "Koreanisch"
+		"korean": "Koreanisch",
+		"japanese": "Japanisch"
 	},
 	"sidemenu": {
 		"minting": "PRÄGUNG",
@@ -40,6 +41,45 @@
 		"sm1": "NAMEN",
 		"sm2": "NAMENSVERWALTUNG",
 		"sm3": "NAMENSMARKT"
+	},
+	"tabmenu": {
+		"tm1": "Prägedetails",
+		"tm2": "Minter werden",
+		"tm3": "Sponsoring-Liste",
+		"tm4": "Geldbörsen",
+		"tm5": "Handelsportal",
+		"tm6": "Automatischer Kauf",
+		"tm7": "Belohnungsanteil",
+		"tm8": "Q-Chat",
+		"tm9": "Namensregistrierung",
+		"tm10": "Namensmarkt",
+		"tm11": "Websites",
+		"tm12": "Q-Apps",
+		"tm13": "Gruppenverwaltung",
+		"tm14": "Datenverwaltung",
+		"tm15": "Rätsel",
+		"tm16": "Knotenverwaltung",
+		"tm17": "Neuer Tab",
+		"tm18": "Neuen Tab hinzufügen",
+		"tm19": "Neues Plugin hinzufügen",
+		"tm20": "Q-App",
+		"tm21": "Website",
+		"tm22": "Plugin entfernen",
+		"tm23": "Sind Sie sicher, dass Sie dieses Plugin entfernen?",
+		"tm24": "Plugin-Typ:",
+		"tm25": "Bitte wählen Sie einen Plugin-Typ aus!",
+		"tm26": "Neues Plugin zum Menü hinzufügen",
+		"tm27": "Plugin aus Menü entfernen",
+		"tm28": "Übersichtsseite",
+		"tm29": "Registerkartenmenü zurücksetzen",
+		"tm30": "Qortalnamen suchen",
+		"tm31": "Meine verfolgten Namen",
+		"tm32": "Diesem Konto folgt keinem Benutzer",
+		"tm33": "Registerkartenmenü importieren",
+		"tm34": "Registerkartenmenü Exportieren",
+		"tm35": "Ihr vorhandenes Tab-Menü wird gelöscht und auf das hochgeladene Tab-Menü gesetzt.",
+		"tm36": "Tab-Menü erfolgreich wiederhergestellt",
+		"tm37": "Tab-Menü erfolgreich gespeichert als"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -86,7 +126,29 @@
 		"created1": "Ihr Konto ist jetzt erstellt",
 		"created2": " und wird in diesem Browser gespeichert.",
 		"downloadbackup": "Laden Sie die Wallet-Sicherungsdatei herunter",
-		"passwordhint": "Ein Passwort muss mindestens 8 Zeichen lang sein."
+		"passwordhint": "Ein Passwort muss mindestens 8 Zeichen lang sein.",
+		"lp1": "Bildschirm sperren",
+		"lp2": "Es ist kein Passwort für den Sperrbildschirm festgelegt!",
+		"lp3": "Bitte legen Sie eins fest",
+		"lp4": "Nein Danke",
+		"lp5": "Passwort festlegen",
+		"lp6": "Neues Passwort für die Bildschirmsperre erfolgreich festgelegt!",
+		"lp7": "UNLOCK",
+		"lp8": "Fehler: Falsches Passwort",
+		"lp9": "IST",
+		"lp10": "GESPERRT",
+		"lp11": "ENTSPERRT",
+		"lp12": "Gespeicherte Daten dekodieren",
+		"lp13": "Entschlüsselungsschlüssel wird generiert",
+		"lp14": "Schlüssel wird überprüft",
+		"lp15": "Falsches Passwort",
+		"lp16": "Entschlüsseln",
+		"lp17": "Warten, bis die Arbeiter bereit sind",
+		"lp18": "Schlüsselteile ableiten",
+		"lp19": "Fehler, falscher Schlüssel. ",
+		"lp20": "Fehler, falsche Nonce",
+		"lp21": "Wichtige Teile kombinieren",
+		"lp22": "Schlüssel ist bereit"
 	},
 	"logout": {
 		"logout": "AUSLOGGEN",
@@ -148,7 +210,11 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Minter Level",
-		"blocksminted": "Blöcke Geprägt"
+		"blocksminted": "Blöcke Geprägt",
+		"wp1": "Prägung",
+		"wp2": "Nicht am Prägen",
+		"wp3": "Kerninformationen",
+		"wp4": "Synchronisiert"
 	},
 	"general": {
 		"yes": "Ja",
@@ -711,8 +777,8 @@
 		"cchange38": "Benutzer verifiziert",
 		"cchange39": "Kann keine verschlüsselte Nachricht an diesen Benutzer senden, da er seinen öffentlichen Schlüssel nicht in der Kette hat.",
 		"cchange40": "BILD (zum Anzeigen klicken)",
-		"cchange41": "Ihr Guthaben liegt unter 4,20 QORT",
-		"cchange42": "Aus Gründen der Spam-Bekämpfung benötigen Konten mit einem Qort-Guthaben von weniger als 4,20 viel Zeit, um Nachrichten in Q-Chat zu SENDEN. Wenn Sie die Sendegeschwindigkeit für Q-Chat-Nachrichten sofort erhöhen möchten, besorgen Sie sich über 4,20 QORT an Ihre Adresse. Dies kann mit Trades im Handelsportal oder über einen anderen Qortian erfolgen, der Ihnen die QORT gibt. Sobald Sie über 4,20 QORT in Ihrem Konto haben, werden Q-Chat-Nachrichten sofort gesendet und dieser Dialog wird nicht mehr angezeigt Show. Vielen Dank für Ihr Verständnis für diese notwendige Spam-Präventionsmethode, und wir hoffen, dass Ihnen Qortal gefällt!",
+		"cchange41": "Ihr Guthaben liegt unter 4 QORT",
+		"cchange42": "Aus Gründen der Spam-Bekämpfung benötigen Konten mit einem Qort-Guthaben von weniger als 4 viel Zeit, um Nachrichten in Q-Chat zu SENDEN. Wenn Sie die Sendegeschwindigkeit für Q-Chat-Nachrichten sofort erhöhen möchten, besorgen Sie sich über 4 QORT an Ihre Adresse. Dies kann mit Trades im Handelsportal oder über einen anderen Qortian erfolgen, der Ihnen die QORT gibt. Sobald Sie über 4 QORT in Ihrem Konto haben, werden Q-Chat-Nachrichten sofort gesendet und dieser Dialog wird nicht mehr angezeigt Show. Vielen Dank für Ihr Verständnis für diese notwendige Spam-Präventionsmethode, und wir hoffen, dass Ihnen Qortal gefällt!",
 		"cchange43": "Tipp QORT an",
 		"cchange44": "NACHRICHT SENDEN",
 		"cchange45": "TIP BENUTZER",
@@ -897,7 +963,9 @@
 		"nchange29": "Prägekonto erfolgreich entfernt!",
 		"nchange30": "Fehler beim Entfernen des Prägekontos!",
 		"nchange31": "Knoten stoppen",
-		"nchange32": "Stoppanforderung erfolgreich gesendet!"
+		"nchange32": "Stoppanforderung erfolgreich gesendet!",
+		"nchange33": "Knoten neu starten",
+		"nchange34": "Neustartanforderung erfolgreich gesendet!"
 	},
 	"transpage": {
 		"tchange1": "Transaktionsanfrage",
@@ -978,7 +1046,9 @@
 		"exp18": "Zahlungen",
 		"exp19": "Gesendet",
 		"exp20": "Empfangen",
-		"exp21": "Trades"
+		"exp21": "Trades",
+		"exp22": "LETZTE 5 ZAHLUNGEN",
+		"exp23": "Alle Zahlungen anzeigen"
 	},
 	"managegroup": {
 		"mg1": "Gruppenmitglieder",
@@ -1059,6 +1129,8 @@
 		"inf13": "Automatisch kaufen",
 		"inf14": "mit",
 		"inf15": "Aktive automatische Kaufaufträge",
-		"inf16": "Automatischer Kauf"
+		"inf16": "Automatischer Kauf",
+		"inf17": "Zum hellen Thema wechseln",
+		"inf18": "Zum dunklen Thema wechseln"
 	}
 }

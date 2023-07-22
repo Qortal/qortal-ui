@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -155,6 +156,7 @@ class NodeManagement extends LitElement {
 			<div class="node-card">
 				<h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
 				<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
+                <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>
 				<span class="sblack"><br />${translate("nodepage.nchange2")} ${this.upTime}</span>
 				<br /><br />
 				<div id="minting">
@@ -283,21 +285,7 @@ class NodeManagement extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
-
-        // Call updateMintingAccounts
         this.updateMintingAccounts()
-
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this.isTextMenuOpen = true
-            this._textMenu(event)
-        })
-
-        window.addEventListener('click', () => {
-            if (this.isTextMenuOpen) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
-        })
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -313,36 +301,13 @@ class NodeManagement extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) {
-                parentEpml.request('closeCopyTextMenu', null)
-            }
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
-
-        this.shadowRoot.getElementById('addMintingAccountKey').addEventListener('contextmenu', (event) => {
-            const getSelectedText = () => {
-                var text = ''
-                if (typeof window.getSelection != 'undefined') {
-                    text = window.getSelection().toString()
-                } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                    text = this.shadowRoot.selection.createRange().text
-                }
-                return text
-            }
-            const checkSelectedTextAndShowMenu = () => {
-                let selectedText = getSelectedText()
-                if (selectedText && typeof selectedText === 'string') {
-                } else {
-                    this.myElementId = ''
-                    this.pasteMenu(event, 'addMintingAccountKey')
-                    this.myElementId = this.shadowRoot.getElementById('addMintingAccountKey')
-                    this.isPasteMenuOpen = true
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-            }
-            checkSelectedTextAndShowMenu()
-        })
 
         // Calculate HH MM SS from Milliseconds...
         const convertMsToTime = (milliseconds) => {
@@ -413,21 +378,6 @@ class NodeManagement extends LitElement {
                     configLoaded = true;
                 }
                 this.config = JSON.parse(c);
-            })
-
-            parentEpml.subscribe('copy_menu_switch', async (value) => {
-                if (value === 'false' && this.isTextMenuOpen === true) {
-                    this.clearSelection()
-                    this.isTextMenuOpen = false
-                }
-            })
-
-            parentEpml.subscribe('frame_paste_menu_switch', async res => {
-                res = JSON.parse(res)
-                if (res.isOpen === false && this.isPasteMenuOpen === true) {
-                    this.pasteToTextBox(this.myElementId)
-                    this.isPasteMenuOpen = false
-                }
             })
         })
         parentEpml.imReady()
@@ -501,6 +451,18 @@ class NodeManagement extends LitElement {
             });
     }
 
+    restartNode() {
+        parentEpml
+            .request("apiCall", {
+                url: `/admin/restart?apiKey=${this.getApiKey()}`,
+                method: "GET"
+            })
+            .then((res) => {
+				let err7string = get("nodepage.nchange34")
+                parentEpml.request('showSnackBar', `${err7string}`);
+            });
+    }
+
     onPageNavigation(pageUrl) {
         parentEpml.request("setPageUrl", pageUrl);
     }
@@ -558,43 +520,6 @@ class NodeManagement extends LitElement {
         });
     }
 
-    pasteToTextBox(elementId) {
-        window.focus()
-        navigator.clipboard.readText().then((clipboardText) => {
-            elementId.value += clipboardText
-            elementId.focus()
-        })
-    }
-
-    pasteMenu(event, elementId) {
-        let eventObject = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY, elementId }
-        parentEpml.request('openFramePasteMenu', eventObject)
-    }
-
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = { pageX: event.pageX, pageY: event.pageY, clientX: event.clientX, clientY: event.clientY }
-
-                let textMenuObject = { selectedText: selectedText, eventObject: _eve, isFrame: true }
-
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
-    }
-
     removeMintingAccount(publicKey) {
         this.removeMintingAccountLoading = true;
 
@@ -620,11 +545,6 @@ class NodeManagement extends LitElement {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
     }
 
     isEmptyArray(arr) {

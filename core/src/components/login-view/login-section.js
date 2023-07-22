@@ -457,6 +457,10 @@ class LoginSection extends connect(store)(LitElement) {
         return html`${translate("login.error2")}`
     }
 
+    renderError3Text() {
+        return html`${translate("login.lp8")}`
+    }
+
     selectWallet(wallet) {
         this.selectedWallet = wallet
         this.selectedPage = 'unlockStored'
@@ -617,43 +621,37 @@ class LoginSection extends connect(store)(LitElement) {
 
         // First decrypt...
         this.loadingRipple.welcomeMessage = this.renderPrepareText()
-//        const x = e.clientX !== undefined ? e.clientX : e.explicitOriginalTarget.getBoundingClientRect().left + window.scrollX
-//        const y = e.clientY !== undefined ? e.clientY : e.explicitOriginalTarget.getBoundingClientRect().top + window.scrollY
 
         this.loadingRipple.open({
             x: e.clientX,
             y: e.clientY
+        }).then(() => {
+            const source = this.walletSources[type]()
+            return createWallet(type, source, status => {
+                this.loadingRipple.loadingMessage = status
+            }).then(wallet => {
+                store.dispatch(doLogin(wallet))
+                store.dispatch(doSelectAddress(wallet.addresses[0]))
+                this.navigate('show-address')
+                const storedWallets = store.getState().user.storedWallets
+                const storedWalletAddress = storedWallets[wallet.addresses[0].address]
+
+                if (!storedWalletAddress) {
+                    if (this.saveInBrowser && type !== 'storedWallet') {
+                        store.dispatch(doStoreWallet(wallet, source.password, source.name, () => {
+                            ripple.loadingMessage = status
+                        })).catch(err => console.error(err))
+                    }
+                }
+                checkApiKey(this.nodeConfig)
+                this.cleanup()
+                return this.loadingRipple.fade()
+            })
+        }).catch(e => {
+            this.loginErrorMessage = this.renderError3Text()
+            console.error(e)
+            return this.loadingRipple.close()
         })
-            .then(() => {
-                const source = this.walletSources[type]()
-                return createWallet(type, source, status => {
-                    this.loadingRipple.loadingMessage = status
-                })
-                    .then(wallet => {
-                        store.dispatch(doLogin(wallet))
-                        store.dispatch(doSelectAddress(wallet.addresses[0]))
-                        this.navigate('show-address')
-                        const storedWallets = store.getState().user.storedWallets
-                        const storedWalletAddress = storedWallets[wallet.addresses[0].address]
-
-                        if (!storedWalletAddress) {
-                            if (this.saveInBrowser && type !== 'storedWallet') {
-                                store.dispatch(doStoreWallet(wallet, source.password, source.name, () => {
-
-                                    ripple.loadingMessage = status
-                                })).catch(err => console.error(err))
-                            }
-                        }
-                        checkApiKey(this.nodeConfig)
-                        this.cleanup()
-                        return this.loadingRipple.fade()
-                    })
-            })
-            .catch(e => {
-                this.loginErrorMessage = e
-                console.error(e)
-                return this.loadingRipple.close()
-            })
     }
 
     back() {

@@ -1,5 +1,5 @@
 {
-  "__locale_name__": "Deutsch, Deutschland",
+  "__locale_name__": "Deutsch",
 
   "electron_translate_1": "Qortal-UI anzeigen",
   "electron_translate_2": "Beenden",
@@ -34,5 +34,15 @@
   "electron_translate_31": "Core-Einstellungen starten",
   "electron_translate_32": "Ändern Sie den aktuellen Status der Aufforderung, den Core zu starten, wenn er nicht läuft",
   "electron_translate_33": "(Aktivieren oder deaktivieren Sie das Kontrollkästchen Frag mich nie wieder)",
-  "electron_translate_34": "Einstellungen"
+  "electron_translate_34": "Einstellungen",
+  "electron_translate_35": "Kopieren",
+  "electron_translate_36": "Einfügen",
+  "electron_translate_37": "Ansicht",
+  "electron_translate_38": "Vergrößern",
+  "electron_translate_39": "Herauszoomen",
+  "electron_translate_40": "Tatsächliche Größe",
+  "electron_translate_41": "Vollbild umschalten",
+  "electron_translate_42": "Neue UI-Instanz",
+  "electron_translate_43": "Suche nach Updates!",
+  "electron_translate_44": "Die Benutzeroberfläche prüft im Hintergrund, ob eine neue Version verfügbar ist, und lädt sie herunter."
 }

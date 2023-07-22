@@ -2,14 +2,21 @@ import { store } from '../api_deps.js'
 import { stateAwait } from './utils/stateAwait.js'
 import { Sha512 } from 'asmcrypto.js'
 import utils from '../api/deps/utils.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 export const kdf = async (seed, salt, status = () => { }) => {
 	const state = store.getState()
 	const config = state.config
 	const workers = state.app.workers.workers
-	status('Waiting for workers to be ready')
+	const kst1 = get("login.lp17")
+	status(kst1)
 	await stateAwait(state => state.app.workers.ready)
-	status('Deriving key parts')
+	const kst2 = get("login.lp18")
+	status(kst2)
 	salt = new Uint8Array(salt)
 	const seedParts = await Promise.all(workers.map((worker, index) => {
 		const nonce = index
@@ -27,13 +34,17 @@ export const kdf = async (seed, salt, status = () => { }) => {
 			} catch (e) {
 				// ...
 			}
-			if (seed !== data.key) throw new Error('Error, incorrect key. ' + seed + ' !== ' + data.key)
-			if (nonce !== data.nonce) throw new Error('Error, incorrect nonce')
+			const kst3 = get("login.lp19")
+			if (seed !== data.key) throw new Error(kst3 + seed + ' !== ' + data.key)
+			const kst4 = get("login.lp20")
+			if (nonce !== data.nonce) throw new Error(kst4)
 			return data.result
 		})
 	}))
-	status('Combining key parts')
+	const kst5 = get("login.lp21")
+	status(kst5)
 	const result = new Sha512().process(utils.stringtoUTF8Array(config.crypto.staticSalt + seedParts.reduce((a, c) => a + c))).finish().result
-	status('Key is ready ')
+	const kst6 = get("login.lp22")
+	status(kst6)
 	return result
 }

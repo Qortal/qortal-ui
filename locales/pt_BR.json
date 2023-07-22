@@ -33,5 +33,16 @@
   "electron_translate_30": "CANCELAR",
   "electron_translate_31": "Iniciar configurações do núcleo",
   "electron_translate_32": "Alterar o status atual de pedir para iniciar o núcleo se não estiver em execução",
-  "electron_translate_33": "(Marque ou desmarque a caixa de seleção para nunca mais me perguntar)"
+  "electron_translate_33": "(Marque ou desmarque a caixa de seleção para nunca mais me perguntar)",
+  "electron_translate_34": "Configurações",
+  "electron_translate_35": "Copiar",
+  "electron_translate_36": "Colar",
+  "electron_translate_37": "Ver",
+  "electron_translate_38": "Aumentar o zoom",
+  "electron_translate_39": "Reduzir",
+  "electron_translate_40": "Tamanho real",
+  "electron_translate_41": "Alternar tela cheia",
+  "electron_translate_42": "Nova instância de IU",
+  "electron_translate_43": "Verificando atualização!",
+  "electron_translate_44": "A interface do usuário está verificando em segundo plano se uma nova versão está disponível e baixe-a."
 }

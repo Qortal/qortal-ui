@@ -1,7 +1,10 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
+import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import Base58 from '../../../../crypto/api/deps/Base58.js'
+import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -23,6 +26,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
+import '@vaadin/password-field'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -75,7 +79,16 @@ class TradeBotPortal extends LitElement {
             tradeBotDogeBook: { type: Array },
             tradeBotDgbBook: { type: Array },
             tradeBotRvnBook: { type: Array },
-            tradeBotArrrBook: { type: Array }
+            tradeBotArrrBook: { type: Array },
+            autoSalt: { type: String },
+            autoStorageData: { type: String },
+            autoLockScreenPass: { type: String },
+            autoLockScreenSet: { type: String },
+            autoLockPass: { type: String },
+            autoLockSet: { type: String },
+            myAutoLockScreenPass: { type: String },
+            myAutoLockScreenSet: { type: String },
+            autoHelperMessage: { type: String }
         }
     }
 
@@ -85,17 +98,17 @@ class TradeBotPortal extends LitElement {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
 			--mdc-theme-error: rgb(255, 89, 89);
-                  --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                        --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-text-field-label-ink-color: var(--black);
 			--mdc-text-field-ink-color: var(--black);
-                  --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+                        --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-select-label-ink-color: var(--black);
 			--mdc-select-ink-color: var(--black);
 			--mdc-theme-surface: var(--white);
 			--mdc-dialog-content-ink-color: var(--black);
-                  --mdc-dialog-shape-radius: 25px;
+                        --mdc-dialog-shape-radius: 25px;
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
 			--lumo-primary-text-color: rgb(0, 167, 245);
 			--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -569,6 +582,56 @@ class TradeBotPortal extends LitElement {
                 cursor: pointer;
                 opacity: .6;
             }
+            .setpass-wrapper {
+                width: 100%;
+                min-width: 400px;
+                max-width: 450px;
+                text-align: center;
+                background: var(--white);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                padding: 10px 10px 0px;
+                box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+             }
+             .lock-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 600px;
+                 max-width: 600px;
+                 min-height: 400px;
+                 max-height: 400px;
+                 text-align: center;
+                 background: url("/img/qortal-lock.jpg");
+                 border: 1px solid var(--black);
+                 border-radius: 25px;
+                 padding: 10px 10px 0px;
+             }
+             .text-wrapper {
+                 width: 100%;
+                 height: 100%;
+                 min-width: 280px;
+                 max-width: 280px;
+                 min-height: 64px;
+                 max-height: 64px;
+                 text-align: center;
+                 margin-left: 35px;
+                 margin-top: 125px;
+                 overflow: hidden;
+             }
+            .lock-title-white {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #ffffff;
+            }
+            .lock-title-red {
+                font-family: 'magistralbold';
+                font-weight: 700;
+                font-size: 26px;
+                line-height: 32px;
+                color: #df3636;
+            }
 		@media (min-width: 701px) {
 			* {
 			}
@@ -826,6 +889,15 @@ class TradeBotPortal extends LitElement {
         this.tradeBotDgbBook = []
         this.tradeBotRvnBook = []
         this.tradeBotArrrBook = []
+        this.autoSalt = ''
+        this.autoStorageData = ''
+        this.autoLockScreenPass = ''
+        this.autoLockScreenSet = ''
+        this.autoLockPass = ''
+        this.autoLockSet = ''
+        this.myAutoLockScreenPass = ''
+        this.myAutoLockScreenSet = ''
+        this.autoHelperMessage = ''
     }
 
     openTradesTemplate() {
@@ -1469,11 +1541,14 @@ class TradeBotPortal extends LitElement {
 					<mwc-list-item value="DOGECOIN"><span class="coinName doge" style="color: var(--black);">DOGE / QORT</span></mwc-list-item>
 					<mwc-list-item value="DIGIBYTE"><span class="coinName dgb" style="color: var(--black);">DGB / QORT</span></mwc-list-item>
 					<mwc-list-item value="RAVENCOIN"><span class="coinName rvn" style="color: var(--black);">RVN / QORT</span></mwc-list-item>
-                              <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">ARRR / QORT</span></mwc-list-item>
+                                       <mwc-list-item value="PIRATECHAIN"><span class="coinName arrr" style="color: var(--black);">ARRR / QORT</span></mwc-list-item>
 				</mwc-select>
-                        <div style="padding-left: 20px; padding-top: 5px;">
-					<mwc-fab mini icon="info" title="${translate("info.inf7")}" @click=${() => this.shadowRoot.getElementById('buyInfoDialog').open()}></mwc-fab>
-			      </div>
+                                <div style="padding-left: 20px; padding-top: 5px;">
+			            <mwc-fab mini icon="info" title="${translate("info.inf7")}" @click=${() => this.shadowRoot.getElementById('buyInfoDialog').open()}></mwc-fab>
+			        </div>
+                                <div style="padding-left: 10px; padding-top: 12px; color: var(--black);">
+                                   ${this.renderAutoLockButton()}
+			        </div>
 			</div>
 			<div></div>
 			</div>
@@ -1556,10 +1631,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyBTCTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1631,10 +1706,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyLTCTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1706,10 +1781,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyDOGETotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1781,10 +1856,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyDGBTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1856,10 +1931,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyRVNTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1931,10 +2006,10 @@ class TradeBotPortal extends LitElement {
 						style="width: 100%; color: var(--black);"
 						id="autoBuyARRRTotalInput"
 						required
-						readOnly
 						label=""
 						placeholder="0.0000000"
 						type="number"
+						@input="${(e) => { this.checkTradeBotTotalAmount(e) }}"
 						auto-validate="false"
 						outlined
 						value="${this.initialAmount}"
@@ -1968,6 +2043,59 @@ class TradeBotPortal extends LitElement {
                     <h2>${translate("info.inf12")}</h2>
                 </div>
             </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="setAutoLockScreenPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm6")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lp2")}</h3>
+                    <h4 style="color: var(--black);">${translate("login.lp3")}</h4>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.password")}" id="autoLockPassword" autofocus></vaadin-password-field>
+                </div>
+                <div style="display:flex;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 100%;" label="${translate("login.confirmpass")}" id="autoLockPasswordConfirm"></vaadin-password-field>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closewAutoSetScreenLockPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.autoCheckPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="setpass-wrapper" id="autoExtraConfirmPass" modal>
+                <div style="text-align: center;">
+                    <h2 style="color: var(--black);">Qortal ${translate("tabmenu.tm6")} ${translate("login.lp1")}</h2>
+                    <hr>
+                </div>
+                <div style="text-align: center;">
+                    <h3 style="color: var(--black);">${translate("login.lessthen8")}</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <mwc-button class="red" @click="${() => this.closAutoExtraConfirmPass()}">${translate("login.lp4")}</mwc-button>
+                    <mwc-button @click="${() => this.setAutoNewScreenPass()}">${translate("login.lp5")}</mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="lock-wrapper" id="autoLockScreenActive" modal>
+                <div class="text-wrapper">
+                    <span class="lock-title-white">${translate("tradepage.tchange46")}</span><br/>
+                    <span class="lock-title-white">${translate("login.lp9")} </span>
+                    <span class="lock-title-red">${translate("login.lp10")}</span>
+                </div>
+                <div style="display:flex; margin-top: 5px;">
+                    <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
+                    <vaadin-password-field style="width: 45%;" label="${translate("login.password")}" id="autoUnlockPassword" @keydown="${this.autoPassKeyListener}" autofocus>
+                        <div slot="helper">
+                            ${this.autoHelperMessage}
+                        </div>
+                    </vaadin-password-field>
+                </div>
+                <div style="display: flex; margin-top: 35px;">
+                    <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeAutoLockScreenActive()}"></mwc-button>
+                </div>
+            </paper-dialog>
         `
     }
 
@@ -1977,6 +2105,45 @@ class TradeBotPortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+
+        this.autoHelperMessage = this.renderAutoHelperPass()
+
+        this.autoSalt = ''
+        this.autoSalt = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+
+        this.autoStorageData = ''
+        this.autoStorageData = window.parent.reduxStore.getState().app.selectedAddress.address
+
+        this.autoLockScreenPass = ''
+        this.autoLockScreenPass = 'autoLockScreenPass-' + this.autoStorageData
+
+        this.autoLockScreenSet = ''
+        this.autoLockScreenSet = 'autoLockScreenSet-' + this.autoStorageData
+
+        this.autoLockPass = ''
+        this.autoLockPass = encryptData(false, this.autoSalt)
+
+        this.autoLockSet = ''
+        this.autoLockSet = encryptData(false, this.autoSalt)
+
+        if (localStorage.getItem(this.autoLockScreenPass) === null && localStorage.getItem(this.autoLockScreenSet) === null) {
+            localStorage.setItem(this.autoLockScreenPass, this.autoLockPass)
+            localStorage.setItem(this.autoLockScreenSet, this.autoLockSet)
+            this.myAutoLockScreenPass = ''
+            this.myAutoLockScreenPass = decryptData(localStorage.getItem(this.autoLockScreenPass), this.autoSalt)
+            this.myAutoLockScreenSet = ''
+            this.myAutoLockScreenSet = decryptData(localStorage.getItem(this.autoLockScreenSet), this.autoSalt)
+        } else {
+            this.myAutoLockScreenPass = ''
+            this.myAutoLockScreenPass = decryptData(localStorage.getItem(this.autoLockScreenPass), this.autoSalt)
+            this.myAutoLockScreenSet = ''
+            this.myAutoLockScreenSet = decryptData(localStorage.getItem(this.autoLockScreenSet), this.autoSalt)
+        }
+
+        if (this.myAutoLockScreenSet === true) {
+            this.shadowRoot.getElementById('autoLockScreenActive').open()
+        }
+
         this.updateWalletBalance()
         this.fetchWalletAddress(this.selectedCoin)
 
@@ -2036,17 +2203,6 @@ class TradeBotPortal extends LitElement {
             setTimeout(getQortArrrPrice, 300000)
         }
 
-        window.addEventListener('contextmenu', (event) => {
-            event.preventDefault()
-            this._textMenu(event)},
-            { passive: true }
-        )
-
-        window.addEventListener('click', () => {
-            parentEpml.request('closeCopyTextMenu', null)},
-            { passive: true }
-        )
-
         window.addEventListener('storage', () => {
             this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.btcWallet) || "[]")
             this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.ltcWallet) || "[]")
@@ -2063,8 +2219,12 @@ class TradeBotPortal extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        window.onkeyup = (e) => {
-            if (e.keyCode === 27) parentEpml.request('closeCopyTextMenu', null)
+        if (!isElectron()) {
+        } else {
+            window.addEventListener('contextmenu', (event) => {
+                event.preventDefault()
+                window.parent.electronAPI.showMyMenu()
+            })
         }
 
         this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
@@ -2106,10 +2266,6 @@ class TradeBotPortal extends LitElement {
                 this.config = JSON.parse(c)
             })
 
-            parentEpml.subscribe('copy_menu_switch', async (value) => {
-                if (value === 'false' && window.getSelection().toString().length !== 0) this.clearSelection()
-            })
-
             let coinSelectionMenu = this.shadowRoot.getElementById("coinSelectionMenu")
 
             coinSelectionMenu.addEventListener('change', function () {
@@ -2125,6 +2281,137 @@ class TradeBotPortal extends LitElement {
         this.dgbTradebook()
         this.rvnTradebook()
         this.arrrTradebook()
+    }
+
+    renderAutoLockButton() {
+        if (this.myAutoLockScreenPass === false && this.myAutoLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.openAutoSetScreenLockPass()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myAutoLockScreenSet === false) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock-open" @click=${() => this.setAutoLockQortal()} title="${translate("login.lp11")}"></paper-icon-button>
+                </div>
+            `
+        } else if (this.myAutoLockScreenSet === true) {
+            return html`
+                <div style="display: inline;">
+                    <paper-icon-button style="padding-bottom: 12px;" icon="icons:lock" title="${translate("login.lp10")}"></paper-icon-button>
+                </div>
+            `
+        }
+    }
+
+    openAutoSetScreenLockPass() {
+        this.shadowRoot.getElementById('autoLockPassword').value = ''
+        this.shadowRoot.getElementById('autoLockPasswordConfirm').value = ''
+        this.shadowRoot.getElementById('setAutoLockScreenPass').open()
+    }
+
+    closewAutoSetScreenLockPass() {
+        this.shadowRoot.getElementById('setAutoLockScreenPass').close()
+    }
+
+    autoCheckPass() {
+        const autoPassword = this.shadowRoot.getElementById('autoLockPassword').value
+        const autoRePassword = this.shadowRoot.getElementById('autoLockPasswordConfirm').value
+
+        if (autoPassword === '') {
+            let snackbar1string = get("login.pleaseenter")
+            parentEpml.request('showSnackBar', `${snackbar1string}`)
+            return
+        }
+
+        if (autoPassword != autoRePassword) {
+            let snackbar2string = get("login.notmatch")
+            parentEpml.request('showSnackBar', `${snackbar2string}`)
+            return
+        }
+
+        if (autoPassword.length < 8) {
+            let snackbar3string = get("login.lessthen8")
+            parentEpml.request('showSnackBar', `${snackbar3string}`)
+            this.autoExtraConfirm()
+        }
+
+        if (autoPassword.length >= 8) {
+            this.setAutoNewScreenPass()
+            let snackbar4string = get("login.lp6")
+            parentEpml.request('showSnackBar', `${snackbar4string}`)
+        }
+    }
+
+    autoExtraConfirm() {
+        this.shadowRoot.getElementById('setAutoLockScreenPass').close()
+        this.shadowRoot.getElementById('autoExtraConfirmPass').open()
+    }
+
+    closAutoExtraConfirmPass() {
+        this.shadowRoot.getElementById('autoExtraConfirmPass').close()
+        this.shadowRoot.getElementById('autoLockPassword').value = ''
+        this.shadowRoot.getElementById('autoLockPasswordConfirm').value = ''
+    }
+
+    setAutoNewScreenPass() {
+        const autoRawPassword = this.shadowRoot.getElementById('autoLockPassword').value
+        const autoCryptPassword = encryptData(autoRawPassword, this.autoSalt)
+        localStorage.setItem(this.autoLockScreenPass, autoCryptPassword)
+        this.myAutoLockScreenPass = ''
+        this.myAutoLockScreenPass = decryptData(localStorage.getItem(this.autoLockScreenPass), this.autoSalt)
+        this.shadowRoot.getElementById('setAutoLockScreenPass').close()
+        this.shadowRoot.getElementById('autoExtraConfirmPass').close()
+        this.shadowRoot.getElementById('autoLockPassword').value = ''
+        this.shadowRoot.getElementById('autoLockPasswordConfirm').value = ''
+    }
+
+    setAutoLockQortal() {
+        this.autoHelperMessage = this.renderAutoHelperPass()
+        this.autoLockSet = ''
+        this.autoLockSet = encryptData(true, this.autoSalt)
+        localStorage.setItem(this.autoLockScreenSet, this.autoLockSet)
+        this.myAutoLockScreenSet = ''
+        this.myAutoLockScreenSet = decryptData(localStorage.getItem(this.autoLockScreenSet), this.autoSalt)
+        this.shadowRoot.getElementById('autoLockScreenActive').open()
+    }
+
+    autoPassKeyListener(e) {
+        if (e.key === 'Enter') {
+            this.closeAutoLockScreenActive()
+        }
+    }
+
+    async closeAutoLockScreenActive() {
+        const myAutoPass = decryptData(localStorage.getItem(this.autoLockScreenPass), this.autoSalt)
+        const autoCheckPass = this.shadowRoot.getElementById('autoUnlockPassword').value
+        const errDelay = ms => new Promise(res => setTimeout(res, ms))
+
+        if (autoCheckPass === myAutoPass) {
+            this.autoLockSet = ''
+            this.autoLockSet = encryptData(false, this.autoSalt)
+            localStorage.setItem(this.autoLockScreenSet, this.autoLockSet)
+            this.myAutoLockScreenSet = ''
+            this.myAutoLockScreenSet = decryptData(localStorage.getItem(this.autoLockScreenSet), this.autoSalt)
+            this.shadowRoot.getElementById('autoLockScreenActive').close()
+            this.shadowRoot.getElementById('autoUnlockPassword').value = ''
+            this.autoHelperMessage = this.renderAutoHelperPass()
+        } else {
+            this.shadowRoot.getElementById('autoUnlockPassword').value = ''
+            this.autoHelperMessage = this.renderAutoHelperErr()
+            await errDelay(3000)
+            this.autoHelperMessage = this.renderAutoHelperPass()
+            return
+        }
+    }
+
+    renderAutoHelperPass() {
+        return html`<span style="color: #fff; font-weight: bold; font-size: 13px; float: left;">${translate("login.pleaseenter")}</span>`
+    }
+
+    renderAutoHelperErr() {
+        return html`<span style="color: var(--mdc-theme-error); font-weight: bold;  font-size: 13px; float: right;">${translate("login.lp8")}</span>`
     }
 
     changeTheme() {
@@ -2718,8 +3005,10 @@ class TradeBotPortal extends LitElement {
     checkTradeBotValues() {
         const checkTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
         const checkTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+        const checkTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
         const checkAmount = this.round(parseFloat(checkTradeBotAmountInput))
         const checkPrice = this.round(parseFloat(checkTradeBotPriceInput))
+        const checkTotal = this.round(parseFloat(checkTradeBotTotalInput))
 
         if (Number(checkAmount) === 0) {
             let amountString = get("tradepage.tchange34")
@@ -2727,6 +3016,9 @@ class TradeBotPortal extends LitElement {
         } else if (Number(checkPrice) === 0) {
             let priceString = get("tradepage.tchange35")
             parentEpml.request('showSnackBar', `${priceString}`)
+        } else if (Number(checkTotal) === 0) {
+            let totalString = get("tradepage.tchange35")
+            parentEpml.request('showSnackBar', `${totalString}`)
         } else {
             this.showAddToAutoBuyStore()
         }
@@ -3280,6 +3572,7 @@ class TradeBotPortal extends LitElement {
         } else {
             const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
             const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+            const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
             const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
             const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
             if (Number(myFunds) > Number(checkFunds)) {
@@ -3312,6 +3605,7 @@ class TradeBotPortal extends LitElement {
                     } else {
                         const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
                         const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                        const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
                         const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
                         const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
                         if (Number(myFunds) > Number(checkFunds)) {
@@ -3331,6 +3625,7 @@ class TradeBotPortal extends LitElement {
             } else {
                 const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
                 const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
                 const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
                 const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
                 if (Number(myFunds) > Number(checkFunds)) {
@@ -3346,46 +3641,94 @@ class TradeBotPortal extends LitElement {
         }
     }
 
+    checkTradeBotTotalAmount(e) {
+        const targetAmount = e.target.value
+        const target = e.target
+        this.autoBuyWarning = false
+
+        if (targetAmount.length === 0) {
+            this.isValidAmount = false
+            this.autoBuyBtnDisable = true
+            this.autoBuyWarning = false
+            e.target.blur()
+            e.target.focus()
+            e.target.invalid = true
+        } else {
+            const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+            const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+            const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+            const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+            const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+            if (Number(myFunds) > Number(checkFunds)) {
+                this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                this.autoBuyBtnDisable = false
+                this.autoBuyWarning = false
+            } else {
+                this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                this.autoBuyBtnDisable = true
+                this.autoBuyWarning = true
+            }
+        }
+
+        e.target.blur()
+        e.target.focus()
+
+        e.target.validityTransform = (newValue, nativeValidity) => {
+            if (newValue.includes('-') === true) {
+                this.autoBuyBtnDisable = true
+                this.autoBuyWarning = false
+                return {
+                    valid: false,
+                }
+            } else if (!nativeValidity.valid) {
+                if (newValue.includes('.') === true) {
+                    let myAmount = newValue.split('.')
+                    if (myAmount[1].length > 8) {
+                        this.autoBuyBtnDisable = true
+                        this.autoBuyWarning = false
+                    } else {
+                        const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+                        const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                        const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+                        const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+                        const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+                        if (Number(myFunds) > Number(checkFunds)) {
+                            this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                            this.autoBuyBtnDisable = false
+                            this.autoBuyWarning = false
+                        } else {
+                            this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                            this.autoBuyBtnDisable = true
+                            this.autoBuyWarning = true
+                        }
+                        return {
+                            valid: true,
+                        }
+                    }
+                }
+            } else {
+                const buyTradeBotAmountInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value
+                const buyTradeBotPriceInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'PriceInput').value
+                const buyTradeBotTotalInput = this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'TotalInput').value
+                const checkFunds = this.round(parseFloat(buyTradeBotAmountInput) * parseFloat(buyTradeBotPriceInput))
+                const myFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+                if (Number(myFunds) > Number(checkFunds)) {
+                    this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                    this.autoBuyBtnDisable = false
+                    this.autoBuyWarning = false
+                } else {
+                    this.shadowRoot.getElementById('autoBuy' + this.listedCoins.get(this.selectedCoin).coinCode + 'QortAmountInput').value = this.round(parseFloat(buyTradeBotTotalInput) / parseFloat(buyTradeBotPriceInput))
+                    this.autoBuyBtnDisable = true
+                    this.autoBuyWarning = true
+                }
+            }
+        }
+    }
+
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
         let apiKey = myNode.apiKey;
         return apiKey;
-    }
-
-    clearSelection() {
-        window.getSelection().removeAllRanges()
-        window.parent.getSelection().removeAllRanges()
-    }
-
-    _textMenu(event) {
-        const getSelectedText = () => {
-            var text = ''
-            if (typeof window.getSelection != 'undefined') {
-                text = window.getSelection().toString()
-            } else if (typeof this.shadowRoot.selection != 'undefined' && this.shadowRoot.selection.type == 'Text') {
-                text = this.shadowRoot.selection.createRange().text
-            }
-            return text
-        }
-
-        const checkSelectedTextAndShowMenu = () => {
-            let selectedText = getSelectedText()
-            if (selectedText && typeof selectedText === 'string') {
-                let _eve = {
-                    pageX: event.pageX,
-                    pageY: event.pageY,
-                    clientX: event.clientX,
-                    clientY: event.clientY,
-                }
-                let textMenuObject = {
-                    selectedText: selectedText,
-                    eventObject: _eve,
-                    isFrame: true,
-                }
-                parentEpml.request('openCopyTextMenu', textMenuObject)
-            }
-        }
-        checkSelectedTextAndShowMenu()
     }
 
     clearTradeBotForm() {

@@ -3,7 +3,8 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Qortal/qortal-ui?label=latest%20version)
 [![GitHub Releases](https://img.shields.io/github/downloads/Qortal/qortal-ui/latest/total)](https://github.com/Qortal/qortal-ui/releases/latest)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](https://opensource.org/licenses/GPL-3.0)
-[![Qortal Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=chat&logo=discord&logoColor=white)](https://discord.com/invite/54UyhB7)
+[![Qortal Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=Chat&logo=discord&logoColor=white)](https://discord.com/invite/54UyhB7)
+[![Qortal Apps Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=Q-Apps&logo=discord&logoColor=white)](https://discord.com/invite/tqnpDMfuR2)
 
 Decentralizing The World
 
@@ -27,24 +28,25 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
 ``` nvm install v18.14.0 ```  (LTS: Hydrogen supported by Electron) <br/>
-``` npm --location=global install npm@9.6.6 ``` <br/>
+``` npm --location=global install npm@9.7.2 ``` <br/>
 
 Adding via binary package mirror will only work if you have set the package path. You can do a node or java build via ports instead by downloading ports with portsnap fetch method.
 
-Verify your installtion with node --version <br/>
-- ``` If you have an older installation of npm, please do not forget to update that with npm update -g. ```
+Verify your installation with ``` node --version ``` <br/>
+ - If you have an older installation of npm, please do not forget to update that with ``` npm update -g ```
 
 Clone the main UI repo
  - ``` git clone https://github.com/Qortal/qortal-ui.git ```
 
 Installation
 ------------------------
- In `qortal-ui/` npm install
-
+In `qortal-ui` directory, run:
+```
+npm install
+```
 
 Build UI server and files
 -------------------------
-In `qortal-ui` directory, run:
 ```
 npm run build
 ```

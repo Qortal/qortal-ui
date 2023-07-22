@@ -1,10 +1,25 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer, Menu, Notification, Tray, nativeImage, dialog, webContents, nativeTheme } = require('electron')
+const {
+    app,
+    BrowserWindow,
+    ipcMain,
+    ipcRenderer,
+    Menu,
+    Notification,
+    Tray,
+    nativeImage,
+    dialog,
+    webContents,
+    nativeTheme,
+    crashReporter
+} = require('electron')
+
 const { autoUpdater } = require('electron-updater')
 const server = require('./server.js')
 const log = require('electron-log')
 const path = require('path')
 const i18n = require('./lib/i18n.js')
 const fs = require('fs')
+const os = require("os")
 const electronDl = require('electron-dl')
 const Store = require('electron-store')
 const extract = require('extract-zip')
@@ -12,31 +27,70 @@ const fetch = require('node-fetch')
 const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
+const homePath = app.getPath('home')
+const downloadPath = app.getPath('downloads')
+const logPath = app.getPath('logs')
+const debugFileUnix = logPath + '/qortal-ui.log'
+const debugFileWin = logPath + '\\qortal-ui.log'
+const myMemory = os.totalmem()
+const store = new Store()
 
-app.commandLine.appendSwitch('enable-experimental-web-platform-features')
-app.disableHardwareAcceleration()
+crashReporter.start({
+	productName: 'Qortal-UI',
+	uploadToServer: false
+})
+
+if (myMemory > 16000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
+        log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
+} else if (myMemory > 12000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=6144')
+        log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
+} else if (myMemory > 7000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
+        log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
+} else {
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048')
+        log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
+}
+
+if (process.arch === 'arm') {
+	app.disableHardwareAcceleration()
+	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+	log.info('We are on 32bit. Hardware Acceleration is disabled !')
+} else {
+	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+	app.commandLine.appendSwitch('disable-renderer-backgrounding')
+	app.commandLine.appendSwitch('disable-http-cache')
+	log.info('We are on 64bit. Hardware Acceleration is enabled !')
+}
+
+if (process.platform === 'win32') {
+	app.commandLine.appendSwitch('log-file', debugFileWin)
+	app.commandLine.appendSwitch('enable-logging')
+} else {
+	app.commandLine.appendSwitch('log-file', debugFileUnix)
+	app.commandLine.appendSwitch('enable-logging')
+}
+
 app.enableSandbox()
 electronDl()
 
 process.env['APP_PATH'] = app.getAppPath()
-
-const homePath = app.getPath('home')
-const downloadPath = app.getPath('downloads')
-const store = new Store()
 
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 
-if(!store.has('askingCore')) {
+if (!store.has('askingCore')) {
 	store.set('askingCore', false)
 }
 
 log.info('App starting...')
 log.info('App Platform is', process.platform)
 log.info('Platform arch is', process.arch)
-log.info("ASKING CORE", store.get('askingCore'))
+log.info("Memory Size", os.totalmem())
 
 const winjar = String.raw`C:\Program Files\Qortal\qortal.jar`
 const winurl = "https://github.com/Qortal/qortal/releases/latest/download/qortal.exe"
@@ -77,6 +131,8 @@ const macjavaaarch64url = "https://download.qortal.online/openjdk-17.0.2_macos-a
 const macjavaaarch64file = homePath + "/openjdk-17.0.2_macos-aarch64_bin.zip"
 const macjavaaarch64bindir = homePath + "/jdk-17.0.2/Contents/Home/bin"
 const macjavaaarch64binfile = homePath + "/jdk-17.0.2/Contents/Home/bin/java"
+
+let win = BrowserWindow.getFocusedWindow();
 
 const isRunning = (query, cb) => {
 	let platform = process.platform
@@ -203,29 +259,29 @@ async function checkResponseStatus(res) {
 
 async function javaversion() {
 	var stderrChunks = []
-	let checkJava = await spawn('java', ['-version'],{shell: true})
+	let checkJava = await spawn('java', ['-version'], { shell: true })
 	if (process.platform === 'linux') {
 		if (process.arch === 'x64') {
 			if (fs.existsSync(linjavax64bindir)) {
-				checkJava = await spawn(linjavax64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavax64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else if (process.arch === 'arm64') {
 			if (fs.existsSync(linjavaarm64bindir)) {
-				checkJava = await spawn(linjavaarm64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavaarm64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else if (process.arch === 'arm') {
 			if (fs.existsSync(linjavaarmbindir)) {
-				checkJava = await spawn(linjavaarmbinfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(linjavaarmbinfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		}
 	} else if (process.platform === 'darwin') {
 		if (process.arch === 'x64') {
 			if (fs.existsSync(macjavax64bindir)) {
-				checkJava = await spawn(macjavax64binfile, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(macjavax64binfile, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		} else {
 			if (fs.existsSync(macjavaaarch64bindir)) {
-				checkJava = await spawn(macjavaaarch64file, ['-version'],{cwd: homePath, shell: true, maxBuffer: Infinity})
+				checkJava = await spawn(macjavaaarch64file, ['-version'], { cwd: homePath, shell: true, maxBuffer: Infinity })
 			}
 		}
 	}
@@ -706,7 +762,7 @@ const editMenu = Menu.buildFromTemplate([
 	{
 		label: "Qortal",
 		submenu: [
-			{ label: "Quit", click() {app.quit()}}
+			{ label: "Quit", click() { app.quit() } }
 		]
 	},
 	{
@@ -748,7 +804,7 @@ const editMenu = Menu.buildFromTemplate([
 		]
 	},
 	{
-		label: "Check for update", click() {autoUpdater.checkForUpdatesAndNotify()}
+		label: "Check for update", click() { autoUpdater.checkForUpdatesAndNotify() }
 	}
 ])
 
@@ -768,7 +824,7 @@ function createWindow() {
 		autoHideMenuBar: true,
 		webPreferences: {
 			partition: 'persist:webviewsession',
-			nodeIntegration: false,
+			nodeIntegration: true,
 			contextIsolation: true,
 			enableRemoteModule: false,
 			allowRunningInsecureContent: false,
@@ -786,6 +842,51 @@ function createWindow() {
 	myWindow.on('minimize', function (event) {
 		event.preventDefault()
 		myWindow.hide()
+	})
+	ipcMain.handle('dark-mode:toggle', () => {
+		if (nativeTheme.shouldUseDarkColors) {
+			nativeTheme.themeSource = 'light'
+		} else {
+			nativeTheme.themeSource = 'dark'
+		}
+		return nativeTheme.shouldUseDarkColors
+	})
+	ipcMain.handle('dark-mode:system', () => {
+		nativeTheme.themeSource = 'system'
+	})
+}
+
+let newWindow = null
+
+function createNewWindow() {
+	newWindow = new BrowserWindow({
+		backgroundColor: '#eee',
+		width: 1280,
+		height: 720,
+		minWidth: 700,
+		minHeight: 640,
+		icon: path.join(__dirname + '/img/icons/png/256x256.png'),
+		title: "Qortal UI New Instance",
+		autoHideMenuBar: true,
+		webPreferences: {
+			partition: 'persist:webviewsession',
+			nodeIntegration: true,
+			contextIsolation: true,
+			enableRemoteModule: false,
+			allowRunningInsecureContent: false,
+			experimentalFeatures: false,
+			preload: path.join(__dirname, '/lib/preload.js')
+		},
+		show: false
+	})
+	newWindow.show()
+	newWindow.loadURL('http://localhost:12388/app/wallet')
+	newWindow.on('closed', function () {
+		newWindow = null
+	})
+	newWindow.on('minimize', function (event) {
+		event.preventDefault()
+		newWindow.hide()
 	})
 	ipcMain.handle('dark-mode:toggle', () => {
 		if (nativeTheme.shouldUseDarkColors) {
@@ -931,7 +1032,61 @@ if (!isLock) {
 		})
 	})
 	ipcMain.on('check-for-update', (event) => {
+		const check = new Notification({
+			title: i18n.__("electron_translate_43"),
+			body: i18n.__("electron_translate_44")
+		})
+		check.show()
 		autoUpdater.checkForUpdatesAndNotify()
+	})
+	ipcMain.on('show-my-menu', (event) => {
+		let homePageOptions = Menu.buildFromTemplate([
+			{
+				label: i18n.__("electron_translate_35"),
+				role: 'copy'
+			},
+			{
+				label: i18n.__("electron_translate_36"),
+				role: 'paste'
+			},
+			{
+				type: "separator"
+			},
+			{
+				label: i18n.__("electron_translate_37"),
+				submenu: [
+					{
+						label: i18n.__("electron_translate_38"),
+						role: 'zoomIn'
+					},
+					{
+						label: i18n.__("electron_translate_39"),
+						role: 'zoomOut'
+					},
+					{
+						label: i18n.__("electron_translate_40"),
+						role: 'resetZoom'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						label: i18n.__("electron_translate_41"),
+						role: 'togglefullscreen'
+					}
+				]
+			},
+			{
+				type: "separator"
+			},
+			{
+				label: i18n.__("electron_translate_42"),
+				click: function () {
+					createNewWindow()
+				},
+			}
+		])
+		homePageOptions.popup(myWindow)
 	})
 	autoUpdater.on('update-available', (event) => {
 		const downloadOpts = {
@@ -954,11 +1109,7 @@ if (!isLock) {
 		})
 	})
 	autoUpdater.on('update-not-available', (event) => {
-		const noUpdate = new Notification({
-			title: 'Checking for update',
-			body: 'No update available, you are on latest version.'
-		})
-		noUpdate.show()
+		log.info("NO UPDATE")
 	})
 	autoUpdater.on('download-progress', (progressObj) => {
 		myWindow.webContents.send('downloadProgress', progressObj)
@@ -986,7 +1137,15 @@ if (!isLock) {
 		})
 		n.show()
 	})
+	ipcMain.on('focus-app', (event) => {
+		if (myWindow.isMinimized()) {
+			myWindow.restore()
+		}
+		myWindow.maximize()
+		myWindow.focus()
+	})
 	process.on('uncaughtException', function (err) {
 		log.info("*** WHOOPS TIME ***" + err)
 	})
+
 }

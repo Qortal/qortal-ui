@@ -83,12 +83,13 @@ win:
   icon: "./img/icons/ico/256x256.ico"
   target:
     - "nsis"
+    - "portable"
 
 # Config for the windows installer
 nsis:
   artifactName: "Qortal-Setup-win64.${ext}"
   oneClick: false
-  perMachine: false
+  perMachine: true
   installerSidebar: "./img/win-installer-sidebar.bmp"
   uninstallerSidebar: "./img/win-uninstaller-sidebar.bmp"
   runAfterFinish: true
@@ -105,19 +106,20 @@ linux:
     StartupWMClass: qortal-ui
   executableArgs:
     - --no-sandbox
-    - '--js-flags="--max-old-space-size=3584"'
   target:
     - "deb"
     - "AppImage"
+    - "snap"
+    - "rpm"
 
 deb:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
   synopsis: "Qortal UI for Linux"
   afterInstall: "./scripts/add-debian-apt-repo.sh"
   afterRemove: "./scripts/uninstall-debian-conf.sh"
 
 appImage:
-  artifactName: "Qortal-Setup-arm64.${ext}"
+  artifactName: "Qortal-Setup-amd64.${ext}"
 
 snap:
   artifactName: "Qortal-Setup-amd64.${ext}"

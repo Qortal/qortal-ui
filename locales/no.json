@@ -1,5 +1,5 @@
 {
-  "__locale_name__": "Norwegian",
+  "__locale_name__": "Norsk",
 
   "electron_translate_1": "Vis Qortal UI",
   "electron_translate_2": "Avslutt",
@@ -33,5 +33,16 @@
   "electron_translate_30": "AVBRYT",
   "electron_translate_31": "Start kjerneinnstillinger",
   "electron_translate_32": "Endre gjeldende status for å spørre om å starte kjernen hvis den ikke kjører",
-  "electron_translate_33": "(Merk av eller fjern merket for aldri spør meg igjen)"
+  "electron_translate_33": "(Merk av eller fjern merket for aldri spør meg igjen)",
+  "electron_translate_34": "Innstillinger",
+  "electron_translate_35": "Kopier",
+  "electron_translate_36": "Lim inn",
+  "electron_translate_37": "Vis",
+  "electron_translate_38": "Zoom inn",
+  "electron_translate_39": "Zoom ut",
+  "electron_translate_40": "Faktisk størrelse",
+  "electron_translate_41": "Veksle fullskjerm",
+  "electron_translate_42": "Ny brukergrensesnittforekomst",
+  "electron_translate_43": "Søker etter oppdatering !",
+  "electron_translate_44": "UI sjekker i bakgrunnen om en ny versjon er tilgjengelig og last den ned."
 }

@@ -1,6 +1,4 @@
 import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
 import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 registerTranslateConfig({
@@ -16,10 +14,9 @@ if (checkLanguage === null || checkLanguage.length === 0) {
     use(checkLanguage)
 }
 
-class LanguageSelector extends connect(store)(LitElement) {
+class LanguageSelector extends LitElement {
     static get properties() {
         return {
-            config: { type: Object },
             theme: { type: String, reflect: true }
         }
     }
@@ -35,7 +32,24 @@ class LanguageSelector extends connect(store)(LitElement) {
                     border: 1px solid var(--black);
                     border-radius: 3px;
                     color: var(--black);
-                    background: var(--white);
+                    background:
+                        linear-gradient(45deg, transparent 50%, white 50%),
+                        linear-gradient(135deg, white 50%, transparent 50%),
+                        linear-gradient(to right, #03a9f4, #03a9f4);
+                    background-position:
+                        calc(100% - 17px) calc(0.5em + 4px),
+                        calc(100% - 7px) calc(0.5em + 4px),
+                        100% 0;
+                    background-size:
+                        10px 10px,
+                        10px 10px,
+                        2.2em 2.2em;
+                    background-repeat: no-repeat;
+                    -webkit-box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                    box-sizing: border-box;
+                    -webkit-appearance:none;
+                    -moz-appearance:none;
                 }
 
                 *:focus {
@@ -43,6 +57,8 @@ class LanguageSelector extends connect(store)(LitElement) {
                 }
 
                 select option { 
+                    color: var(--black);
+                    background: var(--white);
                     line-height: 34px;
                 }
             `
@@ -57,8 +73,7 @@ class LanguageSelector extends connect(store)(LitElement) {
     render() {
         return html`
             <div style="display: inline;">
-                <select @change="${this.changeLanguage}">
-                    <option value="us">${translate("selectmenu.selectlanguage")}</option>
+                <select id="languageSelect" @change="${this.changeLanguage}">
                     <option value="us">US - ${translate("selectmenu.english")}</option>
                     <option value="de">DE - ${translate("selectmenu.german")}</option>
                     <option value="es">ES - ${translate("selectmenu.spanish")}</option>
@@ -67,6 +82,7 @@ class LanguageSelector extends connect(store)(LitElement) {
                     <option value="hu">HU - ${translate("selectmenu.hungarian")}</option>
                     <option value="hindi">IN - ${translate("selectmenu.hindi")}</option>
                     <option value="it">IT - ${translate("selectmenu.italian")}</option>
+                    <option value="jp">JP - ${translate("selectmenu.japanese")}</option>
                     <option value="ko">KO - ${translate("selectmenu.korean")}</option>
                     <option value="no">NO - ${translate("selectmenu.norwegian")}</option>
                     <option value="pl">PL - ${translate("selectmenu.polish")}</option>
@@ -82,16 +98,24 @@ class LanguageSelector extends connect(store)(LitElement) {
     }
 
     firstUpdated() {
-        // ...
+        const myElement = this.shadowRoot.getElementById('languageSelect')
+
+        myElement.addEventListener("change", () => {
+            this.selectElement()
+        })
+
+        this.selectElement()
+    }
+
+    selectElement() {
+        const selectedLanguage = localStorage.getItem('qortalLanguage')
+        let element = this.shadowRoot.getElementById('languageSelect')
+        element.value = selectedLanguage
     }
 
     changeLanguage(event) {
        use(event.target.value)
        localStorage.setItem('qortalLanguage', event.target.value)
-    }
-
-    stateChanged(state) {
-        this.config = state.config
     }
 }
 

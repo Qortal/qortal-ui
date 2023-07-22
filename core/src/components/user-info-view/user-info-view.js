@@ -2,7 +2,6 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { doLogout } from '../../redux/app/app-actions.js'
 import { get, translate, translateUnsafeHTML } from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
@@ -48,6 +47,7 @@ class UserInfoView extends connect(store)(LitElement) {
             explorerSoldRVNTrades: { type: Array },
             explorerSoldARRRTrades: { type: Array },
             allPayments: { type: Array },
+            slicedArray: { type: Array },
             allReceivedPayments: { type: Array },
             allSendPayments: { type: Array },
             actualBlockheight: { type: Number },
@@ -267,8 +267,24 @@ class UserInfoView extends connect(store)(LitElement) {
                 --mdc-theme-primary: var(--mdc-theme-error)
             }
 
+            .warning {
+                --mdc-theme-primary: #f0ad4e;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
+            }
+
             .buttons {
-                text-align:right;
+                display: inline;
+                float: right;
+                margin-bottom: 5px;
+            }
+
+            .paybutton {
+                display: inline;
+                float: left;
+                margin-bottom: 5px;
             }
 
 		.loadingContainer {
@@ -315,6 +331,15 @@ class UserInfoView extends connect(store)(LitElement) {
 			height: 250px;
 		}
 
+		.box-info-full {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-flow: column;
+			height: 450px;
+			width: 450px;
+		}
+
 		header {
 			display: flex;
 			flex: 0 1 auto;
@@ -322,7 +347,7 @@ class UserInfoView extends connect(store)(LitElement) {
 			justify-content: center;
 			padding: 0px 10px;
 			font-size: 16px;
-			color: var(--white);
+			color: var(--black);
 			background-color: var(--tradehead);
 			border-left: 1px solid var(--tradeborder);
 			border-top: 1px solid var(--tradeborder);
@@ -332,8 +357,9 @@ class UserInfoView extends connect(store)(LitElement) {
 
 		.border-wrapper {
 			border: 1px var(--tradeborder) solid;
-			overflow: hidden;
+			overflow: hidden; 
 		}
+
 
 		#first-explorer-section {
 			display: grid;
@@ -478,6 +504,7 @@ class UserInfoView extends connect(store)(LitElement) {
         this.explorerSoldRVNTrades = []
         this.explorerSoldARRRTrades = []
         this.allPayments = []
+        this.slicedArray = []
         this.allReceivedPayments = []
         this.allSendPayments = []
         this.actualBlockheight = 0
@@ -1106,6 +1133,62 @@ class UserInfoView extends connect(store)(LitElement) {
                 </div>
                 <div class="explorer-trades">
                     <div class="box-info">
+                        <header>${translate("explorerpage.exp22")}</header>
+                        <div class="border-wrapper">
+                            <div class="loadingContainer" id="loadingExplorerTrades" style="display:${this.isLoadingCompleteInfo ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
+                            <vaadin-grid theme="compact" id="lastQortPaymentsGrid" ?hidden="${this.isEmptyArray(this.slicedArray)}" .items="${this.slicedArray}">
+                                <vaadin-grid-column
+                                    auto-width
+                                    header="${translate("walletpage.wchange35")}"
+                                    .renderer=${(root, column, data) => {
+                                        render(html`${translate("walletpage.wchange40")} ${data.item.creatorAddress === this.displayAddress ? html`<span class="color-out">${translate("walletpage.wchange7")}</span>` : html`<span class="color-in">${translate("walletpage.wchange8")}</span>`} `, root)
+                                    }}
+                                >
+                                </vaadin-grid-column>
+                                <vaadin-grid-column auto-width header="${translate("walletpage.wchange11")}" path="amount"></vaadin-grid-column>
+                                <vaadin-grid-column
+                                    auto-width
+                                    header="${translate("walletpage.wchange14")}"
+                                    .renderer=${(root, column, data) => {
+                                        const dateString = new Date(data.item.timestamp).toLocaleDateString()
+                                        render(html`${dateString}`, root)
+                                    }}
+                                >
+                                </vaadin-grid-column>
+                                <vaadin-grid-column
+                                    auto-width
+                                    resizable
+                                    header="${translate("explorerpage.exp7")}"
+                                    .renderer=${(root, column, data) => {
+                                        render(html`<span @click="${() => this.showPaymentDetails(data)}"><mwc-icon class="btn-info">info</mwc-icon></span>`, root)
+                                    }}
+                                >
+                                </vaadin-grid-column>
+                            </vaadin-grid>
+                            ${this.isEmptyArray(this.slicedArray) ? html`
+                                <span style="color: var(--black); font-size: 16px; text-align: center;">${translate("walletpage.wchange38")}</span>
+                            `: ''}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="paybutton">
+                        <mwc-button class='green' @click=${() => this.showAllPayments()}>${translate("explorerpage.exp23")}</mwc-button>
+                    </span>
+                    <span class="buttons">
+                        <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp21")}</mwc-button>
+                        <mwc-button class='decline' @click=${() => this.closeCompleteInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
+                    </span>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="showAllPaymentsDialog" modal>
+                <div style="text-align: center; color: var(--black);">
+                    <h1>${translate("explorerpage.exp17")}</h1>
+                    <hr />
+                </div>
+                <div class="explorer-trades">
+                    <div class="box-info-full">
                         <header>${translate("explorerpage.exp17")}</header>
                         <div class="border-wrapper">
                             <div class="loadingContainer" id="loadingExplorerTrades" style="display:${this.isLoadingCompleteInfo ? 'block' : 'none'}"><div class="loading"></div><span style="color: var(--black);">${translate("login.loading")}</span></div>
@@ -1144,9 +1227,10 @@ class UserInfoView extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </div>
-                <div class="buttons">
-                    <mwc-button @click=${() => this.openTrades()}>${translate("explorerpage.exp21")}</mwc-button>
-                    <mwc-button class='decline' @click=${() => this.closeCompleteInfoDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
+                <div>
+                    <span class="buttons">
+                        <mwc-button class='decline' @click=${() => this.closeShowAllPaymentsDialog()} dialog-dismiss>${translate("general.close")}</mwc-button>
+                    </span>
                 </div>
             </paper-dialog>
 
@@ -1419,14 +1503,15 @@ class UserInfoView extends connect(store)(LitElement) {
 
     founderStatus() {
        if (this.addressResult.flags === 1) {
-           return html`${translate("general.yes")}`
+           return html`<span style="color: green;">${translate("general.yes")}</span>`
        } else {
-           return html`${translate("general.no")}`
+           return html`<span style="color: red;">${translate("general.no")}</span>`
        }
     }
 
     async getPaymentsGridItems() {
         this.allPayments = []
+        this.slicedArray = []
         this.allReceivedPayments = []
         this.allSendPayments = []
         this.totalSent = 0
@@ -1453,6 +1538,8 @@ class UserInfoView extends connect(store)(LitElement) {
                 }
             }
         }).filter(item => !!item)
+
+        this.slicedArray = this.allPayments.slice(0, 5)
 
         this.allSendPayments = this.allPayments.map(item => {
             const searchSendAddress = item.creatorAddress
@@ -1503,6 +1590,10 @@ class UserInfoView extends connect(store)(LitElement) {
         this.txfee = paymentsData.item.fee
         this.txblockHeight = paymentsData.item.blockHeight
         this.shadowRoot.getElementById('showTxDetailsDialog').open()
+    }
+
+    showAllPayments() {
+        this.shadowRoot.getElementById('showAllPaymentsDialog').open()
     }
 
     async getBoughtBTCGridItems() {
@@ -1848,6 +1939,10 @@ class UserInfoView extends connect(store)(LitElement) {
 
     closeSoldDialog() {
         this.shadowRoot.getElementById('userSoldDialog').close()
+    }
+
+    closeShowAllPaymentsDialog() {
+        this.shadowRoot.getElementById('showAllPaymentsDialog').close()
     }
 
     getApiKey() {

@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { doAddNode, doSetNode, doLoadNodeConfig } from '../redux/app/app-actions.js'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import snackbar from './snackbar.js'
 import '../components/language-selector.js'
 import '../custom-elements/frag-file-input.js'
@@ -15,6 +15,19 @@ import '@material/mwc-textfield'
 import '@material/mwc-icon'
 import '@material/mwc-list/mwc-list-item.js'
 
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
+
+const checkLanguage = localStorage.getItem('qortalLanguage')
+
+if (checkLanguage === null || checkLanguage.length === 0) {
+    localStorage.setItem('qortalLanguage', 'us')
+    use('us')
+} else {
+    use(checkLanguage)
+}
+
 let settingsDialog
 
 class SettingsPage extends connect(store)(LitElement) {
@@ -22,7 +35,8 @@ class SettingsPage extends connect(store)(LitElement) {
         return {
             lastSelected: { type: Number },
             nodeConfig: { type: Object },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            nodeIndex: { type: Number }
         }
     }
 
@@ -83,6 +97,7 @@ class SettingsPage extends connect(store)(LitElement) {
     constructor() {
         super()
         this.nodeConfig = {}
+        this.nodeIndex = localStorage.getItem('mySelectedNode')
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -95,7 +110,7 @@ class SettingsPage extends connect(store)(LitElement) {
                 </div>
                 <br>
                 <div style="min-height: 250px; min-width: 500px; box-sizing: border-box; position: relative;">
-                    <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="0" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
+                    <mwc-select icon="link" id="nodeSelect" label="${translate("settings.nodeurl")}" index="${this.nodeIndex}" @selected="${(e) => this.nodeSelected(e)}" style="min-width: 130px; max-width:100%; width:100%;">
                         ${this.nodeConfig.knownNodes.map((n, index) => html`
                             <mwc-list-item value="${index}">
                                 <span class="name">${n.name}</span>
@@ -117,9 +132,9 @@ class SettingsPage extends connect(store)(LitElement) {
                 <div style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;">
                     <hr><br>
                     <center>
-                    <div id="main">
-                        <mwc-icon class="globe">language</mwc-icon>&nbsp;<language-selector></language-selector>
-                    </div>
+                        <div id="main">
+                            <mwc-icon class="globe">language</mwc-icon>&nbsp;<language-selector></language-selector>
+                        </div>
                     </center>
                 </div>
                 <mwc-button
@@ -184,7 +199,11 @@ class SettingsPage extends connect(store)(LitElement) {
     }
 
     firstUpdated() {
-        // ...
+        const checkNode = localStorage.getItem('mySelectedNode')
+        if (checkNode === null || checkNode.length === 0) {
+            localStorage.setItem('mySelectedNode', 0)
+        } else {
+        }
     }
 
     show() {
@@ -224,6 +243,9 @@ class SettingsPage extends connect(store)(LitElement) {
             dismiss: true
         })
 
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', 0)
+
         store.dispatch(doLoadNodeConfig())
     }
 
@@ -236,6 +258,9 @@ class SettingsPage extends connect(store)(LitElement) {
         if (isNaN(index)) return
 
         store.dispatch(doSetNode(selectedNodeIndex))
+
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', selectedNodeIndex)
 
         let snack2string = get("settings.snack2")
         snackbar.add({
@@ -373,6 +398,9 @@ class SettingsPage extends connect(store)(LitElement) {
             labelText: `${snack5string}`,
             dismiss: true
         })
+
+        localStorage.removeItem('mySelectedNode')
+        localStorage.setItem('mySelectedNode', 0)
 
         store.dispatch(doLoadNodeConfig())
     }
