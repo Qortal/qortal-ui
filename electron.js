@@ -1,16 +1,17 @@
 const {
-    app,
-    BrowserWindow,
-    ipcMain,
-    ipcRenderer,
-    Menu,
-    Notification,
-    Tray,
-    nativeImage,
-    dialog,
-    webContents,
-    nativeTheme,
-    crashReporter
+	app,
+	BrowserWindow,
+	ipcMain,
+	ipcRenderer,
+	Menu,
+	Notification,
+	Tray,
+	nativeImage,
+	dialog,
+	webContents,
+	nativeTheme,
+	crashReporter,
+	webFrame
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
@@ -1030,6 +1031,12 @@ if (!isLock) {
 				return
 			}
 		})
+	})
+	ipcMain.on('clear-all-cache', (event) => {
+		const theWindows = BrowserWindow.getAllWindows()[0]
+		const ses = theWindows.webContents.session
+		console.clear()
+		ses.clearCache()
 	})
 	ipcMain.on('check-for-update', (event) => {
 		const check = new Notification({
