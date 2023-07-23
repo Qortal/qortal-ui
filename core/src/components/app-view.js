@@ -7,6 +7,7 @@ import { get, translate, translateUnsafeHTML } from 'lit-translate'
 import localForage from 'localforage'
 import { encryptData, decryptData } from '../lockScreen.js'
 import { setChatLastSeen } from '../redux/app/app-actions.js'
+import isElectron from 'is-electron'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -427,7 +428,7 @@ class AppView extends connect(store)(LitElement) {
     constructor() {
         super()
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
-        this.urls = [];
+        this.urls = []
         this.nodeType = ''
         this.addressInfo = {}
         this.getAllBalancesLoading = false
@@ -648,6 +649,8 @@ class AppView extends connect(store)(LitElement) {
 
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
+
+        this.clearTheCache()
 
         this.helperMessage = this.renderHelperPass()
 
@@ -1581,14 +1584,14 @@ class AppView extends connect(store)(LitElement) {
         }
 
         const getChatLastSeen = async () => {
-            let items = [];
+            let items = []
 
             await chatLastSeen.iterate(function (value, key, iterationNumber) {
-
-                items.push({ key, timestamp: value });
+                items.push({ key, timestamp: value })
             })
+
             store.dispatch(setChatLastSeen(items))
-            return items;
+            return items
         }
 
         await getOpenTradesBTC()
@@ -1603,14 +1606,25 @@ class AppView extends connect(store)(LitElement) {
         await appDelay(1000)
         await getOpenTradesARRR()
         await getChatLastSeen()
+        setInterval(() => {
+            this.clearTheCache()
+        }, 60000)
     }
 
     shBalanceTicker() {
         const targetDiv = this.shadowRoot.getElementById("theTicker")
         if (targetDiv.style.display !== "none") {
-            targetDiv.style.display = "none";
+            targetDiv.style.display = "none"
         } else {
-            targetDiv.style.display = "inline";
+            targetDiv.style.display = "inline"
+        }
+    }
+
+    async clearTheCache() {
+        if (!isElectron()) {
+        } else {
+            await window.parent.electronAPI.clearMyCache()
+            console.clear()
         }
     }
 

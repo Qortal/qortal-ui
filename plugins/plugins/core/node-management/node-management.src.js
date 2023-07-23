@@ -34,10 +34,8 @@ class NodeManagement extends LitElement {
             confPeerMessage: { type: String },
             addMintingAccountMessage: { type: String },
             removeMintingAccountMessage: { type: String },
-            tempMintingAccount: { type: Object },
             nodeConfig: { type: Object },
             nodeDomain: { type: String },
-            myElementId: { type: String },
             theme: { type: String, reflect: true }
         }
     }
@@ -138,15 +136,13 @@ class NodeManagement extends LitElement {
         this.addPeerMessage = ""
         this.confPeerMessage = ""
         this.addMintingAccountMessage = ""
-        this.tempMintingAccount = {}
         this.config = {
             user: {
                 node: {},
             },
-        };
+        }
         this.nodeConfig = {}
         this.nodeDomain = ""
-        this.myElementId = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -278,7 +274,7 @@ class NodeManagement extends LitElement {
 				<br />
 			</div>
 		</div>
-	`;
+	`
     }
 
     firstUpdated() {
@@ -311,73 +307,59 @@ class NodeManagement extends LitElement {
 
         // Calculate HH MM SS from Milliseconds...
         const convertMsToTime = (milliseconds) => {
-            let day, hour, minute, seconds;
-            seconds = Math.floor(milliseconds / 1000);
-            minute = Math.floor(seconds / 60);
-            seconds = seconds % 60;
-            hour = Math.floor(minute / 60);
-            minute = minute % 60;
-            day = Math.floor(hour / 24);
-            hour = hour % 24;
+            let day, hour, minute, seconds
+            seconds = Math.floor(milliseconds / 1000)
+            minute = Math.floor(seconds / 60)
+            seconds = seconds % 60
+            hour = Math.floor(minute / 60)
+            minute = minute % 60
+            day = Math.floor(hour / 24)
+            hour = hour % 24
             if (isNaN(day)) {
-                return "offline";
+                return "offline"
             }
-            return day + "d " + hour + "h " + minute + "m";
-        };
+            return day + "d " + hour + "h " + minute + "m"
+        }
 
         const getNodeUpTime = () => {
-            parentEpml
-                .request("apiCall", {
-                    url: `/admin/uptime`,
-                })
-                .then((res) => {
-                    this.upTime = "";
-                    setTimeout(() => {
-                        this.upTime = convertMsToTime(res);
-                    }, 1);
-                });
-
-            setTimeout(getNodeUpTime, this.config.user.nodeSettings.pingInterval);
-        };
+            this.upTime = ""
+            parentEpml.request("apiCall", { url: `/admin/uptime` }).then((res) => {
+                this.upTime = convertMsToTime(res)
+            })
+            setTimeout(getNodeUpTime, 60000)
+        }
 
         const updatePeers = () => {
-            parentEpml
-                .request("apiCall", {
-                    url: `/peers`,
-                })
-                .then((res) => {
-                    setTimeout(() => {
-                        this.peers = res;
-                    }, 1);
-                });
-                setTimeout(updatePeers, this.config.user.nodeSettings.pingInterval);
-        };
+            this.peers = []
+            parentEpml.request("apiCall", { url: `/peers` }).then((res) => {
+                this.peers = res
+            })
+            setTimeout(updatePeers, 60000)
+        }
 
         const getNodeConfig = () => {
+            this.nodeConfig = {}
+            this.nodeDomain = ""
             parentEpml.request("getNodeConfig").then((res) => {
-                setTimeout(() => {
-                    this.nodeConfig = res;
-                }, 1);
-                let myNode = window.parent.reduxStore.getState().app.nodeConfig
-                    .knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-                this.nodeDomain = myNode.domain + ":" + myNode.port;
-            });
-
-            setTimeout(getNodeConfig, 1000);
-        };
+                this.nodeConfig = res
+                const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+                this.nodeDomain = myNode.domain + ":" + myNode.port
+            })
+            setTimeout(getNodeConfig, 60000)
+        }
 
         let configLoaded = false
 
         parentEpml.ready().then(() => {
             parentEpml.subscribe("config", async c => {
                 if (!configLoaded) {
-                    setTimeout(getNodeUpTime, 1);
-                    setTimeout(updatePeers, 1);
-                    setTimeout(this.updateMintingAccounts, 1);
-                    setTimeout(getNodeConfig, 1);
-                    configLoaded = true;
+                    setTimeout(getNodeUpTime, 1)
+                    setTimeout(updatePeers, 1)
+                    setTimeout(this.updateMintingAccounts, 1)
+                    setTimeout(getNodeConfig, 1)
+                    configLoaded = true
                 }
-                this.config = JSON.parse(c);
+                this.config = JSON.parse(c)
             })
         })
         parentEpml.imReady()
@@ -386,11 +368,11 @@ class NodeManagement extends LitElement {
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
-            this.theme = 'dark';
+            this.theme = 'dark'
         } else {
-            this.theme = 'light';
+            this.theme = 'light'
         }
-        document.querySelector('html').setAttribute('theme', this.theme);
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     changeLanguage() {
@@ -421,8 +403,8 @@ class NodeManagement extends LitElement {
             })
             .then((res) => {
                 let err3string = get("nodepage.nchange25")
-                parentEpml.request('showSnackBar', `${err3string}` + peerAddress);
-            });
+                parentEpml.request('showSnackBar', `${err3string}` + peerAddress)
+            })
     }
 
     removePeer(peerAddress, rowIndex) {
@@ -434,9 +416,9 @@ class NodeManagement extends LitElement {
             })
             .then((res) => {
                 let err4string = get("nodepage.nchange26")
-                parentEpml.request('showSnackBar', `${err4string}` + peerAddress);
-                this.peers.splice(rowIndex, 1);
-            });
+                parentEpml.request('showSnackBar', `${err4string}` + peerAddress)
+                this.peers.splice(rowIndex, 1)
+            })
     }
 
     stopNode() {
@@ -446,9 +428,9 @@ class NodeManagement extends LitElement {
                 method: "GET"
             })
             .then((res) => {
-				let err7string = get("nodepage.nchange32")
-                parentEpml.request('showSnackBar', `${err7string}`);
-            });
+		let err7string = get("nodepage.nchange32")
+                parentEpml.request('showSnackBar', `${err7string}`)
+            })
     }
 
     restartNode() {
@@ -458,19 +440,18 @@ class NodeManagement extends LitElement {
                 method: "GET"
             })
             .then((res) => {
-				let err7string = get("nodepage.nchange34")
-                parentEpml.request('showSnackBar', `${err7string}`);
-            });
+		let err7string = get("nodepage.nchange34")
+                parentEpml.request('showSnackBar', `${err7string}`)
+            })
     }
 
     onPageNavigation(pageUrl) {
-        parentEpml.request("setPageUrl", pageUrl);
+        parentEpml.request("setPageUrl", pageUrl)
     }
 
     addPeer(e) {
-        this.addPeerLoading = true;
-        const addPeerAddress = this.shadowRoot.querySelector("#addPeerAddress")
-            .value;
+        this.addPeerLoading = true
+        const addPeerAddress = this.shadowRoot.querySelector("#addPeerAddress").value
 
         parentEpml
             .request("apiCall", {
@@ -479,18 +460,16 @@ class NodeManagement extends LitElement {
                 body: addPeerAddress,
             })
             .then((res) => {
-                this.addPeerMessage = res.message;
-                this.addPeerLoading = false;
-            });
+                this.addPeerMessage = res.message
+                this.addPeerLoading = false
+            })
     }
 
     addMintingAccount(e) {
-        this.addMintingAccountLoading = true;
-        this.addMintingAccountMessage = "Loading...";
+        this.addMintingAccountLoading = true
+        this.addMintingAccountMessage = "Loading..."
 
-        this.addMintingAccountKey = this.shadowRoot.querySelector(
-            "#addMintingAccountKey"
-        ).value;
+        this.addMintingAccountKey = this.shadowRoot.querySelector("#addMintingAccountKey").value
 
         parentEpml
             .request("apiCall", {
@@ -500,28 +479,28 @@ class NodeManagement extends LitElement {
             })
             .then((res) => {
                 if (res === true) {
-                    this.updateMintingAccounts();
-                    this.addMintingAccountKey = "";
-                    this.addMintingAccountMessage = this.renderErr1Text();
-                    this.addMintingAccountLoading = false;
+                    this.updateMintingAccounts()
+                    this.addMintingAccountKey = ""
+                    this.addMintingAccountMessage = this.renderErr1Text()
+                    this.addMintingAccountLoading = false
                 } else {
-                    this.addMintingAccountKey = "";
-                    this.addMintingAccountMessage = this.renderErr2Text(); // Corrected an error here thanks to crow (-_-)
-                    this.addMintingAccountLoading = false;
+                    this.addMintingAccountKey = ""
+                    this.addMintingAccountMessage = this.renderErr2Text() // Corrected an error here thanks to crow (-_-)
+                    this.addMintingAccountLoading = false
                 }
-            });
+            })
     }
 
     updateMintingAccounts() {
-        parentEpml.request("apiCall", {
-            url: `/admin/mintingaccounts`,
-        }).then((res) => {
-            setTimeout(() => this.mintingAccounts = res, 1);
-        });
+        this.mintingAccounts = []
+        parentEpml.request("apiCall", { url: `/admin/mintingaccounts` }).then((res) => {
+            this.mintingAccounts = res
+        })
+        console.clear()
     }
 
     removeMintingAccount(publicKey) {
-        this.removeMintingAccountLoading = true;
+        this.removeMintingAccountLoading = true
 
         parentEpml.request("apiCall", {
             url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
@@ -529,28 +508,28 @@ class NodeManagement extends LitElement {
             body: publicKey,
         }).then((res) => {
             if (res === true) {
-                this.updateMintingAccounts();
-                this.removeMintingAccountLoading = false;
+                this.updateMintingAccounts()
+                this.removeMintingAccountLoading = false
                 let err5string = get("nodepage.nchange29")
-                parentEpml.request('showSnackBar', `${err5string}`);
+                parentEpml.request('showSnackBar', `${err5string}`)
             } else {
-                this.removeMintingAccountLoading = false;
+                this.removeMintingAccountLoading = false
                 let err6string = get("nodepage.nchange30")
-                parentEpml.request('showSnackBar', `${err6string}`);
+                parentEpml.request('showSnackBar', `${err6string}`)
             }
-        });
+        })
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
     isEmptyArray(arr) {
-        if (!arr) return true;
-        return arr.length === 0;
+        if (!arr) return true
+        return arr.length === 0
     }
 }
 
-window.customElements.define("node-management", NodeManagement);
+window.customElements.define("node-management", NodeManagement)
