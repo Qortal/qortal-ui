@@ -1,13 +1,15 @@
 import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, registerTranslateConfig } from 'lit-translate'
-import isElectron from 'is-electron'
 import { overviewStyle } from './overview-page-css.js'
 import { asyncReplace } from 'lit/directives/async-replace.js'
+import isElectron from 'is-electron'
+
 import "@material/mwc-button"
 import '@material/mwc-dialog'
-import '@vaadin/button';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@vaadin/button'
+
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
@@ -15,8 +17,8 @@ registerTranslateConfig({
 
 async function* countDown(count, callback) {
 	while (count > 0) {
-		yield count--;
-		await new Promise((r) => setTimeout(r, 1000));
+		yield count--
+		await new Promise((r) => setTimeout(r, 1000))
 		if (count === 0) {
 			callback()
 		}
@@ -114,7 +116,7 @@ class OverviewPage extends LitElement {
                                                     </div>
                                                     <div>
                                                         <span class="heading"><span class="${this.cssStatus2}">${this.renderSyncStatus()}</span></span>
-                                                        <span class="description">${translate("walletpage.wchange41")}</span>
+                                                        <span class="description">${translate("walletprofile.wp5")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -168,14 +170,18 @@ class OverviewPage extends LitElement {
         setInterval(() => {
             this.refreshItems()
         }, 60000)
+
+        setInterval(() => {
+            this.getAvatar()
+        }, 180000)
     }
 
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
-            this.theme = 'dark';
+            this.theme = 'dark'
         } else {
-            this.theme = 'light';
+            this.theme = 'light'
         }
         document.querySelector('html').setAttribute('theme', this.theme)
     }
@@ -288,7 +294,7 @@ class StartMintingNow extends LitElement {
 			status: { type: Number },
 			timer: { type: Number },
 			privateRewardShareKey: { type: String }
-		};
+		}
 	}
 
 	static get styles() {
@@ -424,24 +430,24 @@ class StartMintingNow extends LitElement {
 				color: var(--error);
 			}
 			`,
-		];
+		]
 	}
 
 	constructor() {
-		super();
-		this.mintingAccountData = [];
-		this.errorMsg = '';
-		this.openDialogRewardShare = false;
-		this.status = 0;
-		this.privateRewardShareKey = "";
+		super()
+		this.mintingAccountData = []
+		this.errorMsg = ''
+		this.openDialogRewardShare = false
+		this.status = 0
+		this.privateRewardShareKey = ""
 	}
 
 	render() {
-		return html` ${this.renderStartMintingButton()} `;
+		return html` ${this.renderStartMintingButton()} `
 	}
 
 	firstUpdated() {
-		this.getMintingAcccounts();
+		this.getMintingAcccounts()
 	}
 
 	renderErrorMsg1() {
@@ -465,7 +471,7 @@ class StartMintingNow extends LitElement {
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const url = `${nodeUrl}/admin/mintingaccounts`
 		try {
-			const res = await fetch(url);
+			const res = await fetch(url)
 			const mintingAccountData = await res.json()
 
 			this.mintingAccountData = mintingAccountData
@@ -509,7 +515,7 @@ class StartMintingNow extends LitElement {
 			}
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg2()
-			return;
+			return
 		}
 
 		try {
@@ -540,7 +546,7 @@ class StartMintingNow extends LitElement {
 			}
 
 			if (!stop) {
-				stop = true;
+				stop = true
 				try {
 					const address = window.parent.reduxStore.getState().app?.selectedAddress?.address
 					const myRewardShareArray = await rewardShares(address)
@@ -554,7 +560,7 @@ class StartMintingNow extends LitElement {
 				}
 				stop = false
 			}
-		};
+		}
 		interval = setInterval(getAnswer, 5000)
 	}
 
@@ -570,7 +576,7 @@ class StartMintingNow extends LitElement {
 		const isMinterButKeyMintingKeyNotAssigned = addressInfo?.error !== 124 && addressInfo?.level >= 1 && !findMintingAccount
 
 		const makeTransactionRequest = async (lastRef) => {
-			let mylastRef = lastRef;
+			let mylastRef = lastRef
 			let rewarddialog1 = get('transactions.rewarddialog1')
 			let rewarddialog2 = get('transactions.rewarddialog2')
 			let rewarddialog3 = get('transactions.rewarddialog3')
@@ -594,18 +600,18 @@ class StartMintingNow extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-			let err6string = get('rewardsharepage.rchange21');
+			let err6string = get('rewardsharepage.rchange21')
 			if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
 				return err6string
 			}
 			if (txnResponse.success === false && txnResponse.message) {
-				throw (txnResponse);
+				throw (txnResponse)
 			} else if (
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
 
-				return err6string;
+				return err6string
 			} else {
 				throw (txnResponse)
 			}
@@ -617,7 +623,7 @@ class StartMintingNow extends LitElement {
 
 			let myTransaction = await makeTransactionRequest(lastRef)
 
-			getTxnRequestResponse(myTransaction);
+			getTxnRequestResponse(myTransaction)
 			return myTransaction?.extraData?.rewardSharePrivateKey
 		}
 
@@ -637,7 +643,7 @@ class StartMintingNow extends LitElement {
 
 			if(findMintingAccountsFromUser.length > 2){
 				this.errorMsg = translate("startminting.smchange10")
-				return;
+				return
 			}
 
 			try {
@@ -646,7 +652,7 @@ class StartMintingNow extends LitElement {
 			} catch (error) {
 				console.log({ error })
 				this.errorMsg = error?.data?.message || this.renderErrorMsg4()
-				return;
+				return
 			}
 		}
 
@@ -741,7 +747,7 @@ class StartMintingNow extends LitElement {
 					
 			` : ""}			
 			` : ''}
-		`;
+		`
 	}
 }
 window.customElements.define('start-minting-now', StartMintingNow)
@@ -751,7 +757,7 @@ class MyButton extends LitElement {
 		onClick: { type: Function },
 		isLoading: { type: Boolean },
 		label: { type: String },
-	};
+	}
 
 	static styles = css`
 		vaadin-button {
@@ -769,13 +775,13 @@ class MyButton extends LitElement {
 		vaadin-button:hover {
 			opacity: 0.9;
 		}
-	`;
+	`
 
 	constructor() {
-		super();
-		this.onClick = () => {};
-		this.isLoading = false;
-		this.label = '';
+		super()
+		this.onClick = () => {}
+		this.isLoading = false
+		this.label = ''
 	}
 
 	render() {
@@ -788,7 +794,7 @@ class MyButton extends LitElement {
 					? html`${this.label}`
 					: html`<paper-spinner-lite active></paper-spinner-lite>`}
 			</vaadin-button>
-		`;
+		`
 	}
 }
 customElements.define('my-button', MyButton)

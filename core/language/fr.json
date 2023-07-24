@@ -214,7 +214,8 @@
 		"wp1": "Monnaie",
 		"wp2": "Pas de frappe",
 		"wp3": "Informations de base",
-		"wp4": "Synchronisé"
+		"wp4": "Synchronisé",
+		"wp5": "État de la synchronisation"
 	},
 	"general": {
 		"yes": "Oui",

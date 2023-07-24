@@ -79,6 +79,8 @@ a:not([href]):not([tabindex]):focus {
 img {
   vertical-align: middle;
   border-style: none;
+  height: 128px;
+  width: 128px;
 }
 
 caption {

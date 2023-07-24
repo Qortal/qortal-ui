@@ -214,7 +214,8 @@
 		"wp1": "Prägung",
 		"wp2": "Nicht am Prägen",
 		"wp3": "Kerninformationen",
-		"wp4": "Synchronisiert"
+		"wp4": "Synchronisiert",
+		"wp5": "Synchronisierungsstatus"
 	},
 	"general": {
 		"yes": "Ja",

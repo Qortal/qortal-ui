@@ -214,7 +214,8 @@
 		"wp1": "Battering",
 		"wp2": "Nu se bate",
 		"wp3": "Informații de bază",
-		"wp4": "Sincronizat"
+		"wp4": "Sincronizat",
+		"wp5": "Stare sincronizare"
 	},
 	"general": {
 		"yes": "Da",

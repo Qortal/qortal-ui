@@ -214,7 +214,8 @@
 		"wp1": "Bicie",
 		"wp2": "Nie bije",
 		"wp3": "Podstawowe informacje",
-		"wp4": "Zsynchronizowany"
+		"wp4": "Zsynchronizowany",
+		"wp5": "Stan synchronizacji"
 	},
 	"general": {
 		"yes": "Tak",

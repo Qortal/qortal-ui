@@ -214,7 +214,8 @@
 		"wp1": "Acuñación",
 		"wp2": "Sin acuñar",
 		"wp3": "Información básica",
-		"wp4": "Sincronizado"
+		"wp4": "Sincronizado",
+		"wp5": "Estado de sincronización"
 	},
 	"general": {
 		"yes": "Sí",

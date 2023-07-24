@@ -214,7 +214,8 @@
 		"wp1": "Kovanje",
 		"wp2": "Nije kovano",
 		"wp3": "Osnovne informacije",
-		"wp4": "Sinkronizirano"
+		"wp4": "Sinkronizirano",
+		"wp5": "Status sinkronizacije"
 	},
 	"general": {
 		"yes": "Da",

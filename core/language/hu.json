@@ -214,7 +214,8 @@
 		"wp1": "verés",
 		"wp2": "Nem pénzverés",
 		"wp3": "Alapinformációk",
-		"wp4": "Szinkronizált"
+		"wp4": "Szinkronizált",
+		"wp5": "Szinkronizálás állapota"
 	},
 	"general": {
 		"yes": "Igen",
