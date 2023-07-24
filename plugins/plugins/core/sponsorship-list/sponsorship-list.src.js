@@ -6,10 +6,6 @@ import { asyncReplace } from 'lit/directives/async-replace.js'
 import { pageStyles } from './sponsorship-list-css.src.js'
 import isElectron from 'is-electron'
 
-registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-})
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -18,6 +14,10 @@ import '@material/mwc-textfield'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/button'
 import '../components/ButtonIconCopy.js'
+
+registerTranslateConfig({
+    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -650,7 +650,7 @@ class SponsorshipList extends LitElement {
 			try {
 				accountDetails = await getAccountDetails()
 			} catch (error) {
-				this.errorMessage = 'Couldn't fetch account details'
+				this.errorMessage = 'Could not fetch account details'
 			}
 			
 			let lastRef = await getLastRef()
