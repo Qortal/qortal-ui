@@ -130,13 +130,13 @@ class SponsorshipList extends LitElement {
 							<ul class='tableGrid'>
 								<li class='grid-item'>
 									<div class='name-container'>
-										${sponsorship?.name ? html`
+										${sponsorship.name ? html`
 											<img src=${sponsorship.url}
 												class='avatar-img'
-												onerror='this.src='/img/incognito.png''
+												onerror='this.src="/img/incognito.png"'
 											/>
 										` : ''}		
-										${sponsorship?.name || sponsorship.address}
+										${sponsorship.name || sponsorship.address}
 									</div>
 								</li>
 								<li class='grid-item'>
@@ -145,7 +145,7 @@ class SponsorshipList extends LitElement {
 								</li>
 								<li class='grid-item'>
 									<mwc-button
-										@click=${()=> {this.createRewardShare(sponsorship?.publicKey, true)}}
+										@click=${()=> {this.createRewardShare(sponsorship.publicKey, true)}}
 									>
 									<mwc-icon>content_copy</mwc-icon>&nbsp;${translate('sponsorshipspage.schange11')}
 									</mwc-button>
@@ -172,8 +172,7 @@ class SponsorshipList extends LitElement {
 							<p class='text text--bold'>
 								${translate('sponsorshipspage.schange4')}&nbsp;
 								<span class='text text--bold--green'>
-									${this.nextSponsorshipEnding
-									?.blocksRemaining}&nbsp;
+									${this.nextSponsorshipEnding.blocksRemaining}&nbsp;
 								</span>
 								${translate('mintingpage.mchange26')}
 							</p>
@@ -454,7 +453,6 @@ class SponsorshipList extends LitElement {
 			await navigator.clipboard.writeText(toBeCopied)
 			parentEpml.request('showSnackBar', text)
 		} catch (err) {
-			console.error('Copy to clipboard error:', err)
 		}
 	}
 
@@ -474,7 +472,7 @@ class SponsorshipList extends LitElement {
 		this.addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		this.isPageLoading = true
 		try {
-			const address = window.parent.reduxStore.getState().app?.selectedAddress?.address
+			const address = window.parent.reduxStore.getState().app.selectedAddress.address
 
 			let rewardShares = await this.getRewardShareRelationship(address)
 
@@ -491,7 +489,7 @@ class SponsorshipList extends LitElement {
 					url: `/names/address/${rs.recipient}`
 				})
 				let url = ''
-				if(getNames?.length > 0 ) {
+				if(getNames.length > 0 ) {
 					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 					const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
 					const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
@@ -503,7 +501,7 @@ class SponsorshipList extends LitElement {
 				return {
 					...addressInfo,
 					...rs,
-					name: getNames?.length > 0 ? getNames[0].name : '',
+					name: getNames.length > 0 ? getNames[0].name : '',
 					url,
 					blocksRemaining: blocksRemaining,
 				}
@@ -538,13 +536,13 @@ class SponsorshipList extends LitElement {
 	}
 
 	_levelUpBlocks(accountInfo) {
-		let countBlocksString = (blocksNeed(0) - (accountInfo?.blocksMinted + accountInfo?.blocksMintedAdjustment)).toString()
+		let countBlocksString = (blocksNeed(0) - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
 		return countBlocksString
 	}
 
 	async removeRewardShare(rewardShareObject) {
 		
-		const selectedAddress = window.parent.reduxStore.getState().app?.selectedAddress
+		const selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
 
 		const myPercentageShare = -1
 
@@ -575,7 +573,7 @@ class SponsorshipList extends LitElement {
 			let rewarddialog6 = get('transactions.rewarddialog6')
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 381,
-				nonce: selectedAddress?.nonce,
+				nonce: selectedAddress.nonce,
 				params: {
 					rewardShareKeyPairPublicKey:
 					rewardShareObject.rewardSharePublicKey,
@@ -621,7 +619,7 @@ class SponsorshipList extends LitElement {
 		this.errorMessage = ''
 		const recipientPublicKey = publicKeyValue
 		const percentageShare = 0
-		const selectedAddress = window.parent.reduxStore.getState().app?.selectedAddress
+		const selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
 
 		// Check for valid...
 		this.isLoadingCreateSponsorship = true
@@ -697,8 +695,8 @@ class SponsorshipList extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-			if(txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
-				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
+			if(txnResponse.extraData.rewardSharePrivateKey && (txnResponse.data.message.includes('multiple') || txnResponse.data.message.includes('SELF_SHARE_EXISTS'))) {
+				this.privateRewardShareKey = txnResponse.extraData.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue, isCopy)
 			} else if (txnResponse.success === false && txnResponse?.message) {
 				this.errorMessage = txnResponse?.message
@@ -708,12 +706,12 @@ class SponsorshipList extends LitElement {
 				txnResponse.success === true &&
 				!txnResponse.data.error
 			) {
-				this.privateRewardShareKey = txnResponse?.extraData?.rewardSharePrivateKey
+				this.privateRewardShareKey = txnResponse.extraData.rewardSharePrivateKey
 				this.confirmRelationship(publicKeyValue, isCopy)
 			} else {
-				this.errorMessage = txnResponse?.data?.message || txnResponse?.message
+				this.errorMessage = txnResponse.data.message || txnResponse.message
 				this.isLoadingCreateSponsorship = false
-				throw(txnResponse?.data?.message || txnResponse?.message)
+				throw(txnResponse.data.message || txnResponse.message)
 			}
 		}
 		validateReceiver()
@@ -731,7 +729,7 @@ class SponsorshipList extends LitElement {
 	
 				try {
 					const recipientAddress = window.parent.base58PublicKeyToAddress(recipientPublicKey)
-					const minterAddress = window.parent.reduxStore.getState().app?.selectedAddress.address
+					const minterAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 					const myRewardShareArray = await parentEpml.request('apiCall', {
 						type: 'api',
 						url: `/addresses/rewardshares?minters=${minterAddress}&recipients=${recipientAddress}`
@@ -742,7 +740,6 @@ class SponsorshipList extends LitElement {
 						this.timer = countDown(isCopy ? 5 : 180, ()=> this.changeStatus(4))
 					}	
 				} catch (error) {
-					console.error(error)
 				}
 	
 				stop = false
@@ -764,7 +761,6 @@ class SponsorshipList extends LitElement {
 			this.lookupPublicAddressValue = response
 		} catch (error) {
 			this.errorLookup = error
-			console.error(error)
 		}
 	}
 }
