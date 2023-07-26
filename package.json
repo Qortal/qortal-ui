@@ -73,7 +73,7 @@
 	"devDependencies": {
 		"axios": "1.4.0",
 		"electron": "25.3.1",
-		"electron-builder": "24.4.0",
+		"electron-builder": "24.6.3",
 		"electron-packager": "17.1.1",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
