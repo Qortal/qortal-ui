@@ -8,10 +8,6 @@ import { cropAddress } from '../../../utils/cropAddress.js'
 import '@polymer/paper-progress/paper-progress.js'
 import '@vaadin/button'
 
-registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export class UserInfo extends LitElement {

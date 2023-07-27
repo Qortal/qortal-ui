@@ -35,7 +35,7 @@ import './ChatSideNavHeads.js'
 import './ChatLeaveGroup.js'
 import './ChatGroupSettings.js'
 import './ChatRightPanel.js'
-import './ChatSeachResults.js'
+import './ChatSearchResults.js'
 import './ChatGifs/ChatGifs.js'
 
 import '@material/mwc-button'
@@ -43,10 +43,6 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-
-registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -57,6 +53,7 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class ChatPage extends LitElement {
     static get properties() {
         return {
+            theme: { type: String, reflect: true },
             selectedAddress: { type: Object },
             config: { type: Object },
             messages: { type: Array },
@@ -1350,6 +1347,7 @@ class ChatPage extends LitElement {
             left: 0,
             offsetHeight: 0
         }
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     setOpenGifModal(value) {
@@ -2377,10 +2375,20 @@ class ChatPage extends LitElement {
     }
 
     async firstUpdated() {
+        this.changeTheme()
+
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
-            use(checkLanguage)
+            const checkTheme = localStorage.getItem('qortalTheme')
+
             this.userLanguage = checkLanguage
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
         })
 
         parentEpml.ready().then(() => {
@@ -2404,6 +2412,16 @@ class ChatPage extends LitElement {
             this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true
         }
 
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark'
+        } else {
+            this.theme = 'light'
+        }
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     async updated(changedProperties) {
@@ -3926,7 +3944,6 @@ class ChatPage extends LitElement {
     }
 
     pasteToTextBox(textarea) {
-
         // Return focus to the window
         window.focus()
 

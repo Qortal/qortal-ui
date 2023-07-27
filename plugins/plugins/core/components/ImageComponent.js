@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit';
-import { translate, get } from 'lit-translate';
-import { render } from 'lit/html.js';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 export class ImageComponent extends LitElement {
 
@@ -48,52 +48,51 @@ border: 1px solid var(--mdc-theme-primary );
 }
 
 constructor() {
-  super();
-  this.attempts = 0;
-  this.maxAttempts = 5;
+  super()
+  this.attempts = 0
+  this.maxAttempts = 5
 }
 getApiKey() {
-  const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-  let apiKey = myNode.apiKey;
-  return apiKey;
+  const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+  let apiKey = myNode.apiKey
+  return apiKey
 }
 
 async _fetchImage() {
   this.attempts++;
-  if (this.attempts > this.maxAttempts) return;
+  if (this.attempts > this.maxAttempts) return
   await new Promise((res) => {
     setTimeout(() => {
-      res();
+      res()
     }, 1000)
-  });
+  })
   try {
-    const response = await fetch(this.gif.url);
-    const data = await response.json();
-    console.log({data});
+    const response = await fetch(this.gif.url)
+    const data = await response.json()
     if (data.ok) {
-    this.error = false;
+    this.error = false
     this.gif = {
       ...this.gif,
       url: data.src
     };
     this.requestUpdate();
     } else if (!data.ok || data.error) {
-      this.error = true;
+      this.error = true
     } else {
-      this.error = false;
+      this.error = false
     }
   } catch (error) {
-    this.error = true;
-    console.error(error);
-    this._fetchImage();
+    this.error = true
+    console.error(error)
+    this._fetchImage()
   }
 }
 
 render() {
 if (this.error && this.attempts <= this.maxAttempts) {
   setTimeout(() => {
-    this._fetchImage();
-  }, 1000);
+    this._fetchImage()
+  }, 1000)
 }
 return html`
 ${this.gif && !this.error 
@@ -124,4 +123,4 @@ alt=${this.alt}
 }
 }
 
-customElements.define('image-component', ImageComponent);
+customElements.define('image-component', ImageComponent)

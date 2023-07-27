@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })

@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit';
-import { Epml } from '../../../../epml.js';
-import { chatGifsExploreStyles } from './ChatGifsExplore-css.js';
-import { translate, get } from 'lit-translate';
-import '@material/mwc-icon';
+import { LitElement, html, css } from 'lit'
+import { Epml } from '../../../../epml.js'
+import { chatGifsExploreStyles } from './ChatGifsExplore-css.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -69,9 +69,9 @@ class ChatGifsExplore extends LitElement {
     	this.elementObserver();
     }
 	getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
 		async searchCollections() {
@@ -169,4 +169,4 @@ class ChatGifsExplore extends LitElement {
 
 }
 
-window.customElements.define('chat-gifs-explore', ChatGifsExplore);
+window.customElements.define('chat-gifs-explore', ChatGifsExplore)

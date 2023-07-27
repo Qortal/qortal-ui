@@ -1,18 +1,20 @@
 import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
-import localForage from "localforage";
-import { translate} from 'lit-translate';
-
+import localForage from "localforage"
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
-});
+})
+
 class ChatHead extends LitElement {
     static get properties() {
         return {
+            theme: { type: String, reflect: true },
             selectedAddress: { type: Object },
             config: { type: Object },
             chatInfo: { type: Object },
@@ -53,10 +55,7 @@ class ChatHead extends LitElement {
                 color: var(--chat-group);
             }
 
-         
-
             .about {
-   
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -109,12 +108,13 @@ class ChatHead extends LitElement {
         this.imageFetches = 0
         this.lastReadMessageTimestamp =  0
         this.loggedInAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
      createImage(imageUrl)  {
-        const imageHTMLRes = new Image();
-        imageHTMLRes.src = imageUrl;
-        imageHTMLRes.style= "width:40px; height:40px; float: left; border-radius:50%";
+        const imageHTMLRes = new Image()
+        imageHTMLRes.src = imageUrl
+        imageHTMLRes.style= "width:40px; height:40px; float: left; border-radius:50%"
         imageHTMLRes.onclick= () => {
             this.openDialogImage = true;
         }
@@ -124,29 +124,25 @@ class ChatHead extends LitElement {
         imageHTMLRes.onerror = () => {   
             if (this.imageFetches < 4) {
                 setTimeout(() => {
-                    this.imageFetches = this.imageFetches + 1;
-                    imageHTMLRes.src = imageUrl;
-                }, 750);
+                    this.imageFetches = this.imageFetches + 1
+                    imageHTMLRes.src = imageUrl
+                }, 750)
             } else {
-               
-
                 this.isImageLoaded = false
             }
         };
-        return imageHTMLRes;
+        return imageHTMLRes
       }
 
-      
-    
     render() {
-        let avatarImg = '';
+        let avatarImg = ''
         let backupAvatarImg = ''
         let isUnread = false
     
         if(this.chatInfo.name){
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
             avatarImg= this.createImage(avatarUrl)
         }
 
@@ -189,6 +185,19 @@ class ChatHead extends LitElement {
     }
 
    async firstUpdated() {
+        this.changeTheme()
+
+        window.addEventListener('storage', () => {
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+
         let configLoaded = false
         this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatInfo.url) || 0
         parentEpml.ready().then(() => {
@@ -215,6 +224,16 @@ class ChatHead extends LitElement {
             })
         })
         parentEpml.imReady()
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark'
+        } else {
+            this.theme = 'light'
+        }
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     shouldUpdate(changedProperties) {

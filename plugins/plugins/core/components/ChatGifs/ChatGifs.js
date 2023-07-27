@@ -5,12 +5,12 @@ import * as zip from '@zip.js/zip.js';
 import '@material/mwc-icon';
 import ShortUniqueId from 'short-unique-id';
 import {publishData} from '../../../utils/publish-image.js';
-import {translate, get} from 'lit-translate';
 import {gifExplorerStyles} from './ChatGifs-css.js';
 import { bytesToMegabytes } from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
 
@@ -993,4 +993,4 @@ setOpenGifModal: { attribute: false }
 
 }
 
-window.customElements.define('chat-gifs', ChatGifs);
+window.customElements.define('chat-gifs', ChatGifs)

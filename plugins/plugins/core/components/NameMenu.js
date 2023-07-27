@@ -3,11 +3,6 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import snackbar from './snackbar.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 import '@material/mwc-snackbar'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -250,16 +245,11 @@ class NameMenu extends LitElement {
     }
 
     firstUpdated() {
-        this.getChatBlockedAdresses();
+        this.getChatBlockedAdresses()
 
 	  setInterval(() => {
-	      this.getChatBlockedAdresses();
+	      this.getChatBlockedAdresses()
 	  }, 60000)
-
-        window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage');
-            use(checkLanguage);
-        })
 
         window.onclick = function(event) {
             if (!event.target.matches('.block')) {
@@ -275,12 +265,12 @@ class NameMenu extends LitElement {
         }
 
         const stopKeyEventPropagation = (e) => {
-            e.stopPropagation();
-            return false;
+            e.stopPropagation()
+            return false
         }
 
-        this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation);
-        this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
+        this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation)
+        this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation)
 
         const getDataFromURL = () => {
             let tempUrl = document.location.href
@@ -307,17 +297,6 @@ class NameMenu extends LitElement {
             })
         })
         parentEpml.imReady()
-    }
-
-    changeLanguage() {
-        const checkLanguage = localStorage.getItem('qortalLanguage')
-
-        if (checkLanguage === null || checkLanguage.length === 0) {
-            localStorage.setItem('qortalLanguage', 'us')
-            use('us')
-        } else {
-            use(checkLanguage)
-        }
     }
 
     myMenu() {

@@ -1,13 +1,13 @@
 import { LitElement, html, css } from "lit";
-import { get, translate } from 'lit-translate';
-
-import { EmojiPicker } from 'emoji-picker-js';
-import { Epml } from '../../../epml.js';
+import { render } from 'lit/html.js'
+import { EmojiPicker } from 'emoji-picker-js'
+import { Epml } from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-// import { addAutoLoadImageChat } from "../../../../qortal-ui-core/src/redux/app/app-actions.js";
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
 class ChatTextEditor extends LitElement {
 	static get properties() {
 		return {
@@ -589,11 +589,11 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             const checkTheme = localStorage.getItem('qortalTheme');
             const chatbar = this.shadowRoot.querySelector('.element')
             if (checkTheme === 'dark') {
-                this.theme = 'dark';
+                this.theme = 'dark'
                 chatbar.style.cssText = "color:#ffffff;"
                
             } else {
-                this.theme = 'light';
+                this.theme = 'light'
                 chatbar.style.cssText = "color:#080808;"
              
             }

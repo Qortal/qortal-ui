@@ -1,10 +1,10 @@
-import { LitElement, html } from 'lit';
-import { render } from 'lit/html.js';
-import { get, translate } from 'lit-translate';
-import { tipUserStyles } from './TipUser-css.js';
-import { Epml } from '../../../epml';
-import '@vaadin/button';
-import '@polymer/paper-progress/paper-progress.js';
+import { LitElement, html } from 'lit'
+import { render } from 'lit/html.js'
+import { tipUserStyles } from './TipUser-css.js'
+import { Epml } from '../../../epml'
+import '@vaadin/button'
+import '@polymer/paper-progress/paper-progress.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 
@@ -34,15 +34,15 @@ export class TipUser extends LitElement {
     static styles = [tipUserStyles]
 
    async firstUpdated() {
-      await this.fetchWalletDetails();
+      await this.fetchWalletDetails()
     }
 
     updated(changedProperties) {
         if (changedProperties && changedProperties.has("closeTipUser")) {
             if (this.closeTipUser) {
-                this.shadowRoot.getElementById("amountInput").value = "";
-                this.errorMessage = "";
-                this.successMessage = "";
+                this.shadowRoot.getElementById("amountInput").value = ""
+                this.errorMessage = ""
+                this.successMessage = ""
             }
         }
     }
@@ -52,7 +52,7 @@ export class TipUser extends LitElement {
 			type: "api",
 			url: `/addresses/lastreference/${this.myAddress.address}`,
 		})
-		return myRef;
+		return myRef
 	}
 
     renderSuccessText() {
@@ -64,9 +64,9 @@ export class TipUser extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
     async fetchWalletDetails() {
@@ -78,85 +78,85 @@ export class TipUser extends LitElement {
                 let snack4string = get("chatpage.cchange48")
                 parentEpml.request('showSnackBar', `${snack4string}`)
             } else {
-                this.walletBalance = Number(res).toFixed(8);
+                this.walletBalance = Number(res).toFixed(8)
             }
         })					 
     }
 
     async sendQort() {
-    const amount = this.shadowRoot.getElementById("amountInput").value;
-    let recipient = this.userName;
-    this.sendMoneyLoading = true;
-    this.btnDisable = true;
+    const amount = this.shadowRoot.getElementById("amountInput").value
+    let recipient = this.userName
+    this.sendMoneyLoading = true
+    this.btnDisable = true
 
     if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.walletBalance)) {
-        this.sendMoneyLoading = false;
-        this.btnDisable = false;
-        let snack1string = get("chatpage.cchange51");
-        parentEpml.request('showSnackBar', `${snack1string}`);
-        return false;
+        this.sendMoneyLoading = false
+        this.btnDisable = false
+        let snack1string = get("chatpage.cchange51")
+        parentEpml.request('showSnackBar', `${snack1string}`)
+        return false
     }
 
     if (parseFloat(amount) <= 0) {
-        this.sendMoneyLoading = false;
-        this.btnDisable = false;
-        let snack2string = get("chatpage.cchange52");
-        parentEpml.request('showSnackBar', `${snack2string}`);
-        return false;
+        this.sendMoneyLoading = false
+        this.btnDisable = false
+        let snack2string = get("chatpage.cchange52")
+        parentEpml.request('showSnackBar', `${snack2string}`)
+        return false
     }
 
     if (recipient.length === 0) {
-        this.sendMoneyLoading = false;
-        this.btnDisable = false;
-        let snack3string = get("chatpage.cchange53");
-        parentEpml.request('showSnackBar', `${snack3string}`);
-        return false;
+        this.sendMoneyLoading = false
+        this.btnDisable = false
+        let snack3string = get("chatpage.cchange53")
+        parentEpml.request('showSnackBar', `${snack3string}`)
+        return false
     }
 
     const validateName = async (receiverName) => {
-        let myRes;
+        let myRes
         let myNameRes = await parentEpml.request('apiCall', {
             type: 'api',
             url: `/names/${receiverName}`,
         })
 
         if (myNameRes.error === 401) {
-            myRes = false;
+            myRes = false
         } else {
-            myRes = myNameRes;
+            myRes = myNameRes
         }
         return myRes;
     }
 
     const validateAddress = async (receiverAddress) => {
-        let myAddress = await window.parent.validateAddress(receiverAddress);
-        return myAddress;
+        let myAddress = await window.parent.validateAddress(receiverAddress)
+        return myAddress
     }
 
     const validateReceiver = async (recipient) => {
-        let lastRef = await this.getLastRef();
-        let isAddress;
+        let lastRef = await this.getLastRef()
+        let isAddress
 
         try {
-            isAddress = await validateAddress(recipient);
+            isAddress = await validateAddress(recipient)
         } catch (err) {
-            isAddress = false;
+            isAddress = false
         }
 
         if (isAddress) {
-            let myTransaction = await makeTransactionRequest(recipient, lastRef);
-            getTxnRequestResponse(myTransaction);
+            let myTransaction = await makeTransactionRequest(recipient, lastRef)
+            getTxnRequestResponse(myTransaction)
         } else {
-            let myNameRes = await validateName(recipient);
+            let myNameRes = await validateName(recipient)
             if (myNameRes !== false) {
                 let myNameAddress = myNameRes.owner
                 let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
                 getTxnRequestResponse(myTransaction)
             } else {
                 console.error(this.renderReceiverText())
-                this.errorMessage = this.renderReceiverText();
-                this.sendMoneyLoading = false;
-                this.btnDisable = false;
+                this.errorMessage = this.renderReceiverText()
+                this.sendMoneyLoading = false
+                this.btnDisable = false
             }
         }
     }
@@ -169,23 +169,23 @@ export class TipUser extends LitElement {
             });
 
             if (getNames?.length > 0 ) {
-                return getNames[0].name;
+                return getNames[0].name
             } else {
-                return '';
+                return ''
             }
         } catch (error) {
-            return "";
+            return ""
         }
     }
 
     const makeTransactionRequest = async (receiver, lastRef) => {
-        let myReceiver = receiver;
-        let mylastRef = lastRef;
-        let dialogamount = get("transactions.amount");
-        let dialogAddress = get("login.address");
-        let dialogName = get("login.name");
-        let dialogto = get("transactions.to");
-        let recipientName = await getName(myReceiver);
+        let myReceiver = receiver
+        let mylastRef = lastRef
+        let dialogamount = get("transactions.amount")
+        let dialogAddress = get("login.address")
+        let dialogName = get("login.name")
+        let dialogto = get("transactions.to")
+        let recipientName = await getName(myReceiver)
         let myTxnrequest = await parentEpml.request('transaction', {
             type: 2,
             nonce: this.myAddress.nonce,
@@ -201,33 +201,33 @@ export class TipUser extends LitElement {
                 dialogName
             },
         })
-        return myTxnrequest;
+        return myTxnrequest
     }
 
     const getTxnRequestResponse = (txnResponse) => {
         if (txnResponse.success === false && txnResponse.message) {
-            this.errorMessage = txnResponse.message;
-            this.sendMoneyLoading = false;
-            this.btnDisable = false;
-            throw new Error(txnResponse);
+            this.errorMessage = txnResponse.message
+            this.sendMoneyLoading = false
+            this.btnDisable = false
+            throw new Error(txnResponse)
         } else if (txnResponse.success === true && !txnResponse.data.error) {
-            this.shadowRoot.getElementById('amountInput').value = '';
-            this.errorMessage = '';
-            this.successMessage = this.renderSuccessText();
-            this.sendMoneyLoading = false;
-            this.btnDisable = false;
+            this.shadowRoot.getElementById('amountInput').value = ''
+            this.errorMessage = ''
+            this.successMessage = this.renderSuccessText()
+            this.sendMoneyLoading = false
+            this.btnDisable = false
             setTimeout(() => {
-                this.setOpenTipUser(false);
-                this.successMessage = "";
-            }, 3000);
+                this.setOpenTipUser(false)
+                this.successMessage = ""
+            }, 3000)
         } else {
-            this.errorMessage = txnResponse.data.message;
-            this.sendMoneyLoading = false;
-            this.btnDisable = false;
-            throw new Error(txnResponse);
+            this.errorMessage = txnResponse.data.message
+            this.sendMoneyLoading = false
+            this.btnDisable = false
+            throw new Error(txnResponse)
         }
     }
-    validateReceiver(recipient);
+    validateReceiver(recipient)
     }
 
   render() {
@@ -274,4 +274,4 @@ export class TipUser extends LitElement {
     `;
   }
 }
-customElements.define('tip-user', TipUser);
+customElements.define('tip-user', TipUser)

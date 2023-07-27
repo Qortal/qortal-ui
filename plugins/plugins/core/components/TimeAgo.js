@@ -24,11 +24,11 @@ class TimeAgo extends LitElement {
             }
         });
 
-        this.shadowRoot.querySelector('time-ago').setAttribute('title', '');
+        this.shadowRoot.querySelector('time-ago').setAttribute('title', '')
     }
 
     constructor() {
-        super();
+        super()
         this.timestamp = 0
         this.timeIso = ''
         this.format = ''
@@ -41,7 +41,7 @@ class TimeAgo extends LitElement {
     }
 
     renderTime(timestamp) {
-        timestamp === undefined ? this.timeIso = '' : this.timeIso = new Date(timestamp).toISOString();
+        timestamp === undefined ? this.timeIso = '' : this.timeIso = new Date(timestamp).toISOString()
     }
 
     firstUpdated() {

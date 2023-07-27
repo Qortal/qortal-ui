@@ -29,10 +29,6 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/tooltip'
 
-registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 let toggledMessage = {}
@@ -172,6 +168,7 @@ function processText(input) {
 class ChatScroller extends LitElement {
     static get properties() {
         return {
+            theme: { type: String, reflect: true },
             getNewMessage: { attribute: false },
             getOldMessage: { attribute: false },
             escapeHTML: { attribute: false },
@@ -216,6 +213,7 @@ class ChatScroller extends LitElement {
         this.openTipUser = false
         this.openUserInfo = false
         this.listSeenMessages = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     addSeenMessage(val) {
@@ -258,7 +256,6 @@ class ChatScroller extends LitElement {
             }
             return messageArray
         }, [])
-
 
         return html`
               ${this.isLoadingMessages ? html`
@@ -337,8 +334,20 @@ class ChatScroller extends LitElement {
     }
 
     async firstUpdated() {
-        this.emojiPicker.on('emoji', selection => {
+        this.changeTheme()
 
+        window.addEventListener('storage', () => {
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+
+        this.emojiPicker.on('emoji', selection => {
             this.sendMessage({
                 type: 'reaction',
                 editedMessageObj: toggledMessage,
@@ -353,6 +362,16 @@ class ChatScroller extends LitElement {
         this.downElementObserver()
         await this.getUpdateComplete()
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark'
+        } else {
+            this.theme = 'light'
+        }
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     _getOldMessage(_scrollElement) {
@@ -447,7 +466,7 @@ class MessageTemplate extends LitElement {
             goToRepliedMessage: { attribute: false },
             listSeenMessages: { type: Array },
             addSeenMessage: { attribute: false },
-            chatId: { type: String },
+            chatId: { type: String }
         }
     }
 
@@ -1220,7 +1239,7 @@ class ChatMenu extends LitElement {
             setOpenPrivateMessage: { attribute: false },
             setOpenTipUser: { attribute: false },
             setUserName: { attribute: false },
-            gif: { type: Boolean },
+            gif: { type: Boolean }
         }
     }
 

@@ -18,7 +18,7 @@ import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
 import '../../components/WrapperModal.js'
-import '../../components/ChatSeachResults.js'
+import '../../components/ChatSearchResults.js'
 
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -26,10 +26,6 @@ import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
 
 passiveSupport({ events: ['touchstart'] })
 
@@ -149,7 +145,6 @@ class Chat extends LitElement {
             ]
           })
 
-         
           this.unsubscribeStore =  window.parent.reduxStore.subscribe(() => {
             try {
                 if(window.parent.location && window.parent.location.search) {
@@ -381,7 +376,6 @@ class Chat extends LitElement {
     }
 
     async firstUpdated() {
-        this.changeLanguage()
         this.changeTheme()
         this.getChatBlockedList()
         this.getLocalBlockedList()
@@ -429,10 +423,7 @@ class Chat extends LitElement {
         let runFunctionsAfterPageLoadInterval = setInterval(runFunctionsAfterPageLoad, 100)
 
         window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
-
-            use(checkLanguage)
 
             if (checkTheme === 'dark') {
                 this.theme = 'dark'
@@ -800,17 +791,6 @@ class Chat extends LitElement {
             this.theme = 'light'
         }
         document.querySelector('html').setAttribute('theme', this.theme)
-    }
-
-    changeLanguage() {
-        const checkLanguage = localStorage.getItem('qortalLanguage')
-
-        if (checkLanguage === null || checkLanguage.length === 0) {
-            localStorage.setItem('qortalLanguage', 'us')
-            use('us')
-        } else {
-            use(checkLanguage)
-        }
     }
 
     renderChatWelcomePage() {

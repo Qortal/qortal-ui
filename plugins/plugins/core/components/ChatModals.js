@@ -1,10 +1,10 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { get, translate } from 'lit-translate';
-import { Epml } from '../../../epml';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../epml'
 import snackbar from './snackbar.js'
-import '@material/mwc-button';
-import '@material/mwc-dialog';
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import '@material/mwc-button'
+import '@material/mwc-dialog'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -18,15 +18,15 @@ class ChatModals extends LitElement {
       hidePrivateMessageModal: {type: Function},
       hideBlockUserModal: {type: Function},
       toblockaddress: { type: String, attribute: true },
-      chatBlockedAdresses: { type: Array },
+      chatBlockedAdresses: { type: Array }
     }
   }
 
   constructor() {
-    super();
-    this.isLoading = false;
-    this.hidePrivateMessageModal = () => {};
-    this.hideBlockUserModal = () => {};
+    super()
+    this.isLoading = false
+    this.hidePrivateMessageModal = () => {}
+    this.hideBlockUserModal = () => {}
     this.chatBlockedAdresses = []
   }
 
@@ -105,13 +105,13 @@ class ChatModals extends LitElement {
     } else {
         this.sendMessage()
     }
-  };
+  }
 
     async sendMessage() {
-        this.isLoading = true;
-        const _recipient = this.shadowRoot.getElementById('sendTo').value;
-        const messageBox = this.shadowRoot.getElementById('messageBox');
-        const messageText = messageBox.value;
+        this.isLoading = true
+        const _recipient = this.shadowRoot.getElementById('sendTo').value
+        const messageBox = this.shadowRoot.getElementById('messageBox')
+        const messageText = messageBox.value
         let recipient;
 
         const validateName = async (receiverName) => {
@@ -127,7 +127,7 @@ class ChatModals extends LitElement {
                 myRes = myNameRes
             }
 
-            return myRes;
+            return myRes
         }
 
         const myNameRes = await validateName(_recipient)
@@ -138,8 +138,8 @@ class ChatModals extends LitElement {
 
             recipient = myNameRes.owner
         }
-        let _reference = new Uint8Array(64);
-        window.crypto.getRandomValues(_reference);
+        let _reference = new Uint8Array(64)
+        window.crypto.getRandomValues(_reference)
 
         let sendTimestamp = Date.now()
 
@@ -200,17 +200,17 @@ class ChatModals extends LitElement {
 
     const _computePow = async (chatBytes) => {
 
-        const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; });
+        const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; })
         const chatBytesArray = new Uint8Array(_chatBytesArray)
         const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
-        const hashPtr = window.parent.sbrk(32, window.parent.heap);
-        const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32);
-        hashAry.set(chatBytesHash);
+        const hashPtr = window.parent.sbrk(32, window.parent.heap)
+        const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
+        hashAry.set(chatBytesHash)
 
-        const difficulty = this.balance < 4 ? 18 : 8;
+        const difficulty = this.balance < 4 ? 18 : 8
 
         const workBufferLength = 8 * 1024 * 1024;
-        const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap);
+        const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
 
         let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
 
@@ -250,9 +250,9 @@ class ChatModals extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 
     getChatBlockedList() {
@@ -263,7 +263,7 @@ class ChatModals extends LitElement {
 
         localStorage.removeItem("ChatBlockedAddresses")
 
-        var obj = [];
+        var obj = []
 
         fetch(blockedAddressesUrl).then(response => {
             return response.json()
@@ -412,4 +412,4 @@ class ChatModals extends LitElement {
   }
 }
 
-customElements.define('chat-modals', ChatModals);
+customElements.define('chat-modals', ChatModals)
