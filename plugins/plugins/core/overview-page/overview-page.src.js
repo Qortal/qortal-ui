@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit'
 import { Epml } from '../../../epml.js'
-import { use, get, translate, registerTranslateConfig } from 'lit-translate'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import { overviewStyle } from './overview-page-css.js'
 import { asyncReplace } from 'lit/directives/async-replace.js'
 import isElectron from 'is-electron'
@@ -10,9 +10,8 @@ import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/button'
 
-
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
+    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 async function* countDown(count, callback) {
@@ -36,7 +35,10 @@ class OverviewPage extends LitElement {
             nodeInfo: { type: Array },
             coreInfo: { type: Array },
             imageUrl: { type: String },
-            myBalance: { type: Number }
+            myBalance: { type: Number },
+            listAccounts: { type: Array },
+            check1: { type: Boolean },
+            check2: { type: Boolean }
         }
     }
 
@@ -54,6 +56,9 @@ class OverviewPage extends LitElement {
         this.coreInfo = []
         this.imageUrl = ''
         this.myBalance = 0
+        this.listAccounts = []
+        this.check1 = false
+        this.check2 = false
     }
 
     render() {
@@ -134,7 +139,7 @@ class OverviewPage extends LitElement {
         `
     }
 
-    firstUpdated() {
+    async firstUpdated() {
         this.changeTheme()
         this.changeLanguage()
 
@@ -144,6 +149,7 @@ class OverviewPage extends LitElement {
         this.getNodeInfo()
         this.getCoreInfo()
         this.getBalanceInfo()
+        await this.getMintingKeysList()
 
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -197,22 +203,87 @@ class OverviewPage extends LitElement {
         }
     }
 
-    refreshItems() {
+    renderMyErrorMsg1() {
+        return html`${translate("startminting.smchange1")}`
+    }
+
+    async refreshItems() {
         this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
         this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
         this.getNodeInfo()
         this.getCoreInfo()
         this.getBalanceInfo()
+        await this.getMintingKeysList()
+    }
+
+    async getMintingKeysList() {
+        this.check1 = false
+        this.check2 = false
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeStatus = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const statusUrl = `${nodeStatus}/admin/mintingaccounts`
+
+        try {
+            const res = await fetch(statusUrl)
+            const listAccounts = await res.json()
+            this.listAccounts = listAccounts
+
+            const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
+            const address = window.parent.reduxStore.getState().app.selectedAddress.address
+            const findMyMintingAccount = this.listAccounts.find((myKey) => myKey.mintingAccount === address)
+            const findMyMintingRecipient = this.listAccounts.find((myKey) => myKey.recipientAccount === address)
+            const findRemovedSponsorsKey = this.listAccounts.filter((my) => my.address)
+
+            if (findMyMintingAccount === undefined) {
+                this.check1 = false
+            } else {
+                this.check1 = true
+            }
+
+            if (findMyMintingRecipient === undefined) {
+                this.check2 = false
+            } else {
+                this.check2 = true
+            }
+
+            if (findRemovedSponsorsKey.length > 0) {
+                this.removeBlankKey(findRemovedSponsorsKey.publicKey)
+            } else {
+            }
+        } catch (error) {
+            this.errorMsg = this.renderMyErrorMsg1()
+        }
+    }
+
+    removeBlankKey(myPublicKey) {
+        parentEpml.request("apiCall", {
+            url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
+            method: "DELETE",
+            body: myPublicKey,
+        }).then((res) => {
+            if (res === true) {
+                console.log('REMOVED BLANK KEY')
+            } else {
+            }
+        })
     }
 
     renderMintingStatus() {
-        if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === true) {
+        const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
+        const myMintingKey = addressInfo?.error !== 124 && +addressInfo?.level > 0
+
+        if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === true && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
             this.cssStatus = ''
             return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
-        } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false) {
+        } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
             this.cssStatus = ''
             return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
-        } else if (this.nodeInfo.isMintingPossible === false) {
+        } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === false && this.check2 === true && addressInfo.level == 0 && addressInfo.blocksMinted < 7200) {
+            this.cssStatus = ''
+            return html`<span class="btn btn-sm btn-info float-right">${translate("becomeMinterPage.bchange12")}</span>`
+        } else if (this.check1 === false && this.check2 === false && myMintingKey === true) {
+            return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
+        } else if (myMintingKey === false) {
             return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
         }
     }
@@ -264,7 +335,6 @@ class OverviewPage extends LitElement {
             this.coreInfo = data
         })
         .catch(err => {
-            console.error('Request failed', err)
         })
     }
 
@@ -279,8 +349,13 @@ class OverviewPage extends LitElement {
             this.myBalance = data
         })
         .catch(err => {
-            console.error('Request failed', err)
         })
+    }
+
+    getApiKey() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 }
 window.customElements.define('overview-page', OverviewPage)
@@ -298,8 +373,7 @@ class StartMintingNow extends LitElement {
 	}
 
 	static get styles() {
-		return [
-			css`
+		return [css`
 			p, h1 {
 				color: var(--black)
 			}
@@ -429,8 +503,7 @@ class StartMintingNow extends LitElement {
 			.message-error {
 				color: var(--error);
 			}
-			`,
-		]
+		`]
 	}
 
 	constructor() {
@@ -443,7 +516,7 @@ class StartMintingNow extends LitElement {
 	}
 
 	render() {
-		return html` ${this.renderStartMintingButton()} `
+		return html`${this.renderStartMintingButton()}`
 	}
 
 	firstUpdated() {
@@ -473,14 +546,13 @@ class StartMintingNow extends LitElement {
 		try {
 			const res = await fetch(url)
 			const mintingAccountData = await res.json()
-
 			this.mintingAccountData = mintingAccountData
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg1()
 		}
 	}
 
-	async changeStatus(value){
+	async changeStatus(value) {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		this.status = value
@@ -569,11 +641,11 @@ class StartMintingNow extends LitElement {
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const mintingAccountData = this.mintingAccountData
 		const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
-		const address = window.parent.reduxStore.getState().app?.selectedAddress?.address
-		const nonce = window.parent.reduxStore.getState().app?.selectedAddress?.nonce
-		const publicAddress = window.parent.reduxStore.getState().app?.selectedAddress ?.base58PublicKey
+		const address = window.parent.reduxStore.getState().app.selectedAddress.address
+		const nonce = window.parent.reduxStore.getState().app.selectedAddress.nonce
+		const publicAddress = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
 		const findMintingAccount = mintingAccountData.find((ma) => ma.mintingAccount === address)
-		const isMinterButKeyMintingKeyNotAssigned = addressInfo?.error !== 124 && addressInfo?.level >= 1 && !findMintingAccount
+		const isMinterButKeyMintingKeyNotAssigned = addressInfo.error !== 124 && addressInfo.level >= 1 && !findMintingAccount
 
 		const makeTransactionRequest = async (lastRef) => {
 			let mylastRef = lastRef
@@ -592,25 +664,21 @@ class StartMintingNow extends LitElement {
 					rewarddialog1: rewarddialog1,
 					rewarddialog2: rewarddialog2,
 					rewarddialog3: rewarddialog3,
-					rewarddialog4: rewarddialog4,
+					rewarddialog4: rewarddialog4
 				},
-				disableModal: true,
+				disableModal: true
 			})
 			return myTxnrequest
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
 			let err6string = get('rewardsharepage.rchange21')
-			if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
+			if (txnResponse.extraData.rewardSharePrivateKey && (txnResponse.data.message.includes('multiple') || txnResponse.data.message.includes('SELF_SHARE_EXISTS'))) {
 				return err6string
 			}
 			if (txnResponse.success === false && txnResponse.message) {
 				throw (txnResponse)
-			} else if (
-				txnResponse.success === true &&
-				!txnResponse.data.error
-			) {
-
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
 				return err6string
 			} else {
 				throw (txnResponse)
@@ -624,24 +692,24 @@ class StartMintingNow extends LitElement {
 			let myTransaction = await makeTransactionRequest(lastRef)
 
 			getTxnRequestResponse(myTransaction)
-			return myTransaction?.extraData?.rewardSharePrivateKey
+			return myTransaction.extraData.rewardSharePrivateKey
 		}
 
 		const getLastRef = async () => {
-			const url = `${nodeUrl}/addresses/lastreference/${address}`
-			const res = await fetch(url)
-			const data = await res.text()
-			return data
+			let myRef = await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${address}`
+			})
+			return myRef
 		}
 
 		const startMinting = async () => {
 			this.openDialogRewardShare = true
 			this.errorMsg = ''
-			const address = window.parent.reduxStore.getState().app?.selectedAddress?.address
 
 			const findMintingAccountsFromUser = this.mintingAccountData.filter((ma) => ma.recipientAccount === address && ma.mintingAccount === address)
 
-			if(findMintingAccountsFromUser.length > 2){
+			if(findMintingAccountsFromUser.length > 2) {
 				this.errorMsg = translate("startminting.smchange10")
 				return
 			}
@@ -650,8 +718,7 @@ class StartMintingNow extends LitElement {
 				this.privateRewardShareKey = await createSponsorshipKey()
 				this.confirmRelationship(publicAddress)
 			} catch (error) {
-				console.log({ error })
-				this.errorMsg = error?.data?.message || this.renderErrorMsg4()
+				this.errorMsg = error.data.message || this.renderErrorMsg4()
 				return
 			}
 		}
@@ -676,7 +743,7 @@ class StartMintingNow extends LitElement {
 				${this.openDialogRewardShare ? html`
 					<div class="dialogCustom">
 						<div class="dialogCustomInner">
-                    				<div class="dialog-header" >
+                    					<div class="dialog-header">
 								<div class="row">
 								<h1>In progress</h1>
 								<div class=${`smallLoading marginLoader ${this.status > 3 && 'hide'}`}></div>
@@ -730,23 +797,27 @@ class StartMintingNow extends LitElement {
 						</div>
 						<div class="modalFooter">
 							${this.errorMsg || this.status === 5 ? html`
-							<mwc-button
-                        				slot="primaryAction"
-								@click=${() => {
-									this.openDialogRewardShare = false
-									this.errorMsg = ''
-								}}
-                        				class="red"
-                    				>
-                    				${translate("general.close")}
-                    				</mwc-button>
-						` : '' }
+								<mwc-button
+									slot="primaryAction"
+									@click=${() => {
+										this.openDialogRewardShare = false
+										this.errorMsg = ''
+									}}
+									class="red"
+								>
+									${translate("general.close")}
+								</mwc-button>
+							` : '' }
+						</div>
 					</div>
+				` : ""}
+			` : html`
+				<div class="start-minting-wrapper">
+					<a href="../become-minter/index.html">
+						<my-button label="${translate('tabmenu.tm2')}"></my-button>
+					</a>
 				</div>
-			</div>
-					
-			` : ""}			
-			` : ''}
+			`}
 		`
 	}
 }
@@ -756,7 +827,7 @@ class MyButton extends LitElement {
 	static properties = {
 		onClick: { type: Function },
 		isLoading: { type: Boolean },
-		label: { type: String },
+		label: { type: String }
 	}
 
 	static styles = css`
