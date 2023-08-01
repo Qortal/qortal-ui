@@ -1620,11 +1620,12 @@ class AppView extends connect(store)(LitElement) {
         }
     }
 
-    async clearTheCache() {
+    clearTheCache() {
         if (!isElectron()) {
         } else {
-            await window.parent.electronAPI.clearMyCache()
             console.clear()
+            window.parent.electronAPI.clearMyCache()
+            window.parent.electronAPI.clearCache()
         }
     }
 
