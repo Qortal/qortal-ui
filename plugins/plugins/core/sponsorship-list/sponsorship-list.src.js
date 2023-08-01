@@ -406,6 +406,23 @@ class SponsorshipList extends LitElement {
 				window.parent.electronAPI.showMyMenu()
 			})
 		}
+
+		setInterval(() => {
+			this.atMount()
+		}, 180000)
+
+		this.clearConsole()
+		setInterval(() => {
+			this.clearConsole()
+		}, 60000)
+	}
+
+	clearConsole() {
+		if (!isElectron()) {
+		} else {
+			console.clear()
+			window.parent.electronAPI.clearCache()
+		}
 	}
 
 	renderCopyMsg() {

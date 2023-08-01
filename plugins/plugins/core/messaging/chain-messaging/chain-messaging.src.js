@@ -1,5 +1,9 @@
 import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../../epml.js'
 import isElectron from 'is-electron'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChainMessaging extends LitElement {
     static get properties() {
@@ -44,12 +48,18 @@ class ChainMessaging extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
 
-        setInterval(() => {
-            this.changeTheme();
-        }, 100)
+        window.addEventListener('storage', () => {
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
 
         if (!isElectron()) {
         } else {
@@ -57,6 +67,14 @@ class ChainMessaging extends LitElement {
                 event.preventDefault()
                 window.parent.electronAPI.showMyMenu()
             })
+        }
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
         }
     }
 

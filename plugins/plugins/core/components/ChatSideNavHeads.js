@@ -177,7 +177,7 @@ class ChatSideNavHeads extends LitElement {
                 this.config = JSON.parse(c)
             })
         })
-        parentEpml.imReady();     
+        parentEpml.imReady()
     }
 
     shouldUpdate(changedProperties) {

@@ -211,7 +211,6 @@ class RewardShare extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
         this.changeLanguage()
 
@@ -238,12 +237,13 @@ class RewardShare extends LitElement {
         }
 
         const updateRewardshares = () => {
+            this.rewardShares = []
             parentEpml.request('apiCall', {
                 url: `/addresses/rewardshares?involving=${this.selectedAddress.address}`
             }).then(res => {
-                setTimeout(() => { this.rewardShares = res }, 1)
+                this.rewardShares = res
             })
-            setTimeout(updateRewardshares, this.config.user.nodeSettings.pingInterval)
+            setTimeout(updateRewardshares, 60000)
         }
 
         let configLoaded = false
@@ -266,6 +266,18 @@ class RewardShare extends LitElement {
         })
 
         parentEpml.imReady()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {

@@ -468,6 +468,18 @@ class Chat extends LitElement {
             })
         })
         parentEpml.imReady()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     setOpenPrivateMessage(props) {

@@ -1,18 +1,14 @@
-import { LitElement, html } from 'lit';
-import { Epml } from '../../../../epml.js';
-import '../../components/ButtonIconCopy.js';
-import { use, translate, registerTranslateConfig } from 'lit-translate';
+import { LitElement, html } from 'lit'
+import { Epml } from '../../../../epml.js'
+import '../../components/ButtonIconCopy.js'
+import { use, get, translate, registerTranslateConfig } from 'lit-translate'
 
-registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
-
-import '@polymer/paper-spinner/paper-spinner-lite.js';
-import '@material/mwc-button';
-import '@material/mwc-textfield';
-import '@vaadin/button';
-import { blocksNeed } from '../../../utils/blocks-needed.js';
-import { pageStyles } from '../become-minter-css.src.js';
+import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@material/mwc-button'
+import '@material/mwc-textfield'
+import '@vaadin/button'
+import { blocksNeed } from '../../../utils/blocks-needed.js'
+import { pageStyles } from '../become-minter-css.src.js'
 
 class YesSponsored extends LitElement {
 	static get properties() {
@@ -24,14 +20,13 @@ class YesSponsored extends LitElement {
 	}
 
 	constructor() {
-		super();
-
-		this.addressInfo = {};
-		this.rewardSharePublicKey = '';
+		super()
+		this.addressInfo = {}
+		this.rewardSharePublicKey = ''
 		this.isMinting = false
 	}
 
-	static styles = [pageStyles];
+	static styles = [pageStyles]
 
 	_levelUpBlocks() {
 		let countBlocksString = (
@@ -39,7 +34,7 @@ class YesSponsored extends LitElement {
 			(this.addressInfo?.blocksMinted +
 				this.addressInfo?.blocksMintedAdjustment)
 		).toString();
-		return countBlocksString;
+		return countBlocksString
 	}
 
 	render() {
@@ -107,8 +102,8 @@ class YesSponsored extends LitElement {
 					</div>
 				</div>
 			</div>
-		`;
+		`
 	}
 }
 
-window.customElements.define('yes-sponsored', YesSponsored);
+window.customElements.define('yes-sponsored', YesSponsored)

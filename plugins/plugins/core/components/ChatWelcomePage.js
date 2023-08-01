@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import isElectron from 'is-electron'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -314,7 +315,11 @@ class ChatWelcomePage extends LitElement {
     }
 
     clearConsole() {
-        console.clear()
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {

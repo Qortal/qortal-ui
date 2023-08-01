@@ -1,19 +1,15 @@
-import { LitElement, html } from 'lit';
-import { Epml } from '../../../../epml.js';
-import '../../components/ButtonIconCopy.js';
-import { use, translate, registerTranslateConfig } from 'lit-translate';
+import { LitElement, html } from 'lit'
+import { Epml } from '../../../../epml.js'
+import '../../components/ButtonIconCopy.js'
+import { use, get, translate, registerTranslateConfig } from 'lit-translate'
 
-registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
+import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@material/mwc-button'
+import '@material/mwc-textfield'
+import '@vaadin/button'
+import { pageStyles } from '../become-minter-css.src.js'
 
-import '@polymer/paper-spinner/paper-spinner-lite.js';
-import '@material/mwc-button';
-import '@material/mwc-textfield';
-import '@vaadin/button';
-import { pageStyles } from '../become-minter-css.src.js';
-
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class NotSponsored extends LitElement {
 	static properties = {
@@ -27,18 +23,18 @@ class NotSponsored extends LitElement {
 
 	constructor() {
 		super();
-		this.isLoadingSponsorshipKeySubmit = false;
-		this.sponsorshipKeyValue = '';
-		this.addMintingAccountMessage = '';
-		this.atMount = () => {};
+		this.isLoadingSponsorshipKeySubmit = false
+		this.sponsorshipKeyValue = ''
+		this.addMintingAccountMessage = ''
+		this.atMount = () => {}
 	}
 
 	renderErr1Text() {
-		return html`${translate('nodepage.nchange27')}`;
+		return html`${translate('nodepage.nchange27')}`
 	}
 
 	renderErr2Text() {
-		return html`${translate('nodepage.nchange28')}`;
+		return html`${translate('nodepage.nchange28')}`
 	}
 
 	getApiKey() {
@@ -46,13 +42,13 @@ class NotSponsored extends LitElement {
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-		let apiKey = myNode.apiKey;
-		return apiKey;
+		let apiKey = myNode.apiKey
+		return apiKey
 	}
 
 	addMintingAccount(e) {
-		this.isLoadingSponsorshipKeySubmit = true;
-		this.addMintingAccountMessage = 'Loading...';
+		this.isLoadingSponsorshipKeySubmit = true
+		this.addMintingAccountMessage = 'Loading...'
 
 		parentEpml
 			.request('apiCall', {
@@ -63,20 +59,20 @@ class NotSponsored extends LitElement {
 			.then((res) => {
 				if (res === true) {
 					// refetch data
-					this.atMount();
-					this.sponsorshipKeyValue = '';
-					this.addMintingAccountMessage = this.renderErr1Text();
-					this.isLoadingSponsorshipKeySubmit = false;
+					this.atMount()
+					this.sponsorshipKeyValue = ''
+					this.addMintingAccountMessage = this.renderErr1Text()
+					this.isLoadingSponsorshipKeySubmit = false
 				} else {
 					this.sponsorshipKeyValue = '';
-					this.addMintingAccountMessage = this.renderErr2Text();
-					this.isLoadingSponsorshipKeySubmit = false;
+					this.addMintingAccountMessage = this.renderErr2Text()
+					this.isLoadingSponsorshipKeySubmit = false
 				}
-			});
+			})
 	}
 
 	inputHandler(e) {
-		this.sponsorshipKeyValue = e.target.value;
+		this.sponsorshipKeyValue = e.target.value
 	}
 
 	render() {
@@ -130,8 +126,8 @@ class NotSponsored extends LitElement {
 					</div>
 				</div>
 			</div>
-		`;
+		`
 	}
 }
 
-window.customElements.define('not-sponsored', NotSponsored);
+window.customElements.define('not-sponsored', NotSponsored)

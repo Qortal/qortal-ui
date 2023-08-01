@@ -180,7 +180,6 @@ class Puzzles extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
         this.changeLanguage()
 
@@ -308,7 +307,7 @@ class Puzzles extends LitElement {
 
             this.puzzles = _puzzles;
 
-            setTimeout(updatePuzzles, 20000)
+            setTimeout(updatePuzzles, 60000)
         }
 
         let configLoaded = false
@@ -330,6 +329,18 @@ class Puzzles extends LitElement {
             })
         })
         parentEpml.imReady()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {

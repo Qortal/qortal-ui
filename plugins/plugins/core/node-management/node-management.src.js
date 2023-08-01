@@ -278,7 +278,6 @@ class NodeManagement extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
         this.changeLanguage()
         this.updateMintingAccounts()
@@ -363,6 +362,18 @@ class NodeManagement extends LitElement {
             })
         })
         parentEpml.imReady()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {

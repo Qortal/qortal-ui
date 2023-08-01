@@ -9,6 +9,7 @@ import { cropAddress } from "../../utils/cropAddress"
 import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js'
 import { EmojiPicker } from 'emoji-picker-js'
 import { generateHTML } from '@tiptap/core'
+import isElectron from 'is-electron'
 
 import axios from 'axios'
 import Highlight from '@tiptap/extension-highlight'
@@ -362,6 +363,19 @@ class ChatScroller extends LitElement {
         this.downElementObserver()
         await this.getUpdateComplete()
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {
@@ -568,6 +582,18 @@ class MessageTemplate extends LitElement {
             overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px"
             overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;"
         })
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     render() {
