@@ -318,7 +318,6 @@ class PublishData extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
         this.changeLanguage()
 
@@ -342,6 +341,18 @@ class PublishData extends LitElement {
                 event.preventDefault()
                 window.parent.electronAPI.showMyMenu()
             })
+        }
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
         }
     }
 

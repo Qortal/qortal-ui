@@ -1,57 +1,63 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { repeat } from 'lit/directives/repeat.js';
-import { translate, get } from 'lit-translate';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { repeat } from 'lit/directives/repeat.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { chatStyles } from './ChatScroller-css.js'
-import { Epml } from "../../../epml";
-import { cropAddress } from "../../utils/cropAddress";
-import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js';
-import './LevelFounder.js';
-import './NameMenu.js';
-import './ChatModals.js';
-import './WrapperModal';
-import "./UserInfo/UserInfo";
-import '@vaadin/icons';
-import '@vaadin/icon';
-import '@vaadin/tooltip';
-import '@material/mwc-button';
-import '@material/mwc-dialog';
-import '@material/mwc-icon';
-import { EmojiPicker } from 'emoji-picker-js';
-import { generateHTML } from '@tiptap/core';
-import axios from "axios";
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline';
+import { Epml } from '../../../epml'
+import { cropAddress } from "../../utils/cropAddress"
+import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js'
+import { EmojiPicker } from 'emoji-picker-js'
+import { generateHTML } from '@tiptap/core'
+import isElectron from 'is-electron'
+
+import axios from 'axios'
 import Highlight from '@tiptap/extension-highlight'
-import ShortUniqueId from 'short-unique-id';
+import ShortUniqueId from 'short-unique-id'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+
+import './ChatModals.js'
+import './LevelFounder.js'
+import './NameMenu.js'
+import './UserInfo/UserInfo.js'
+import './WrapperModal'
+
+import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@material/mwc-icon'
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@vaadin/tooltip'
+
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
 let toggledMessage = {}
 
 const uid = new ShortUniqueId()
 
 const getApiKey = () => {
-    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-    let apiKey = myNode.apiKey;
-    return apiKey;
+    const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+    let apiKey = myNode.apiKey
+    return apiKey
 }
 
 const extractComponents = async (url) => {
     if (!url.startsWith("qortal://")) {
-        return null;
+        return null
     }
 
-    url = url.replace(/^(qortal\:\/\/)/, "");
+    url = url.replace(/^(qortal\:\/\/)/, "")
     if (url.includes("/")) {
-        let parts = url.split("/");
-        const service = parts[0].toUpperCase();
-        parts.shift();
-        const name = parts[0];
-        parts.shift();
-        let identifier;
+        let parts = url.split("/")
+        const service = parts[0].toUpperCase()
+        parts.shift()
+        const name = parts[0]
+        parts.shift()
+        let identifier
 
         if (parts.length > 0) {
-            identifier = parts[0]; // Do not shift yet
+            identifier = parts[0] // Do not shift yet
             // Check if a resource exists with this service, name and identifier combination
             let responseObj = await parentEpml.request('apiCall', {
                 url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${getApiKey()}`
@@ -59,48 +65,48 @@ const extractComponents = async (url) => {
 
             if (responseObj.totalChunkCount > 0) {
                 // Identifier exists, so don't include it in the path
-                parts.shift();
+                parts.shift()
             }
             else {
-                identifier = null;
+                identifier = null
             }
         }
 
-        const path = parts.join("/");
+        const path = parts.join("/")
 
-        const components = {};
-        components["service"] = service;
-        components["name"] = name;
-        components["identifier"] = identifier;
-        components["path"] = path;
-        return components;
+        const components = {}
+        components["service"] = service
+        components["name"] = name
+        components["identifier"] = identifier
+        components["path"] = path
+        return components
     }
 
-    return null;
+    return null
 }
 
 function processText(input) {
-    const linkRegex = /(qortal:\/\/\S+)/g;
+    const linkRegex = /(qortal:\/\/\S+)/g
 
     function processNode(node) {
         if (node.nodeType === Node.TEXT_NODE) {
-            const parts = node.textContent.split(linkRegex);
+            const parts = node.textContent.split(linkRegex)
 
             if (parts.length > 1) {
-                const fragment = document.createDocumentFragment();
+                const fragment = document.createDocumentFragment()
 
                 parts.forEach((part) => {
                     if (part.startsWith('qortal://')) {
-                        const link = document.createElement('span');
+                        const link = document.createElement('span')
                         // Store the URL in a data attribute
-                        link.setAttribute('data-url', part);
-                        link.textContent = part;
-                        link.style.color = 'var(--nav-text-color)';
-                        link.style.textDecoration = 'underline';
+                        link.setAttribute('data-url', part)
+                        link.textContent = part
+                        link.style.color = 'var(--nav-text-color)'
+                        link.style.textDecoration = 'underline'
                         link.style.cursor = 'pointer'
 
                         link.addEventListener('click', async (e) => {
-                            e.preventDefault();
+                            e.preventDefault()
                             try {
                                 const res = await extractComponents(part)
                                 if (!res) return
@@ -134,34 +140,36 @@ function processText(input) {
                                 console.log({ error })
                             }
 
-                        });
+                        })
 
-                        fragment.appendChild(link);
+                        fragment.appendChild(link)
                     } else {
-                        const textNode = document.createTextNode(part);
-                        fragment.appendChild(textNode);
+                        const textNode = document.createTextNode(part)
+                        fragment.appendChild(textNode)
                     }
-                });
+                })
 
-                node.replaceWith(fragment);
+                node.replaceWith(fragment)
             }
         } else {
             for (const childNode of Array.from(node.childNodes)) {
-                processNode(childNode);
+                processNode(childNode)
             }
         }
     }
 
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = input;
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = input
 
-    processNode(wrapper);
+    processNode(wrapper)
 
     return wrapper
 }
+
 class ChatScroller extends LitElement {
     static get properties() {
         return {
+            theme: { type: String, reflect: true },
             getNewMessage: { attribute: false },
             getOldMessage: { attribute: false },
             escapeHTML: { attribute: false },
@@ -193,7 +201,7 @@ class ChatScroller extends LitElement {
     }
 
     static get styles() {
-        return [chatStyles];
+        return [chatStyles]
     }
 
     constructor() {
@@ -203,9 +211,10 @@ class ChatScroller extends LitElement {
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
-        this.openTipUser = false;
-        this.openUserInfo = false;
+        this.openTipUser = false
+        this.openUserInfo = false
         this.listSeenMessages = []
+        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     addSeenMessage(val) {
@@ -214,41 +223,40 @@ class ChatScroller extends LitElement {
 
     render() {
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
-            const lastGroupedMessage = messageArray[messageArray.length - 1];
-            let timestamp;
-            let sender;
-            let repliedToData;
-            let firstMessageInChat;
+            const lastGroupedMessage = messageArray[messageArray.length - 1]
+            let timestamp
+            let sender
+            let repliedToData
+            let firstMessageInChat
 
             if (index === 0) {
-                firstMessageInChat = true;
+                firstMessageInChat = true
             } else {
-                firstMessageInChat = false;
+                firstMessageInChat = false
             }
 
             message = { ...message, firstMessageInChat }
 
             if (lastGroupedMessage) {
-                timestamp = lastGroupedMessage.timestamp;
-                sender = lastGroupedMessage.sender;
-                repliedToData = lastGroupedMessage.repliedToData;
+                timestamp = lastGroupedMessage.timestamp
+                sender = lastGroupedMessage.sender
+                repliedToData = lastGroupedMessage.repliedToData
             }
-            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData;
+            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData
 
             if (isSameGroup) {
                 messageArray[messageArray.length - 1].messages = [
                     ...(messageArray[messageArray.length - 1].messages || []),
                     message
-                ];
+                ]
             } else {
                 messageArray.push({
                     messages: [message],
                     ...message
-                });
+                })
             }
-            return messageArray;
+            return messageArray
         }, [])
-
 
         return html`
               ${this.isLoadingMessages ? html`
@@ -312,37 +320,72 @@ class ChatScroller extends LitElement {
             return true
         }
         // Only update element if prop1 changed.
-        return changedProperties.has('messages');
+        return changedProperties.has('messages')
     }
 
     async getUpdateComplete() {
-        await super.getUpdateComplete();
-        const marginElements = Array.from(this.shadowRoot.querySelectorAll('message-template'));
-        await Promise.all(marginElements.map(el => el.updateComplete));
-        return true;
+        await super.getUpdateComplete()
+        const marginElements = Array.from(this.shadowRoot.querySelectorAll('message-template'))
+        await Promise.all(marginElements.map(el => el.updateComplete))
+        return true
     }
 
     setToggledMessage(message) {
-        toggledMessage = message;
+        toggledMessage = message
     }
 
     async firstUpdated() {
-        this.emojiPicker.on('emoji', selection => {
+        this.changeTheme()
 
+        window.addEventListener('storage', () => {
+            const checkTheme = localStorage.getItem('qortalTheme')
+
+            if (checkTheme === 'dark') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
+            document.querySelector('html').setAttribute('theme', this.theme)
+        })
+
+        this.emojiPicker.on('emoji', selection => {
             this.sendMessage({
                 type: 'reaction',
                 editedMessageObj: toggledMessage,
                 reaction: selection.emoji,
             })
-        });
-        this.viewElement = this.shadowRoot.getElementById('viewElement');
-        this.upObserverElement = this.shadowRoot.getElementById('upObserver');
-        this.downObserverElement = this.shadowRoot.getElementById('downObserver');
+        })
+        this.viewElement = this.shadowRoot.getElementById('viewElement')
+        this.upObserverElement = this.shadowRoot.getElementById('upObserver')
+        this.downObserverElement = this.shadowRoot.getElementById('downObserver')
         // Intialize Observers
-        this.upElementObserver();
-        this.downElementObserver();
-        await this.getUpdateComplete();
-        this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
+        this.upElementObserver()
+        this.downElementObserver()
+        await this.getUpdateComplete()
+        this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
+    }
+
+    changeTheme() {
+        const checkTheme = localStorage.getItem('qortalTheme')
+        if (checkTheme === 'dark') {
+            this.theme = 'dark'
+        } else {
+            this.theme = 'light'
+        }
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     _getOldMessage(_scrollElement) {
@@ -358,19 +401,19 @@ class ChatScroller extends LitElement {
             if (this.messages.length < 20) {
                 return
             }
-            this.setIsLoadingMessages(true);
-            let _scrollElement = entries[0].target.nextElementSibling;
-            this._getOldMessage(_scrollElement);
+            this.setIsLoadingMessages(true)
+            let _scrollElement = entries[0].target.nextElementSibling
+            this._getOldMessage(_scrollElement)
         }
     }
 
     _downObserverHandler(entries) {
         if (!entries[0].isIntersecting) {
-            let _scrollElement = entries[0].target.previousElementSibling;
-            // this._getOldMessageAfter(_scrollElement);
-            this.showLastMessageRefScroller(true);
+            let _scrollElement = entries[0].target.previousElementSibling
+            // this._getOldMessageAfter(_scrollElement)
+            this.showLastMessageRefScroller(true)
         } else {
-            this.showLastMessageRefScroller(false);
+            this.showLastMessageRefScroller(false)
         }
     }
 
@@ -379,9 +422,9 @@ class ChatScroller extends LitElement {
             root: this.viewElement,
             rootMargin: '0px',
             threshold: 1
-        };
-        const observer = new IntersectionObserver(this._upObserverhandler, options);
-        observer.observe(this.upObserverElement);
+        }
+        const observer = new IntersectionObserver(this._upObserverhandler, options)
+        observer.observe(this.upObserverElement)
     }
 
     downElementObserver() {
@@ -391,12 +434,12 @@ class ChatScroller extends LitElement {
             threshold: 1
         }
         // identify an element to observe
-        const elementToObserve = this.downObserverElement;
+        const elementToObserve = this.downObserverElement
         // passing it a callback function
-        const observer = new IntersectionObserver(this._downObserverHandler, options);
+        const observer = new IntersectionObserver(this._downObserverHandler, options)
         // call `observe()` on that MutationObserver instance,
         // passing it the element to observe, and the options object
-        observer.observe(elementToObserve);
+        observer.observe(elementToObserve)
     }
 }
 
@@ -437,12 +480,12 @@ class MessageTemplate extends LitElement {
             goToRepliedMessage: { attribute: false },
             listSeenMessages: { type: Array },
             addSeenMessage: { attribute: false },
-            chatId: { type: String },
+            chatId: { type: String }
         }
     }
 
     constructor() {
-        super();
+        super()
         this.messageObj = {}
         this.openDialogPrivateMessage = false
         this.openDialogBlockUser = false
@@ -461,7 +504,7 @@ class MessageTemplate extends LitElement {
     }
 
     static get styles() {
-        return [chatStyles];
+        return [chatStyles]
     }
 
 
@@ -485,26 +528,26 @@ class MessageTemplate extends LitElement {
 
     showBlockIconFunc(bool) {
         if (bool) {
-            this.showBlockAddressIcon = true;
+            this.showBlockAddressIcon = true
         } else {
-            this.showBlockAddressIcon = false;
+            this.showBlockAddressIcon = false
         }
     }
 
     async downloadAttachment(attachment) {
 
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
-        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         try {
             axios.get(`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}?apiKey=${myNode.apiKey}`, { responseType: 'blob' })
                 .then(response => {
-                    let filename = attachment.attachmentName;
-                    let blob = new Blob([response.data], { type: "application/octet-stream" });
-                    this.saveFileToDisk(blob, filename);
+                    let filename = attachment.attachmentName
+                    let blob = new Blob([response.data], { type: "application/octet-stream" })
+                    this.saveFileToDisk(blob, filename)
                 })
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
     }
 
@@ -533,31 +576,43 @@ class MessageTemplate extends LitElement {
             this.viewImage = true
         }
 
-        const tooltips = this.shadowRoot.querySelectorAll('vaadin-tooltip');
+        const tooltips = this.shadowRoot.querySelectorAll('vaadin-tooltip')
         tooltips.forEach(tooltip => {
-            const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay');
-            overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px";
-            overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;";
-        });
+            const overlay = tooltip.shadowRoot.querySelector('vaadin-tooltip-overlay')
+            overlay.shadowRoot.getElementById("overlay").style.cssText = "background-color: transparent; box-shadow: rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px"
+            overlay.shadowRoot.getElementById('content').style.cssText = "background-color: var(--reactions-tooltip-bg); color: var(--chat-bubble-msg-color); text-align: center; padding: 20px 10px; border-radius: 8px; font-family: Roboto, sans-serif; letter-spacing: 0.3px; font-weight: 300; font-size: 13.5px; transition: all 0.3s ease-in-out;"
+        })
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     render() {
-        const hidemsg = this.hideMessages;
-        let message = "";
+        const hidemsg = this.hideMessages
+        let message = ""
         let messageVersion2 = ""
         let messageVersion2WithLink = null
-        let reactions = [];
-        let repliedToData = null;
-        let image = null;
-        let gif = null;
-        let isImageDeleted = false;
-        let isAttachmentDeleted = false;
-        let version = 0;
+        let reactions = []
+        let repliedToData = null
+        let image = null
+        let gif = null
+        let isImageDeleted = false
+        let isAttachmentDeleted = false
+        let version = 0
         let isForwarded = false
         let isEdited = false
-        let attachment = null;
+        let attachment = null
         try {
-            const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage);
+            const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
                     StarterKit,
@@ -568,121 +623,122 @@ class MessageTemplate extends LitElement {
                 messageVersion2WithLink = processText(messageVersion2)
 
             }
-            message = parsedMessageObj.messageText;
-            repliedToData = this.messageObj.repliedToData;
-            isImageDeleted = parsedMessageObj.isImageDeleted;
-            isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted;
-            // reactions = parsedMessageObj.reactions || [];
-            version = parsedMessageObj.version;
-            isForwarded = parsedMessageObj.type === 'forward';
-            isEdited = parsedMessageObj.isEdited && true;
+            message = parsedMessageObj.messageText
+            repliedToData = this.messageObj.repliedToData
+            isImageDeleted = parsedMessageObj.isImageDeleted
+            isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted
+            // reactions = parsedMessageObj.reactions || []
+            version = parsedMessageObj.version
+            isForwarded = parsedMessageObj.type === 'forward'
+            isEdited = parsedMessageObj.isEdited && true
             if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
-                attachment = parsedMessageObj.attachments[0];
+                attachment = parsedMessageObj.attachments[0]
             }
             if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
-                image = parsedMessageObj.images[0];
+                image = parsedMessageObj.images[0]
             }
             if (parsedMessageObj.gifs && Array.isArray(parsedMessageObj.gifs) && parsedMessageObj.gifs.length > 0) {
-                gif = parsedMessageObj.gifs[0];
+                gif = parsedMessageObj.gifs[0]
             }
         } catch (error) {
-            message = this.messageObj.decodedMessage;
+            message = this.messageObj.decodedMessage
         }
-        let avatarImg = '';
-        let imageHTML = '';
-        let imageHTMLDialog = '';
-        let imageUrl = '';
-        let gifHTML = '';
-        let gifHTMLDialog = '';
-        let gifUrl = '';
-        let nameMenu = '';
-        let levelFounder = '';
-        let hideit = hidemsg.includes(this.messageObj.sender);
+        let avatarImg = ''
+        let imageHTML = ''
+        let imageHTMLDialog = ''
+        let imageUrl = ''
+        let gifHTML = ''
+        let gifHTMLDialog = ''
+        let gifUrl = ''
+        let nameMenu = ''
+        let levelFounder = ''
+        let hideit = hidemsg.includes(this.messageObj.sender)
         let forwarded = ''
         let edited = ''
 
-        levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`;
+        levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
+
         if (this.messageObj.senderName) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
-            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`
+            avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
         } else {
             avatarImg = html`<img src='/img/incognito.png'  style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
         }
 
         const createImage = (imageUrl) => {
-            const imageHTMLRes = new Image();
-            imageHTMLRes.src = imageUrl;
-            imageHTMLRes.style = "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
+            const imageHTMLRes = new Image()
+            imageHTMLRes.src = imageUrl
+            imageHTMLRes.style = "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer;"
             imageHTMLRes.onclick = () => {
-                this.openDialogImage = true;
+                this.openDialogImage = true
             }
             imageHTMLRes.onload = () => {
-                this.isImageLoaded = true;
+                this.isImageLoaded = true
             }
             imageHTMLRes.onerror = () => {
                 if (this.imageFetches < 4) {
                     setTimeout(() => {
-                        this.imageFetches = this.imageFetches + 1;
-                        imageHTMLRes.src = imageUrl;
-                    }, 2000);
+                        this.imageFetches = this.imageFetches + 1
+                        imageHTMLRes.src = imageUrl
+                    }, 10000)
                 } else {
                     setTimeout(() => {
-                        this.imageFetches = this.imageFetches + 1;
-                        imageHTMLRes.src = imageUrl;
-                    }, 6000);
+                        this.imageFetches = this.imageFetches + 1
+                        imageHTMLRes.src = imageUrl
+                    }, 15000)
                 }
-            };
-            return imageHTMLRes;
+            }
+            return imageHTMLRes
         }
 
         const createGif = (gif) => {
-            const gifHTMLRes = new Image();
-            gifHTMLRes.src = gif;
-            gifHTMLRes.style = "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer";
+            const gifHTMLRes = new Image()
+            gifHTMLRes.src = gif
+            gifHTMLRes.style = "max-width:45vh; max-height:40vh; border-radius: 5px; cursor: pointer;"
             gifHTMLRes.onclick = () => {
-                this.openDialogGif = true;
+                this.openDialogGif = true
             }
             gifHTMLRes.onload = () => {
-                this.isGifLoaded = true;
+                this.isGifLoaded = true
             }
             gifHTMLRes.onerror = () => {
                 if (this.gifFetches < 4) {
                     setTimeout(() => {
-                        this.gifFetches = this.gifFetches + 1;
-                        gifHTMLRes.src = gif;
-                    }, 500);
+                        this.gifFetches = this.gifFetches + 1
+                        gifHTMLRes.src = gif
+                    }, 10000)
                 } else {
-                    gifHTMLRes.src = '/img/chain.png';
-                    gifHTMLRes.style = "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5)";
+                    gifHTMLRes.src = '/img/chain.png'
+                    gifHTMLRes.style = "max-width:45vh; max-height:20vh; border-radius: 5px; filter: opacity(0.5);"
                     gifHTMLRes.onclick = () => { }
                     this.isGifLoaded = true
                 }
-            };
-            return gifHTMLRes;
+            }
+            return gifHTMLRes
         }
 
         if (image) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            imageUrl = `${nodeUrl}/arbitrary/${image.service}/${image.name}/${image.identifier}?async=true&apiKey=${myNode.apiKey}`
 
             if (this.viewImage || this.myAddress === this.messageObj.sender) {
-                imageHTML = createImage(imageUrl);
+                imageHTML = createImage(imageUrl)
                 imageHTMLDialog = createImage(imageUrl)
-                imageHTMLDialog.style = "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
+                imageHTMLDialog.style = "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"
             }
         }
 
         if (gif) {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-            gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?filepath=${gif.filePath}&apiKey=${myNode.apiKey}`;
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?filepath=${gif.filePath}&apiKey=${myNode.apiKey}`
             if (this.viewImage || this.myAddress === this.messageObj.sender) {
-                gifHTML = createGif(gifUrl);
+                gifHTML = createGif(gifUrl)
                 gifHTMLDialog = createGif(gifUrl)
-                gifHTMLDialog.style = "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px";
+                gifHTMLDialog.style = "height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"
             }
         }
 
@@ -690,27 +746,29 @@ class MessageTemplate extends LitElement {
             <span class="${this.messageObj.sender === this.myAddress && 'message-data-my-name'}">
                 ${this.messageObj.senderName ? this.messageObj.senderName : cropAddress(this.messageObj.sender)}
             </span>
-        `;
+        `
+
         forwarded = html`
-        <span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">
-            ${translate("blockpage.bcchange17")}
-        </span>
-        `;
+            <span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">
+                ${translate("blockpage.bcchange17")}
+            </span>
+        `
 
         edited = html`
-        <span class="edited-message-style">
-            ${translate("chatpage.cchange68")}
-        </span>
-        `;
+            <span class="edited-message-style">
+                ${translate("chatpage.cchange68")}
+            </span>
+        `
 
         if (repliedToData) {
             try {
-                const parsedMsg = JSON.parse(repliedToData.decodedMessage);
-                repliedToData.decodedMessage = parsedMsg;
+                const parsedMsg = JSON.parse(repliedToData.decodedMessage)
+                repliedToData.decodedMessage = parsedMsg
             } catch (error) {
             }
 
         }
+
         let repliedToMessageText = ''
         if (repliedToData && repliedToData.decodedMessage && repliedToData.decodedMessage.messageText) {
             try {
@@ -724,15 +782,15 @@ class MessageTemplate extends LitElement {
 
             }
         }
+
         let replacedMessage = ''
         if (message && +version < 2) {
             const escapedMessage = this.escapeHTML(message)
             if (escapedMessage) {
-                replacedMessage = escapedMessage.replace(new RegExp('\r?\n', 'g'), '<br />');
+                replacedMessage = escapedMessage.replace(new RegExp('\r?\n', 'g'), '<br />')
             }
 
         }
-
 
         return hideit ? html`<li class="clearfix"></li>` : html`
             <li 
@@ -753,9 +811,9 @@ class MessageTemplate extends LitElement {
                                     <div 
                                     style=${this.myAddress === this.messageObj.sender ? "cursor: auto;" : "cursor: pointer;"}
                                     @click=${() => {
-                            if (this.myAddress === this.messageObj.sender) return;
-                            this.setOpenUserInfo(true);
-                            this.setUserName(this.messageObj);
+                            if (this.myAddress === this.messageObj.sender) return
+                            this.setOpenUserInfo(true)
+                            this.setUserName(this.messageObj)
                         }} class="message-data-avatar">
                                         ${avatarImg}
                                     </div>
@@ -789,9 +847,9 @@ class MessageTemplate extends LitElement {
                                         <span 
                                         style=${this.myAddress === this.messageObj.sender ? "cursor: auto;" : "cursor: pointer;"}
                                         @click=${() => {
-                        if (this.myAddress === this.messageObj.sender) return;
-                        this.setOpenUserInfo(true);
-                        this.setUserName(this.messageObj);
+                        if (this.myAddress === this.messageObj.sender) return
+                        this.setOpenUserInfo(true)
+                        this.setUserName(this.messageObj)
                     }}
                                         class="message-data-name">
                                             ${nameMenu}
@@ -844,13 +902,13 @@ class MessageTemplate extends LitElement {
                 }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black);">
                                                 ${translate("chatpage.cchange40")}
                                             </div>
                                         </div>
                                     ` : html``}
                                     ${!this.isImageLoaded && image && this.viewImage ? html`
-                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;position:absolute">
+                                        <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;position:absolute;">
                                         <div class=${`smallLoading`}></div>
                                         </div>
                                         
@@ -863,7 +921,7 @@ class MessageTemplate extends LitElement {
                                             ${this.myAddress === this.messageObj.sender ? html`
                                             <vaadin-icon
                                             @click=${() => {
-                        this.openDeleteImage = true;
+                        this.openDeleteImage = true
                     }}
                                             class="image-delete-icon"  icon="vaadin:close" slot="icon"></vaadin-icon>
                                             ` : ''}
@@ -879,7 +937,7 @@ class MessageTemplate extends LitElement {
                 }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
-                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black)">
+                                            <div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black);">
                                             ${translate("gifs.gchange25")}
                                             </div>
                                         </div>
@@ -917,8 +975,8 @@ class MessageTemplate extends LitElement {
                         ? html`
                                                 <vaadin-icon
                                                     @click=${(e) => {
-                                e.stopPropagation();
-                                this.openDeleteAttachment = true;
+                                e.stopPropagation()
+                                this.openDeleteAttachment = true
                             }}
                                                     class="image-delete-icon"  icon="vaadin:close" slot="icon">
                                                 </vaadin-icon>
@@ -1128,7 +1186,7 @@ class MessageTemplate extends LitElement {
                 hideActions
                 ?open=${this.openDeleteImage} 
                 @closed=${() => {
-                this.openDeleteImage = false;
+                this.openDeleteImage = false
             }}>
                 <div class="delete-image-msg">
                     <p>${translate("chatpage.cchange78")}</p>
@@ -1153,7 +1211,7 @@ class MessageTemplate extends LitElement {
                 hideActions
                 ?open=${this.openDeleteAttachment} 
                 @closed=${() => {
-                this.openDeleteAttachment = false;
+                this.openDeleteAttachment = false
             }}>
                 <div class="delete-image-msg">
                 <p>${translate("chatpage.cchange79")}</p>
@@ -1182,7 +1240,7 @@ class MessageTemplate extends LitElement {
     }
 }
 
-window.customElements.define('message-template', MessageTemplate);
+window.customElements.define('message-template', MessageTemplate)
 
 class ChatMenu extends LitElement {
     static get properties() {
@@ -1207,18 +1265,18 @@ class ChatMenu extends LitElement {
             setOpenPrivateMessage: { attribute: false },
             setOpenTipUser: { attribute: false },
             setUserName: { attribute: false },
-            gif: { type: Boolean },
+            gif: { type: Boolean }
         }
     }
 
     constructor() {
-        super();
-        this.showPrivateMessageModal = () => { };
-        this.showBlockUserModal = () => { };
+        super()
+        this.showPrivateMessageModal = () => { }
+        this.showBlockUserModal = () => { }
     }
 
     static get styles() {
-        return [chatStyles];
+        return [chatStyles]
     }
 
     // Copy address to clipboard
@@ -1246,7 +1304,7 @@ class ChatMenu extends LitElement {
             key: ''
         }
         try {
-            parsedMessageObj = JSON.parse(this.originalMessage.decodedMessage);
+            parsedMessageObj = JSON.parse(this.originalMessage.decodedMessage)
 
         } catch (error) {
             parsedMessageObj = {}
@@ -1335,7 +1393,7 @@ class ChatMenu extends LitElement {
                     this.versionErrorSnack()
                     return
                 }
-                this.setRepliedToMessageObj({ ...this.originalMessage, version: this.version });
+                this.setRepliedToMessageObj({ ...this.originalMessage, version: this.version })
             }}">
                     <vaadin-icon icon="vaadin:reply" slot="icon"></vaadin-icon>
                 </div>
@@ -1351,7 +1409,7 @@ class ChatMenu extends LitElement {
                             this.versionErrorSnack()
                             return
                         }
-                        this.setEditedMessageObj(this.originalMessage);
+                        this.setEditedMessageObj(this.originalMessage)
                     }}>
                         <vaadin-icon icon="vaadin:pencil" slot="icon"></vaadin-icon>
                     </div>
@@ -1363,9 +1421,9 @@ class ChatMenu extends LitElement {
                     class=${`menu-icon ${!this.firstMessageInChat ? "tooltip" : ""}`}
                     data-text="${translate("blockpage.bcchange18")}" 
                     @click=${(e) => {
-                        e.preventDefault();
-                        this.setUserName(this.originalMessage);
-                        this.setOpenTipUser(true);
+                        e.preventDefault()
+                        this.setUserName(this.originalMessage)
+                        this.setOpenTipUser(true)
                     }}>
                         <vaadin-icon icon="vaadin:dollar" slot="icon"></vaadin-icon>
                     </div>

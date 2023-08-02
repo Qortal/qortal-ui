@@ -2,16 +2,17 @@ import { LitElement, html, css } from 'lit'
 import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
+import isElectron from 'is-electron'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
+
+registerTranslateConfig({
+    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -258,10 +259,16 @@ class ChatWelcomePage extends LitElement {
 
     firstUpdated() {
         this.changeTheme()
+        this.changeLanguage()
+
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
 
         const stopKeyEventPropagation = (e) => {
-            e.stopPropagation();
-            return false;
+            e.stopPropagation()
+            return false
         }
 
         this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation);
@@ -290,8 +297,6 @@ class ChatWelcomePage extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        let configLoaded = false
-
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
                 this.selectedAddress = {}
@@ -309,19 +314,26 @@ class ChatWelcomePage extends LitElement {
         parentEpml.imReady()
     }
 
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
+    }
+
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
-            this.theme = 'dark';
+            this.theme = 'dark'
         } else {
-            this.theme = 'light';
+            this.theme = 'light'
         }
-        document.querySelector('html').setAttribute('theme', this.theme);
+        document.querySelector('html').setAttribute('theme', this.theme)
     }
 
     changeLanguage() {
         const checkLanguage = localStorage.getItem('qortalLanguage')
-
         if (checkLanguage === null || checkLanguage.length === 0) {
             localStorage.setItem('qortalLanguage', 'us')
             use('us')
@@ -343,7 +355,7 @@ class ChatWelcomePage extends LitElement {
         } else {
             this.sendMessage();
         }
-    };
+    }
 
     async sendMessage() {
         this.isLoading = true;

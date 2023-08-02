@@ -2100,7 +2100,6 @@ class TradeBotPortal extends LitElement {
     }
 
     firstUpdated() {
-
         let _this = this
 
         this.changeTheme()
@@ -2281,6 +2280,18 @@ class TradeBotPortal extends LitElement {
         this.dgbTradebook()
         this.rvnTradebook()
         this.arrrTradebook()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     renderAutoLockButton() {

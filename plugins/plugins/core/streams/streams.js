@@ -45,7 +45,7 @@ const sortActiveChat = (activeChatObject, localChatHeads) => {
         let results = newActiveChats.filter(newChat => {
             let value = oldActiveChats.some(oldChat => newChat.timestamp === oldChat.timestamp)
             return !value
-        });
+        })
 
         results.forEach(chat => {
 
@@ -103,8 +103,6 @@ const chatHeadWatcher = (activeChats) => {
         }
 
     } catch (e) {
-        console.error(e)
-
     }
 }
 
@@ -128,13 +126,13 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
         if (window.parent.location.protocol === "https:") {
 
-            activeChatSocketLink = `wss://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`;
+            activeChatSocketLink = `wss://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`
         } else {
 
-            activeChatSocketLink = `ws://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`;
+            activeChatSocketLink = `ws://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`
         }
 
-        const activeChatSocket = new WebSocket(activeChatSocketLink);
+        const activeChatSocket = new WebSocket(activeChatSocketLink)
 
         // Open Connection
         activeChatSocket.onopen = () => {
@@ -147,16 +145,14 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
         // Message Event
         activeChatSocket.onmessage = (e) => {
             if (e.data === 'pong') {
-                clearTimeout(timeoutId);
+                clearTimeout(timeoutId)
                 activeChatSocketTimeout = setTimeout(pingActiveChatSocket, 45000)
                 return
             }
             try {
                 chatHeadWatcher(JSON.parse(e.data))
             } catch (error) {
-
             }
-
         }
 
         // Closed Event
@@ -171,8 +167,6 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
         // Error Event
         activeChatSocket.onerror = (e) => {
-
-            console.log(`[SOCKET]: ${e.type}`);
         }
     }
 
@@ -197,9 +191,9 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 
                 socketObject.send('ping')
                 timeoutId = setTimeout(() => {
-                    socketObject.close();
+                    socketObject.close()
                     clearTimeout(activeChatSocketTimeout)
-                }, 5000);
+                }, 5000)
             }
 
         } else {

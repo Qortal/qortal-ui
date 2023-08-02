@@ -138,12 +138,7 @@ class Messaging extends LitElement {
     }
 
     firstUpdated() {
-
         this.changeTheme()
-
-        setInterval(() => {
-            this.changeTheme();
-        }, 100)
 
         if (!isElectron()) {
         } else {
@@ -170,6 +165,18 @@ class Messaging extends LitElement {
             })
         })
         parentEpml.imReady()
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     changeTheme() {

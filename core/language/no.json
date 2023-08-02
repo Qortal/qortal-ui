@@ -214,7 +214,8 @@
 		"wp1": "Minting",
 		"wp2": "Ikke preging",
 		"wp3": "Kjerneinformasjon",
-		"wp4": "Synkronisert"
+		"wp4": "Synkronisert",
+		"wp5": "Synkroniseringsstatus"
 	},
 	"general": {
 		"yes": "Ja",

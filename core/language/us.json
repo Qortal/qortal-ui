@@ -219,7 +219,8 @@
 		"wp1": "Minting",
 		"wp2": "Not Minting",
 		"wp3": "Core Information",
-		"wp4": "Synchronized"
+		"wp4": "Synchronized",
+		"wp5": "Sync Status"
 	},
 	"general": {
 		"yes": "Yes",

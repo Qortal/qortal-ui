@@ -20,10 +20,9 @@ import { Loader } from '../../../utils/loader.js';
 import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
 import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
-import { mimeToExtensionMap } from '../../components/qdn-action-constants'
-import { base64ToUint8Array, encryptData, fileToBase64, uint8ArrayToBase64 } from '../../components/qdn-action-encryption'
-
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+import { mimeToExtensionMap } from '../../components/qdn-action-constants';
+import { base64ToUint8Array, decryptDeprecatedSingle, decryptGroupData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
 	static get properties() {
@@ -630,57 +629,52 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.DECRYPT_DATA: {
-					const requiredFields = ['encryptedData', 'publicKey'];
-					const missingFields = [];
 
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field);
-						}
-					});
+					const { encryptedData, publicKey } = data
 
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
-						const errorMsg = `Missing fields: ${missingFieldsString}`
+					try {
 						let data = {};
+						if (!encryptedData) {
+							const errorMsg = `Missing fields: encryptedData`
+
+							data['error'] = errorMsg;
+							response = JSON.stringify(data);
+							break
+
+						}
+						const uint8Array = base64ToUint8Array(encryptedData)
+						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData");
+						if (startsWithQortalEncryptedData) {
+
+							if (!publicKey) {
+								const errorMsg = `Missing fields: publicKey`
+
+								data['error'] = errorMsg;
+								response = JSON.stringify(data);
+								break
+							}
+
+
+							const decryptedDataToBase64 = decryptDeprecatedSingle(uint8Array, publicKey)
+							response = JSON.stringify(decryptedDataToBase64);
+							break;
+
+
+						}
+						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
+						if (startsWithQortalGroupEncryptedData) {
+
+							const decryptedData = decryptGroupData(encryptedData)
+							const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
+							response = JSON.stringify(decryptedDataToBase64);
+							break;
+
+						}
+
+						const errorMsg = "Unable to decrypt"
 						data['error'] = errorMsg;
 						response = JSON.stringify(data);
 						break
-					}
-					const { encryptedData, publicKey } = data
-
-
-					try {
-						const uint8Array = base64ToUint8Array(encryptedData)
-						const combinedData = uint8Array
-						const str = "qortalEncryptedData";
-						const strEncoder = new TextEncoder();
-						const strUint8Array = strEncoder.encode(str);
-
-						const strData = combinedData.slice(0, strUint8Array.length);
-						const nonce = combinedData.slice(strUint8Array.length, strUint8Array.length + 24);
-						const _encryptedData = combinedData.slice(strUint8Array.length + 24);
-
-						const privateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
-						const _publicKey = window.parent.Base58.decode(publicKey)
-
-						if (!privateKey || !_publicKey) {
-							data['error'] = "Unable to retrieve keys"
-							response = JSON.stringify(data);
-							break
-						}
-
-						const convertedPrivateKey = ed2curve.convertSecretKey(privateKey)
-						const convertedPublicKey = ed2curve.convertPublicKey(_publicKey)
-						const sharedSecret = new Uint8Array(32);
-						nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
-
-						const _chatEncryptionSeed = new window.parent.Sha256().process(sharedSecret).finish().result
-						const _decryptedData = nacl.secretbox.open(_encryptedData, nonce, _chatEncryptionSeed)
-						const decryptedDataToBase64 = uint8ArrayToBase64(_decryptedData)
-						response = JSON.stringify(decryptedDataToBase64);
-
-						break;
 					} catch (error) {
 
 						const data = {};
@@ -690,6 +684,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+
 				case actions.GET_LIST_ITEMS: {
 					const requiredFields = ['list_name'];
 					const missingFields = [];
@@ -984,9 +979,9 @@ class WebBrowser extends LitElement {
 						identifier = 'default';
 					}
 
-					if (data.encrypt && !data.recipientPublicKey) {
+					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
 						let data = {};
-						data['error'] = "Encrypting data requires the recipient's public key";
+						data['error'] = "Encrypting data requires public keys";
 						response = JSON.stringify(data);
 						break
 					}
@@ -996,14 +991,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					if (data.file) {
+						data64 = await fileToBase64(data.file)
+					}
 
 					if (data.encrypt) {
 						try {
-							const encryptDataResponse = encryptData({
-								data64, recipientPublicKey: data.recipientPublicKey
+							const encryptDataResponse = encryptDataGroup({
+								data64, publicKeys: data.publicKeys
 							})
-							if (encryptDataResponse.encryptedData) {
-								data64 = encryptDataResponse.encryptedData
+							if (encryptDataResponse) {
+								data64 = encryptDataResponse
 							}
 
 						} catch (error) {
@@ -1015,6 +1013,7 @@ class WebBrowser extends LitElement {
 						}
 
 					}
+
 
 
 					const res2 = await showModalAndWait(
@@ -1109,9 +1108,9 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
-					if (data.encrypt && !data.recipientPublicKey) {
+					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
 						let data = {};
-						data['error'] = "Encrypting data requires the recipient's public key";
+						data['error'] = "Encrypting data requires public keys";
 						response = JSON.stringify(data);
 						break
 					}
@@ -1169,14 +1168,19 @@ class WebBrowser extends LitElement {
 						if (!data.encrypt && service.endsWith("_PRIVATE")) {
 							throw new Error("Only encrypted data can go into private services")
 						}
+						if (data.file) {
+							data64 = await fileToBase64(data.file)
+						}
+
 
 						if (data.encrypt) {
 							try {
-								const encryptDataResponse = encryptData({
-									data64, recipientPublicKey: data.recipientPublicKey
+
+								const encryptDataResponse = encryptDataGroup({
+									data64, publicKeys: data.publicKeys
 								})
-								if (encryptDataResponse.encryptedData) {
-									data64 = encryptDataResponse.encryptedData
+								if (encryptDataResponse) {
+									data64 = encryptDataResponse
 								}
 
 							} catch (error) {
@@ -2669,6 +2673,18 @@ class WebBrowser extends LitElement {
 				});
 			}
 		});
+		this.clearConsole()
+		setInterval(() => {
+			this.clearConsole()
+		}, 60000)
+	}
+
+	clearConsole() {
+		if (!isElectron()) {
+		} else {
+			console.clear()
+			window.parent.electronAPI.clearCache()
+		}
 	}
 
 	changeTheme() {

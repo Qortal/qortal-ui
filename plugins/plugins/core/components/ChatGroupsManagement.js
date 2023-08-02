@@ -1,19 +1,19 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { get, translate } from 'lit-translate';
-import { Epml } from '../../../epml';
+import { LitElement, html, css } from 'lit'
+import { render } from 'lit/html.js'
+import { Epml } from '../../../epml'
 import snackbar from './snackbar.js'
-import '@material/mwc-button';
-import '@material/mwc-dialog';
+import '@material/mwc-button'
+import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import '@material/mwc-icon';
-import './WrapperModal';
+import '@material/mwc-icon'
+import './WrapperModal'
 import '@vaadin/tabs'
-import '@vaadin/tabs/theme/material/vaadin-tabs.js';
-import '@vaadin/avatar';
-import '@vaadin/grid';
-import '@vaadin/grid/vaadin-grid-filter-column.js';
-import { columnBodyRenderer } from '@vaadin/grid/lit.js';
+import '@vaadin/tabs/theme/material/vaadin-tabs.js'
+import '@vaadin/avatar'
+import '@vaadin/grid'
+import '@vaadin/grid/vaadin-grid-filter-column.js'
+import { columnBodyRenderer } from '@vaadin/grid/lit.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

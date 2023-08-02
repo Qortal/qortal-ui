@@ -1417,7 +1417,6 @@ class TradePortal extends LitElement {
     }
 
     firstUpdated() {
-
         let _this = this
 
         this.changeTheme()
@@ -1505,42 +1504,42 @@ class TradePortal extends LitElement {
 
         const getQortBtcPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/BITCOIN?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortbtc = (Number(res) / 1e8).toFixed(8) }, 1)
+                this.qortbtc = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortBtcPrice, 300000)
         }
 
         const getQortLtcPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/LITECOIN?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortltc = (Number(res) / 1e8).toFixed(8) }, 1)
+                this.qortltc = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortLtcPrice, 300000)
         }
 
         const getQortDogePrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/DOGECOIN?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortdoge = (Number(res) / 1e8).toFixed(8) }, 1)
+               this.qortdoge = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortDogePrice, 300000)
         }
 
         const getQortDgbPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/DIGIBYTE?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortdgb = (Number(res) / 1e8).toFixed(8) }, 1)
+                this.qortdgb = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortDgbPrice, 300000)
         }
 
         const getQortRvnPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/RAVENCOIN?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortrvn = (Number(res) / 1e8).toFixed(8) }, 1)
+                this.qortrvn = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortRvnPrice, 300000)
         }
 
         const getQortArrrPrice = () => {
             parentEpml.request("apiCall", { url: `/crosschain/price/PIRATECHAIN?inverse=true` }).then((res) => {
-                setTimeout(() => { this.qortarrr = (Number(res) / 1e8).toFixed(8) }, 1)
+                this.qortarrr = (Number(res) / 1e8).toFixed(8)
             })
             setTimeout(getQortArrrPrice, 300000)
         }
@@ -1614,6 +1613,18 @@ class TradePortal extends LitElement {
         parentEpml.imReady()
 
         setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+        this.clearConsole()
+        setInterval(() => {
+            this.clearConsole()
+        }, 60000)
+    }
+
+    clearConsole() {
+        if (!isElectron()) {
+        } else {
+            console.clear()
+            window.parent.electronAPI.clearCache()
+        }
     }
 
     renderTradeLockButton() {

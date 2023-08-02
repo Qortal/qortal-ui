@@ -1,11 +1,12 @@
-import { LitElement, html, css } from "lit";
-import { get } from 'lit-translate';
-import { escape, unescape } from 'html-escaper';
-import { EmojiPicker } from 'emoji-picker-js';
-import { inputKeyCodes } from '../../utils/keyCodes.js';
-import { Epml } from '../../../epml.js';
+import { LitElement, html, css } from "lit"
+import { escape, unescape } from 'html-escaper'
+import { EmojiPicker } from 'emoji-picker-js'
+import { inputKeyCodes } from '../../utils/keyCodes.js'
+import { Epml } from '../../../epml.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
 class ChatTextEditor extends LitElement {
 	static get properties() {
 		return {
@@ -298,13 +299,13 @@ class ChatTextEditor extends LitElement {
         }
 
         window.addEventListener('storage', () => {
-            const checkTheme = localStorage.getItem('qortalTheme');
-            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
+            const checkTheme = localStorage.getItem('qortalTheme')
+            const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId')
             if (checkTheme === 'dark') {
-                this.theme = 'dark';
+                this.theme = 'dark'
                 chatbar.style.cssText = "color:#ffffff;"
             } else {
-                this.theme = 'light';
+                this.theme = 'light'
                 chatbar.style.cssText = "color:#080808;"
             }
         })
@@ -323,18 +324,18 @@ class ChatTextEditor extends LitElement {
             boxShadow: 'rgba(4, 4, 5, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.24) 0px 8px 16px 0px',
             zIndex: 100
 
-        });
+        })
 
         this.emojiPicker.on('emoji', selection => {
-            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`;
+            const emojiHtmlString = `<img class="emoji" draggable="false" alt="${selection.emoji}" src="${selection.url}">`
             this.chatEditor.insertEmoji(emojiHtmlString);
-        });
+        })
 
 
-        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler));
+        this.emojiPickerHandler.addEventListener('click', () => this.emojiPicker.togglePicker(this.emojiPickerHandler))
 
-        await this.updateComplete;
-        this.initChatEditor();
+        await this.updateComplete
+        this.initChatEditor()
 	}
 
     async updated(changedProperties) {
@@ -348,12 +349,12 @@ class ChatTextEditor extends LitElement {
             }
         }
         if (changedProperties && changedProperties.has('placeholder')) {
-            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId');
-            captionEditor.setAttribute('data-placeholder', this.placeholder);
+            const captionEditor = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId')
+            captionEditor.setAttribute('data-placeholder', this.placeholder)
         }
        
         if (changedProperties && changedProperties.has("imageFile")) {
-            this.chatMessageInput = "newChat";
+            this.chatMessageInput = "newChat"
         }
     }
 
@@ -365,12 +366,12 @@ class ChatTextEditor extends LitElement {
 
     sendMessageFunc(props) {
         if (this.chatMessageSize > 1000 ) {
-            parentEpml.request('showSnackBar', get("chatpage.cchange29"));
-            return;
+            parentEpml.request('showSnackBar', get("chatpage.cchange29"))
+            return
         };
-        this.chatMessageSize = 0;
-        this.chatEditor.updateMirror();
-        this._sendMessage(props);
+        this.chatMessageSize = 0
+        this.chatEditor.updateMirror()
+        this._sendMessage(props)
     }
 
     getMessageSize(message){

@@ -134,6 +134,18 @@ class BecomeMinter extends LitElement {
 				window.parent.electronAPI.showMyMenu()
 			})
 		}
+		this.clearConsole()
+		setInterval(() => {
+			this.clearConsole()
+		}, 60000)
+	}
+
+	clearConsole() {
+		if (!isElectron()) {
+		} else {
+			console.clear()
+			window.parent.electronAPI.clearCache()
+		}
 	}
 
 	async getRewardShareRelationship(recipientAddress) {

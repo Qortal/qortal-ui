@@ -1,6 +1,5 @@
 import { LitElement, html, css } from "lit";
 import { render } from "lit/html.js";
-import { get, translate } from "lit-translate";
 import { Epml } from "../../../epml";
 import { getUserNameFromAddress } from "../../utils/getUserNameFromAddress";
 import snackbar from "./snackbar.js";
@@ -13,6 +12,9 @@ import '@vaadin/button';
 import "./WrapperModal";
 import "./TipUser"
 import "./UserInfo/UserInfo";
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChatRightPanel extends LitElement {
 	static get properties() {

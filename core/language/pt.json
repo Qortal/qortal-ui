@@ -214,7 +214,8 @@
 		"wp1": "Criação",
 		"wp2": "Não está cunhando",
 		"wp3": "Informações essenciais",
-		"wp4": "Sincronizado"
+		"wp4": "Sincronizado",
+		"wp5": "Status da sincronização"
 	},
 	"general": {
 		"yes": "Sim",

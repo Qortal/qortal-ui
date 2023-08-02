@@ -3,11 +3,6 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml.js'
 import snackbar from './snackbar.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 import '@polymer/paper-tooltip/paper-tooltip.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -15,8 +10,8 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class LevelFounder extends LitElement {
     static get properties() {
         return {
-            checkleveladdress: { type: String, attribute: true },
-            selectedAddress: { type: Object },
+            checkleveladdress: { type: String },
+            selectedAddress: { type: String },
             config: { type: Object },
             memberInfo: { type: Array }
         }
@@ -106,15 +101,7 @@ class LevelFounder extends LitElement {
     }
 
     firstUpdated() {
-        this.changeLanguage()
         this.checkAddressInfo()
-
-        window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
-            use(checkLanguage)
-        })
-
-        let configLoaded = false
 
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
@@ -127,17 +114,6 @@ class LevelFounder extends LitElement {
         parentEpml.imReady()
     }
 
-    changeLanguage() {
-        const checkLanguage = localStorage.getItem('qortalLanguage')
-
-        if (checkLanguage === null || checkLanguage.length === 0) {
-            localStorage.setItem('qortalLanguage', 'us')
-            use('us')
-        } else {
-            use(checkLanguage)
-        }
-    }
-
     async checkAddressInfo() {
         let toCheck = this.checkleveladdress
         const memberInfo = await parentEpml.request('apiCall', {
@@ -147,23 +123,23 @@ class LevelFounder extends LitElement {
     }
 
     renderFounder() {
-        let adressfounder = this.memberInfo.flags;
+        let adressfounder = this.memberInfo.flags
         if (adressfounder === 1) {
         return html `
             <span id="founderTooltip" class="badge">F</span>
             <paper-tooltip class="custom" for="founderTooltip" position="top">FOUNDER</paper-tooltip>
         `
         } else {
-            return null;
+            return html ``
         }
     }
 
     renderLevel() {
-        let adresslevel = this.memberInfo.level;
+        let adresslevel = this.memberInfo.level
         return adresslevel ? html `
             <img id="level-img" src=${`/img/badges/level-${adresslevel}.png`} alt=${`badge-${adresslevel}`} class="message-data-level" />
             <paper-tooltip class="level-img-tooltip" for="level-img" position="top" >
-            ${translate("mintingpage.mchange27")} ${adresslevel}
+                ${translate("mintingpage.mchange27")} ${adresslevel}
             </paper-tooltip>
         ` : ''
     }
@@ -174,9 +150,9 @@ class LevelFounder extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        let apiKey = myNode.apiKey
+        return apiKey
     }
 }
 

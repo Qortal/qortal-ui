@@ -1,8 +1,8 @@
 import { parentEpml } from './connect.js';
 import './streams/streams.js';
 
-let config = {};
-let haveRegisteredNodeManagement = false;
+let config = {}
+let haveRegisteredNodeManagement = false
 
 parentEpml.ready().then(() => {
 	// pluginUrlsConf
@@ -186,20 +186,20 @@ parentEpml.ready().then(() => {
 	];
 
 	const registerPlugins = (pluginInfo) => {
-		parentEpml.request('registerUrl', pluginInfo);
+		parentEpml.request('registerUrl', pluginInfo)
 	};
 
 	const checkNode =
 		window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 			window.parent.reduxStore.getState().app.nodeConfig.node
-		];
+		]
 
 	parentEpml.subscribe('config', (c) => {
-		config = JSON.parse(c);
+		config = JSON.parse(c)
 
 		// Only register node management if node management is enabled and it hasn't already been registered
 		if (!haveRegisteredNodeManagement && checkNode.enableManagement) {
-			haveRegisteredNodeManagement = true;
+			haveRegisteredNodeManagement = true
 
 			let nodeManagementConf = {
 				url: 'node-management',
@@ -213,10 +213,10 @@ parentEpml.ready().then(() => {
 				parent: false,
 			};
 
-			let _pluginUrlsConf = [...pluginUrlsConf, nodeManagementConf];
-			registerPlugins(_pluginUrlsConf);
+			let _pluginUrlsConf = [...pluginUrlsConf, nodeManagementConf]
+			registerPlugins(_pluginUrlsConf)
 		} else {
-			registerPlugins(pluginUrlsConf);
+			registerPlugins(pluginUrlsConf)
 		}
-	});
-});
+	})
+})

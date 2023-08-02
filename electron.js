@@ -1,16 +1,17 @@
 const {
-    app,
-    BrowserWindow,
-    ipcMain,
-    ipcRenderer,
-    Menu,
-    Notification,
-    Tray,
-    nativeImage,
-    dialog,
-    webContents,
-    nativeTheme,
-    crashReporter
+	app,
+	BrowserWindow,
+	ipcMain,
+	ipcRenderer,
+	Menu,
+	Notification,
+	Tray,
+	nativeImage,
+	dialog,
+	webContents,
+	nativeTheme,
+	crashReporter,
+	webFrame
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
@@ -40,19 +41,16 @@ crashReporter.start({
 	uploadToServer: false
 })
 
-if (myMemory > 16000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
-        log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
-} else if (myMemory > 12000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=6144')
-        log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
-} else if (myMemory > 7000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
-        log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
-} else {
-	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048')
-        log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
-}
+app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=1024 --max-semi-space-size=2')
+
+setInterval (function() {
+    let mu = process.memoryUsage()
+    log.info('heapTotal:',  mu.heapTotal, 'heapUsed:', mu.heapUsed);
+    if (mu.heapUsed > 1024 * 1024 * 1024) {
+        log.info('Taking out the garbage')
+        global.gc()
+    }
+}, 1000 * 120)
 
 if (process.arch === 'arm') {
 	app.disableHardwareAcceleration()
@@ -1030,6 +1028,12 @@ if (!isLock) {
 				return
 			}
 		})
+	})
+	ipcMain.on('clear-all-cache', (event) => {
+		const theWindows = BrowserWindow.getAllWindows()[0]
+		const ses = theWindows.webContents.session
+		console.clear()
+		ses.clearCache()
 	})
 	ipcMain.on('check-for-update', (event) => {
 		const check = new Notification({
