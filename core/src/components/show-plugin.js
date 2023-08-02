@@ -45,7 +45,8 @@ class ShowPlugin extends connect(store)(LitElement) {
             theme: { type: String, reflect: true },
             tabInfo: { type: Object },
             chatLastSeen: { type: Array },
-            chatHeads: { type: Array }
+            chatHeads: { type: Array },
+            proxyPort: { type: Number }
         }
     }
 
@@ -63,6 +64,23 @@ class ShowPlugin extends connect(store)(LitElement) {
             * {
                 scrollbar-width: thin;
                 scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-surface: var(--white);
+                --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+                --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+                --mdc-text-field-label-ink-color: var(--black);
+                --mdc-text-field-ink-color: var(--black);
+                --mdc-select-ink-color: var(--black);
+                --mdc-select-fill-color: var(--black);
+                --mdc-select-label-ink-color: var(--black);
+                --mdc-select-idle-line-color: var(--black);
+                --mdc-select-hover-line-color: var(--black);
+                --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+                --mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
+                --mdc-dialog-content-ink-color: var(--black);
+                --mdc-dialog-shape-radius: 25px;
+                --mdc-dialog-min-width: 400px;
+                --mdc-dialog-max-width: 700px;
             }
 
             *::-webkit-scrollbar-track {
@@ -206,6 +224,30 @@ class ShowPlugin extends connect(store)(LitElement) {
                 color: var(--black);
             }
 
+            .add-dev-button {
+                position: fixed;
+                right: 20px;
+                margin-left: 10px;
+                margin-top: 4px;
+                max-height: 28px;
+                padding: 5px 5px;
+                font-size: 14px;
+                background-color: #03a9f4;
+                color: white;
+                border: 1px solid transparent;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .add-dev-button:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
+
+            .red {
+                --mdc-theme-primary: #F44336;
+            }
+
             .iconActive {
                 position: absolute;
                 top: 5px;
@@ -291,6 +333,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.tabInfo = {}
         this.chatLastSeen = []
         this.chatHeads = []
+        this.proxyPort = 0
     }
 
     render() {
@@ -341,6 +384,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                         title = html`${translate('tabmenu.tm16')}`
                     } else if (tab.myPlugObj && tab.myPlugObj.url === "myapp") {
                         title = tab.myPlugObj && tab.myPlugObj.title
+                    } else if (tab.myPlugObj && tab.myPlugObj.url === "devmode") {
+                        title = html`${translate('tabmenu.tm38')}`
                     } else {
                         title = html`${translate('tabmenu.tm17')}`
                     }
@@ -413,6 +458,11 @@ class ShowPlugin extends connect(store)(LitElement) {
                         this.currentTab = lengthOfTabs
                     }}
                 >+</button>
+                <button 
+                    class="add-dev-button"
+                    title="${translate('tabmenu.tm18')}"
+                    @click=${this.openDevDialog}
+                >${translate('tabmenu.tm38')}</button>
             </div>
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
@@ -433,7 +483,32 @@ class ShowPlugin extends connect(store)(LitElement) {
                     >
                     </nav-bar>
                 </div>
-            `)}     
+            `)}
+            <mwc-dialog id="addDevDialog">
+                <div style="text-align: center;">
+                    <h2>${translate('tabmenu.tm39')}</h2>
+                    <hr>
+                </div>
+                <p>
+                    <mwc-textfield id="domainInput" style="width:100%; color: var(--black);" required outlined label="${translate("settings.domain")}"></mwc-textfield>
+                </p>
+                <p>
+                    <mwc-textfield id="portInput" style="width:100%; color: var(--black);" required outlined label="${translate("settings.port")}"></mwc-textfield>
+                </p>
+                <mwc-button
+                    slot="secondaryAction"
+                    dialogAction="close"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+                <mwc-button
+                    slot="primaryAction"
+                    @click="${this.getProxyPort}"
+                >
+                ${translate('tabmenu.tm40')}
+                </mwc-button>
+            </mwc-dialog>    
         `
     }
 
@@ -474,6 +549,58 @@ class ShowPlugin extends connect(store)(LitElement) {
     async getUpdateComplete() {
         await super.getUpdateComplete()
         return true
+    }
+
+    openDevDialog() {
+        this.shadowRoot.getElementById('domainInput').value = ''
+        this.shadowRoot.getElementById('portInput').value = ''
+        this.shadowRoot.querySelector("#addDevDialog").show()
+    }
+
+    async getProxyPort() {
+        this.proxyPort = 0
+        let framework = ''
+
+        const domain = this.shadowRoot.getElementById('domainInput').value
+        const port = this.shadowRoot.getElementById('portInput').value
+
+        if (domain.length >= 3 && port.length >= 2) {
+            framework = domain + ':' + port
+        } else {
+            let errorString = get("tabmenu.tm41")
+            parentEpml.request('showSnackBar', `${errorString}`)
+            return
+        }
+
+        let framePort = await parentEpml.request('apiCall', {
+            url: `/developer/proxy/start`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: `${framework}`
+        })
+
+        this.createUrl(framePort)
+    }
+
+    createUrl(framePort) {
+        this.proxyPort = framePort
+        const myFrameNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const myFrameNodeUrl = myFrameNode.protocol + '://' + myFrameNode.domain + ':' + this.proxyPort
+
+        this.changePage({
+            "url": "devmode",
+            "domain": "core",
+            "page": `qdn/browser/index.html?link=${myFrameNodeUrl}&dev=FRAMEWORK`,
+            "title": "Dev Server",
+            "icon": "vaadin:desktop",
+            "mwcicon": "api",
+            "menus": [],
+            "parent": false
+        })
+
+        this.shadowRoot.querySelector("#addDevDialog").close()
     }
 
     async addTab(tab) {

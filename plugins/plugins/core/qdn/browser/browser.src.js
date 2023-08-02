@@ -34,6 +34,8 @@ class WebBrowser extends LitElement {
 			identifier: { type: String },
 			path: { type: String },
 			preview: { type: String },
+			dev: { type: String },
+			link: { type: String },
 			displayUrl: { type: String },
 			followedNames: { type: Array },
 			blockedNames: { type: Array },
@@ -129,11 +131,11 @@ class WebBrowser extends LitElement {
 	constructor() {
 		super();
 		this.url = 'about:blank';
-		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress;
-		this._publicKey = { key: '', hasPubKey: false };
-		const urlParams = new URLSearchParams(window.location.search);
-		this.name = urlParams.get('name');
-		this.service = urlParams.get('service');
+		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress
+		this._publicKey = { key: '', hasPubKey: false }
+		const urlParams = new URLSearchParams(window.location.search)
+		this.name = urlParams.get('name')
+		this.service = urlParams.get('service')
 		this.identifier =
 			urlParams.get('identifier') != null
 				? urlParams.get('identifier')
@@ -144,44 +146,53 @@ class WebBrowser extends LitElement {
 				urlParams.get('path')
 				: '';
 		this.preview = urlParams.get('preview');
-		this.followedNames = [];
-		this.blockedNames = [];
+		this.link = urlParams.get('link')
+		this.dev = urlParams.get('dev')
+		this.followedNames = []
+		this.blockedNames = []
 		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
-		this.loader = new Loader();
+		this.loader = new Loader()
+
 		// Build initial display URL
-		let displayUrl = 'qortal://' + this.service + '/' + this.name;
-		if (
-			this.identifier && this.identifier != 'null' &&
-			this.identifier != 'default'
-		) {
-			displayUrl = displayUrl.concat('/' + this.identifier);
+		let displayUrl = ''
+
+		if (this.dev === 'FRAMEWORK') {
+			displayUrl = 'qortal://app/development'
+		} else {
+			displayUrl = 'qortal://' + this.service + '/' + this.name
+			if (this.identifier && this.identifier != 'null' && this.identifier != 'default') {
+				displayUrl = displayUrl.concat('/' + this.identifier)
+			}
+			if (this.path != null && this.path != '/') {
+				displayUrl = displayUrl.concat(this.path)
+			}
 		}
-		if (this.path != null && this.path != '/')
-			displayUrl = displayUrl.concat(this.path);
-		this.displayUrl = displayUrl;
+
+		this.displayUrl = displayUrl
+
 		const getFollowedNames = async () => {
 			let followedNames = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
-			});
+			})
 
-			this.followedNames = followedNames;
+			this.followedNames = followedNames
 			setTimeout(
 				getFollowedNames,
 				this.config.user.nodeSettings.pingInterval
-			);
-		};
+			)
+		}
 
 		const getBlockedNames = async () => {
 			let blockedNames = await parentEpml.request('apiCall', {
 				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
-			});
+			})
 
 			this.blockedNames = blockedNames;
 			setTimeout(
 				getBlockedNames,
 				this.config.user.nodeSettings.pingInterval
-			);
-		};
+			)
+		}
 
 		const render = () => {
 			const myNode =
@@ -194,8 +205,9 @@ class WebBrowser extends LitElement {
 			if (this.preview != null && this.preview.length > 0) {
 				// In preview mode we access the preview URL path directly
 				this.url = `${nodeUrl}${this.preview}&theme=${this.theme}`
-			}
-			else {
+			} else if (this.dev === 'FRAMEWORK') {
+				this.url = `${this.link}`
+			} else {
 				// Normal mode
 
 				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
@@ -2757,15 +2769,15 @@ class WebBrowser extends LitElement {
 	}
 
 	refresh() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-			window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
-			}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
-			}&time=${new Date().getMilliseconds()}`;
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		if (this.dev === 'FRAMEWORK') {
+			this.url = `${this.link}?time=${new Date().getMilliseconds()}`
+		} else {
+			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
+				}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
+				}&time=${new Date().getMilliseconds()}`
+		}
 	}
 
 	goBackToList() {

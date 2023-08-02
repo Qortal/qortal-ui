@@ -79,7 +79,11 @@
 		"tm34": "Export Tab Menu",
 		"tm35": "Your existing tab menu will be deleted and set to uploaded tab menu.",
 		"tm36": "Tab Menu Successfully Restored",
-                "tm37": "Tab Menu Successfully Saved As"
+                "tm37": "Tab Menu Successfully Saved As",
+                "tm38": "DEV MODE",
+                "tm39": "Add Custom Framework",
+                "tm40": "Add And Open",
+                "tm41": "Error: Invalid data please try again !"
 	},
 	"login": {
 		"login": "Log In",
