@@ -79,7 +79,11 @@
 		"tm34": "Menú de pestaña Exportar",
 		"tm35": "Tu menú de pestañas existente se eliminará y se establecerá en el menú de pestañas cargado.",
 		"tm36": "Menú de pestañas restaurado con éxito",
-		"tm37": "Menú de pestañas guardado correctamente como"
+		"tm37": "Menú de pestañas guardado correctamente como",
+                "tm38": "MODO DEV",
+                "tm39": "Agregar marco personalizado",
+                "tm40": "Agregar y abrir",
+                "tm41": "Error: datos no válidos, inténtalo de nuevo"
 	},
 	"login": {
 		"login": "Iniciar sesión",

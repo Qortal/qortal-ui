@@ -79,7 +79,11 @@
 		"tm34": "Menu zakładki Eksportuj",
 		"tm35": "Twoje istniejące menu kart zostanie usunięte i ustawione na przesłane menu kart.",
 		"tm36": "Menu zakładki pomyślnie przywrócone",
-		"tm37": "Menu zakładki pomyślnie zapisane jako"
+		"tm37": "Menu zakładki pomyślnie zapisane jako",
+                "tm38": "TRYB DEV",
+                "tm39": "Dodaj niestandardową strukturę",
+                "tm40": "Dodaj i otwórz",
+                "tm41": "Błąd: Nieprawidłowe dane, spróbuj ponownie!"
 	},
 	"login": {
 		"login": "Zaloguj się",

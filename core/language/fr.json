@@ -79,7 +79,11 @@
 		"tm34": "Menu de l'onglet Exporter",
 		"tm35": "Votre menu d'onglets existant sera supprimé et défini sur le menu d'onglets téléchargé.",
 		"tm36": "Le menu des onglets a été restauré avec succès",
-		"tm37": "Le menu des onglets a été enregistré avec succès sous"
+		"tm37": "Le menu des onglets a été enregistré avec succès sous",
+                "tm38": "MODE DEV",
+                "tm39": "Ajouter un cadre personnalisé",
+                "tm40": "Ajouter et ouvrir",
+                "tm41": "Erreur : données invalides, veuillez réessayer !"
 	},
 	"login": {
 		"login": "Connexion",

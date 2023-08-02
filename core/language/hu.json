@@ -79,7 +79,11 @@
 		"tm34": "Exportálás lap menü",
 		"tm35": "Meglévő lapmenüje törlésre kerül, és a feltöltött lapok menüje lesz.",
 		"tm36": "A lap menüje sikeresen visszaállítva",
-		"tm37": "A lap menüje sikeresen mentve másként"
+		"tm37": "A lap menüje sikeresen mentve másként",
+                "tm38": "DEV MODE",
+                "tm39": "Egyéni keret hozzáadása",
+                "tm40": "Hozzáadás és megnyitás",
+                "tm41": "Hiba: Érvénytelen adatok, próbálkozz újra!"
 	},
 	"login": {
 		"login": "Bejelentkezés",

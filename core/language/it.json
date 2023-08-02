@@ -79,7 +79,11 @@
 		"tm34": "Menu scheda Esporta",
 		"tm35": "Il menu della scheda esistente verrà eliminato e impostato sul menu della scheda caricato.",
 		"tm36": "Menu scheda ripristinato con successo",
-		"tm37": "Menu scheda salvato con successo con nome"
+		"tm37": "Menu scheda salvato con successo con nome",
+                "tm38": "MODALITÀ SVILUPPATORE",
+                "tm39": "Aggiungi framework personalizzato",
+                "tm40": "Aggiungi e apri",
+                "tm41": "Errore: dati non validi, riprova!"
 	},
 	"login": {
 		"login": "Login",

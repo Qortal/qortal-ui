@@ -79,7 +79,11 @@
 		"tm34": "Menu da guia Exportar",
 		"tm35": "Seu menu de guia existente será excluído e definido como menu de guia carregado.",
 		"tm36": "Menu de abas restaurado com sucesso",
-		"tm37": "Menu da guia salvo com sucesso como"
+		"tm37": "Menu da guia salvo com sucesso como",
+                "tm38": "MODO DEV",
+                "tm39": "Adicionar estrutura personalizada",
+                "tm40": "Adicionar e abrir",
+                "tm41": "Erro: Dados inválidos tente novamente!"
 	},
 	"login": {
 		"login": "Login",

@@ -79,7 +79,11 @@
 		"tm34": "Registerkartenmenü Exportieren",
 		"tm35": "Ihr vorhandenes Tab-Menü wird gelöscht und auf das hochgeladene Tab-Menü gesetzt.",
 		"tm36": "Tab-Menü erfolgreich wiederhergestellt",
-		"tm37": "Tab-Menü erfolgreich gespeichert als"
+		"tm37": "Tab-Menü erfolgreich gespeichert als",
+                "tm38": "DEV-MODUS",
+                "tm39": "Benutzerdefiniertes Framework hinzufügen",
+                "tm40": "Hinzufügen und öffnen",
+                "tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!"
 	},
 	"login": {
 		"login": "Einloggen",

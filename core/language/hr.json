@@ -79,7 +79,11 @@
 		"tm34": "Izbornik kartice Izvoz",
 		"tm35": "Vaš postojeći izbornik kartica bit će izbrisan i postavljen na učitani izbornik kartica.",
 		"tm36": "Izbornik kartice uspješno vraćen",
-		"tm37": "Izbornik kartice uspješno spremljen kao"
+		"tm37": "Izbornik kartice uspješno spremljen kao",
+                "tm38": "DEV NAČIN",
+                "tm39": "Dodaj prilagođeni okvir",
+                "tm40": "Dodaj i otvori",
+                "tm41": "Pogreška: nevažeći podaci pokušajte ponovo!"
 	},
 	"login": {
 		"login": "Prijavi se",
