@@ -837,10 +837,6 @@ function createWindow() {
 	myWindow.on('closed', function () {
 		myWindow = null
 	})
-	myWindow.on('minimize', function (event) {
-		event.preventDefault()
-		myWindow.hide()
-	})
 	ipcMain.handle('dark-mode:toggle', () => {
 		if (nativeTheme.shouldUseDarkColors) {
 			nativeTheme.themeSource = 'light'
@@ -881,10 +877,6 @@ function createNewWindow() {
 	newWindow.loadURL('http://localhost:12388/app/wallet')
 	newWindow.on('closed', function () {
 		newWindow = null
-	})
-	newWindow.on('minimize', function (event) {
-		event.preventDefault()
-		newWindow.hide()
 	})
 	ipcMain.handle('dark-mode:toggle', () => {
 		if (nativeTheme.shouldUseDarkColors) {
