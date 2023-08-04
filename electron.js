@@ -41,7 +41,19 @@ crashReporter.start({
 	uploadToServer: false
 })
 
-app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=1024 --max-semi-space-size=2')
+if (myMemory > 16000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=8192', '--max-semi-space-size=2')
+        log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
+} else if (myMemory > 12000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=6144', '--max-semi-space-size=2')
+        log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
+} else if (myMemory > 7000000000) {
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=4096', '--max-semi-space-size=2')
+        log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
+} else {
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=2048', '--max-semi-space-size=2')
+        log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
+}
 
 setInterval (function() {
     let mu = process.memoryUsage()
