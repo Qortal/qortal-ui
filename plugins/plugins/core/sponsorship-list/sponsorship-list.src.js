@@ -53,7 +53,8 @@ class SponsorshipList extends LitElement {
 			isOpenDialogPublicKeyLookup: {type: Boolean},
 			lookupAddressValue: {type: String},
 			lookupPublicAddressValue: {type: String},
-			errorLookup: {type: String}
+			errorLookup: {type: String},
+			nextEnding: { type: Number }
 		}
 	}
 
@@ -80,6 +81,7 @@ class SponsorshipList extends LitElement {
 		this.lookupAddressValue = ''
 		this.lookupPublicAddressValue = ''
 		this.errorLookup = ''
+		this.nextEnding = 0
 	}
 
 	render() {
@@ -172,7 +174,7 @@ class SponsorshipList extends LitElement {
 							<p class='text text--bold'>
 								${translate('sponsorshipspage.schange4')}&nbsp;
 								<span class='text text--bold--green'>
-									${this.nextSponsorshipEnding.blocksRemaining}&nbsp;
+									${this.nextEnding}&nbsp;
 								</span>
 								${translate('mintingpage.mchange26')}
 							</p>
@@ -532,9 +534,16 @@ class SponsorshipList extends LitElement {
 				.filter((sponsorship) => sponsorship.blocksRemaining !== 0)
 				.sort((a, b) => a.blocksRemaining - b.blocksRemaining)[0]
 
+			if (this.nextSponsorshipEnding === undefined || this.nextSponsorshipEnding.length == 0) {
+				this.nextEnding = 0
+			} else {
+				this.nextEnding = this.nextSponsorshipEnding.blocksRemaining
+			}
+
 			this.isPageLoading = false
 
-			const openModal = accountInfoValues.find(s=> s.blocksRemaining <= 0)
+			const openModal = accountInfoValues.find(s => s.blocksRemaining <= 0)
+
 			if(openModal) {
 				this.shadowRoot.querySelector('#showDialog').show()
 			}
