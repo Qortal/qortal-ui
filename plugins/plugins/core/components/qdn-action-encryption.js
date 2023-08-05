@@ -2,12 +2,41 @@ import nacl from '../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../crypto/api/deps/ed2curve.js'
 
 
+class Semaphore {
+    constructor(count) {
+        this.count = count;
+        this.waiting = [];
+    }
+
+    acquire() {
+        return new Promise(resolve => {
+            if (this.count > 0) {
+                this.count--;
+                resolve();
+            } else {
+                this.waiting.push(resolve);
+            }
+        });
+    }
+
+    release() {
+        if (this.waiting.length > 0) {
+            const resolve = this.waiting.shift();
+            resolve();
+        } else {
+            this.count++;
+        }
+    }
+}
+
+let semaphore = new Semaphore(1);
 let reader = new FileReader();
 export const fileToBase64 = (file) =>
-    new Promise((resolve, reject) => {
+    new Promise(async (resolve, reject) => {
         if (!reader) {
             reader = new FileReader();
         }
+        await semaphore.acquire();
         reader.readAsDataURL(file);
         reader.onload = () => {
             const dataUrl = reader.result;
@@ -21,11 +50,13 @@ export const fileToBase64 = (file) =>
                 reader.onerror = null;
                 reject(new Error('Invalid data URL'));
             }
+            semaphore.release();
         };
         reader.onerror = (error) => {
             reader.onload = null;
             reader.onerror = null;
             reject(error);
+            semaphore.release();
         };
     });
 
