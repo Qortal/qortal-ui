@@ -217,9 +217,9 @@ class ChatWelcomePage extends LitElement {
                         <div 
                             class="start-chat" 
                             @click="${() => this.setOpenPrivateMessage({
-                            name: "",
-                            open: true   
-                            })}">
+            name: "",
+            open: true
+        })}">
                             ${translate("welcomepage.wcchange2")}
                         </div>
                     </div>
@@ -240,9 +240,9 @@ class ChatWelcomePage extends LitElement {
                     </p>
                     
                     <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${() => {
-                        this._sendMessage();
-                        }
-                    }>
+                this._sendMessage();
+            }
+            }>
                     ${translate("welcomepage.wcchange6")}</mwc-button>
                     <mwc-button
                         ?disabled="${this.isLoading}"
@@ -304,11 +304,7 @@ class ChatWelcomePage extends LitElement {
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
             })
-            parentEpml.request('apiCall', {
-                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-            }).then(res => {
-                this.balance = res
-            })
+
         })
 
         parentEpml.imReady()

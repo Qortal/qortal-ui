@@ -101,7 +101,7 @@ class LevelFounder extends LitElement {
     }
 
     firstUpdated() {
-        this.checkAddressInfo()
+        console.log('levelFounder')
 
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {
@@ -115,28 +115,28 @@ class LevelFounder extends LitElement {
     }
 
     async checkAddressInfo() {
-        let toCheck = this.checkleveladdress
-        const memberInfo = await parentEpml.request('apiCall', {
-            url: `/addresses/${toCheck}`
-        })
-        this.memberInfo = memberInfo
+        // let toCheck = this.checkleveladdress
+        // const memberInfo = await parentEpml.request('apiCall', {
+        //     url: `/addresses/${toCheck}`
+        // })
+        // this.memberInfo = memberInfo
     }
 
     renderFounder() {
         let adressfounder = this.memberInfo.flags
         if (adressfounder === 1) {
-        return html `
+            return html`
             <span id="founderTooltip" class="badge">F</span>
             <paper-tooltip class="custom" for="founderTooltip" position="top">FOUNDER</paper-tooltip>
         `
         } else {
-            return html ``
+            return html``
         }
     }
 
     renderLevel() {
         let adresslevel = this.memberInfo.level
-        return adresslevel ? html `
+        return adresslevel ? html`
             <img id="level-img" src=${`/img/badges/level-${adresslevel}.png`} alt=${`badge-${adresslevel}`} class="message-data-level" />
             <paper-tooltip class="level-img-tooltip" for="level-img" position="top" >
                 ${translate("mintingpage.mchange27")} ${adresslevel}

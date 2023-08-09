@@ -118,7 +118,7 @@ class ChatPage extends LitElement {
     }
 
     static get styles() {
-    return css`
+        return css`
     html {
         scroll-behavior: smooth;
     }
@@ -1443,14 +1443,7 @@ class ChatPage extends LitElement {
                 ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
                 <!-- gif div -->
-                <chat-gifs 
-                    class="chat-gifs"
-                    style=${this.openGifModal ? "display: flex;" : "display: none;"}
-                    .webWorkerImage=${this.webWorkerFile}
-                    .setGifsLoading=${(val) => this.setGifsLoading(val)}
-                    .sendMessage=${(val) => this._sendMessage(val)}
-                    .setOpenGifModal=${(val) => this.setOpenGifModal(val)}>
-                </chat-gifs>
+              
                     <div 
                     class='last-message-ref' 
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
@@ -1600,18 +1593,18 @@ class ChatPage extends LitElement {
                             </div>
                             <div class="modal-button-row">
                                 <button class="modal-button-red" @click=${() => {
-                                    this.removeImage()
-                                }}>
+                this.removeImage()
+            }}>
                                     ${translate("chatpage.cchange33")}
                                 </button>
                                 <button
                                     class="modal-button"
                                     @click=${() => {
-                                        const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
-                                        chatTextEditor.sendMessageFunc({
-                                            type: 'image',
-                                        })
-                                    }}
+                const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
+                chatTextEditor.sendMessageFunc({
+                    type: 'image',
+                })
+            }}
                                 >
                                     ${translate("chatpage.cchange9")}
                                 </button>
@@ -1652,18 +1645,18 @@ class ChatPage extends LitElement {
                         </div>
                         <div class="modal-button-row">
                             <button class="modal-button-red" @click=${() => {
-                                this.removeAttachment()
-                            }}>
+                this.removeAttachment()
+            }}>
                                 ${translate("chatpage.cchange33")}
                             </button>
                             <button
                                 class="modal-button"
                                 @click=${() => {
-                                    const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
-                                    chatTextEditor.sendMessageFunc({
-                                        type: 'attachment',
-                                    })
-                                }}
+                const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
+                chatTextEditor.sendMessageFunc({
+                    type: 'attachment',
+                })
+            }}
                             >
                                 ${translate("chatpage.cchange9")}
                             </button>
@@ -2398,11 +2391,7 @@ class ChatPage extends LitElement {
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
             })
-            parentEpml.request('apiCall', {
-                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-            }).then(res => {
-                this.balance = res
-            })
+
         })
         parentEpml.imReady()
 
@@ -2559,15 +2548,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2589,15 +2578,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2623,15 +2612,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2655,15 +2644,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2690,15 +2679,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
+            this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2722,15 +2711,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodeMsgs,
+            //     parentEpml,
+            //     isReceipient: this.isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this.messagesRendered = [...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
+            this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2762,35 +2751,36 @@ class ChatPage extends LitElement {
         })
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodedMessages,
-                parentEpml,
-                isReceipient: isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodedMessages,
+            //     parentEpml,
+            //     isReceipient: isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey
+            // })
 
-            this._messages = replacedMessages.sort(function (a, b) {
+            this._messages = decodedMessages.sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
 
             // TODO: Determine number of initial messages by screen height...
+            // this.messagesRendered = this._messages
             this.messagesRendered = this._messages
             this.isLoadingMessages = false
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodedMessages,
-                parentEpml,
-                isReceipient: isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                isNotInitial: true
-            })
+            // const replacedMessages = await replaceMessagesEdited({
+            //     decodedMessages: decodedMessages,
+            //     parentEpml,
+            //     isReceipient: isReceipient,
+            //     decodeMessageFunc: this.decodeMessage,
+            //     _publicKey: this._publicKey,
+            //     isNotInitial: true
+            // })
 
-            const renderEachMessage = replacedMessages.map(async (msg) => {
+            const renderEachMessage = decodedMessages.map(async (msg) => {
                 await this.renderNewMessage(msg)
             })
 
