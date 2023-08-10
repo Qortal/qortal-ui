@@ -396,13 +396,14 @@ class ShowPlugin extends connect(store)(LitElement) {
                         icon = 'tab'
                     }
 
-                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                        title = this.tabInfo[tab.id].name
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
+                title = this.tabInfo[tab.id].name
                     }
 
-                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                        count = this.tabInfo[tab.id].count
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
+                count = this.tabInfo[tab.id].count
                     }
+
 
                     if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
                         for (const chat of this.chatHeads) {

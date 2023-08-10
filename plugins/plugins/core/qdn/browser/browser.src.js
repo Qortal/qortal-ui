@@ -3,6 +3,7 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
 import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import ShortUniqueId from 'short-unique-id';
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
@@ -131,6 +132,7 @@ class WebBrowser extends LitElement {
 	constructor() {
 		super();
 		this.url = 'about:blank';
+		this.uid = new ShortUniqueId()
 		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress
 		this._publicKey = { key: '', hasPubKey: false }
 		const urlParams = new URLSearchParams(window.location.search)
@@ -316,6 +318,44 @@ class WebBrowser extends LitElement {
 			}
 			window.location = window.location.origin + window.location.pathname + query
 		}
+	}
+
+	async linkOpenNewTab(link) {
+	
+			const value = link
+			let newQuery = value;
+			if (newQuery.endsWith('/')) {
+				newQuery = newQuery.slice(0, -1);
+			}
+			const res = await this.extractComponents(newQuery)
+			if (!res) return
+			const { service, name, identifier, path } = res
+			let query = `?service=${service}`
+			if (name) {
+				query = query + `&name=${name}`
+			}
+			if (identifier) {
+				query = query + `&identifier=${identifier}`
+			}
+			if (path) {
+				query = query + `&path=${path}`
+			}
+			
+			window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
+				url: `qdn/browser/index.html${query}`,
+				id: this.uid(),
+				myPlugObj: {
+					"url": service === 'WEBSITE' ? "websites" : "qapps",
+					"domain": "core",
+					"page": `qdn/browser/index.html${query}`,
+					"title": name,
+					"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
+					"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
+					"menus": [],
+					"parent": false
+				}
+			}))
+	
 	}
 
 	render() {
@@ -1253,8 +1293,91 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 				}
+				case actions.OPEN_NEW_TAB: {
+					if(!data.qortalLink){
+						const obj = {};
+						const errorMsg = 'Please enter a qortal link - qortal://...';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
 
+					try {
+						await this.linkOpenNewTab(data.qortalLink)
+						response = true
+					} catch (error) {
+						console.log('error', error)
+						const obj = {};
+						const errorMsg = "Invalid qortal link";
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
+					}
+				
+				}
+				case actions.NOTIFICATIONS_PERMISSION: {
+					try {
 
+						const res = await showModalAndWait(
+							actions.NOTIFICATIONS_PERMISSION,
+							{
+								name: this.name
+							}
+						);
+						if (res.action === 'accept'){
+							this.addAppToNotificationList(this.name)
+						response = true
+						break;
+						}
+						
+					} catch (error) {
+						break;
+					}
+				
+				}
+				case actions.SEND_LOCAL_NOTIFICATION: {
+					const {title, url, icon, message} = data
+					try {
+						const id = `appNotificationList-${this.selectedAddress.address}`
+						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+			if(!checkData || !checkData[this.name]) throw new Error('App not on permission list')
+					const appInfo = checkData[this.name]
+					const lastNotification = appInfo.lastNotification
+					const interval = appInfo.interval
+					if (lastNotification && interval) {
+						const timeDifference = Date.now() - lastNotification;
+					  
+						if (timeDifference > interval) {
+							parentEpml.request('showNotification', {
+								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+						   })
+						   response = true
+						   this.updateLastNotification(id, this.name)
+						   break;
+						} else {
+							throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
+						}
+					  } else if(!lastNotification){
+						parentEpml.request('showNotification', {
+							title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+					   })
+					   response = true
+					   this.updateLastNotification(id)
+					   break;
+					  } else {
+						throw new Error(`invalid data`)
+					  }
+						
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || "error in pushing notification";
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
+					
+					}
+				
+				}
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message;
 					const recipient = data.destinationAddress;
@@ -2707,6 +2830,45 @@ class WebBrowser extends LitElement {
 			use(checkLanguage);
 		}
 	}
+	addAppToNotificationList(appName) {
+		const id = `appNotificationList-${this.selectedAddress.address}`;
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+	  
+		if (!checkData) {
+		  const newData = {
+			[appName]: {
+			  interval: 900000, // 15mins in milliseconds
+			  lastNotification: null,
+			},
+		  };
+		  localStorage.setItem(id, JSON.stringify(newData));
+		} else {
+		  const copyData = { ...checkData };
+		  copyData[appName] = {
+			interval: 900000, // 15mins in milliseconds
+			lastNotification: null,
+		  };
+		  localStorage.setItem(id, JSON.stringify(copyData));
+		}
+	  }
+
+	  updateLastNotification(id, appName) {
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+	  
+		if (checkData) {
+		  const copyData = { ...checkData };
+		  if (copyData[appName]) {
+			copyData[appName].lastNotification = Date.now(); // Make sure to use Date.now(), not date.now()
+		  } else {
+			copyData[appName] = {
+			  interval: 900000, // 15mins in milliseconds
+			  lastNotification: Date.now(),
+			};
+		  }
+		  localStorage.setItem(id, JSON.stringify(copyData));
+		}
+	  }
+	  
 
 	renderFollowUnfollowButton() {
 		// Only show the follow/unfollow button if we have permission to modify the list on this node
@@ -3064,7 +3226,12 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
 							</div>
 						` : ''}
-						
+						${type === actions.NOTIFICATIONS_PERMISSION ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange47")}</p>
+							</div>
+						` : ''}
+					
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>

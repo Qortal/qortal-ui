@@ -1,1 +1,1 @@
-export { newMessage, newMessageNotificationQapp } from './new-message'
+export { newMessage, newMessageNotificationQapp, newMessageNotificationQappLocal } from './new-message'
