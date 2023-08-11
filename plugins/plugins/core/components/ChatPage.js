@@ -1880,7 +1880,7 @@ class ChatPage extends LitElement {
                 return memberItem
             })
             const membersWithName = await Promise.all(getMembersWithName)
-            this.groupMembers = membersWithName
+            this.groupMembers = [...this.groupMembers, ...membersWithName]
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
         }
