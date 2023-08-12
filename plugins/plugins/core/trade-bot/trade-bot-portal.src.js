@@ -3747,7 +3747,7 @@ class TradeBotPortal extends LitElement {
             }
             return Promise.reject(response)
         }).then((json) => {
-            this.listedCoins.get("QORTAL").tradeFee = (Number(json) / 1e8).toFixed(2)
+            this.listedCoins.get("QORTAL").tradeFee = (Number(json + 100000) / 1e8).toFixed(2)
         })
     }
 
