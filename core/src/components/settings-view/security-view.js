@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists } from '../../redux/app/app-actions.js'
+import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists, setIsOpenDevDialog } from '../../redux/app/app-actions.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
@@ -15,7 +15,8 @@ class SecurityView extends connect(store)(LitElement) {
     static get properties() {
         return {
             theme: { type: String, reflect: true },
-            backupErrorMessage: { type: String }
+            backupErrorMessage: { type: String },
+            closeSettings: {attribute: false}
         }
     }
 
@@ -75,6 +76,23 @@ class SecurityView extends connect(store)(LitElement) {
                 transition: all .2s;
                 position: relative;
             }   
+
+            .add-dev-button {
+                margin-top: 4px;
+                max-height: 28px;
+                padding: 5px 5px;
+                font-size: 14px;
+                background-color: #03a9f4;
+                color: white;
+                border: 1px solid transparent;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .add-dev-button:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
         `
     }
 
@@ -122,6 +140,14 @@ class SecurityView extends connect(store)(LitElement) {
                             </label>
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
                     </div>
+                    <div class="checkbox-row">
+                    <button 
+                    class="add-dev-button"
+                    title="${translate('tabmenu.tm18')}"
+                    @click=${this.openDevDialog}
+                >${translate('tabmenu.tm38')}</button>
+                    </div>
+                    
                 </div>
         `
     }
@@ -153,6 +179,11 @@ class SecurityView extends connect(store)(LitElement) {
         } else {
             this.downloadBackup()
         }
+    }
+
+    openDevDialog() {
+        this.closeSettings()
+        store.dispatch(setIsOpenDevDialog(true))
     }
 
     async downloadBackup() {

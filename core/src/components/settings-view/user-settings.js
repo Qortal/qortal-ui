@@ -157,7 +157,9 @@ class UserSettings extends connect(store)(LitElement) {
                 font-size: 16px;
                 text-align: center;
                 min-height: 460px;
-                height: 60vh;
+                height: auto;
+                overflow: auto;
+
             }
 
             @media(max-width:700px) {
@@ -252,7 +254,7 @@ class UserSettings extends connect(store)(LitElement) {
         if (selectedView.id === 'info') {
             return html`<account-view></account-view>`
         } else if (selectedView.id === 'security') {
-            return html`<security-view></security-view>`
+            return html`<security-view .closeSettings=${()=> this.closeSettings()}></security-view>`
         } else if (selectedView.id === 'export') {
             return html`<export-keys></export-keys>`
         } else if (selectedView.id === 'notification') {
