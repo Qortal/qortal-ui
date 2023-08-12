@@ -2104,6 +2104,7 @@ class TradeBotPortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+        this.tradeFee()
 
         this.autoHelperMessage = this.renderAutoHelperPass()
 
@@ -3734,6 +3735,20 @@ class TradeBotPortal extends LitElement {
                 }
             }
         }
+    }
+
+    async tradeFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.listedCoins.get("QORTAL").tradeFee = (Number(json) / 1e8).toFixed(2)
+        })
     }
 
     getApiKey() {
