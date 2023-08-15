@@ -1421,6 +1421,7 @@ class TradePortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+        this.tradeFee()
 
         this.tradeHelperMessage = this.renderTradeHelperPass()
 
@@ -2758,7 +2759,7 @@ class TradePortal extends LitElement {
             }
         }
 
-        if (this.round(parseFloat(fundingQortAmount) + parseFloat(0.002)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
+        if (this.round(parseFloat(fundingQortAmount) + parseFloat(this.listedCoins.get("QORTAL").tradeFee)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
             this.isSellLoading = false
             this.sellBtnDisable = false
             let snack4string = get("tradepage.tchange22")
@@ -3019,6 +3020,20 @@ class TradePortal extends LitElement {
                 this.buyBtnDisable = false
             }
         }
+    }
+
+    async tradeFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.listedCoins.get("QORTAL").tradeFee = (Number(json) + 100000) / 1e8
+        })
     }
 
     getApiKey() {
