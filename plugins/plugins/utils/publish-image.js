@@ -28,7 +28,8 @@ export const publishData = async ({
     tag2,
     tag3,
     tag4,
-    tag5
+    tag5,
+	feeAmount
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -51,7 +52,7 @@ export const publishData = async ({
 	const getArbitraryFee = async () => {
 		const timestamp = Date.now()
 		let fee = await parentEpml.request('apiCall', {
-			url: `/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+			url: `/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
 		})
 		return {
 			timestamp,
@@ -136,9 +137,11 @@ export const publishData = async ({
 			throw new Error('Name not found');
 		}
 		let fee = null
-		if(withFee){
+		if(withFee && feeAmount){
+			fee= feeAmount
+		} else if(withFee){
 			const res = await getArbitraryFee()
-			if(res.fee){
+			 if(res.fee){
 				fee= res.fee
 			} else {
 				throw new Error('unable to get fee')

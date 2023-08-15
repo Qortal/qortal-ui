@@ -491,7 +491,7 @@ class PublishData extends LitElement {
         const getArbitraryFee = async () => {
             const timestamp = Date.now()
             let fee = await parentEpml.request('apiCall', {
-                url: `/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+                url: `/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
             })
             return {
                 timestamp,
