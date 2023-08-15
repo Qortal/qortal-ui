@@ -488,6 +488,16 @@ class PublishData extends LitElement {
             this.successMessage = ''
             console.error(errorMessage)
         }
+        const getArbitraryFee = async () => {
+            const timestamp = Date.now()
+            let fee = await parentEpml.request('apiCall', {
+                url: `/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+            })
+            return {
+                timestamp,
+                fee : (Number(fee) / 1e8).toFixed(8)
+            }
+        }
 
         const validate = async () => {
             let validNameRes = await validateName(registeredName)
@@ -501,8 +511,17 @@ class PublishData extends LitElement {
             this.generalMessage = `${err6string}`
             let transactionBytes
             let previewUrlPath
+            let feeAmount = null
 
-            let uploadDataRes = await uploadData(registeredName, path, file, preview, fee)
+            if(fee){
+                const res = await getArbitraryFee()
+                if(res.fee){
+                    feeAmount= res.fee
+                } else {
+                    throw new Error('unable to get fee')
+                }
+            }
+            let uploadDataRes = await uploadData(registeredName, path, file, preview, fee, feeAmount)
 
             if (uploadDataRes.error) {
                 let err7string = get("publishpage.pchange20")
@@ -531,12 +550,13 @@ class PublishData extends LitElement {
             if (fee) {
                 let err9string = get("publishpage.pchange26")
                 this.generalMessage = `${err9string}`
+              
             } else {
                 let err9string = get("publishpage.pchange22")
                 this.generalMessage = `${err9string}`
             }
 
-            let signAndProcessRes = await signAndProcess(transactionBytes, fee)
+            let signAndProcessRes = await signAndProcess(transactionBytes, fee, feeAmount)
 
             if (signAndProcessRes.error) {
                 let err10string = get("publishpage.pchange20")
@@ -554,7 +574,9 @@ class PublishData extends LitElement {
             this.successMessage = `${err11string}`
         }
 
-        const uploadData = async (registeredName, path, file, preview, fee) => {
+
+
+        const uploadData = async (registeredName, path, file, preview, fee, feeAmount) => {
             let postBody = path
             let urlSuffix = ""
             if (file != null) {
@@ -592,9 +614,9 @@ class PublishData extends LitElement {
                     uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
                 }
             } else if (fee) {
-                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&fee=${feeAmount}&apiKey=${this.getApiKey()}`
                 if (identifier != null && identifier.trim().length > 0) {
-                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&fee=${feeAmount}&apiKey=${this.getApiKey()}`
                 }
             } else {
                 uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`
