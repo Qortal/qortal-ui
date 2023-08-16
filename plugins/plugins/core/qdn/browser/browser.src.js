@@ -425,6 +425,22 @@ class WebBrowser extends LitElement {
 		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
+	 async getArbitraryFee (){
+		const timestamp = Date.now()
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching arbitrary fee');
+		}
+		const data = await response.json()
+		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
+		return {
+			timestamp,
+			fee : arbitraryFee
+		}
+    }
 	async sendQortFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -975,6 +991,7 @@ class WebBrowser extends LitElement {
 					const tag3 = data.tag3;
 					const tag4 = data.tag4;
 					const tag5 = data.tag5;
+					let feeAmount = null
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
@@ -994,6 +1011,8 @@ class WebBrowser extends LitElement {
 					if (data.file) {
 						data64 = await fileToBase64(data.file)
 					}
+					const getArbitraryFee = await this.getArbitraryFee()
+					feeAmount = getArbitraryFee.fee
 
 					if (data.encrypt) {
 						try {
@@ -1014,6 +1033,7 @@ class WebBrowser extends LitElement {
 
 					}
 
+				
 
 
 					const res2 = await showModalAndWait(
@@ -1022,7 +1042,8 @@ class WebBrowser extends LitElement {
 							name,
 							identifier,
 							service,
-							encrypt: data.encrypt
+							encrypt: data.encrypt,
+							feeAmount
 						}
 					);
 					if (res2.action === 'accept') {
@@ -1052,7 +1073,8 @@ class WebBrowser extends LitElement {
 								tag4,
 								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true : false
+								withFee: res2.userData.isWithFee === true ? true : false,
+								feeAmount: feeAmount
 							});
 
 							response = JSON.stringify(resPublish);
@@ -1080,7 +1102,7 @@ class WebBrowser extends LitElement {
 				case actions.PUBLISH_MULTIPLE_QDN_RESOURCES: {
 					const requiredFields = ['resources'];
 					const missingFields = [];
-
+					let feeAmount = null
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field);
@@ -1114,11 +1136,14 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					const getArbitraryFee = await this.getArbitraryFee()
+					feeAmount = getArbitraryFee.fee
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
 							resources,
-							encrypt: data.encrypt
+							encrypt: data.encrypt,
+							feeAmount
 						}
 					);
 
@@ -1217,7 +1242,8 @@ class WebBrowser extends LitElement {
 								tag4,
 								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true : false
+								withFee: res2.userData.isWithFee === true ? true : false,
+								feeAmount: feeAmount
 							});
 
 							worker.terminate();
@@ -3001,7 +3027,7 @@ async function showModalAndWait(type, data) {
 								</table>
 								<div class="checkbox-row">
 									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
+										${get('browserpage.bchange33')} ${data.resources.length * data.feeAmount} QORT fee
 									</label>
 									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
 								</div>
@@ -3017,7 +3043,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<div class="checkbox-row">
 									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange29')}
+										${get('browserpage.bchange47')} ${data.feeAmount} QORT fee
 									</label>
 									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
 								</div>
