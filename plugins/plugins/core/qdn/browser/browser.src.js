@@ -438,7 +438,8 @@ class WebBrowser extends LitElement {
 		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
 		return {
 			timestamp,
-			fee : arbitraryFee
+			fee : Number(data),
+			feeToShow: arbitraryFee
 		}
     }
 	async sendQortFee() {
@@ -1043,7 +1044,7 @@ class WebBrowser extends LitElement {
 							identifier,
 							service,
 							encrypt: data.encrypt,
-							feeAmount
+							feeAmount: getArbitraryFee.feeToShow
 						}
 					);
 					if (res2.action === 'accept') {
