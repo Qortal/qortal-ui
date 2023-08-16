@@ -1144,7 +1144,7 @@ class WebBrowser extends LitElement {
 						{
 							resources,
 							encrypt: data.encrypt,
-							feeAmount
+							feeAmount: getArbitraryFee.feeToShow
 						}
 					);
 
