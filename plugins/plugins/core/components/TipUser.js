@@ -9,32 +9,35 @@ import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } fro
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 
 export class TipUser extends LitElement {
-  static get properties() {
-		return {
-        userName: { type: String },
-        walletBalance: { type: Number },
-        sendMoneyLoading: { type: Boolean },
-        closeTipUser: { type: Boolean },
-        btnDisable: { type: Boolean },
-        errorMessage: { type: String },
-        successMessage: { type: String },
-        setOpenTipUser: { attribute: false },
+    static get properties() {
+        return {
+            userName: { type: String },
+            walletBalance: { type: Number },
+            sendMoneyLoading: { type: Boolean },
+            closeTipUser: { type: Boolean },
+            btnDisable: { type: Boolean },
+            errorMessage: { type: String },
+            successMessage: { type: String },
+            setOpenTipUser: { attribute: false },
+            qortPaymentFee: { type: Number }
         }
-	}
+    }
 
-  constructor() {
-		super()
+    constructor() {
+	super()
         this.sendMoneyLoading = false
         this.btnDisable = false
         this.errorMessage = ""
         this.successMessage = ""
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress
+        this.qortPaymentFee = 0.01
     }
 
     static styles = [tipUserStyles]
 
-   async firstUpdated() {
-      await this.fetchWalletDetails()
+    async firstUpdated() {
+        await this.fetchWalletDetails()
+        this.paymentFee()
     }
 
     updated(changedProperties) {
@@ -48,12 +51,34 @@ export class TipUser extends LitElement {
     }
 
     async getLastRef() {
-		let myRef = await parentEpml.request("apiCall", {
-			type: "api",
-			url: `/addresses/lastreference/${this.myAddress.address}`,
-		})
-		return myRef
-	}
+        let myRef = await parentEpml.request("apiCall", {
+            type: "api",
+            url: `/addresses/lastreference/${this.myAddress.address}`,
+        })
+        return myRef
+    }
+
+    async getSendQortFee() {
+        let sendFee = await parentEpml.request('apiCall', {
+            type: "api",
+            url: `/transactions/unitfee?txType=PAYMENT`
+        })
+        return (Number(sendFee) / 1e8).toFixed(8)
+    }
+
+    async paymentFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.qortPaymentFee = (Number(json) / 1e8).toFixed(8)
+        })
+    }
 
     renderSuccessText() {
         return html`${translate("chatpage.cchange55")}`
@@ -89,7 +114,7 @@ export class TipUser extends LitElement {
     this.sendMoneyLoading = true
     this.btnDisable = true
 
-    if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.walletBalance)) {
+    if (parseFloat(amount) + parseFloat(0.011) > parseFloat(this.walletBalance)) {
         this.sendMoneyLoading = false
         this.btnDisable = false
         let snack1string = get("chatpage.cchange51")
@@ -125,7 +150,7 @@ export class TipUser extends LitElement {
         } else {
             myRes = myNameRes
         }
-        return myRes;
+        return myRes
     }
 
     const validateAddress = async (receiverAddress) => {
@@ -135,6 +160,7 @@ export class TipUser extends LitElement {
 
     const validateReceiver = async (recipient) => {
         let lastRef = await this.getLastRef()
+        let theFee = await this.getSendQortFee()
         let isAddress
 
         try {
@@ -144,13 +170,13 @@ export class TipUser extends LitElement {
         }
 
         if (isAddress) {
-            let myTransaction = await makeTransactionRequest(recipient, lastRef)
+            let myTransaction = await makeTransactionRequest(recipient, lastRef, theFee)
             getTxnRequestResponse(myTransaction)
         } else {
             let myNameRes = await validateName(recipient)
             if (myNameRes !== false) {
                 let myNameAddress = myNameRes.owner
-                let myTransaction = await makeTransactionRequest(myNameAddress, lastRef)
+                let myTransaction = await makeTransactionRequest(myNameAddress, lastRef, theFee)
                 getTxnRequestResponse(myTransaction)
             } else {
                 console.error(this.renderReceiverText())
@@ -178,9 +204,10 @@ export class TipUser extends LitElement {
         }
     }
 
-    const makeTransactionRequest = async (receiver, lastRef) => {
+    const makeTransactionRequest = async (receiver, lastRef, theFee) => {
         let myReceiver = receiver
         let mylastRef = lastRef
+        let myFee = theFee
         let dialogamount = get("transactions.amount")
         let dialogAddress = get("login.address")
         let dialogName = get("login.name")
@@ -194,7 +221,7 @@ export class TipUser extends LitElement {
                 recipientName: recipientName,
                 amount: amount,
                 lastReference: mylastRef,
-                fee: 0.001,
+                fee: myFee,
                 dialogamount: dialogamount,
                 dialogto: dialogto,
                 dialogAddress,
@@ -239,7 +266,7 @@ export class TipUser extends LitElement {
       <div class="tip-user-body">
         <p class="tip-available">${translate("chatpage.cchange47")}: ${this.walletBalance} QORT</p>
         <input id="amountInput" class="tip-input" type="number" placeholder="${translate("chatpage.cchange46")}" />
-        <p class="tip-available">${translate("chatpage.cchange49")}: 0.001 QORT</p>
+        <p class="tip-available">${translate("chatpage.cchange49")}: ${this.qortPaymentFee} QORT</p>
         ${this.sendMoneyLoading ? 
             html` 
             <paper-progress indeterminate style="width: 100%; margin: 4px;">
