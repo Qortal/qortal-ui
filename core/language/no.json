@@ -717,7 +717,8 @@
 		"bchange43": "Gir du denne applikasjonen tillatelse til å legge til denne listen?",
 		"bchange44": "Gir du denne applikasjonen tillatelse til å slette fra denne listen?",
 		"bchange45": "Krypter",
-		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil"
+		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil",
+		"bchange47": "Øyeblikkelig publisering - krever"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

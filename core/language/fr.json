@@ -717,7 +717,8 @@
 		"bchange43": "Autorisez-vous cette application à ajouter à cette liste ?",
 		"bchange44": "Autorisez-vous cette application à supprimer de cette liste ?",
 		"bchange45": "Crypter",
-		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant"
+		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant",
+		"bchange47": "Publication instantanée - nécessite"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",

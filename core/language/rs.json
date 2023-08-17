@@ -717,7 +717,8 @@
 		"bchange43": "Da li dajete ovoj aplikaciji dozvolu za dodavanje na ovu listu?",
 		"bchange44": "Da li ovoj aplikaciji dajete dozvolu za brisanje sa ove liste?",
 		"bchange45": "Šifrovanje",
-		"bchange46": "Da li ovoj aplikaciji dajete dozvolu da sačuva sledeću datoteku"
+		"bchange46": "Da li ovoj aplikaciji dajete dozvolu da sačuva sledeću datoteku",
+		"bchange47": "Trenutno objavljivanje - zahteva"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",
