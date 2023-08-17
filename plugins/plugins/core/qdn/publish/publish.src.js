@@ -495,7 +495,8 @@ class PublishData extends LitElement {
             })
             return {
                 timestamp,
-                fee : (Number(fee) / 1e8).toFixed(8)
+                fee : Number(fee),
+			feeToShow: (Number(fee) / 1e8).toFixed(8)
             }
         }
 
