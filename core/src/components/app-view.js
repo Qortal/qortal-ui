@@ -3048,3 +3048,4 @@ class AppView extends connect(store)(LitElement) {
 }
 
 window.customElements.define('app-view', AppView)
+
