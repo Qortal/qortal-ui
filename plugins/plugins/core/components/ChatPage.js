@@ -36,8 +36,6 @@ import './ChatLeaveGroup.js'
 import './ChatGroupSettings.js'
 import './ChatRightPanel.js'
 import './ChatSearchResults.js'
-import './ChatGifs/ChatGifs.js'
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -1442,15 +1440,6 @@ class ChatPage extends LitElement {
                 <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
                 ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
-                <!-- gif div -->
-                <!-- <chat-gifs 
-                    class="chat-gifs"
-                    style=${this.openGifModal ? "display: flex;" : "display: none;"}
-                    .webWorkerImage=${this.webWorkerFile}
-                    .setGifsLoading=${(val) => this.setGifsLoading(val)}
-                    .sendMessage=${(val) => this._sendMessage(val)}
-                    .setOpenGifModal=${(val) => this.setOpenGifModal(val)}>
-                </chat-gifs> -->
                     <div 
                     class='last-message-ref' 
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
