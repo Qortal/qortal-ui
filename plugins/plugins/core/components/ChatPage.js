@@ -41,6 +41,7 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import { modalHelper } from '../../utils/publish-modal.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -3124,7 +3125,6 @@ class ChatPage extends LitElement {
     }
 
     async _sendMessage(outSideMsg, msg) {
-        console.log({outSideMsg, msg})
         try {
             if (this.isReceipient) {
                 let hasPublicKey = true
@@ -3252,7 +3252,9 @@ class ChatPage extends LitElement {
                         metaData: undefined,
                         uploadType: 'file',
                         selectedAddress: this.selectedAddress,
-                        worker: this.webWorkerFile
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
                     })
                     this.isDeletingImage = false
                 } catch (error) {
@@ -3347,7 +3349,9 @@ class ChatPage extends LitElement {
                         metaData: undefined,
                         uploadType: 'file',
                         selectedAddress: this.selectedAddress,
-                        worker: this.webWorkerFile
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
                     })
                     this.isDeletingAttachment = false
                 } catch (error) {
@@ -3386,13 +3390,11 @@ class ChatPage extends LitElement {
                     return
                 }
                 const arbitraryFeeData = await modalHelper.getArbitraryFee()
-                console.log('updated')
                 const res = await modalHelper.showModalAndWaitPublish(
                     {
                         feeAmount: arbitraryFeeData.feeToShow
                     }
                 );
-                    console.log({res})
             if (res.action !== 'accept') throw new Error('User declined publish')
     
                 if (this.webWorkerFile) {
@@ -3529,7 +3531,9 @@ class ChatPage extends LitElement {
                         metaData: undefined,
                         uploadType: 'file',
                         selectedAddress: this.selectedAddress,
-                        worker: this.webWorkerFile
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
                     })
                     this.isUploadingAttachment = false
                     this.removeAttachment()

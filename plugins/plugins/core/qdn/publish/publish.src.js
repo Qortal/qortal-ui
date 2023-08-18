@@ -14,10 +14,9 @@ import '@material/mwc-select'
 import '@material/mwc-dialog'
 import '@material/mwc-list/mwc-list-item.js'
 import '@polymer/paper-progress/paper-progress.js'
-import { ModalHelper } from '../../../utils/publish-modal'
+import { modalHelper } from '../../../utils/publish-modal'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
-const modalHelper = new ModalHelper();
 
 class PublishData extends LitElement {
     static get properties() {

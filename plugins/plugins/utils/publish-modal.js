@@ -26,8 +26,6 @@ export class ModalHelper {
     }
 
     async showModalAndWaitPublish(data) {
-        console.log({ data });
-
         return new Promise((resolve) => {
             const modal = this.createModal(data);
             document.body.appendChild(modal);
@@ -260,4 +258,13 @@ export class ModalHelper {
 
         document.adoptedStyleSheets = [styleSheet];
     }
+
+    static getInstance() {
+        if (!ModalHelper.instance) {
+          ModalHelper.instance = new ModalHelper();
+        }
+        return ModalHelper.instance;
+      }
 }
+
+export const modalHelper = ModalHelper.getInstance();

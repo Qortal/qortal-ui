@@ -26,12 +26,10 @@ import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
-import { ModalHelper } from '../../../utils/publish-modal.js'
 
 passiveSupport({ events: ['touchstart'] })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
-export const modalHelper = new ModalHelper();
 class Chat extends LitElement {
     static get properties() {
         return {
