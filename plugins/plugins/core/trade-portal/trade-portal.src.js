@@ -2701,7 +2701,7 @@ class TradePortal extends LitElement {
         this.sellBtnDisable = true
         const sellAmountInput = this.shadowRoot.getElementById('sellAmountInput').value
         const sellTotalInput = this.shadowRoot.getElementById('sellTotalInput').value
-        const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.001)
+        const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.021)
 
         const makeRequest = async () => {
             let _receivingAddress = null
@@ -2733,7 +2733,7 @@ class TradePortal extends LitElement {
                 fundingQortAmount: parseFloat(fundingQortAmount),
                 foreignBlockchain: this.selectedCoin,
                 foreignAmount: parseFloat(sellTotalInput),
-                tradeTimeout: 60,
+                tradeTimeout: 120,
                 receivingAddress: _receivingAddress,
             })
             return response
