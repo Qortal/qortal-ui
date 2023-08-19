@@ -14,6 +14,7 @@ import '@material/mwc-select'
 import '@material/mwc-dialog'
 import '@material/mwc-list/mwc-list-item.js'
 import '@polymer/paper-progress/paper-progress.js'
+import { modalHelper } from '../../../utils/publish-modal'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -299,8 +300,10 @@ class PublishData extends LitElement {
                     <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.doPublish(e, true, false)}> ${translate("appspage.schange40")}</mwc-button>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${() => this.shadowRoot.querySelector('#publishWithFeeDialog').show()}> ${translate("publishpage.pchange11")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.shadowRoot.querySelector('#publishWithFeeDialog').close()}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => {
+                                this.doPublish(e, false, true)
+                            }}> ${translate("publishpage.pchange11")}</mwc-button>
                     </div>
                 </div>
             </div>
@@ -310,7 +313,7 @@ class PublishData extends LitElement {
                  <mwc-button slot="primaryAction" @click="${(e) => this.feeDialogNo(e, false, false)}" class="red">
                      ${translate("general.no")}
                  </mwc-button>
-                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green">
+                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green"> 
                      ${translate("general.yes")}
                  </mwc-button>
             </mwc-dialog>
@@ -418,7 +421,7 @@ class PublishData extends LitElement {
         this.shadowRoot.querySelector('#publishWithFeeDialog').close()
     }
 
-    doPublish(e, preview, fee) {
+    async doPublish(e, preview, fee) {
         let registeredName = this.shadowRoot.getElementById('registeredName').value
         let service = this.shadowRoot.getElementById('service').value
         let identifier = this.shadowRoot.getElementById('identifier').value
@@ -464,7 +467,22 @@ class PublishData extends LitElement {
             parentEpml.request('showSnackBar', `${err5string}`)
         }
         else {
-            this.publishData(registeredName, path, file, service, identifier, preview, fee)
+            try {
+                if(!preview){
+                    const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                    const res = await modalHelper.showModalAndWaitPublish(
+                        {
+                            feeAmount: arbitraryFeeData.feeToShow
+                        }
+                    );
+                    if (res.action !== 'accept') throw new Error('User declined publish')
+                }
+               
+                this.publishData(registeredName, path, file, service, identifier, preview, fee)
+            } catch (error) {
+                this.shadowRoot.querySelector('#publishWithFeeDialog').close()
+            }
+         
         }
     }
 

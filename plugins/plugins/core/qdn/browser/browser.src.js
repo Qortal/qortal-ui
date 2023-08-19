@@ -3027,10 +3027,7 @@ async function showModalAndWait(type, data) {
 									`).join('')}
 								</table>
 								<div class="checkbox-row">
-									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange33')} ${data.resources.length * data.feeAmount} QORT fee
-									</label>
-									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+									<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.resources.length * data.feeAmount} QORT fee</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -3043,10 +3040,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<div class="checkbox-row">
-									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange47')} ${data.feeAmount} QORT fee
-									</label>
-									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.feeAmount} QORT fee</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -3118,7 +3112,8 @@ async function showModalAndWait(type, data) {
 			const userData = {};
 			if (type === actions.PUBLISH_QDN_RESOURCE || type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES) {
 				const isWithFeeCheckbox = modal.querySelector('#isWithFee');
-				userData.isWithFee = isWithFeeCheckbox.checked;
+				// userData.isWithFee = isWithFeeCheckbox.checked;
+				userData.isWithFee = true
 			}
 			if (modal.parentNode === document.body) {
 				document.body.removeChild(modal);

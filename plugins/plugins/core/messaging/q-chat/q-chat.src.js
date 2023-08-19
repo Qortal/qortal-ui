@@ -30,7 +30,6 @@ import '@vaadin/grid'
 passiveSupport({ events: ['touchstart'] })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
-
 class Chat extends LitElement {
     static get properties() {
         return {
