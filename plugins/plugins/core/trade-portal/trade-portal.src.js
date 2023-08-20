@@ -708,7 +708,7 @@ class TradePortal extends LitElement {
             balance: "0",
             coinCode: "QORT",
             coinAmount: this.amountString,
-            tradeFee: "0.002"
+            tradeFee: "0.02"
         }
 
         let bitcoin = {
@@ -2699,9 +2699,10 @@ class TradePortal extends LitElement {
     async sellAction() {
         this.isSellLoading = true
         this.sellBtnDisable = true
+        await this.tradeFee()
         const sellAmountInput = this.shadowRoot.getElementById('sellAmountInput').value
         const sellTotalInput = this.shadowRoot.getElementById('sellTotalInput').value
-        const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.021)
+        const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.001)
 
         const makeRequest = async () => {
             let _receivingAddress = null
@@ -3032,9 +3033,10 @@ class TradePortal extends LitElement {
             }
             return Promise.reject(response)
         }).then((json) => {
-            this.listedCoins.get("QORTAL").tradeFee = (Number(json) + 100000) / 1e8
+            this.listedCoins.get("QORTAL").tradeFee = (Number(json) * 2) / 1e8
         })
     }
+
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
