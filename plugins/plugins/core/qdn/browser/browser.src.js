@@ -509,7 +509,7 @@ class WebBrowser extends LitElement {
 
 	}
 
-	async _deployAt(name, description, tags, creationBytes, amount, assetId, fee, atType) {
+	async _deployAt(name, description, tags, creationBytes, amount, assetId, atType) {
 		const deployAtFee = await this.deployAtFee()
 		const getLastRef = async () => {
 			let myRef = await parentEpml.request('apiCall', {
@@ -527,13 +527,15 @@ class WebBrowser extends LitElement {
 		}
 
 		const makeTransactionRequest = async (lastRef) => {
-			let groupdialog1 = get("transactions.groupdialog1")
-			let groupdialog2 = get("transactions.groupdialog2")
+			let deployAtdialog1 = get("transactions.deployAtdialog1")
+			let deployAtdialog2 = get("transactions.deployAtdialog2")
+			let deployAtdialog3 = get("transactions.deployAtdialog3")
+			let deployAtdialog4 = get("walletpage.wchange12")
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 16,
 				nonce: this.selectedAddress.nonce,
 				params: {
-					fee: fee || deployAtFee,
+					fee: deployAtFee,
 					rName: name,
 					rDescription: description,
 					rTags: tags,
@@ -542,8 +544,10 @@ class WebBrowser extends LitElement {
 					rCreationBytes: creationBytes,
 					atType: atType,
 					lastReference: lastRef,
-					atDeployDialog1: groupdialog1,
-					atDeployDialog2: groupdialog2
+					atDeployDialog1: deployAtdialog1,
+					atDeployDialog2: deployAtdialog2,
+					atDeployDialog3: deployAtdialog3,
+					atDeployDialog4: deployAtdialog4
 				},
 				apiVersion: 2
 			})
@@ -1645,41 +1649,41 @@ class WebBrowser extends LitElement {
 					break;
 				}
 
-				// case 'DEPLOY_AT': {
-				// 	const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
-				// 	const missingFields = [];
+				case 'DEPLOY_AT': {
+					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
+					const missingFields = [];
 
-				// 	requiredFields.forEach((field) => {
-				// 		if (!data[field]) {
-				// 			missingFields.push(field);
-				// 		}
-				// 	});
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
 
-				// 	if (missingFields.length > 0) {
-				// 		const missingFieldsString = missingFields.join(', ');
-				// 		const errorMsg = `Missing fields: ${missingFieldsString}`
-				// 		let data = {};
-				// 		data['error'] = errorMsg;
-				// 		response = JSON.stringify(data);
-				// 		break
-				// 	}
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 
 
-				// 	try {
-				// 		this.loader.show();
-				// 		const fee = data.fee || undefined
-				// 		const resJoinGroup = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, fee, data.type)
-				// 		response = JSON.stringify(resJoinGroup);
-				// 	} catch (error) {
-				// 		const obj = {};
-				// 		const errorMsg = error.message || 'Failed to join the group.';
-				// 		obj['error'] = errorMsg;
-				// 		response = JSON.stringify(obj);
-				// 	} finally {
-				// 		this.loader.hide();
-				// 	}
-				// 	break;
-				// }
+					try {
+						this.loader.show();
+					
+						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
+						response = JSON.stringify(resDeployAt);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
 
 
 				case actions.GET_WALLET_BALANCE: {

@@ -1008,7 +1008,10 @@
 		"rewarddialog3": "If yes, you will need to save the key below in order to mint. It can be supplied to any node in order to allow it to mint on your behalf.",
 		"rewarddialog4": "On pressing confirm, the rewardshare will be created, but you will still need to supply the above key to a node in order to mint with the account.",
 		"rewarddialog5": "You are removing a reward share transaction associated with account:",
-		"rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid."
+		"rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid.",
+		"deployAtdialog1": "You are deploying the AT",
+		"deployAtdialog2": "On pressing confirm, the AT will be deployed!",
+		"deployAtdialog3": "Initial amount balance"
 	},
 	"sponsorshipspage": {
 		"schange1": "Active Sponsorships",
