@@ -225,7 +225,6 @@ class ChatRightPanel extends LitElement {
             if(this.groupMembers.length < 20){
                 return
             }
-            console.log('this.leaveGroupObjp', this.leaveGroupObj)
             this.getMoreMembers(this.leaveGroupObj.groupId)
         }
     }
@@ -252,7 +251,6 @@ class ChatRightPanel extends LitElement {
                         activeChatHeadUrl=""
                         .setActiveChatHeadUrl=${(val) => {
                             if (val.address === this.myAddress) return;
-                            console.log({ val });
                             this.selectedHead = val;
                             this.setOpenUserInfo(true);
                             this.setUserName({
@@ -269,7 +267,6 @@ class ChatRightPanel extends LitElement {
                         activeChatHeadUrl=""
                         .setActiveChatHeadUrl=${(val) => {
                             if (val.address === this.myAddress) return;
-                            console.log({ val });
                             this.selectedHead = val;
                             this.setOpenUserInfo(true);
                             this.setUserName({
@@ -286,7 +283,6 @@ class ChatRightPanel extends LitElement {
                         activeChatHeadUrl=""
                         .setActiveChatHeadUrl=${(val) => {
                             if (val.address === this.myAddress) return;
-                            console.log({ val });
                             this.selectedHead = val;
                             this.setOpenUserInfo(true);
                             this.setUserName({

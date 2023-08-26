@@ -2831,6 +2831,7 @@ class WebBrowser extends LitElement {
 		}
 	}
 	addAppToNotificationList(appName) {
+		if(!appName) throw new Error('unknown app name')
 		const id = `appNotificationList-${this.selectedAddress.address}`;
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
 	  

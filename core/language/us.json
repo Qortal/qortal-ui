@@ -203,7 +203,8 @@
 		"exp2": "Export Master Key",
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
-		"core": "Start Core Settings"
+		"core": "Start Core Settings",
+		"qappNotification1": "Q-App notifications"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",
