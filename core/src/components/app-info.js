@@ -119,11 +119,11 @@ class AppInfo extends connect(store)(LitElement) {
         this.setStorage()
         this.getNodeInfo()
         this.getCoreInfo()
-        try {
-            this.confirmPublicKeyOnChain(store.getState().app.selectedAddress.address)
-        } catch (error) {
-            console.error(error)
-        }
+        // try {
+        //     this.confirmPublicKeyOnChain(store.getState().app.selectedAddress.address)
+        // } catch (error) {
+        //     console.error(error)
+        // }
        
         setInterval(() => {
             this.getNodeInfo()

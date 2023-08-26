@@ -717,7 +717,8 @@
 		"bchange43": "Você dá a este aplicativo permissão para adicionar a esta lista?",
 		"bchange44": "Você dá a este aplicativo permissão para deletar desta lista?",
 		"bchange45": "Criptografar",
-		"bchange46": "Você concede permissão a este aplicativo para salvar o seguinte arquivo"
+		"bchange46": "Você concede permissão a este aplicativo para salvar o seguinte arquivo",
+		"bchange47": "Publicação instantânea - requer"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

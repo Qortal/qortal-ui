@@ -721,7 +721,8 @@
 		"bchange44": "Do you give this application permission to delete from this list?",
 		"bchange45": "Encrypt",
 		"bchange46": "Do you give this application permission to save the following file",
-		"bchange47": "Do you give this application permission to send you notifications"
+		"bchange47": "Instant publish - requires",
+		"bchange48": "Do you give this application permission to send you notifications"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

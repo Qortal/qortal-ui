@@ -28,7 +28,8 @@ export const publishData = async ({
     tag2,
     tag3,
     tag4,
-    tag5
+    tag5,
+	feeAmount
 }) => {
 	const validateName = async (receiverName) => {
 		let nameRes = await parentEpml.request("apiCall", {
@@ -47,6 +48,17 @@ export const publishData = async ({
             body: `${transactionBytesBase58}`,
         })
         return convertedBytes
+    }
+	const getArbitraryFee = async () => {
+		const timestamp = Date.now()
+		let fee = await parentEpml.request('apiCall', {
+			url: `/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+		})
+		return {
+			timestamp,
+			fee : Number(fee),
+			feeToShow: (Number(fee) / 1e8).toFixed(8)
+		}
     }
 
     const signAndProcess = async (transactionBytesBase58) => {
@@ -125,7 +137,18 @@ export const publishData = async ({
 		if (validNameRes.error) {
 			throw new Error('Name not found');
 		}
-		let transactionBytes = await uploadData(registeredName, path, file)
+		let fee = null
+		if(withFee && feeAmount){
+			fee= feeAmount
+		} else if(withFee){
+			const res = await getArbitraryFee()
+			 if(res.fee){
+				fee= res.fee
+			} else {
+				throw new Error('unable to get fee')
+			}
+		}
+		let transactionBytes = await uploadData(registeredName, path, file, fee)
 		if (transactionBytes.error) {
 			throw new Error(transactionBytes.message || 'Error when uploading');
 		} else if (
@@ -149,7 +172,7 @@ export const publishData = async ({
 		return signAndProcessRes
 	}
 
-	const uploadData = async (registeredName, path, file) => {
+	const uploadData = async (registeredName, path, file, fee) => {
 		if (identifier != null && identifier.trim().length > 0) {
 			let postBody = path
 			let urlSuffix = ""
@@ -181,7 +204,7 @@ export const publishData = async ({
 			}
 
 			if(withFee){
-				uploadDataUrl = uploadDataUrl + '&fee=100000'
+				uploadDataUrl = uploadDataUrl + `&fee=${fee}`
 			}
 
 			if(filename != null && filename != "undefined"){
