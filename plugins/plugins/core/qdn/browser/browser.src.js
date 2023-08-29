@@ -1332,6 +1332,7 @@ class WebBrowser extends LitElement {
 					try {
 						await this.linkOpenNewTab(data.qortalLink)
 						response = true
+						break;
 					} catch (error) {
 						console.log('error', error)
 						const obj = {};
