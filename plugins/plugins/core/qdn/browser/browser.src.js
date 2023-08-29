@@ -1356,6 +1356,9 @@ class WebBrowser extends LitElement {
 							this.addAppToNotificationList(this.name)
 						response = true
 						break;
+						} else {
+							response = false
+							break;
 						}
 						
 					} catch (error) {
