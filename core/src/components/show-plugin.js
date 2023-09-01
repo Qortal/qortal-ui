@@ -6,7 +6,7 @@ import { Epml } from '../epml.js'
 import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
 import { repeat } from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
-import { setNewTab } from '../redux/app/app-actions.js'
+import { setIsOpenDevDialog, setNewTab } from '../redux/app/app-actions.js'
 import localForage from 'localforage'
 import FileSaver from 'file-saver'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
@@ -46,7 +46,8 @@ class ShowPlugin extends connect(store)(LitElement) {
             tabInfo: { type: Object },
             chatLastSeen: { type: Array },
             chatHeads: { type: Array },
-            proxyPort: { type: Number }
+            proxyPort: { type: Number },
+            isOpenDevDialog: {type: Boolean}
         }
     }
 
@@ -334,9 +335,11 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.chatLastSeen = []
         this.chatHeads = []
         this.proxyPort = 0
+        this.isOpenDevDialog = false
     }
 
     render() {
+        
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
@@ -396,13 +399,14 @@ class ShowPlugin extends connect(store)(LitElement) {
                         icon = 'tab'
                     }
 
-                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                        title = this.tabInfo[tab.id].name
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
+                title = this.tabInfo[tab.id].name
                     }
 
-                    if (tab.myPlugObj && (tab.myPlugObj.url === 'websites' || tab.myPlugObj.url === 'qapps') && this.tabInfo[tab.id]) {
-                        count = this.tabInfo[tab.id].count
+                    if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
+                count = this.tabInfo[tab.id].count
                     }
+
 
                     if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
                         for (const chat of this.chatHeads) {
@@ -458,11 +462,6 @@ class ShowPlugin extends connect(store)(LitElement) {
                         this.currentTab = lengthOfTabs
                     }}
                 >+</button>
-                <button 
-                    class="add-dev-button"
-                    title="${translate('tabmenu.tm18')}"
-                    @click=${this.openDevDialog}
-                >${translate('tabmenu.tm38')}</button>
             </div>
 
             ${repeat(this.tabs, (tab) => tab.id, (tab, index) => html`
@@ -484,7 +483,15 @@ class ShowPlugin extends connect(store)(LitElement) {
                     </nav-bar>
                 </div>
             `)}
-            <mwc-dialog id="addDevDialog">
+            <mwc-dialog id="addDevDialog"  
+                ?open=${this.isOpenDevDialog} 
+                @closed=${() => {
+                  this.shadowRoot.getElementById('domainInput').value = ''
+        this.shadowRoot.getElementById('portInput').value = ''
+        this.isOpenDevDialog = false
+        store.dispatch(setIsOpenDevDialog(false))
+            }}
+                >
                 <div style="text-align: center;">
                     <h2>${translate('tabmenu.tm39')}</h2>
                     <hr>
@@ -549,12 +556,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     async getUpdateComplete() {
         await super.getUpdateComplete()
         return true
-    }
-
-    openDevDialog() {
-        this.shadowRoot.getElementById('domainInput').value = ''
-        this.shadowRoot.getElementById('portInput').value = ''
-        this.shadowRoot.querySelector("#addDevDialog").show()
     }
 
     async getProxyPort() {
@@ -733,11 +734,9 @@ class ShowPlugin extends connect(store)(LitElement) {
             const myPlugObj = plugArr.find(pagePlug => {
                 return pagePlug.url === this.url
             })
-
             if (this.tabs.length === 0) {
                 this.addTab({
-                    url: this.url,
-                    myPlugObj,
+                    url: "",
                     id: this.uid()
                 })
             } else {
@@ -780,7 +779,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         }
 
         if (split[0] === '' && split[1] === 'app' && split[2] === undefined) {
-            newUrl = 'wallet'
+            newUrl = ''
             newLinkParam = ''
         } else if (split.length === 5 && split[1] === 'app') {
             newUrl = split[2]
@@ -792,7 +791,6 @@ class ShowPlugin extends connect(store)(LitElement) {
             newUrl = '404'
             newLinkParam = ''
         }
-
         if (newUrl !== this.url) {
             this.url = newUrl
         }
@@ -837,6 +835,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                 store.dispatch(setNewTab(null))
                 //clear newTab
             }
+        }
+        if(state.app.isOpenDevDialog){
+            this.isOpenDevDialog = state.app.isOpenDevDialog
         }
     }
 }

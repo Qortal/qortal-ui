@@ -203,7 +203,8 @@
 		"exp2": "Export Master Key",
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
-		"core": "Start Core Settings"
+		"core": "Start Core Settings",
+		"qappNotification1": "Q-App notifications"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",
@@ -720,7 +721,8 @@
 		"bchange44": "Do you give this application permission to delete from this list?",
 		"bchange45": "Encrypt",
 		"bchange46": "Do you give this application permission to save the following file",
-		"bchange47": "Instant publish - requires"
+		"bchange47": "Instant publish - requires",
+		"bchange48": "Do you give this application permission to send you notifications"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

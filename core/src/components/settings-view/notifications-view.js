@@ -14,7 +14,8 @@ class NotificationsView extends connect(store)(LitElement) {
             notificationConfig: { type: Object },
             q_chatConfig: { type: Object },
             blockConfig: { type: Object },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            appNotificationList: {type: Array}
         }
     }
 
@@ -24,6 +25,11 @@ class NotificationsView extends connect(store)(LitElement) {
         this.q_chatConfig = {}
         this.blockConfig = {}
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.appNotificationList = [] // Fetch the list of apps from local storage
+    }
+
+    firstUpdated(){
+        this.appNotificationList = this.getAppsFromStorage();
     }
 
     static get styles() {
@@ -42,7 +48,7 @@ class NotificationsView extends connect(store)(LitElement) {
                 text-align: center;
             }
 
-            @media(min-width: 1150px) {
+            @media(min-width: 1400px) {
                 .notification-box {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
@@ -106,6 +112,18 @@ class NotificationsView extends connect(store)(LitElement) {
                 transition: all .2s;
                 position: relative;
             } 
+
+            .remove-button {
+            font-family: Roboto, sans-serif;
+            font-size: 16px;
+            color: var(--mdc-theme-primary);
+            background-color: transparent;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: none;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
         `
     }
 
@@ -145,11 +163,46 @@ class NotificationsView extends connect(store)(LitElement) {
                                 <label for="blockShowNotification">${translate("settings.shownotifications")}</label>
                             </div>
                         </div>
+                        <div class="content-box">
+        <h4>${translate("settings.qappNotification1")}</h4>
+        ${this.appNotificationList.map((app)=> html`
+        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+              ${app}
+              <button class="remove-button" @click=${() => this.removeApp(app)}>Remove</button>
+            </div>
+        `)}
+        
+      </div>
                     </div>
                     ${this.renderSetCoreButton()}
                 </div>
         `
     }
+
+    getAppsFromStorage() {
+        // Your method to fetch the list of apps from local storage
+        // Example:
+        const address= store.getState().app.selectedAddress.address
+        const id = `appNotificationList-${address}`;
+        const data = localStorage.getItem(id);
+        return data ? Object.keys(JSON.parse(data)) : [];
+      }
+
+      removeApp(appName) {
+        // Remove the app from local storage
+        this.removeAppFromStorage(appName);
+        // Update the apps list in the component
+        this.appNotificationList = this.appNotificationList.filter(app => app !== appName);
+      }
+    
+      removeAppFromStorage(appName) {
+        // Your method to remove the app from local storage
+        const address= store.getState().app.selectedAddress.address
+        const id = `appNotificationList-${address}`;
+        const data = JSON.parse(localStorage.getItem(id) || '{}');
+        delete data[appName];
+        localStorage.setItem(id, JSON.stringify(data));
+      }
 
     renderSetCoreButton() {
         if (!isElectron()) {
