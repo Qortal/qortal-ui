@@ -71,7 +71,7 @@
 		"@tiptap/starter-kit": "2.0.4"
 	},
 	"devDependencies": {
-		"axios": "1.4.0",
+		"axios": "1.5.0",
 		"electron": "26.1.0",
 		"electron-builder": "24.6.3",
 		"electron-packager": "17.1.2",
@@ -140,7 +140,7 @@
 		"@vaadin/icons": "24.1.6",
 		"@vaadin/password-field": "24.1.6",
 		"@vaadin/tooltip": "24.1.6",
-		"@zip.js/zip.js": "2.7.24"
+		"@zip.js/zip.js": "2.7.27"
 	},
 	"engines": {
 		"node": ">=18.16.1"
