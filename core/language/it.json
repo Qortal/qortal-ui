@@ -83,7 +83,8 @@
                 "tm38": "MODALITÀ SVILUPPATORE",
                 "tm39": "Aggiungi framework personalizzato",
                 "tm40": "Aggiungi e apri",
-                "tm41": "Errore: dati non validi, riprova!"
+                "tm41": "Errore: dati non validi, riprova!",
+                "tm42": "Qortal Lotteria"
 	},
 	"login": {
 		"login": "Login",
@@ -202,7 +203,8 @@
 		"exp2": "Esporta chiave master",
 		"exp3": "Esporta",
 		"exp4": "Scegli un portafoglio per il backup della chiave master privata.",
-		"core": "Avvia impostazioni principali"
+		"core": "Avvia impostazioni principali",
+		"qappNotification1": "Notifiche Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",

@@ -83,7 +83,8 @@
                 "tm38": "MOD DEV",
                 "tm39": "Adăugați un cadru personalizat",
                 "tm40": "Adăugați și deschideți",
-                "tm41": "Eroare: date nevalide, încercați din nou !"
+                "tm41": "Eroare: date nevalide, încercați din nou !",
+                "tm42": "Qortal Loterie"
 	},
 	"login": {
 		"login": "Login",
@@ -202,7 +203,8 @@
 		"exp2": "Exportați cheia principală",
 		"exp3": "Export",
 		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
-		"core": "Porniți setările de bază"
+		"core": "Porniți setările de bază",
+		"qappNotification1": "Notificări Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",

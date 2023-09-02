@@ -83,7 +83,8 @@
                 "tm38": "MODE DEV",
                 "tm39": "Ajouter un cadre personnalisé",
                 "tm40": "Ajouter et ouvrir",
-                "tm41": "Erreur : données invalides, veuillez réessayer !"
+                "tm41": "Erreur : données invalides, veuillez réessayer !",
+                "tm42": "Qortal Loterie"
 	},
 	"login": {
 		"login": "Connexion",
@@ -202,7 +203,8 @@
 		"exp2": "Exporter la clé principale",
 		"exp3": "Exporter",
 		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
-		"core": "Démarrer les paramètres du noyau"
+		"core": "Démarrer les paramètres du noyau",
+		"qappNotification1": "Notifications Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",

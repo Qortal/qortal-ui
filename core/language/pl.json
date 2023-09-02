@@ -83,7 +83,8 @@
                 "tm38": "TRYB DEV",
                 "tm39": "Dodaj niestandardową strukturę",
                 "tm40": "Dodaj i otwórz",
-                "tm41": "Błąd: Nieprawidłowe dane, spróbuj ponownie!"
+                "tm41": "Błąd: Nieprawidłowe dane, spróbuj ponownie!",
+                "tm42": "Qortal Loteria"
 	},
 	"login": {
 		"login": "Zaloguj się",
@@ -202,7 +203,8 @@
 		"exp2": "Eksportuj klucz główny",
 		"exp3": "Eksportuj",
 		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego.",
-		"core": "Uruchom podstawowe ustawienia"
+		"core": "Uruchom podstawowe ustawienia",
+		"qappNotification1": "Powiadomienia Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",

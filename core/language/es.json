@@ -83,7 +83,8 @@
                 "tm38": "MODO DEV",
                 "tm39": "Agregar marco personalizado",
                 "tm40": "Agregar y abrir",
-                "tm41": "Error: datos no válidos, inténtalo de nuevo"
+                "tm41": "Error: datos no válidos, inténtalo de nuevo",
+                "tm42": "Qortal Lotería"
 	},
 	"login": {
 		"login": "Iniciar sesión",
@@ -202,7 +203,8 @@
 		"exp2": "Exportar clave maestra",
 		"exp3": "Exportar",
 		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada.",
-		"core": "Iniciar configuración básica"
+		"core": "Iniciar configuración básica",
+		"qappNotification1": "Notificaciones de Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",

@@ -83,7 +83,8 @@
                 "tm38": "MODO DEV",
                 "tm39": "Adicionar estrutura personalizada",
                 "tm40": "Adicionar e abrir",
-                "tm41": "Erro: Dados inválidos tente novamente!"
+                "tm41": "Erro: Dados inválidos tente novamente!",
+                "tm42": "Qortal Loteria"
 	},
 	"login": {
 		"login": "Login",
@@ -202,7 +203,8 @@
 		"exp2": "Exportar Chave Mestra",
 		"exp3": "Exportar",
 		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada.",
-		"core": "Iniciar configurações do núcleo"
+		"core": "Iniciar configurações do núcleo",
+		"qappNotification1": "Notificações de Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",

@@ -83,7 +83,8 @@
                 "tm38": "DEV MODE",
                 "tm39": "Egyéni keret hozzáadása",
                 "tm40": "Hozzáadás és megnyitás",
-                "tm41": "Hiba: Érvénytelen adatok, próbálkozz újra!"
+                "tm41": "Hiba: Érvénytelen adatok, próbálkozz újra!",
+                "tm42": "Qortal Lottó"
 	},
 	"login": {
 		"login": "Bejelentkezés",
@@ -202,7 +203,8 @@
 		"exp2": "Főkulcs exportálása",
 		"exp3": "Exportálás",
 		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez.",
-		"core": "Alapbeállítások indítása"
+		"core": "Alapbeállítások indítása",
+		"qappNotification1": "Q-App értesítések"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",

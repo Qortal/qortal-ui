@@ -83,7 +83,8 @@
                 "tm38": "DEV MODUS",
                 "tm39": "Legg til tilpasset rammeverk",
                 "tm40": "Legg til og åpne",
-                "tm41": "Feil: Ugyldige data, prøv igjen !"
+                "tm41": "Feil: Ugyldige data, prøv igjen !",
+                "tm42": "Qortal Lotteri"
 	},
 	"login": {
 		"login": "Logg på",
@@ -202,7 +203,8 @@
 		"exp2": "Eksporter hovednøkkel",
 		"exp3": "Eksporter",
 		"exp4": "Velg en lommebok for å sikkerhetskopiere den private hovednøkkelen.",
-		"core": "Start kjerneinnstillinger"
+		"core": "Start kjerneinnstillinger",
+		"qappNotification1": "Q-App varsler"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",

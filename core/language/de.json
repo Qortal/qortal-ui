@@ -83,7 +83,8 @@
                 "tm38": "DEV-MODUS",
                 "tm39": "Benutzerdefiniertes Framework hinzufügen",
                 "tm40": "Hinzufügen und öffnen",
-                "tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!"
+                "tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!",
+                "tm42": "Qortal Lotterie"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -202,7 +203,8 @@
 		"exp2": "Hauptschlüssel exportieren",
 		"exp3": "Exportieren",
 		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern.",
-		"core": "Core-Einstellungen starten"
+		"core": "Core-Einstellungen starten",
+		"qappNotification1": "Q-App Benachrichtigungen"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",

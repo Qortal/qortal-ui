@@ -83,7 +83,8 @@
                 "tm38": "DEV NAČIN",
                 "tm39": "Dodaj prilagođeni okvir",
                 "tm40": "Dodaj i otvori",
-                "tm41": "Pogreška: nevažeći podaci pokušajte ponovo!"
+                "tm41": "Pogreška: nevažeći podaci pokušajte ponovo!",
+                "tm42": "Qortal Lutrija"
 	},
 	"login": {
 		"login": "Prijavi se",
@@ -202,7 +203,8 @@
 		"exp2": "Glavni ključ izvoza",
 		"exp3": "Izvoz",
 		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa.",
-		"core": "Pokreni osnovne postavke"
+		"core": "Pokreni osnovne postavke",
+		"qappNotification1": "Obavijesti Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Visina bloka",

@@ -83,7 +83,8 @@
                 "tm38": "DEV MODE",
                 "tm39": "Add Custom Framework",
                 "tm40": "Add And Open",
-                "tm41": "Error: Invalid data please try again !"
+                "tm41": "Error: Invalid data please try again !",
+                "tm42": "Qortal Lottery"
 	},
 	"login": {
 		"login": "Log In",
@@ -204,7 +205,7 @@
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
 		"core": "Start Core Settings",
-		"qappNotification1": "Q-App notifications"
+		"qappNotification1": "Q-App Notifications"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",
