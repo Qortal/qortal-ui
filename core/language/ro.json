@@ -80,11 +80,11 @@
 		"tm35": "Meniul de file existent va fi șters și setat la meniul de file încărcat.",
 		"tm36": "Meniul Tab a fost restaurat cu succes",
 		"tm37": "Meniul Tab a fost salvat cu succes ca",
-                "tm38": "MOD DEV",
-                "tm39": "Adăugați un cadru personalizat",
-                "tm40": "Adăugați și deschideți",
-                "tm41": "Eroare: date nevalide, încercați din nou !",
-                "tm42": "Qortal Loterie"
+		"tm38": "MOD DEV",
+		"tm39": "Adăugați un cadru personalizat",
+		"tm40": "Adăugați și deschideți",
+		"tm41": "Eroare: date nevalide, încercați din nou !",
+		"tm42": "Qortal Loterie"
 	},
 	"login": {
 		"login": "Login",
@@ -1140,5 +1140,19 @@
 		"inf16": "Cumpărare automată",
 		"inf17": "Comutați la tema luminoasă",
 		"inf18": "Comutați la tema întunecată"
+	},
+	"lotterypage": {
+		"lot1": "Deschideți loterii Qortal",
+		"lot2": "Adresa AT",
+		"lot3": "Bloc început",
+		"lot4": "Blocarea plății",
+		"lot5": "Joacă la loterie",
+		"lot6": "Loteriile Qortal terminate",
+		"lot7": "Suma câștigătoare",
+		"lot8": "Câștigător",
+		"lot9": "Plătit",
+		"lot10": "Joacă la loteria Qortal",
+		"lot11": "Nu există loterie deschise!",
+		"lot12": "Nu există loterie terminate!"
 	}
 }

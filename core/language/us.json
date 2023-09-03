@@ -79,12 +79,12 @@
 		"tm34": "Export Tab Menu",
 		"tm35": "Your existing tab menu will be deleted and set to uploaded tab menu.",
 		"tm36": "Tab Menu Successfully Restored",
-                "tm37": "Tab Menu Successfully Saved As",
-                "tm38": "DEV MODE",
-                "tm39": "Add Custom Framework",
-                "tm40": "Add And Open",
-                "tm41": "Error: Invalid data please try again !",
-                "tm42": "Qortal Lottery"
+		"tm37": "Tab Menu Successfully Saved As",
+		"tm38": "DEV MODE",
+		"tm39": "Add Custom Framework",
+		"tm40": "Add And Open",
+		"tm41": "Error: Invalid data please try again !",
+		"tm42": "Qortal Lottery"
 	},
 	"login": {
 		"login": "Log In",
@@ -1146,5 +1146,19 @@
 		"inf16": "Auto Buy",
 		"inf17": "Switch to light theme",
 		"inf18": "Switch to dark theme"
+	},
+	"lotterypage": {
+		"lot1": "Open Qortal Lotteries",
+		"lot2": "AT Address",
+		"lot3": "Started Block",
+		"lot4": "Payout Block",
+		"lot5": "Play Lottery",
+		"lot6": "Finished Qortal Lotteries",
+		"lot7": "Winning Amount",
+		"lot8": "Winner",
+		"lot9": "Paid Out",
+		"lot10": "Play Qortal Lottery",
+		"lot11": "There are no open lotteries!",
+		"lot12": "There are no finished lotteries!"
 	}
 }

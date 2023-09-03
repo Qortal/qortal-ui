@@ -80,11 +80,11 @@
 		"tm35": "Twoje istniejące menu kart zostanie usunięte i ustawione na przesłane menu kart.",
 		"tm36": "Menu zakładki pomyślnie przywrócone",
 		"tm37": "Menu zakładki pomyślnie zapisane jako",
-                "tm38": "TRYB DEV",
-                "tm39": "Dodaj niestandardową strukturę",
-                "tm40": "Dodaj i otwórz",
-                "tm41": "Błąd: Nieprawidłowe dane, spróbuj ponownie!",
-                "tm42": "Qortal Loteria"
+		"tm38": "TRYB DEV",
+		"tm39": "Dodaj niestandardową strukturę",
+		"tm40": "Dodaj i otwórz",
+		"tm41": "Błąd: Nieprawidłowe dane, spróbuj ponownie!",
+		"tm42": "Qortal Loteria"
 	},
 	"login": {
 		"login": "Zaloguj się",
@@ -1140,5 +1140,19 @@
 		"inf16": "Automatyczny zakup",
 		"inf17": "Przełącz na jasny motyw",
 		"inf18": "Przełącz na ciemny motyw"
+	},
+	"lotterypage": {
+		"lot1": "Otwarte loterie Qortal",
+		"lot2": "Adres AT",
+		"lot3": "Rozpoczęty blok",
+		"lot4": "Blokada wypłat",
+		"lot5": "Zagraj w loterię",
+		"lot6": "Zakończone loterie Qortal",
+		"lot7": "Wygrana kwota",
+		"lot8": "Zwycięzca",
+		"lot9": "Wypłacone",
+		"lot10": "Zagraj w loterię Qortal",
+		"lot11": "Nie ma otwartych loterii!",
+		"lot12": "Brak gotowych loterii!"
 	}
 }

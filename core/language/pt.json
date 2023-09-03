@@ -80,11 +80,11 @@
 		"tm35": "Seu menu de guia existente será excluído e definido como menu de guia carregado.",
 		"tm36": "Menu de abas restaurado com sucesso",
 		"tm37": "Menu da guia salvo com sucesso como",
-                "tm38": "MODO DEV",
-                "tm39": "Adicionar estrutura personalizada",
-                "tm40": "Adicionar e abrir",
-                "tm41": "Erro: Dados inválidos tente novamente!",
-                "tm42": "Qortal Loteria"
+		"tm38": "MODO DEV",
+		"tm39": "Adicionar estrutura personalizada",
+		"tm40": "Adicionar e abrir",
+		"tm41": "Erro: Dados inválidos tente novamente!",
+		"tm42": "Qortal Loteria"
 	},
 	"login": {
 		"login": "Login",
@@ -1140,5 +1140,19 @@
 		"inf16": "Compra automática",
 		"inf17": "Mudar para tema claro",
 		"inf18": "Mudar para o tema escuro"
+	},
+	"lotterypage": {
+		"lot1": "Loterias Qortal Abertas",
+		"lot2": "Endereço AT",
+		"lot3": "Bloco Iniciado",
+		"lot4": "Bloqueio de Pagamento",
+		"lot5": "Jogar na loteria",
+		"lot6": "Loterias Qortal concluídas",
+		"lot7": "Valor ganho",
+		"lot8": "Vencedor",
+		"lot9": "Pago",
+		"lot10": "Jogar na loteria Qortal",
+		"lot11": "Não existem loterias abertas!",
+		"lot12": "Não há loterias concluídas!"
 	}
 }

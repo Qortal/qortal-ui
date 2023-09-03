@@ -80,11 +80,11 @@
 		"tm35": "Il menu della scheda esistente verrà eliminato e impostato sul menu della scheda caricato.",
 		"tm36": "Menu scheda ripristinato con successo",
 		"tm37": "Menu scheda salvato con successo con nome",
-                "tm38": "MODALITÀ SVILUPPATORE",
-                "tm39": "Aggiungi framework personalizzato",
-                "tm40": "Aggiungi e apri",
-                "tm41": "Errore: dati non validi, riprova!",
-                "tm42": "Qortal Lotteria"
+		"tm38": "MODALITÀ SVILUPPATORE",
+		"tm39": "Aggiungi framework personalizzato",
+		"tm40": "Aggiungi e apri",
+		"tm41": "Errore: dati non validi, riprova!",
+		"tm42": "Qortal Lotteria"
 	},
 	"login": {
 		"login": "Login",
@@ -1140,5 +1140,19 @@
 		"inf16": "Acquisto automatico",
 		"inf17": "Passa al tema chiaro",
 		"inf18": "Passa al tema scuro"
+	},
+	"lotterypage": {
+		"lot1": "Apri le lotterie Qortal",
+		"lot2": "Indirizzo AT",
+		"lot3": "Blocco iniziato",
+		"lot4": "Blocco pagamenti",
+		"lot5": "Gioca alla lotteria",
+		"lot6": "Lotterie Qortal terminate",
+		"lot7": "Importo vincente",
+		"lot8": "Vincitore",
+		"lot9": "Pagato",
+		"lot10": "Gioca alla lotteria Qortal",
+		"lot11": "Non ci sono lotterie aperte!",
+		"lot12": "Non ci sono lotterie finite!"
 	}
 }

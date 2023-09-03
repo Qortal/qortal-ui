@@ -80,11 +80,11 @@
 		"tm35": "Tu menú de pestañas existente se eliminará y se establecerá en el menú de pestañas cargado.",
 		"tm36": "Menú de pestañas restaurado con éxito",
 		"tm37": "Menú de pestañas guardado correctamente como",
-                "tm38": "MODO DEV",
-                "tm39": "Agregar marco personalizado",
-                "tm40": "Agregar y abrir",
-                "tm41": "Error: datos no válidos, inténtalo de nuevo",
-                "tm42": "Qortal Lotería"
+		"tm38": "MODO DEV",
+		"tm39": "Agregar marco personalizado",
+		"tm40": "Agregar y abrir",
+		"tm41": "Error: datos no válidos, inténtalo de nuevo",
+		"tm42": "Qortal Lotería"
 	},
 	"login": {
 		"login": "Iniciar sesión",
@@ -1140,5 +1140,19 @@
 		"inf16": "Compra automática",
 		"inf17": "Cambiar a tema claro",
 		"inf18": "Cambiar a tema oscuro"
+	},
+	"lotterypage": {
+		"lot1": "Loterías Qortal Abiertas",
+		"lot2": "Dirección AT",
+		"lot3": "Bloque iniciado",
+		"lot4": "Bloque de pago",
+		"lot5": "Jugar a la Lotería",
+		"lot6": "Loterías Qortal finalizadas",
+		"lot7": "Cantidad ganadora",
+		"lote8": "Ganador",
+		"lot9": "Pagado",
+		"lot10": "Jugar a la Lotería Qortal",
+		"lot11": "¡No hay loterías abiertas!",
+		"lot12": "¡No hay loterías terminadas!"
 	}
 }

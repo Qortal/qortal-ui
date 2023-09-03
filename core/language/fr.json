@@ -80,11 +80,11 @@
 		"tm35": "Votre menu d'onglets existant sera supprimé et défini sur le menu d'onglets téléchargé.",
 		"tm36": "Le menu des onglets a été restauré avec succès",
 		"tm37": "Le menu des onglets a été enregistré avec succès sous",
-                "tm38": "MODE DEV",
-                "tm39": "Ajouter un cadre personnalisé",
-                "tm40": "Ajouter et ouvrir",
-                "tm41": "Erreur : données invalides, veuillez réessayer !",
-                "tm42": "Qortal Loterie"
+		"tm38": "MODE DEV",
+		"tm39": "Ajouter un cadre personnalisé",
+		"tm40": "Ajouter et ouvrir",
+		"tm41": "Erreur : données invalides, veuillez réessayer !",
+		"tm42": "Qortal Loterie"
 	},
 	"login": {
 		"login": "Connexion",
@@ -1140,5 +1140,19 @@
 		"inf16": "Achat automatique",
 		"inf17": "Passer au thème clair",
 		"inf18": "Passer au thème sombre"
+	},
+	"lotterypage": {
+		"lot1": "Loteries Qortal ouvertes",
+		"lot2": "Adresse AT",
+		"lot3": "Bloc démarré",
+		"lot4": "Bloc de paiement",
+		"lot5": "Jouer à la loterie",
+		"lot6": "Loteries Qortal terminées",
+		"lot7": "Montant gagnant",
+		"lot8": "Gagnant",
+		"lot9": "Payé",
+		"lot10": "Jouez à la loterie Qortal",
+		"lot11": "Il n'y a pas de loteries ouvertes !",
+		"lot12": "Il n'y a aucune loterie terminée !"
 	}
 }

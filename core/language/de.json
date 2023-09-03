@@ -80,11 +80,11 @@
 		"tm35": "Ihr vorhandenes Tab-Menü wird gelöscht und auf das hochgeladene Tab-Menü gesetzt.",
 		"tm36": "Tab-Menü erfolgreich wiederhergestellt",
 		"tm37": "Tab-Menü erfolgreich gespeichert als",
-                "tm38": "DEV-MODUS",
-                "tm39": "Benutzerdefiniertes Framework hinzufügen",
-                "tm40": "Hinzufügen und öffnen",
-                "tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!",
-                "tm42": "Qortal Lotterie"
+		"tm38": "DEV-MODUS",
+		"tm39": "Benutzerdefiniertes Framework hinzufügen",
+		"tm40": "Hinzufügen und öffnen",
+		"tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!",
+		"tm42": "Qortal Lotterie"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -1140,5 +1140,19 @@
 		"inf16": "Automatischer Kauf",
 		"inf17": "Zum hellen Thema wechseln",
 		"inf18": "Zum dunklen Thema wechseln"
+	},
+	"lotterypage": {
+		"lot1": "Offene Qortal-Lotterien",
+		"lot2": "AT-Adresse",
+		"lot3": "Block gestartet",
+		"lot4": "Block auszahlung",
+		"lot5": "Lotterie spielen",
+		"lot6": "Abgeschlossene Qortal-Lotterien",
+		"lot7": "Gewinnbetrag",
+		"lot8": "Gewinner",
+		"lot9": "Ausgezahlt",
+		"lot10": "Qortal-Lotterie spielen",
+		"lot11": "Es gibt keine offenen Lotterien!",
+		"lot12": "Es gibt keine fertigen Lotterien!"
 	}
 }

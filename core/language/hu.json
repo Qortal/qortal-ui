@@ -80,11 +80,11 @@
 		"tm35": "Meglévő lapmenüje törlésre kerül, és a feltöltött lapok menüje lesz.",
 		"tm36": "A lap menüje sikeresen visszaállítva",
 		"tm37": "A lap menüje sikeresen mentve másként",
-                "tm38": "DEV MODE",
-                "tm39": "Egyéni keret hozzáadása",
-                "tm40": "Hozzáadás és megnyitás",
-                "tm41": "Hiba: Érvénytelen adatok, próbálkozz újra!",
-                "tm42": "Qortal Lottó"
+		"tm38": "DEV MODE",
+		"tm39": "Egyéni keret hozzáadása",
+		"tm40": "Hozzáadás és megnyitás",
+		"tm41": "Hiba: Érvénytelen adatok, próbálkozz újra!",
+		"tm42": "Qortal Lottó"
 	},
 	"login": {
 		"login": "Bejelentkezés",
@@ -1140,5 +1140,19 @@
 		"inf16": "Automatikus vásárlás",
 		"inf17": "Váltás világos témára",
 		"inf18": "Váltás sötét témára"
+	},
+	"lotterypage": {
+		"lot1": "Open Qortal lottó",
+		"lot2": "AT-cím",
+		"lot3": "Indított blokk",
+		"lot4": "Kifizetési blokk",
+		"lot5": "Játssz lottót",
+		"lot6": "Kész Qortal lottó",
+		"lot7": "Nyertes összeg",
+		"lot8": "nyertes",
+		"lot9": "Kifizetett",
+		"lot10": "Játssz Qortal lottót",
+		"lot11": "Nincsenek nyílt lottójátékok!",
+		"lot12": "Nincsenek kész lottójátékok!"
 	}
 }

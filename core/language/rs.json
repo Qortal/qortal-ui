@@ -80,11 +80,11 @@
 		"tm35": "Vaš postojeći meni kartica će biti obrisan i postavljen na meni za otpremljene kartice.",
 		"tm36": "Meni kartice je uspešno vraćen",
 		"tm37": "Meni kartice je uspešno sačuvan kao",
-                "tm38": "DEV MODE",
-                "tm39": "Dodaj prilagođeni okvir",
-                "tm40": "Dodaj i otvori",
-                "tm41": "Greška: Nevažeći podaci, pokušajte ponovo!",
-                "tm42": "Qortal Lutrija"
+		"tm38": "DEV MODE",
+		"tm39": "Dodaj prilagođeni okvir",
+		"tm40": "Dodaj i otvori",
+		"tm41": "Greška: Nevažeći podaci, pokušajte ponovo!",
+		"tm42": "Qortal Lutrija"
 	},
 	"login": {
 		"login": "Prijava",
@@ -1140,5 +1140,19 @@
 		"inf16": "Automatska kupovina",
 		"inf17": "Prebaci na svetlu temu",
 		"inf18": "Prebaci na tamnu temu"
+	},
+	"lotterypage": {
+		"lot1": "Otvorene Kortal lutrije",
+		"lot2": "AT adresa",
+		"lot3": "Započeti blok",
+		"lot4": "Blok isplate",
+		"lot5": "Igraj lutriju",
+		"lot6": "Završene Kortal lutrije",
+		"lot7": "Iznos dobitka",
+		"lot8": "Pobednik",
+		"lot9": "Isplaćeno",
+		"lot10": "Igraj Kortal lutriju",
+		"lot11": "Nema otvorenih lutrija!",
+		"lot12": "Nema završenih lutrija!"
 	}
 }
