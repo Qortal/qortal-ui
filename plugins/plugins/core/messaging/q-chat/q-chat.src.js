@@ -465,6 +465,7 @@ class Chat extends LitElement {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
             }).then(res => {
                 this.balance = res
+                this.requestUpdate()
             })
         })
         parentEpml.imReady()
@@ -834,6 +835,7 @@ class Chat extends LitElement {
                 chatId=${this.activeChatHeadUrl} 
                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                 .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}
+                balance=${this.balance}
             >
             </chat-page>
         `

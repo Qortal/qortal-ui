@@ -101,7 +101,6 @@ class LevelFounder extends LitElement {
     }
 
     firstUpdated() {
-        console.log('levelFounder')
 
         parentEpml.ready().then(() => {
             parentEpml.subscribe('selected_address', async selectedAddress => {

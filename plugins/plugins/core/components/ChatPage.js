@@ -43,12 +43,16 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import { RequestQueue } from '../../utils/queue.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+export const queue = new RequestQueue();
+
 
 class ChatPage extends LitElement {
     static get properties() {
@@ -113,7 +117,8 @@ class ChatPage extends LitElement {
             openGifModal: { type: Boolean },
             gifsLoading: { type: Boolean },
             goToRepliedMessage: { attribute: false },
-            isLoadingGoToRepliedMessage: { type: Object }
+            isLoadingGoToRepliedMessage: { type: Object },
+            updateMessageHash: { type: Object}
         }
     }
 
@@ -1348,6 +1353,8 @@ class ChatPage extends LitElement {
             offsetHeight: 0
         }
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.updateMessageHash = {}
+        this.addToUpdateMessageHashmap = this.addToUpdateMessageHashmap.bind(this)
     }
 
     setOpenGifModal(value) {
@@ -2502,6 +2509,7 @@ class ChatPage extends LitElement {
                 .selectedHead=${this.selectedHead}
                 .goToRepliedMessage=${(val, val2) => this.goToRepliedMessage(val, val2)}
                .getOldMessageAfter=${(val) => this.getOldMessageAfter(val)}
+               .updateMessageHash=${this.updateMessageHash}
             >
             </chat-scroller>
         `
@@ -2548,13 +2556,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -2578,13 +2588,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+           
 
             this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -2612,13 +2624,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -2644,13 +2658,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
                 return a.timestamp
@@ -2668,6 +2684,27 @@ class ChatPage extends LitElement {
         }
     }
 
+    async addToUpdateMessageHashmap(array){
+        console.log({array})
+        const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
+        const originalScrollTop = viewElement.scrollTop;
+const originalScrollHeight = viewElement.scrollHeight;
+
+        const newObj = {}
+
+        array.forEach((item)=> {
+			const signature = item.originalSignature || item.signature
+            newObj[signature] = item
+			})
+        this.updateMessageHash = {
+            ...this.updateMessageHash,
+            ...newObj
+        }
+        await this.getUpdateComplete()
+        const heightDifference = viewElement.scrollHeight - originalScrollHeight;
+viewElement.scrollTop = originalScrollTop + heightDifference;
+    }
+
     async getOldMessageAfter(scrollElement) {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -2679,13 +2716,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
                 return a.timestamp
@@ -2711,13 +2750,15 @@ class ChatPage extends LitElement {
                 return this.decodeMessage(eachMessage)
             })
 
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodeMsgs,
-            //     parentEpml,
-            //     isReceipient: this.isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
                 return a.timestamp
@@ -2751,13 +2792,21 @@ class ChatPage extends LitElement {
         })
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodedMessages,
-            //     parentEpml,
-            //     isReceipient: isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey
-            // })
+          
+
+            try {
+                queue.push(() => replaceMessagesEdited({
+                    decodedMessages: decodedMessages,
+                    parentEpml,
+                    isReceipient: isReceipient,
+                    decodeMessageFunc: this.decodeMessage,
+                    _publicKey: this._publicKey,
+                    addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+                }));
+            } catch (error) {
+                console.log({error})
+            }
+            
 
             this._messages = decodedMessages.sort(function (a, b) {
                 return a.timestamp
@@ -2771,14 +2820,17 @@ class ChatPage extends LitElement {
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-            // const replacedMessages = await replaceMessagesEdited({
-            //     decodedMessages: decodedMessages,
-            //     parentEpml,
-            //     isReceipient: isReceipient,
-            //     decodeMessageFunc: this.decodeMessage,
-            //     _publicKey: this._publicKey,
-            //     isNotInitial: true
-            // })
+           
+            
+            queue.push(() => replaceMessagesEdited({
+                decodedMessages: decodedMessages,
+                parentEpml,
+                isReceipient: isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                isNotInitial: true,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
             const renderEachMessage = decodedMessages.map(async (msg) => {
                 await this.renderNewMessage(msg)

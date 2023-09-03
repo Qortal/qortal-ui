@@ -196,7 +196,8 @@ class ChatScroller extends LitElement {
             selectedHead: { type: Object },
             goToRepliedMessage: { attribute: false },
             getOldMessageAfter: { attribute: false },
-            listSeenMessages: { type: Array }
+            listSeenMessages: { type: Array },
+            updateMessageHash: {type: Object}
         }
     }
 
@@ -223,6 +224,10 @@ class ChatScroller extends LitElement {
 
     render() {
         let formattedMessages = this.messages.reduce((messageArray, message, index) => {
+            if(this.updateMessageHash[message.signature]){
+                
+                message = this.updateMessageHash[message.signature]
+            }
             const lastGroupedMessage = messageArray[messageArray.length - 1]
             let timestamp
             let sender
@@ -317,6 +322,9 @@ class ChatScroller extends LitElement {
             return true
         }
         if (changedProperties.has('userName')) {
+            return true
+        }
+        if (changedProperties.has('updateMessageHash')) {
             return true
         }
         // Only update element if prop1 changed.
