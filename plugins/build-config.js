@@ -73,6 +73,10 @@ const generateForPlugins = () => {
 			out: 'plugins/core/overview-page/overview-page.js',
 		},
 		{
+			in: 'plugins/core/qortal-lottery/qortal-lottery.src.js',
+			out: 'plugins/core/qortal-lottery/qortal-lottery.js',
+		},
+		{
 			in: 'plugins/core/trade-portal/trade-portal.src.js',
 			out: 'plugins/core/trade-portal/trade-portal.js',
 		},

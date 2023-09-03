@@ -339,7 +339,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     render() {
-        
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
@@ -385,6 +384,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                         title = html`${translate('tabmenu.tm15')}`
                     } else if (tab.myPlugObj && tab.myPlugObj.title === "Node Management") {
                         title = html`${translate('tabmenu.tm16')}`
+                    } else if (tab.myPlugObj && tab.myPlugObj.title === "Qortal Lottery") {
+                        title = html`${translate('tabmenu.tm42')}`
                     } else if (tab.myPlugObj && tab.myPlugObj.url === "myapp") {
                         title = tab.myPlugObj && tab.myPlugObj.title
                     } else if (tab.myPlugObj && tab.myPlugObj.url === "devmode") {
@@ -400,13 +401,12 @@ class ShowPlugin extends connect(store)(LitElement) {
                     }
 
                     if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
-                title = this.tabInfo[tab.id].name
+                        title = this.tabInfo[tab.id].name
                     }
 
                     if (tab.myPlugObj && (tab.myPlugObj.url === 'myapp') && this.tabInfo[tab.id]) {
-                count = this.tabInfo[tab.id].count
+                        count = this.tabInfo[tab.id].count
                     }
-
 
                     if (tab.myPlugObj && tab.myPlugObj.url === 'q-chat') {
                         for (const chat of this.chatHeads) {
@@ -486,12 +486,12 @@ class ShowPlugin extends connect(store)(LitElement) {
             <mwc-dialog id="addDevDialog"  
                 ?open=${this.isOpenDevDialog} 
                 @closed=${() => {
-                  this.shadowRoot.getElementById('domainInput').value = ''
-        this.shadowRoot.getElementById('portInput').value = ''
-        this.isOpenDevDialog = false
-        store.dispatch(setIsOpenDevDialog(false))
-            }}
-                >
+                    this.shadowRoot.getElementById('domainInput').value = ''
+                    this.shadowRoot.getElementById('portInput').value = ''
+                    this.isOpenDevDialog = false
+                    store.dispatch(setIsOpenDevDialog(false))
+                }}
+            >
                 <div style="text-align: center;">
                     <h2>${translate('tabmenu.tm39')}</h2>
                     <hr>
@@ -791,6 +791,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             newUrl = '404'
             newLinkParam = ''
         }
+
         if (newUrl !== this.url) {
             this.url = newUrl
         }
@@ -836,6 +837,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 //clear newTab
             }
         }
+
         if(state.app.isOpenDevDialog){
             this.isOpenDevDialog = state.app.isOpenDevDialog
         }
@@ -1774,6 +1776,12 @@ class NavBar extends connect(store)(LitElement) {
             this.textFieldDisabled = true
             this.initialName = 'Node Management'
             this.mwcIcon = 'cloud'
+        } else if (theValue === 'lottery') {
+            this.mwcIcon = ''
+            this.initialName = ''
+            this.textFieldDisabled = true
+            this.initialName = 'Qortal Lottery'
+            this.mwcIcon = 'token'
         }
     }
 
@@ -1799,6 +1807,7 @@ class NavBar extends connect(store)(LitElement) {
                 <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
                 <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
                 <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+                <option style="padding-top: 10px;" value="lottery">${translate("tabmenu.tm42")}</option>
             `
         } else if (isMinterSelect && isSponsorSelect) {
             return html`
@@ -1818,6 +1827,7 @@ class NavBar extends connect(store)(LitElement) {
                 <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
                 <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
                 <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+                <option style="padding-top: 10px;" value="lottery">${translate("tabmenu.tm42")}</option>
             `
         } else {
             return html`
@@ -1836,6 +1846,7 @@ class NavBar extends connect(store)(LitElement) {
                 <option style="padding-top: 10px;" value="data-management">${translate("tabmenu.tm14")}</option>
                 <option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
                 <option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
+                <option style="padding-top: 10px;" value="lottery">${translate("tabmenu.tm42")}</option>
             `
         }
     }
@@ -2027,6 +2038,8 @@ class NavBar extends connect(store)(LitElement) {
                 this.pluginPage = 'puzzles/index.html'
             } else if (this.pluginType === 'node-management') {
                 this.pluginPage = 'node-management/index.html'
+            } else if (this.pluginType === 'lottery') {
+                this.pluginPage = 'qortal-lottery/index.html'
             }
 
             var oldMenuPlugs = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
@@ -2100,6 +2113,8 @@ class NavBar extends connect(store)(LitElement) {
             return html`<span>${translate('tabmenu.tm15')}</span>`
         } else if (theUrl === 'node-management') {
             return html`<span>${translate('tabmenu.tm16')}</span>`
+        } else if (theUrl === 'lottery') {
+            return html`<span>${translate('tabmenu.tm42')}</span>`
         } else {
             return html`<span>${theName}</span>`
         }
@@ -2156,6 +2171,8 @@ class NavBar extends connect(store)(LitElement) {
             this.removeTitle = html`<span>${translate('tabmenu.tm15')}</span>`
         } else if (pluginUrlTD === 'node-management') {
             this.removeTitle = html`<span>${translate('tabmenu.tm16')}</span>`
+        } else if (pluginUrlTD === 'lottery') {
+            this.removeTitle = html`<span>${translate('tabmenu.tm42')}</span>`
         } else {
             this.removeTitle = html`<span>${pluginNameTD}</span>`
         }
