@@ -708,7 +708,7 @@ class TradePortal extends LitElement {
             balance: "0",
             coinCode: "QORT",
             coinAmount: this.amountString,
-            tradeFee: "0.002"
+            tradeFee: "0.02"
         }
 
         let bitcoin = {
@@ -1421,6 +1421,7 @@ class TradePortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
+        this.tradeFee()
 
         this.tradeHelperMessage = this.renderTradeHelperPass()
 
@@ -2698,6 +2699,7 @@ class TradePortal extends LitElement {
     async sellAction() {
         this.isSellLoading = true
         this.sellBtnDisable = true
+        await this.tradeFee()
         const sellAmountInput = this.shadowRoot.getElementById('sellAmountInput').value
         const sellTotalInput = this.shadowRoot.getElementById('sellTotalInput').value
         const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.001)
@@ -2732,7 +2734,7 @@ class TradePortal extends LitElement {
                 fundingQortAmount: parseFloat(fundingQortAmount),
                 foreignBlockchain: this.selectedCoin,
                 foreignAmount: parseFloat(sellTotalInput),
-                tradeTimeout: 60,
+                tradeTimeout: 120,
                 receivingAddress: _receivingAddress,
             })
             return response
@@ -2758,7 +2760,7 @@ class TradePortal extends LitElement {
             }
         }
 
-        if (this.round(parseFloat(fundingQortAmount) + parseFloat(0.002)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
+        if (this.round(parseFloat(fundingQortAmount) + parseFloat(this.listedCoins.get("QORTAL").tradeFee)) > parseFloat(this.listedCoins.get("QORTAL").balance)) {
             this.isSellLoading = false
             this.sellBtnDisable = false
             let snack4string = get("tradepage.tchange22")
@@ -3020,6 +3022,21 @@ class TradePortal extends LitElement {
             }
         }
     }
+
+    async tradeFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.listedCoins.get("QORTAL").tradeFee = (Number(json) * 2) / 1e8
+        })
+    }
+
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];

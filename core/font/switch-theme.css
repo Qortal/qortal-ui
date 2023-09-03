@@ -64,6 +64,7 @@ html {
   --app-background-2: #09c6f9;
   --app-icon: #ffffff;
   --app-hr: rgba(0, 0, 0, .3);
+  --code-block-text-color: #008fd5;
 }
 
 html[theme="dark"] {
@@ -132,4 +133,5 @@ html[theme="dark"] {
   --app-background-2: #0d324d;
   --app-icon: #03a9f4;
   --app-hr: rgba(255, 255, 255, .3);
+  --code-block-text-color: #008fd5;
 }

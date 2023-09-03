@@ -101,7 +101,7 @@ function processText(input) {
                         // Store the URL in a data attribute
                         link.setAttribute('data-url', part)
                         link.textContent = part
-                        link.style.color = 'var(--nav-text-color)'
+                        link.style.color = 'var(--code-block-text-color)'
                         link.style.textDecoration = 'underline'
                         link.style.cursor = 'pointer'
 
@@ -125,7 +125,7 @@ function processText(input) {
                                     url: `qdn/browser/index.html${query}`,
                                     id: uid(),
                                     myPlugObj: {
-                                        "url": service === 'WEBSITE' ? "websites" : "qapps",
+                                        "url": "myapp",
                                         "domain": "core",
                                         "page": `qdn/browser/index.html${query}`,
                                         "title": name,

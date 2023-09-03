@@ -845,7 +845,7 @@ function createWindow() {
 	})
 	myWindow.maximize()
 	myWindow.show()
-	myWindow.loadURL('http://localhost:12388/app/wallet')
+	myWindow.loadURL('http://localhost:12388/app')
 	myWindow.on('closed', function () {
 		myWindow = null
 	})
@@ -886,7 +886,7 @@ function createNewWindow() {
 		show: false
 	})
 	newWindow.show()
-	newWindow.loadURL('http://localhost:12388/app/wallet')
+	newWindow.loadURL('http://localhost:12388/app')
 	newWindow.on('closed', function () {
 		newWindow = null
 	})

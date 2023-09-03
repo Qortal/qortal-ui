@@ -140,7 +140,9 @@ class NotificationBell extends connect(store)(LitElement) {
                 ${this.notificationCount ? html`
                     <paper-icon-button style="color: green;" icon="icons:mail" @click=${() => this._toggleNotifications()} title="Q-Mail"></paper-icon-button>
                 ` : html`
-                    <paper-icon-button icon="icons:mail" @click=${() => this._toggleNotifications()} title="Q-Mail"></paper-icon-button>
+                    <paper-icon-button icon="icons:mail" @click=${() => {
+                       this._openTabQmail()
+                    }} title="Q-Mail"></paper-icon-button>
                 `}
 
                 ${this.notificationCount ? html`
@@ -187,6 +189,23 @@ class NotificationBell extends connect(store)(LitElement) {
     _toggleNotifications() {
         if (this.notifications.length === 0) return
         this.showNotifications = !this.showNotifications
+    }
+    _openTabQmail() {
+        const query = `?service=APP&name=Q-Mail`
+        store.dispatch(setNewTab({
+                    url: `qdn/browser/index.html${query}`,
+                    id: 'q-mail-notification',
+                    myPlugObj: {
+                        "url": "qapps",
+                        "domain": "core",
+                        "page": `qdn/browser/index.html${query}`,
+                        "title": "Q-Mail",
+                        "icon": "vaadin:mailbox",
+            "mwcicon": "mail_outline",
+                        "menus": [],
+                        "parent": false
+                    }
+                }))
     }
 
     static styles = css`

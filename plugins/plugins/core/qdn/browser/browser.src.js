@@ -3,6 +3,7 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../../epml'
 import isElectron from 'is-electron'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import ShortUniqueId from 'short-unique-id';
 
 registerTranslateConfig({
 	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
@@ -131,6 +132,7 @@ class WebBrowser extends LitElement {
 	constructor() {
 		super();
 		this.url = 'about:blank';
+		this.uid = new ShortUniqueId()
 		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress
 		this._publicKey = { key: '', hasPubKey: false }
 		const urlParams = new URLSearchParams(window.location.search)
@@ -318,6 +320,44 @@ class WebBrowser extends LitElement {
 		}
 	}
 
+	async linkOpenNewTab(link) {
+	
+			const value = link
+			let newQuery = value;
+			if (newQuery.endsWith('/')) {
+				newQuery = newQuery.slice(0, -1);
+			}
+			const res = await this.extractComponents(newQuery)
+			if (!res) return
+			const { service, name, identifier, path } = res
+			let query = `?service=${service}`
+			if (name) {
+				query = query + `&name=${name}`
+			}
+			if (identifier) {
+				query = query + `&identifier=${identifier}`
+			}
+			if (path) {
+				query = query + `&path=${path}`
+			}
+			
+			window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
+				url: `qdn/browser/index.html${query}`,
+				id: this.uid(),
+				myPlugObj: {
+					"url": service === 'WEBSITE' ? "websites" : "qapps",
+					"domain": "core",
+					"page": `qdn/browser/index.html${query}`,
+					"title": name,
+					"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
+					"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
+					"menus": [],
+					"parent": false
+				}
+			}))
+	
+	}
+
 	render() {
 
 		return html`
@@ -425,6 +465,23 @@ class WebBrowser extends LitElement {
 		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
+	 async getArbitraryFee (){
+		const timestamp = Date.now()
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching arbitrary fee');
+		}
+		const data = await response.json()
+		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
+		return {
+			timestamp,
+			fee : Number(data),
+			feeToShow: arbitraryFee
+		}
+    }
 	async sendQortFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -492,7 +549,7 @@ class WebBrowser extends LitElement {
 
 	}
 
-	async _deployAt(name, description, tags, creationBytes, amount, assetId, fee, atType) {
+	async _deployAt(name, description, tags, creationBytes, amount, assetId, atType) {
 		const deployAtFee = await this.deployAtFee()
 		const getLastRef = async () => {
 			let myRef = await parentEpml.request('apiCall', {
@@ -510,13 +567,15 @@ class WebBrowser extends LitElement {
 		}
 
 		const makeTransactionRequest = async (lastRef) => {
-			let groupdialog1 = get("transactions.groupdialog1")
-			let groupdialog2 = get("transactions.groupdialog2")
+			let deployAtdialog1 = get("transactions.deployAtdialog1")
+			let deployAtdialog2 = get("transactions.deployAtdialog2")
+			let deployAtdialog3 = get("transactions.deployAtdialog3")
+			let deployAtdialog4 = get("walletpage.wchange12")
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 16,
 				nonce: this.selectedAddress.nonce,
 				params: {
-					fee: fee || deployAtFee,
+					fee: deployAtFee,
 					rName: name,
 					rDescription: description,
 					rTags: tags,
@@ -525,8 +584,10 @@ class WebBrowser extends LitElement {
 					rCreationBytes: creationBytes,
 					atType: atType,
 					lastReference: lastRef,
-					atDeployDialog1: groupdialog1,
-					atDeployDialog2: groupdialog2
+					atDeployDialog1: deployAtdialog1,
+					atDeployDialog2: deployAtdialog2,
+					atDeployDialog3: deployAtdialog3,
+					atDeployDialog4: deployAtdialog4
 				},
 				apiVersion: 2
 			})
@@ -975,6 +1036,7 @@ class WebBrowser extends LitElement {
 					const tag3 = data.tag3;
 					const tag4 = data.tag4;
 					const tag5 = data.tag5;
+					let feeAmount = null
 					if (data.identifier == null) {
 						identifier = 'default';
 					}
@@ -994,6 +1056,8 @@ class WebBrowser extends LitElement {
 					if (data.file) {
 						data64 = await fileToBase64(data.file)
 					}
+					const getArbitraryFee = await this.getArbitraryFee()
+					feeAmount = getArbitraryFee.fee
 
 					if (data.encrypt) {
 						try {
@@ -1014,6 +1078,7 @@ class WebBrowser extends LitElement {
 
 					}
 
+				
 
 
 					const res2 = await showModalAndWait(
@@ -1022,7 +1087,8 @@ class WebBrowser extends LitElement {
 							name,
 							identifier,
 							service,
-							encrypt: data.encrypt
+							encrypt: data.encrypt,
+							feeAmount: getArbitraryFee.feeToShow
 						}
 					);
 					if (res2.action === 'accept') {
@@ -1052,7 +1118,8 @@ class WebBrowser extends LitElement {
 								tag4,
 								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true : false
+								withFee: res2.userData.isWithFee === true ? true : false,
+								feeAmount: feeAmount
 							});
 
 							response = JSON.stringify(resPublish);
@@ -1080,7 +1147,7 @@ class WebBrowser extends LitElement {
 				case actions.PUBLISH_MULTIPLE_QDN_RESOURCES: {
 					const requiredFields = ['resources'];
 					const missingFields = [];
-
+					let feeAmount = null
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field);
@@ -1114,11 +1181,14 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data);
 						break
 					}
+					const getArbitraryFee = await this.getArbitraryFee()
+					feeAmount = getArbitraryFee.fee
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
 							resources,
-							encrypt: data.encrypt
+							encrypt: data.encrypt,
+							feeAmount: getArbitraryFee.feeToShow
 						}
 					);
 
@@ -1217,7 +1287,8 @@ class WebBrowser extends LitElement {
 								tag4,
 								tag5,
 								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true : false
+								withFee: res2.userData.isWithFee === true ? true : false,
+								feeAmount: feeAmount
 							});
 
 							worker.terminate();
@@ -1253,8 +1324,95 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					break;
 				}
+				case actions.OPEN_NEW_TAB: {
+					if(!data.qortalLink){
+						const obj = {};
+						const errorMsg = 'Please enter a qortal link - qortal://...';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
 
+					try {
+						await this.linkOpenNewTab(data.qortalLink)
+						response = true
+						break;
+					} catch (error) {
+						console.log('error', error)
+						const obj = {};
+						const errorMsg = "Invalid qortal link";
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
+					}
+				
+				}
+				case actions.NOTIFICATIONS_PERMISSION: {
+					try {
 
+						const res = await showModalAndWait(
+							actions.NOTIFICATIONS_PERMISSION,
+							{
+								name: this.name
+							}
+						);
+						if (res.action === 'accept'){
+							this.addAppToNotificationList(this.name)
+						response = true
+						break;
+						} else {
+							response = false
+							break;
+						}
+						
+					} catch (error) {
+						break;
+					}
+				
+				}
+				case actions.SEND_LOCAL_NOTIFICATION: {
+					const {title, url, icon, message} = data
+					try {
+						const id = `appNotificationList-${this.selectedAddress.address}`
+						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+			if(!checkData || !checkData[this.name]) throw new Error('App not on permission list')
+					const appInfo = checkData[this.name]
+					const lastNotification = appInfo.lastNotification
+					const interval = appInfo.interval
+					if (lastNotification && interval) {
+						const timeDifference = Date.now() - lastNotification;
+					  
+						if (timeDifference > interval) {
+							parentEpml.request('showNotification', {
+								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+						   })
+						   response = true
+						   this.updateLastNotification(id, this.name)
+						   break;
+						} else {
+							throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
+						}
+					  } else if(!lastNotification){
+						parentEpml.request('showNotification', {
+							title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+					   })
+					   response = true
+					   this.updateLastNotification(id)
+					   break;
+					  } else {
+						throw new Error(`invalid data`)
+					  }
+						
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || "error in pushing notification";
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break;
+					
+					}
+				
+				}
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message;
 					const recipient = data.destinationAddress;
@@ -1618,41 +1776,41 @@ class WebBrowser extends LitElement {
 					break;
 				}
 
-				// case 'DEPLOY_AT': {
-				// 	const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
-				// 	const missingFields = [];
+				case 'DEPLOY_AT': {
+					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
+					const missingFields = [];
 
-				// 	requiredFields.forEach((field) => {
-				// 		if (!data[field]) {
-				// 			missingFields.push(field);
-				// 		}
-				// 	});
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
 
-				// 	if (missingFields.length > 0) {
-				// 		const missingFieldsString = missingFields.join(', ');
-				// 		const errorMsg = `Missing fields: ${missingFieldsString}`
-				// 		let data = {};
-				// 		data['error'] = errorMsg;
-				// 		response = JSON.stringify(data);
-				// 		break
-				// 	}
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
 
 
-				// 	try {
-				// 		this.loader.show();
-				// 		const fee = data.fee || undefined
-				// 		const resJoinGroup = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, fee, data.type)
-				// 		response = JSON.stringify(resJoinGroup);
-				// 	} catch (error) {
-				// 		const obj = {};
-				// 		const errorMsg = error.message || 'Failed to join the group.';
-				// 		obj['error'] = errorMsg;
-				// 		response = JSON.stringify(obj);
-				// 	} finally {
-				// 		this.loader.hide();
-				// 	}
-				// 	break;
-				// }
+					try {
+						this.loader.show();
+					
+						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
+						response = JSON.stringify(resDeployAt);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
 
 
 				case actions.GET_WALLET_BALANCE: {
@@ -2707,6 +2865,46 @@ class WebBrowser extends LitElement {
 			use(checkLanguage);
 		}
 	}
+	addAppToNotificationList(appName) {
+		if(!appName) throw new Error('unknown app name')
+		const id = `appNotificationList-${this.selectedAddress.address}`;
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+	  
+		if (!checkData) {
+		  const newData = {
+			[appName]: {
+			  interval: 900000, // 15mins in milliseconds
+			  lastNotification: null,
+			},
+		  };
+		  localStorage.setItem(id, JSON.stringify(newData));
+		} else {
+		  const copyData = { ...checkData };
+		  copyData[appName] = {
+			interval: 900000, // 15mins in milliseconds
+			lastNotification: null,
+		  };
+		  localStorage.setItem(id, JSON.stringify(copyData));
+		}
+	  }
+
+	  updateLastNotification(id, appName) {
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+	  
+		if (checkData) {
+		  const copyData = { ...checkData };
+		  if (copyData[appName]) {
+			copyData[appName].lastNotification = Date.now(); // Make sure to use Date.now(), not date.now()
+		  } else {
+			copyData[appName] = {
+			  interval: 900000, // 15mins in milliseconds
+			  lastNotification: Date.now(),
+			};
+		  }
+		  localStorage.setItem(id, JSON.stringify(copyData));
+		}
+	  }
+	  
 
 	renderFollowUnfollowButton() {
 		// Only show the follow/unfollow button if we have permission to modify the list on this node
@@ -3000,10 +3198,7 @@ async function showModalAndWait(type, data) {
 									`).join('')}
 								</table>
 								<div class="checkbox-row">
-									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange33')} ${data.resources.length * 0.001} QORT fee
-									</label>
-									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+									<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.resources.length * data.feeAmount} QORT fee</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -3016,10 +3211,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
 								<div class="checkbox-row">
-									<label for="isWithFee" id="isWithFeeLabel" style="color: var(--black);">
-										${get('browserpage.bchange29')}
-									</label>
-									<mwc-checkbox checked style="margin-right: -15px;" id="isWithFee"></mwc-checkbox>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.feeAmount} QORT fee</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -3064,7 +3256,12 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
 							</div>
 						` : ''}
-						
+						${type === actions.NOTIFICATIONS_PERMISSION ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange48")}</p>
+							</div>
+						` : ''}
+					
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>
@@ -3091,7 +3288,8 @@ async function showModalAndWait(type, data) {
 			const userData = {};
 			if (type === actions.PUBLISH_QDN_RESOURCE || type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES) {
 				const isWithFeeCheckbox = modal.querySelector('#isWithFee');
-				userData.isWithFee = isWithFeeCheckbox.checked;
+				// userData.isWithFee = isWithFeeCheckbox.checked;
+				userData.isWithFee = true
 			}
 			if (modal.parentNode === document.body) {
 				document.body.removeChild(modal);

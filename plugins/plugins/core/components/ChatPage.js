@@ -36,14 +36,13 @@ import './ChatLeaveGroup.js'
 import './ChatGroupSettings.js'
 import './ChatRightPanel.js'
 import './ChatSearchResults.js'
-import './ChatGifs/ChatGifs.js'
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import { RequestQueue } from '../../utils/queue.js'
+import { modalHelper } from '../../utils/publish-modal.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -1449,8 +1448,6 @@ class ChatPage extends LitElement {
                 <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
                 ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
-                <!-- gif div -->
-              
                     <div 
                     class='last-message-ref' 
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
@@ -1880,7 +1877,7 @@ class ChatPage extends LitElement {
                 return memberItem
             })
             const membersWithName = await Promise.all(getMembersWithName)
-            this.groupMembers = membersWithName
+            this.groupMembers = [...this.groupMembers, ...membersWithName]
             this.pageNumber = this.pageNumber + 1
         } catch (error) {
         }
@@ -3177,511 +3174,555 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
     }
 
     async _sendMessage(outSideMsg, msg) {
-        if (this.isReceipient) {
-            let hasPublicKey = true
-            if (!this._publicKey.hasPubKey) {
-                hasPublicKey = false
-                try {
-                    const res = await parentEpml.request('apiCall', {
-                        type: 'api',
-                        url: `/addresses/publickey/${this.selectedAddress.address}`
-                    })
-                    if (res.error === 102) {
-                        this._publicKey.key = ''
-                        this._publicKey.hasPubKey = false
-                    } else if (res !== false) {
-                        this._publicKey.key = res
-                        this._publicKey.hasPubKey = true
-                        hasPublicKey = true
-                    } else {
-                        this._publicKey.key = ''
-                        this._publicKey.hasPubKey = false
+        try {
+            if (this.isReceipient) {
+                let hasPublicKey = true
+                if (!this._publicKey.hasPubKey) {
+                    hasPublicKey = false
+                    try {
+                        const res = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/addresses/publickey/${this.selectedAddress.address}`
+                        })
+                        if (res.error === 102) {
+                            this._publicKey.key = ''
+                            this._publicKey.hasPubKey = false
+                        } else if (res !== false) {
+                            this._publicKey.key = res
+                            this._publicKey.hasPubKey = true
+                            hasPublicKey = true
+                        } else {
+                            this._publicKey.key = ''
+                            this._publicKey.hasPubKey = false
+                        }
+                    } catch (error) {
                     }
-                } catch (error) {
+    
+                    if (!hasPublicKey || !this._publicKey.hasPubKey) {
+                        let err4string = get("chatpage.cchange39")
+                        parentEpml.request('showSnackBar', `${err4string}`)
+                        return
+                    }
+    
                 }
-
-                if (!hasPublicKey || !this._publicKey.hasPubKey) {
-                    let err4string = get("chatpage.cchange39")
-                    parentEpml.request('showSnackBar', `${err4string}`)
+            }
+            // have params to determine if it's a reply or not
+            // have variable to determine if it's a response, holds signature in constructor
+            // need original message signature 
+            // need whole original message object, transform the data and put it in local storage
+            // create new var called repliedToData and use that to modify the UI
+            // find specific object property in local
+            let typeMessage = 'regular'
+            this.isLoading = true
+            const trimmedMessage = msg
+    
+            const getName = async (recipient) => {
+                try {
+                    const getNames = await parentEpml.request("apiCall", {
+                        type: "api",
+                        url: `/names/address/${recipient}`
+                    })
+    
+                    if (Array.isArray(getNames) && getNames.length > 0) {
+                        return getNames[0].name
+                    } else {
+                        return ''
+                    }
+    
+                } catch (error) {
+                    return ""
+                }
+            }
+    
+            if (outSideMsg && outSideMsg.type === 'delete') {
+                this.isDeletingImage = true
+                const userName = outSideMsg.name
+                const identifier = outSideMsg.identifier
+                let compressedFile = ''
+                var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+    
+                if (this.webWorkerFile) {
+                    this.webWorkerFile.terminate()
+                    this.webWorkerFile = null
+                }
+    
+                this.webWorkerFile = new WebWorkerFile()
+    
+                const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+                    const byteCharacters = atob(b64Data)
+                    const byteArrays = []
+    
+                    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                        const slice = byteCharacters.slice(offset, offset + sliceSize)
+    
+                        const byteNumbers = new Array(slice.length)
+                        for (let i = 0; i < slice.length; i++) {
+                            byteNumbers[i] = slice.charCodeAt(i)
+                        }
+    
+                        const byteArray = new Uint8Array(byteNumbers)
+                        byteArrays.push(byteArray)
+                    }
+    
+                    const blob = new Blob(byteArrays, { type: contentType })
+                    return blob
+                }
+                const blob = b64toBlob(str, 'image/png')
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            })
+    
+                            compressedFile = file
+                            resolve()
+                        },
+                        error(err) {
+                        },
+                    })
+                })
+                const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                const res = await modalHelper.showModalAndWaitPublish(
+                    {
+                        feeAmount: arbitraryFeeData.feeToShow
+                    }
+                );
+                if (res.action !== 'accept') throw new Error('User declined publish')
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file: compressedFile,
+                        service: 'QCHAT_IMAGE',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
+                    })
+                    this.isDeletingImage = false
+                } catch (error) {
+                    this.isLoading = false
                     return
                 }
-
-            }
-        }
-        // have params to determine if it's a reply or not
-        // have variable to determine if it's a response, holds signature in constructor
-        // need original message signature 
-        // need whole original message object, transform the data and put it in local storage
-        // create new var called repliedToData and use that to modify the UI
-        // find specific object property in local
-        let typeMessage = 'regular'
-        this.isLoading = true
-        const trimmedMessage = msg
-
-        const getName = async (recipient) => {
-            try {
-                const getNames = await parentEpml.request("apiCall", {
-                    type: "api",
-                    url: `/names/address/${recipient}`
-                })
-
-                if (Array.isArray(getNames) && getNames.length > 0) {
-                    return getNames[0].name
-                } else {
-                    return ''
+                typeMessage = 'edit'
+                let chatReference = outSideMsg.editedMessageObj.signature
+    
+                if (outSideMsg.editedMessageObj.chatReference) {
+                    chatReference = outSideMsg.editedMessageObj.chatReference
                 }
-
-            } catch (error) {
-                return ""
-            }
-        }
-
-        if (outSideMsg && outSideMsg.type === 'delete') {
-            this.isDeletingImage = true
-            const userName = outSideMsg.name
-            const identifier = outSideMsg.identifier
-            let compressedFile = ''
-            var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
-
-            if (this.webWorkerFile) {
-                this.webWorkerFile.terminate()
-                this.webWorkerFile = null
-            }
-
-            this.webWorkerFile = new WebWorkerFile()
-
-            const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
-                const byteCharacters = atob(b64Data)
-                const byteArrays = []
-
-                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                    const slice = byteCharacters.slice(offset, offset + sliceSize)
-
-                    const byteNumbers = new Array(slice.length)
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i)
+    
+                let message = ""
+                try {
+                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+                    message = parsedMessageObj
+                } catch (error) {
+                    message = outSideMsg.editedMessageObj.decodedMessage
+                }
+                const messageObject = {
+                    ...message,
+                    isImageDeleted: true
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+            } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
+                this.isDeletingAttachment = true
+                let compressedFile = ''
+                var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+                const userName = outSideMsg.name
+                const identifier = outSideMsg.identifier
+    
+                if (this.webWorkerFile) {
+                    this.webWorkerFile.terminate()
+                    this.webWorkerFile = null
+                }
+    
+                this.webWorkerFile = new WebWorkerFile()
+    
+                const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+                    const byteCharacters = atob(b64Data)
+                    const byteArrays = []
+    
+                    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                        const slice = byteCharacters.slice(offset, offset + sliceSize)
+    
+                        const byteNumbers = new Array(slice.length)
+                        for (let i = 0; i < slice.length; i++) {
+                            byteNumbers[i] = slice.charCodeAt(i)
+                        }
+    
+                        const byteArray = new Uint8Array(byteNumbers)
+                        byteArrays.push(byteArray)
                     }
-
-                    const byteArray = new Uint8Array(byteNumbers)
-                    byteArrays.push(byteArray)
+    
+                    const blob = new Blob(byteArrays, { type: contentType })
+                    return blob
                 }
-
-                const blob = new Blob(byteArrays, { type: contentType })
-                return blob
-            }
-            const blob = b64toBlob(str, 'image/png')
-            await new Promise(resolve => {
-                new Compressor(blob, {
-                    quality: 0.6,
-                    maxWidth: 500,
-                    success(result) {
-                        const file = new File([result], "name", {
-                            type: 'image/png'
-                        })
-
-                        compressedFile = file
-                        resolve()
-                    },
-                    error(err) {
-                    },
-                })
-            })
-            try {
-                await publishData({
-                    registeredName: userName,
-                    file: compressedFile,
-                    service: 'QCHAT_IMAGE',
-                    identifier: identifier,
-                    parentEpml,
-                    metaData: undefined,
-                    uploadType: 'file',
-                    selectedAddress: this.selectedAddress,
-                    worker: this.webWorkerFile
-                })
-                this.isDeletingImage = false
-            } catch (error) {
-                this.isLoading = false
-                return
-            }
-            typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.signature
-
-            if (outSideMsg.editedMessageObj.chatReference) {
-                chatReference = outSideMsg.editedMessageObj.chatReference
-            }
-
-            let message = ""
-            try {
-                const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                message = parsedMessageObj
-            } catch (error) {
-                message = outSideMsg.editedMessageObj.decodedMessage
-            }
-            const messageObject = {
-                ...message,
-                isImageDeleted: true
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
-        } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
-            this.isDeletingAttachment = true
-            let compressedFile = ''
-            var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
-            const userName = outSideMsg.name
-            const identifier = outSideMsg.identifier
-
-            if (this.webWorkerFile) {
-                this.webWorkerFile.terminate()
-                this.webWorkerFile = null
-            }
-
-            this.webWorkerFile = new WebWorkerFile()
-
-            const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
-                const byteCharacters = atob(b64Data)
-                const byteArrays = []
-
-                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                    const slice = byteCharacters.slice(offset, offset + sliceSize)
-
-                    const byteNumbers = new Array(slice.length)
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i)
-                    }
-
-                    const byteArray = new Uint8Array(byteNumbers)
-                    byteArrays.push(byteArray)
-                }
-
-                const blob = new Blob(byteArrays, { type: contentType })
-                return blob
-            }
-
-            const blob = b64toBlob(str, 'image/png')
-            await new Promise(resolve => {
-                new Compressor(blob, {
-                    quality: 0.6,
-                    maxWidth: 500,
-                    success(result) {
-                        const file = new File([result], "name", {
-                            type: 'image/png'
-                        })
-
-                        compressedFile = file
-                        resolve()
-                    },
-                    error(err) {
-                    },
-                })
-            })
-
-            try {
-                await publishData({
-                    registeredName: userName,
-                    file: compressedFile,
-                    service: 'QCHAT_ATTACHMENT',
-                    identifier: identifier,
-                    parentEpml,
-                    metaData: undefined,
-                    uploadType: 'file',
-                    selectedAddress: this.selectedAddress,
-                    worker: this.webWorkerFile
-                })
-                this.isDeletingAttachment = false
-            } catch (error) {
-                this.isLoading = false
-                return
-            }
-            typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.signature
-
-            if (outSideMsg.editedMessageObj.chatReference) {
-                chatReference = outSideMsg.editedMessageObj.chatReference
-            }
-
-            let message = ""
-            try {
-                const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                message = parsedMessageObj
-
-            } catch (error) {
-                message = outSideMsg.editedMessageObj.decodedMessage
-            }
-            const messageObject = {
-                ...message,
-                isAttachmentDeleted: true
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
-        } else if (outSideMsg && outSideMsg.type === 'image') {
-            this.isUploadingImage = true
-            const userName = await getName(this.selectedAddress.address)
-            if (!userName) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange27"))
-                this.isLoading = false
-                this.isUploadingImage = false
-                this.imageFile = null
-                return
-            }
-
-            if (this.webWorkerFile) {
-                this.webWorkerFile.terminate()
-                this.webWorkerFile = null
-            }
-
-            this.webWorkerFile = new WebWorkerFile()
-
-            const image = this.imageFile
-            const id = this.uid()
-            const identifier = `qchat_${id}`
-            let compressedFile = ''
-            await new Promise(resolve => {
-                new Compressor(image, {
-                    quality: .6,
-                    maxWidth: 1200,
-                    success(result) {
-                        const file = new File([result], "name", {
-                            type: image.type
-                        })
-                        compressedFile = file
-                        resolve()
-                    },
-                    error(err) {
-                    },
-                })
-            })
-            const fileSize = compressedFile.size
-            if (fileSize > 500000) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange26"))
-                this.isLoading = false
-                this.isUploadingImage = false
-                return
-            }
-            try {
-                await publishData({
-                    registeredName: userName,
-                    file: compressedFile,
-                    service: 'QCHAT_IMAGE',
-                    identifier: identifier,
-                    parentEpml,
-                    metaData: undefined,
-                    uploadType: 'file',
-                    selectedAddress: this.selectedAddress,
-                    worker: this.webWorkerFile
-                })
-                this.isUploadingImage = false
-                this.removeImage()
-            } catch (error) {
-                this.isLoading = false
-                this.isUploadingImage = false
-                return
-            }
-
-            const messageObject = {
-                messageText: trimmedMessage,
-                images: [{
-                    service: "QCHAT_IMAGE",
-                    name: userName,
-                    identifier: identifier
-                }],
-                isImageDeleted: false,
-                repliedTo: '',
-                version: 3
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage)
-        } else if (outSideMsg && outSideMsg.type === 'gif') {
-            const userName = await getName(this.selectedAddress.address)
-            if (!userName) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange27"))
-                this.isLoading = false
-                return
-            }
-
-            const messageObject = {
-                messageText: '',
-                gifs: [{
-                    service: outSideMsg.service,
-                    name: outSideMsg.name,
-                    identifier: outSideMsg.identifier,
-                    filePath: outSideMsg.filePath
-                }],
-                repliedTo: '',
-                version: 3
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage)
-        } else if (outSideMsg && outSideMsg.type === 'attachment') {
-            this.isUploadingAttachment = true
-            const userName = await getName(this.selectedAddress.address)
-            if (!userName) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange27"))
-                this.isLoading = false
-                return
-            }
-
-            if (this.webWorkerFile) {
-                this.webWorkerFile.terminate()
-                this.webWorkerFile = null
-            }
-
-            this.webWorkerFile = new WebWorkerFile()
-
-            const attachment = this.attachment
-            const id = this.uid()
-            const identifier = `qchat_${id}`
-            const fileSize = attachment.size
-            if (fileSize > 1000000) {
-                parentEpml.request('showSnackBar', get("chatpage.cchange77"))
-                this.isLoading = false
-                this.isUploadingAttachment = false
-                return
-            }
-            try {
-                await publishData({
-                    registeredName: userName,
-                    file: attachment,
-                    service: 'QCHAT_ATTACHMENT',
-                    identifier: identifier,
-                    parentEpml,
-                    metaData: undefined,
-                    uploadType: 'file',
-                    selectedAddress: this.selectedAddress,
-                    worker: this.webWorkerFile
-                })
-                this.isUploadingAttachment = false
-                this.removeAttachment()
-            } catch (error) {
-                this.isLoading = false
-                this.isUploadingAttachment = false
-                return
-            }
-            const messageObject = {
-                messageText: trimmedMessage,
-                attachments: [{
-                    service: 'QCHAT_ATTACHMENT',
-                    name: userName,
-                    identifier: identifier,
-                    attachmentName: attachment.name,
-                    attachmentSize: attachment.size
-                }],
-                isAttachmentDeleted: false,
-                repliedTo: '',
-                version: 3
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage)
-        } else if (outSideMsg && outSideMsg.type === 'reaction') {
-            const userName = await getName(this.selectedAddress.address)
-            typeMessage = 'edit'
-            let chatReference = outSideMsg.editedMessageObj.signature
-
-            if (outSideMsg.editedMessageObj.chatReference) {
-                chatReference = outSideMsg.editedMessageObj.chatReference
-            }
-
-            let message = ""
-
-            try {
-                const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                message = parsedMessageObj
-            } catch (error) {
-                message = outSideMsg.editedMessageObj.decodedMessage
-            }
-
-            let reactions = message.reactions || []
-            const findEmojiIndex = reactions.findIndex((reaction) => reaction.type === outSideMsg.reaction)
-            if (findEmojiIndex !== -1) {
-                let users = reactions[findEmojiIndex].users || []
-                const findUserIndex = users.findIndex((user) => user.address === this.selectedAddress.address)
-                if (findUserIndex !== -1) {
-                    users.splice(findUserIndex, 1)
-                } else {
-                    users.push({
-                        address: this.selectedAddress.address,
-                        name: userName
+    
+                const blob = b64toBlob(str, 'image/png')
+                await new Promise(resolve => {
+                    new Compressor(blob, {
+                        quality: 0.6,
+                        maxWidth: 500,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: 'image/png'
+                            })
+    
+                            compressedFile = file
+                            resolve()
+                        },
+                        error(err) {
+                        },
                     })
+                })
+                const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                const res = await modalHelper.showModalAndWaitPublish(
+                    {
+                        feeAmount: arbitraryFeeData.feeToShow
+                    }
+                );
+                if (res.action !== 'accept') throw new Error('User declined publish')
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file: compressedFile,
+                        service: 'QCHAT_ATTACHMENT',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
+                    })
+                    this.isDeletingAttachment = false
+                } catch (error) {
+                    this.isLoading = false
+                    return
                 }
-                reactions[findEmojiIndex] = {
-                    ...reactions[findEmojiIndex],
-                    qty: users.length,
-                    users
+                typeMessage = 'edit'
+                let chatReference = outSideMsg.editedMessageObj.signature
+    
+                if (outSideMsg.editedMessageObj.chatReference) {
+                    chatReference = outSideMsg.editedMessageObj.chatReference
                 }
-                if (users.length === 0) {
-                    reactions.splice(findEmojiIndex, 1)
+    
+                let message = ""
+                try {
+                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+                    message = parsedMessageObj
+    
+                } catch (error) {
+                    message = outSideMsg.editedMessageObj.decodedMessage
                 }
-            } else {
-                reactions = [...reactions, {
-                    type: outSideMsg.reaction,
-                    qty: 1,
-                    users: [{
-                        address: this.selectedAddress.address,
-                        name: userName
-                    }]
-                }]
-            }
-            const messageObject = {
-                ...message,
-                reactions
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
-        } else if (/^\s*$/.test(trimmedMessage)) {
-            this.isLoading = false
-        } else if (this.repliedToMessageObj) {
-            let chatReference = this.repliedToMessageObj.signature
-            if (this.repliedToMessageObj.chatReference) {
-                chatReference = this.repliedToMessageObj.chatReference
-            }
-            typeMessage = 'reply'
-            const messageObject = {
-                messageText: trimmedMessage,
-                images: [''],
-                repliedTo: chatReference,
-                version: 3
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage)
-        } else if (this.editedMessageObj) {
-            typeMessage = 'edit'
-            let chatReference = this.editedMessageObj.signature
-
-            if (this.editedMessageObj.chatReference) {
-                chatReference = this.editedMessageObj.chatReference
-            }
-
-            let message = ""
-            try {
-                const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
-                message = parsedMessageObj
-
-            } catch (error) {
-                message = this.editedMessageObj.decodedMessage
-            }
-            const messageObject = {
-                ...message,
-                messageText: trimmedMessage,
-                isEdited: true
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-            this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
-        } else {
-            const messageObject = {
-                messageText: trimmedMessage,
-                images: [''],
-                repliedTo: '',
-                version: 3
-            }
-            const stringifyMessageObject = JSON.stringify(messageObject)
-
-            if (this.balance < 4) {
-                this.myTrimmedMeassage = ''
-                this.myTrimmedMeassage = stringifyMessageObject
-                this.shadowRoot.getElementById('confirmDialog').open()
-            } else {
+                const messageObject = {
+                    ...message,
+                    isAttachmentDeleted: true
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+            } else if (outSideMsg && outSideMsg.type === 'image') {
+                this.isUploadingImage = true
+                const userName = await getName(this.selectedAddress.address)
+                if (!userName) {
+                    parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+                    this.isLoading = false
+                    this.isUploadingImage = false
+                    this.imageFile = null
+                    return
+                }
+                const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                const res = await modalHelper.showModalAndWaitPublish(
+                    {
+                        feeAmount: arbitraryFeeData.feeToShow
+                    }
+                );
+            if (res.action !== 'accept') throw new Error('User declined publish')
+    
+                if (this.webWorkerFile) {
+                    this.webWorkerFile.terminate()
+                    this.webWorkerFile = null
+                }
+    
+                this.webWorkerFile = new WebWorkerFile()
+    
+                const image = this.imageFile
+                const id = this.uid()
+                const identifier = `qchat_${id}`
+                let compressedFile = ''
+                await new Promise(resolve => {
+                    new Compressor(image, {
+                        quality: .6,
+                        maxWidth: 1200,
+                        success(result) {
+                            const file = new File([result], "name", {
+                                type: image.type
+                            })
+                            compressedFile = file
+                            resolve()
+                        },
+                        error(err) {
+                        },
+                    })
+                })
+                const fileSize = compressedFile.size
+                if (fileSize > 500000) {
+                    parentEpml.request('showSnackBar', get("chatpage.cchange26"))
+                    this.isLoading = false
+                    this.isUploadingImage = false
+                    return
+                }
+              
+                try {
+                   
+                    await publishData({
+                        registeredName: userName,
+                        file: compressedFile,
+                        service: 'QCHAT_IMAGE',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
+                    })
+                    this.isUploadingImage = false
+                    this.removeImage()
+                } catch (error) {
+                    this.isLoading = false
+                    this.isUploadingImage = false
+                    return
+                }
+    
+                const messageObject = {
+                    messageText: trimmedMessage,
+                    images: [{
+                        service: "QCHAT_IMAGE",
+                        name: userName,
+                        identifier: identifier
+                    }],
+                    isImageDeleted: false,
+                    repliedTo: '',
+                    version: 3
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
                 this.sendMessage(stringifyMessageObject, typeMessage)
+            } else if (outSideMsg && outSideMsg.type === 'gif') {
+                const userName = await getName(this.selectedAddress.address)
+                if (!userName) {
+                    parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+                    this.isLoading = false
+                    return
+                }
+    
+                const messageObject = {
+                    messageText: '',
+                    gifs: [{
+                        service: outSideMsg.service,
+                        name: outSideMsg.name,
+                        identifier: outSideMsg.identifier,
+                        filePath: outSideMsg.filePath
+                    }],
+                    repliedTo: '',
+                    version: 3
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage)
+            } else if (outSideMsg && outSideMsg.type === 'attachment') {
+                this.isUploadingAttachment = true
+                const userName = await getName(this.selectedAddress.address)
+                if (!userName) {
+                    parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+                    this.isLoading = false
+                    return
+                }
+    
+                if (this.webWorkerFile) {
+                    this.webWorkerFile.terminate()
+                    this.webWorkerFile = null
+                }
+    
+                this.webWorkerFile = new WebWorkerFile()
+    
+                const attachment = this.attachment
+                const id = this.uid()
+                const identifier = `qchat_${id}`
+                const fileSize = attachment.size
+                if (fileSize > 1000000) {
+                    parentEpml.request('showSnackBar', get("chatpage.cchange77"))
+                    this.isLoading = false
+                    this.isUploadingAttachment = false
+                    return
+                }
+                const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                const res = await modalHelper.showModalAndWaitPublish(
+                    {
+                        feeAmount: arbitraryFeeData.feeToShow
+                    }
+                );
+                if (res.action !== 'accept') throw new Error('User declined publish')
+                try {
+                    await publishData({
+                        registeredName: userName,
+                        file: attachment,
+                        service: 'QCHAT_ATTACHMENT',
+                        identifier: identifier,
+                        parentEpml,
+                        metaData: undefined,
+                        uploadType: 'file',
+                        selectedAddress: this.selectedAddress,
+                        worker: this.webWorkerFile,
+                        withFee: true,
+                        feeAmount: arbitraryFeeData.fee
+                    })
+                    this.isUploadingAttachment = false
+                    this.removeAttachment()
+                } catch (error) {
+                    this.isLoading = false
+                    this.isUploadingAttachment = false
+                    return
+                }
+                const messageObject = {
+                    messageText: trimmedMessage,
+                    attachments: [{
+                        service: 'QCHAT_ATTACHMENT',
+                        name: userName,
+                        identifier: identifier,
+                        attachmentName: attachment.name,
+                        attachmentSize: attachment.size
+                    }],
+                    isAttachmentDeleted: false,
+                    repliedTo: '',
+                    version: 3
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage)
+            } else if (outSideMsg && outSideMsg.type === 'reaction') {
+                const userName = await getName(this.selectedAddress.address)
+                typeMessage = 'edit'
+                let chatReference = outSideMsg.editedMessageObj.signature
+    
+                if (outSideMsg.editedMessageObj.chatReference) {
+                    chatReference = outSideMsg.editedMessageObj.chatReference
+                }
+    
+                let message = ""
+    
+                try {
+                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+                    message = parsedMessageObj
+                } catch (error) {
+                    message = outSideMsg.editedMessageObj.decodedMessage
+                }
+    
+                let reactions = message.reactions || []
+                const findEmojiIndex = reactions.findIndex((reaction) => reaction.type === outSideMsg.reaction)
+                if (findEmojiIndex !== -1) {
+                    let users = reactions[findEmojiIndex].users || []
+                    const findUserIndex = users.findIndex((user) => user.address === this.selectedAddress.address)
+                    if (findUserIndex !== -1) {
+                        users.splice(findUserIndex, 1)
+                    } else {
+                        users.push({
+                            address: this.selectedAddress.address,
+                            name: userName
+                        })
+                    }
+                    reactions[findEmojiIndex] = {
+                        ...reactions[findEmojiIndex],
+                        qty: users.length,
+                        users
+                    }
+                    if (users.length === 0) {
+                        reactions.splice(findEmojiIndex, 1)
+                    }
+                } else {
+                    reactions = [...reactions, {
+                        type: outSideMsg.reaction,
+                        qty: 1,
+                        users: [{
+                            address: this.selectedAddress.address,
+                            name: userName
+                        }]
+                    }]
+                }
+                const messageObject = {
+                    ...message,
+                    reactions
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+            } else if (/^\s*$/.test(trimmedMessage)) {
+                this.isLoading = false
+            } else if (this.repliedToMessageObj) {
+                let chatReference = this.repliedToMessageObj.signature
+                if (this.repliedToMessageObj.chatReference) {
+                    chatReference = this.repliedToMessageObj.chatReference
+                }
+                typeMessage = 'reply'
+                const messageObject = {
+                    messageText: trimmedMessage,
+                    images: [''],
+                    repliedTo: chatReference,
+                    version: 3
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage)
+            } else if (this.editedMessageObj) {
+                typeMessage = 'edit'
+                let chatReference = this.editedMessageObj.signature
+    
+                if (this.editedMessageObj.chatReference) {
+                    chatReference = this.editedMessageObj.chatReference
+                }
+    
+                let message = ""
+                try {
+                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
+                    message = parsedMessageObj
+    
+                } catch (error) {
+                    message = this.editedMessageObj.decodedMessage
+                }
+                const messageObject = {
+                    ...message,
+                    messageText: trimmedMessage,
+                    isEdited: true
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+            } else {
+                const messageObject = {
+                    messageText: trimmedMessage,
+                    images: [''],
+                    repliedTo: '',
+                    version: 3
+                }
+                const stringifyMessageObject = JSON.stringify(messageObject)
+    
+                if (this.balance < 4) {
+                    this.myTrimmedMeassage = ''
+                    this.myTrimmedMeassage = stringifyMessageObject
+                    this.shadowRoot.getElementById('confirmDialog').open()
+                } else {
+                    this.sendMessage(stringifyMessageObject, typeMessage)
+                }
             }
+        } catch (error) {
+            this.isLoading = false
+            this.isUploadingImage = false
+            return
         }
+    
     }
 
     async sendMessage(messageText, typeMessage, chatReference, isForward) {

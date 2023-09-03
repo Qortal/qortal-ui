@@ -75,6 +75,7 @@ class MultiWallet extends LitElement {
             isValidAmount: { type: Boolean },
             balance: { type: Number },
             balanceString: { type: String },
+            qortPaymentFee: { type: Number },
             btcFeePerByte: { type: Number },
             ltcFeePerByte: { type: Number },
             dogeFeePerByte: { type: Number },
@@ -795,6 +796,7 @@ class MultiWallet extends LitElement {
         this.dgbAmount = 0
         this.rvnAmount = 0
         this.arrrAmount = 0
+        this.qortPaymentFee = 0.001
         this.btcFeePerByte = 100
         this.btcSatMinFee = 20
         this.btcSatMaxFee = 150
@@ -1352,7 +1354,7 @@ class MultiWallet extends LitElement {
                             </mwc-textfield>
                         </p>
                         <div style="margin-bottom: 10px;">
-                            <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">0.001 QORT<span></p>
+                            <p style="margin-bottom: 0;">${translate("walletpage.wchange21")} <span style="font-weight: bold;">${this.qortPaymentFee} QORT<span></p>
                         </div>
                         ${this.renderClearSuccess()}
                         ${this.renderClearError()}
@@ -2821,6 +2823,7 @@ class MultiWallet extends LitElement {
     firstUpdated() {
         this.changeTheme()
         this.changeLanguage()
+        this.paymentFee()
 
         this.bookQortalAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.bookBitcoinAddress = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
@@ -2906,6 +2909,23 @@ class MultiWallet extends LitElement {
         setInterval(() => {
             this.clearConsole()
         }, 60000)
+        setInterval(() => {
+            this.paymentFee()
+        }, 600000)
+    }
+
+    async paymentFee() {
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
+        await fetch(url).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+            return Promise.reject(response)
+        }).then((json) => {
+            this.qortPaymentFee = (Number(json) / 1e8).toFixed(8)
+        })
     }
 
     clearConsole() {
@@ -4048,11 +4068,11 @@ class MultiWallet extends LitElement {
     calculateQortAll() {
         this.amount = 0
         this.shadowRoot.getElementById('amountInput').value = this.amount
-        if (this.balance < 0.00110000) {
+        if (this.balance < 0.01100000) {
             let not_enough_string = get("walletpage.wchange26")
             parentEpml.request('showSnackBar', `${not_enough_string}`)
         } else {
-            this.amount = (this.balance - 0.00110000).toFixed(8)
+            this.amount = (this.balance - 0.01100000).toFixed(8)
             this.shadowRoot.getElementById('amountInput').value = this.amount
             this.shadowRoot.getElementById('amountInput').blur()
             this.shadowRoot.getElementById('amountInput').focus()
@@ -4238,7 +4258,7 @@ class MultiWallet extends LitElement {
         } else {
             const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
             const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-            const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+            const myFunds = this.round(parseFloat(this.balance - 0.01100000))
             if (Number(myFunds) >= Number(checkQortAmount)) {
                 this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
                 this.btnDisable = false
@@ -4269,7 +4289,7 @@ class MultiWallet extends LitElement {
                     } else {
                         const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
                         const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-                        const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+                        const myFunds = this.round(parseFloat(this.balance - 0.01100000))
                         if (Number(myFunds) >= Number(checkQortAmount)) {
                             this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
                             this.btnDisable = false
@@ -4287,7 +4307,7 @@ class MultiWallet extends LitElement {
             } else {
                 const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
                 const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-                const myFunds = this.round(parseFloat(this.balance - 0.00110000))
+                const myFunds = this.round(parseFloat(this.balance - 0.01100000))
                 if (Number(myFunds) >= Number(checkQortAmount)) {
                     this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
                     this.btnDisable = false
@@ -4302,6 +4322,7 @@ class MultiWallet extends LitElement {
     }
 
     async sendQort() {
+        const sendFee = this.qortPaymentFee
         const amount = this.shadowRoot.getElementById('amountInput').value
         let recipient = this.shadowRoot.getElementById('recipient').value
 
@@ -4390,11 +4411,10 @@ class MultiWallet extends LitElement {
 
         const getName = async (recipient)=> {
             try {
-
                 const getNames = await parentEpml.request("apiCall", {
-					type: "api",
-					url: `/names/address/${recipient}`,
-				})
+                    type: "api",
+                    url: `/names/address/${recipient}`,
+                })
                 if(getNames?.length > 0 ){
                     return getNames[0].name
                 } else {
@@ -4421,7 +4441,7 @@ class MultiWallet extends LitElement {
                     recipientName: recipientName,
                     amount: amount,
                     lastReference: mylastRef,
-                    fee: 0.001,
+                    fee: sendFee,
                     dialogamount: dialogamount,
                     dialogto: dialogto,
                     dialogAddress,

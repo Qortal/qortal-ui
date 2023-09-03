@@ -1,6 +1,7 @@
 'use strict'
 import TransactionBase from './TransactionBase.js'
 import { store } from '../../api.js'
+import { QORT_DECIMALS } from '../constants.js'
 
 export default class DeployAtTransaction extends TransactionBase {
 	constructor() {
@@ -8,17 +9,22 @@ export default class DeployAtTransaction extends TransactionBase {
 		this.type = 16
 	}
 
+
 	render(html) {
 		return html`
-			${this._groupdialog5}
+			${this._atDeployDialog1}:
 			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-				<div>${this._atDeployDialog1}: <span style="color: #000;">${this._rName}</span></div>
-				<br>
-				<div>${this.atDeployDialog2}: <span style="color: #000;">${this._rDescription}</span></div>
-				<br>
-				</div>
+				<span style="color: #000;">${this._rName}</span>
 			</div>
-			${this._groupdialog6}
+			${this._atDeployDialog4}:
+			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+				<span style="color: #000;">${this._feeToShow}</span>
+			</div>
+			${this._atDeployDialog3}:
+			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+				<span style="color: #000;">${this._amountToShow}</span>
+			</div>
+			${this._atDeployDialog2}
 		`
 	}
 
@@ -28,12 +34,20 @@ export default class DeployAtTransaction extends TransactionBase {
 	set atDeployDialog2(atDeployDialog2) {
 		this._atDeployDialog2 = atDeployDialog2
 	}
+	set atDeployDialog3(atDeployDialog3) {
+		this._atDeployDialog3 = atDeployDialog3
+	}
+	set atDeployDialog4(atDeployDialog4) {
+		this._atDeployDialog4 = atDeployDialog4
+	}
 
 	set fee(fee) {
-		this._fee = fee
+		this._feeToShow = fee
+		this._fee = fee * QORT_DECIMALS
 		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
 	}
 	set rAmount(rAmount) {
+		this._amountToShow = rAmount
 		this._rAmount = Math.round(rAmount * store.getState().config.coin.decimals)
 		this._rAmountBytes = this.constructor.utils.int64ToBytes(this._rAmount)
 	}

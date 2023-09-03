@@ -14,6 +14,7 @@ import '@material/mwc-select'
 import '@material/mwc-dialog'
 import '@material/mwc-list/mwc-list-item.js'
 import '@polymer/paper-progress/paper-progress.js'
+import { modalHelper } from '../../../utils/publish-modal'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -299,8 +300,10 @@ class PublishData extends LitElement {
                     <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.doPublish(e, true, false)}> ${translate("appspage.schange40")}</mwc-button>
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${() => this.shadowRoot.querySelector('#publishWithFeeDialog').show()}> ${translate("publishpage.pchange11")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.shadowRoot.querySelector('#publishWithFeeDialog').close()}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => {
+                                this.doPublish(e, false, true)
+                            }}> ${translate("publishpage.pchange11")}</mwc-button>
                     </div>
                 </div>
             </div>
@@ -310,7 +313,7 @@ class PublishData extends LitElement {
                  <mwc-button slot="primaryAction" @click="${(e) => this.feeDialogNo(e, false, false)}" class="red">
                      ${translate("general.no")}
                  </mwc-button>
-                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green">
+                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green"> 
                      ${translate("general.yes")}
                  </mwc-button>
             </mwc-dialog>
@@ -418,7 +421,7 @@ class PublishData extends LitElement {
         this.shadowRoot.querySelector('#publishWithFeeDialog').close()
     }
 
-    doPublish(e, preview, fee) {
+    async doPublish(e, preview, fee) {
         let registeredName = this.shadowRoot.getElementById('registeredName').value
         let service = this.shadowRoot.getElementById('service').value
         let identifier = this.shadowRoot.getElementById('identifier').value
@@ -464,7 +467,22 @@ class PublishData extends LitElement {
             parentEpml.request('showSnackBar', `${err5string}`)
         }
         else {
-            this.publishData(registeredName, path, file, service, identifier, preview, fee)
+            try {
+                if(!preview){
+                    const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                    const res = await modalHelper.showModalAndWaitPublish(
+                        {
+                            feeAmount: arbitraryFeeData.feeToShow
+                        }
+                    );
+                    if (res.action !== 'accept') throw new Error('User declined publish')
+                }
+               
+                this.publishData(registeredName, path, file, service, identifier, preview, fee)
+            } catch (error) {
+                this.shadowRoot.querySelector('#publishWithFeeDialog').close()
+            }
+         
         }
     }
 
@@ -488,6 +506,17 @@ class PublishData extends LitElement {
             this.successMessage = ''
             console.error(errorMessage)
         }
+        const getArbitraryFee = async () => {
+            const timestamp = Date.now()
+            let fee = await parentEpml.request('apiCall', {
+                url: `/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+            })
+            return {
+                timestamp,
+                fee : Number(fee),
+			feeToShow: (Number(fee) / 1e8).toFixed(8)
+            }
+        }
 
         const validate = async () => {
             let validNameRes = await validateName(registeredName)
@@ -501,8 +530,17 @@ class PublishData extends LitElement {
             this.generalMessage = `${err6string}`
             let transactionBytes
             let previewUrlPath
+            let feeAmount = null
 
-            let uploadDataRes = await uploadData(registeredName, path, file, preview, fee)
+            if(fee){
+                const res = await getArbitraryFee()
+                if(res.fee){
+                    feeAmount= res.fee
+                } else {
+                    throw new Error('unable to get fee')
+                }
+            }
+            let uploadDataRes = await uploadData(registeredName, path, file, preview, fee, feeAmount)
 
             if (uploadDataRes.error) {
                 let err7string = get("publishpage.pchange20")
@@ -531,12 +569,13 @@ class PublishData extends LitElement {
             if (fee) {
                 let err9string = get("publishpage.pchange26")
                 this.generalMessage = `${err9string}`
+              
             } else {
                 let err9string = get("publishpage.pchange22")
                 this.generalMessage = `${err9string}`
             }
 
-            let signAndProcessRes = await signAndProcess(transactionBytes, fee)
+            let signAndProcessRes = await signAndProcess(transactionBytes, fee, feeAmount)
 
             if (signAndProcessRes.error) {
                 let err10string = get("publishpage.pchange20")
@@ -554,7 +593,9 @@ class PublishData extends LitElement {
             this.successMessage = `${err11string}`
         }
 
-        const uploadData = async (registeredName, path, file, preview, fee) => {
+
+
+        const uploadData = async (registeredName, path, file, preview, fee, feeAmount) => {
             let postBody = path
             let urlSuffix = ""
             if (file != null) {
@@ -592,9 +633,9 @@ class PublishData extends LitElement {
                     uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}&preview=${new Boolean(preview).toString()}`
                 }
             } else if (fee) {
-                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&fee=${feeAmount}&apiKey=${this.getApiKey()}`
                 if (identifier != null && identifier.trim().length > 0) {
-                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&fee=100000&apiKey=${this.getApiKey()}`
+                    uploadDataUrl = `/arbitrary/${service}/${registeredName}/${this.identifier}${urlSuffix}?${metadataQueryString}&fee=${feeAmount}&apiKey=${this.getApiKey()}`
                 }
             } else {
                 uploadDataUrl = `/arbitrary/${this.service}/${registeredName}${urlSuffix}?${metadataQueryString}&apiKey=${this.getApiKey()}`

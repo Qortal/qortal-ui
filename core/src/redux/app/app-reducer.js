@@ -1,6 +1,6 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
 import { loadStateFromLocalStorage, saveStateToLocalStorage } from '../../localStorageHelpers.js'
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS, SET_NEW_TAB, ADD_TAB_INFO, SET_TAB_NOTIFICATIONS } from './app-action-types.js'
+import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS, SET_NEW_TAB, ADD_TAB_INFO, SET_TAB_NOTIFICATIONS, IS_OPEN_DEV_DIALOG } from './app-action-types.js'
 import { initWorkersReducer } from './reducers/init-workers.js'
 import { loginReducer } from './reducers/login-reducer.js'
 import { setNode, addNode } from './reducers/manage-node.js'
@@ -49,7 +49,8 @@ const INITIAL_STATE = {
     qAPPAutoLists: loadStateFromLocalStorage('qAPPAutoLists') || false,
     chatLastSeen: [],
     newTab: null,
-    tabInfo: {}
+    tabInfo: {},
+    isOpenDevDialog: false
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -229,6 +230,12 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 newTab: action.payload
+            }
+        }
+        case IS_OPEN_DEV_DIALOG: {
+            return {
+                ...state,
+                isOpenDevDialog: action.payload
             }
         }
         case ADD_TAB_INFO: {

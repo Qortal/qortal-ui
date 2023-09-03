@@ -717,7 +717,8 @@
 		"bchange43": "Engedélyt ad ennek az alkalmazásnak, hogy felvegye ezt a listát?",
 		"bchange44": "Engedélyezi ennek az alkalmazásnak, hogy töröljön erről a listáról?",
 		"bchange45": "Titkosítás",
-		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését"
+		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését",
+		"bchange47": "Azonnali közzététel – szükséges"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",
