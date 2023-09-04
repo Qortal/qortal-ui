@@ -172,6 +172,7 @@ class ChatScroller extends LitElement {
             theme: { type: String, reflect: true },
             getNewMessage: { attribute: false },
             getOldMessage: { attribute: false },
+            getAfterMessages: {attribute: false},
             escapeHTML: { attribute: false },
             messages: { type: Array },
             hideMessages: { type: Array },
@@ -304,6 +305,8 @@ class ChatScroller extends LitElement {
             )
         })}
                 <div style=${"height: 1px;"} id='downObserver'></div>
+                <!-- <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div> -->
+
             </ul>
         `
     }
@@ -399,6 +402,9 @@ class ChatScroller extends LitElement {
     _getOldMessage(_scrollElement) {
         this.getOldMessage(_scrollElement)
     }
+    _getAfterMessages(_scrollElement) {
+        this.getAfterMessages(_scrollElement)
+    }
 
     _getOldMessageAfter(_scrollElement) {
         this.getOldMessageAfter(_scrollElement)
@@ -417,11 +423,11 @@ class ChatScroller extends LitElement {
 
     _downObserverHandler(entries) {
         if (!entries[0].isIntersecting) {
-            let _scrollElement = entries[0].target.previousElementSibling
-            // this._getOldMessageAfter(_scrollElement)
             this.showLastMessageRefScroller(true)
         } else {
+            let _scrollElement = entries[0].target.previousElementSibling
             this.showLastMessageRefScroller(false)
+            this._getAfterMessages(_scrollElement)
         }
     }
 
@@ -437,9 +443,7 @@ class ChatScroller extends LitElement {
 
     downElementObserver() {
         const options = {
-            root: this.viewElement,
-            rootMargin: '0px',
-            threshold: 1
+            
         }
         // identify an element to observe
         const elementToObserve = this.downObserverElement

@@ -1354,6 +1354,7 @@ class ChatPage extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.updateMessageHash = {}
         this.addToUpdateMessageHashmap = this.addToUpdateMessageHashmap.bind(this)
+        this.getAfterMessages = this.getAfterMessages.bind(this)
     }
 
     setOpenGifModal(value) {
@@ -2488,6 +2489,7 @@ class ChatPage extends LitElement {
                 .messages=${this.messagesRendered} 
                 .escapeHTML=${escape} 
                 .getOldMessage=${this.getOldMessage}
+                .getAfterMessages=${this.getAfterMessages}
                 .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
                 .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
                 .sendMessage=${(val) => this._sendMessage(val)}
@@ -2630,8 +2632,8 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+            const lengthOfExistingMsgs = this.messagesRendered
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0, 80)].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2665,7 +2667,79 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
+            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0,80)].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete()
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
+            const findElement = marginElements.find((item) => item.messageObj.signature === scrollElement.messageObj.signature)
+
+            if (findElement) {
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' })
+            }
+        }
+    }
+    async getAfterMessages(scrollElement) {
+        const firstMsg = this.messagesRendered.at(-1)
+        const timestamp = scrollElement.messageObj.timestamp
+        
+        if (this.isReceipient) {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
+            })
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+            this.messagesRendered = [ ...this.messagesRendered.slice(-80), ...decodeMsgs].sort(function (a, b) {
+                return a.timestamp
+                    - b.timestamp
+            })
+
+            this.isLoadingOldMessages = false
+            await this.getUpdateComplete()
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
+
+            const findElement = marginElements.find((item) => item.messageObj.signature === scrollElement.messageObj.signature)
+
+            if (findElement) {
+                findElement.scrollIntoView({ behavior: 'auto', block: 'center' })
+            }
+        } else {
+            const getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
+            })
+
+            const decodeMsgs = getInitialMessages.map((eachMessage) => {
+                return this.decodeMessage(eachMessage)
+            })
+
+            
+            queue.push(() =>  replaceMessagesEdited({
+                decodedMessages: decodeMsgs,
+                parentEpml,
+                isReceipient: this.isReceipient,
+                decodeMessageFunc: this.decodeMessage,
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+
+            this.messagesRendered = [...this.messagesRendered.slice(-80), ...decodeMsgs].sort(function (a, b) {
                 return a.timestamp
                     - b.timestamp
             })
@@ -2682,7 +2756,6 @@ class ChatPage extends LitElement {
     }
 
     async addToUpdateMessageHashmap(array){
-        console.log({array})
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
         const originalScrollTop = viewElement.scrollTop;
 const originalScrollHeight = viewElement.scrollHeight;
