@@ -211,6 +211,7 @@ class ChatScroller extends LitElement {
         this.messages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
+        this.__bottomObserverForFetchingMessagesHandler = this.__bottomObserverForFetchingMessagesHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
         this.openTipUser = false
@@ -304,8 +305,9 @@ class ChatScroller extends LitElement {
                             </message-template>`
             )
         })}
+                        <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
+
                 <div style=${"height: 1px;"} id='downObserver'></div>
-                <!-- <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div> -->
 
             </ul>
         `
@@ -369,9 +371,11 @@ class ChatScroller extends LitElement {
         this.viewElement = this.shadowRoot.getElementById('viewElement')
         this.upObserverElement = this.shadowRoot.getElementById('upObserver')
         this.downObserverElement = this.shadowRoot.getElementById('downObserver')
+        this.bottomObserverForFetchingMessages = this.shadowRoot.getElementById('bottomObserverForFetchingMessages')
         // Intialize Observers
         this.upElementObserver()
         this.downElementObserver()
+        this.bottomObserver()
         await this.getUpdateComplete()
         this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
 
@@ -425,8 +429,14 @@ class ChatScroller extends LitElement {
         if (!entries[0].isIntersecting) {
             this.showLastMessageRefScroller(true)
         } else {
-            let _scrollElement = entries[0].target.previousElementSibling
             this.showLastMessageRefScroller(false)
+        }
+    }
+
+    __bottomObserverForFetchingMessagesHandler(entries){
+        if (!entries[0].isIntersecting) {
+        } else {
+            let _scrollElement = entries[0].target.previousElementSibling
             this._getAfterMessages(_scrollElement)
         }
     }
@@ -449,6 +459,18 @@ class ChatScroller extends LitElement {
         const elementToObserve = this.downObserverElement
         // passing it a callback function
         const observer = new IntersectionObserver(this._downObserverHandler, options)
+        // call `observe()` on that MutationObserver instance,
+        // passing it the element to observe, and the options object
+        observer.observe(elementToObserve)
+    }
+    bottomObserver() {
+        const options = {
+            
+        }
+        // identify an element to observe
+        const elementToObserve = this.bottomObserverForFetchingMessages
+        // passing it a callback function
+        const observer = new IntersectionObserver(this.__bottomObserverForFetchingMessagesHandler, options)
         // call `observe()` on that MutationObserver instance,
         // passing it the element to observe, and the options object
         observer.observe(elementToObserve)
