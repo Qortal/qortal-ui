@@ -2736,7 +2736,7 @@ class ChatPage extends LitElement {
                  
                 }
               })
-           )
+           
               this.messagesRendered  = list
 
             this.isLoadingOldMessages = false
@@ -2796,7 +2796,7 @@ class ChatPage extends LitElement {
                  
                 }
               })
-           )
+           
               this.messagesRendered  = list
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
