@@ -2578,9 +2578,21 @@ class ChatPage extends LitElement {
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             
             queue.push(() =>  replaceMessagesEdited({
@@ -2592,10 +2604,24 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+          
+            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2610,9 +2636,21 @@ class ChatPage extends LitElement {
                 url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
@@ -2624,10 +2662,24 @@ class ChatPage extends LitElement {
             }));
            
 
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+       
+            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2645,11 +2697,21 @@ class ChatPage extends LitElement {
                 type: 'api',
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
-
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
-
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
             
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
@@ -2659,11 +2721,23 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-            const lengthOfExistingMsgs = this.messagesRendered
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0, 80)].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+          
+            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           )
+              this.messagesRendered  = list
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2684,7 +2758,6 @@ class ChatPage extends LitElement {
 
            
                 await new Promise((res, rej) => {
-                    console.log('this.webWorkerDecodeMessages2.', this.webWorkerDecodeMessages)
                     this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
                 
                     this.webWorkerDecodeMessages.onmessage = e => {
@@ -2723,7 +2796,7 @@ class ChatPage extends LitElement {
                  
                 }
               })
-              console.log({list})
+           )
               this.messagesRendered  = list
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2746,9 +2819,21 @@ class ChatPage extends LitElement {
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             
             queue.push(() =>  replaceMessagesEdited({
@@ -2759,10 +2844,23 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-            this.messagesRendered = [ ...this.messagesRendered.slice(-80), ...decodeMsgs].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+            
+            let list = [...this.messagesRendered.slice(-80), ...decodeMsgs]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2778,10 +2876,21 @@ class ChatPage extends LitElement {
                 type: 'api',
                 url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
-
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             
             queue.push(() =>  replaceMessagesEdited({
@@ -2793,10 +2902,25 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            this.messagesRendered = [...this.messagesRendered.slice(-80), ...decodeMsgs].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+           
+
+            let list = [...this.messagesRendered.slice(-80), ...decodeMsgs]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2839,9 +2963,21 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&afer=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             
             queue.push(() =>  replaceMessagesEdited({
@@ -2853,10 +2989,24 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+
+            let list = [...this.messagesRendered.slice(-80), ...decodeMsgs]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2873,9 +3023,21 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = e => {
+                    console.log('e',e)
+                    rej()
+                 
+                }
+              })
 
             
             queue.push(() =>  replaceMessagesEdited({
@@ -2887,10 +3049,23 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            this.messagesRendered = [...this.messagesRendered, ...decodeMsgs].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+          
+            let list = [...this.messagesRendered.slice(-80), ...decodeMsgs]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2905,19 +3080,6 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
 
     async processMessages(messages, isInitial) {
         const isReceipient = this.chatId.includes('direct')
-        // const decodedMessages = messages.map((eachMessage) => {
-
-        //     if (eachMessage.isText === true) {
-        //         this.messageSignature = eachMessage.signature
-        //         let _eachMessage = this.decodeMessage(eachMessage)
-        //         return _eachMessage
-        //     } else {
-        //         this.messageSignature = eachMessage.signature
-        //         let _eachMessage = this.decodeMessage(eachMessage)
-        //         return _eachMessage
-        //     }
-        // })
-
         let decodedMessages = []
         console.log({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey})
            
@@ -2954,10 +3116,24 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
             }
             
 
-            this._messages = decodedMessages.sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+        
+
+            let list = decodedMessages
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
 
             // TODO: Determine number of initial messages by screen height...
             // this.messagesRendered = this._messages
@@ -2991,11 +3167,24 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 }))
 
             }
-            // this.newMessages = this.newMessages.concat(_newMessages)
-            this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+            
+
+            let list = [...this.messagesRendered]
+           
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered  = list
         }
     }
 
