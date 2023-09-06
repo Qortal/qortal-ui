@@ -2465,6 +2465,7 @@ class Base58 {
   }
 
   decode(string) {
+    console.log({string})
       if (string.length === 0) {
           return new Uint8Array(0);
       }
@@ -2644,6 +2645,16 @@ class Curve25519 {
     this.pack25519(d, b);
     return this.crypto_verify_32(c, 0, d, 0);
   }
+  par25519(a) {
+    var d = new Uint8Array(32);
+    this.pack25519(d, a);
+    return d[0] & 1;
+  }
+  unpack25519(o, n) {
+    var i;
+    for (i = 0; i < 16; i++) o[i] = n[2*i] + (n[2*i+1] << 8);
+    o[15] &= 0x7fff;
+  }
 
   crypto_verify_32(x, xi, y, yi) {
     return this.vn(x, xi, y, yi, 32);
@@ -2757,6 +2768,12 @@ export const decryptChatMessageBase64 = (
 	recipientPublicKey,
 	lastReference
 ) => {
+    console.log('1', {
+      encryptedMessage,
+	privateKey,
+	recipientPublicKey,
+	lastReference
+    })
 	let _encryptedMessage = atob(encryptedMessage);
 	const binaryLength = _encryptedMessage.length;
 	const bytes = new Uint8Array(binaryLength);
@@ -2765,12 +2782,21 @@ export const decryptChatMessageBase64 = (
 		bytes[i] = _encryptedMessage.charCodeAt(i);
 	}
 
-	const _base58RecipientPublicKey =
-		recipientPublicKey instanceof Uint8Array
-			? base58Instant.encode(recipientPublicKey)
-			: recipientPublicKey;
-	const _recipientPublicKey = base58Instant.decode(_base58RecipientPublicKey);
+  let _base58RecipientPublic = recipientPublicKey
 
+  try {
+    _base58RecipientPublic =  recipientPublicKey.key
+  } catch (error) {
+    _base58RecipientPublic = recipientPublicKey
+  }
+
+	const _base58RecipientPublicKey =
+		_base58RecipientPublic instanceof Uint8Array
+			? base58Instant.encode(_base58RecipientPublic)
+			: _base58RecipientPublic;
+      console.log({_base58RecipientPublicKey})
+	const _recipientPublicKey = base58Instant.decode(_base58RecipientPublicKey);
+  console.log({_recipientPublicKey})
 	const _lastReference =
 		lastReference instanceof Uint8Array
 			? lastReference
@@ -2825,6 +2851,7 @@ const decodeMessage = (
 			_publicKeyVar.hasPubKey === true &&
 			encodedMessageObj.data
 		) {
+      console.log('hello encrypt')
 			let decodedMessage = decryptChatMessageBase64(
 				encodedMessageObj.data,
 				privateKey,

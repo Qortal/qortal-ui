@@ -2682,7 +2682,7 @@ class ChatPage extends LitElement {
 
             let decodeMsgs = []
 
-            try {
+           
                 await new Promise((res, rej) => {
                     console.log('this.webWorkerDecodeMessages2.', this.webWorkerDecodeMessages)
                     this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
@@ -2699,10 +2699,7 @@ class ChatPage extends LitElement {
                     }
                   })
     
-            } catch (error) {
-                console.log({error})
-            }
-          
+                console.log({decodeMsgs})
             
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
@@ -2713,10 +2710,7 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
             let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
-            // this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0,80)].sort(function (a, b) {
-            //     return a.timestamp
-            //         - b.timestamp
-            // })
+           
             await new Promise((res, rej) => {
        
                 this.webWorkerSortMessages.postMessage({list});
@@ -2911,18 +2905,37 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
 
     async processMessages(messages, isInitial) {
         const isReceipient = this.chatId.includes('direct')
-        const decodedMessages = messages.map((eachMessage) => {
+        // const decodedMessages = messages.map((eachMessage) => {
 
-            if (eachMessage.isText === true) {
-                this.messageSignature = eachMessage.signature
-                let _eachMessage = this.decodeMessage(eachMessage)
-                return _eachMessage
-            } else {
-                this.messageSignature = eachMessage.signature
-                let _eachMessage = this.decodeMessage(eachMessage)
-                return _eachMessage
+        //     if (eachMessage.isText === true) {
+        //         this.messageSignature = eachMessage.signature
+        //         let _eachMessage = this.decodeMessage(eachMessage)
+        //         return _eachMessage
+        //     } else {
+        //         this.messageSignature = eachMessage.signature
+        //         let _eachMessage = this.decodeMessage(eachMessage)
+        //         return _eachMessage
+        //     }
+        // })
+
+        let decodedMessages = []
+        console.log({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey})
+           
+        await new Promise((res, rej) => {
+            this.webWorkerDecodeMessages.postMessage({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+        
+            this.webWorkerDecodeMessages.onmessage = e => {
+                decodedMessages = e.data
+                res()
+             
             }
-        })
+            this.webWorkerDecodeMessages.onerror = e => {
+                console.log('e',e)
+                rej()
+             
+            }
+          })
+          console.log('process', decodedMessages)
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
           
