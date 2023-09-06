@@ -1291,7 +1291,7 @@ class ChatPage extends LitElement {
         this.setUserName = this.setUserName.bind(this)
         this.setSelectedHead = this.setSelectedHead.bind(this)
         this.setGifsLoading = this.setGifsLoading.bind(this)
-        this.selectedAddress = {}
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.userName = ""
         this.chatId = ''
         this.myAddress = ''
@@ -1406,7 +1406,6 @@ class ChatPage extends LitElement {
     }
 
     render() {
-        console.log('chatpage')
         return html`
             <div class="main-container">
             <div 
@@ -1898,9 +1897,6 @@ class ChatPage extends LitElement {
         this.webWorkerSortMessages = new WebWorkerSortMessages()
         this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
         await this.getUpdateCompleteTextEditor()
-
-        const chatscrollerEl = this.shadowRoot.querySelector('_chatEditorDOM')
-        if(!chatscrollerEl) return
 
         const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
         const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
@@ -2772,7 +2768,6 @@ class ChatPage extends LitElement {
                     }
                   })
     
-                console.log({decodeMsgs})
             
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
@@ -2811,7 +2806,6 @@ class ChatPage extends LitElement {
     async getAfterMessages(scrollElement) {
         const firstMsg = this.messagesRendered.at(-1)
         const timestamp = scrollElement.messageObj.timestamp
-        console.log('getAfterMessages')
         
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -2934,7 +2928,6 @@ class ChatPage extends LitElement {
     }
 
     async addToUpdateMessageHashmap(array){
-        console.log({array})
         const chatscrollerEl = this.shadowRoot.querySelector('chat-scroller')
         if(!chatscrollerEl) return
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
@@ -3081,8 +3074,12 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
     async processMessages(messages, isInitial) {
         const isReceipient = this.chatId.includes('direct')
         let decodedMessages = []
-        console.log({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey})
-           
+           if(!this.webWorkerDecodeMessages){
+            this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
+           }
+           if(!this.webWorkerSortMessages){
+            this.webWorkerSortMessages = new WebWorkerSortMessages()
+           }
         await new Promise((res, rej) => {
             this.webWorkerDecodeMessages.postMessage({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
         
@@ -3097,7 +3094,6 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
              
             }
           })
-          console.log('process', decodedMessages)
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
           
@@ -3278,7 +3274,6 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
             isReceipientVar = isReceipient
             _publicKeyVar = _publicKey
         }
-        console.log({_publicKeyVar})
 
         let decodedMessageObj = {}
 
@@ -4066,7 +4061,6 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
 
     async sendMessage(messageText, typeMessage, chatReference, isForward) {
         this.isLoading = true
-
         let _reference = new Uint8Array(64)
         window.crypto.getRandomValues(_reference)
         let reference = window.parent.Base58.encode(_reference)
