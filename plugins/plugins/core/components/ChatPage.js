@@ -3133,7 +3133,7 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
                 }
               })
            
-              this.messagesRendered  = list
+              this._messages  = list
 
             // TODO: Determine number of initial messages by screen height...
             // this.messagesRendered = this._messages
