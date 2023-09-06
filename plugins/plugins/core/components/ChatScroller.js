@@ -631,6 +631,7 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
+        
         const hidemsg = this.hideMessages
         let message = ""
         let messageVersion2 = ""

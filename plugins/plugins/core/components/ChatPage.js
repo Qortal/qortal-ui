@@ -20,6 +20,9 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import WebWorker from 'web-worker:./computePowWorker.js'
 import WebWorkerFile from 'web-worker:./computePowWorkerFile.js'
+import WebWorkerSortMessages from 'web-worker:./webworkerSortMessages.js'
+import WebWorkerDecodeMessages from 'web-worker:./webworkerDecodeMessages.js'
+
 import ShortUniqueId from 'short-unique-id'
 import Compressor from 'compressorjs'
 
@@ -1340,6 +1343,8 @@ class ChatPage extends LitElement {
         }
         this.webWorker = null
         this.webWorkerFile = null
+        this.webWorkerSortMessages = null
+        this.webWorkerDecodeMessages = null
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.setOpenGifModal = this.setOpenGifModal.bind(this)
@@ -1401,6 +1406,7 @@ class ChatPage extends LitElement {
     }
 
     render() {
+        console.log('chatpage')
         return html`
             <div class="main-container">
             <div 
@@ -1889,7 +1895,12 @@ class ChatPage extends LitElement {
         await this.initUpdate()
         this.webWorker = new WebWorker()
         this.webWorkerFile = new WebWorkerFile()
+        this.webWorkerSortMessages = new WebWorkerSortMessages()
+        this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
         await this.getUpdateCompleteTextEditor()
+
+        const chatscrollerEl = this.shadowRoot.querySelector('_chatEditorDOM')
+        if(!chatscrollerEl) return
 
         const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
         const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
@@ -2041,6 +2052,9 @@ class ChatPage extends LitElement {
         }
         if (this.webWorkerFile) {
             this.webWorkerFile.terminate()
+        }
+        if(this.webWorkerSortMessages){
+            this.webWorkerSortMessages.terminate()
         }
         if (this.editor) {
             this.editor.destroy()
@@ -2389,15 +2403,15 @@ class ChatPage extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
+        // parentEpml.ready().then(() => {
+        //     parentEpml.subscribe('selected_address', async selectedAddress => {
+        //         this.selectedAddress = {}
+        //         selectedAddress = JSON.parse(selectedAddress)
+        //         if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+        //         this.selectedAddress = selectedAddress
+        //     })
 
-        })
+        // })
         parentEpml.imReady()
 
         const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter')
@@ -2435,6 +2449,19 @@ class ChatPage extends LitElement {
                 this.editor.setEditable(true)
             }
         }
+    }
+
+
+    shouldUpdate(changedProperties) {
+        if (changedProperties.has('setActiveChatHeadUrl')) {
+            return false
+        }
+        if (changedProperties.has('setOpenPrivateMessage')) {
+            return false
+        }
+
+        return true
+        
     }
 
     async getName(recipient) {
@@ -2653,10 +2680,29 @@ class ChatPage extends LitElement {
                 url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
 
+            try {
+                await new Promise((res, rej) => {
+                    console.log('this.webWorkerDecodeMessages2.', this.webWorkerDecodeMessages)
+                    this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+                
+                    this.webWorkerDecodeMessages.onmessage = e => {
+                        decodeMsgs = e.data
+                        res()
+                     
+                    }
+                    this.webWorkerDecodeMessages.onerror = e => {
+                        console.log('e',e)
+                        rej()
+                     
+                    }
+                  })
+    
+            } catch (error) {
+                console.log({error})
+            }
+          
             
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
@@ -2666,12 +2712,25 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-
-            this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0,80)].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
-
+            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+            // this.messagesRendered = [...decodeMsgs, ...this.messagesRendered.slice(0,80)].sort(function (a, b) {
+            //     return a.timestamp
+            //         - b.timestamp
+            // })
+            await new Promise((res, rej) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+              console.log({list})
+              this.messagesRendered  = list
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
@@ -2685,6 +2744,7 @@ class ChatPage extends LitElement {
     async getAfterMessages(scrollElement) {
         const firstMsg = this.messagesRendered.at(-1)
         const timestamp = scrollElement.messageObj.timestamp
+        console.log('getAfterMessages')
         
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
@@ -2756,6 +2816,9 @@ class ChatPage extends LitElement {
     }
 
     async addToUpdateMessageHashmap(array){
+        console.log({array})
+        const chatscrollerEl = this.shadowRoot.querySelector('chat-scroller')
+        if(!chatscrollerEl) return
         const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
         const originalScrollTop = viewElement.scrollTop;
 const originalScrollHeight = viewElement.scrollHeight;
@@ -3013,6 +3076,7 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
             isReceipientVar = isReceipient
             _publicKeyVar = _publicKey
         }
+        console.log({_publicKeyVar})
 
         let decodedMessageObj = {}
 
@@ -4088,6 +4152,8 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
     }
 
     downElementObserver() {
+        const chatscrollerEl = this.shadowRoot.querySelector('chat-scroller')
+        if(!chatscrollerEl) return
         const downObserver = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('downObserver')
 
         const options = {

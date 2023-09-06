@@ -61,7 +61,7 @@ class Chat extends LitElement {
 
     constructor() {
         super()
-        this.selectedAddress = {}
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.config = {
             user: {
                 node: {
@@ -179,6 +179,7 @@ class Chat extends LitElement {
     }
 
     render() {
+        console.log('q-chat')
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -443,12 +444,7 @@ class Chat extends LitElement {
         let configLoaded = false
 
         parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
+          
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(getBlockedUsers, 1)
@@ -472,6 +468,11 @@ class Chat extends LitElement {
         setInterval(() => {
             this.clearConsole()
         }, 60000)
+    }
+
+    async updated(changedProperties) {
+        console.log({changedProperties})
+       
     }
 
     clearConsole() {
