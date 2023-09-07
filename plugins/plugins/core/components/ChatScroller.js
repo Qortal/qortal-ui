@@ -166,15 +166,53 @@ function processText(input) {
     return wrapper
 }
 
+const formatMessages = (messages) => {
+    const formattedMessages = messages.reduce((messageArray, message) => {
+        const currentMessage = message;
+        const lastGroupedMessage = messageArray[messageArray.length - 1];
+
+        currentMessage.firstMessageInChat = messageArray.length === 0;
+
+        let timestamp, sender, repliedToData;
+
+        if (lastGroupedMessage) {
+            timestamp = lastGroupedMessage.timestamp;
+            sender = lastGroupedMessage.sender;
+            repliedToData = lastGroupedMessage.repliedToData;
+        } else {
+            timestamp = currentMessage.timestamp;
+            sender = currentMessage.sender;
+            repliedToData = currentMessage.repliedToData;
+        }
+
+        const isSameGroup = Math.abs(timestamp - currentMessage.timestamp) < 600000 &&
+            sender === currentMessage.sender &&
+            !repliedToData;
+
+        if (isSameGroup && lastGroupedMessage) {
+            lastGroupedMessage.messages.push(currentMessage);
+        } else {
+            messageArray.push({
+                messages: [currentMessage],
+                ...currentMessage
+            });
+        }
+
+        return messageArray;
+    }, []);
+
+    return formattedMessages
+}
+
 class ChatScroller extends LitElement {
     static get properties() {
         return {
             theme: { type: String, reflect: true },
             getNewMessage: { attribute: false },
             getOldMessage: { attribute: false },
-            getAfterMessages: {attribute: false},
+            getAfterMessages: { attribute: false },
             escapeHTML: { attribute: false },
-            messages: { type: Array },
+            messages: { type: Object },
             hideMessages: { type: Array },
             setRepliedToMessageObj: { attribute: false },
             setEditedMessageObj: { attribute: false },
@@ -196,9 +234,10 @@ class ChatScroller extends LitElement {
             userName: { type: String },
             selectedHead: { type: Object },
             goToRepliedMessage: { attribute: false },
-            getOldMessageAfter: { attribute: false },
             listSeenMessages: { type: Array },
-            updateMessageHash: {type: Object}
+            updateMessageHash: { type: Object },
+            messagesToRender: { type: Array },
+            oldMessages: { type: Array }
         }
     }
 
@@ -208,7 +247,11 @@ class ChatScroller extends LitElement {
 
     constructor() {
         super()
-        this.messages = []
+        this.messages = {
+            messages: [],
+            type: ''
+        }
+        this.oldMessages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.__bottomObserverForFetchingMessagesHandler = this.__bottomObserverForFetchingMessagesHandler.bind(this)
@@ -218,52 +261,176 @@ class ChatScroller extends LitElement {
         this.openUserInfo = false
         this.listSeenMessages = []
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.messagesToRender = []
     }
 
     addSeenMessage(val) {
         this.listSeenMessages.push(val)
     }
 
-    render() {
-        let formattedMessages = this.messages.reduce((messageArray, message, index) => {
-            if(this.updateMessageHash[message.signature]){
-                
-                message = this.updateMessageHash[message.signature]
-            }
-            const lastGroupedMessage = messageArray[messageArray.length - 1]
-            let timestamp
-            let sender
-            let repliedToData
-            let firstMessageInChat
+    shouldGroupWithLastMessage(newMessage, lastGroupedMessage) {
+        if (!lastGroupedMessage) return false;
 
-            if (index === 0) {
-                firstMessageInChat = true
+        return Math.abs(lastGroupedMessage.timestamp - newMessage.timestamp) < 600000 &&
+            lastGroupedMessage.sender === newMessage.sender &&
+            !lastGroupedMessage.repliedToData;
+    }
+    addNewMessage(newMessage) {
+        const lastGroupedMessage = this.messagesToRender[this.messagesToRender.length - 1];
+
+        if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
+            lastGroupedMessage.messages.push(newMessage);
+        } else {
+            this.messagesToRender.push({
+                messages: [newMessage],
+                ...newMessage
+            });
+        }
+
+        this.requestUpdate();
+    }
+
+    async addNewMessages(newMessages, type) {
+        console.log('sup')
+        newMessages.forEach(newMessage => {
+            const lastGroupedMessage = this.messagesToRender[this.messagesToRender.length - 1];
+
+            if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
+                lastGroupedMessage.messages.push(newMessage);
             } else {
-                firstMessageInChat = false
+                this.messagesToRender.push({
+                    messages: [newMessage],
+                    ...newMessage
+                });
             }
+        });
 
-            message = { ...message, firstMessageInChat }
+        this.requestUpdate();
+        if(type === 'initial'){
+            await this.getUpdateComplete();
+        setTimeout(() => {
+            this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
+            this.setIsLoadingMessages(false)
+        }, 50)
+        }
+        
 
-            if (lastGroupedMessage) {
-                timestamp = lastGroupedMessage.timestamp
-                sender = lastGroupedMessage.sender
-                repliedToData = lastGroupedMessage.repliedToData
-            }
-            const isSameGroup = Math.abs(timestamp - message.timestamp) < 600000 && sender === message.sender && !repliedToData
+    }
 
-            if (isSameGroup) {
-                messageArray[messageArray.length - 1].messages = [
-                    ...(messageArray[messageArray.length - 1].messages || []),
-                    message
-                ]
-            } else {
-                messageArray.push({
+    async prependOldMessages(oldMessages) {
+
+        console.log('2', { oldMessages })
+        if (!this.messagesToRender) this.messagesToRender = []; // Ensure it's initialized
+
+        let currentMessageGroup = null;
+        let previousMessage = null;
+
+        for (const message of oldMessages) {
+            if (!previousMessage || !this.shouldGroupWithLastMessage(message, previousMessage)) {
+                // If no previous message, or if the current message shouldn't be grouped with the previous, 
+                // push the current group to the front of the formatted messages (since these are older messages)
+                if (currentMessageGroup) {
+                    this.messagesToRender.unshift(currentMessageGroup);
+                }
+                currentMessageGroup = {
+                    id: message.signature,
                     messages: [message],
                     ...message
-                })
+                };
+            } else {
+                // Add to the current group
+                currentMessageGroup.messages.push(message);
             }
-            return messageArray
-        }, [])
+            previousMessage = message;
+        }
+
+        // After processing all old messages, add the last group
+        if (currentMessageGroup) {
+            this.messagesToRender.unshift(currentMessageGroup);
+        }
+
+        this.requestUpdate();
+        this.setIsLoadingMessages(false)
+        // await this.getUpdateComplete();
+        // setTimeout(()=> {
+        //     this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
+        //     this.setIsLoadingMessages(false)
+        // },50)
+
+
+
+    }
+
+    async replaceMessagesWithUpdate(updatedMessages) {
+        for (let group of this.messagesToRender) {
+            for (let i = 0; i < group.messages.length; i++) {
+                if (updatedMessages[group.messages[i].signature]) {
+                    Object.assign(group.messages[i], updatedMessages[group.messages[i].signature]);
+                }
+            }
+        }
+        this.requestUpdate();
+    }
+
+
+
+    async updated(changedProperties) {
+        if (changedProperties && changedProperties.has('messages')) {
+            console.log('this.messages', this.messages)
+            if (this.messages.type === 'initial') {
+                this.addNewMessages(this.messages.messages, 'initial')
+
+
+
+            } else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages)
+            else if (this.messages.type === 'old') this.prependOldMessages(this.messages.messages)
+
+
+        }
+        if (changedProperties && changedProperties.has('updateMessageHash')) {
+            this.replaceMessagesWithUpdate(this.updateMessageHash)
+        }
+
+    }
+
+    render() {
+        // let formattedMessages = this.messages.reduce((messageArray, message) => {
+        //     const currentMessage = this.updateMessageHash[message.signature] || message;
+        //     const lastGroupedMessage = messageArray[messageArray.length - 1];
+
+        //     currentMessage.firstMessageInChat = messageArray.length === 0;
+
+        //     let timestamp, sender, repliedToData;
+
+        //     if (lastGroupedMessage) {
+        //         timestamp = lastGroupedMessage.timestamp;
+        //         sender = lastGroupedMessage.sender;
+        //         repliedToData = lastGroupedMessage.repliedToData;
+        //     } else {
+        //         timestamp = currentMessage.timestamp;
+        //         sender = currentMessage.sender;
+        //         repliedToData = currentMessage.repliedToData;
+        //     }
+
+        //     const isSameGroup = Math.abs(timestamp - currentMessage.timestamp) < 600000 && 
+        //                         sender === currentMessage.sender && 
+        //                         !repliedToData;
+
+        //     if (isSameGroup && lastGroupedMessage) {
+        //         lastGroupedMessage.messages.push(currentMessage);
+        //     } else {
+        //         messageArray.push({
+        //             messages: [currentMessage],
+        //             ...currentMessage
+        //         });
+        //     }
+
+        //     return messageArray;
+        // }, []);
+
+        let formattedMessages = this.messagesToRender
+
+        console.log('this.messagesToRender', this.messagesToRender)
 
         return html`
               ${this.isLoadingMessages ? html`
@@ -273,12 +440,15 @@ class ChatScroller extends LitElement {
                         ` : ''}
             <ul id="viewElement" class="chat-list clearfix">
                 <div id="upObserver"></div>
-                ${formattedMessages.map((formattedMessage) => {
-            return repeat(
+                ${repeat(
+            formattedMessages,
+            (formattedMessage) => formattedMessage.id, // Use .id as the unique key for formattedMessage.
+            (formattedMessage) => html`
+                ${repeat(
                 formattedMessage.messages,
                 (message) => message.signature,
                 (message, indexMessage) => html`
-                            <message-template 
+                        <message-template 
                             .emojiPicker=${this.emojiPicker} 
                             .escapeHTML=${this.escapeHTML} 
                             .messageObj=${message} 
@@ -301,10 +471,10 @@ class ChatScroller extends LitElement {
                             .addSeenMessage=${(val) => this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
                             chatId=${this.chatId}
-                            >
-                            </message-template>`
-            )
-        })}
+                        ></message-template>`
+            )}
+            `
+        )}
                         <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
 
                 <div style=${"height: 1px;"} id='downObserver'></div>
@@ -339,6 +509,7 @@ class ChatScroller extends LitElement {
     async getUpdateComplete() {
         await super.getUpdateComplete()
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('message-template'))
+        console.log({ marginElements })
         await Promise.all(marginElements.map(el => el.updateComplete))
         return true
     }
@@ -376,8 +547,7 @@ class ChatScroller extends LitElement {
         this.upElementObserver()
         this.downElementObserver()
         this.bottomObserver()
-        await this.getUpdateComplete()
-        this.viewElement.scrollTop = this.viewElement.scrollHeight + 50
+
 
         this.clearConsole()
         setInterval(() => {
@@ -410,13 +580,12 @@ class ChatScroller extends LitElement {
         this.getAfterMessages(_scrollElement)
     }
 
-    _getOldMessageAfter(_scrollElement) {
-        this.getOldMessageAfter(_scrollElement)
-    }
+
 
     _upObserverhandler(entries) {
+
         if (entries[0].isIntersecting) {
-            if (this.messages.length < 20) {
+            if (this.isLoadingMessages) {
                 return
             }
             this.setIsLoadingMessages(true)
@@ -433,7 +602,10 @@ class ChatScroller extends LitElement {
         }
     }
 
-    __bottomObserverForFetchingMessagesHandler(entries){
+    __bottomObserverForFetchingMessagesHandler(entries) {
+        if (this.messagesToRender.length === 0) {
+            return
+        }
         if (!entries[0].isIntersecting) {
         } else {
             let _scrollElement = entries[0].target.previousElementSibling
@@ -453,7 +625,7 @@ class ChatScroller extends LitElement {
 
     downElementObserver() {
         const options = {
-            
+
         }
         // identify an element to observe
         const elementToObserve = this.downObserverElement
@@ -465,7 +637,7 @@ class ChatScroller extends LitElement {
     }
     bottomObserver() {
         const options = {
-            
+
         }
         // identify an element to observe
         const elementToObserve = this.bottomObserverForFetchingMessages
@@ -631,7 +803,7 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-        
+
         const hidemsg = this.hideMessages
         let message = ""
         let messageVersion2 = ""
