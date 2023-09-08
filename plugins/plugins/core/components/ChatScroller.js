@@ -237,7 +237,8 @@ class ChatScroller extends LitElement {
             listSeenMessages: { type: Array },
             updateMessageHash: { type: Object },
             messagesToRender: { type: Array },
-            oldMessages: { type: Array }
+            oldMessages: { type: Array },
+            clearUpdateMessageHashmap: { attribute: false}
         }
     }
 
@@ -263,10 +264,15 @@ class ChatScroller extends LitElement {
         this.listSeenMessages = []
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.messagesToRender = []
+        this.disableFetching = false
     }
 
     addSeenMessage(val) {
         this.listSeenMessages.push(val)
+    }
+    goToRepliedMessageFunc(val, val2){
+        this.disableFetching = true
+        this.goToRepliedMessage(val, val2)
     }
 
     shouldGroupWithLastMessage(newMessage, lastGroupedMessage) {
@@ -289,12 +295,15 @@ class ChatScroller extends LitElement {
         }
 
         this.requestUpdate();
+        this.disableFetching = false
     }
 
-    async newListMessages(newMessages, signature) {
+    async newListMessages(newMessages, message) {
+        this.disableFetching = true
         console.log('sup')
         let data = []
-        newMessages.forEach(newMessage => {
+        const copy = [...newMessages]
+        copy.forEach(newMessage => {
             const lastGroupedMessage = data[data.length - 1];
 
             if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
@@ -307,49 +316,95 @@ class ChatScroller extends LitElement {
             }
         });
 
-    
         
+        console.log({data})
         this.messagesToRender = data
+        this.disableFetching = false
         this.requestUpdate()
-  
+        await this.updateComplete()
+     
+        this.setIsLoadingMessages(false);
+      
+
+        
+       
+
         
 
     }
-    async addNewMessages(newMessages, type) {
-        console.log('sup')
-        newMessages.forEach(newMessage => {
-            const lastGroupedMessage = this.messagesToRender[this.messagesToRender.length - 1];
 
+
+
+    async addNewMessages(newMessages, type) {
+        let previousScrollTop;
+        let previousScrollHeight;
+        
+        const viewElement = this.shadowRoot.querySelector("#viewElement");
+        previousScrollTop = viewElement.scrollTop;
+        previousScrollHeight = viewElement.scrollHeight;
+        this.disableFetching = true
+    
+        console.log('sup', type);
+        const copy = [...this.messagesToRender]
+        
+        for (const newMessage of newMessages) {
+            const lastGroupedMessage = copy[copy.length - 1];
+    
             if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
                 lastGroupedMessage.messages.push(newMessage);
             } else {
-                this.messagesToRender.push({
+                copy.push({
                     messages: [newMessage],
                     ...newMessage
                 });
             }
-        });
-
-        this.requestUpdate();
-        if(type === 'initial'){
-            await this.getUpdateComplete();
-        setTimeout(() => {
-            this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
-            this.setIsLoadingMessages(false)
-        }, 50)
         }
-        
 
+       
+    
+        // Ensure that the total number of individual messages doesn't exceed 80
+        let totalMessagesCount = copy.reduce((acc, group) => acc + group.messages.length, 0);
+        while (totalMessagesCount > 80 && copy.length) {
+            const firstGroup = copy[0];
+            if (firstGroup.messages.length <= (totalMessagesCount - 80)) {
+                // If removing the whole first group achieves the goal, remove it
+                totalMessagesCount -= firstGroup.messages.length;
+                copy.shift();
+            } else {
+                // Otherwise, trim individual messages from the first group
+                const messagesToRemove = totalMessagesCount - 80;
+                firstGroup.messages.splice(0, messagesToRemove);
+                totalMessagesCount = 80;
+            }
+        }
+        this.messagesToRender = copy
+        this.requestUpdate();
+        console.log("Before waiting for updateComplete");
+        await this.updateComplete;
+        console.log("After waiting for updateComplete");
+
+        if (type === 'initial') {
+          
+                this.viewElement.scrollTop = this.viewElement.scrollHeight
+                this.setIsLoadingMessages(false);
+               
+            
+        } else {
+            this.setIsLoadingMessages(false);
+
+        }
+        this.disableFetching = false
     }
+    
 
     async prependOldMessages(oldMessages) {
-
-        console.log('2', { oldMessages })
+        console.log('2', { oldMessages });
+        this.disableFetching = true
         if (!this.messagesToRender) this.messagesToRender = []; // Ensure it's initialized
-
+    
         let currentMessageGroup = null;
         let previousMessage = null;
-
+    
         for (const message of oldMessages) {
             if (!previousMessage || !this.shouldGroupWithLastMessage(message, previousMessage)) {
                 // If no previous message, or if the current message shouldn't be grouped with the previous, 
@@ -368,28 +423,75 @@ class ChatScroller extends LitElement {
             }
             previousMessage = message;
         }
-
+    
         // After processing all old messages, add the last group
         if (currentMessageGroup) {
             this.messagesToRender.unshift(currentMessageGroup);
         }
-
-        this.requestUpdate();
-        this.setIsLoadingMessages(false)
-    }
-
-    async replaceMessagesWithUpdate(updatedMessages) {
-        for (let group of this.messagesToRender) {
-            for (let i = 0; i < group.messages.length; i++) {
-                if (updatedMessages[group.messages[i].signature]) {
-                    Object.assign(group.messages[i], updatedMessages[group.messages[i].signature]);
-                }
+    
+        // Ensure that the total number of individual messages doesn't exceed 80
+        let totalMessagesCount = this.messagesToRender.reduce((acc, group) => acc + group.messages.length, 0);
+        while (totalMessagesCount > 80 && this.messagesToRender.length) {
+            const lastGroup = this.messagesToRender[this.messagesToRender.length - 1];
+            if (lastGroup.messages.length <= (totalMessagesCount - 80)) {
+                // If removing the whole last group achieves the goal, remove it
+                totalMessagesCount -= lastGroup.messages.length;
+                this.messagesToRender.pop();
+            } else {
+                // Otherwise, trim individual messages from the last group
+                const messagesToRemove = totalMessagesCount - 80;
+                lastGroup.messages.splice(-messagesToRemove, messagesToRemove);
+                totalMessagesCount = 80;
             }
         }
+    
         this.requestUpdate();
+        this.setIsLoadingMessages(false);
+        this.disableFetching = false
     }
+    
+
+    async replaceMessagesWithUpdate(updatedMessages) {
+        const viewElement = this.shadowRoot.querySelector("#viewElement");
+        if (!viewElement) return;  // Ensure the element exists
+    
+        const previousScrollTop = viewElement.scrollTop;
+        const previousScrollHeight = viewElement.scrollHeight;
+    
+        // Using map to return a new array, rather than mutating the old one
+        const newMessagesToRender = this.messagesToRender.map(group => {
+            // For each message, return the updated message if it exists, otherwise return the original message
+            const updatedGroupMessages = group.messages.map(message => {
+                return updatedMessages[message.signature] ? {...message, ...updatedMessages[message.signature]} : message;
+            });
+    
+            // Return a new group object with updated messages
+            return {
+                ...group,
+                messages: updatedGroupMessages
+            };
+        });
+    
+        this.messagesToRender = newMessagesToRender;
+    
+        await this.updateComplete;
+    
+        // Adjust scroll position based on the difference in scroll heights
+        const newScrollHeight = viewElement.scrollHeight;
+        viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
+    
+        this.clearUpdateMessageHashmap();
+        this.disableFetching = false;
+    }
+    
 
     async replaceMessagesWithUpdateByArray(updatedMessagesArray) {
+        let previousScrollTop;
+        let previousScrollHeight;
+        
+        const viewElement = this.shadowRoot.querySelector("#viewElement");
+        previousScrollTop = viewElement.scrollTop;
+        previousScrollHeight = viewElement.scrollHeight;
         console.log({updatedMessagesArray}, this.messagesToRender)
         for (let group of this.messagesToRender) {
             for (let i = 0; i < group.messages.length; i++) {
@@ -400,6 +502,10 @@ class ChatScroller extends LitElement {
             }
         }
         this.requestUpdate();
+        const newScrollHeight = viewElement.scrollHeight;
+        viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
+        this.clearUpdateMessageHashmap()
+        this.disableFetching = false
     }
     
 
@@ -420,7 +526,7 @@ class ChatScroller extends LitElement {
 
 
         }
-        if (changedProperties && changedProperties.has('updateMessageHash')) {
+        if (changedProperties && changedProperties.has('updateMessageHash') && Object.keys(this.updateMessageHash).length > 0) {
             this.replaceMessagesWithUpdate(this.updateMessageHash)
         }
 
@@ -499,7 +605,7 @@ class ChatScroller extends LitElement {
                             .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
                             .setUserName=${(val) => this.setUserName(val)}
                             id=${message.signature}
-                            .goToRepliedMessage=${this.goToRepliedMessage}
+                            .goToRepliedMessage=${(val, val2)=> this.goToRepliedMessageFunc(val, val2)}
                             .addSeenMessage=${(val) => this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
                             chatId=${this.chatId}
@@ -510,12 +616,17 @@ class ChatScroller extends LitElement {
                         <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
 
                 <div style=${"height: 1px;"} id='downObserver'></div>
-
+                ${this.isLoadingMessages ? html`
+                <div class="spinnerContainer">
+                        <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                        ` : ''}
             </ul>
         `
     }
 
     shouldUpdate(changedProperties) {
+        console.log({changedProperties})
         if (changedProperties.has('isLoadingMessages')) {
             return true
         }
@@ -532,6 +643,10 @@ class ChatScroller extends LitElement {
             return true
         }
         if (changedProperties.has('updateMessageHash')) {
+            return true
+        }
+        if(changedProperties.has('messagesToRender')){
+            console.log('true', this.messagesToRender)
             return true
         }
         // Only update element if prop1 changed.
@@ -617,7 +732,7 @@ class ChatScroller extends LitElement {
     _upObserverhandler(entries) {
 
         if (entries[0].isIntersecting) {
-            if (this.isLoadingMessages) {
+            if (this.isLoadingMessages ||  this.disableFetching) {
                 return
             }
             this.setIsLoadingMessages(true)
@@ -635,11 +750,12 @@ class ChatScroller extends LitElement {
     }
 
     __bottomObserverForFetchingMessagesHandler(entries) {
-        if (this.messagesToRender.length === 0) {
+        if (this.messagesToRender.length === 0 ||  this.disableFetching) {
             return
         }
         if (!entries[0].isIntersecting) {
         } else {
+            this.setIsLoadingMessages(true)
             let _scrollElement = entries[0].target.previousElementSibling
             this._getAfterMessages(_scrollElement)
         }

@@ -55,7 +55,7 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 10
+export const chatLimit = 40
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -1282,6 +1282,7 @@ class ChatPage extends LitElement {
     constructor() {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
+        this.clearUpdateMessageHashmap = this.clearUpdateMessageHashmap.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertFile = this.insertFile.bind(this)
         this.pasteImage = this.pasteImage.bind(this)
@@ -2138,6 +2139,7 @@ class ChatPage extends LitElement {
     }
 
     async goToRepliedMessage(message, clickedOnMessage) {
+        console.log({message})
         const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
 
         if (findMessage) {
@@ -2165,24 +2167,21 @@ class ChatPage extends LitElement {
                 }
        
             await this.getOldMessageDynamic(0, clickedOnMessage.timestamp, message)
-            await new Promise((res)=> {
-                setTimeout(()=> {
-                    res()
-                },1000)
-            })
-            await this.getUpdateCompleteMessages()
+            await this.getUpdateComplete()
             
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
-            const findMessage = marginElements.find((item) => item.messageObj.signature === message.signature)
-            if (findMessage) {
-                findMessage.scrollIntoView({ behavior: 'auto', block: 'center' })
+            console.log({marginElements})
+            const findMessage2 = marginElements.find((item) => item.messageObj.signature === message.signature) || marginElements.find((item) => item.messageObj.originalSignature === message.signature) || marginElements.find((item) => item.messageObj.signature === message.originalSignature) || marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
+            console.log({findMessage2}, message.signature)
+            if (findMessage2) {
+                findMessage2.scrollIntoView({ block: 'center' })
             }
-            if (findMessage) {
+            if (findMessage2) {
                 this.isLoadingGoToRepliedMessage = {
                     ...this.isLoadingGoToRepliedMessage,
                     loading: false
                 }
-                const findElement = findMessage.shadowRoot.querySelector('.message-parent')
+                const findElement = findMessage2.shadowRoot.querySelector('.message-parent')
                 if (findElement) {
                     findElement.classList.add('blink-bg')
                     setTimeout(() => {
@@ -2515,6 +2514,7 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller() {
+        console.log('clearUpdateMessageHashmap', Object.keys(this.updateMessageHash).length)
         return html`
             <chat-scroller 
                 chatId=${this.chatId}
@@ -2541,6 +2541,7 @@ class ChatPage extends LitElement {
                 .selectedHead=${this.selectedHead}
                 .goToRepliedMessage=${(val, val2) => this.goToRepliedMessage(val, val2)}
                .updateMessageHash=${this.updateMessageHash}
+               .clearUpdateMessageHashmap=${this.clearUpdateMessageHashmap}
             >
             </chat-scroller>
         `
@@ -2585,7 +2586,7 @@ class ChatPage extends LitElement {
     async getOldMessageDynamic(limit, timestampClickedOnMessage, messageToGoTo) {
       const findMsg = await parentEpml.request("apiCall", {
             type: "api",
-             url: `/chat/message/${messageToGoTo.signature}?encoding=BASE64`,
+             url: `/chat/message/${messageToGoTo.originalSignature || messageToGoTo.signature}?encoding=BASE64`,
         })
         if(!findMsg) return null
         if (this.isReceipient) {
@@ -2595,7 +2596,7 @@ class ChatPage extends LitElement {
             })
             const getInitialMessagesAfter = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=true&after=${findMsg.timestamp - 100}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=false&after=${findMsg.timestamp - 1000}&haschatreference=false&encoding=BASE64`
             })
             const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
             let decodeMsgs = []
@@ -2624,7 +2625,8 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-          
+            console.log({decodeMsgs})
+
             let list = [...decodeMsgs]
            
             await new Promise((res, rej) => {
@@ -2643,6 +2645,7 @@ class ChatPage extends LitElement {
               this.messagesRendered = {
                 messages: list,
                 type: 'inBetween',
+                message: messageToGoTo
             }
 
             this.isLoadingOldMessages = false
@@ -2654,7 +2657,7 @@ class ChatPage extends LitElement {
             })
             const getInitialMessagesAfter = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=true&after=${findMsg.timestamp - 100}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=false&after=${findMsg.timestamp - 1000}&haschatreference=false&encoding=BASE64`
             })
             const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
 
@@ -2683,7 +2686,7 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
            
-
+            console.log({decodeMsgs})
        
             let list = [...decodeMsgs]
            
@@ -2842,7 +2845,7 @@ class ChatPage extends LitElement {
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=false&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
 
             let decodeMsgs = []
@@ -2904,7 +2907,7 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${chatLimit}&reverse=false&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
             let decodeMsgs = []
             await new Promise((res, rej) => {
@@ -2959,7 +2962,6 @@ class ChatPage extends LitElement {
             await this.getUpdateComplete()
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
             const findElement = marginElements.find((item) => item.messageObj.signature === scrollElement.messageObj.signature)
-
             if (findElement) {
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' })
             }
@@ -2984,8 +2986,14 @@ const originalScrollHeight = viewElement.scrollHeight;
             ...newObj
         }
         await this.getUpdateComplete()
-        const heightDifference = viewElement.scrollHeight - originalScrollHeight;
-viewElement.scrollTop = originalScrollTop + heightDifference;
+//         const heightDifference = viewElement.scrollHeight - originalScrollHeight;
+// viewElement.scrollTop = originalScrollTop + heightDifference;
+    }
+
+    async clearUpdateMessageHashmap(){
+        console.log('hello clear')
+        this.updateMessageHash = {}
+        this.requestUpdate()
     }
 
   
