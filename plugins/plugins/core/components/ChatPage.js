@@ -2143,7 +2143,7 @@ class ChatPage extends LitElement {
         const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
 
         if (findMessage) {
-            findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            findMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
             const findElement = findMessage.shadowRoot.querySelector('.message-parent')
             if (findElement) {
                 findElement.classList.add('blink-bg')
@@ -2969,11 +2969,8 @@ class ChatPage extends LitElement {
     }
 
     async addToUpdateMessageHashmap(array){
-        const chatscrollerEl = this.shadowRoot.querySelector('chat-scroller')
-        if(!chatscrollerEl) return
-        const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-        const originalScrollTop = viewElement.scrollTop;
-const originalScrollHeight = viewElement.scrollHeight;
+       
+     
 
         const newObj = {}
 
@@ -2985,9 +2982,9 @@ const originalScrollHeight = viewElement.scrollHeight;
             ...this.updateMessageHash,
             ...newObj
         }
+        this.requestUpdate()
         await this.getUpdateComplete()
-//         const heightDifference = viewElement.scrollHeight - originalScrollHeight;
-// viewElement.scrollTop = originalScrollTop + heightDifference;
+
     }
 
     async clearUpdateMessageHashmap(){
@@ -3194,7 +3191,10 @@ const originalScrollHeight = viewElement.scrollHeight;
             viewElement.scrollTop = viewElement.scrollHeight
         } else {
 
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'new',
+            } 
             await this.getUpdateComplete()
 
             this.showNewMessageBar()

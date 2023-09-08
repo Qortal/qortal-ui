@@ -238,7 +238,10 @@ class ChatScroller extends LitElement {
             updateMessageHash: { type: Object },
             messagesToRender: { type: Array },
             oldMessages: { type: Array },
-            clearUpdateMessageHashmap: { attribute: false}
+            clearUpdateMessageHashmap: { attribute: false},
+            disableFetching: {type: Boolean},
+            isLoadingBefore: {type: Boolean},
+            isLoadingAfter: {type: Boolean}
         }
     }
 
@@ -256,6 +259,7 @@ class ChatScroller extends LitElement {
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this.newListMessages = this.newListMessages.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
+        this.replaceMessagesWithUpdate = this.replaceMessagesWithUpdate.bind(this)
         this.__bottomObserverForFetchingMessagesHandler = this.__bottomObserverForFetchingMessagesHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.hideMessages = JSON.parse(localStorage.getItem("MessageBlockedAddresses") || "[]")
@@ -265,6 +269,8 @@ class ChatScroller extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.messagesToRender = []
         this.disableFetching = false
+        this.isLoadingBefore = false
+        this.isLoadingAfter = false
     }
 
     addSeenMessage(val) {
@@ -282,6 +288,12 @@ class ChatScroller extends LitElement {
             lastGroupedMessage.sender === newMessage.sender &&
             !lastGroupedMessage.repliedToData;
     }
+
+    clearLoaders(){
+        this.isLoadingBefore = false
+        this.isLoadingAfter = false
+        this.disableFetching = false
+    }
     addNewMessage(newMessage) {
         const lastGroupedMessage = this.messagesToRender[this.messagesToRender.length - 1];
 
@@ -293,13 +305,13 @@ class ChatScroller extends LitElement {
                 ...newMessage
             });
         }
-
+        this.clearLoaders()
         this.requestUpdate();
-        this.disableFetching = false
+        
     }
 
     async newListMessages(newMessages, message) {
-        this.disableFetching = true
+     
         console.log('sup')
         let data = []
         const copy = [...newMessages]
@@ -319,11 +331,10 @@ class ChatScroller extends LitElement {
         
         console.log({data})
         this.messagesToRender = data
-        this.disableFetching = false
+        this.clearLoaders()
         this.requestUpdate()
-        await this.updateComplete()
+        await this.updateComplete
      
-        this.setIsLoadingMessages(false);
       
 
         
@@ -342,7 +353,7 @@ class ChatScroller extends LitElement {
         const viewElement = this.shadowRoot.querySelector("#viewElement");
         previousScrollTop = viewElement.scrollTop;
         previousScrollHeight = viewElement.scrollHeight;
-        this.disableFetching = true
+
     
         console.log('sup', type);
         const copy = [...this.messagesToRender]
@@ -386,20 +397,16 @@ class ChatScroller extends LitElement {
         if (type === 'initial') {
           
                 this.viewElement.scrollTop = this.viewElement.scrollHeight
-                this.setIsLoadingMessages(false);
+           
                
             
-        } else {
-            this.setIsLoadingMessages(false);
-
-        }
-        this.disableFetching = false
+        } 
+        this.clearLoaders()
     }
     
 
     async prependOldMessages(oldMessages) {
         console.log('2', { oldMessages });
-        this.disableFetching = true
         if (!this.messagesToRender) this.messagesToRender = []; // Ensure it's initialized
     
         let currentMessageGroup = null;
@@ -444,17 +451,22 @@ class ChatScroller extends LitElement {
                 totalMessagesCount = 80;
             }
         }
-    
-        this.requestUpdate();
-        this.setIsLoadingMessages(false);
-        this.disableFetching = false
+        this.clearLoaders()
+        this.requestUpdate();  // await new Promise((res)=> {
+            //     setTimeout(()=> {
+            //         res()
+            //     }, 5000)
+            // })
+            
     }
     
 
     async replaceMessagesWithUpdate(updatedMessages) {
+      
         const viewElement = this.shadowRoot.querySelector("#viewElement");
         if (!viewElement) return;  // Ensure the element exists
-    
+        const isUserAtBottom = (viewElement.scrollTop + viewElement.clientHeight) === viewElement.scrollHeight;
+
         const previousScrollTop = viewElement.scrollTop;
         const previousScrollHeight = viewElement.scrollHeight;
     
@@ -473,15 +485,34 @@ class ChatScroller extends LitElement {
         });
     
         this.messagesToRender = newMessagesToRender;
-    
+        this.requestUpdate();
+        console.log('await this.updateComplete 1')
         await this.updateComplete;
-    
+        console.log('await this.updateComplete 2')
+        
+        // Adjust scroll position based on the difference in scroll heights
+        // await new Promise((res)=> {
+        //     setTimeout(()=> {
+        //         res()
+        //     }, 5000)
+        // })
+        // const newScrollHeight = viewElement.scrollHeight;
+        // viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
+        // viewElement.scrollTop = viewElement.scrollHeight - viewElement.clientHeight;
+        // const newScrollHeight = viewElement.scrollHeight;
+        // viewElement.scrollTop = viewElement.scrollTop + (newScrollHeight - viewElement.scrollHeight);
+        // If the user was at the bottom before the update, keep them at the bottom
+    if (isUserAtBottom) {
+        viewElement.scrollTop = viewElement.scrollHeight - viewElement.clientHeight;
+    } else {
         // Adjust scroll position based on the difference in scroll heights
         const newScrollHeight = viewElement.scrollHeight;
-        viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
+        viewElement.scrollTop = viewElement.scrollTop + (newScrollHeight - viewElement.scrollHeight);
+    }
+
     
         this.clearUpdateMessageHashmap();
-        this.disableFetching = false;
+        this.clearLoaders()
     }
     
 
@@ -505,7 +536,7 @@ class ChatScroller extends LitElement {
         const newScrollHeight = viewElement.scrollHeight;
         viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
         this.clearUpdateMessageHashmap()
-        this.disableFetching = false
+        this.clearLoaders()
     }
     
 
@@ -571,7 +602,7 @@ class ChatScroller extends LitElement {
 
 
         return html`
-              ${this.isLoadingMessages ? html`
+              ${this.isLoadingBefore ? html`
                 <div class="spinnerContainer">
                         <paper-spinner-lite active></paper-spinner-lite>
                         </div>
@@ -616,7 +647,7 @@ class ChatScroller extends LitElement {
                         <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
 
                 <div style=${"height: 1px;"} id='downObserver'></div>
-                ${this.isLoadingMessages ? html`
+                ${this.isLoadingAfter ? html`
                 <div class="spinnerContainer">
                         <paper-spinner-lite active></paper-spinner-lite>
                         </div>
@@ -647,6 +678,12 @@ class ChatScroller extends LitElement {
         }
         if(changedProperties.has('messagesToRender')){
             console.log('true', this.messagesToRender)
+            return true
+        }
+        if(changedProperties.has('isLoadingBefore')){
+            return true
+        }
+        if(changedProperties.has('isLoadingAfter')){
             return true
         }
         // Only update element if prop1 changed.
@@ -732,10 +769,11 @@ class ChatScroller extends LitElement {
     _upObserverhandler(entries) {
 
         if (entries[0].isIntersecting) {
-            if (this.isLoadingMessages ||  this.disableFetching) {
+            if (this.disableFetching) {
                 return
             }
-            this.setIsLoadingMessages(true)
+            this.disableFetching = true
+            this.isLoadingBefore = true
             let _scrollElement = entries[0].target.nextElementSibling
             this._getOldMessage(_scrollElement)
         }
@@ -755,7 +793,8 @@ class ChatScroller extends LitElement {
         }
         if (!entries[0].isIntersecting) {
         } else {
-            this.setIsLoadingMessages(true)
+            this.disableFetching = true
+            this.isLoadingAfter = true
             let _scrollElement = entries[0].target.previousElementSibling
             this._getAfterMessages(_scrollElement)
         }
