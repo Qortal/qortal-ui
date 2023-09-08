@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "言語を選択",
 		"languageflag": "jp",
-		"english": "英語",
 		"chinese1": "中国語 (簡体字)",
 		"chinese2": "中国語 (繁体字)",
-		"german": "ドイツ語",
-		"french": "フランス語",
-		"polish": "ポーランド語",
-		"spanish": "スペイン語",
-		"hindi": "ヒンディー語",
 		"croatian": "クロアチア語",
-		"portuguese": "ポルトガル語",
+		"english": "英語",
+		"estonian": "エストニア語",
+		"french": "フランス語",
+		"german": "ドイツ語",
+		"hindi": "ヒンディー語",
 		"hungarian": "ハンガリー語",
-		"serbian": "セルビア語",
 		"italian": "イタリア語",
-		"russian": "ロシア語",
-		"norwegian": "ノルウェー語",
-		"romanian": "ルーマニア語",
+		"japanese": "日本語",
 		"korean": "韓国語",
-		"japanese": "日本語"
+		"norwegian": "ノルウェー語",
+		"polish": "ポーランド語",
+		"portuguese": "ポルトガル語",
+		"romanian": "ルーマニア語",
+		"russian": "ロシア語",
+		"serbian": "セルビア語",
+		"spanish": "スペイン語"
 	},
 	"sidemenu": {
 		"minting": "ミント",
@@ -40,9 +41,7 @@
 		"groups": "グループ",
 		"sm1": "名前",
 		"sm2": "名前の管理",
-		"sm3": "名前マーケット",
-		"exp22": "最後の 5 回の支払い",
-		"exp23": "すべての支払いを表示"
+		"sm3": "名前マーケット"
 	},
 	"tabmenu": {
 		"tm1": "鋳造の詳細",

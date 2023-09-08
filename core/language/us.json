@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Select language",
 		"languageflag": "us",
-		"english": "English",
 		"chinese1": "Chinese (Simplified)",
 		"chinese2": "Chinese (Traditional)",
-		"german": "German",
-		"french": "French",
-		"polish": "Polish",
-		"spanish": "Spanish",
-		"hindi": "Hindi",
 		"croatian": "Croatian",
-		"portuguese": "Portuguese",
+		"english": "English",
+		"estonian": "Estonian",
+		"french": "French",
+		"german": "German",
+		"hindi": "Hindi",
 		"hungarian": "Hungarian",
-		"serbian": "Serbian",
 		"italian": "Italian",
-		"russian": "Russian",
-		"norwegian": "Norwegian",
-		"romanian": "Romanian",
+		"japanese": "Japanese",
 		"korean": "Korean",
-		"japanese": "Japanese"
+		"norwegian": "Norwegian",
+		"polish": "Polish",
+		"portuguese": "Portuguese",
+		"romanian": "Romanian",
+		"russian": "Russian",
+		"serbian": "Serbian",
+		"spanish": "Spanish"
 	},
 	"sidemenu": {
 		"minting": "MINTING",
@@ -154,7 +155,6 @@
 		"lp20": "Error, incorrect nonce",
 		"lp21": "Combining key parts",
 		"lp22": "Key is ready"
-
 	},
 	"logout": {
 		"logout": "LOG OUT",
