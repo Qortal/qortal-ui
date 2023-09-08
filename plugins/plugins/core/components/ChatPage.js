@@ -3405,7 +3405,7 @@ class ChatPage extends LitElement {
                 this.webWorkerFile = new WebWorkerFile()
     
                 const image = this.imageFile
-                const id = this.uid()
+                const id = this.uid.rnd()
                 const identifier = `qchat_${id}`
                 let compressedFile = ''
                 await new Promise(resolve => {
@@ -3505,7 +3505,7 @@ class ChatPage extends LitElement {
                 this.webWorkerFile = new WebWorkerFile()
     
                 const attachment = this.attachment
-                const id = this.uid()
+                const id = this.uid.rnd()
                 const identifier = `qchat_${id}`
                 const fileSize = attachment.size
                 if (fileSize > 1000000) {

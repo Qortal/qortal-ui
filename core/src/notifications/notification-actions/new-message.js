@@ -186,7 +186,7 @@ export const newMessageNotificationQappLocal  = (data) => {
 			}
                 const tab = {
                     url: `qdn/browser/index.html${query}`,
-				id: uid(),
+				id: uid.rnd(),
 				myPlugObj: {
 					"url": service === 'WEBSITE' ? "websites" : "qapps",
 					"domain": "core",
@@ -232,7 +232,7 @@ export const newMessageNotificationQappLocal  = (data) => {
 			}
                 const tab = {
                     url: `qdn/browser/index.html${query}`,
-				id: uid(),
+				id: uid.rnd(),
 				myPlugObj: {
 					"url": service === 'WEBSITE' ? "websites" : "qapps",
 					"domain": "core",

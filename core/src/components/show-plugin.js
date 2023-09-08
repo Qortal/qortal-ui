@@ -457,7 +457,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                         const lengthOfTabs = this.tabs.length
                         this.addTab({
                             url: "",
-                            id: this.uid()
+                            id: this.uid.rnd()
                         })
                         this.currentTab = lengthOfTabs
                     }}
@@ -737,7 +737,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             if (this.tabs.length === 0) {
                 this.addTab({
                     url: "",
-                    id: this.uid()
+                    id: this.uid.rnd()
                 })
             } else {
                 const copiedTabs = [...this.tabs]
@@ -1876,7 +1876,7 @@ class NavBar extends connect(store)(LitElement) {
     async addToMyMenuPlugins() {
         this.newId = ''
         const newUid = new ShortUniqueId({ length: 10 })
-        this.newId = 'plugin-' + newUid()
+        this.newId = 'plugin-' + newUid.rnd()
 
         this.pluginType = this.shadowRoot.getElementById("pluginTypeInput").value
 
