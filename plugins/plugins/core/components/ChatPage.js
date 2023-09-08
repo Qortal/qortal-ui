@@ -55,7 +55,7 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 40
+export const chatLimit = 10
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -2152,13 +2152,7 @@ class ChatPage extends LitElement {
             return
         }
 
-        if ((message.timestamp - this.messagesRendered[0].timestamp) > 86400000) {
-            let errorMsg = get("chatpage.cchange66")
-            parentEpml.request('showSnackBar', `${errorMsg}`)
-            return
-        }
-
-        if ((message.timestamp - this.messagesRendered[0].timestamp) < 86400000) {
+      
             const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.signature)
             if (findOriginalMessage) {
                 const messageClientRect = findOriginalMessage.getBoundingClientRect()
@@ -2169,15 +2163,25 @@ class ChatPage extends LitElement {
                     top: messageClientRect.top,
                     offsetHeight: findOriginalMessage.offsetHeight
                 }
+       
+            await this.getOldMessageDynamic(0, clickedOnMessage.timestamp, message)
+            await new Promise((res)=> {
+                setTimeout(()=> {
+                    res()
+                },1000)
+            })
+            await this.getUpdateCompleteMessages()
+            
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
+            const findMessage = marginElements.find((item) => item.messageObj.signature === message.signature)
+            if (findMessage) {
+                findMessage.scrollIntoView({ behavior: 'auto', block: 'center' })
             }
-            await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
-            const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
             if (findMessage) {
                 this.isLoadingGoToRepliedMessage = {
                     ...this.isLoadingGoToRepliedMessage,
                     loading: false
                 }
-                findMessage.scrollIntoView({ block: 'center' })
                 const findElement = findMessage.shadowRoot.querySelector('.message-parent')
                 if (findElement) {
                     findElement.classList.add('blink-bg')
@@ -2553,6 +2557,13 @@ class ChatPage extends LitElement {
         return true
     }
 
+    async getUpdateCompleteMessages() {
+        await super.getUpdateComplete()
+        const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
+        await Promise.all(marginElements.map(el => el.updateComplete))
+        return true
+    }
+
     async getUpdateCompleteTextEditor() {
         await super.getUpdateComplete()
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-text-editor'))
@@ -2571,14 +2582,22 @@ class ChatPage extends LitElement {
         })
     }
 
-    async getOldMessageDynamic(limit, before, after) {
-
+    async getOldMessageDynamic(limit, timestampClickedOnMessage, messageToGoTo) {
+      const findMsg = await parentEpml.request("apiCall", {
+            type: "api",
+             url: `/chat/message/${messageToGoTo.signature}?encoding=BASE64`,
+        })
+        if(!findMsg) return null
         if (this.isReceipient) {
-            const getInitialMessages = await parentEpml.request('apiCall', {
+            const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=true&before=${findMsg.timestamp}&haschatreference=false&encoding=BASE64`
             })
-
+            const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=true&after=${findMsg.timestamp - 100}&haschatreference=false&encoding=BASE64`
+            })
+            const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
@@ -2606,7 +2625,7 @@ class ChatPage extends LitElement {
             }));
 
           
-            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+            let list = [...decodeMsgs]
            
             await new Promise((res, rej) => {
        
@@ -2621,21 +2640,23 @@ class ChatPage extends LitElement {
                 }
               })
            
-              this.messagesRendered  = list
-
+              this.messagesRendered = {
+                messages: list,
+                type: 'inBetween',
+            }
 
             this.isLoadingOldMessages = false
-            await this.getUpdateComplete()
-            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-
-            if (viewElement) {
-                viewElement.scrollTop = 200
-            }
+            
         } else {
-            const getInitialMessages = await parentEpml.request('apiCall', {
+            const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=true&before=${findMsg.timestamp}&haschatreference=false&encoding=BASE64`
             })
+            const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=true&after=${findMsg.timestamp - 100}&haschatreference=false&encoding=BASE64`
+            })
+            const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
 
             let decodeMsgs = []
             await new Promise((res, rej) => {
@@ -2664,7 +2685,7 @@ class ChatPage extends LitElement {
            
 
        
-            let list = [...decodeMsgs, ...this.messagesRendered.slice(0,80)]
+            let list = [...decodeMsgs]
            
             await new Promise((res, rej) => {
        
@@ -2679,16 +2700,15 @@ class ChatPage extends LitElement {
                 }
               })
            
-              this.messagesRendered  = list
+            this.messagesRendered = {
+                messages: list,
+                type: 'inBetween',
+                signature: messageToGoTo.signature
+            }
 
 
             this.isLoadingOldMessages = false
-            await this.getUpdateComplete()
-            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-
-            if (viewElement) {
-                viewElement.scrollTop = 200
-            }
+           
         }
     }
 
@@ -3067,22 +3087,22 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
             }
             
 
-            let list = [...this.messagesRendered]
+            // let list = [...this.messagesRendered]
            
-            await new Promise((res, rej) => {
+            // await new Promise((res, rej) => {
        
-                this.webWorkerSortMessages.postMessage({list});
+            //     this.webWorkerSortMessages.postMessage({list});
             
-                this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
+            //     this.webWorkerSortMessages.onmessage = e => {
+            //         console.log('e',e)
               
-                    list = e.data
-                    res()
+            //         list = e.data
+            //         res()
                  
-                }
-              })
+            //     }
+            //   })
            
-              this.messagesRendered  = list
+            //   this.messagesRendered  = list
         }
     }
 
@@ -3124,15 +3144,19 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
 
     async renderNewMessage(newMessage) {
         if (newMessage.chatReference) {
-            const findOriginalMessageIndex = this.messagesRendered.findIndex(msg => msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference))
-            if (findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender) {
-                const newMessagesRendered = [...this.messagesRendered]
-                newMessagesRendered[findOriginalMessageIndex] = {
-                    ...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
-                    sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp
-                }
-                this.messagesRendered = newMessagesRendered
-                await this.getUpdateComplete()
+            // const findOriginalMessageIndex = this.messagesRendered.findIndex(msg => msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference))
+            // if (findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender) {
+            //     const newMessagesRendered = [...this.messagesRendered]
+            //     newMessagesRendered[findOriginalMessageIndex] = {
+            //         ...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
+            //         sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp
+            //     }
+            //     this.messagesRendered = newMessagesRendered
+            //     await this.getUpdateComplete()
+            // }
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'update',
             }
             return
         }
@@ -3141,14 +3165,22 @@ viewElement.scrollTop = originalScrollTop + heightDifference;
 
         if (newMessage.sender === this.selectedAddress.address) {
 
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'new',
+            }
             await this.getUpdateComplete()
 
             viewElement.scrollTop = viewElement.scrollHeight
         } else if (this.isUserDown) {
 
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'new',
+            }
             // Append the message and scroll to the bottom if user is down the page
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            // this.messagesRendered = [...this.messagesRendered, newMessage]
             await this.getUpdateComplete()
 
             viewElement.scrollTop = viewElement.scrollHeight

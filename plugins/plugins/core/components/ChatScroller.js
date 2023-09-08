@@ -253,6 +253,7 @@ class ChatScroller extends LitElement {
         }
         this.oldMessages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
+        this.newListMessages = this.newListMessages.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
         this.__bottomObserverForFetchingMessagesHandler = this.__bottomObserverForFetchingMessagesHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -290,6 +291,30 @@ class ChatScroller extends LitElement {
         this.requestUpdate();
     }
 
+    async newListMessages(newMessages, signature) {
+        console.log('sup')
+        let data = []
+        newMessages.forEach(newMessage => {
+            const lastGroupedMessage = data[data.length - 1];
+
+            if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
+                lastGroupedMessage.messages.push(newMessage);
+            } else {
+                data.push({
+                    messages: [newMessage],
+                    ...newMessage
+                });
+            }
+        });
+
+    
+        
+        this.messagesToRender = data
+        this.requestUpdate()
+  
+        
+
+    }
     async addNewMessages(newMessages, type) {
         console.log('sup')
         newMessages.forEach(newMessage => {
@@ -351,14 +376,6 @@ class ChatScroller extends LitElement {
 
         this.requestUpdate();
         this.setIsLoadingMessages(false)
-        // await this.getUpdateComplete();
-        // setTimeout(()=> {
-        //     this.viewElement.scrollTop = this.viewElement.scrollHeight + 50;
-        //     this.setIsLoadingMessages(false)
-        // },50)
-
-
-
     }
 
     async replaceMessagesWithUpdate(updatedMessages) {
@@ -372,11 +389,25 @@ class ChatScroller extends LitElement {
         this.requestUpdate();
     }
 
+    async replaceMessagesWithUpdateByArray(updatedMessagesArray) {
+        console.log({updatedMessagesArray}, this.messagesToRender)
+        for (let group of this.messagesToRender) {
+            for (let i = 0; i < group.messages.length; i++) {
+                const update = updatedMessagesArray.find(updatedMessage => ((updatedMessage.chatReference  === group.messages[i].signature) || (updatedMessage.chatReference === group.messages[i].originalSignature)));
+                if (update) {
+                    Object.assign(group.messages[i], update);
+                }
+            }
+        }
+        this.requestUpdate();
+    }
+    
+
 
 
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('messages')) {
-            console.log('this.messages', this.messages)
+     
             if (this.messages.type === 'initial') {
                 this.addNewMessages(this.messages.messages, 'initial')
 
@@ -384,6 +415,8 @@ class ChatScroller extends LitElement {
 
             } else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages)
             else if (this.messages.type === 'old') this.prependOldMessages(this.messages.messages)
+            else if (this.messages.type === 'inBetween') this.newListMessages(this.messages.messages, this.messages.signature)
+            else if (this.messages.type === 'update') this.replaceMessagesWithUpdateByArray(this.messages.messages)
 
 
         }
@@ -430,7 +463,6 @@ class ChatScroller extends LitElement {
 
         let formattedMessages = this.messagesToRender
 
-        console.log('this.messagesToRender', this.messagesToRender)
 
         return html`
               ${this.isLoadingMessages ? html`
