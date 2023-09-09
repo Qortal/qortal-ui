@@ -91,7 +91,7 @@
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
 		"shelljs": "0.8.5",
-		"@babel/core": "7.22.15",
+		"@babel/core": "7.22.17",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
