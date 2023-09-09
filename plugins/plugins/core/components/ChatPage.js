@@ -55,7 +55,8 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 40
+export const chatLimit = 10
+export const totalMsgCount = 20
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -2748,18 +2749,18 @@ class ChatPage extends LitElement {
           
             let list = [...decodeMsgs]
            
-            // await new Promise((res, rej) => {
+            await new Promise((res, rej) => {
        
-            //     this.webWorkerSortMessages.postMessage({list});
+                this.webWorkerSortMessages.postMessage({list});
             
-            //     this.webWorkerSortMessages.onmessage = e => {
-            //         console.log('e',e)
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
               
-            //         list = e.data
-            //         res()
+                    list = e.data
+                    res()
                  
-            //     }
-            //   })
+                }
+              })
            
               this.messagesRendered = {
                 messages: list,
@@ -2811,18 +2812,18 @@ class ChatPage extends LitElement {
             }));
             let list = [...decodeMsgs]
            
-            // await new Promise((res, rej) => {
+            await new Promise((res, rej) => {
        
-            //     this.webWorkerSortMessages.postMessage({list});
+                this.webWorkerSortMessages.postMessage({list});
             
-            //     this.webWorkerSortMessages.onmessage = e => {
-            //         console.log('e',e)
+                this.webWorkerSortMessages.onmessage = e => {
+                    console.log('e',e)
               
-            //         list = e.data
-            //         res()
+                    list = e.data
+                    res()
                  
-            //     }
-            //   })
+                }
+              })
            
               this.messagesRendered = {
                 messages: list,
@@ -3173,16 +3174,16 @@ class ChatPage extends LitElement {
             
             this.messagesRendered = {
                 messages: [newMessage],
-                type: 'new',
+                type: 'newComingInAuto',
             }
             await this.getUpdateComplete()
 
-            viewElement.scrollTop = viewElement.scrollHeight
+            // viewElement.scrollTop = viewElement.scrollHeight
         } else if (this.isUserDown) {
 
             this.messagesRendered = {
                 messages: [newMessage],
-                type: 'new',
+                type: 'newComingInAuto',
             }
             // Append the message and scroll to the bottom if user is down the page
             // this.messagesRendered = [...this.messagesRendered, newMessage]
@@ -3193,7 +3194,7 @@ class ChatPage extends LitElement {
 
             this.messagesRendered = {
                 messages: [newMessage],
-                type: 'new',
+                type: 'newComingInAuto',
             } 
             await this.getUpdateComplete()
 
@@ -4202,6 +4203,7 @@ class ChatPage extends LitElement {
 
         const _computePow = async (chatBytes, isForward) => {
             const difficulty = this.balance < 4 ? 18 : 8
+            console.log({difficulty})
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 
             let worker

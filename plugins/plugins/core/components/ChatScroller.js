@@ -29,6 +29,7 @@ import '@material/mwc-icon'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/tooltip'
+import { chatLimit, totalMsgCount } from './ChatPage.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -271,6 +272,7 @@ class ChatScroller extends LitElement {
         this.disableFetching = false
         this.isLoadingBefore = false
         this.isLoadingAfter = false
+        this.disableAddingNewMessages = false
     }
 
     addSeenMessage(val) {
@@ -347,6 +349,7 @@ class ChatScroller extends LitElement {
 
 
     async addNewMessages(newMessages, type) {
+        if(this.disableAddingNewMessages && type === 'newComingInAuto') return
         let previousScrollTop;
         let previousScrollHeight;
         
@@ -373,19 +376,22 @@ class ChatScroller extends LitElement {
 
        
     
-        // Ensure that the total number of individual messages doesn't exceed 80
+        // Ensure that the total number of individual messages doesn't exceed totalMsgCount
         let totalMessagesCount = copy.reduce((acc, group) => acc + group.messages.length, 0);
-        while (totalMessagesCount > 80 && copy.length) {
+        while (totalMessagesCount > totalMsgCount && copy.length) {
+            if(newMessages.length < chatLimit && type !== 'newComingInAuto' && type !== 'initial'){
+                this.disableAddingNewMessages = false
+            }
             const firstGroup = copy[0];
-            if (firstGroup.messages.length <= (totalMessagesCount - 80)) {
+            if (firstGroup.messages.length <= (totalMessagesCount - totalMsgCount)) {
                 // If removing the whole first group achieves the goal, remove it
                 totalMessagesCount -= firstGroup.messages.length;
                 copy.shift();
             } else {
                 // Otherwise, trim individual messages from the first group
-                const messagesToRemove = totalMessagesCount - 80;
+                const messagesToRemove = totalMessagesCount - totalMsgCount;
                 firstGroup.messages.splice(0, messagesToRemove);
-                totalMessagesCount = 80;
+                totalMessagesCount = totalMsgCount;
             }
         }
         this.messagesToRender = copy
@@ -436,27 +442,24 @@ class ChatScroller extends LitElement {
             this.messagesToRender.unshift(currentMessageGroup);
         }
     
-        // Ensure that the total number of individual messages doesn't exceed 80
+        // Ensure that the total number of individual messages doesn't exceed totalMsgCount
         let totalMessagesCount = this.messagesToRender.reduce((acc, group) => acc + group.messages.length, 0);
-        while (totalMessagesCount > 80 && this.messagesToRender.length) {
+        while (totalMessagesCount > totalMsgCount && this.messagesToRender.length) {
+            this.disableAddingNewMessages = true
             const lastGroup = this.messagesToRender[this.messagesToRender.length - 1];
-            if (lastGroup.messages.length <= (totalMessagesCount - 80)) {
+            if (lastGroup.messages.length <= (totalMessagesCount - totalMsgCount)) {
                 // If removing the whole last group achieves the goal, remove it
                 totalMessagesCount -= lastGroup.messages.length;
                 this.messagesToRender.pop();
             } else {
                 // Otherwise, trim individual messages from the last group
-                const messagesToRemove = totalMessagesCount - 80;
+                const messagesToRemove = totalMessagesCount - totalMsgCount;
                 lastGroup.messages.splice(-messagesToRemove, messagesToRemove);
-                totalMessagesCount = 80;
+                totalMessagesCount = totalMsgCount;
             }
         }
         this.clearLoaders()
-        this.requestUpdate();  // await new Promise((res)=> {
-            //     setTimeout(()=> {
-            //         res()
-            //     }, 5000)
-            // })
+        this.requestUpdate();  
             
     }
     
@@ -548,9 +551,10 @@ class ChatScroller extends LitElement {
             if (this.messages.type === 'initial') {
                 this.addNewMessages(this.messages.messages, 'initial')
 
+                
 
-
-            } else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages)
+            } else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages) 
+            else if(this.messages.type === 'newComingInAuto') this.addNewMessages(this.messages.messages, 'newComingInAuto')
             else if (this.messages.type === 'old') this.prependOldMessages(this.messages.messages)
             else if (this.messages.type === 'inBetween') this.newListMessages(this.messages.messages, this.messages.signature)
             else if (this.messages.type === 'update') this.replaceMessagesWithUpdateByArray(this.messages.messages)
