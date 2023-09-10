@@ -320,7 +320,6 @@ class ChatScroller extends LitElement {
 
     async newListMessages(newMessages, message) {
      
-        console.log('sup')
         let data = []
         const copy = [...newMessages]
         copy.forEach(newMessage => {
@@ -337,7 +336,6 @@ class ChatScroller extends LitElement {
         });
 
         
-        console.log({data})
         this.messagesToRender = data
         this.clearLoaders()
         this.requestUpdate()
@@ -355,7 +353,6 @@ class ChatScroller extends LitElement {
     async newListMessagesUnreadMessages(newMessages, message, lastReadMessageTimestamp) {
         const viewElement = this.shadowRoot.querySelector("#viewElement");
 
-        console.log('sup', lastReadMessageTimestamp);
         let data = [];
         const copy = [...newMessages];
         
@@ -370,7 +367,6 @@ class ChatScroller extends LitElement {
     
             // Check if this is the message before which the divider should be placed
             if (!dividerPlaced && newMessage.timestamp <= lastReadMessageTimestamp) {
-                console.log('true true')
                 newMessage.isDivider = true;
                 dividerPlaced = true;  // Ensure the divider is only added once
                 break;  // Exit once the divider is placed
@@ -390,7 +386,6 @@ class ChatScroller extends LitElement {
             }
         });
     
-        console.log({ data });
         this.messagesToRender = data;
         this.clearLoaders();
         this.requestUpdate();
@@ -415,7 +410,6 @@ class ChatScroller extends LitElement {
         previousScrollHeight = viewElement.scrollHeight;
 
     
-        console.log('sup', type);
         const copy = [...this.messagesToRender]
         
         for (const newMessage of newMessages) {
@@ -453,9 +447,7 @@ class ChatScroller extends LitElement {
         }
         this.messagesToRender = copy
         this.requestUpdate();
-        console.log("Before waiting for updateComplete");
         await this.updateComplete;
-        console.log("After waiting for updateComplete");
 
         if (type === 'initial') {
           
@@ -469,7 +461,6 @@ class ChatScroller extends LitElement {
     
 
     async prependOldMessages(oldMessages) {
-        console.log('2', { oldMessages });
         if (!this.messagesToRender) this.messagesToRender = []; // Ensure it's initialized
     
         let currentMessageGroup = null;
@@ -546,22 +537,9 @@ class ChatScroller extends LitElement {
     
         this.messagesToRender = newMessagesToRender;
         this.requestUpdate();
-        console.log('await this.updateComplete 1')
         await this.updateComplete;
-        console.log('await this.updateComplete 2')
         
-        // Adjust scroll position based on the difference in scroll heights
-        // await new Promise((res)=> {
-        //     setTimeout(()=> {
-        //         res()
-        //     }, 5000)
-        // })
-        // const newScrollHeight = viewElement.scrollHeight;
-        // viewElement.scrollTop = previousScrollTop + (newScrollHeight - previousScrollHeight);
-        // viewElement.scrollTop = viewElement.scrollHeight - viewElement.clientHeight;
-        // const newScrollHeight = viewElement.scrollHeight;
-        // viewElement.scrollTop = viewElement.scrollTop + (newScrollHeight - viewElement.scrollHeight);
-        // If the user was at the bottom before the update, keep them at the bottom
+       
     if (isUserAtBottom) {
         viewElement.scrollTop = viewElement.scrollHeight - viewElement.clientHeight;
     } else {
@@ -583,7 +561,6 @@ class ChatScroller extends LitElement {
         const viewElement = this.shadowRoot.querySelector("#viewElement");
         previousScrollTop = viewElement.scrollTop;
         previousScrollHeight = viewElement.scrollHeight;
-        console.log({updatedMessagesArray}, this.messagesToRender)
         for (let group of this.messagesToRender) {
             for (let i = 0; i < group.messages.length; i++) {
                 const update = updatedMessagesArray.find(updatedMessage => ((updatedMessage.chatReference  === group.messages[i].signature) || (updatedMessage.chatReference === group.messages[i].originalSignature)));
@@ -604,7 +581,6 @@ class ChatScroller extends LitElement {
 
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('messages')) {
-            console.log({changedProperties}, this.messages)
             if (this.messages.type === 'initial') {
                 this.addNewMessages(this.messages.messages, 'initial')
 
@@ -738,7 +714,6 @@ class ChatScroller extends LitElement {
     }
 
     shouldUpdate(changedProperties) {
-        console.log({changedProperties})
         if (changedProperties.has('isLoadingMessages')) {
             return true
         }
@@ -758,7 +733,6 @@ class ChatScroller extends LitElement {
             return true
         }
         if(changedProperties.has('messagesToRender')){
-            console.log('true', this.messagesToRender)
             return true
         }
         if(changedProperties.has('isLoadingBefore')){
@@ -774,7 +748,6 @@ class ChatScroller extends LitElement {
     async getUpdateComplete() {
         await super.getUpdateComplete()
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('message-template'))
-        console.log({ marginElements })
         await Promise.all(marginElements.map(el => el.updateComplete))
         return true
     }

@@ -55,8 +55,10 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 40
-export const totalMsgCount = 120
+export const chatLimit = 20
+export const chatLimitHalf = 10
+
+export const totalMsgCount = 60
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -2142,7 +2144,6 @@ class ChatPage extends LitElement {
     }
 
     async goToRepliedMessage(message, clickedOnMessage) {
-        console.log({message})
         const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
 
         if (findMessage) {
@@ -2173,9 +2174,7 @@ class ChatPage extends LitElement {
             await this.getUpdateComplete()
             
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
-            console.log({marginElements})
             const findMessage2 = marginElements.find((item) => item.messageObj.signature === message.signature) || marginElements.find((item) => item.messageObj.originalSignature === message.signature) || marginElements.find((item) => item.messageObj.signature === message.originalSignature) || marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
-            console.log({findMessage2}, message.signature)
             if (findMessage2) {
                 findMessage2.scrollIntoView({ block: 'center' })
             }
@@ -2410,26 +2409,9 @@ class ChatPage extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        // parentEpml.ready().then(() => {
-        //     parentEpml.subscribe('selected_address', async selectedAddress => {
-        //         this.selectedAddress = {}
-        //         selectedAddress = JSON.parse(selectedAddress)
-        //         if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-        //         this.selectedAddress = selectedAddress
-        //     })
-
-        // })
+      
         this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
-        // parentEpml.subscribe('chat_last_seen', async chatList => {
-        //     const parsedChatList = JSON.parse(chatList)
-        //     console.log({parsedChatList}, this.chatId)
-        //     const findChatSeen = parsedChatList.find(chat=> chat.key === this.chatId)
-        //     console.log({findChatSeen})
-        //     if(findChatSeen && this.lastReadMessageTimestamp !== findChatSeen.timestamp){
-        //         this.lastReadMessageTimestamp = findChatSeen.timestamp
-               
-        //     }
-        // })
+     
         parentEpml.imReady()
 
         const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter')
@@ -2528,7 +2510,6 @@ class ChatPage extends LitElement {
     }
 
     renderChatScroller() {
-        console.log('clearUpdateMessageHashmap', Object.keys(this.updateMessageHash).length)
         return html`
             <chat-scroller 
                 chatId=${this.chatId}
@@ -2623,7 +2604,6 @@ class ChatPage extends LitElement {
                  
                 }
                 this.webWorkerDecodeMessages.onerror = e => {
-                    console.log('e',e)
                     rej()
                  
                 }
@@ -2639,7 +2619,6 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-            console.log({decodeMsgs})
 
             let list = [...decodeMsgs]
            
@@ -2648,7 +2627,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -2685,7 +2663,6 @@ class ChatPage extends LitElement {
                  
                 }
                 this.webWorkerDecodeMessages.onerror = e => {
-                    console.log('e',e)
                     rej()
                  
                 }
@@ -2700,7 +2677,6 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
            
-            console.log({decodeMsgs})
        
             let list = [...decodeMsgs]
            
@@ -2709,7 +2685,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -2745,7 +2720,6 @@ class ChatPage extends LitElement {
                  
                 }
                 this.webWorkerDecodeMessages.onerror = e => {
-                    console.log('e',e)
                     rej()
                  
                 }
@@ -2767,7 +2741,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -2808,7 +2781,6 @@ class ChatPage extends LitElement {
                      
                     }
                     this.webWorkerDecodeMessages.onerror = e => {
-                        console.log('e',e)
                         rej()
                      
                     }
@@ -2830,7 +2802,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -2872,7 +2843,6 @@ class ChatPage extends LitElement {
                  
                 }
                 this.webWorkerDecodeMessages.onerror = e => {
-                    console.log('e',e)
                     rej()
                  
                 }
@@ -2895,7 +2865,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -2933,7 +2902,6 @@ class ChatPage extends LitElement {
                  
                 }
                 this.webWorkerDecodeMessages.onerror = e => {
-                    console.log('e',e)
                     rej()
                  
                 }
@@ -2958,7 +2926,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -3002,7 +2969,6 @@ class ChatPage extends LitElement {
     }
 
     async clearUpdateMessageHashmap(){
-        console.log('hello clear')
         this.updateMessageHash = {}
         this.requestUpdate()
     }
@@ -3046,7 +3012,6 @@ class ChatPage extends LitElement {
              
             }
             this.webWorkerDecodeMessages.onerror = e => {
-                console.log('e',e)
                 rej()
              
             }
@@ -3078,7 +3043,6 @@ class ChatPage extends LitElement {
                 this.webWorkerSortMessages.postMessage({list});
             
                 this.webWorkerSortMessages.onmessage = e => {
-                    console.log('e',e)
               
                     list = e.data
                     res()
@@ -3141,23 +3105,6 @@ class ChatPage extends LitElement {
 
             }
             
-
-            // let list = [...this.messagesRendered]
-           
-            // await new Promise((res, rej) => {
-       
-            //     this.webWorkerSortMessages.postMessage({list});
-            
-            //     this.webWorkerSortMessages.onmessage = e => {
-            //         console.log('e',e)
-              
-            //         list = e.data
-            //         res()
-                 
-            //     }
-            //   })
-           
-            //   this.messagesRendered  = list
         }
     }
 
@@ -3329,27 +3276,24 @@ class ChatPage extends LitElement {
                     let isUnread = false
     
                     const chatId = this.chatId
-                      console.log('this.chatHeads', this.chatHeads)
                     const findContent = this.chatHeads.find((item)=> item.url === chatId) 
                     const chatInfoTimestamp = findContent.timestamp || 0
                     const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
     
-                    console.log({lastReadMessageTimestamp, chatInfoTimestamp})
         
                     if(lastReadMessageTimestamp && chatInfoTimestamp){
                         if(lastReadMessageTimestamp < chatInfoTimestamp){
                             isUnread = true
                         }
                     }
-                    console.log({isUnread})
                     if(isUnread){
                         const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${20}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimitHalf}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
                         })
                         const getInitialMessagesAfter = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${20}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
                         })
                          getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
                     } else {
@@ -3450,27 +3394,24 @@ class ChatPage extends LitElement {
             let isUnread = false
     
             const chatId = this.chatId
-              console.log('this.chatHeads', this.chatHeads)
             const findContent = this.chatHeads.find((item)=> item.url === chatId) 
             const chatInfoTimestamp = findContent.timestamp || 0
-            console.log({lastReadMessageTimestamp, chatInfoTimestamp})
 
             if(lastReadMessageTimestamp && chatInfoTimestamp){
                 if(lastReadMessageTimestamp < chatInfoTimestamp){
                     isUnread = true
                 }
             }
-            console.log({isUnread}, '2')
             if(isUnread){
                
 
                 const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                     type: 'api',
-                    url: `/chat/messages?txGroupId=${groupId}&limit=${20}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimitHalf}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
                 })
                 const getInitialMessagesAfter = await parentEpml.request('apiCall', {
                     type: 'api',
-                    url: `/chat/messages?txGroupId=${groupId}&limit=${20}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
                 })
                  getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
             } else {
@@ -4295,7 +4236,6 @@ class ChatPage extends LitElement {
 
         const _computePow = async (chatBytes, isForward) => {
             const difficulty = this.balance < 4 ? 18 : 8
-            console.log({difficulty})
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 
             let worker

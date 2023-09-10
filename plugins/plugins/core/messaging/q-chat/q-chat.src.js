@@ -179,7 +179,6 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log('q-chat')
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -470,10 +469,7 @@ class Chat extends LitElement {
         }, 60000)
     }
 
-    async updated(changedProperties) {
-        console.log({changedProperties})
-       
-    }
+   
 
     clearConsole() {
         if (!isElectron()) {
