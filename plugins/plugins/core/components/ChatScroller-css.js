@@ -753,6 +753,17 @@ export const chatStyles = css`
     visibility: visible;
 	}
 
+	.unread-divider {
+		width: 100%;
+    background: #9B111E;
+    padding: 5px;
+    color: #FAEBD7;
+    display: flex;
+    justify-content: center;
+    border-radius: 2px;
+	margin-top: 5px;
+	}
+
   .blink-bg{
 	border-radius: 8px;
 		animation: blinkingBackground 3s;

@@ -10,6 +10,7 @@ import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js'
 import { EmojiPicker } from 'emoji-picker-js'
 import { generateHTML } from '@tiptap/core'
 import isElectron from 'is-electron'
+import localForage from 'localforage'
 
 import axios from 'axios'
 import Highlight from '@tiptap/extension-highlight'
@@ -32,7 +33,9 @@ import '@vaadin/tooltip'
 import { chatLimit, totalMsgCount } from './ChatPage.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
-
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+})
 let toggledMessage = {}
 
 const uid = new ShortUniqueId()
@@ -259,7 +262,9 @@ class ChatScroller extends LitElement {
         this.oldMessages = []
         this._upObserverhandler = this._upObserverhandler.bind(this)
         this.newListMessages = this.newListMessages.bind(this)
+        this.newListMessagesUnreadMessages = this.newListMessagesUnreadMessages.bind(this)
         this._downObserverHandler = this._downObserverHandler.bind(this)
+        this.isLastMessageBeforeUnread = this.isLastMessageBeforeUnread.bind(this)
         this.replaceMessagesWithUpdate = this.replaceMessagesWithUpdate.bind(this)
         this.__bottomObserverForFetchingMessagesHandler = this.__bottomObserverForFetchingMessagesHandler.bind(this)
         this.myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -273,6 +278,7 @@ class ChatScroller extends LitElement {
         this.isLoadingBefore = false
         this.isLoadingAfter = false
         this.disableAddingNewMessages = false
+        this.lastReadMessageTimestamp =  null
     }
 
     addSeenMessage(val) {
@@ -346,6 +352,57 @@ class ChatScroller extends LitElement {
 
     }
 
+    async newListMessagesUnreadMessages(newMessages, message, lastReadMessageTimestamp) {
+        const viewElement = this.shadowRoot.querySelector("#viewElement");
+
+        console.log('sup', lastReadMessageTimestamp);
+        let data = [];
+        const copy = [...newMessages];
+        
+        let dividerPlaced = false; // To ensure the divider is added only once
+    
+        // Start from the end of the list (newest messages)
+        for (let i = copy.length - 1; i >= 0; i--) {
+            let newMessage = copy[i];
+            
+            // Initialize a property for the divider
+            newMessage.isDivider = false;
+    
+            // Check if this is the message before which the divider should be placed
+            if (!dividerPlaced && newMessage.timestamp <= lastReadMessageTimestamp) {
+                console.log('true true')
+                newMessage.isDivider = true;
+                dividerPlaced = true;  // Ensure the divider is only added once
+                break;  // Exit once the divider is placed
+            }
+        }
+    
+        copy.forEach((newMessage, groupIndex) => {
+            const lastGroupedMessage = data[data.length - 1];
+    
+            if (this.shouldGroupWithLastMessage(newMessage, lastGroupedMessage)) {
+                lastGroupedMessage.messages.push(newMessage);
+            } else {
+                data.push({
+                    messages: [newMessage],
+                    ...newMessage
+                });
+            }
+        });
+    
+        console.log({ data });
+        this.messagesToRender = data;
+        this.clearLoaders();
+        this.requestUpdate();
+        await this.updateComplete;
+        const findElement = this.shadowRoot.getElementById('unread-divider-id')
+        if (findElement) {
+            findElement.scrollIntoView({ behavior: 'auto', block: 'center' })
+        }
+    }
+    
+    
+
 
 
     async addNewMessages(newMessages, type) {
@@ -402,7 +459,7 @@ class ChatScroller extends LitElement {
 
         if (type === 'initial') {
           
-                this.viewElement.scrollTop = this.viewElement.scrollHeight
+                viewElement.scrollTop = viewElement.scrollHeight
            
                
             
@@ -547,13 +604,17 @@ class ChatScroller extends LitElement {
 
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('messages')) {
-     
+            console.log({changedProperties}, this.messages)
             if (this.messages.type === 'initial') {
                 this.addNewMessages(this.messages.messages, 'initial')
 
                 
 
-            } else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages) 
+            } else if (this.messages.type === 'initialLastSeen') {
+                this.newListMessagesUnreadMessages(this.messages.messages, 'initialLastSeen', this.messages.lastReadMessageTimestamp)
+
+            }
+             else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages) 
             else if(this.messages.type === 'newComingInAuto') this.addNewMessages(this.messages.messages, 'newComingInAuto')
             else if (this.messages.type === 'old') this.prependOldMessages(this.messages.messages)
             else if (this.messages.type === 'inBetween') this.newListMessages(this.messages.messages, this.messages.signature)
@@ -566,6 +627,15 @@ class ChatScroller extends LitElement {
         }
 
     }
+
+    isLastMessageBeforeUnread(message, formattedMessages) {
+        // if the message is the last one in the older messages list and its timestamp is before the user's last seen timestamp
+        if (message.timestamp < this.lastReadMessageTimestamp && formattedMessages.indexOf(message) === (formattedMessages.length - 21)) {
+            return true;
+        }
+        return false;
+    }
+    
 
     render() {
         // let formattedMessages = this.messages.reduce((messageArray, message) => {
@@ -617,10 +687,12 @@ class ChatScroller extends LitElement {
             formattedMessages,
             (formattedMessage) => formattedMessage.id, // Use .id as the unique key for formattedMessage.
             (formattedMessage) => html`
+               
                 ${repeat(
                 formattedMessage.messages,
                 (message) => message.signature,
                 (message, indexMessage) => html`
+                         
                         <message-template 
                             .emojiPicker=${this.emojiPicker} 
                             .escapeHTML=${this.escapeHTML} 
@@ -644,8 +716,13 @@ class ChatScroller extends LitElement {
                             .addSeenMessage=${(val) => this.addSeenMessage(val)}
                             .listSeenMessages=${this.listSeenMessages}
                             chatId=${this.chatId}
-                        ></message-template>`
+                        ></message-template>
+                        ${message.isDivider ? html`<div class="unread-divider" id="unread-divider-id">Unread Messages Below</div>` : null}
+                        
+                        `
+                       
             )}
+           
             `
         )}
                         <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
@@ -708,7 +785,6 @@ class ChatScroller extends LitElement {
 
     async firstUpdated() {
         this.changeTheme()
-
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme')
 

@@ -55,8 +55,8 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 10
-export const totalMsgCount = 20
+export const chatLimit = 40
+export const totalMsgCount = 120
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -1367,6 +1367,8 @@ class ChatPage extends LitElement {
         this.addToUpdateMessageHashmap = this.addToUpdateMessageHashmap.bind(this)
         this.getAfterMessages = this.getAfterMessages.bind(this)
         this.oldMessages = []
+        this.lastReadMessageTimestamp =  0
+        this.initUpdate = this.initUpdate.bind(this)
     }
 
     setOpenGifModal(value) {
@@ -2006,42 +2008,42 @@ class ChatPage extends LitElement {
         document.addEventListener('keydown', this.initialChat)
         document.addEventListener('paste', this.pasteImage)
 
-        if (this.chatId) {
-            window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-                key: this.chatId,
-                timestamp: Date.now()
-            }))
-        }
+        // if (this.chatId) {
+        //     window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+        //         key: this.chatId,
+        //         timestamp: Date.now()
+        //     }))
+        // }
 
-        let callback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
+        // let callback = (entries, observer) => {
+        //     entries.forEach(entry => {
+        //         if (entry.isIntersecting) {
 
-                    this.isPageVisible = true
-                    if (this.chatId) {
-                        window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-                            key: this.chatId,
-                            timestamp: Date.now()
-                        }))
+        //             this.isPageVisible = true
+        //             if (this.chatId) {
+        //                 window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+        //                     key: this.chatId,
+        //                     timestamp: Date.now()
+        //                 }))
 
-                    }
-                } else {
-                    this.isPageVisible = false
-                }
-            })
-        }
+        //             }
+        //         } else {
+        //             this.isPageVisible = false
+        //         }
+        //     })
+        // }
 
-        let options = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.5
-        }
+        // let options = {
+        //     root: null,
+        //     rootMargin: '0px',
+        //     threshold: 0.5
+        // }
 
-        // Create the observer with the callback function and options
-        this.observer = new IntersectionObserver(callback, options)
-        const mainContainer = this.shadowRoot.querySelector('.main-container')
+        // // Create the observer with the callback function and options
+        // this.observer = new IntersectionObserver(callback, options)
+        // const mainContainer = this.shadowRoot.querySelector('.main-container')
 
-        this.observer.observe(mainContainer)
+        // this.observer.observe(mainContainer)
     }
 
     disconnectedCallback() {
@@ -2416,6 +2418,17 @@ class ChatPage extends LitElement {
         //         this.selectedAddress = selectedAddress
         //     })
 
+        // })
+        this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
+        // parentEpml.subscribe('chat_last_seen', async chatList => {
+        //     const parsedChatList = JSON.parse(chatList)
+        //     console.log({parsedChatList}, this.chatId)
+        //     const findChatSeen = parsedChatList.find(chat=> chat.key === this.chatId)
+        //     console.log({findChatSeen})
+        //     if(findChatSeen && this.lastReadMessageTimestamp !== findChatSeen.timestamp){
+        //         this.lastReadMessageTimestamp = findChatSeen.timestamp
+               
+        //     }
         // })
         parentEpml.imReady()
 
@@ -2994,9 +3007,28 @@ class ChatPage extends LitElement {
         this.requestUpdate()
     }
 
+    findContent(identifier, data) {
+        const [type, id] = identifier.split('/');
+    
+        if (type === 'group') {
+            for (let group of data.groups) {
+                if (group.groupId === parseInt(id, 10)) {
+                    return group;
+                }
+            }
+        } else if (type === 'direct') {
+            for (let direct of data.direct) {
+                if (direct.address === id) {
+                    return direct;
+                }
+            }
+        }
+        return null;
+    }
+
   
 
-    async processMessages(messages, isInitial) {
+    async processMessages(messages, isInitial, isUnread) {
         const isReceipient = this.chatId.includes('direct')
         let decodedMessages = []
            if(!this.webWorkerDecodeMessages){
@@ -3058,10 +3090,27 @@ class ChatPage extends LitElement {
 
             // TODO: Determine number of initial messages by screen height...
             // this.messagesRendered = this._messages
-            this.messagesRendered = {
-                messages: this._messages,
-                type: 'initial'
+            const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
+
+          
+            if(isUnread){
+                this.messagesRendered = {
+                    messages: this._messages,
+                    type: 'initialLastSeen',
+                    lastReadMessageTimestamp
+                }
+
+                window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+                    key: this.chatId,
+                    timestamp: Date.now()
+                }))
+            } else {
+                this.messagesRendered = {
+                    messages: this._messages,
+                    type: 'initial'
+                }
             }
+            
             this.isLoadingMessages = false
 
             setTimeout(() => this.downElementObserver(), 500)
@@ -3272,25 +3321,47 @@ class ChatPage extends LitElement {
                     directSocketTimeout = setTimeout(pingDirectSocket, 45000)
                     return
                 }
+               
                 if (initial === 0) {
+                    this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
-                    const cachedData = null
                     let getInitialMessages = []
-                    if (cachedData && cachedData.length !== 0) {
-                        const lastMessage = cachedData[cachedData.length - 1]
-                        const newMessages = await parentEpml.request('apiCall', {
+                    let isUnread = false
+    
+                    const chatId = this.chatId
+                      console.log('this.chatHeads', this.chatHeads)
+                    const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+                    const chatInfoTimestamp = findContent.timestamp || 0
+                    const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
+    
+                    console.log({lastReadMessageTimestamp, chatInfoTimestamp})
+        
+                    if(lastReadMessageTimestamp && chatInfoTimestamp){
+                        if(lastReadMessageTimestamp < chatInfoTimestamp){
+                            isUnread = true
+                        }
+                    }
+                    console.log({isUnread})
+                    if(isUnread){
+                        const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimit}&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${20}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
                         })
-                        getInitialMessages = [...newMessages]
+                        const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${20}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                        })
+                         getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
                             url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
                         })
                     }
+                       
+                    
 
-                    this.processMessages(getInitialMessages, true)
+                    this.processMessages(getInitialMessages, true, isUnread)
 
                     initial = initial + 1
 
@@ -3371,27 +3442,48 @@ class ChatPage extends LitElement {
                     return
                 }
                 if (initial === 0) {
+                    this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
-                    const cachedData = null
                     let getInitialMessages = []
-                    if (cachedData && cachedData.length !== 0) {
+                    const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
 
-                        const lastMessage = cachedData[cachedData.length - 1]
+            let isUnread = false
+    
+            const chatId = this.chatId
+              console.log('this.chatHeads', this.chatHeads)
+            const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+            const chatInfoTimestamp = findContent.timestamp || 0
+            console.log({lastReadMessageTimestamp, chatInfoTimestamp})
 
-                        const newMessages = await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimit}&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`
-                        })
-                        getInitialMessages = [...newMessages]
-                    }else {
-                        getInitialMessages = await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
-                        })
+            if(lastReadMessageTimestamp && chatInfoTimestamp){
+                if(lastReadMessageTimestamp < chatInfoTimestamp){
+                    isUnread = true
+                }
+            }
+            console.log({isUnread}, '2')
+            if(isUnread){
+               
+
+                const getInitialMessagesBefore = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${20}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
+                })
+                const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${20}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                })
+                 getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+            } else {
+                getInitialMessages = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+                })
+            }
+                       
                     
-                    } 
+                    
 
-                    this.processMessages(getInitialMessages, true)
+                    this.processMessages(getInitialMessages, true, isUnread)
 
                     initial = initial + 1
                 } else {
