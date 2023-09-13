@@ -163,6 +163,7 @@ class ChatTextEditor extends LitElement {
 	}
 
 	render() {
+        console.log('here here')
         let scrollHeightBool = false;
         try {
             if (this.chatMessageInput && this.chatMessageInput.contentDocument.body.scrollHeight > 60 && this.shadowRoot.querySelector(".chat-editor").contentDocument.body.querySelector("#chatbarId").innerHTML.trim() !== "") {

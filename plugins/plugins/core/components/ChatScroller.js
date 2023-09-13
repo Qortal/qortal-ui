@@ -245,7 +245,8 @@ class ChatScroller extends LitElement {
             clearUpdateMessageHashmap: { attribute: false},
             disableFetching: {type: Boolean},
             isLoadingBefore: {type: Boolean},
-            isLoadingAfter: {type: Boolean}
+            isLoadingAfter: {type: Boolean},
+            messageQueue: {type: Array}
         }
     }
 
@@ -279,6 +280,7 @@ class ChatScroller extends LitElement {
         this.isLoadingAfter = false
         this.disableAddingNewMessages = false
         this.lastReadMessageTimestamp =  null
+        this.messageQueue = []
     }
 
     addSeenMessage(val) {
@@ -614,6 +616,7 @@ class ChatScroller extends LitElement {
     
 
     render() {
+        console.log('this.chatId', this.chatId)
         // let formattedMessages = this.messages.reduce((messageArray, message) => {
         //     const currentMessage = this.updateMessageHash[message.signature] || message;
         //     const lastGroupedMessage = messageArray[messageArray.length - 1];
@@ -698,17 +701,67 @@ class ChatScroller extends LitElement {
                         `
                        
             )}
+            
            
             `
         )}
+
+                        ${this.messageQueue.filter((item )=> this.chatId.includes(item._chatId)).length > 0 ? html`
+                        <div style=${"height: 1px"} id='bottomObserverForFetchingMessages'></div>
+                        ` : html`
                         <div style=${"height: 1px; margin-top: -100px"} id='bottomObserverForFetchingMessages'></div>
+                        `}
+                        
 
                 <div style=${"height: 1px;"} id='downObserver'></div>
+                
                 ${this.isLoadingAfter ? html`
                 <div class="spinnerContainer">
                         <paper-spinner-lite active></paper-spinner-lite>
                         </div>
                         ` : ''}
+                        ${repeat(
+                this.messageQueue.filter((item )=> this.chatId.includes(item._chatId)),
+                (message) => message.messageText,
+                (message, indexMessage) => html`
+                         
+                        <message-template 
+                            .emojiPicker=${this.emojiPicker} 
+                            .escapeHTML=${this.escapeHTML} 
+                            .messageObj=${{
+                            decodedMessage: message.messageText, 
+                            
+    "timestamp": message.timestamp,
+    "sender": "QWxEcmZxnM8yb1p92C1YKKRsp8svSVbFEs",
+    "senderName": "palmas",
+    "signature": "4B6hHMHTnSvXTMmQb73P4Yr2o772zu7XxiTiRQv8GsgysNaoc9UCUqb9x7ihz2Su6xCREZUvgACmFpHY2gzUbYHf",
+    
+                            }} 
+                            .hideMessages=${this.hideMessages}
+                            .setRepliedToMessageObj=${this.setRepliedToMessageObj}
+                            .setEditedMessageObj=${this.setEditedMessageObj}
+                            .sendMessage=${this.sendMessage}
+                            .sendMessageForward=${this.sendMessageForward}
+                            ?isFirstMessage=${true}
+                            ?isSingleMessageInGroup=${false}
+                            ?isLastMessageInGroup=${true}
+                            .setToggledMessage=${this.setToggledMessage}
+                            .setForwardProperties=${this.setForwardProperties}
+                            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+                            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+                            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+                            .setUserName=${(val) => this.setUserName(val)}
+                            id=${message.signature}
+                            .goToRepliedMessage=${(val, val2)=> this.goToRepliedMessageFunc(val, val2)}
+                            .addSeenMessage=${(val) => this.addSeenMessage(val)}
+                            .listSeenMessages=${this.listSeenMessages}
+                            chatId=${this.chatId}
+                            ?isInProgress=${true}
+                        ></message-template>
+                        
+                        `
+                       
+            )}
             </ul>
         `
     }
@@ -739,6 +792,9 @@ class ChatScroller extends LitElement {
             return true
         }
         if(changedProperties.has('isLoadingAfter')){
+            return true
+        }
+        if(changedProperties.has('messageQueue')){
             return true
         }
         // Only update element if prop1 changed.
@@ -820,7 +876,7 @@ class ChatScroller extends LitElement {
 
 
     _upObserverhandler(entries) {
-
+        if(!entries[0].target || !entries[0].target.nextElementSibling) return
         if (entries[0].isIntersecting) {
             if (this.disableFetching) {
                 return
@@ -844,7 +900,7 @@ class ChatScroller extends LitElement {
         if (this.messagesToRender.length === 0 ||  this.disableFetching) {
             return
         }
-        if (!entries[0].isIntersecting) {
+        if (!entries[0].isIntersecting || !entries[0].target || !entries[0].target.previousElementSibling) {
         } else {
             this.disableFetching = true
             this.isLoadingAfter = true
@@ -926,7 +982,8 @@ class MessageTemplate extends LitElement {
             goToRepliedMessage: { attribute: false },
             listSeenMessages: { type: Array },
             addSeenMessage: { attribute: false },
-            chatId: { type: String }
+            chatId: { type: String },
+            isInProgress: {type: Boolean}
         }
     }
 
@@ -947,6 +1004,7 @@ class MessageTemplate extends LitElement {
         this.isSingleMessageInGroup = false
         this.isLastMessageInGroup = false
         this.viewImage = false
+        this.isInProgress = false
     }
 
     static get styles() {
@@ -1059,6 +1117,7 @@ class MessageTemplate extends LitElement {
         let isEdited = false
         let attachment = null
         try {
+            console.log('this.messageOb', this.messageObj )
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
@@ -1250,7 +1309,7 @@ class MessageTemplate extends LitElement {
                     <div 
                     class="message-container" 
                     style="${(this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false) && 'margin-bottom: 0'}">
-                        <div class="message-subcontainer1">
+                        <div class=${`message-subcontainer1 ${this.isInProgress ? 'message-sending' : ''}`}>
                             ${(this.isSingleMessageInGroup === false ||
                 (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true))
                 ? (
@@ -1476,7 +1535,12 @@ class MessageTemplate extends LitElement {
                                                     `
                 : ''
             }
+                                            ${this.isInProgress ? html`
+                                            <p>Sending...</p>
+                                            ` : html`
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
+                                            `}
+                                            
                                         </div>
                                     </div>
                             </div>
@@ -1518,7 +1582,7 @@ class MessageTemplate extends LitElement {
                     editedMessageObj: this.messageObj,
                     reaction: reaction.type,
                 })} 
-                                        id=${`reactions-${index}`}
+                                        id=${`reactions-${indexMessageTemplate}`}
                                         class="reactions-bg">
                                         ${reaction.type} 
                                         ${reaction.qty}
@@ -1530,7 +1594,7 @@ class MessageTemplate extends LitElement {
                                         text=${reaction.users.length > 3 ?
                         (
                             `${reaction.users[0].name
-                                ? reaction.users[0].name
+                                ? reaction.users[0].nameMessageTemplate
                                 : cropAddress(reaction.users[0].address)}, 
                                         ${reaction.users[1].name
                                 ? reaction.users[1].name
@@ -1558,7 +1622,7 @@ class MessageTemplate extends LitElement {
                                         : cropAddress(reaction.users[0].address)}
                                         ${get("chatpage.cchange71")} 
                                         ${reaction.users[1].name
-                                        ? reaction.users[1].name
+                                        ? reaction.users[1].namMessageTemplatee
                                         : cropAddress(reaction.users[1].address)} ${get("chatpage.cchange74")} ${reaction.type}`
                                 ) : reaction.users.length === 1 ?
                                     (
@@ -1585,7 +1649,7 @@ class MessageTemplate extends LitElement {
                 toblockaddress=${this.messageObj.sender}
             >
             </chat-modals>
-            <mwc-dialog 
+            <mwc-dialog MessageTemplate
                 id="showDialogPublicKey" 
                 ?open=${this.openDialogImage} 
                 @closed=${() => {
@@ -1600,7 +1664,7 @@ class MessageTemplate extends LitElement {
 						dialogAction="cancel"
 						class="red"
 						@click=${() => {
-
+MessageTemplate
                 this.openDialogImage = false
             }}
 					>
@@ -1612,7 +1676,7 @@ class MessageTemplate extends LitElement {
                 ?open=${this.openDialogGif} 
                 @closed=${() => {
                 this.openDialogGif = false
-            }}>
+            }}>MessageTemplate
 					<div class="dialog-header"></div>
 					<div class="dialog-container imageContainer">
 					    ${gifHTMLDialog}
@@ -1627,7 +1691,7 @@ class MessageTemplate extends LitElement {
             }}
 					>
 					    ${translate("general.close")}
-					</mwc-button>
+					</mwc-button>MessageTemplate
 				</mwc-dialog>
                 <mwc-dialog
                 hideActions

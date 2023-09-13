@@ -43,6 +43,10 @@ export const chatStyles = css`
 		margin: 0;
 		padding: 20px 17px;
 	}
+	.message-sending {
+  opacity: 0.5;
+  cursor: progress;
+}
 
 	.chat-list {
 		overflow-y: auto;

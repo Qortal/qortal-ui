@@ -124,7 +124,9 @@ class ChatPage extends LitElement {
             goToRepliedMessage: { attribute: false },
             isLoadingGoToRepliedMessage: { type: Object },
             updateMessageHash: { type: Object},
-            oldMessages: {type: Array}
+            oldMessages: {type: Array},
+            messageQueue: {type: Array},
+            isInProcessQueue: {type: Boolean}
         }
     }
 
@@ -1371,6 +1373,10 @@ class ChatPage extends LitElement {
         this.oldMessages = []
         this.lastReadMessageTimestamp =  0
         this.initUpdate = this.initUpdate.bind(this)
+        this.messageQueue = []
+        this.addToQueue = this.addToQueue.bind(this)
+        this.processQueue = this.processQueue.bind(this)
+        this.isInProcessQueue = false
     }
 
     setOpenGifModal(value) {
@@ -1416,7 +1422,84 @@ class ChatPage extends LitElement {
         this.gifsLoading = props
     }
 
+    addToQueue(outSideMsg, messageQueue) {
+        console.log('added to queue', messageQueue, this.messageQueue)
+        // Push the new message object to the queue
+        
+        this.messageQueue = [...messageQueue, { ...outSideMsg, timestamp: Date.now()}];
+        console.log('Current Queue after adding:', [...this.messageQueue]);
+
+        // Start processing the queue only if the message we just added is the only one in the queue
+        // This ensures that the queue processing starts only once, even if this method is called multiple times
+        if (this.messageQueue.length === 1) {
+            this.processQueue();
+        }
+    
+        // Notify Lit to update/render due to the property change
+        this.requestUpdate();
+    }
+
+    async processQueue() {
+        if (this.messageQueue.length === 0) return;
+        const currentMessage = this.messageQueue[0];
+        console.log({currentMessage})
+        try {
+          const res =  await this.sendMessage(currentMessage);
+          console.log({res})
+          if(res === true) {
+            this.messageQueue = this.messageQueue.slice(1);
+          } else {
+            throw new Error('failed')
+          }
+         
+            if (this.messageQueue.length > 0) {
+                setTimeout(() => this.processQueue(), 2000); // Wait for 10 seconds before retrying
+                // setTimeout(() => this.processQueue(), 0); // Process the next message immediately
+            }
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            setTimeout(() => this.processQueue(), 10000); // Wait for 10 seconds before retrying
+        }
+    }
+    // async processQueue() {
+    //     let inProcess = false;  // to indicate if we're currently sending a message
+    
+    //     while (true) {  // Infinite loop
+    //         const currentMessage = this.messageQueue[0];
+    
+    //         // If there's no current message, you could wait a while (e.g., a second) before the next iteration.
+    //         // This prevents the loop from consuming resources unnecessarily when the queue is empty.
+    //         if (!currentMessage) {
+    //             await new Promise(res => setTimeout(res, 1000));  // Wait for 1 second
+    //             continue;  // go to the next iteration of the loop
+    //         }
+    
+    //         // If not currently processing another message, attempt to send the current one
+    //         if (!inProcess) {
+    //             inProcess = true;  // indicate that we're starting to process a message
+    
+    //             try {
+    //                 await this._sendMessage(currentMessage.outSideMsg, currentMessage.msg, true, currentMessage.chatId, currentMessage.isReceipient, currentMessage._publicKey, currentMessage.attachment);
+    
+    //                 // If successful, remove the processed message from the queue
+    //                 this.messageQueue = this.messageQueue.slice(1);
+    //                 inProcess = false;  // set inProcess back to false since we're done with this message
+    //             } catch (error) {
+    //                 console.error("Failed to send message:", error);
+    //                 inProcess = false;  // set inProcess back to false since an error occurred
+    //                 await new Promise(res => setTimeout(res, 10000));  // Wait for 10 seconds before retrying
+    //             }
+    //         } else {
+    //             await new Promise(res => setTimeout(res, 1000));  // Wait for 1 second before checking again if inProcess is false
+    //         }
+    //     }
+    // }
+    
+    
+
     render() {
+        console.log('this.messageQueue', this.messageQueue.length)
+
         return html`
             <div class="main-container">
             <div 
@@ -1551,6 +1634,7 @@ class ChatPage extends LitElement {
                                 ?openGifModal=${this.openGifModal}
                                 .setOpenGifModal=${(val) => this.setOpenGifModal(val)}
                                 chatId=${this.chatId}
+                                .messageQueue=${this.messageQueue}
                                 >                           
                             </chat-text-editor>
                     </div>
@@ -2394,7 +2478,9 @@ class ChatPage extends LitElement {
 
     async firstUpdated() {
         this.changeTheme()
-
+     
+            // this.processQueue();
+      
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -2453,6 +2539,7 @@ class ChatPage extends LitElement {
 
 
     shouldUpdate(changedProperties) {
+        console.log({changedProperties})
         if (changedProperties.has('setActiveChatHeadUrl')) {
             return false
         }
@@ -2537,6 +2624,7 @@ class ChatPage extends LitElement {
                 .goToRepliedMessage=${(val, val2) => this.goToRepliedMessage(val, val2)}
                .updateMessageHash=${this.updateMessageHash}
                .clearUpdateMessageHashmap=${this.clearUpdateMessageHashmap}
+               .messageQueue=${this.messageQueue}
             >
             </chat-scroller>
         `
@@ -3484,11 +3572,25 @@ class ChatPage extends LitElement {
         }
     }
 
-    async _sendMessage(outSideMsg, msg) {
+    async _sendMessage(outSideMsg, msg, messageQueue) {
+       const _chatId= this._chatId 
+       const isReceipient= this.isReceipient 
+       const _publicKey= this._publicKey 
+      const attachment= this.attachment
+      console.log({
+        _chatId, isReceipient, _publicKey, attachment
+      })
+        // if(messageQueue){
+        //     console.log('is queueCurrent Queue after before:', [...this.messageQueue]);
+        //     this.addToQueue(outSideMsg, msg, messageQueue);
+
+        //     return
+        // }
+       
         try {
             if (this.isReceipient) {
                 let hasPublicKey = true
-                if (!this._publicKey.hasPubKey) {
+                if (!publicKey.hasPubKey) {
                     hasPublicKey = false
                     try {
                         const res = await parentEpml.request('apiCall', {
@@ -3496,20 +3598,20 @@ class ChatPage extends LitElement {
                             url: `/addresses/publickey/${this.selectedAddress.address}`
                         })
                         if (res.error === 102) {
-                            this._publicKey.key = ''
-                            this._publicKey.hasPubKey = false
+                            publicKey.key = ''
+                            publicKey.hasPubKey = false
                         } else if (res !== false) {
-                            this._publicKey.key = res
-                            this._publicKey.hasPubKey = true
+                            publicKey.key = res
+                            publicKey.hasPubKey = true
                             hasPublicKey = true
                         } else {
-                            this._publicKey.key = ''
-                            this._publicKey.hasPubKey = false
+                            publicKey.key = ''
+                            publicKey.hasPubKey = false
                         }
                     } catch (error) {
                     }
     
-                    if (!hasPublicKey || !this._publicKey.hasPubKey) {
+                    if (!hasPublicKey || !publicKey.hasPubKey) {
                         let err4string = get("chatpage.cchange39")
                         parentEpml.request('showSnackBar', `${err4string}`)
                         return
@@ -3524,7 +3626,7 @@ class ChatPage extends LitElement {
             // create new var called repliedToData and use that to modify the UI
             // find specific object property in local
             let typeMessage = 'regular'
-            this.isLoading = true
+            // this.isLoading = true
             const trimmedMessage = msg
     
             const getName = async (recipient) => {
@@ -3640,7 +3742,7 @@ class ChatPage extends LitElement {
                     isImageDeleted: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
                 this.isDeletingAttachment = true
                 let compressedFile = ''
@@ -3738,7 +3840,7 @@ class ChatPage extends LitElement {
                     isAttachmentDeleted: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'image') {
                 this.isUploadingImage = true
                 const userName = await getName(this.selectedAddress.address)
@@ -3826,7 +3928,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'gif') {
                 const userName = await getName(this.selectedAddress.address)
                 if (!userName) {
@@ -3847,7 +3949,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'attachment') {
                 this.isUploadingAttachment = true
                 const userName = await getName(this.selectedAddress.address)
@@ -3864,7 +3966,7 @@ class ChatPage extends LitElement {
     
                 this.webWorkerFile = new WebWorkerFile()
     
-                const attachment = this.attachment
+                // const attachment = attachment
                 const id = this.uid()
                 const identifier = `qchat_${id}`
                 const fileSize = attachment.size
@@ -3916,7 +4018,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'reaction') {
                 const userName = await getName(this.selectedAddress.address)
                 typeMessage = 'edit'
@@ -3971,7 +4073,7 @@ class ChatPage extends LitElement {
                     reactions
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (/^\s*$/.test(trimmedMessage)) {
                 this.isLoading = false
             } else if (this.repliedToMessageObj) {
@@ -3987,7 +4089,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (this.editedMessageObj) {
                 typeMessage = 'edit'
                 let chatReference = this.editedMessageObj.signature
@@ -4010,7 +4112,7 @@ class ChatPage extends LitElement {
                     isEdited: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+                return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else {
                 const messageObject = {
                     messageText: trimmedMessage,
@@ -4025,7 +4127,7 @@ class ChatPage extends LitElement {
                     this.myTrimmedMeassage = stringifyMessageObject
                     this.shadowRoot.getElementById('confirmDialog').open()
                 } else {
-                    this.sendMessage(stringifyMessageObject, typeMessage)
+                   return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
                 }
             }
         } catch (error) {
@@ -4036,20 +4138,27 @@ class ChatPage extends LitElement {
     
     }
 
-    async sendMessage(messageText, typeMessage, chatReference, isForward) {
-        this.isLoading = true
+    async sendMessage({messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey, messageQueue}) {
+        console.log('2', {messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey})
+        if(messageQueue){
+            console.log('is queueCurrent Queue after before:', [...this.messageQueue]);
+            this.addToQueue({messageText, typeMessage, chatReference, isForward, isReceipient, _chatId, _publicKey}, messageQueue);
+            this.resetChatEditor()
+            return
+        }
+        // this.isLoading = true
         let _reference = new Uint8Array(64)
         window.crypto.getRandomValues(_reference)
         let reference = window.parent.Base58.encode(_reference)
         const sendMessageRequest = async () => {
-            if (this.isReceipient === true) {
+            if (isReceipient === true) {
                 let chatResponse = await parentEpml.request('chat', {
                     type: 18,
                     nonce: this.selectedAddress.nonce,
                     params: {
                         timestamp: Date.now(),
-                        recipient: this._chatId,
-                        recipientPublicKey: this._publicKey.key,
+                        recipient: _chatId,
+                        recipientPublicKey: _publicKey.key,
                         hasChatReference: typeMessage === 'edit' ? 1 : 0,
                         chatReference: chatReference,
                         message: messageText,
@@ -4059,14 +4168,14 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(chatResponse)
+               return _computePow(chatResponse)
             } else {
                 let groupResponse = await parentEpml.request('chat', {
                     type: 181,
                     nonce: this.selectedAddress.nonce,
                     params: {
                         timestamp: Date.now(),
-                        groupID: Number(this._chatId),
+                        groupID: Number(_chatId),
                         hasReceipient: 0,
                         hasChatReference: typeMessage === 'edit' ? 1 : 0,
                         chatReference: chatReference,
@@ -4077,7 +4186,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(groupResponse)
+               return _computePow(groupResponse)
             }
         }
 
@@ -4266,11 +4375,12 @@ class ChatPage extends LitElement {
             })
 
             getSendChatResponse(_response, isForward)
+            return _response
         }
 
         const getSendChatResponse = (response, isForward, customErrorMessage) => {
             if (response === true) {
-                this.resetChatEditor()
+                // this.resetChatEditor()
                 if (isForward) {
                     let successString = get("blockpage.bcchange15")
                     parentEpml.request('showSnackBar', `${successString}`)
@@ -4302,7 +4412,7 @@ class ChatPage extends LitElement {
             sendForwardRequest()
             return
         }
-        sendMessageRequest()
+      return  sendMessageRequest()
     }
 
     /**
