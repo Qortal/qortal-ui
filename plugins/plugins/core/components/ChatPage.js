@@ -55,10 +55,10 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 20
-export const chatLimitHalf = 10
+export const chatLimit = 40
+export const chatLimitHalf = 20
 
-export const totalMsgCount = 60
+export const totalMsgCount = 120
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -2204,6 +2204,10 @@ class ChatPage extends LitElement {
                 setTimeout(() => {
                     findElement.classList.remove('blink-bg')
                 }, 2000)
+            }
+            const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
+            if (chatScrollerElement && chatScrollerElement.disableFetching) {
+                chatScrollerElement.disableFetching = false
             }
             return
         }
