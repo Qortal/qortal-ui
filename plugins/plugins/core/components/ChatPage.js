@@ -3905,7 +3905,7 @@ class ChatPage extends LitElement {
                     images: [{
                         service: "QCHAT_IMAGE",
                         name: userName,
-                        identifier: identifieroh it's p
+                        identifier: identifier,
                     }],
                     isImageDeleted: false,
                     repliedTo: '',
