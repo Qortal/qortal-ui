@@ -2347,6 +2347,7 @@ class ChatPage extends LitElement {
             this.webSocket.close(1000, 'switch chat')
             this.webSocket = ''
         }
+        console.log('this.webSocket', this.webSocket)
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -2489,6 +2490,7 @@ class ChatPage extends LitElement {
     }
 
     async updated(changedProperties) {
+        console.log({changedProperties})
         if (changedProperties && changedProperties.has('userLanguage')) {
             const userLang = changedProperties.get('userLanguage')
             if (userLang) {
@@ -2505,7 +2507,7 @@ class ChatPage extends LitElement {
                 this.editor.setEditable(true)
             }
         }
-        if(changedProperties && changedProperties.has('chatId')){
+        if(changedProperties && changedProperties.has('chatId') && this.webSocket){
             this.isLoadingMessages = true
             this.initUpdate()
             
@@ -3146,7 +3148,7 @@ class ChatPage extends LitElement {
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-           
+            console.log('decodedmsg', decodedMessages)
             
             queue.push(() => replaceMessagesEdited({
                 decodedMessages: decodedMessages,
@@ -3212,6 +3214,7 @@ class ChatPage extends LitElement {
     */
 
     async renderNewMessage(newMessage) {
+        console.log('newMessage', newMessage)
         if (newMessage.chatReference) {
             // const findOriginalMessageIndex = this.messagesRendered.findIndex(msg => msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference))
             // if (findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender) {
@@ -3230,7 +3233,12 @@ class ChatPage extends LitElement {
             return
         }
 
-        const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
+        let viewElement = this.shadowRoot.querySelector('chat-scroller')
+        if(viewElement){
+            viewElement = viewElement.shadowRoot.getElementById('viewElement')
+        } else {
+            viewElement = null
+        }
 
         if (newMessage.sender === this.selectedAddress.address) {
 
@@ -3251,8 +3259,10 @@ class ChatPage extends LitElement {
             // Append the message and scroll to the bottom if user is down the page
             // this.messagesRendered = [...this.messagesRendered, newMessage]
             await this.getUpdateComplete()
-
-            viewElement.scrollTop = viewElement.scrollHeight
+            if(viewElement){
+                viewElement.scrollTop = viewElement.scrollHeight
+            }
+           
         } else {
 
             this.messagesRendered = {
@@ -3320,7 +3330,9 @@ class ChatPage extends LitElement {
             } else {
                 // Fallback to http
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`
-            }
+            }   
+
+          
 
             this.webSocket = new WebSocket(directSocketLink)
             // Open Connection
@@ -3389,7 +3401,9 @@ class ChatPage extends LitElement {
             // Closed Event
             this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
+                console.log('e', e)
                 if (e.reason === 'switch chat') return
+                console.log('not coming in')
                 restartDirectWebSocket()
             }
 
@@ -3437,7 +3451,7 @@ class ChatPage extends LitElement {
                 // Fallback to http
                 groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
             }
-
+          
             this.webSocket = new WebSocket(groupSocketLink)
 
             // Open Connection

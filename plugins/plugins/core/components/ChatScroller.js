@@ -559,6 +559,7 @@ class ChatScroller extends LitElement {
     
 
     async replaceMessagesWithUpdateByArray(updatedMessagesArray) {
+        console.log({updatedMessagesArray, messages: this.messagesToRender})
         let previousScrollTop;
         let previousScrollHeight;
         
@@ -567,7 +568,7 @@ class ChatScroller extends LitElement {
         previousScrollHeight = viewElement.scrollHeight;
         for (let group of this.messagesToRender) {
             for (let i = 0; i < group.messages.length; i++) {
-                const update = updatedMessagesArray.find(updatedMessage => ((updatedMessage.chatReference  === group.messages[i].signature) || (updatedMessage.chatReference === group.messages[i].originalSignature)));
+                const update = updatedMessagesArray.find(updatedMessage => ((updatedMessage.chatReference  === group.messages[i].signature) || (updatedMessage.chatReference === group.messages[i].originalSignature) || (updatedMessage.chatReference === group.messages[i].chatReference)));
                 if (update) {
                     Object.assign(group.messages[i], update);
                 }
