@@ -412,7 +412,7 @@ class ChatScroller extends LitElement {
         previousScrollHeight = viewElement.scrollHeight;
 
     
-        const copy = [...this.messagesToRender]
+        const copy = type === 'initial' ? [] : [...this.messagesToRender]
         
         for (const newMessage of newMessages) {
             const lastGroupedMessage = copy[copy.length - 1];
@@ -458,6 +458,8 @@ class ChatScroller extends LitElement {
                
             
         } 
+
+      
         this.clearLoaders()
     }
     
@@ -603,6 +605,18 @@ class ChatScroller extends LitElement {
         if (changedProperties && changedProperties.has('updateMessageHash') && Object.keys(this.updateMessageHash).length > 0) {
             this.replaceMessagesWithUpdate(this.updateMessageHash)
         }
+        if (changedProperties && changedProperties.has('messageQueue') && Object.keys(this.messageQueue).length > 0) {
+            if(!this.disableAddingNewMessages){
+                await new Promise((res)=> {
+                    setTimeout(()=> {
+                        res()
+                    }, 200)
+                })
+                const viewElement = this.shadowRoot.querySelector("#viewElement");
+                viewElement.scrollTop = viewElement.scrollHeight + 200
+            }
+        }
+        
 
     }
 
@@ -616,7 +630,6 @@ class ChatScroller extends LitElement {
     
 
     render() {
-        console.log('this.chatId', this.chatId)
         // let formattedMessages = this.messages.reduce((messageArray, message) => {
         //     const currentMessage = this.updateMessageHash[message.signature] || message;
         //     const lastGroupedMessage = messageArray[messageArray.length - 1];
@@ -696,7 +709,7 @@ class ChatScroller extends LitElement {
                             .listSeenMessages=${this.listSeenMessages}
                             chatId=${this.chatId}
                         ></message-template>
-                        ${message.isDivider ? html`<div class="unread-divider" id="unread-divider-id">Unread Messages Below</div>` : null}
+                        ${message.isDivider ? html`<div class="unread-divider" id="unread-divider-id">${translate('chatpage.cchange92')}</div>` : null}
                         
                         `
                        
@@ -1117,7 +1130,6 @@ class MessageTemplate extends LitElement {
         let isEdited = false
         let attachment = null
         try {
-            console.log('this.messageOb', this.messageObj )
             const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
             if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
                 messageVersion2 = generateHTML(parsedMessageObj.messageText, [
@@ -1536,7 +1548,7 @@ class MessageTemplate extends LitElement {
                 : ''
             }
                                             ${this.isInProgress ? html`
-                                            <p>Sending...</p>
+                                            <p>${translate('chatpage.cchange91')}</p>
                                             ` : html`
                                             <message-time timestamp=${this.messageObj.timestamp}></message-time>
                                             `}

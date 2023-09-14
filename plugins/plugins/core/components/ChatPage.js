@@ -1423,11 +1423,9 @@ class ChatPage extends LitElement {
     }
 
     addToQueue(outSideMsg, messageQueue) {
-        console.log('added to queue', messageQueue, this.messageQueue)
         // Push the new message object to the queue
         
         this.messageQueue = [...messageQueue, { ...outSideMsg, timestamp: Date.now()}];
-        console.log('Current Queue after adding:', [...this.messageQueue]);
 
         // Start processing the queue only if the message we just added is the only one in the queue
         // This ensures that the queue processing starts only once, even if this method is called multiple times
@@ -1442,10 +1440,8 @@ class ChatPage extends LitElement {
     async processQueue() {
         if (this.messageQueue.length === 0) return;
         const currentMessage = this.messageQueue[0];
-        console.log({currentMessage})
         try {
           const res =  await this.sendMessage(currentMessage);
-          console.log({res})
           if(res === true) {
             this.messageQueue = this.messageQueue.slice(1);
           } else {
@@ -1461,44 +1457,36 @@ class ChatPage extends LitElement {
             setTimeout(() => this.processQueue(), 10000); // Wait for 10 seconds before retrying
         }
     }
-    // async processQueue() {
-    //     let inProcess = false;  // to indicate if we're currently sending a message
-    
-    //     while (true) {  // Infinite loop
-    //         const currentMessage = this.messageQueue[0];
-    
-    //         // If there's no current message, you could wait a while (e.g., a second) before the next iteration.
-    //         // This prevents the loop from consuming resources unnecessarily when the queue is empty.
-    //         if (!currentMessage) {
-    //             await new Promise(res => setTimeout(res, 1000));  // Wait for 1 second
-    //             continue;  // go to the next iteration of the loop
-    //         }
-    
-    //         // If not currently processing another message, attempt to send the current one
-    //         if (!inProcess) {
-    //             inProcess = true;  // indicate that we're starting to process a message
-    
-    //             try {
-    //                 await this._sendMessage(currentMessage.outSideMsg, currentMessage.msg, true, currentMessage.chatId, currentMessage.isReceipient, currentMessage._publicKey, currentMessage.attachment);
-    
-    //                 // If successful, remove the processed message from the queue
-    //                 this.messageQueue = this.messageQueue.slice(1);
-    //                 inProcess = false;  // set inProcess back to false since we're done with this message
-    //             } catch (error) {
-    //                 console.error("Failed to send message:", error);
-    //                 inProcess = false;  // set inProcess back to false since an error occurred
-    //                 await new Promise(res => setTimeout(res, 10000));  // Wait for 10 seconds before retrying
-    //             }
-    //         } else {
-    //             await new Promise(res => setTimeout(res, 1000));  // Wait for 1 second before checking again if inProcess is false
-    //         }
-    //     }
-    // }
-    
+  
+    async getLastestMessages(){
+        try {
+            let getInitialMessages = []
+            if (this.isReceipient) {
+
+
+     
+            getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+            })
+
+            this.processMessages(getInitialMessages, true, isUnread)
+
+        } else {
+            getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+            })
+
+        }
+        this.processMessages(getInitialMessages, true, false)
+        } catch (error) {
+            console.log
+        }
+    }
     
 
     render() {
-        console.log('this.messageQueue', this.messageQueue.length)
 
         return html`
             <div class="main-container">
@@ -1552,10 +1540,16 @@ class ChatPage extends LitElement {
                     class='last-message-ref' 
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
                         <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
-                this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
+                             const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
+    if (chatScrollerElement && chatScrollerElement.disableAddingNewMessages) {
+        this.getLastestMessages()
+    } else {
+        this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
                     .scrollIntoView({
                         behavior: 'smooth',
                     });
+    }
+              
             }}>
                         </vaadin-icon>
                         </div>
@@ -1987,10 +1981,19 @@ class ChatPage extends LitElement {
     async connectedCallback() {
         super.connectedCallback()
         await this.initUpdate()
-        this.webWorker = new WebWorker()
-        this.webWorkerFile = new WebWorkerFile()
-        this.webWorkerSortMessages = new WebWorkerSortMessages()
-        this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
+        if(!this.webWorker){
+            this.webWorker = new WebWorker()
+        }
+        if(!this.webWorkerFile){
+            this.webWorkerFile = new WebWorkerFile()
+        }
+        if(!this.webWorkerSortMessages){
+            this.webWorkerSortMessages = new WebWorkerSortMessages()
+
+        }
+        if(!this.webWorkerDecodeMessages){
+            this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
+        }
         await this.getUpdateCompleteTextEditor()
 
         const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
@@ -2093,43 +2096,6 @@ class ChatPage extends LitElement {
 
         document.addEventListener('keydown', this.initialChat)
         document.addEventListener('paste', this.pasteImage)
-
-        // if (this.chatId) {
-        //     window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-        //         key: this.chatId,
-        //         timestamp: Date.now()
-        //     }))
-        // }
-
-        // let callback = (entries, observer) => {
-        //     entries.forEach(entry => {
-        //         if (entry.isIntersecting) {
-
-        //             this.isPageVisible = true
-        //             if (this.chatId) {
-        //                 window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-        //                     key: this.chatId,
-        //                     timestamp: Date.now()
-        //                 }))
-
-        //             }
-        //         } else {
-        //             this.isPageVisible = false
-        //         }
-        //     })
-        // }
-
-        // let options = {
-        //     root: null,
-        //     rootMargin: '0px',
-        //     threshold: 0.5
-        // }
-
-        // // Create the observer with the callback function and options
-        // this.observer = new IntersectionObserver(callback, options)
-        // const mainContainer = this.shadowRoot.querySelector('.main-container')
-
-        // this.observer.observe(mainContainer)
     }
 
     disconnectedCallback() {
@@ -2338,7 +2304,7 @@ class ChatPage extends LitElement {
             }
             delete message.reactions
             const stringifyMessageObject = JSON.stringify(message)
-            this.sendMessage(stringifyMessageObject, undefined, '', true)
+            this.sendMessage({messageText: stringifyMessageObject, chatReference: undefined, isForward: true})
         } catch (error) {
         }
     }
@@ -2377,6 +2343,10 @@ class ChatPage extends LitElement {
     }
 
     async initUpdate() {
+        if (this.webSocket) {
+            this.webSocket.close(1000, 'switch chat')
+            this.webSocket = ''
+        }
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -2535,11 +2505,20 @@ class ChatPage extends LitElement {
                 this.editor.setEditable(true)
             }
         }
+        if(changedProperties && changedProperties.has('chatId')){
+            this.isLoadingMessages = true
+            this.initUpdate()
+            
+
+
+        }
     }
 
 
     shouldUpdate(changedProperties) {
-        console.log({changedProperties})
+        if(changedProperties.has('chatId')){
+            return true
+        }
         if (changedProperties.has('setActiveChatHeadUrl')) {
             return false
         }
@@ -3575,22 +3554,13 @@ class ChatPage extends LitElement {
     async _sendMessage(outSideMsg, msg, messageQueue) {
        const _chatId= this._chatId 
        const isReceipient= this.isReceipient 
-       const _publicKey= this._publicKey 
+       let _publicKey= this._publicKey 
       const attachment= this.attachment
-      console.log({
-        _chatId, isReceipient, _publicKey, attachment
-      })
-        // if(messageQueue){
-        //     console.log('is queueCurrent Queue after before:', [...this.messageQueue]);
-        //     this.addToQueue(outSideMsg, msg, messageQueue);
-
-        //     return
-        // }
-       
+     
         try {
             if (this.isReceipient) {
                 let hasPublicKey = true
-                if (!publicKey.hasPubKey) {
+                if (!_publicKey.hasPubKey) {
                     hasPublicKey = false
                     try {
                         const res = await parentEpml.request('apiCall', {
@@ -3598,20 +3568,20 @@ class ChatPage extends LitElement {
                             url: `/addresses/publickey/${this.selectedAddress.address}`
                         })
                         if (res.error === 102) {
-                            publicKey.key = ''
-                            publicKey.hasPubKey = false
+                            _publicKey.key = ''
+                            _publicKey.hasPubKey = false
                         } else if (res !== false) {
-                            publicKey.key = res
-                            publicKey.hasPubKey = true
+                            _publicKey.key = res
+                            _publicKey.hasPubKey = true
                             hasPublicKey = true
                         } else {
-                            publicKey.key = ''
-                            publicKey.hasPubKey = false
+                            _publicKey.key = ''
+                            _publicKey.hasPubKey = false
                         }
                     } catch (error) {
                     }
     
-                    if (!hasPublicKey || !publicKey.hasPubKey) {
+                    if (!hasPublicKey || !_publicKey.hasPubKey) {
                         let err4string = get("chatpage.cchange39")
                         parentEpml.request('showSnackBar', `${err4string}`)
                         return
@@ -4139,14 +4109,18 @@ class ChatPage extends LitElement {
     }
 
     async sendMessage({messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey, messageQueue}) {
-        console.log('2', {messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey})
+
         if(messageQueue){
-            console.log('is queueCurrent Queue after before:', [...this.messageQueue]);
             this.addToQueue({messageText, typeMessage, chatReference, isForward, isReceipient, _chatId, _publicKey}, messageQueue);
             this.resetChatEditor()
+            this.closeEditMessageContainer()
+            this.closeRepliedToContainer()
             return
         }
-        // this.isLoading = true
+        if(isForward){
+            this.isLoading = true
+        }
+     
         let _reference = new Uint8Array(64)
         window.crypto.getRandomValues(_reference)
         let reference = window.parent.Base58.encode(_reference)
@@ -4384,21 +4358,31 @@ class ChatPage extends LitElement {
                 if (isForward) {
                     let successString = get("blockpage.bcchange15")
                     parentEpml.request('showSnackBar', `${successString}`)
+                    this.resetChatEditor()
+                    this.closeEditMessageContainer()
+                    this.closeRepliedToContainer()
+                    this.openForwardOpen = false
+                    this.forwardActiveChatHeadUrl = {
+                        url: "",
+                        name: "",
+                        selected: false
+                    }
+                    this.isLoading = false
                 }
 
-                this.closeEditMessageContainer()
-                this.closeRepliedToContainer()
-                this.openForwardOpen = false
-                this.forwardActiveChatHeadUrl = {
-                    url: "",
-                    name: "",
-                    selected: false
-                }
+                // this.closeEditMessageContainer()
+                // this.closeRepliedToContainer()
+                // this.openForwardOpen = false
+                // this.forwardActiveChatHeadUrl = {
+                //     url: "",
+                //     name: "",
+                //     selected: false
+                // }
             } else if (response.error) {
-                parentEpml.request('showSnackBar', response.message)
+                // parentEpml.request('showSnackBar', response.message)
             } else {
-                let err2string = get("chatpage.cchange21")
-                parentEpml.request('showSnackBar', `${customErrorMessage || err2string}`)
+                // let err2string = get("chatpage.cchange21")
+                // parentEpml.request('showSnackBar', `${customErrorMessage || err2string}`)
             }
             if (isForward && response !== true) {
                 this.isLoading = false

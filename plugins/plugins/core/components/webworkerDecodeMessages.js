@@ -2465,7 +2465,6 @@ class Base58 {
   }
 
   decode(string) {
-    console.log({string})
       if (string.length === 0) {
           return new Uint8Array(0);
       }
@@ -2768,12 +2767,7 @@ export const decryptChatMessageBase64 = (
 	recipientPublicKey,
 	lastReference
 ) => {
-    console.log('1', {
-      encryptedMessage,
-	privateKey,
-	recipientPublicKey,
-	lastReference
-    })
+   
 	let _encryptedMessage = atob(encryptedMessage);
 	const binaryLength = _encryptedMessage.length;
 	const bytes = new Uint8Array(binaryLength);
@@ -2794,9 +2788,7 @@ export const decryptChatMessageBase64 = (
 		_base58RecipientPublic instanceof Uint8Array
 			? base58Instant.encode(_base58RecipientPublic)
 			: _base58RecipientPublic;
-      console.log({_base58RecipientPublicKey})
 	const _recipientPublicKey = base58Instant.decode(_base58RecipientPublicKey);
-  console.log({_recipientPublicKey})
 	const _lastReference =
 		lastReference instanceof Uint8Array
 			? lastReference
@@ -2851,7 +2843,6 @@ const decodeMessage = (
 			_publicKeyVar.hasPubKey === true &&
 			encodedMessageObj.data
 		) {
-      console.log('hello encrypt')
 			let decodedMessage = decryptChatMessageBase64(
 				encodedMessageObj.data,
 				privateKey,

@@ -95,9 +95,8 @@ class Chat extends LitElement {
     }
 
     async setActiveChatHeadUrl(url) {
-        this.activeChatHeadUrl = ''
-        await this.updateComplete;
         this.activeChatHeadUrl = url
+        this.requestUpdate()
     }   
 
     resetChatEditor(){
@@ -223,8 +222,8 @@ class Chat extends LitElement {
                         <span>${translate("chatpage.cchange5")} <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
                     </div>
                     <div class="chat-history">
-               
-                        ${this.activeChatHeadUrl ? html`${this.renderChatPage()}` : html`${this.renderChatWelcomePage()}`}
+                    ${this.isEmptyArray(this.chatHeads) ? html`${this.renderChatWelcomePage()}` : html`${this.renderChatPage()}`}
+
                     </div>
                 </div>
                 <!-- Start Chatting Dialog -->
@@ -818,6 +817,7 @@ class Chat extends LitElement {
     }
 
     renderChatPage() {
+        console.log('this.chatHeads', this.chatHeads, this.activeChatHeadUrl)
         // Check for the chat ID from and render chat messages
         // Else render Welcome to Q-CHat
 
@@ -864,6 +864,9 @@ class Chat extends LitElement {
         }
 
         this.chatHeads = chatHeadMasterList.sort(compareArgs)
+        if(!this.activeChatHeadUrl && this.chatHeads.length > 0){
+            this.activeChatHeadUrl = this.chatHeads[0].url
+        }
     }
 
     getChatHeadFromState(chatObj) {

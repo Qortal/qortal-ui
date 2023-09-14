@@ -382,7 +382,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 	}
 
 	render() {
-        console.log('at render', this.messageQueue)
 		return html`
             <div 
              class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
@@ -519,7 +518,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 icon="vaadin:check"
                                 slot="icon"
                                 @click=${() => {
-                                    console.log('onclick', this.messageQueue)
                                     this.sendMessageFunc(this.messageQueue);
                                 }}
                                 >
@@ -543,7 +541,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 alt="send-icon" 
                                 class="send-icon" 
                                 @click=${() => {
-                                       console.log('onclick', this.messageQueue)
                                     this.sendMessageFunc(this.messageQueue);
                                 }} 
                                 />
@@ -647,7 +644,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
       }
 
     sendMessageFunc(props) {
-        console.log({props})
         if(this.editor.isEmpty && (this.iframeId !== 'newChat' && this.iframeId !== 'newAttachmentChat')) return
         this.getMessageSize(this.editor.getJSON())
         if (this.chatMessageSize > 4000 ) {
@@ -655,7 +651,6 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             return;
         }
         this.chatMessageSize = 0;
-        console.log('messageQueue', this.messageQueue)
         this._sendMessage(props, this.editor.getJSON(), this.messageQueue);
     }
 

@@ -828,7 +828,9 @@
 		"cchange80": "This image has been deleted",
 		"cchange81": "This image type is not supported",
 		"cchange82": "This attachment has been deleted",
-		"cchange90": "No messages"
+		"cchange90": "No messages",
+		"cchange91": "Sending...",
+		"cchange92": "Unread messages below"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
