@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Selecteaza limba",
 		"languageflag": "ro",
-		"english": "Engleza",
 		"chinese1": "Chineza (simplificata)",
 		"chinese2": "Chineza (traditionala)",
-		"german": "Germana",
-		"french": "Franceza",
-		"polish": "Poloneza",
-		"spanish": "Spaniola",
-		"hindi": "Hindi",
 		"croatian": "Croata",
-		"portuguese": "Portugheza",
+		"english": "Engleza",
+		"estonian": "Estonian",
+		"french": "Franceza",
+		"german": "Germana",
+		"hindi": "Hindi",
 		"hungarian": "Maghiara",
-		"serbian": "Sarba",
 		"italian": "Italiana",
-		"russian": "Rus",
-		"norwegian": "Norvegiana",
-		"romanian": "Romana",
+		"japanese": "Japonez",
 		"korean": "Coreeana",
-		"japanese": "Japonez"
+		"norwegian": "Norvegiana",
+		"polish": "Poloneza",
+		"portuguese": "Portugheza",
+		"romanian": "Romana",
+		"russian": "Rus",
+		"serbian": "Sarba",
+		"spanish": "Spaniola"
 	},
 	"sidemenu": {
 		"minting": "MONTAREA",
@@ -80,10 +81,11 @@
 		"tm35": "Meniul de file existent va fi șters și setat la meniul de file încărcat.",
 		"tm36": "Meniul Tab a fost restaurat cu succes",
 		"tm37": "Meniul Tab a fost salvat cu succes ca",
-                "tm38": "MOD DEV",
-                "tm39": "Adăugați un cadru personalizat",
-                "tm40": "Adăugați și deschideți",
-                "tm41": "Eroare: date nevalide, încercați din nou !"
+		"tm38": "MOD DEV",
+		"tm39": "Adăugați un cadru personalizat",
+		"tm40": "Adăugați și deschideți",
+		"tm41": "Eroare: date nevalide, încercați din nou !",
+		"tm42": "Qortal Loterie"
 	},
 	"login": {
 		"login": "Login",
@@ -202,7 +204,8 @@
 		"exp2": "Exportați cheia principală",
 		"exp3": "Export",
 		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
-		"core": "Porniți setările de bază"
+		"core": "Porniți setările de bază",
+		"qappNotification1": "Notificări Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",
@@ -1138,5 +1141,20 @@
 		"inf16": "Cumpărare automată",
 		"inf17": "Comutați la tema luminoasă",
 		"inf18": "Comutați la tema întunecată"
+	},
+	"lotterypage": {
+		"lot1": "Deschideți loterii Qortal",
+		"lot2": "Adresa AT",
+		"lot3": "Bloc început",
+		"lot4": "Blocarea plății",
+		"lot5": "Joacă la loterie",
+		"lot6": "Loteriile Qortal terminate",
+		"lot7": "Suma câștigătoare",
+		"lot8": "Câștigător",
+		"lot9": "Plătit",
+		"lot10": "Joacă la loteria Qortal",
+		"lot11": "Nu există loterie deschise!",
+		"lot12": "Nu există loterie terminate!",
+		"lot13": "Jucători"
 	}
 }

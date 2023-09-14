@@ -3851,7 +3851,7 @@ class ChatPage extends LitElement {
                 this.webWorkerFile = new WebWorkerFile()
     
                 const image = this.imageFile
-                const id = this.uid()
+                const id = this.uid.rnd()
                 const identifier = `qchat_${id}`
                 let compressedFile = ''
                 await new Promise(resolve => {
@@ -3905,7 +3905,7 @@ class ChatPage extends LitElement {
                     images: [{
                         service: "QCHAT_IMAGE",
                         name: userName,
-                        identifier: identifier
+                        identifier: identifieroh it's p
                     }],
                     isImageDeleted: false,
                     repliedTo: '',

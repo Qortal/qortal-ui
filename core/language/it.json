@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Seleziona lingua",
 		"languageflag": "it",
-		"english": "Inglese",
 		"chinese1": "Cinese (semplificato)",
 		"chinese2": "Cinese (tradizionale)",
-		"german": "Tedesco",
-		"french": "Francese",
-		"polish": "Polacco",
-		"spanish": "Spagnolo",
-		"hindi": "Hindi",
 		"croatian": "Croato",
-		"portuguese": "Portoghese",
+		"english": "Inglese",
+		"estonian": "Estone",
+		"french": "Francese",
+		"german": "Tedesco",
+		"hindi": "Hindi",
 		"hungarian": "Ungherese",
-		"serbian": "Serbo",
 		"italian": "Italiano",
-		"russian": "Russo",
-		"norwegian": "Norvegese",
-		"romanian": "Rumeno",
+		"japanese": "Giapponese",
 		"korean": "Coreano",
-		"japanese": "Giapponese"
+		"norwegian": "Norvegese",
+		"polish": "Polacco",
+		"portuguese": "Portoghese",
+		"romanian": "Rumeno",
+		"russian": "Russo",
+		"serbian": "Serbo",
+		"spanish": "Spagnolo"
 	},
 	"sidemenu": {
 		"minting": "CONIAZIONE",
@@ -80,10 +81,11 @@
 		"tm35": "Il menu della scheda esistente verrà eliminato e impostato sul menu della scheda caricato.",
 		"tm36": "Menu scheda ripristinato con successo",
 		"tm37": "Menu scheda salvato con successo con nome",
-                "tm38": "MODALITÀ SVILUPPATORE",
-                "tm39": "Aggiungi framework personalizzato",
-                "tm40": "Aggiungi e apri",
-                "tm41": "Errore: dati non validi, riprova!"
+		"tm38": "MODALITÀ SVILUPPATORE",
+		"tm39": "Aggiungi framework personalizzato",
+		"tm40": "Aggiungi e apri",
+		"tm41": "Errore: dati non validi, riprova!",
+		"tm42": "Qortal Lotteria"
 	},
 	"login": {
 		"login": "Login",
@@ -202,7 +204,8 @@
 		"exp2": "Esporta chiave master",
 		"exp3": "Esporta",
 		"exp4": "Scegli un portafoglio per il backup della chiave master privata.",
-		"core": "Avvia impostazioni principali"
+		"core": "Avvia impostazioni principali",
+		"qappNotification1": "Notifiche Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",
@@ -1138,5 +1141,20 @@
 		"inf16": "Acquisto automatico",
 		"inf17": "Passa al tema chiaro",
 		"inf18": "Passa al tema scuro"
+	},
+	"lotterypage": {
+		"lot1": "Apri le lotterie Qortal",
+		"lot2": "Indirizzo AT",
+		"lot3": "Blocco iniziato",
+		"lot4": "Blocco pagamenti",
+		"lot5": "Gioca alla lotteria",
+		"lot6": "Lotterie Qortal terminate",
+		"lot7": "Importo vincente",
+		"lot8": "Vincitore",
+		"lot9": "Pagato",
+		"lot10": "Gioca alla lotteria Qortal",
+		"lot11": "Non ci sono lotterie aperte!",
+		"lot12": "Non ci sono lotterie finite!",
+		"lot13": "Giocatori"
 	}
 }

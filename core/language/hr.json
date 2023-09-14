@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Izaberi jezik",
 		"languageflag": "hr",
-		"english": "Engleski",
 		"chinese1": "Kineski (Pojednostavljeni)",
 		"chinese2": "Kineski (Traditionalni)",
-		"german": "Njemački",
-		"french": "Francuski",
-		"polish": "Poljski",
-		"spanish": "Španjolski",
-		"hindi": "Hindi",
 		"croatian": "Hrvatski",
-		"portuguese": "Portugalski",
+		"english": "Engleski",
+		"estonian": "Estonski",
+		"french": "Francuski",
+		"german": "Njemački",
+		"hindi": "Hindi",
 		"hungarian": "Mađarski",
-		"serbian": "Srpski",
 		"italian": "Talijanski",
-		"russian": "Ruski",
-		"norwegian": "Norveški",
-		"romanian": "Rumunjski",
+		"japanese": "Japanski",
 		"korean": "Korejski",
-		"japanese": "Japanski"
+		"norwegian": "Norveški",
+		"polish": "Poljski",
+		"portuguese": "Portugalski",
+		"romanian": "Rumunjski",
+		"russian": "Ruski",
+		"serbian": "Srpski",
+		"spanish": "Španjolski"
 	},
 	"sidemenu": {
 		"minting": "KOVANJE",
@@ -80,10 +81,11 @@
 		"tm35": "Vaš postojeći izbornik kartica bit će izbrisan i postavljen na učitani izbornik kartica.",
 		"tm36": "Izbornik kartice uspješno vraćen",
 		"tm37": "Izbornik kartice uspješno spremljen kao",
-                "tm38": "DEV NAČIN",
-                "tm39": "Dodaj prilagođeni okvir",
-                "tm40": "Dodaj i otvori",
-                "tm41": "Pogreška: nevažeći podaci pokušajte ponovo!"
+		"tm38": "DEV NAČIN",
+		"tm39": "Dodaj prilagođeni okvir",
+		"tm40": "Dodaj i otvori",
+		"tm41": "Pogreška: nevažeći podaci pokušajte ponovo!",
+		"tm42": "Qortal Lutrija"
 	},
 	"login": {
 		"login": "Prijavi se",
@@ -202,7 +204,8 @@
 		"exp2": "Glavni ključ izvoza",
 		"exp3": "Izvoz",
 		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa.",
-		"core": "Pokreni osnovne postavke"
+		"core": "Pokreni osnovne postavke",
+		"qappNotification1": "Obavijesti Q-App"
 	},
 	"appinfo": {
 		"blockheight": "Visina bloka",
@@ -1138,5 +1141,20 @@
 		"inf16": "Automatska kupnja",
 		"inf17": "Prebaci na svijetlu temu",
 		"inf18": "Prebaci na tamnu temu"
+	},
+	"lotterypage": {
+		"lot1": "Otvorene Qortal lutrije",
+		"lot2": "AT adresa",
+		"lot3": "Pokrenuti blok",
+		"lot4": "Blok isplate",
+		"lot5": "Igraj lutriju",
+		"lot6": "Završene Qortal lutrije",
+		"lot7": "Osvojeni iznos",
+		"lot8": "Dobitnik",
+		"lot9": "Isplaćeno",
+		"lot10": "Igraj lutriju Qortal",
+		"lot11": "Nema otvorenih lutrija!",
+		"lot12": "Nema završenih lutrija!",
+		"lot13": "Igrači"
 	}
 }

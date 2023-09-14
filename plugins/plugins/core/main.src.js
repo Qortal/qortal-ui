@@ -183,6 +183,17 @@ parentEpml.ready().then(() => {
 			menus: [],
 			parent: false,
 		},
+		{
+			url: 'lottery',
+			domain: 'core',
+			page: 'qortal-lottery/index.html',
+			title: 'Qortal Lottery',
+			icon: 'vaadin:ticket',
+			mwcicon: 'token',
+			pluginNumber: 'plugin-TgHRtXRxit',
+			menus: [],
+			parent: false,
+		},
 	];
 
 	const registerPlugins = (pluginInfo) => {

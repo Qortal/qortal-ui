@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Sprache auswählen",
 		"languageflag": "de",
-		"english": "Englisch",
 		"chinese1": "Chinesisch (vereinfacht)",
 		"chinese2": "Chinesisch (traditionell)",
-		"german": "Deutsch",
-		"french": "Französisch",
-		"polish": "Polnisch",
-		"spanish": "Spanisch",
-		"hindi": "Hindi",
 		"croatian": "Kroatisch",
-		"portuguese": "Portugiesisch",
+		"english": "Englisch",
+		"estonian": "Estnisch",
+		"french": "Französisch",
+		"german": "Deutsch",
+		"hindi": "Hindi",
 		"hungarian": "Ungarisch",
-		"serbian": "Serbisch",
 		"italian": "Italienisch",
-		"russian": "Russisch",
-		"norwegian": "Norwegisch",
-		"romanian": "Rumänisch",
+		"japanese": "Japanisch",
 		"korean": "Koreanisch",
-		"japanese": "Japanisch"
+		"norwegian": "Norwegisch",
+		"polish": "Polnisch",
+		"portuguese": "Portugiesisch",
+		"romanian": "Rumänisch",
+		"russian": "Russisch",
+		"serbian": "Serbisch",
+		"spanish": "Spanisch"
 	},
 	"sidemenu": {
 		"minting": "PRÄGUNG",
@@ -80,10 +81,11 @@
 		"tm35": "Ihr vorhandenes Tab-Menü wird gelöscht und auf das hochgeladene Tab-Menü gesetzt.",
 		"tm36": "Tab-Menü erfolgreich wiederhergestellt",
 		"tm37": "Tab-Menü erfolgreich gespeichert als",
-                "tm38": "DEV-MODUS",
-                "tm39": "Benutzerdefiniertes Framework hinzufügen",
-                "tm40": "Hinzufügen und öffnen",
-                "tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!"
+		"tm38": "DEV-MODUS",
+		"tm39": "Benutzerdefiniertes Framework hinzufügen",
+		"tm40": "Hinzufügen und öffnen",
+		"tm41": "Fehler: Ungültige Daten, bitte versuchen Sie es erneut!",
+		"tm42": "Qortal Lotterie"
 	},
 	"login": {
 		"login": "Einloggen",
@@ -202,7 +204,8 @@
 		"exp2": "Hauptschlüssel exportieren",
 		"exp3": "Exportieren",
 		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern.",
-		"core": "Core-Einstellungen starten"
+		"core": "Core-Einstellungen starten",
+		"qappNotification1": "Q-App Benachrichtigungen"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",
@@ -1138,5 +1141,20 @@
 		"inf16": "Automatischer Kauf",
 		"inf17": "Zum hellen Thema wechseln",
 		"inf18": "Zum dunklen Thema wechseln"
+	},
+	"lotterypage": {
+		"lot1": "Offene Qortal-Lotterien",
+		"lot2": "AT-Adresse",
+		"lot3": "Block gestartet",
+		"lot4": "Block auszahlung",
+		"lot5": "Lotterie spielen",
+		"lot6": "Abgeschlossene Qortal-Lotterien",
+		"lot7": "Gewinnbetrag",
+		"lot8": "Gewinner",
+		"lot9": "Ausgezahlt",
+		"lot10": "Qortal-Lotterie spielen",
+		"lot11": "Es gibt keine offenen Lotterien!",
+		"lot12": "Es gibt keine fertigen Lotterien!",
+		"lot13": "Teilnehmer"
 	}
 }

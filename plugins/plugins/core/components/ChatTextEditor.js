@@ -344,7 +344,7 @@ class ChatTextEditor extends LitElement {
 }
 
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: 'Material Icons Outlined';
   font-weight: normal;
   font-style: normal;
   font-size: 18px;  /* Preferred icon size */
@@ -426,13 +426,13 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         @click=${() => this.editor.chain().focus().toggleHighlight().run()}
         class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('highlight') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-symbols-outlined">&#xf82b;</span>
+      <span class="material-symbols-outlined">&#xe22b;</span>
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleCodeBlock().run()}
         class=${["chatbar-button-single",(this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('codeBlock') ? 'is-active' : ''].join(' ')}
       >
-      <span class="material-symbols-outlined">&#xf84d;</span>
+      <span class="material-symbols-outlined">&#xe86f;</span>
       </button>
       <button
       @click=${()=> this.toggleEnableChatEnter() }

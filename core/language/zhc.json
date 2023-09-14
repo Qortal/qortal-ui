@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "选择语言",
 		"languageflag": "zhc",
-		"english": "英文",
 		"chinese1": "简体中文",
 		"chinese2": "繁体中文",
-		"german": "德文",
-		"french": "法文",
-		"polish": "波兰文",
-		"spanish": "西班牙文",
-		"hindi": "印度文",
 		"croatian": "克罗地亚文",
-		"portuguese": "葡萄牙文",
+		"english": "英文",
+		"estonian": "爱沙尼亚文",
+		"french": "法文",
+		"german": "德文",
+		"hindi": "印度文",
 		"hungarian": "匈牙利文",
-		"serbian": "塞尔维亚文",
 		"italian": "意大利文",
-		"russian": "俄语",
-		"norwegian": "挪威语",
-		"romanian": "罗马尼亚语",
+		"japanese": "日语",
 		"korean": "韩语",
-		"japanese": "日语"
+		"norwegian": "挪威语",
+		"polish": "波兰文",
+		"portuguese": "葡萄牙文",
+		"romanian": "罗马尼亚语",
+		"russian": "俄语",
+		"serbian": "塞尔维亚文",
+		"spanish": "西班牙文"
 	},
 	"sidemenu": {
 		"minting": "铸币",
@@ -80,10 +81,11 @@
 		"tm35": "您现有的选项卡菜单将被删除并设置为上传的选项卡菜单。",
 		"tm36": "选项卡菜单恢复成功",
 		"tm37": "选项卡菜单成功另存为",
-                "tm38": "开发模式",
-                "tm39": "添加自定义框架",
-                "tm40": "添加并打开",
-                "tm41": "错误：数据无效，请重试！"
+		"tm38": "开发模式",
+		"tm39": "添加自定义框架",
+		"tm40": "添加并打开",
+		"tm41": "错误：数据无效，请重试！",
+		"tm42": "Qortal 彩票"
 	},
 	"login": {
 		"login": "登入",
@@ -202,7 +204,8 @@
 		"exp2": "导出主密钥",
 		"exp3": "导出",
 		"exp4": "请选择一个钱包来备份私钥。",
-		"core": "开始核心设置"
+		"core": "开始核心设置",
+		"qappNotification1": "Q-App 通知"
 	},
 	"appinfo": {
 		"blockheight": "区块高度",
@@ -1138,5 +1141,20 @@
 		"inf16": "自动购买",
 		"inf17": "切换到浅色主题",
 		"inf18": "切换到深色主题"
+	},
+	"lotterypage": {
+		"lot1": "开放 Qortal 彩票",
+		"lot2": "AT 地址",
+		"lot3": "开始区块",
+		"lot4": "支付块",
+		"lot5": "玩彩票",
+		"lot6": "完成 Qortal 彩票",
+		"lot7": "中奖金额",
+		"lot8": "获胜者",
+		"lot9": "已支付",
+		"lot10": "玩 Qortal 彩票",
+		"lot11": "没有公开抽奖！",
+		"lot12": "没有完成的彩票！",
+		"lot13": "玩家"
 	}
 }

@@ -4,7 +4,7 @@
   "electron_translate_1": "Show Qortal UI",
   "electron_translate_2": "Quit",
   "electron_translate_3": "Update available",
-  "electron_translate_4": "A new Qortal UI version is available. You want to download it ?",
+  "electron_translate_4": "A new Qortal UI version is available. Do you want to download it?",
   "electron_translate_5": "INSTALL NOW",
   "electron_translate_6": "MAYBE LATER",
   "electron_translate_7": "Update ready to install",
@@ -43,6 +43,6 @@
   "electron_translate_40": "Actual Size",
   "electron_translate_41": "Toggle Full Screen",
   "electron_translate_42": "New UI Instance",
-  "electron_translate_43": "Checking for update !",
-  "electron_translate_44": "UI is checking in background if a new version is available and download it."
+  "electron_translate_43": "Checking for update!",
+  "electron_translate_44": "UI is checking in the background for a new version to download."
 }

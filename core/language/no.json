@@ -2,24 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Velg språk",
 		"languageflag": "no",
-		"english": "Engelsk",
 		"chinese1": "Kinesisk (Forenklet)",
 		"chinese2": "Kinesisk (Tradisjonell)",
-		"german": "Tysk",
-		"french": "Fransk",
-		"polish": "Polsk",
-		"spanish": "Spansk",
-		"hindi": "Hindi",
 		"croatian": "Kroatisk",
-		"portuguese": "Portugisisk",
+		"english": "Engelsk",
+		"estonian": "Estisk",
+		"french": "Fransk",
+		"german": "Tysk",
+		"hindi": "Hindi",
 		"hungarian": "Ungarsk",
-		"serbian": "Serbisk",
 		"italian": "Italiensk",
-		"russian": "Russisk",
-		"norwegian": "Norsk",
-		"romanian": "Rumensk",
+		"japanese": "Japansk",
 		"korean": "Koreansk",
-		"japanese": "Japansk"
+		"norwegian": "Norsk",
+		"polish": "Polsk",
+		"portuguese": "Portugisisk",
+		"romanian": "Rumensk",
+		"russian": "Russisk",
+		"serbian": "Serbisk",
+		"spanish": "Spansk"
 	},
 	"sidemenu": {
 		"minting": "UTBYTTE",
@@ -80,10 +81,11 @@
 		"tm35": "Din eksisterende fanemeny vil bli slettet og satt til opplastet fanemeny.",
 		"tm36": "Fanemenyen ble gjenopprettet",
 		"tm37": "Fanemeny ble lagret som",
-                "tm38": "DEV MODUS",
-                "tm39": "Legg til tilpasset rammeverk",
-                "tm40": "Legg til og åpne",
-                "tm41": "Feil: Ugyldige data, prøv igjen !"
+		"tm38": "DEV MODUS",
+		"tm39": "Legg til tilpasset rammeverk",
+		"tm40": "Legg til og åpne",
+		"tm41": "Feil: Ugyldige data, prøv igjen !",
+		"tm42": "Qortal Lotteri"
 	},
 	"login": {
 		"login": "Logg på",
@@ -202,7 +204,8 @@
 		"exp2": "Eksporter hovednøkkel",
 		"exp3": "Eksporter",
 		"exp4": "Velg en lommebok for å sikkerhetskopiere den private hovednøkkelen.",
-		"core": "Start kjerneinnstillinger"
+		"core": "Start kjerneinnstillinger",
+		"qappNotification1": "Q-App varsler"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",
@@ -1138,5 +1141,20 @@
 		"inf16": "Autokjøp",
 		"inf17": "Bytt til lystema",
 		"inf18": "Bytt til mørkt tema"
+	},
+	"lotterypage": {
+		"lot1": "Åpne Qortal-lotterier",
+		"lot2": "AT-adresse",
+		"lot3": "Startet blokkering",
+		"lot4": "Utbetalingsblokk",
+		"lot5": "Spill lotteri",
+		"lot6": "Ferdige Qortal-lotterier",
+		"lot7": "Gevinstbeløp",
+		"lot8": "Vinner",
+		"lot9": "Utbetalt",
+		"lot10": "Spill Qortal Lottery",
+		"lot11": "Det er ingen åpne lotterier!",
+		"lot12": "Det er ingen ferdige lotterier!",
+		"lot13": "Spillere"
 	}
 }

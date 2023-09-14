@@ -127,7 +127,7 @@ function processText(input) {
                                 }
                                 window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
                                     url: `qdn/browser/index.html${query}`,
-                                    id: uid(),
+                                    id: uid.rnd(),
                                     myPlugObj: {
                                         "url": "myapp",
                                         "domain": "core",

@@ -507,7 +507,6 @@ class NodeManagement extends LitElement {
         parentEpml.request("apiCall", { url: `/admin/mintingaccounts` }).then((res) => {
             this.mintingAccounts = res
         })
-        console.clear()
     }
 
     removeMintingAccount(publicKey) {

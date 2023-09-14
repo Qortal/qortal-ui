@@ -343,7 +343,7 @@ class WebBrowser extends LitElement {
 			
 			window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
 				url: `qdn/browser/index.html${query}`,
-				id: this.uid(),
+				id: this.uid.rnd(),
 				myPlugObj: {
 					"url": service === 'WEBSITE' ? "websites" : "qapps",
 					"domain": "core",
