@@ -908,7 +908,15 @@ class Chat extends LitElement {
 
     scrollToBottom() {
         const viewElement = this.shadowRoot.querySelector('chat-page').shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-        viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
+
+        const chatScrollerElement = this.shadowRoot.querySelector('chat-page').shadowRoot.querySelector('chat-scroller')
+        if (chatScrollerElement && chatScrollerElement.disableAddingNewMessages) {
+            const chatPageElement = this.shadowRoot.querySelector('chat-page')
+            if(chatPageElement && chatPageElement.getLastestMessages)
+            chatPageElement.getLastestMessages()
+        } else {
+            viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
+        }
     }
 
     showNewMessageBar() {
