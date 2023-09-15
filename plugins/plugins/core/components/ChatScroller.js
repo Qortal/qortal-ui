@@ -325,7 +325,6 @@ class ChatScroller extends LitElement {
     }
 
     async newListMessages(newMessages, message) {
-     
         let data = []
         const copy = [...newMessages]
         copy.forEach(newMessage => {
@@ -341,7 +340,10 @@ class ChatScroller extends LitElement {
             }
         });
 
-        
+        // const getCount = await parentEpml.request('apiCall', {
+        //     type: 'api',
+        //     url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
+        // })
         this.messagesToRender = data
         this.clearLoaders()
         this.requestUpdate()
@@ -356,9 +358,8 @@ class ChatScroller extends LitElement {
 
     }
 
-    async newListMessagesUnreadMessages(newMessages, message, lastReadMessageTimestamp) {
-        const viewElement = this.shadowRoot.querySelector("#viewElement");
-
+    async newListMessagesUnreadMessages(newMessages, message, lastReadMessageTimestamp, count) {
+        
         let data = [];
         const copy = [...newMessages];
         
@@ -391,7 +392,9 @@ class ChatScroller extends LitElement {
                 });
             }
         });
-    
+        if(count > 0){
+            this.disableAddingNewMessages = true
+        }
         this.messagesToRender = data;
         this.clearLoaders();
         this.requestUpdate();
@@ -563,7 +566,6 @@ class ChatScroller extends LitElement {
     
 
     async replaceMessagesWithUpdateByArray(updatedMessagesArray) {
-        console.log({updatedMessagesArray, messages: this.messagesToRender})
         let previousScrollTop;
         let previousScrollHeight;
         
@@ -596,7 +598,7 @@ class ChatScroller extends LitElement {
                 
 
             } else if (this.messages.type === 'initialLastSeen') {
-                this.newListMessagesUnreadMessages(this.messages.messages, 'initialLastSeen', this.messages.lastReadMessageTimestamp)
+                this.newListMessagesUnreadMessages(this.messages.messages, 'initialLastSeen', this.messages.lastReadMessageTimestamp, this.messages.count)
 
             }
              else if (this.messages.type === 'new') this.addNewMessages(this.messages.messages) 

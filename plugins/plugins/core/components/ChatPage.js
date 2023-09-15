@@ -1472,7 +1472,7 @@ class ChatPage extends LitElement {
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
             })
 
-            this.processMessages(getInitialMessages, true, isUnread)
+           
 
         } else {
             getInitialMessages = await parentEpml.request('apiCall', {
@@ -2098,6 +2098,36 @@ class ChatPage extends LitElement {
 
         document.addEventListener('keydown', this.initialChat)
         document.addEventListener('paste', this.pasteImage)
+
+        let callback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+
+                    this.isPageVisible = true
+                    if (this.chatId) {
+                        window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+                            key: this.chatId,
+                            timestamp: Date.now()
+                        }))
+
+                    }
+                } else {
+                    this.isPageVisible = false
+                }
+            })
+        }
+
+        let options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5
+        }
+
+        // Create the observer with the callback function and options
+        this.observer = new IntersectionObserver(callback, options)
+        const mainContainer = this.shadowRoot.querySelector('.main-container')
+
+        this.observer.observe(mainContainer)
     }
 
     disconnectedCallback() {
@@ -2127,13 +2157,6 @@ class ChatPage extends LitElement {
 
         document.removeEventListener('keydown', this.initialChat)
         document.removeEventListener('paste', this.pasteImage)
-
-        if (this.chatId) {
-            window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-                key: this.chatId,
-                timestamp: Date.now()
-            }))
-        }
     }
 
     initialChat(e) {
@@ -2353,7 +2376,6 @@ class ChatPage extends LitElement {
             this.webSocket.close(1000, 'switch chat')
             this.webSocket = ''
         }
-        console.log('this.webSocket', this.webSocket)
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -2496,7 +2518,6 @@ class ChatPage extends LitElement {
     }
 
     async updated(changedProperties) {
-        console.log({changedProperties})
         if (changedProperties && changedProperties.has('userLanguage')) {
             const userLang = changedProperties.get('userLanguage')
             if (userLang) {
@@ -2514,11 +2535,18 @@ class ChatPage extends LitElement {
             }
         }
         if(changedProperties && changedProperties.has('chatId') && this.webSocket){
+            const previousChatId = changedProperties.get('chatId');
+
             this.isLoadingMessages = true
             this.initUpdate()
             
 
-
+            if (previousChatId) {
+                window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+                    key: previousChatId,
+                    timestamp: Date.now()
+                }))
+            }
         }
     }
 
@@ -3071,7 +3099,7 @@ class ChatPage extends LitElement {
 
   
 
-    async processMessages(messages, isInitial, isUnread) {
+    async processMessages(messages, isInitial, isUnread, count) {
         const isReceipient = this.chatId.includes('direct')
         let decodedMessages = []
            if(!this.webWorkerDecodeMessages){
@@ -3135,10 +3163,12 @@ class ChatPage extends LitElement {
 
           
             if(isUnread){
+
                 this.messagesRendered = {
                     messages: this._messages,
                     type: 'initialLastSeen',
-                    lastReadMessageTimestamp
+                    lastReadMessageTimestamp,
+                    count
                 }
 
                 window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
@@ -3156,7 +3186,6 @@ class ChatPage extends LitElement {
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-            console.log('decodedmsg', decodedMessages)
             
             queue.push(() => replaceMessagesEdited({
                 decodedMessages: decodedMessages,
@@ -3222,18 +3251,7 @@ class ChatPage extends LitElement {
     */
 
     async renderNewMessage(newMessage) {
-        console.log('newMessage', newMessage)
         if (newMessage.chatReference) {
-            // const findOriginalMessageIndex = this.messagesRendered.findIndex(msg => msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference))
-            // if (findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender) {
-            //     const newMessagesRendered = [...this.messagesRendered]
-            //     newMessagesRendered[findOriginalMessageIndex] = {
-            //         ...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
-            //         sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp
-            //     }
-            //     this.messagesRendered = newMessagesRendered
-            //     await this.getUpdateComplete()
-            // }
             this.messagesRendered = {
                 messages: [newMessage],
                 type: 'update',
@@ -3360,6 +3378,7 @@ class ChatPage extends LitElement {
                     this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
                     let getInitialMessages = []
+                    let count = 0
                     let isUnread = false
     
                     const chatId = this.chatId
@@ -3383,6 +3402,13 @@ class ChatPage extends LitElement {
                             url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
                         })
                          getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+                         const lastMessage = getInitialMessagesAfter.at(-1)
+                         if(lastMessage){
+                         count = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages/count?after=${lastMessage.timestamp}&involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=false`
+                        })
+                    }
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
@@ -3392,7 +3418,7 @@ class ChatPage extends LitElement {
                        
                     
 
-                    this.processMessages(getInitialMessages, true, isUnread)
+                    this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
 
@@ -3409,9 +3435,9 @@ class ChatPage extends LitElement {
             // Closed Event
             this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
-                console.log('e', e)
+               
                 if (e.reason === 'switch chat') return
-                console.log('not coming in')
+              
                 restartDirectWebSocket()
             }
 
@@ -3445,7 +3471,7 @@ class ChatPage extends LitElement {
             let groupId = Number(gId)
 
             let initial = 0
-
+            let count = 0
             let groupSocketTimeout
 
             let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -3503,6 +3529,14 @@ class ChatPage extends LitElement {
                     url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
                 })
                  getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+                 const lastMessage = getInitialMessagesAfter.at(-1)
+                 if(lastMessage){
+                    count = await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/chat/messages/count?after=${lastMessage.timestamp}&txGroupId=${groupId}&limit=20&reverse=false`
+                    })
+                 }
+                
             } else {
                 getInitialMessages = await parentEpml.request('apiCall', {
                     type: 'api',
@@ -3513,7 +3547,7 @@ class ChatPage extends LitElement {
                     
                     
 
-                    this.processMessages(getInitialMessages, true, isUnread)
+                    this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
                 } else {
