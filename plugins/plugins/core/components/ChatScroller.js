@@ -684,7 +684,7 @@ class ChatScroller extends LitElement {
                 <div id="upObserver"></div>
                 ${repeat(
             formattedMessages,
-            (formattedMessage) => formattedMessage.id, // Use .id as the unique key for formattedMessage.
+            (formattedMessage) => formattedMessage.reference, // Use .id as the unique key for formattedMessage.
             (formattedMessage) => html`
                
                 ${repeat(
@@ -1004,7 +1004,8 @@ class MessageTemplate extends LitElement {
             listSeenMessages: { type: Array },
             addSeenMessage: { attribute: false },
             chatId: { type: String },
-            isInProgress: {type: Boolean}
+            isInProgress: {type: Boolean},
+            id: {type: String}
         }
     }
 
@@ -1111,6 +1112,13 @@ class MessageTemplate extends LitElement {
         setInterval(() => {
             this.clearConsole()
         }, 60000)
+    }
+
+    shouldUpdate(changedProperties){
+        if (changedProperties.has('messageObj')) {
+            return true
+        }
+        return false
     }
 
     clearConsole() {
