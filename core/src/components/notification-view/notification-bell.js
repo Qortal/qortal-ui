@@ -128,7 +128,7 @@ class NotificationBell extends connect(store)(LitElement) {
                 getNewMail()
             }, 5000)
 
-            interval = setInterval(getNewMail, 30000)
+            interval = setInterval(getNewMail, 60000)
         } catch (error) {
             console.error(error)
         }
