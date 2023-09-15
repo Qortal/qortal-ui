@@ -53,7 +53,9 @@ class Chat extends LitElement {
             userFoundModalOpen: { type: Boolean },
             userSelected: { type: Object },
             editor: {type: Object},
-            groupInvites: { type: Array }
+            groupInvites: { type: Array },
+            loggedInUserName: {type: String},
+            loggedInUserAddress: {type: String},
         }
     }
 
@@ -92,6 +94,7 @@ class Chat extends LitElement {
         this.userFoundModalOpen = false
         this.userSelected = {}
         this.groupInvites = []
+        this.loggedInUserName = ""
     }
 
     async setActiveChatHeadUrl(url) {
@@ -145,6 +148,8 @@ class Chat extends LitElement {
 
           this.unsubscribeStore =  window.parent.reduxStore.subscribe(() => {
             try {
+                const currentState = window.parent.reduxStore.getState();
+
                 if(window.parent.location && window.parent.location.search) {
                     const queryString = window.parent.location.search
                     const params = new URLSearchParams(queryString)
@@ -155,6 +160,12 @@ class Chat extends LitElement {
                         window.parent.history.pushState({}, "", newUrl)
                         this.setActiveChatHeadUrl(chat)
                     }
+                }
+                if(currentState.app.accountInfo && currentState.app.accountInfo.names && currentState.app.accountInfo.names.length > 0 && this.loggedInUserName !== currentState.app.accountInfo.names[0].name){
+                    this.loggedInUserName = currentState.app.accountInfo.names[0].name
+                }
+                if(currentState.app.accountInfo && currentState.app.accountInfo.addressInfo && currentState.app.accountInfo.addressInfo.address && this.loggedInUserAddress !== currentState.app.accountInfo.addressInfo.address){
+                    this.loggedInUserAddress = currentState.app.accountInfo.addressInfo.address
                 }
             } catch (error) {
             }
@@ -831,6 +842,8 @@ class Chat extends LitElement {
                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                 .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}
                 balance=${this.balance}
+                loggedInUserName=${this.loggedInUserName}
+                loggedInUserAddress=${this.loggedInUserAddress}
             >
             </chat-page>
         `

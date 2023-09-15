@@ -126,7 +126,9 @@ class ChatPage extends LitElement {
             updateMessageHash: { type: Object},
             oldMessages: {type: Array},
             messageQueue: {type: Array},
-            isInProcessQueue: {type: Boolean}
+            isInProcessQueue: {type: Boolean},
+            loggedInUserName: {type: String},
+            loggedInUserAddress: {type: String}
         }
     }
 
@@ -2610,6 +2612,8 @@ class ChatPage extends LitElement {
                .updateMessageHash=${this.updateMessageHash}
                .clearUpdateMessageHashmap=${this.clearUpdateMessageHashmap}
                .messageQueue=${this.messageQueue}
+               loggedInUserName=${this.loggedInUserName}
+               loggedInUserAddress=${this.loggedInUserAddress}
             >
             </chat-scroller>
         `

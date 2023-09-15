@@ -46,6 +46,8 @@ const getApiKey = () => {
     return apiKey
 }
 
+
+
 const extractComponents = async (url) => {
     if (!url.startsWith("qortal://")) {
         return null
@@ -246,7 +248,9 @@ class ChatScroller extends LitElement {
             disableFetching: {type: Boolean},
             isLoadingBefore: {type: Boolean},
             isLoadingAfter: {type: Boolean},
-            messageQueue: {type: Array}
+            messageQueue: {type: Array},
+            loggedInUserName: {type: String},
+            loggedInUserAddress: {type: String}
         }
     }
 
@@ -743,13 +747,11 @@ class ChatScroller extends LitElement {
                             .emojiPicker=${this.emojiPicker} 
                             .escapeHTML=${this.escapeHTML} 
                             .messageObj=${{
-                            decodedMessage: message.messageText, 
-                            
-    "timestamp": message.timestamp,
-    "sender": "QWxEcmZxnM8yb1p92C1YKKRsp8svSVbFEs",
-    "senderName": "palmas",
-    "signature": "4B6hHMHTnSvXTMmQb73P4Yr2o772zu7XxiTiRQv8GsgysNaoc9UCUqb9x7ihz2Su6xCREZUvgACmFpHY2gzUbYHf",
-    
+                            decodedMessage: message.messageText,                 
+                            "timestamp": message.timestamp,
+                            "sender": this.loggedInUserAddress,
+                            "senderName": this.loggedInUserName,
+                            "signature": "",
                             }} 
                             .hideMessages=${this.hideMessages}
                             .setRepliedToMessageObj=${this.setRepliedToMessageObj}
@@ -794,6 +796,9 @@ class ChatScroller extends LitElement {
             return true
         }
         if (changedProperties.has('userName')) {
+            return true
+        }
+        if(changedProperties.has('loggedInUserName')){
             return true
         }
         if (changedProperties.has('updateMessageHash')) {
@@ -1557,7 +1562,8 @@ class MessageTemplate extends LitElement {
                                         </div>
                                     </div>
                             </div>
-                                <chat-menu 
+                            ${this.isInProgress ? '' : html`
+                            <chat-menu 
                                 tabindex="0"
                                 class="chat-hover"
                                 style="${this.showBlockAddressIcon && 'display: block;'}"
@@ -1584,6 +1590,8 @@ class MessageTemplate extends LitElement {
                                 .gif=${!!gif}
                             > 
                             </chat-menu>
+                            `}
+                               
                         </div>
                         <div class="message-reactions" style="${reactions.length > 0 &&
             'margin-top: 10px; margin-bottom: 5px;'}">
