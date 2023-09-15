@@ -2841,17 +2841,7 @@ class ChatPage extends LitElement {
           
             let list = [...decodeMsgs]
            
-            await new Promise((res, rej) => {
-       
-                this.webWorkerSortMessages.postMessage({list});
-            
-                this.webWorkerSortMessages.onmessage = e => {
-              
-                    list = e.data
-                    res()
-                 
-                }
-              })
+          
            
               this.messagesRendered = {
                 messages: list,
@@ -2902,17 +2892,7 @@ class ChatPage extends LitElement {
             }));
             let list = [...decodeMsgs]
            
-            await new Promise((res, rej) => {
-       
-                this.webWorkerSortMessages.postMessage({list});
-            
-                this.webWorkerSortMessages.onmessage = e => {
-              
-                    list = e.data
-                    res()
-                 
-                }
-              })
+           
            
               this.messagesRendered = {
                 messages: list,
