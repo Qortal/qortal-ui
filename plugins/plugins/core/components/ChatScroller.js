@@ -593,6 +593,7 @@ class ChatScroller extends LitElement {
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('messages')) {
             if (this.messages.type === 'initial') {
+             
                 this.addNewMessages(this.messages.messages, 'initial')
 
                 
@@ -1118,6 +1119,12 @@ class MessageTemplate extends LitElement {
         if (changedProperties.has('messageObj')) {
             return true
         }
+        if(changedProperties.has('showBlockAddressIcon')){
+            return true
+        }
+        if(changedProperties.has('openDialogBlockUser')){
+            return true
+        }
         return false
     }
 
@@ -1130,7 +1137,6 @@ class MessageTemplate extends LitElement {
     }
 
     render() {
-
         const hidemsg = this.hideMessages
         let message = ""
         let messageVersion2 = ""

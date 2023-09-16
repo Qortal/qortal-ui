@@ -260,7 +260,6 @@ export const chatStyles = css`
 	.message-parent {
 		padding: 3px;
 		background: rgba(245, 245, 245, 0);
-		transition: all 0.1s ease-in-out;
 	}
 
 	.message-parent:hover {
@@ -368,7 +367,6 @@ export const chatStyles = css`
 		background:#fff;
 		color: #000;
 		text-align: center;
-		box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 		font-size: 12px;
 		z-index: 5;
 		white-space: nowrap;
@@ -414,7 +412,6 @@ export const chatStyles = css`
 		width: 150px;
 		height: 32px;
 		padding: 3px 8px;
-		box-shadow: rgba(77, 77, 82, 0.2) 0px 7px 29px 0px;
 	}
 
 	.block-user:hover {

@@ -55,10 +55,10 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export const queue = new RequestQueue();
 
-export const chatLimit = 40
-export const chatLimitHalf = 20
+export const chatLimit = 20
+export const chatLimitHalf = 10
 
-export const totalMsgCount = 120
+export const totalMsgCount = 60
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -2810,6 +2810,14 @@ class ChatPage extends LitElement {
     }
 
     async getOldMessage(scrollElement) {
+        if(!scrollElement || !scrollElement.messageObj || !scrollElement.messageObj.timestamp){
+            this.messagesRendered = {
+                messages: [],
+                type: 'old',
+                el: scrollElement
+            }
+            return
+        }
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -2910,6 +2918,13 @@ class ChatPage extends LitElement {
         }
     }
     async getAfterMessages(scrollElement) {
+        if(!scrollElement || !scrollElement.messageObj || !scrollElement.messageObj.timestamp){
+            this.messagesRendered = {
+                messages: [],
+                type: 'new',
+            }
+            return
+        }
         const timestamp = scrollElement.messageObj.timestamp
         
         if (this.isReceipient) {
