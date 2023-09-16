@@ -97,13 +97,13 @@ class ShowPlugin extends connect(store)(LitElement) {
             .hideIframe  {
                 display: none;
                 position: absolute;
-                zIndex: -10;
+                z-Index: -10;
             }
 
             .showIframe  {
                 display: flex;
                 position: relative;
-                zIndex: 1;
+                z-Index: 1;
             }
 
             .tabs {
