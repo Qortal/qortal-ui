@@ -1125,6 +1125,24 @@ class MessageTemplate extends LitElement {
         if(changedProperties.has('openDialogBlockUser')){
             return true
         }
+        if(changedProperties.has('viewImage')){
+            return true
+        }
+        if(changedProperties.has('isImageLoaded')){
+            return true
+        }
+        if(changedProperties.has('openDialogImage')){
+            return true
+        }
+        if(changedProperties.has('openDialogPrivateMessage')){
+            return true
+        }
+        if(changedProperties.has('openDialogGif')){
+            return true
+        }
+        if(changedProperties.has('isGifLoaded')){
+            return true
+        }
         return false
     }
 
@@ -1437,8 +1455,9 @@ class MessageTemplate extends LitElement {
                                     ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${() => {
+                                            console.log('clicked')
                     this.viewImage = true
-                    this.addSeenMessage(this.messageObj.signature)
+                    // this.addSeenMessage(this.messageObj.signature)
                 }}
                                         class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : ''].join(' ')}
                                         style=${this.isFirstMessage && "margin-top: 10px;"}>
