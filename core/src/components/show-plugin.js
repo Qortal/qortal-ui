@@ -101,7 +101,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .showIframe  {
-                display: block;
+                display: flex;
                 position: relative;
                 zIndex: 1;
             }
