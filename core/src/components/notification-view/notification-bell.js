@@ -158,7 +158,7 @@ class NotificationBell extends connect(store)(LitElement) {
                                     url: `qdn/browser/index.html${query}`,
                                     id: 'q-mail-notification',
                                     myPlugObj: {
-                                        "url": "qapps",
+                                        "url": "myapp",
                                         "domain": "core",
                                         "page": `qdn/browser/index.html${query}`,
                                         "title": "Q-Mail",
@@ -196,7 +196,7 @@ class NotificationBell extends connect(store)(LitElement) {
                     url: `qdn/browser/index.html${query}`,
                     id: 'q-mail-notification',
                     myPlugObj: {
-                        "url": "qapps",
+                        "url": "myapp",
                         "domain": "core",
                         "page": `qdn/browser/index.html${query}`,
                         "title": "Q-Mail",
