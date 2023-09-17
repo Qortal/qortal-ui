@@ -4,14 +4,17 @@ import { Epml } from '../../../epml.js'
 import snackbar from './snackbar.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import '@polymer/paper-tooltip/paper-tooltip.js'
+import { RequestQueue } from '../../utils/queue.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+ const queue = new RequestQueue(3);
+
 
 class LevelFounder extends LitElement {
     static get properties() {
         return {
             checkleveladdress: { type: String },
-            selectedAddress: { type: String },
             config: { type: Object },
             memberInfo: { type: Array }
         }
@@ -39,7 +42,7 @@ class LevelFounder extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:# var(--black);
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -88,7 +91,6 @@ class LevelFounder extends LitElement {
     constructor() {
         super()
         this.memberInfo = []
-        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address
     }
 
     render() {
@@ -101,24 +103,20 @@ class LevelFounder extends LitElement {
     }
 
     firstUpdated() {
-
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-        })
-        parentEpml.imReady()
+       queue.push(() =>  this.checkAddressInfo());
     }
 
     async checkAddressInfo() {
-        // let toCheck = this.checkleveladdress
-        // const memberInfo = await parentEpml.request('apiCall', {
-        //     url: `/addresses/${toCheck}`
-        // })
-        // this.memberInfo = memberInfo
+        try {
+            let toCheck = this.checkleveladdress
+            const memberInfo = await parentEpml.request('apiCall', {
+                url: `/addresses/${toCheck}`
+            })
+            this.memberInfo = memberInfo
+        } catch (error) {
+            console.error(error)
+        }
+       
     }
 
     renderFounder() {

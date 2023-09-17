@@ -1455,7 +1455,6 @@ class MessageTemplate extends LitElement {
                                     ${image && !isImageDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ? html`
                                         <div 
                                         @click=${() => {
-                                            console.log('clicked')
                     this.viewImage = true
                     // this.addSeenMessage(this.messageObj.signature)
                 }}
