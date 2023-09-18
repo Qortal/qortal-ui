@@ -20,3 +20,26 @@ export const addNode = (state, action) => {
         }
     }
 }
+
+export const editNode = (state, action) => {
+    const copyKnownNodes = [...state.nodeConfig.knownNodes]
+    copyKnownNodes[action.payload.index] = action.payload.nodeObject
+    return {
+        ...state,
+        nodeConfig: {
+            ...state.nodeConfig,
+            knownNodes: copyKnownNodes
+        }
+    }
+}
+export const removeNode = (state, action) => {
+    const copyKnownNodes = [...state.nodeConfig.knownNodes]
+    copyKnownNodes.splice(action.payload, 1);
+    return {
+        ...state,
+        nodeConfig: {
+            ...state.nodeConfig,
+            knownNodes: copyKnownNodes
+        }
+    }
+}

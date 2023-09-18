@@ -200,6 +200,8 @@
 		"snack3": "Successfully added and saved custom node",
 		"snack4": "Nodes successfully saved as",
 		"snack5": "Nodes successfully imported",
+		"snack6": "Successfully removed custom node",
+		"snack7": "Successfully edited custom node",
 		"exp1": "Export Private Master Key",
 		"exp2": "Export Master Key",
 		"exp3": "Export",

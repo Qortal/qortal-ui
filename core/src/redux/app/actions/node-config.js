@@ -1,5 +1,5 @@
 // Node Config Actions here...
-import { LOAD_NODE_CONFIG, SET_NODE, ADD_NODE } from '../app-action-types.js'
+import { LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, REMOVE_NODE, EDIT_NODE } from '../app-action-types.js'
 import { UI_VERSION } from '../version.js'
 
 const nodeConfigUrl = '/getConfig'
@@ -72,6 +72,16 @@ export const doAddNode = (nodeObject) => {
         return dispatch(addNode(nodeObject))
     }
 }
+export const doRemoveNode = (index) => {
+    return (dispatch, getState) => {
+        return dispatch(removeNode(index))
+    }
+}
+export const doEditNode = (index, nodeObject) => {
+    return (dispatch, getState) => {
+        return dispatch(editNode({index, nodeObject}))
+    }
+}
 
 const addNode = (payload) => {
     return {
@@ -80,6 +90,18 @@ const addNode = (payload) => {
     }
 }
 
+const editNode = (payload) => {
+    return {
+        type: EDIT_NODE,
+        payload
+    }
+}
+const removeNode = (payload) => {
+    return {
+        type: REMOVE_NODE,
+        payload
+    }
+}
 const obj1 = {
     name: 'Local Node',
     protocol: 'http',
