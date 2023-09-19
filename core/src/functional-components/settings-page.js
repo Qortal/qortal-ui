@@ -175,7 +175,6 @@ class SettingsPage extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('this.dropdownOpen', this.dropdownOpen);
 		return html`
 			<mwc-dialog id="settingsDialog" opened="false">
 				<div style="display: inline; text-align: center;">

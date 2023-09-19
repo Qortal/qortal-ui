@@ -135,7 +135,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 min-width: 110px;
                 max-width: 220px;
                 overflow: hidden;
-                zIndex: 2;
+                z-index: 2;
             }
 
             .tabCard {
@@ -171,7 +171,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 border-left: 1px solid var(--black);
                 border-right: 1px solid var(--black);
                 border-bottom: 1px solid var(--white);
-                zIndex: 1;
+                z-index: 1;
             }
 
             .close {
@@ -901,7 +901,7 @@ class NavBar extends connect(store)(LitElement) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: color: var(--white);
+            background-color: var(--white);
             padding: 10px 20px;
             max-width: 750px;
             width: 80%;
