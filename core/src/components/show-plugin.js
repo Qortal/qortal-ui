@@ -893,7 +893,7 @@ class NavBar extends connect(store)(LitElement) {
             flex-flow: column;
             align-items: center;
             padding: 20px;
-            height: 100vh;
+            height: calc(100vh - 120px);
             overflow-y: auto;
         }
 
