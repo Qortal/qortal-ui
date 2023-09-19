@@ -2276,10 +2276,10 @@ class NavBar extends connect(store)(LitElement) {
 
         if (service === "APP") {
             this.changePage({
-                "url": "qapp",
+                "url": "myapp",
                 "domain": "core",
                 "page": `qdn/browser/index.html${query}`,
-                "title": "Q-App",
+                "title": name || "Q-App",
                 "icon": "vaadin:external-browser",
                 "mwcicon": "open_in_browser",
                 "menus": [],
@@ -2287,10 +2287,10 @@ class NavBar extends connect(store)(LitElement) {
             })
         } else if (service === "WEBSITE") {
             this.changePage({
-                "url": "websites",
+                "url": "myapp",
                 "domain": "core",
                 "page": `qdn/browser/index.html${query}`,
-                "title": "Website",
+                "title": name || "Website",
                 "icon": "vaadin:desktop",
                 "mwcicon": "desktop_mac",
                 "menus": [],
