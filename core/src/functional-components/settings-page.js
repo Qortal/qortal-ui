@@ -48,7 +48,7 @@ class SettingsPage extends connect(store)(LitElement) {
 			lastSelected: { type: Number },
 			nodeConfig: { type: Object },
 			theme: { type: String, reflect: true },
-			nodeIndex: { type: Number },e
+			nodeIndex: { type: Number },
 			isBeingEdited: { type: Boolean },
 			dropdownOpen: { type: Boolean },
 		};
