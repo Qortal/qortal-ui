@@ -15,7 +15,14 @@ export default class VoteOnPollTransaction extends TransactionBase {
 				<span style="color: #000;">${this._rPollName}</span>
 			</div>
 			${this._votedialog2}
+			<div style="margin-top: 10px; font-weight: bold">
+			${this._feeDialog}: ${this._feeDisplay}
+			</div>
 		`
+	}
+
+	set feeDialog(feeDialog){
+		this._feeDialog = feeDialog
 	}
 
 	set votedialog1(votedialog1) {
@@ -27,6 +34,7 @@ export default class VoteOnPollTransaction extends TransactionBase {
 	}
 
 	set fee(fee) {
+		this._feeDisplay = fee
 		this._fee = fee * QORT_DECIMALS
 		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
 	}

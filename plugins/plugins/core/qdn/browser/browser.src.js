@@ -657,7 +657,8 @@ class WebBrowser extends LitElement {
 		const makeTransactionRequest = async (lastRef) => {
 			let votedialog1 =   get("transactions.votedialog1")
 			let votedialog2 =  get("transactions.votedialog2")
-			
+			let feeDialog =  get("walletpage.wchange12")
+
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 9,
 				nonce: this.selectedAddress.nonce,
@@ -668,7 +669,8 @@ class WebBrowser extends LitElement {
 					rOptionIndex: optionIndex,
 					lastReference: lastRef,
 					votedialog1: votedialog1,
-					votedialog2: votedialog2
+					votedialog2: votedialog2,
+					feeDialog
 				},
 				apiVersion: 2
 			})
@@ -712,6 +714,7 @@ class WebBrowser extends LitElement {
 			let votedialog4 =  get("transactions.votedialog4")
 			let votedialog5 =   get("transactions.votedialog5")
 			let votedialog6 =  get("transactions.votedialog6")
+			let feeDialog =  get("walletpage.wchange12")
 			
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 8,
@@ -727,6 +730,7 @@ class WebBrowser extends LitElement {
 					votedialog4: votedialog4,
 					votedialog5: votedialog5,
 					votedialog6: votedialog6,
+					feeDialog
 				},
 				apiVersion: 2
 			})

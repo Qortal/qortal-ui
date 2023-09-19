@@ -24,6 +24,9 @@ export default class CreatePollTransaction extends TransactionBase {
 				<span style="color: #000;">${this._pollOptions.join(', ')}</span>
 			</div>
 			${this._votedialog6}
+			<div style="margin-top: 10px; font-weight: bold">
+			${this._feeDialog}: ${this._feeDisplay}
+			</div>
 		`
 	}
 
@@ -31,6 +34,10 @@ export default class CreatePollTransaction extends TransactionBase {
 		const optionBytes = this.constructor.utils.stringtoUTF8Array(option);
 		const optionLength = this.constructor.utils.int32ToBytes(optionBytes.length);
 		this._options.push({ length: optionLength, bytes: optionBytes });
+	}
+
+	set feeDialog(feeDialog){
+		this._feeDialog = feeDialog
 	}
 
 	set votedialog3(votedialog3) {
@@ -48,6 +55,7 @@ export default class CreatePollTransaction extends TransactionBase {
 	}
 
 	set fee(fee) {
+		this._feeDisplay = fee
 		this._fee = fee * QORT_DECIMALS
 		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
 	}
