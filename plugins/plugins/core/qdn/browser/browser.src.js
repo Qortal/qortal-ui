@@ -496,6 +496,33 @@ class WebBrowser extends LitElement {
 		return qortFee
 	}
 
+	async unitVoteFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=VOTE_ON_POLL`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching vote fee');
+		}
+
+		const data = await response.json()
+		const joinFee = (Number(data) / 1e8).toFixed(8)
+		return joinFee
+	}
+	async unitCreatePollFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_POLL`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching vote fee');
+		}
+
+		const data = await response.json()
+		const joinFee = (Number(data) / 1e8).toFixed(8)
+		return joinFee
+	}
+
 	async _joinGroup(groupId, groupName) {
 		const joinFeeInput = await this.unitJoinFee()
 		const getLastRef = async () => {
@@ -607,6 +634,118 @@ class WebBrowser extends LitElement {
 		}
 		const groupRes = await validateReceiver()
 		return groupRes
+
+	}
+
+	async _voteOnPoll(pollName, optionIndex) {
+		const voteFeeInput = await this.unitVoteFee()
+		const getLastRef = async () => {
+			let myRef = await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+			return myRef
+		};
+
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef();
+			let myTransaction = await makeTransactionRequest(lastRef)
+			const res = getTxnRequestResponse(myTransaction)
+			return res
+		}
+
+		const makeTransactionRequest = async (lastRef) => {
+			let votedialog1 =   get("transactions.votedialog1")
+			let votedialog2 =  get("transactions.votedialog2")
+			
+			let myTxnrequest = await parentEpml.request('transaction', {
+				type: 9,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: voteFeeInput,
+					voterAddress: this.selectedAddress.address,
+					rPollName: pollName,
+					rOptionIndex: optionIndex,
+					lastReference: lastRef,
+					votedialog1: votedialog1,
+					votedialog2: votedialog2
+				},
+				apiVersion: 2
+			})
+			return myTxnrequest
+		}
+
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		const voteRes = await validateReceiver()
+		return voteRes
+
+	}
+	async _createPoll(pollName, pollDescription, options, pollOwnerAddress) {
+		const voteFeeInput = await this.unitCreatePollFee()
+		const getLastRef = async () => {
+			let myRef = await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+			return myRef
+		};
+
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef();
+			let myTransaction = await makeTransactionRequest(lastRef)
+			const res = getTxnRequestResponse(myTransaction)
+			return res
+		}
+
+		const makeTransactionRequest = async (lastRef) => {
+			let votedialog3 =   get("transactions.votedialog3")
+			let votedialog4 =  get("transactions.votedialog4")
+			let votedialog5 =   get("transactions.votedialog5")
+			let votedialog6 =  get("transactions.votedialog6")
+			
+			let myTxnrequest = await parentEpml.request('transaction', {
+				type: 8,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: voteFeeInput,
+					ownerAddress: pollOwnerAddress,
+					rPollName: pollName,
+					rPollDesc: pollDescription,
+					rOptions: options,
+					lastReference: lastRef,
+					votedialog3: votedialog3,
+					votedialog4: votedialog4,
+					votedialog5: votedialog5,
+					votedialog6: votedialog6,
+				},
+				apiVersion: 2
+			})
+			return myTxnrequest
+		}
+
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		const voteRes = await validateReceiver()
+		return voteRes
 
 	}
 
@@ -1322,6 +1461,103 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
+					break;
+				}
+				case actions.VOTE_ON_POLL: {
+					const requiredFields = ['pollName', 'optionIndex'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const pollName = data.pollName;
+					const optionIndex = data.optionIndex;
+					
+
+					let pollInfo = null
+					try {
+						pollInfo = await parentEpml.request("apiCall", {
+							type: "api",
+							url: `/polls/${pollName}`,
+						});
+					} catch (error) {
+						const errorMsg = (error && error.message) || 'Poll not found';
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
+
+					if (!pollInfo || pollInfo.error) {
+						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found';
+						let obj = {};
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+						break
+					}
+
+					try {
+						this.loader.show();
+						const resVoteOnPoll = await this._voteOnPoll(pollName, optionIndex)
+						response = JSON.stringify(resVoteOnPoll);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to vote on the poll.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+
+					break;
+				}
+				case actions.CREATE_POLL: {
+					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const pollName = data.pollName;
+					const pollDescription = data.pollDescription	
+					const pollOptions = data.pollOptions
+					const pollOwnerAddress = data.pollOwnerAddress				
+				
+					try {
+						this.loader.show();
+						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
+						response = JSON.stringify(resCreatePoll);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to created poll.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+
 					break;
 				}
 				case actions.OPEN_NEW_TAB: {
