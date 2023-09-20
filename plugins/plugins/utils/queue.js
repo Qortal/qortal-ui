@@ -32,3 +32,40 @@ export class RequestQueue {
     }
 }
 
+export class RequestQueueWithPromise {
+    constructor(maxConcurrent = 5) {
+      this.queue = [];
+      this.maxConcurrent = maxConcurrent;
+      this.currentlyProcessing = 0;
+    }
+  
+    // Add a request to the queue and return a promise
+    enqueue(request) {
+      return new Promise((resolve, reject) => {
+        // Push the request and its resolve and reject callbacks to the queue
+        this.queue.push({ request, resolve, reject });
+        this.process();
+      });
+    }
+  
+    // Process requests in the queue
+    async process() {
+      while (this.queue.length > 0 && this.currentlyProcessing < this.maxConcurrent) {
+        this.currentlyProcessing++;
+        const { request, resolve, reject } = this.queue.shift();
+        try {
+          const response = await request();
+          resolve(response);
+        } catch (error) {
+          reject(error);
+        } finally {
+          this.currentlyProcessing--;
+          this.process();
+        }
+      }
+    }
+  }
+  
+
+  
+

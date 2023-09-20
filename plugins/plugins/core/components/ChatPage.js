@@ -3895,9 +3895,10 @@ class ChatPage extends LitElement {
                     new Compressor(image, {
                         quality: .6,
                         maxWidth: 1200,
+                        mimeType: 'image/webp',
                         success(result) {
                             const file = new File([result], "name", {
-                                type: image.type
+                                type: 'image/webp'
                             })
                             compressedFile = file
                             resolve()
