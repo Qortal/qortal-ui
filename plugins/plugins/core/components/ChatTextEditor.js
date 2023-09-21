@@ -502,7 +502,11 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" />
                     </div>     
                 </div>
-                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"
+           
+                >
+
+                ></textarea>
                 <div id=${this.iframeId}
                 class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
                 ></div>
@@ -571,6 +575,29 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
            }
 	}
+
+    async handlePasteEvent(e) {
+        if (e.type === 'paste') {
+            e.preventDefault();
+            const item_list = await navigator.clipboard.read();
+            let image_type; // we will feed this later
+            const item = item_list.find( item => // choose the one item holding our image
+                item.types.some( type => { 
+                if (type.startsWith( 'image/')) {
+                    image_type = type; 
+                    return true;
+                }
+            })
+            );
+            if(item){
+                const blob = item && await item.getType( image_type );
+            var file = new File([blob], "name", {
+            type: image_type
+            });
+            this.insertFile(file);
+            } 
+        }
+    }
 
 	async firstUpdated() {      
         window.addEventListener('storage', () => {

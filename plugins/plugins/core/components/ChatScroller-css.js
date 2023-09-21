@@ -756,9 +756,9 @@ export const chatStyles = css`
 
 	.unread-divider {
 		width: 100%;
-    background: #9B111E;
     padding: 5px;
-    color: #FAEBD7;
+    color: var(--black);
+	border-bottom: 1px solid var(--black);
     display: flex;
     justify-content: center;
     border-radius: 2px;

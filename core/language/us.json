@@ -833,7 +833,9 @@
 		"cchange82": "This attachment has been deleted",
 		"cchange90": "No messages",
 		"cchange91": "Sending...",
-		"cchange92": "Unread messages below"
+		"cchange92": "Unread messages below",
+		"cchange93": "Image copied to clipboard",
+		"cchange94": "loaded"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",

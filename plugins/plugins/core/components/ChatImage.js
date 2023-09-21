@@ -9,8 +9,11 @@ import {
 } from 'lit-translate';
 import axios from 'axios'
 import { RequestQueueWithPromise } from '../../utils/queue';
-
+import '@material/mwc-menu';
+import '@material/mwc-list/mwc-list-item.js'
+import { Epml } from '../../../epml';
 const requestQueue = new RequestQueueWithPromise(5);
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export class ChatImage extends LitElement {
   static get properties() {
@@ -24,11 +27,15 @@ export class ChatImage extends LitElement {
 
   static get styles() {
     return css`
+    * {
+      --mdc-theme-text-primary-on-background: var(--black);
+    }
       img {
         max-width:45vh; 
         max-height:40vh; 
         border-radius: 5px; 
         cursor: pointer;
+        position: relative;
       }
       .smallLoading,
   .smallLoading:after {
@@ -53,6 +60,10 @@ export class ChatImage extends LitElement {
 		width: 45vh; 
 		height: 40vh;
 	}
+
+  mwc-menu {
+      position: absolute;
+    }
 
 
 
@@ -96,6 +107,7 @@ export class ChatImage extends LitElement {
     this.nodeUrl = this.getNodeUrl()
     this.myNode = this.getMyNode()
     this.hasCalledWhenDownloaded = false
+    this.isFetching = false
 
     this.observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -130,16 +142,14 @@ getMyNode(){
 
    async fetchResource() {
     try {
-      // await qortalRequest({
-      //   action: 'GET_QDN_RESOURCE_PROPERTIES',
-      //   name,
-      //   service,
-      //   identifier
-      // })
+      if(this.isFetching) return
+      this.isFetching = true
       await axios.get(`${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
+      this.isFetching = false
 
-
-    } catch (error) {}
+    } catch (error) {
+      this.isFetching = false
+    }
   }
 
  async fetchVideoUrl() {
@@ -200,7 +210,9 @@ getMyNode(){
         }
    
         this.status = res
-        
+        if(this.status.status === 'DOWNLOADED'){
+          this.fetchResource()
+        }
       }
 
       // check if progress is 100% and clear interval if true
@@ -237,14 +249,70 @@ getMyNode(){
 
     return true
   }
-  async updated(changedProperties) {
-		if (changedProperties && changedProperties.has('status')) {
-      if(this.hasCalledWhenDownloaded === false && this.status.status === 'DOWNLOADED'){
-        this.fetchResource()
-        this.hasCalledWhenDownloaded = true
-      }
-    }
+
+ 
+
+  showContextMenu(e) {
+    e.preventDefault();
+    e.stopPropagation();  
+
+    const contextMenu = this.shadowRoot.getElementById('contextMenu');
+    const containerRect = e.currentTarget.getBoundingClientRect();
+  
+    // Adjusting the positions
+    const adjustedX = e.clientX - containerRect.left;
+    const adjustedY = e.clientY - containerRect.top;
+  
+    contextMenu.style.top = `${adjustedY}px`;
+    contextMenu.style.left = `${adjustedX}px`;
+  
+    contextMenu.open = true;
   }
+  
+  
+
+
+  
+  async handleCopy(e) {
+    e.stopPropagation(); 
+    const image = this.shadowRoot.querySelector('img');
+  
+    // Create a canvas and draw the image on it.
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;  
+    canvas.height = image.naturalHeight;  
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0);
+  
+    // Convert canvas image to blob
+    canvas.toBlob(blob => {
+      try {
+        const clipboardItem = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([clipboardItem]).then(() => {
+          const msg = get("chatpage.cchange93")
+          parentEpml.request('showSnackBar', msg)
+          console.log('Image copied to clipboard');
+        }).catch(err => {
+          console.error('Failed to copy image: ', err);
+        });
+      } catch (error) {
+        console.error('Error copying the image: ', error);
+      }
+    }, 'image/png');
+  }
+  
+  
+ 
+  
+  handleMenuBlur() {
+    setTimeout(() => {
+        if (!this.isMenuItemClicked) {
+            const contextMenu = this.shadowRoot.getElementById('contextMenu');
+            contextMenu.open = false;
+        }
+    }, 100);
+}
+
 
   render() {
 
@@ -269,17 +337,23 @@ getMyNode(){
 														<div
 															class=${`smallLoading`}
 														></div>
-                            <p>${`${Math.round(this.status.percentLoaded || 0
-                        ).toFixed(0)}% loaded`}</p>
+                            <p style="color: var(--black)">${`${Math.round(this.status.percentLoaded || 0
+                        ).toFixed(0)}% `}${translate('chatpage.cchange94')}</p>
 													</div>
 											  `
 											: ''
 									}
     ${this.status.status === 'READY' ? html`
-      <img @click=${()=> this.setOpenDialogImage(true)} src=${this.url} />
+    <div class="customContextMenuDiv" @contextmenu="${this.showContextMenu}" style="position:relative">
+      <img crossOrigin="anonymous"  @click=${()=> this.setOpenDialogImage(true)} src=${this.url} />
+      <mwc-menu id="contextMenu" @blur="${this.handleMenuBlur}">
+        <mwc-list-item @click="${this.handleCopy}">Copy</mwc-list-item>
+      </mwc-menu>
+    </div>
     ` : ''}
 
                 </div>
+               
     `
     
     

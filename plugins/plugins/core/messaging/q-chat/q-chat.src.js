@@ -445,9 +445,24 @@ class Chat extends LitElement {
         if (!isElectron()) {
         } else {
             window.addEventListener('contextmenu', (event) => {
-                event.preventDefault()
-                window.parent.electronAPI.showMyMenu()
-            })
+                // Check if the clicked element has the class
+                let target = event.target;
+                while (target !== null) {
+                    if (target.classList && target.classList.contains('customContextMenuDiv')) {
+                        // Your custom context menu logic
+                        this.showContextMenu(event);
+                        return;
+                    }
+                    target = target.parentNode;
+                }
+    
+                // If it doesn't, show the default Electron context menu
+                event.preventDefault();
+                window.parent.electronAPI.showMyMenu();
+            });
+
+
+         
         }
 
         let configLoaded = false
