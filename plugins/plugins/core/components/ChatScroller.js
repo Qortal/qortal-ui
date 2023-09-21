@@ -700,40 +700,7 @@ class ChatScroller extends LitElement {
 	}
 
 	render() {
-		// let formattedMessages = this.messages.reduce((messageArray, message) => {
-		//     const currentMessage = this.updateMessageHash[message.signature] || message;
-		//     const lastGroupedMessage = messageArray[messageArray.length - 1];
-
-		//     currentMessage.firstMessageInChat = messageArray.length === 0;
-
-		//     let timestamp, sender, repliedToData;
-
-		//     if (lastGroupedMessage) {
-		//         timestamp = lastGroupedMessage.timestamp;
-		//         sender = lastGroupedMessage.sender;
-		//         repliedToData = lastGroupedMessage.repliedToData;
-		//     } else {
-		//         timestamp = currentMessage.timestamp;
-		//         sender = currentMessage.sender;
-		//         repliedToData = currentMessage.repliedToData;
-		//     }
-
-		//     const isSameGroup = Math.abs(timestamp - currentMessage.timestamp) < 600000 &&
-		//                         sender === currentMessage.sender &&
-		//                         !repliedToData;
-
-		//     if (isSameGroup && lastGroupedMessage) {
-		//         lastGroupedMessage.messages.push(currentMessage);
-		//     } else {
-		//         messageArray.push({
-		//             messages: [currentMessage],
-		//             ...currentMessage
-		//         });
-		//     }
-
-		//     return messageArray;
-		// }, []);
-
+	
 		let formattedMessages = this.messagesToRender;
 
 		return html`
@@ -802,21 +769,10 @@ class ChatScroller extends LitElement {
 						)}
 					`
 				)}
-				${this.messageQueue.filter((item) =>
-					this.chatId.includes(item._chatId)
-				).length > 0
-					? html`
-							<div
-								style=${'height: 1px'}
-								id="bottomObserverForFetchingMessages"
-							></div>
-					  `
-					: html`
-							<div
-								style=${'height: 1px; margin-top: -100px'}
-								id="bottomObserverForFetchingMessages"
-							></div>
-					  `}
+				 <div
+    style=${this.messageQueue.filter((item) => this.chatId.includes(item._chatId)).length > 0 ? 'height: 1px' : 'height: 1px; margin-top: -100px'}
+    id="bottomObserverForFetchingMessages"
+  ></div>
 
 				<div style=${'height: 1px;'} id="downObserver"></div>
 
