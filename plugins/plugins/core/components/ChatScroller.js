@@ -522,7 +522,7 @@ class ChatScroller extends LitElement {
 				};
 			} else {
 				// Add to the current group
-				currentMessageGroup.messages.push(message);
+				currentMessageGroup.messages.unshift(message);
 			}
 			previousMessage = message;
 		}
