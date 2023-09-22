@@ -185,44 +185,7 @@ function processText(input) {
 	return wrapper;
 }
 
-const formatMessages = (messages) => {
-	const formattedMessages = messages.reduce((messageArray, message) => {
-		const currentMessage = message;
-		const lastGroupedMessage = messageArray[messageArray.length - 1];
 
-		currentMessage.firstMessageInChat = messageArray.length === 0;
-
-		let timestamp, sender, repliedToData;
-
-		if (lastGroupedMessage) {
-			timestamp = lastGroupedMessage.timestamp;
-			sender = lastGroupedMessage.sender;
-			repliedToData = lastGroupedMessage.repliedToData;
-		} else {
-			timestamp = currentMessage.timestamp;
-			sender = currentMessage.sender;
-			repliedToData = currentMessage.repliedToData;
-		}
-
-		const isSameGroup =
-			Math.abs(timestamp - currentMessage.timestamp) < 600000 &&
-			sender === currentMessage.sender &&
-			!repliedToData;
-
-		if (isSameGroup && lastGroupedMessage) {
-			lastGroupedMessage.messages.push(currentMessage);
-		} else {
-			messageArray.push({
-				messages: [currentMessage],
-				...currentMessage,
-			});
-		}
-
-		return messageArray;
-	}, []);
-
-	return formattedMessages;
-};
 
 class ChatScroller extends LitElement {
 	static get properties() {
@@ -510,8 +473,7 @@ class ChatScroller extends LitElement {
 				!previousMessage ||
 				!this.shouldGroupWithLastMessage(message, previousMessage)
 			) {
-				// If no previous message, or if the current message shouldn't be grouped with the previous,
-				// push the current group to the front of the formatted messages (since these are older messages)
+		
 				if (currentMessageGroup) {
 					this.messagesToRender.unshift(currentMessageGroup);
 				}
@@ -2207,7 +2169,7 @@ class MessageTemplate extends LitElement {
                 toblockaddress=${this.messageObj.sender}
             >
             </chat-modals>
-            <mwc-dialog MessageTemplate
+            <mwc-dialog 
                 id="showDialogPublicKey" 
                 ?open=${this.openDialogImage} 
                 @closed=${() => {
@@ -2225,7 +2187,6 @@ class MessageTemplate extends LitElement {
 						dialogAction="cancel"
 						class="red"
 						@click=${() => {
-							MessageTemplate;
 							this.openDialogImage = false;
 						}}
 					>

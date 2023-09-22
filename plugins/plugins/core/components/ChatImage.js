@@ -198,11 +198,7 @@ getMyNode(){
             
             setTimeout(() => {
               isCalling = false
-              this.fetchResource({
-                name,
-                service,
-                identifier
-              })
+              this.fetchResource()
             }, 25000)
             return
           }

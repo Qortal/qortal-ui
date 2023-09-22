@@ -10,6 +10,7 @@ import { inputKeyCodes } from '../../utils/keyCodes.js'
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js'
 import { publishData } from '../../utils/publish-image.js'
 import { EmojiPicker } from 'emoji-picker-js'
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 import * as zip from '@zip.js/zip.js'
 
@@ -38,6 +39,7 @@ import './ChatSideNavHeads.js'
 import './ChatLeaveGroup.js'
 import './ChatGroupSettings.js'
 import './ChatRightPanel.js'
+import './ChatRightPanelResources.js'
 import './ChatSearchResults.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -105,6 +107,7 @@ class ChatPage extends LitElement {
             groupAdmin: { type: Array },
             groupMembers: { type: Array },
             shifted: { type: Boolean },
+            shiftedResources: {type: Boolean},
             groupInfo: { type: Object },
             setActiveChatHeadUrl: { attribute: false },
             userFound: { type: Array },
@@ -1058,13 +1061,14 @@ class ChatPage extends LitElement {
         .group-nav-container {
             display: flex;
             height: 40px; 
-            padding: 25px 5px 25px 20px; 
+            padding: 5px; 
             margin: 0px;
             background-color: var(--chat-bubble-bg); 
             box-sizing: border-box; 
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--group-drop-shadow);
+            z-index: 1;
         }
     
         .top-bar-icon {
@@ -1344,6 +1348,7 @@ class ChatPage extends LitElement {
         this.groupAdmin = []
         this.groupMembers = []
         this.shifted = false
+        this.shiftedResources = false
         this.groupInfo = {}
         this.pageNumber = 1
         this.userFoundModalOpen = false
@@ -1387,6 +1392,10 @@ class ChatPage extends LitElement {
 
     _toggle(value) {
         this.shifted = value === (false || true) ? value : !this.shifted
+        this.requestUpdate()
+    }
+    _toggleResources(value) {
+        this.shiftedResources = value === (false || true) ? value : !this.shiftedResources
         this.requestUpdate()
     }
 
@@ -1489,23 +1498,32 @@ class ChatPage extends LitElement {
     
 
     render() {
-
+        console.log('this.chatId', this.chatId, this._chatId)
         return html`
             <div class="main-container">
             <div 
             class="chat-container" 
-            style=${(!this.isReceipient && +this._chatId !== 0) ? "grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;" : "grid-template-rows: minmax(6%, 92vh) minmax(40px, auto); flex: 2;"}>
-                ${(!this.isReceipient && +this._chatId !== 0) ?
-                html`
+            style="grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;">
+                
                 <div class="group-nav-container">
                     <div @click=${this._toggle} style="height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: pointer; user-select: none">
+                        ${this.isReceipient ? '' : +this._chatId === 0 ? html`
+                        <p class="group-name">Qortal General Chat</p>
+                        `  :  html`
                         <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
+                        `}
+                        
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
-                        <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
+                    <mwc-icon class="top-bar-icon" @click=${this._toggleResources} style="margin: 0px 10px">photo_library</mwc-icon>
+                    ${(!this.isReceipient && +this._chatId !== 0) ?
+                        html`
+                        <mwc-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px">groups</mwc-icon>
+                        `
+                       : ''}
                     </div>
                 </div>
-                ` : null}
+          
                 <div>
                     ${this.isLoadingMessages ?
                 html`
@@ -1948,6 +1966,24 @@ class ChatPage extends LitElement {
             .setUserName=${(val) => this.setUserName(val)}
             >
             </chat-right-panel>
+        </div>
+        <div class="chat-right-panel ${this.shiftedResources ? "movedin" : "movedout"}"   ${animate()}>
+            <chat-right-panel-resources
+            .getMoreMembers=${(val) => this.getMoreMembers(val)} 
+            .toggle=${(val) => this._toggleResources(val)} 
+            .selectedAddress=${this.selectedAddress} 
+            .groupMembers=${this.groupMembers} 
+            .groupAdmin=${this.groupAdmin} 
+            .leaveGroupObj=${this.groupInfo}
+            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+            .setUserName=${(val) => this.setUserName(val)}
+            _chatId=${ifDefined(this._chatId)}
+            chatId=${this.chatId}
+            ?isreceipient=${this.isReceipient}
+            >
+            </chat-right-panel-resources>
         </div>
     </div>
     `
@@ -2901,7 +2937,7 @@ class ChatPage extends LitElement {
             }));
             let list = [...decodeMsgs]
            
-           
+            
            
               this.messagesRendered = {
                 messages: list,
@@ -3890,7 +3926,8 @@ class ChatPage extends LitElement {
     
                 const image = this.imageFile
                 const id = this.uid.rnd()
-                const identifier = `qchat_${id}`
+                const groupPart = this.isReceipient ? `direct_${this._chatId.slice(-15)}` : `group_${this._chatId}`
+                const identifier = `qchat_${groupPart}_${id}`
                 let compressedFile = ''
                 await new Promise(resolve => {
                     new Compressor(image, {
