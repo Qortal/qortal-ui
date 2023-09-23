@@ -27,7 +27,7 @@ export class ResuableImage extends LitElement {
 			status: { type: Object },
       missingData: {type: Boolean},
 	  openDialogImage: { type: Boolean },
-
+			onLoad: {attribute: false}
 		};
 	}
 
@@ -182,6 +182,7 @@ export class ResuableImage extends LitElement {
 		);
 		if (response && response.data && response.data.status === 'READY') {
 			this.status = response.data;
+			this.onLoad()
 			return;
 		}
 		const intervalId = setInterval(async () => {
@@ -230,13 +231,14 @@ export class ResuableImage extends LitElement {
 			}
 
 			// check if progress is 100% and clear interval if true
-			if (res?.status === 'READY') {
+			if (res.status === 'READY') {
+				this.onLoad()
 				clearInterval(intervalId);
 				this.status = res;
 				this.isReady = true;
 			}
 
-      if(res?.status === 'MISSING_DATA'){
+      if(res.status === 'MISSING_DATA'){
         this.status = res
         this.missingData = true
         clearInterval(intervalId)

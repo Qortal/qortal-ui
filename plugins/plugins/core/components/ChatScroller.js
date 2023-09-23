@@ -732,7 +732,7 @@ class ChatScroller extends LitElement {
 					`
 				)}
 				 <div
-    style=${this.messageQueue.filter((item) => this.chatId.includes(item._chatId)).length > 0 ? 'height: 1px' : 'height: 1px; margin-top: -100px'}
+    style=${this.messageQueue.filter((item) => this.chatId.includes(item._chatId)).length > 0 ? 'height: 1px' : 'height: 1px'}
     id="bottomObserverForFetchingMessages"
   ></div>
 
@@ -745,7 +745,7 @@ class ChatScroller extends LitElement {
 							</div>
 					  `
 					: ''}
-				${repeat(
+				${!this.disableAddingNewMessages ? repeat(
 					this.messageQueue.filter((item) =>
 						this.chatId.includes(item._chatId)
 					),
@@ -787,7 +787,7 @@ class ChatScroller extends LitElement {
 							?isInProgress=${true}
 						></message-template>
 					`
-				)}
+				): ''}
 			</ul>
 		`;
 	}
@@ -934,6 +934,7 @@ class ChatScroller extends LitElement {
 		if (this.messagesToRender.length === 0 || this.disableFetching) {
 			return;
 		}
+		if(!this.disableAddingNewMessages) return
 		if (
 			!entries[0].isIntersecting ||
 			!entries[0].target ||

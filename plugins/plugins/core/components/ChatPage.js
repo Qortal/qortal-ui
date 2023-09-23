@@ -48,6 +48,7 @@ import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import { RequestQueue } from '../../utils/queue.js'
 import { modalHelper } from '../../utils/publish-modal.js'
+import { generateIdFromAddresses } from '../../utils/id-generation.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -1384,7 +1385,28 @@ class ChatPage extends LitElement {
         this.addToQueue = this.addToQueue.bind(this)
         this.processQueue = this.processQueue.bind(this)
         this.isInProcessQueue = false
+        this.nodeUrl = this.getNodeUrl();
+		this.myNode = this.getMyNode();
     }
+
+    getNodeUrl() {
+		const myNode =
+			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+				window.parent.reduxStore.getState().app.nodeConfig.node
+			];
+
+		const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		return nodeUrl;
+	}
+	getMyNode() {
+		const myNode =
+			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+				window.parent.reduxStore.getState().app.nodeConfig.node
+			];
+
+		return myNode;
+	}
 
     setOpenGifModal(value) {
         this.openGifModal = value
@@ -1498,7 +1520,6 @@ class ChatPage extends LitElement {
     
 
     render() {
-        console.log('this.chatId', this.chatId, this._chatId)
         return html`
             <div class="main-container">
             <div 
@@ -1506,7 +1527,10 @@ class ChatPage extends LitElement {
             style="grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;">
                 
                 <div class="group-nav-container">
-                    <div @click=${this._toggle} style="height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: pointer; user-select: none">
+                    <div @click=${()=> {
+                        if(+this._chatId === 0 || this.isReceipient)return
+                        this._toggle()
+                    }} style=${`height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: ${+this._chatId === 0 || this.isReceipient ? 'default': 'pointer'}; user-select: none`}>
                         ${this.isReceipient ? '' : +this._chatId === 0 ? html`
                         <p class="group-name">Qortal General Chat</p>
                         `  :  html`
@@ -1691,7 +1715,7 @@ class ChatPage extends LitElement {
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
-                                <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
+                                <img src=${this.imageFile.identifier ? `${this.nodeUrl}/arbitrary/${this.imageFile.service}/${this.imageFile.name}/${this.imageFile.identifier}?apiKey=${this.myNode.apiKey}` : URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
                             `}
                             <div class="caption-container">
                                 <chat-text-editor
@@ -1982,6 +2006,7 @@ class ChatPage extends LitElement {
             _chatId=${ifDefined(this._chatId)}
             chatId=${this.chatId}
             ?isreceipient=${this.isReceipient}
+            .repost=${this.insertFile}
             >
             </chat-right-panel-resources>
         </div>
@@ -2380,6 +2405,11 @@ class ChatPage extends LitElement {
     }
 
     insertFile(file) {
+        if(file.identifier){
+            this.imageFile = file
+            this.currentEditor = 'newChat'
+            return
+        }else
         if (file.type.includes('image')) {
             this.imageFile = file
             this.currentEditor = 'newChat'
@@ -3900,7 +3930,9 @@ class ChatPage extends LitElement {
                 const stringifyMessageObject = JSON.stringify(messageObject)
                return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'image') {
-                this.isUploadingImage = true
+                if(!this.imageFile.identifier){
+                    this.isUploadingImage = true
+                }
                 const userName = await getName(this.selectedAddress.address)
                 if (!userName) {
                     parentEpml.request('showSnackBar', get("chatpage.cchange27"))
@@ -3909,78 +3941,94 @@ class ChatPage extends LitElement {
                     this.imageFile = null
                     return
                 }
-                const arbitraryFeeData = await modalHelper.getArbitraryFee()
-                const res = await modalHelper.showModalAndWaitPublish(
-                    {
-                        feeAmount: arbitraryFeeData.feeToShow
+                
+               
+              let  service = "QCHAT_IMAGE"
+              let name = userName
+              let identifier
+                if(this.imageFile.identifier){
+                    identifier = this.imageFile.identifier
+                    name = this.imageFile.name
+                    service = this.imageFile.service
+                } else {
+                    const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                    const res = await modalHelper.showModalAndWaitPublish(
+                        {
+                            feeAmount: arbitraryFeeData.feeToShow
+                        }
+                    );
+                if (res.action !== 'accept') throw new Error('User declined publish')
+        
+                    if (this.webWorkerFile) {
+                        this.webWorkerFile.terminate()
+                        this.webWorkerFile = null
                     }
-                );
-            if (res.action !== 'accept') throw new Error('User declined publish')
-    
-                if (this.webWorkerFile) {
-                    this.webWorkerFile.terminate()
-                    this.webWorkerFile = null
-                }
-    
-                this.webWorkerFile = new WebWorkerFile()
-    
-                const image = this.imageFile
-                const id = this.uid.rnd()
-                const groupPart = this.isReceipient ? `direct_${this._chatId.slice(-15)}` : `group_${this._chatId}`
-                const identifier = `qchat_${groupPart}_${id}`
-                let compressedFile = ''
-                await new Promise(resolve => {
-                    new Compressor(image, {
-                        quality: .6,
-                        maxWidth: 1200,
-                        mimeType: 'image/webp',
-                        success(result) {
-                            const file = new File([result], "name", {
-                                type: 'image/webp'
-                            })
-                            compressedFile = file
-                            resolve()
-                        },
-                        error(err) {
-                        },
+        
+                    this.webWorkerFile = new WebWorkerFile()
+                    const image = this.imageFile
+                    const id = this.uid.rnd()
+                    let groupPart 
+                    if(this.isReceipient){
+                        groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
+                    } else {
+                        groupPart = `group_${this._chatId}`
+                    }
+                     identifier = `qchat_${groupPart}_${id}`
+                    let compressedFile = ''
+                    await new Promise(resolve => {
+                        new Compressor(image, {
+                            quality: .6,
+                            maxWidth: 1200,
+                            mimeType: 'image/webp',
+                            success(result) {
+                                const file = new File([result], "name", {
+                                    type: 'image/webp'
+                                })
+                                compressedFile = file
+                                resolve()
+                            },
+                            error(err) {
+                            },
+                        })
                     })
-                })
-                const fileSize = compressedFile.size
-                if (fileSize > 500000) {
-                    parentEpml.request('showSnackBar', get("chatpage.cchange26"))
-                    this.isLoading = false
-                    this.isUploadingImage = false
-                    return
+                    const fileSize = compressedFile.size
+                    if (fileSize > 500000) {
+                        parentEpml.request('showSnackBar', get("chatpage.cchange26"))
+                        this.isLoading = false
+                        this.isUploadingImage = false
+                        return
+                    }
+                  
+                    try {
+                       
+                        await publishData({
+                            registeredName: userName,
+                            file: compressedFile,
+                            service: 'QCHAT_IMAGE',
+                            identifier: identifier,
+                            parentEpml,
+                            metaData: undefined,
+                            uploadType: 'file',
+                            selectedAddress: this.selectedAddress,
+                            worker: this.webWorkerFile,
+                            withFee: true,
+                            feeAmount: arbitraryFeeData.fee
+                        })
+                        this.isUploadingImage = false
+                        this.removeImage()
+                    } catch (error) {
+                        this.isLoading = false
+                        this.isUploadingImage = false
+                        return
+                    }
+        
                 }
-              
-                try {
-                   
-                    await publishData({
-                        registeredName: userName,
-                        file: compressedFile,
-                        service: 'QCHAT_IMAGE',
-                        identifier: identifier,
-                        parentEpml,
-                        metaData: undefined,
-                        uploadType: 'file',
-                        selectedAddress: this.selectedAddress,
-                        worker: this.webWorkerFile,
-                        withFee: true,
-                        feeAmount: arbitraryFeeData.fee
-                    })
-                    this.isUploadingImage = false
-                    this.removeImage()
-                } catch (error) {
-                    this.isLoading = false
-                    this.isUploadingImage = false
-                    return
-                }
-    
+               
                 const messageObject = {
                     messageText: trimmedMessage,
                     images: [{
-                        service: "QCHAT_IMAGE",
-                        name: userName,
+                        service: service,
+                        name: name,
                         identifier: identifier,
                     }],
                     isImageDeleted: false,
@@ -3988,6 +4036,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
+                this.removeImage()
                return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'gif') {
                 const userName = await getName(this.selectedAddress.address)

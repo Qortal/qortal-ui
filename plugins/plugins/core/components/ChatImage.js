@@ -212,7 +212,7 @@ getMyNode(){
       }
 
       // check if progress is 100% and clear interval if true
-      if (res?.status === 'READY') {
+      if (res.status === 'READY') {
         clearInterval(intervalId)
         this.status = res
         this.isReady = true

@@ -21,6 +21,7 @@ import {
 	translateUnsafeHTML,
 	registerTranslateConfig,
 } from 'lit-translate';
+import { generateIdFromAddresses } from '../../utils/id-generation';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -51,7 +52,8 @@ class ChatRightPanelResources extends LitElement {
 			images: { type: Array },
 			viewImage: { type: Boolean },
             autoView: {type: Boolean},
-            onlyMyImages: {type: Boolean}
+            onlyMyImages: {type: Boolean},
+			repost: {attribute: false}
 		};
 	}
 
@@ -77,6 +79,8 @@ class ChatRightPanelResources extends LitElement {
 		this.viewImage = false;
 		this.myName =
 			window.parent.reduxStore.getState().app.accountInfo.names[0].name;
+		this.myAddress =
+			window.parent.reduxStore.getState().app.selectedAddress.address;
         this.autoView =false
         this.onlyMyImages = true
 	}
@@ -237,18 +241,18 @@ class ChatRightPanelResources extends LitElement {
 		    font-family: Montserrat, sans-serif;
 		    font-weight: 600;
 		    color: var(--black);
+			padding-left: 5px;
 	      }
 		`;
 	}
 
 	async getMoreImages(reset) {
 		try {
-            console.log({reset})
             if(reset){
                 this.images = []
             }
 			const groupPart = this.isReceipient
-				? `direct_${this._chatId.slice(-15)}`
+				? `direct_${generateIdFromAddresses(this._chatId, this.myAddress)}`
 				: `group_${this._chatId}`;
             
 			let offset = reset ? 0 : this.images.length;
@@ -282,7 +286,6 @@ class ChatRightPanelResources extends LitElement {
 	}
 
 	async updated(changedProperties) {
-		console.log({ changedProperties });
 		if (changedProperties && changedProperties.has('_chatId')) {
 			this.images = [];
 			this.getMoreImages(true);
@@ -315,7 +318,6 @@ class ChatRightPanelResources extends LitElement {
 		if (!entries[0].isIntersecting) {
 			return;
 		} else {
-            console.log('hello', this.images)
 			if (this.images.length < 20) {
 				return;
 			}
@@ -340,7 +342,6 @@ class ChatRightPanelResources extends LitElement {
     }
 
 	render() {
-		console.log('hello resources3', this.images);
 		return html`
      
         <div class="container">
@@ -368,7 +369,7 @@ class ChatRightPanelResources extends LitElement {
             <div id="viewElement" class="container-body">
               
                 ${this.images.map((image) => {
-					return html`<image-parent .image=${image} ?autoView=${this.autoView}></image-parent>`;
+					return html`<image-parent .repost=${this.repost} .image=${image} ?autoView=${this.autoView}></image-parent>`;
 				})}
                 <div id='downObserver'></div>
             </div>
@@ -407,7 +408,9 @@ class ImageParent extends LitElement {
 			images: { type: Array },
 			viewImage: { type: Boolean },
 			image: { type: Object },
-            autoView: {type: Boolean}
+            autoView: {type: Boolean},
+			repost: {attribute: false},
+			isImgLoaded: {type: Boolean}
 		};
 	}
 
@@ -425,7 +428,7 @@ class ImageParent extends LitElement {
 		this.btnDisable = false;
 		this.errorMessage = '';
 		this.successMessage = '';
-
+		this.isImgLoaded = false
 		this.images = [];
 		this.viewImage = false;
 		this.myName =
@@ -584,6 +587,17 @@ class ImageParent extends LitElement {
 			.image-container {
 				display: flex;
 			}
+			.repost-btn {
+				margin-top: 4px;
+                max-height: 28px;
+                padding: 5px 5px;
+                font-size: 14px;
+                background-color: #03a9f4;
+                color: white;
+                border: 1px solid transparent;
+                border-radius: 3px;
+                cursor: pointer;
+			}
 		`;
 	}
 
@@ -597,6 +611,11 @@ class ImageParent extends LitElement {
 			// 	this.viewImage = true;
 			// }
 		}
+	}
+
+	onLoad(){
+		this.isImgLoaded = true
+		this.requestUpdate()
 	}
 
 	render() {
@@ -639,8 +658,14 @@ class ImageParent extends LitElement {
 									service: this.image.service,
 									identifier: this.image.identifier,
 								}}
+								.onLoad=${()=> this.onLoad()}
 							></reusable-image>
-							<
+							${this.isImgLoaded ? html`
+							<div class="actions-parent">
+								<button class="repost-btn" @click=${()=> this.repost(this.image)}>repost</button>
+							</div>
+							` : ''}
+							
 						</div>
 				  `
 				: ''}
