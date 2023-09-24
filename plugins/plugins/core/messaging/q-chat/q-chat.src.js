@@ -1,10 +1,9 @@
-import { LitElement, html, css } from 'lit'
+import { LitElement, html } from 'lit'
 import { render } from 'lit/html.js'
 import { passiveSupport } from 'passive-events-support/src/utils'
 import { Epml } from '../../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { get, translate } from 'lit-translate'
 import { qchatStyles } from './q-chat-css.src.js'
-import { repeat } from 'lit/directives/repeat.js'
 import { Editor, Extension } from '@tiptap/core'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker.src.js'
@@ -59,7 +58,9 @@ class Chat extends LitElement {
         }
     }
 
-    static styles = [qchatStyles]
+    static get styles() {
+		return [qchatStyles];
+	}
 
     constructor() {
         super()
@@ -167,8 +168,7 @@ class Chat extends LitElement {
                 if(currentState.app.accountInfo && currentState.app.accountInfo.addressInfo && currentState.app.accountInfo.addressInfo.address && this.loggedInUserAddress !== currentState.app.accountInfo.addressInfo.address){
                     this.loggedInUserAddress = currentState.app.accountInfo.addressInfo.address
                 }
-            } catch (error) {
-            }
+            } catch (error) { /* empty */ }
           })
       }
 
@@ -194,31 +194,21 @@ class Chat extends LitElement {
                 <div class="people-list" id="people-list">
                     <div class="search">
                         <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
-                            ${translate("chatpage.cchange1")}
+                        <mwc-icon style="color: var(--black);">edit_square</mwc-icon>
+                          ${translate("chatpage.cchange1")}
+                        </div>
+                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <mwc-icon style="color: var(--black);">group_add</mwc-icon>
+                        </div>
+                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <mwc-icon style="color: var(--black);">person_off</mwc-icon>
                         </div>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
                     <div class="blockedusers">
-                        <!-- <div class="groups-button-container">
-                                <button 
-                                    @click=${() => { this.redirectToGroups() }}
-                                    class="groups-button">
-                                    <mwc-icon>groups</mwc-icon>
-                                    ${translate("sidemenu.groupmanagement")}
-                                </button>
-                            ${this.groupInvites.length > 0 ? (
-                                html`                                
-                                <div class="groups-button-notif">
-                                   ${this.groupInvites.length} 
-                                </div>
-                                <div class="groups-button-notif-number">
-                                    ${this.groupInvites.length} ${translate("chatpage.cchange60")}
-                                </div>
-                                `
-                            ) : null} 
-                        </div> -->
+                   
                         <mwc-button 
                             raised 
                             label="${translate("chatpage.cchange3")}" 
@@ -442,8 +432,7 @@ class Chat extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        if (!isElectron()) {
-        } else {
+        if (!isElectron()) { /* empty */ } else {
             window.addEventListener('contextmenu', (event) => {
                 // Check if the clicked element has the class
                 let target = event.target;
@@ -497,8 +486,7 @@ class Chat extends LitElement {
    
 
     clearConsole() {
-        if (!isElectron()) {
-        } else {
+        if (!isElectron()) { /* empty */ } else {
             console.clear()
             window.parent.electronAPI.clearCache()
         }
@@ -588,7 +576,7 @@ class Chat extends LitElement {
             recipient = _recipient
         } else {
             recipient = myNameRes.owner
-        };
+        }
       
         const getAddressPublicKey = async () => {
             let isEncrypted;
@@ -643,7 +631,7 @@ class Chat extends LitElement {
             const worker = new WebWorker()
             let nonce = null
             let chatBytesArray = null;
-              await new Promise((res, rej) => {
+              await new Promise((res) => {
                 worker.postMessage({chatBytes, path, difficulty})
                 worker.onmessage = e => {
                     worker.terminate()

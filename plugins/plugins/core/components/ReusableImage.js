@@ -1,23 +1,16 @@
 import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
 import {
-	use,
-	get,
 	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
 } from 'lit-translate';
 import axios from 'axios';
 import { RequestQueueWithPromise } from '../../utils/queue';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';
-import { Epml } from '../../../epml';
 import '@material/mwc-dialog'
 
 const requestQueue = new RequestQueueWithPromise(5);
 const requestQueue2 = new RequestQueueWithPromise(5);
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 export class ResuableImage extends LitElement {
 	static get properties() {
@@ -254,7 +247,7 @@ export class ResuableImage extends LitElement {
 				identifier: this.resource.identifier,
 			});
 			this.fetchStatus();
-		} catch (error) {}
+		} catch (error) { /* empty */ }
 	}
 
 	firstUpdated() {

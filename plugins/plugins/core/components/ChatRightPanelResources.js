@@ -1,8 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
 import { Epml } from '../../../epml';
-import { getUserNameFromAddress } from '../../utils/getUserNameFromAddress';
-import snackbar from './snackbar.js';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
@@ -15,11 +12,8 @@ import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
 import {
-	use,
 	get,
 	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
 } from 'lit-translate';
 import { generateIdFromAddresses } from '../../utils/id-generation';
 

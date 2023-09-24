@@ -157,6 +157,9 @@ export const qchatStyles = css`
       padding-top: 20px;
       padding-left: 20px;
       padding-right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
   }
 
   .center {
@@ -172,13 +175,13 @@ export const qchatStyles = css`
       border-radius: 5px;
       border: none;
       display: inline-block;
-      padding: 14px;
       color: #fff;
-      background: var(--tradehead);
       width: 100%;
       font-size: 15px;
       text-align: center;
       cursor: pointer;
+      display: flex;
+    flex: 0;
   }
 
   .people-list .create-chat:hover {

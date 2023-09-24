@@ -3,6 +3,7 @@
         "browser": true,
         "es2021": true
     },
+    "plugins": ["lit", "wc"],
     "extends": ["eslint:recommended", "plugin:lit/recommended", "plugin:wc/recommended"],
     "parserOptions": {
         "ecmaVersion": 12,

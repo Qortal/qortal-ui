@@ -1,22 +1,16 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
+import { LitElement, html, } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import {
-	use,
 	get,
 	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
 } from 'lit-translate';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { chatStyles } from './ChatScroller-css.js';
 import { Epml } from '../../../epml';
 import { cropAddress } from '../../utils/cropAddress';
 import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js';
-import { EmojiPicker } from 'emoji-picker-js';
 import { generateHTML } from '@tiptap/core';
 import isElectron from 'is-electron';
-import localForage from 'localforage';
 
 import axios from 'axios';
 import Highlight from '@tiptap/extension-highlight';
@@ -40,9 +34,6 @@ import '@vaadin/tooltip';
 import { chatLimit, totalMsgCount } from './ChatPage.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
-const chatLastSeen = localForage.createInstance({
-	name: 'chat-last-seen',
-});
 let toggledMessage = {};
 
 const uid = new ShortUniqueId();
@@ -61,7 +52,7 @@ const extractComponents = async (url) => {
 		return null;
 	}
 
-	url = url.replace(/^(qortal\:\/\/)/, '');
+	url = url.replace(/^(qortal:\/\/)/, '');
 	if (url.includes('/')) {
 		let parts = url.split('/');
 		const service = parts[0].toUpperCase();
@@ -313,7 +304,7 @@ class ChatScroller extends LitElement {
 		this.requestUpdate();
 	}
 
-	async newListMessages(newMessages, message) {
+	async newListMessages(newMessages) {
 		let data = [];
 		const copy = [...newMessages];
 		copy.forEach((newMessage) => {
@@ -370,7 +361,7 @@ class ChatScroller extends LitElement {
 			}
 		}
 
-		copy.forEach((newMessage, groupIndex) => {
+		copy.forEach((newMessage) => {
 			const lastGroupedMessage = data[data.length - 1];
 
 			if (
@@ -399,13 +390,8 @@ class ChatScroller extends LitElement {
 
 	async addNewMessages(newMessages, type) {
 		if (this.disableAddingNewMessages && type === 'newComingInAuto') return;
-		let previousScrollTop;
-		let previousScrollHeight;
 
 		const viewElement = this.shadowRoot.querySelector('#viewElement');
-		previousScrollTop = viewElement.scrollTop;
-		previousScrollHeight = viewElement.scrollHeight;
-
 		const copy = type === 'initial' ? [] : [...this.messagesToRender];
 
 		for (const newMessage of newMessages) {
@@ -531,8 +517,6 @@ class ChatScroller extends LitElement {
 			viewElement.scrollTop + viewElement.clientHeight ===
 			viewElement.scrollHeight;
 
-		const previousScrollTop = viewElement.scrollTop;
-		const previousScrollHeight = viewElement.scrollHeight;
 
 		// Using map to return a new array, rather than mutating the old one
 		const newMessagesToRender = this.messagesToRender.map((group) => {
@@ -750,7 +734,7 @@ class ChatScroller extends LitElement {
 						this.chatId.includes(item._chatId)
 					),
 					(message) => message.messageText,
-					(message, indexMessage) => html`
+					(message) => html`
 						<message-template
 							.emojiPicker=${this.emojiPicker}
 							.escapeHTML=${this.escapeHTML}
@@ -885,8 +869,7 @@ class ChatScroller extends LitElement {
 	}
 
 	clearConsole() {
-		if (!isElectron()) {
-		} else {
+		if (!isElectron()) { /* empty */ } else {
 			console.clear();
 			window.parent.electronAPI.clearCache();
 		}
@@ -939,8 +922,7 @@ class ChatScroller extends LitElement {
 			!entries[0].isIntersecting ||
 			!entries[0].target ||
 			!entries[0].target.previousElementSibling
-		) {
-		} else {
+		) { /* empty */ } else {
 			this.disableFetching = true;
 			this.isLoadingAfter = true;
 			let _scrollElement = entries[0].target.previousElementSibling;
@@ -1191,8 +1173,7 @@ class MessageTemplate extends LitElement {
 	}
 
 	clearConsole() {
-		if (!isElectron()) {
-		} else {
+		if (!isElectron()) { /* empty */ } else {
 			console.clear();
 			window.parent.electronAPI.clearCache();
 		}
@@ -1258,7 +1239,6 @@ class MessageTemplate extends LitElement {
 		}
 		let avatarImg = '';
 		let imageHTML = '';
-		let imageHTMLDialog = '';
 		let imageUrl = '';
 		let gifHTML = '';
 		let gifHTMLDialog = '';
@@ -1393,7 +1373,7 @@ class MessageTemplate extends LitElement {
 			try {
 				const parsedMsg = JSON.parse(repliedToData.decodedMessage);
 				repliedToData.decodedMessage = parsedMsg;
-			} catch (error) {}
+			} catch (error) { /* empty */ }
 		}
 
 		let repliedToMessageText = '';
@@ -1412,7 +1392,7 @@ class MessageTemplate extends LitElement {
 						// other extensions …
 					]
 				);
-			} catch (error) {}
+			} catch (error) { /* empty */ }
 		}
 
 		let replacedMessage = '';
@@ -1420,6 +1400,7 @@ class MessageTemplate extends LitElement {
 			const escapedMessage = this.escapeHTML(message);
 			if (escapedMessage) {
 				replacedMessage = escapedMessage.replace(
+					// eslint-disable-next-line no-control-regex
 					new RegExp('\r?\n', 'g'),
 					'<br />'
 				);
@@ -2016,7 +1997,7 @@ class MessageTemplate extends LitElement {
 														this.messageObj,
 													reaction: reaction.type,
 												})}
-											id=${`reactions-${indexMessageTemplate}`}
+											id=${`reactions-${index}`}
 											class="reactions-bg"
 										>
 											${reaction.type} ${reaction.qty}
@@ -2359,7 +2340,7 @@ class ChatMenu extends LitElement {
 				publicKey.key = '';
 				publicKey.hasPubKey = false;
 			}
-		} catch (error) {}
+		} catch (error) { /* empty */ }
 
 		try {
 			const message = {
@@ -2368,29 +2349,11 @@ class ChatMenu extends LitElement {
 			};
 			const stringifyMessageObject = JSON.stringify(message);
 			this.setForwardProperties(stringifyMessageObject);
-		} catch (error) {}
+		} catch (error) { /* empty */ }
 	}
 	render() {
 		return html`
 			<div class="container">
-				<!-- <div 
-                class=${`menu-icon reaction ${
-					!this.firstMessageInChat ? 'tooltip' : ''
-				}`} 
-                data-text="${translate('blockpage.bcchange13')}" 
-                @click=${(e) => {
-					if (this.version === '0') {
-						this.versionErrorSnack();
-						return;
-					}
-					try {
-						this.setToggledMessage(this.originalMessage);
-						this.emojiPicker.togglePicker(e.target);
-					} catch (error) {}
-				}}
-               >
-                    <vaadin-icon icon="vaadin:smiley-o" slot="icon"></vaadin-icon>
-                </div> -->
 				<div
 					class=${`menu-icon ${
 						!this.firstMessageInChat ? 'tooltip' : ''

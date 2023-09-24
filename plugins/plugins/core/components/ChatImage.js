@@ -1,11 +1,7 @@
 import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
 import {
-  use,
   get,
   translate,
-  translateUnsafeHTML,
-  registerTranslateConfig,
 } from 'lit-translate';
 import axios from 'axios'
 import { RequestQueueWithPromise } from '../../utils/queue';
@@ -228,9 +224,7 @@ getMyNode(){
        identifier: this.resource.identifier
       })
       this.fetchStatus()
-    } catch (error) {
-      
-    }
+    } catch (error) { /* empty */ }
   }
 
   firstUpdated(){
