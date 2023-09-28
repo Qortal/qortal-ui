@@ -759,6 +759,7 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     changePage(page) {
+        console.log({page})
         const copiedTabs = [...this.tabs]
         copiedTabs[this.currentTab] = {
             ...copiedTabs[this.currentTab],
@@ -819,7 +820,15 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         if (state.app.newTab) {
             const newTab = state.app.newTab
-            if (!this.tabs.find((tab) => tab.id === newTab.id)) {
+            console.log('this.tabs', this.tabs)
+            if(newTab.openExisting && this.tabs.find((tab)=> tab.url === newTab.url)){
+                const findIndex = this.tabs.findIndex((tab) => tab.url === newTab.url)
+                if (findIndex !== -1) {
+                    this.currentTab = findIndex
+                }
+
+                store.dispatch(setNewTab(null))
+            } else if (!this.tabs.find((tab) => tab.id === newTab.id)) {
                 this.addTab(newTab)
                 this.currentTab = this.tabs.length - 1
                 store.dispatch(setNewTab(null))

@@ -160,6 +160,7 @@ export const qchatStyles = css`
       display: flex;
       align-items: center;
       gap: 10px;
+      justify-content: space-between;
   }
 
   .center {

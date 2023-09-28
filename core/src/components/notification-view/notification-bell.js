@@ -210,7 +210,6 @@ class NotificationBell extends connect(store)(LitElement) {
 
     static styles = css`
         .layout {
-          width: 100px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -220,7 +219,7 @@ class NotificationBell extends connect(store)(LitElement) {
         .count {
           position: absolute;
           top: 2px;
-          right: 32px;
+          right: 0px;
           font-size: 12px;
           background-color: red;
           color: white;

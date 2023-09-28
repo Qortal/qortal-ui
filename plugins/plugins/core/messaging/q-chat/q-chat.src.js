@@ -12,19 +12,22 @@ import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import snackbar from '../../components/snackbar.js'
+import ShortUniqueId from 'short-unique-id';
 
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
 import '../../components/WrapperModal.js'
 import '../../components/ChatSearchResults.js'
-
+import '../../components/ChatGroupsModal.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
+import '@vaadin/tooltip';
+
 
 passiveSupport({ events: ['touchstart'] })
 
@@ -55,6 +58,7 @@ class Chat extends LitElement {
             groupInvites: { type: Array },
             loggedInUserName: {type: String},
             loggedInUserAddress: {type: String},
+            openDialogGroupsModal: {type: Boolean}
         }
     }
 
@@ -96,6 +100,9 @@ class Chat extends LitElement {
         this.userSelected = {}
         this.groupInvites = []
         this.loggedInUserName = ""
+        this.openDialogGroupsModal = false
+        this.uid = new ShortUniqueId();
+
     }
 
     async setActiveChatHeadUrl(url) {
@@ -188,34 +195,74 @@ class Chat extends LitElement {
         })
     }
 
+    setOpenDialogGroupsModal(val){
+        this.openDialogGroupsModal = val
+    }
+
+    openTabToGroupManagement(){
+        window.parent.reduxStore.dispatch(
+            window.parent.reduxAction.setNewTab({
+                url: `group-management`,
+                id: this.uid.rnd(),
+                myPlugObj: {
+                    "url": "group-management",
+                    "domain": "core",
+                    "page": "group-management/index.html",
+                    "title": "Group Management",
+                    "icon": "vaadin:group",
+                    "mwcicon": "group",
+                    "pluginNumber": "plugin-fJZNpyLGTl",
+                    "menus": [],
+                    "parent": false
+                },
+                openExisting: true
+            })
+        );
+    }
+
     render() {
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
                     <div class="search">
-                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <div id="openPrivateMessage" class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
                         <mwc-icon style="color: var(--black);">edit_square</mwc-icon>
-                          ${translate("chatpage.cchange1")}
-                        </div>
-                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <vaadin-tooltip
+                        for="openPrivateMessage"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange1')}>
+                    </vaadin-tooltip>
+                    </div>
+                    <div style="display:flex; align-items:center;gap:10px">
+                       
+                        <div id="goToGroup" class="create-chat" @click=${() => { this.openTabToGroupManagement() }}>
                         <mwc-icon style="color: var(--black);">group_add</mwc-icon>
+                        <vaadin-tooltip
+                        for="goToGroup"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange96')}>
+                    </vaadin-tooltip>
                         </div>
-                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <div id="blockedUsers" class="create-chat" @click=${() => { this.shadowRoot.querySelector('#blockedUserDialog').show() }}>
                         <mwc-icon style="color: var(--black);">person_off</mwc-icon>
+                        <vaadin-tooltip
+                        for="blockedUsers"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange3')}>
+                    </vaadin-tooltip>
+                        </div>
                         </div>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
-                    <div class="blockedusers">
-                   
-                        <mwc-button 
-                            raised 
-                            label="${translate("chatpage.cchange3")}" 
-                            icon="person_off" 
-                            @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}>
-                        </mwc-button>
-                    </div>
+                  
                 </div>
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
@@ -370,7 +417,7 @@ class Chat extends LitElement {
                    </mwc-button>
                 </mwc-dialog>
             </div>
-  
+   
         `
     }
 

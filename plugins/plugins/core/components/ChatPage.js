@@ -1095,6 +1095,7 @@ class ChatPage extends LitElement {
             const blobFound = handleTransferIntoURL(event.clipboardData)
             if (blobFound) {
                 this.insertFile(blobFound)
+                e.preventDefault();
                 return
             } else {
                 const item_list = await navigator.clipboard.read()
@@ -1114,6 +1115,7 @@ class ChatPage extends LitElement {
                             type: image_type
                         })
                         this.insertFile(file)
+                        e.preventDefault();
                     } catch (error) {
                         console.error(error)
                         let errorMsg = get("chatpage.cchange81")

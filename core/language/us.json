@@ -836,7 +836,8 @@
 		"cchange92": "Unread messages below",
 		"cchange93": "Image copied to clipboard",
 		"cchange94": "loaded",
-		"cchange95": "Only my resources"
+		"cchange95": "Only my resources",
+		"cchange96": "Open Group Management"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
@@ -1168,5 +1169,9 @@
 		"lot11": "There are no open lotteries!",
 		"lot12": "There are no finished lotteries!",
 		"lot13": "Players"
+	},
+	"notifications": {
+		"notify1": "Confirming transaction",
+		"notify2": "Transaction confirmed"
 	}
 }

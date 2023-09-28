@@ -2849,6 +2849,17 @@ class GroupManagement extends LitElement {
         }
     }
 
+    setTxNotification(tx){
+        window.parent.reduxStore.dispatch(
+            window.parent.reduxAction.setNewNotification({
+                type: 'JOIN_GROUP',
+                status: 'confirming',
+                reference: tx,
+                timestamp: Date.now()
+            })
+        );
+    }
+
     async _joinGroup(groupId, groupName) {
         this.resetDefaultSettings()
         const joinFeeInput = this.joinFee
@@ -2885,7 +2896,8 @@ class GroupManagement extends LitElement {
                     lastReference: lastRef,
                     groupdialog1: groupdialog1,
                     groupdialog2: groupdialog2
-                }
+                },
+                apiVersion: 2
             })
             return myTxnrequest
         }
@@ -2897,6 +2909,12 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
                 this.message = this.renderErr8Text()
+                this.setTxNotification({
+                    groupName,
+                    groupId,
+                    timestamp: Date.now(),
+                    ...(txnResponse.data || {})
+                })
                 this.error = false
             } else {
                 this.error = true
