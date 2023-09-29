@@ -521,7 +521,8 @@
 		"nchange44": "To the new name",
 		"nchange45": "On pressing confirm, the name update request will be sent!",
 		"nchange46": "Name Sale History",
-		"nchange47": "Name Update Successful!"
+		"nchange47": "Name Update Successful!",
+		"nchange48": "Warning! If you update your name, you will forfeit the resources associated with the original name. In other words, you will lose ownership of the content under the original name in the QDN. Proceed with caution!"
 	},
 	"websitespage": {
 		"schange1": "Browse Websites",
