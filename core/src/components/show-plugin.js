@@ -460,8 +460,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                             id: this.uid.rnd()
                         })
                         this.currentTab = lengthOfTabs
-                        this.tabs = [...this.tabs]
-                        this.requestUpdate()
+                        
                     }}
                 >+</button>
             </div>
@@ -845,7 +844,6 @@ class ShowPlugin extends connect(store)(LitElement) {
                 store.dispatch(setNewTab(null))
                 //clear newTab
             }
-            this.requestUpdate()
         }
 
         if(state.app.isOpenDevDialog){
