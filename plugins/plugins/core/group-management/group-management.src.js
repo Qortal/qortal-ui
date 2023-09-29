@@ -1743,6 +1743,12 @@ class GroupManagement extends LitElement {
             })
             return joinedG
         }
+        const getGroupInfo = async (groupId) => {
+            let joinedG = await parentEpml.request('apiCall', {
+                url: `/groups/${groupId}`
+            })
+            return joinedG
+        }
 
         const getGroupInvites = async () => {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -1838,6 +1844,25 @@ class GroupManagement extends LitElement {
                 selectedAddress = JSON.parse(selectedAddress)
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
+            })
+            parentEpml.subscribe('side_effect_action', async sideEffectActionParam => {
+                const sideEffectAction = JSON.parse(sideEffectActionParam)
+
+                if(sideEffectAction && sideEffectAction.type === 'openJoinGroupModal'){
+                   const res = await getGroupInfo(sideEffectAction.data)
+                   if(res && res.groupId){
+                    if(res.isOpen){
+                        this.joinGroup(res)
+
+                    } else {
+                        let snackbarstring = get("managegroup.mg45")
+                        parentEpml.request('showSnackBar', `${snackbarstring}`)
+                    }   
+                   }
+                   window.parent.reduxStore.dispatch(
+                    window.parent.reduxAction.setSideEffectAction(null)
+                );
+                }
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {

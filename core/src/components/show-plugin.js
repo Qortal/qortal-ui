@@ -339,6 +339,7 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     render() {
+        console.log('this.tabs', this.tabs)
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
@@ -460,6 +461,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                             id: this.uid.rnd()
                         })
                         this.currentTab = lengthOfTabs
+                        this.tabs = [...this.tabs]
+                        this.requestUpdate()
                     }}
                 >+</button>
             </div>
@@ -845,6 +848,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 store.dispatch(setNewTab(null))
                 //clear newTab
             }
+            this.requestUpdate()
         }
 
         if(state.app.isOpenDevDialog){

@@ -837,7 +837,8 @@
 		"cchange93": "Image copied to clipboard",
 		"cchange94": "loaded",
 		"cchange95": "Only my resources",
-		"cchange96": "Open Group Management"
+		"cchange96": "Open Group Management",
+		"cchange97": "Join group link copied to clipboard"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
@@ -1172,6 +1173,7 @@
 	},
 	"notifications": {
 		"notify1": "Confirming transaction",
-		"notify2": "Transaction confirmed"
+		"notify2": "Transaction confirmed",
+		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon."
 	}
 }

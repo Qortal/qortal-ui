@@ -53,7 +53,21 @@ const extractComponents = async (url) => {
 	}
 
 	url = url.replace(/^(qortal:\/\/)/, '');
-	if (url.includes('/')) {
+	if (url.startsWith('use-')) {
+        // Handle the new 'use' format
+        let parts = url.split('/');
+        const type = parts[0].split('-')[1]; // e.g., 'group' from 'use-group'
+        parts.shift();
+        const action = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., 'invite' from 'action-invite'
+        parts.shift();
+        const idPrefix = parts.length > 0 ? parts[0].split('-')[0] : null; // e.g., 'groupid' from 'groupid-321'
+        const id = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., '321' from 'groupid-321'
+        return {
+            type: type,
+            action: action,
+            [idPrefix]: id
+		}
+        } else if (url.includes('/')) {
 		let parts = url.split('/');
 		const service = parts[0].toUpperCase();
 		parts.shift();
@@ -114,6 +128,33 @@ function processText(input) {
 							try {
 								const res = await extractComponents(part);
 								if (!res) return;
+								if(res.type && res.groupid && res.action === 'join'){
+									window.parent.reduxStore.dispatch(
+										window.parent.reduxAction.setNewTab({
+											url: `group-management`,
+											id: uid.rnd(),
+											myPlugObj: {
+												"url": "group-management",
+												"domain": "core",
+												"page": "group-management/index.html",
+												"title": "Group Management",
+												"icon": "vaadin:group",
+												"mwcicon": "group",
+												"pluginNumber": "plugin-fJZNpyLGTl",
+												"menus": [],
+												"parent": false
+											},
+											openExisting: true
+										})
+									);
+									window.parent.reduxStore.dispatch(
+										window.parent.reduxAction.setSideEffectAction({
+											type: 'openJoinGroupModal',
+											data: +res.groupid
+										})
+									);
+									return
+								}
 								const { service, name, identifier, path } = res;
 								let query = `?service=${service}`;
 								if (name) {

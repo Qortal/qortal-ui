@@ -727,7 +727,7 @@ class Chat extends LitElement {
     }
 
     renderLoadingText() {
-        return html`${translate("chatpage.cchange2")}`
+        return html`<div style="width:100%;display:flex;justify-content:center"> <paper-spinner-lite active></paper-spinner-lite></div>`
     }
 
     renderSendText() {

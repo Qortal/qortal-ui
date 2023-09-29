@@ -9,24 +9,16 @@ import { store } from '../../store.js';
 import { setNewNotification, setNewTab } from '../../redux/app/app-actions.js';
 import { routes } from '../../plugins/routes.js';
 import '@material/mwc-icon';
-import { translate } from 'lit-translate';
+import { translate, get } from 'lit-translate';
 import { repeat } from 'lit/directives/repeat.js';
 
 import config from '../../notifications/config.js';
 import '../../../../plugins/plugins/core/components/TimeAgo.js';
 import './popover.js';
 
-const currentNotification = {
-	type: 'JOIN_GROUP',
-	timestamp: Date.now(),
-	status: 'confirming',
-	reference: {
-		signature:
-			'5wpPP7ngE13z8x7FKr3tkx5AhMyzWAcFeTmkyefSbddRZ3ieMRcbwt4VDz5bakJzpFaE16NcSofa8w35AGLN4J47',
-	},
-};
 
-const notifications = [currentNotification];
+
+
 class NotificationBellGeneral extends connect(store)(LitElement) {
 	static properties = {
 		notifications: { type: Array },
@@ -111,7 +103,7 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 			<div class="layout">
 				<popover-component
 					for="popover-notification"
-					message="Your transaction is getting confirmed. To see its progress, click on the bell icon."
+					message=${get('notifications.explanation')}
 				></popover-component>
 				<div
 					id="popover-notification"

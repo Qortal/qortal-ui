@@ -368,6 +368,19 @@ class ChatPage extends LitElement {
             console.log
         }
     }
+
+    async copyJoinGroupLinkToClipboard() {
+		try {
+            const link = `qortal://use-group/action-join/groupid-${this.groupInfo.groupId}`
+			let copyString1 = get('chatpage.cchange97');
+			await navigator.clipboard.writeText(link);
+			parentEpml.request('showSnackBar', `${copyString1}`);
+		} catch (err) {
+			let copyString2 = get('walletpage.wchange39');
+			parentEpml.request('showSnackBar', `${copyString2}`);
+			console.error('Copy to clipboard error:', err);
+		}
+	}
     
 
     render() {
@@ -390,6 +403,11 @@ class ChatPage extends LitElement {
                         
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
+                    ${(!this.isReceipient && +this._chatId !== 0 && this.groupInfo.isOpen) ?
+                        html`
+                        <mwc-icon class="top-bar-icon" @click=${this.copyJoinGroupLinkToClipboard} style="margin: 0px 10px">link</mwc-icon>
+                        `
+                       : ''}
                     <mwc-icon class="top-bar-icon" @click=${this._toggleResources} style="margin: 0px 10px">photo_library</mwc-icon>
                     ${(!this.isReceipient && +this._chatId !== 0) ?
                         html`

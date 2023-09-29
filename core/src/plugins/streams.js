@@ -8,6 +8,7 @@ const APP_INFO_STATE = 'app_info_state'
 const CHAT_HEADS_STREAM_NAME = 'chat_heads'
 const NODE_CONFIG_STREAM_NAME = 'node_config'
 const CHAT_LAST_SEEN = 'chat_last_seen'
+const SIDE_EFFECT_ACTION = 'side_effect_action'
 
 export const loggedInStream = new EpmlStream(LOGIN_STREAM_NAME, () => store.getState().app.loggedIn)
 export const configStream = new EpmlStream(CONFIG_STREAM_NAME, () => store.getState().config)
@@ -16,6 +17,8 @@ export const appInfoStateStream = new EpmlStream(APP_INFO_STATE, () => store.get
 export const chatHeadsStateStream = new EpmlStream(CHAT_HEADS_STREAM_NAME, () => store.getState().app.chatHeads)
 export const nodeConfigStream = new EpmlStream(NODE_CONFIG_STREAM_NAME, () => store.getState().app.nodeConfig)
 export const chatLastSeenStream = new EpmlStream(CHAT_LAST_SEEN, () => store.getState().app.chatLastSeen)
+export const sideEffectActionStream = new EpmlStream(SIDE_EFFECT_ACTION, () => store.getState().app.sideEffectAction)
+
 
 
 let oldState = {
@@ -56,6 +59,10 @@ store.subscribe(() => {
     if (oldState.app.appInfo !== state.app.appInfo) {
         appInfoStateStream.emit(state.app.appInfo)
     }
+    if (oldState.app.sideEffectAction !== state.app.sideEffectAction) {
+        sideEffectActionStream.emit(state.app.sideEffectAction)
+    }
+
 
     oldState = state
 })
