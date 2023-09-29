@@ -441,10 +441,13 @@ class ShowPlugin extends connect(store)(LitElement) {
                                 ${count ? html`
                                     <span class="tabTitle ml-30">${title}</span>
                                     <span class="count ml-5">${count}</span>
-                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${(event) => {
+                                        event.stopPropagation(); this.removeTab(index, tab.id)
+                                        
+                                        }}>close</mwc-icon></span>
                                 ` : html`
                                     <span class="tabTitle ml-30">${title}</span>
-                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${(event) => {event.stopPropagation(); this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 `}
                             </div>
                         </div>
@@ -656,7 +659,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.createEpmlInstance(frame, newIndex)
     }
 
-    removeTab(index, tabA) {
+     removeTab(index, tabA) {
         const tabB = this.tabs.length - 1
         const tabC = this.tabs[tabB].id
 
@@ -668,10 +671,10 @@ class ShowPlugin extends connect(store)(LitElement) {
             let iconId = ''
 
             this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+        
 
             const tabD = this.tabs.length - 1
             const plugObj = this.tabs[tabD].url
-
             theId = this.tabs[tabD].id
             tabId = 'tab-' + theId
             frameId = 'frame-' + theId
