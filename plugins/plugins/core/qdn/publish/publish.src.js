@@ -300,7 +300,9 @@ class PublishData extends LitElement {
                     <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.shadowRoot.querySelector('#publishWithFeeDialog').close()}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => {
+                                this.doPublish(e, true, false)}
+                            }> ${translate("appspage.schange40")}</mwc-button>
                             <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => {
                                 this.doPublish(e, false, true)
                             }}> ${translate("publishpage.pchange11")}</mwc-button>
