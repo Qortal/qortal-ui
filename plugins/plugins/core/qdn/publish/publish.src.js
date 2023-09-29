@@ -276,7 +276,7 @@ class PublishData extends LitElement {
                         <p>
                             <mwc-select id="category" label="${translate("publishpage.pchange7")}" index="0" style="min-width: 130px; max-width:100%; width:100%;">
                                 ${this.categories.map((c, index) => html`
-                                    <mwc-list-item value="${c.id}">${c.name}</mwc-list-item>
+                                    <mwc-list-item style="color:var(--black)" value="${c.id}">${c.name}</mwc-list-item>
                                 `)}
                             </mwc-select>
                         </p>
