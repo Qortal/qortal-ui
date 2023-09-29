@@ -432,7 +432,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                         <div
                             id="tab-${tab.id}"
                             class="tab ${this.currentTab === index ? 'active' : ''}"
-                            @click="${() => this.currentTab = index}"
+                            @click="${() => {
+                                this.currentTab = index
+                            }}"
                         >
                             <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${icon}</mwc-icon>
@@ -671,7 +673,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             let iconId = ''
 
             this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
-        
+            this.currentTab = this.tabs.length - 1;
 
             const tabD = this.tabs.length - 1
             const plugObj = this.tabs[tabD].url
