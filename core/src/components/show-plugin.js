@@ -339,7 +339,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     render() {
-        console.log('this.tabs', this.tabs)
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
@@ -762,7 +761,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     changePage(page) {
-        console.log({page})
         const copiedTabs = [...this.tabs]
         copiedTabs[this.currentTab] = {
             ...copiedTabs[this.currentTab],
@@ -823,7 +821,6 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         if (state.app.newTab) {
             const newTab = state.app.newTab
-            console.log('this.tabs', this.tabs)
             if(newTab.openExisting && this.tabs.find((tab)=> tab.url === newTab.url)){
                 const findIndex = this.tabs.findIndex((tab) => tab.url === newTab.url)
                 if (findIndex !== -1) {
