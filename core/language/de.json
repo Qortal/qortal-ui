@@ -200,6 +200,8 @@
 		"snack3": "Benutzerdefinierter Knoten erfolgreich hinzugefügt und gespeichert",
 		"snack4": "Knoten erfolgreich gespeichert als",
 		"snack5": "Knoten erfolgreich importiert",
+		"snack6": "Benutzerdefinierter Knoten erfolgreich entfernt",
+		"snack7": "Benutzerdefinierter Knoten erfolgreich bearbeitet",
 		"exp1": "Privaten Hauptschlüssel exportieren",
 		"exp2": "Hauptschlüssel exportieren",
 		"exp3": "Exportieren",
@@ -394,7 +396,8 @@
 		"wchange55": "Ihr bestehendes Adressbuch wird gelöscht und aus einem Backup neu erstellt.",
 		"wchange56": "WARNUNG!",
 		"wchange57": "Memo",
-		"wchange58": "Neue Adresse"
+		"wchange58": "Neue Adresse",
+		"wchange59": "Münze"
 	},
 	"tradepage": {
 		"tchange1": "Handelsportal",
@@ -518,7 +521,8 @@
 		"nchange44": "Zum neuen Namen",
 		"nchange45": "Beim Bestätigen wird die Anfrage zur Namensaktualisierung gesendet!",
 		"nchange46": "Namensverkaufshistorie",
-		"nchange47": "Namensaktualisierung erfolgreich!"
+		"nchange47": "Namensaktualisierung erfolgreich!",
+		"nchange48": "Warnung! Wenn Sie Ihren Namen aktualisieren, verlieren Sie die mit dem ursprünglichen Namen verbundenen Ressourcen. Mit anderen Worten: Sie verlieren das Eigentum an den Inhalten unter dem ursprünglichen Namen im QDN. Gehen Sie vorsichtig vor!"
 	},
 	"websitespage": {
 		"schange1": "Webseiten durchsuchen",
@@ -721,7 +725,8 @@
 		"bchange44": "Erteilen Sie dieser Anwendung die Erlaubnis, sie von dieser Liste zu löschen?",
 		"bchange45": "Verschlüsseln",
 		"bchange46": "Geben Sie dieser Anwendung die Erlaubnis, die folgende Datei zu speichern?",
-		"bchange47": "Sofortige Veröffentlichung – erforderlich"
+		"bchange47": "Sofortige Veröffentlichung – erforderlich",
+		"bchange48": "Erteilen Sie dieser Anwendung die Berechtigung, Ihnen Benachrichtigungen zu senden?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",
@@ -827,7 +832,14 @@
 		"cchange80": "Dieses Bild wurde gelöscht",
 		"cchange81": "Dieser Bildtyp wird nicht unterstützt",
 		"cchange82": "Dieser Anhang wurde gelöscht",
-		"cchange90": "Keine Nachrichten"
+		"cchange90": "Keine Nachrichten",
+		"cchange91": "Senden...",
+		"cchange92": "Ungelesene Nachrichten unten",
+		"cchange93": "Bild in die Zwischenablage kopiert",
+		"cchange94": "geladen",
+		"cchange95": "Nur meine Ressourcen",
+		"cchange96": "Gruppenverwaltung öffnen",
+		"cchange97": "Link zur Gruppe beitreten, in Zwischenablage kopiert"
 	},
 	"welcomepage": {
 		"wcchange1": "Willkommen zu Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Wenn ja, müssen Sie den Schlüssel unten speichern, um zu prägen. Es kann an jeden Knoten geliefert werden, damit es in Ihrem Namen prägen kann.",
 		"rewarddialog4": "Wenn Sie auf „Bestätigen“ drücken, wird der Belohnungsanteil erstellt, aber Sie müssen den oben genannten Schlüssel trotzdem an einen Knoten übermitteln, um mit dem Konto zu prägen.",
 		"rewarddialog5": "Sie entfernen eine Prämienaktientransaktion, die mit dem Konto verknüpft ist:",
-		"rewarddialog6": "Wenn Sie auf „Bestätigen“ klicken, wird die Prämie entfernt und der Prägeschlüssel wird ungültig."
+		"rewarddialog6": "Wenn Sie auf „Bestätigen“ klicken, wird die Prämie entfernt und der Prägeschlüssel wird ungültig.",
+		"deployAtdialog1": "Sie stellen das AT bereit",
+		"deployAtdialog2": "Wenn Sie auf 'Bestätigen' klicken, wird das AT bereitgestellt!",
+		"deployAtdialog3": "Anfänglicher Betragssaldo"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktive Patenschaften",
@@ -1156,5 +1171,10 @@
 		"lot11": "Es gibt keine offenen Lotterien!",
 		"lot12": "Es gibt keine fertigen Lotterien!",
 		"lot13": "Teilnehmer"
+	},
+	"notifications": {
+		"notify1": "Transaktion wird bestätigt",
+		"notify2": "Transaktion bestätigt",
+		"explanation": "Ihre Transaktion wird bestätigt. Um den Fortschritt zu verfolgen, klicken Sie auf das Glockensymbol."
 	}
 }

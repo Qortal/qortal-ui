@@ -200,6 +200,8 @@
 		"snack3": "Az egyéni csomópont sikeresen hozzáadva és mentve",
 		"snack4": "A csomópontok sikeresen mentve másként",
 		"snack5": "A csomópontok sikeresen importálva",
+		"snack6": "Egyéni csomópont sikeresen eltávolítva",
+		"snack7": "Egyéni csomópont sikeresen szerkesztve",
 		"exp1": "Privát főkulcs exportálása",
 		"exp2": "Főkulcs exportálása",
 		"exp3": "Exportálás",
@@ -394,7 +396,8 @@
 		"wchange55": "Meglévő címjegyzéke törlésre kerül, és a biztonsági másolatból új jön létre.",
 		"wchange56": "FIGYELEM!",
 		"wchange57": "Memo",
-		"wchange58": "Új Cím"
+		"wchange58": "Új Cím",
+		"wchange59": "Érme"
 	},
 	"tradepage": {
 		"tchange1": "Kereskedelmi Portál",
@@ -518,7 +521,8 @@
 		"nchange44": "Az új névre",
 		"nchange45": "A megerősítés megnyomására a névfrissítési kérés elküldésre kerül!",
 		"nchange46": "Név eladási előzmények",
-		"nchange47": "A névfrissítés sikeres!"
+		"nchange47": "A névfrissítés sikeres!",
+		"nchange48": "Figyelem! Ha frissíti a nevét, elveszíti az eredeti névhez társított erőforrásokat. Más szóval, elveszíti a tartalom tulajdonjogát a QDN-ben az eredeti név alatt. Óvatosan járjon el!"
 	},
 	"websitespage": {
 		"schange1": "Webhelyek Böngészése",
@@ -721,7 +725,8 @@
 		"bchange44": "Engedélyezi ennek az alkalmazásnak, hogy töröljön erről a listáról?",
 		"bchange45": "Titkosítás",
 		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését",
-		"bchange47": "Azonnali közzététel – szükséges"
+		"bchange47": "Azonnali közzététel – szükséges",
+		"bchange48": "Engedélyezi ennek az alkalmazásnak, hogy értesítéseket küldjön Önnek"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",
@@ -827,7 +832,14 @@
 		"cchange80": "Ezt a képet törölték",
 		"cchange81": "Ez a képtípus nem támogatott",
 		"cchange82": "Ez a melléklet törölve lett",
-		"cchange90": "Nincs üzenet"
+		"cchange90": "Nincs üzenet",
+		"cchange91": "Küldés...",
+		"cchange92": "Olvasatlan üzenetek lent",
+		"cchange93": "A kép a vágólapra másolva",
+		"cchange94": "betöltve",
+		"cchange95": "Csak az én erőforrásaim",
+		"cchange96": "Nyitott csoportkezelés",
+		"cchange97": "Csatlakozási link a vágólapra másolva"
 	},
 	"welcomepage": {
 		"wcchange1": "Üdvözöljük a Q-Chathoz",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Ha igen, mentenie kell az alábbi kulcsot a mentéshez. Bármely csomóponthoz eljuttatható, hogy lehetővé tegye az Ön nevében.",
 		"rewarddialog4": "A megerősítés megnyomására a jutalommegosztás létrejön, de a fenti kulcsot továbbra is meg kell adnia egy csomópontnak, hogy hozzáférjen a fiókhoz.",
 		"rewarddialog5": "Ön a következő fiókhoz társított jutalommegosztási tranzakciót távolít el:",
-		"rewarddialog6": "A megerősítés megnyomására a jutalommegosztás törlődik, és a pénzverési kulcs érvénytelenné válik."
+		"rewarddialog6": "A megerősítés megnyomására a jutalommegosztás törlődik, és a pénzverési kulcs érvénytelenné válik.",
+		"deployAtdialog1": "Ön telepíti az AT-t",
+		"deployAtdialog2": "A megerősítés megnyomására az AT telepítésre kerül!",
+		"deployAtdialog3": "Kezdő összeg egyenleg"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktív szponzorálás",
@@ -1156,5 +1171,10 @@
 		"lot11": "Nincsenek nyílt lottójátékok!",
 		"lot12": "Nincsenek kész lottójátékok!",
 		"lot13": "Játékosok"
+	},
+	"notifications": {
+		"notify1": "Tranzakció megerősítése",
+		"notify2": "Tranzakció megerősítve",
+		"explanation": "Tranzakciója megerősítés alatt áll. A folyamat nyomon követéséhez kattintson a csengő ikonra."
 	}
 }

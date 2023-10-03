@@ -200,6 +200,8 @@
 		"snack3": "Nod personalizat adaugat si salvat cu succes",
 		"snack4": "Nodurile au fost salvate cu succes ca",
 		"snack5": "Nodurile au fost importate cu succes",
+		"snack6": "Nodul personalizat a fost eliminat cu succes",
+		"snack7": "Nodul personalizat a fost editat cu succes",
 		"exp1": "Exportați cheia principală privată",
 		"exp2": "Exportați cheia principală",
 		"exp3": "Export",
@@ -394,7 +396,8 @@
 		"wchange55": "Agenda dvs. existenta va fi stearsa si din backup va fi creata o noua.",
 		"wchange56": "AVERTIZARE!",
 		"wchange57": "Nota",
-		"wchange58": "Adresa noua"
+		"wchange58": "Adresa noua",
+		"wchange59": "Monedă"
 	},
 	"tradepage": {
 		"tchange1": "Portal de Tranzactionare",
@@ -518,7 +521,8 @@
 		"nchange44": "La noul nume",
 		"nchange45": "La apăsarea confirmării, cererea de actualizare a numelui va fi trimisă!",
 		"nchange46": "Istoricul vânzărilor de nume",
-		"nchange47": "Actualizarea numelui a reușit!"
+		"nchange47": "Actualizarea numelui a reușit!",
+		"nchange48": "Atenție! Dacă vă actualizați numele, veți pierde resursele asociate cu numele inițial. Cu alte cuvinte, veți pierde dreptul de proprietate asupra conținutului sub numele inițial din QDN. Procedați cu prudență!"
 	},
 	"websitespage": {
 		"schange1": "Navigati pe Site-uri Web",
@@ -721,7 +725,8 @@
 		"bchange44": "Oferiți acestei aplicații permisiunea de a șterge din această listă?",
 		"bchange45": "Criptați",
 		"bchange46": "Dați această aplicație permisiunea de a salva următorul fișier",
-		"bchange47": "Publicare instantanee - necesită"
+		"bchange47": "Publicare instantanee - necesită",
+		"bchange48": "Acordați acestei aplicații permisiunea de a vă trimite notificări"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",
@@ -827,7 +832,14 @@
 		"cchange80": "Această imagine a fost ștearsă",
 		"cchange81": "Acest tip de imagine nu este acceptat",
 		"cchange82": "Acest atașament a fost șters",
-		"cchange90": "Fără mesaje"
+		"cchange90": "Fără mesaje",
+		"cchange91": "Se trimite...",
+		"cchange92": "Mesaje necitite de mai jos",
+		"cchange93": "Imaginea copiată în clipboard",
+		"cchange94": "încărcat",
+		"cchange95": "Numai resursele mele",
+		"cchange96": "Deschideți managementul grupului",
+		"cchange97": "Linkul de alaturare grupului a fost copiat in clipboard"
 	},
 	"welcomepage": {
 		"wcchange1": "Bine ai venit la Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Daca da, va trebui sa salvati cheia de mai jos pentru a putea obstine recompense. Aceasta poate fi furnizata oricarui nod pentru a-i permite acestuia sa obtina recompense in numele dumneavoastra.",
 		"rewarddialog4": "La apasarea butonului de confirmare, cota de recompensare va fi creata, dar va trebui in continuare sa furnizati cheia de mai sus unui nod, pentru a putea sa obtina recompense cu acest cont.",
 		"rewarddialog5": "Suntei pe cale sa stergeti o tranzactie de cota de recompensare asociata cu contul:",
-		"rewarddialog6": "La apasarea butonului de confirmare, recompensa va fi eliminata, iar cheia de obtinere de recompensa (minting) va deveni invalida."
+		"rewarddialog6": "La apasarea butonului de confirmare, recompensa va fi eliminata, iar cheia de obtinere de recompensa (minting) va deveni invalida.",
+		"deployAtdialog1": "Implementați AT",
+		"deployAtdialog2": "La apăsarea confirmării, AT va fi implementat!",
+		"deployAtdialog3": "Soldul sumei inițiale"
 	},
 	"sponsorshipspage": {
 		"schange1": "Sponsorizari active",
@@ -1156,5 +1171,10 @@
 		"lot11": "Nu există loterie deschise!",
 		"lot12": "Nu există loterie terminate!",
 		"lot13": "Jucători"
+	},
+	"notifications": {
+		"notify1": "Se confirmă tranzacția",
+		"notify2": "Tranzacție confirmată",
+		"explanation": "Tranzacția dvs. este confirmată. Pentru a urmări progresul acesteia, faceți clic pe pictograma clopoțel."
 	}
 }

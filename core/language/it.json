@@ -200,6 +200,8 @@
 		"snack3": "Nodo personalizzato aggiunto e salvato con successo",
 		"snack4": "Nodi salvati con successo come",
 		"snack5": "Nodi importati correttamente",
+		"snack6": "Nodo personalizzato rimosso con successo",
+		"snack7": "Nodo personalizzato modificato correttamente",
 		"exp1": "Esporta chiave master privata",
 		"exp2": "Esporta chiave master",
 		"exp3": "Esporta",
@@ -394,7 +396,8 @@
 		"wchange55": "La tua rubrica esistente verrà eliminata e dal backup verrà creata una nuova.",
 		"wchange56": "AVVERTIMENTO!",
 		"wchange57": "Memo",
-		"wchange58": "Nuovo Indirizzo"
+		"wchange58": "Nuovo Indirizzo",
+		"wchange59": "Moneta"
 	},
 	"tradepage": {
 		"tchange1": "Portale commerciale",
@@ -518,7 +521,8 @@
 		"nchange44": "Al nuovo nome",
 		"nchange45": "Premendo conferma, verrà inviata la richiesta di aggiornamento del nome!",
 		"nchange46": "Nome Cronologia vendite",
-		"nchange47": "Aggiornamento nome riuscito!"
+		"nchange47": "Aggiornamento nome riuscito!",
+		"nchange48": "Attenzione! Se aggiorni il tuo nome, perderai le risorse associate al nome originale. In altre parole, perderai la proprietà del contenuto sotto il nome originale nel QDN. Procedi con cautela!"
 	},
 	"websitespage": {
 		"schange1": "Sfoglia siti Web",
@@ -721,7 +725,8 @@
 		"bchange44": "Concedi a questa applicazione il permesso di eliminare da questo elenco?",
 		"bchange45": "Cripta",
 		"bchange46": "Concedi a questa applicazione il permesso di salvare il seguente file",
-		"bchange47": "Pubblicazione istantanea - richiede"
+		"bchange47": "Pubblicazione istantanea - richiede",
+		"bchange48": "Concedi a questa applicazione il permesso di inviarti notifiche"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",
@@ -827,7 +832,14 @@
 		"cchange80": "Questa immagine è stata cancellata",
 		"cchange81": "Questo tipo di immagine non è supportato",
 		"cchange82": "Questo allegato è stato eliminato",
-		"cchange90": "Nessun messaggio"
+		"cchange90": "Nessun messaggio",
+		"cchange91": "Invio in corso...",
+		"cchange92": "Messaggi non letti qui sotto",
+		"cchange93": "Immagine copiata negli appunti",
+		"cchange94": "caricato",
+		"cchange95": "Solo le mie risorse",
+		"cchange96": "Apri gestione gruppo",
+		"cchange97": "Link per unirti al gruppo copiato negli appunti"
 	},
 	"welcomepage": {
 		"wcchange1": "Benvenuto in Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Se sì, dovrai salvare la chiave qui sotto per coniare. Può essere fornito a qualsiasi nodo per consentirne il conio per tuo conto.",
 		"rewarddialog4": "Premendo conferma, verrà creata la condivisione del premio, ma dovrai comunque fornire la chiave sopra a un nodo per coniare con l'account.",
 		"rewarddialog5": "Stai rimuovendo una transazione di quota premio associata all'account:",
-		"rewarddialog6": "Premendo conferma, la condivisione del premio verrà rimossa e la chiave di conio non sarà più valida."
+		"rewarddialog6": "Premendo conferma, la condivisione del premio verrà rimossa e la chiave di conio non sarà più valida.",
+		"deployAtdialog1": "Stai distribuendo l'AT",
+		"deployAtdialog2": "Premendo conferma, l'AT verrà schierato!",
+		"deployAtdialog3": "Saldo importo iniziale"
 	},
 	"sponsorshipspage": {
 		"schange1": "Sponsorizzazioni attive",
@@ -1156,5 +1171,10 @@
 		"lot11": "Non ci sono lotterie aperte!",
 		"lot12": "Non ci sono lotterie finite!",
 		"lot13": "Giocatori"
+	},
+	"notifications": {
+		"notify1": "Conferma transazione",
+		"notify2": "Transazione confermata",
+		"explanation": "La tua transazione è in fase di conferma. Per seguirne l'avanzamento, fai clic sull'icona della campana."
 	}
 }

@@ -200,6 +200,8 @@
 		"snack3": "Pomyślnie dodano i zapisano niestandardowy węzeł",
 		"snack4": "Węzły pomyślnie zapisane jako",
 		"snack5": "Węzły pomyślnie zaimportowane",
+		"snack6": "Pomyślnie usunięto węzeł niestandardowy",
+		"snack7": "Pomyślnie edytowano węzeł niestandardowy",
 		"exp1": "Eksportuj prywatny klucz główny",
 		"exp2": "Eksportuj klucz główny",
 		"exp3": "Eksportuj",
@@ -394,7 +396,8 @@
 		"wchange55": "Twoja istniejąca książka adresowa zostanie usunięta, az kopii zapasowej utworzona nowa.",
 		"wchange56": "OSTRZEŻENIE!",
 		"wchange57": "Memo",
-		"wchange58": "Nowy Adres"
+		"wchange58": "Nowy Adres",
+		"wchange59": "Moneta"
 	},
 	"tradepage": {
 		"tchange1": "Portal Handlowy",
@@ -518,7 +521,8 @@
 		"nchange44": "Do nowej nazwy",
 		"nchange45": "Po naciśnięciu potwierdzenia, prośba o aktualizację nazwy zostanie wysłana!",
 		"nchange46": "Historia sprzedaży nazw",
-		"nchange47": "Aktualizacja nazwy powiodła się!"
+		"nchange47": "Aktualizacja nazwy powiodła się!",
+		"nchange48": "Ostrzeżenie! Jeśli zaktualizujesz swoją nazwę, utracisz zasoby powiązane z pierwotną nazwą. Innymi słowy, utracisz własność treści pod oryginalną nazwą w QDN. Postępuj ostrożnie!"
 	},
 	"websitespage": {
 		"schange1": "Przeglądaj strony internetowe",
@@ -721,7 +725,8 @@
 		"bchange44": "Czy zezwalasz tej aplikacji na usunięcie z tej listy?",
 		"bchange45": "Szyfruj",
 		"bchange46": "Czy zezwalasz tej aplikacji na zapisanie następującego pliku",
-		"bchange47": "Błyskawiczna publikacja - wymaga"
+		"bchange47": "Błyskawiczna publikacja - wymaga",
+		"bchange48": "Czy dajesz tej aplikacji pozwolenie na wysyłanie Ci powiadomień"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",
@@ -827,7 +832,14 @@
 		"cchange80": "Ten obraz został usunięty",
 		"cchange81": "Ten typ obrazu nie jest obsługiwany",
 		"cchange82": "Ten załącznik został usunięty",
-		"cchange90": "Brak wiadomości"
+		"cchange90": "Brak wiadomości",
+		"cchange91": "Wysyłanie...",
+		"cchange92": "Nieprzeczytane wiadomości poniżej",
+		"cchange93": "Obraz skopiowany do schowka",
+		"cchange94": "załadowano",
+		"cchange95": "Tylko moje zasoby",
+		"cchange96": "Otwarte zarządzanie grupą",
+		"cchange97": "Link do dołączenia do grupy skopiowany do schowka"
 	},
 	"welcomepage": {
 		"wcchange1": "Witamy w Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Jeśli tak, musisz zapisać poniższy klucz, aby wybić. Może być dostarczony do dowolnego węzła, aby umożliwić mu bicie w Twoim imieniu.",
 		"rewarddialog4": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie utworzony, ale nadal będziesz musiał dostarczyć powyższy klucz do węzła, aby wybić z konta.",
 		"rewarddialog5": "Usuwasz transakcję dotyczącą udziału w nagrodach powiązaną z kontem:",
-		"rewarddialog6": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie usunięty, a klucz bicia stanie się nieważny."
+		"rewarddialog6": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie usunięty, a klucz bicia stanie się nieważny.",
+		"deployAtdialog1": "Wdrażasz terminal AT",
+		"deployAtdialog2": "Po naciśnięciu przycisku potwierdzenia terminal AT zostanie wdrożony!",
+		"deployAtdialog3": "Saldo kwoty początkowej"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktywny Sponsoring",
@@ -1156,5 +1171,10 @@
 		"lot11": "Nie ma otwartych loterii!",
 		"lot12": "Brak gotowych loterii!",
 		"lot13": "Gracze"
+	},
+	"notifications": {
+		"notify1": "Potwierdzenie transakcji",
+		"notify2": "Transakcja potwierdzona",
+		"explanation": "Twoja transakcja jest potwierdzana. Aby śledzić jej postęp, kliknij ikonę dzwonka."
 	}
 }

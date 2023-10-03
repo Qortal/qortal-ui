@@ -200,6 +200,8 @@
 		"snack3": "Uspješno dodan i spremljen prilagođeni čvor",
 		"snack4": "Čvorovi su uspješno spremljeni kao",
 		"snack5": "Čvorovi su uspješno uvezeni",
+		"snack6": "Uspješno uklonjen prilagođeni čvor",
+		"snack7": "Uspješno uređen prilagođeni čvor",
 		"exp1": "Izvezi privatni glavni ključ",
 		"exp2": "Glavni ključ izvoza",
 		"exp3": "Izvoz",
@@ -394,7 +396,8 @@
 		"wchange55": "Vaš postojeći adresar bit će izbrisan i novi će se stvoriti iz sigurnosne kopije.",
 		"wchange56": "UPOZORENJE!",
 		"wchange57": "Dopis",
-		"wchange58": "Nova Adresa"
+		"wchange58": "Nova Adresa",
+		"wchange59": "Kovanica"
 	},
 	"tradepage": {
 		"tchange1": "Portal razmjene",
@@ -518,7 +521,8 @@
 		"nchange44": "Na novo ime",
 		"nchange45": "Kada pritisnete potvrdu, bit će poslan zahtjev za ažuriranje imena!",
 		"nchange46": "Povijest prodaje imena",
-		"nchage47": "Ažuriranje imena uspješno!"
+		"nchage47": "Ažuriranje imena uspješno!",
+		"nchange48": "Upozorenje! Ako ažurirate svoje ime, izgubit ćete resurse povezane s izvornim imenom. Drugim riječima, izgubit ćete vlasništvo nad sadržajem pod izvornim imenom u QDN-u. Nastavite s oprezom!"
 	},
 	"websitespage": {
 		"schange1": "Pregledavanje web stranica",
@@ -721,7 +725,8 @@
 		"bchange44": "Dajete li ovoj aplikaciji dopuštenje za brisanje s ovog popisa?",
 		"bchange45": "Šifriraj",
 		"bchange46": "Dajete li ovoj aplikaciji dopuštenje za spremanje sljedeće datoteke",
-		"bchange47": "Trenutno objavljivanje - zahtijeva"
+		"bchange47": "Trenutno objavljivanje - zahtijeva",
+		"bchange48": "Dajete li ovoj aplikaciji dopuštenje da vam šalje obavijesti"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",
@@ -827,7 +832,14 @@
 		"cchange80": "Ova slika je izbrisana",
 		"cchange81": "Ova vrsta slike nije podržana",
 		"cchange82": "Ovaj privitak je izbrisan",
-		"cchange90": "Nema poruka"
+		"cchange90": "Nema poruka",
+		"cchange91": "Slanje...",
+		"cchange92": "Nepročitane poruke ispod",
+		"cchange93": "Slika kopirana u međuspremnik",
+		"cchange94": "učitano",
+		"cchange95": "Samo moji resursi",
+		"cchange96": "Otvoreno upravljanje grupom",
+		"cchange97": "Veza za pridruživanje grupi kopirana je u međuspremnik"
 	},
 	"welcomepage": {
 		"wcchange1": "Dobrodošli u Q-Čavrljanje",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Ako je odgovor da, morat ćete spremiti donji ključ kako biste ga mogli iskovati. Može se dostaviti bilo kojem čvoru kako bi mu se omogućilo kovanje u vaše ime.",
 		"rewarddialog4": "Pritiskom na Potvrdi, bit će stvorena dijeljenje nagrade, ali ćete i dalje morati dostaviti gornji ključ čvoru kako biste mogli kovati s računom.",
 		"rewarddialog5": "Uklanjate transakciju dijeljenja nagrade povezanu s računom:",
-		"rewarddialog6": "Pritiskom na potvrdu, dijeljenje nagrade bit će uklonjeno, a ključ za kovanje postat će nevažeći."
+		"rewarddialog6": "Pritiskom na potvrdu, dijeljenje nagrade bit će uklonjeno, a ključ za kovanje postat će nevažeći.",
+		"deployAtdialog1": "Uvodite AT",
+		"deployAtdialog2": "Pritiskom na potvrdu, AT će biti postavljen!",
+		"deployAtdialog3": "Početni iznos stanja"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktivna sponzorstva",
@@ -1156,5 +1171,10 @@
 		"lot11": "Nema otvorenih lutrija!",
 		"lot12": "Nema završenih lutrija!",
 		"lot13": "Igrači"
+	},
+	"notifications": {
+		"notify1": "Potvrđivanje transakcije",
+		"notify2": "Transakcija potvrđena",
+		"explanation": "Vaša se transakcija potvrđuje. Da biste pratili napredak, kliknite na ikonu zvona."
 	}
 }

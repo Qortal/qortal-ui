@@ -200,6 +200,8 @@
 		"snack3": "Edukalt lisatud ja salvestatud kohandatud sõlm",
 		"snack4": "Sõlmed edukalt salvestatud kui",
 		"snack5": "Sõlmed edukalt imporditud",
+		"snack6": "Kohandatud sõlm on edukalt eemaldatud",
+		"snack7": "Kohandatud sõlme edukalt redigeeritud",
 		"exp1": "Ekspordi privaatne üldvõti",
 		"exp2": "Ekspordi üldvõti",
 		"exp3": "Ekspordi",
@@ -394,7 +396,8 @@
 		"wchange55": "Teie olemasolev aadressiraamat kustutatakse ja taastatakse vaikimisi.",
 		"wchange56": "HOIATUS!",
 		"wchange57": "Memo",
-		"wchange58": "Uus aadress"
+		"wchange58": "Uus aadress",
+		"wchange59": "Münt"
 	},
 	"tradepage": {
 		"tchange1": "Kauplemisportaaal",
@@ -518,7 +521,8 @@
 		"nchange44": "Uuele nimele",
 		"nchange45": "Kui vajutate kinnitust, saadetakse nime uuendamise taotlus!",
 		"nchange46": "Nimemüügi ajalugu",
-		"nchange47": "Nime uuendamine edukas!"
+		"nchange47": "Nime uuendamine edukas!",
+		"nchange48": "Hoiatus! Kui uuendate oma nime, siis kaotate algse nimega seotud ressursid. Teisisõnu kaotate QDN-is algse nime all oleva sisu omandiõiguse. Jätkake ettevaatlikult!"
 	},
 	"websitespage": {
 		"schange1": "Sirvi Veebilehti",
@@ -721,7 +725,8 @@
 		"bchange44": "Kas te annate sellele rakendusele loa kustutada sellest nimekirjast?",
 		"bchange45": "Krüpteeri",
 		"bchange46": "Kas te annate sellele rakendusele loa salvestada järgnev fail",
-		"bchange47": "Kiire avaldamine - nõuab"
+		"bchange47": "Kiire avaldamine - nõuab",
+		"bchange48": "Kas annate sellele rakendusele loa teile teateid saata"
 	},
 	"datapage": {
 		"dchange1": "Andmete haldamine",
@@ -827,7 +832,14 @@
 		"cchange80": "See pilt on kustutatud",
 		"cchange81": "See pilditüüp ei ole toetatud",
 		"cchange82": "See manus on kustutatud",
-		"cchange90": "Sõnumeid ei ole"
+		"cchange90": "Sõnumeid ei ole",
+		"cchange91": "Saadamine...",
+		"cchange92": "Lugemata kirjad allpool",
+		"cchange93": "Pilt kopeeriti lõikelauale",
+		"cchange94": "laaditud",
+		"cchange95": "Ainult minu ressursid",
+		"cchange96": "Avatud rühmahaldus",
+		"cchange97": "Grupiga liitumise link on lõikelauale kopeeritud"
 	},
 	"welcomepage": {
 		"wcchange1": "Tere tulemast Q-Chatti",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Kui jah, siis tuleb teil salvestada allpool olev võti, et saaksite müntida. Seda saab esitada mis tahes sõlmpunktile, et see saaks teie nimel vermida..",
 		"rewarddialog4": "Kui vajutate kinnitust, luuakse preemiajagamine, kuid te peate ikkagi andma ülaltoodud võtme sõlmele, et kontoga müntimist teha.",
 		"rewarddialog5": "Te eemaldate kontoga seotud preemiajagamise tehingu:",
-		"rewarddialog6": "Kinnitamist vajutades eemaldatakse preemiajagamine ja müntimisvõti muutub kehtetuks."
+		"rewarddialog6": "Kinnitamist vajutades eemaldatakse preemiajagamine ja müntimisvõti muutub kehtetuks.",
+		"deployAtdialog1": "Te juurutate AT",
+		"deployAtdialog2": "Kinnita vajutamisel juurutatakse AT!",
+		"deployAtdialog3": "Algsumma saldo"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktiivsed sponsorlused",
@@ -1156,5 +1171,10 @@
 		"lot11": "Avatud loteriisid pole!",
 		"lot12": "Lõppenud loteriid pole!",
 		"lot13": "Mängijad"
+	},
+	"notifications": {
+		"notify1": "Tehingu kinnitamine",
+		"notify2": "Tehing kinnitatud",
+		"explanation": "Teie tehing kinnitatakse. Selle edenemise jälgimiseks klõpsake kellaikoonil."
 	}
 }
