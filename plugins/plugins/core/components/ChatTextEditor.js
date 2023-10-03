@@ -171,7 +171,7 @@ class ChatTextEditor extends LitElement {
             padding: 0px 10px;
             height: 100%;
     display: flex;
-    align-items: center;
+    align-items: safe center;
         }
         .element::-webkit-scrollbar-track {
                         background-color: whitesmoke;
