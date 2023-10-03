@@ -200,6 +200,8 @@
 		"snack3": "Egendefinert node er lagt til og lagret",
 		"snack4": "Noder ble lagret som",
 		"snack5": "Noder ble importert",
+		"snack6": "Tilpasset node er fjernet",
+		"snack7": "Redigert tilpasset node",
 		"exp1": "Eksporter privat hovednøkkel",
 		"exp2": "Eksporter hovednøkkel",
 		"exp3": "Eksporter",
@@ -394,7 +396,8 @@
 		"wchange55": "Din eksisterende adressebok vil bli slettet og ny opprettet fra sikkerhetskopi.",
 		"wchange56": "ADVARSEL!",
 		"wchange57": "Memo",
-		"wchange58": "Ny Adresse"
+		"wchange58": "Ny Adresse",
+		"wchange59": "Mynt"
 	},
 	"tradepage": {
 		"tchange1": "Handelsportal",
@@ -518,7 +521,8 @@
 		"nchange44": "Til det nye navnet",
 		"nchange45": "Når du trykker bekreft, vil forespørselen om navneoppdatering bli sendt!",
 		"nchange46": "Navnsalgshistorikk",
-		"nchange47": "Navneoppdateringen er vellykket!"
+		"nchange47": "Navneoppdateringen er vellykket!",
+		"nchange48": "Advarsel! Hvis du oppdaterer navnet ditt, mister du ressursene knyttet til det opprinnelige navnet. Du vil med andre ord miste eierskapet til innholdet under det opprinnelige navnet i QDN. Fortsett med forsiktighet!"
 	},
 	"websitespage": {
 		"schange1": "Bla gjennom nettsteder",
@@ -721,7 +725,8 @@
 		"bchange44": "Gir du denne applikasjonen tillatelse til å slette fra denne listen?",
 		"bchange45": "Krypter",
 		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil",
-		"bchange47": "Øyeblikkelig publisering - krever"
+		"bchange47": "Øyeblikkelig publisering - krever",
+		"bchange48": "Gir du denne applikasjonen tillatelse til å sende deg varsler"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",
@@ -827,7 +832,14 @@
 		"cchange80": "Dette bildet har blitt slettet",
 		"cchange81": "Denne bildetypen støttes ikke",
 		"cchange82": "Dette vedlegget er slettet",
-		"cchange90": "Ingen meldinger"
+		"cchange90": "Ingen meldinger",
+		"cchange91": "Sender...",
+		"cchange92": "Uleste meldinger nedenfor",
+		"cchange93": "Bilde kopiert til utklippstavlen",
+		"cchange94": "lastet",
+		"cchange95": "Kun mine ressurser",
+		"cchange96": "Åpne gruppeadministrasjon",
+		"cchange97": "Bli med i gruppekoblingen kopiert til utklippstavlen"
 	},
 	"welcomepage": {
 		"wcchange1": "Velkommen til Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Hvis ja, må du lagre nøkkelen nedenfor for å minte. Den kan leveres til hvilken som helst node for å tillate den å minte på dine vegne.",
 		"rewarddialog4": "Ved å trykke på Bekreft, vil belønningsdelen bli opprettet, men du må fortsatt levere nøkkelen ovenfor til en node for å kunne minte med kontoen.",
 		"rewarddialog5": "Du fjerner en transaksjon for belønningsdel knyttet til konto:",
-		"rewarddialog6": "Ved å trykke på Bekreft, vil belønningsdelen bli fjernet og mintnøkkelen blir ugyldig."
+		"rewarddialog6": "Ved å trykke på Bekreft, vil belønningsdelen bli fjernet og mintnøkkelen blir ugyldig.",
+		"deployAtdialog1": "Du distribuerer AT",
+		"deployAtdialog2": "Når du trykker på bekreftelse, vil AT bli distribuert!",
+		"deployAtdialog3": "Startbeløpssaldo"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktive sponsorer",
@@ -1156,5 +1171,10 @@
 		"lot11": "Det er ingen åpne lotterier!",
 		"lot12": "Det er ingen ferdige lotterier!",
 		"lot13": "Spillere"
+	},
+	"notifications": {
+		"notify1": "Bekrefter transaksjon",
+		"notify2": "Transaksjonen bekreftet",
+		"explanation": "Transaksjonen din blir bekreftet. Klikk på bjelleikonet for å spore fremdriften."
 	}
 }

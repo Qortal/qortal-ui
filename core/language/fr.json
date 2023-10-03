@@ -200,6 +200,8 @@
 		"snack3": "Noeud personnalisé ajouté et enregistré avec succès",
 		"snack4": "Les noeuds ont été enregistrés avec succès sous",
 		"snack5": "Les noeuds ont été importés avec succès",
+		"snack6": "Nœud personnalisé supprimé avec succès",
+		"snack7": "Nœud personnalisé édité avec succès",
 		"exp1": "Exporter la clé principale privée",
 		"exp2": "Exporter la clé principale",
 		"exp3": "Exporter",
@@ -394,7 +396,8 @@
 		"wchange55": "Votre carnet d'adresses existant sera supprimé et une nouvelle sauvegarde sera créée.",
 		"wchange56": "ATTENTION!",
 		"wchange57": "Mémo",
-		"wchange58": "Nouvelle Adresse"
+		"wchange58": "Nouvelle Adresse",
+		"wchange59": "Pièce"
 	},
 	"tradepage": {
 		"tchange1": "Portail de commerce",
@@ -518,7 +521,8 @@
 		"nchange44": "Au nouveau nom",
 		"nchange45": "En appuyant sur confirmer, la demande de mise à jour du nom sera envoyée !",
 		"nchange46": "Historique des ventes de noms",
-		"nchange47": "Mise à jour du nom réussie !"
+		"nchange47": "Mise à jour du nom réussie !",
+		"nchange48": "Attention ! Si vous mettez à jour votre nom, vous perdrez les ressources associées au nom d'origine. En d'autres termes, vous perdrez la propriété du contenu sous le nom d'origine dans le QDN. Procédez avec prudence !"
 	},
 	"websitespage": {
 		"schange1": "Parcourir les sites Web",
@@ -721,7 +725,8 @@
 		"bchange44": "Autorisez-vous cette application à supprimer de cette liste ?",
 		"bchange45": "Crypter",
 		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant",
-		"bchange47": "Publication instantanée - nécessite"
+		"bchange47": "Publication instantanée - nécessite",
+		"bchange48": "Autorisez-vous cette application à vous envoyer des notifications"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",
@@ -827,7 +832,14 @@
 		"cchange80": "Cette image a été supprimée",
 		"cchange81": "Ce type d'image n'est pas pris en charge",
 		"cchange82": "Cette pièce jointe a été supprimée",
-		"cchange90": "Aucun message"
+		"cchange90": "Aucun message",
+		"cchange91": "Envoi...",
+		"cchange92": "Messages non lus ci-dessous",
+		"cchange93": "Image copiée dans le presse-papier",
+		"cchange94": "chargé",
+		"cchange95": "Uniquement mes ressources",
+		"cchange96": "Gestion de groupe ouverte",
+		"cchange97": "Lien de rejoindre le groupe copié dans le presse-papiers"
 	},
 	"welcomepage": {
 		"wcchange1": "Bienvenue dans Q-Chat",
@@ -1009,7 +1021,10 @@
 		"rewarddialog3": "Si oui, vous devrez enregistrer la clé ci-dessous afin de frapper. Il peut être fourni à n'importe quel nœud afin de lui permettre de frapper en votre nom.",
 		"rewarddialog4": "En appuyant sur confirmer, le partage de récompense sera créé, mais vous devrez toujours fournir la clé ci-dessus à un nœud afin de frapper avec le compte.",
 		"rewarddialog5": "Vous supprimez une transaction de partage de récompenses associée au compte :",
-		"rewarddialog6": "En appuyant sur confirmer, le partage de récompense sera supprimé et la clé de frappe deviendra invalide."
+		"rewarddialog6": "En appuyant sur confirmer, le partage de récompense sera supprimé et la clé de frappe deviendra invalide.",
+		"deployAtdialog1": "Vous déployez l'AT",
+		"deployAtdialog2": "En appuyant sur confirmer, l'AT sera déployé !",
+		"deployAtdialog3": "Solde du montant initial"
 	},
 	"sponsorshipspage": {
 		"schange1": "Parrainages actifs",
@@ -1156,5 +1171,10 @@
 		"lot11": "Il n'y a pas de loteries ouvertes !",
 		"lot12": "Il n'y a aucune loterie terminée !",
 		"lot13": "Joueurs"
+	},
+	"notifications": {
+		"notify1": "Confirmation de la transaction",
+		"notify2": "Transaction confirmée",
+		"explanation": "Votre transaction est en cours de confirmation. Pour suivre sa progression, cliquez sur l'icône en forme de cloche."
 	}
 }
