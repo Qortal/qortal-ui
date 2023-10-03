@@ -228,9 +228,9 @@ class NameMenu extends LitElement {
                     <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
                 </p>
                 <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${() => {
-                    this._sendMessage();
-                    }
-                }>
+                this._sendMessage();
+            }
+            }>
                 ${translate("welcomepage.wcchange6")}</mwc-button>
                 <mwc-button
                     ?disabled="${this.isLoading}"
@@ -247,11 +247,11 @@ class NameMenu extends LitElement {
     firstUpdated() {
         this.getChatBlockedAdresses()
 
-	  setInterval(() => {
-	      this.getChatBlockedAdresses()
-	  }, 60000)
+        setInterval(() => {
+            this.getChatBlockedAdresses()
+        }, 60000)
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (!event.target.matches('.block')) {
                 var dropdowns = document.getElementsByClassName('dropdown-content');
                 var i;
@@ -290,11 +290,7 @@ class NameMenu extends LitElement {
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
             })
-            parentEpml.request('apiCall', {
-                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-            }).then(res => {
-                this.balance = res
-            })
+
         })
         parentEpml.imReady()
     }
@@ -333,7 +329,7 @@ class NameMenu extends LitElement {
 
     relMessages() {
         setTimeout(() => {
-            window.location.href = window.location.href.split( '#' )[0]
+            window.location.href = window.location.href.split('#')[0]
         }, 500)
     }
 
@@ -407,8 +403,8 @@ class NameMenu extends LitElement {
                 fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {
                     return res.json()
                 }).then(jsonRes => {
-                    if(jsonRes.length) {
-                        jsonRes.map (item => {
+                    if (jsonRes.length) {
+                        jsonRes.map(item => {
                             obj.push(item)
                         })
                     } else {

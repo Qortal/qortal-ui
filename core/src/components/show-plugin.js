@@ -97,13 +97,13 @@ class ShowPlugin extends connect(store)(LitElement) {
             .hideIframe  {
                 display: none;
                 position: absolute;
-                zIndex: -10;
+                z-Index: -10;
             }
 
             .showIframe  {
-                display: block;
+                display: flex;
                 position: relative;
-                zIndex: 1;
+                z-Index: 1;
             }
 
             .tabs {
@@ -135,7 +135,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 min-width: 110px;
                 max-width: 220px;
                 overflow: hidden;
-                zIndex: 2;
+                z-index: 2;
             }
 
             .tabCard {
@@ -171,7 +171,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 border-left: 1px solid var(--black);
                 border-right: 1px solid var(--black);
                 border-bottom: 1px solid var(--white);
-                zIndex: 1;
+                z-index: 1;
             }
 
             .close {
@@ -432,7 +432,9 @@ class ShowPlugin extends connect(store)(LitElement) {
                         <div
                             id="tab-${tab.id}"
                             class="tab ${this.currentTab === index ? 'active' : ''}"
-                            @click="${() => this.currentTab = index}"
+                            @click="${() => {
+                                this.currentTab = index
+                            }}"
                         >
                             <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
                                 <mwc-icon>${icon}</mwc-icon>
@@ -441,10 +443,13 @@ class ShowPlugin extends connect(store)(LitElement) {
                                 ${count ? html`
                                     <span class="tabTitle ml-30">${title}</span>
                                     <span class="count ml-5">${count}</span>
-                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${(event) => {
+                                        event.stopPropagation(); this.removeTab(index, tab.id)
+                                        
+                                        }}>close</mwc-icon></span>
                                 ` : html`
                                     <span class="tabTitle ml-30">${title}</span>
-                                    <span class="show ml-25"><mwc-icon class="close" @click=${() => {this.removeTab(index, tab.id)}}>close</mwc-icon></span>
+                                    <span class="show ml-25"><mwc-icon class="close" @click=${(event) => {event.stopPropagation(); this.removeTab(index, tab.id)}}>close</mwc-icon></span>
                                 `}
                             </div>
                         </div>
@@ -460,6 +465,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                             id: this.uid.rnd()
                         })
                         this.currentTab = lengthOfTabs
+                        
                     }}
                 >+</button>
             </div>
@@ -655,7 +661,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         this.createEpmlInstance(frame, newIndex)
     }
 
-    removeTab(index, tabA) {
+     removeTab(index, tabA) {
         const tabB = this.tabs.length - 1
         const tabC = this.tabs[tabB].id
 
@@ -667,10 +673,10 @@ class ShowPlugin extends connect(store)(LitElement) {
             let iconId = ''
 
             this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
+            this.currentTab = this.tabs.length - 1;
 
             const tabD = this.tabs.length - 1
             const plugObj = this.tabs[tabD].url
-
             theId = this.tabs[tabD].id
             tabId = 'tab-' + theId
             frameId = 'frame-' + theId
@@ -819,7 +825,14 @@ class ShowPlugin extends connect(store)(LitElement) {
 
         if (state.app.newTab) {
             const newTab = state.app.newTab
-            if (!this.tabs.find((tab) => tab.id === newTab.id)) {
+            if(newTab.openExisting && this.tabs.find((tab)=> tab.url === newTab.url)){
+                const findIndex = this.tabs.findIndex((tab) => tab.url === newTab.url)
+                if (findIndex !== -1) {
+                    this.currentTab = findIndex
+                }
+
+                store.dispatch(setNewTab(null))
+            } else if (!this.tabs.find((tab) => tab.id === newTab.id)) {
                 this.addTab(newTab)
                 this.currentTab = this.tabs.length - 1
                 store.dispatch(setNewTab(null))
@@ -893,7 +906,7 @@ class NavBar extends connect(store)(LitElement) {
             flex-flow: column;
             align-items: center;
             padding: 20px;
-            height: 100vh;
+            height: calc(100vh - 120px);
             overflow-y: auto;
         }
 
@@ -901,7 +914,7 @@ class NavBar extends connect(store)(LitElement) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: color: var(--white);
+            background-color: var(--white);
             padding: 10px 20px;
             max-width: 750px;
             width: 80%;
@@ -2276,10 +2289,10 @@ class NavBar extends connect(store)(LitElement) {
 
         if (service === "APP") {
             this.changePage({
-                "url": "qapp",
+                "url": "myapp",
                 "domain": "core",
                 "page": `qdn/browser/index.html${query}`,
-                "title": "Q-App",
+                "title": name || "Q-App",
                 "icon": "vaadin:external-browser",
                 "mwcicon": "open_in_browser",
                 "menus": [],
@@ -2287,10 +2300,10 @@ class NavBar extends connect(store)(LitElement) {
             })
         } else if (service === "WEBSITE") {
             this.changePage({
-                "url": "websites",
+                "url": "myapp",
                 "domain": "core",
                 "page": `qdn/browser/index.html${query}`,
-                "title": "Website",
+                "title": name || "Website",
                 "icon": "vaadin:desktop",
                 "mwcicon": "desktop_mac",
                 "menus": [],

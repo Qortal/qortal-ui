@@ -4,6 +4,7 @@ import { Epml } from '../../../epml.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import { columnBodyRenderer, gridRowDetailsRenderer } from '@vaadin/grid/lit.js'
 import isElectron from 'is-electron'
+import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -42,7 +43,9 @@ class QApps extends LitElement {
             blockedResources: { type: Array },
             textStatus: { type: String },
             textProgress: { type: String },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            hasInitiallyFetched: {type:Boolean},
+            isLoading: {type: Boolean}
         }
     }
 
@@ -369,6 +372,7 @@ class QApps extends LitElement {
         this.blockedNames = []
         this.relayMode = null
         this.isLoading = false
+        this.hasInitiallyFetched = false
         this.btnDisabled = false
         this.searchName = ''
         this.searchResources = []
@@ -421,13 +425,14 @@ class QApps extends LitElement {
 	                          </vaadin-grid-column>
 	                      </vaadin-grid>
 	                      <div id="pages"></div>
-                            ${this.pageRes == null ? html`
-	                          Loading...
+                          ${this.isLoading ? html`
+                           <div style="width:100%;display:flex;justify-content:center;position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%)"> <paper-spinner-lite active></paper-spinner-lite></div>
 	                      ` : ''}
-	                      ${this.isEmptyArray(this.pageRes) ? html`
+	                      ${this.isEmptyArray(this.pageRes) && this.hasInitiallyFetched ? html`
 	                          <span style="color: var(--black);">${translate("appspage.schange10")}</span>
 	                      ` : ''}
 	                  ${this.renderRelayModeText()}<br>
+                    
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
@@ -738,11 +743,16 @@ class QApps extends LitElement {
       const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
       let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=APP&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
-
+        this.isLoading = true
+        
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
       const jsonOffsetData = await jsonOffsetRes.json()
 
       this.pageRes = jsonOffsetData
+      if(!this.hasInitiallyFetched){
+        this.hasInitiallyFetched = true
+      }
+      this.isLoading = false
     }
 
     async updateItemsFromPage(page) {

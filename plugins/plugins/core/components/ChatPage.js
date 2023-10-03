@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
+import { LitElement, html } from 'lit'
 import { animate } from '@lit-labs/motion'
 import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { get, translate } from 'lit-translate'
 import { generateHTML } from '@tiptap/core'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { Editor, Extension } from '@tiptap/core'
@@ -10,8 +10,8 @@ import { inputKeyCodes } from '../../utils/keyCodes.js'
 import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js'
 import { publishData } from '../../utils/publish-image.js'
 import { EmojiPicker } from 'emoji-picker-js'
+import {ifDefined} from 'lit/directives/if-defined.js';
 
-import * as zip from '@zip.js/zip.js'
 
 import localForage from 'localforage'
 import StarterKit from '@tiptap/starter-kit'
@@ -20,6 +20,9 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import WebWorker from 'web-worker:./computePowWorker.js'
 import WebWorkerFile from 'web-worker:./computePowWorkerFile.js'
+import WebWorkerSortMessages from 'web-worker:./webworkerSortMessages.js'
+import WebWorkerDecodeMessages from 'web-worker:./webworkerDecodeMessages.js'
+
 import ShortUniqueId from 'short-unique-id'
 import Compressor from 'compressorjs'
 
@@ -35,13 +38,17 @@ import './ChatSideNavHeads.js'
 import './ChatLeaveGroup.js'
 import './ChatGroupSettings.js'
 import './ChatRightPanel.js'
+import './ChatRightPanelResources.js'
 import './ChatSearchResults.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import { RequestQueue } from '../../utils/queue.js'
 import { modalHelper } from '../../utils/publish-modal.js'
+import { generateIdFromAddresses } from '../../utils/id-generation.js'
+import { chatpageStyles } from './ChatPage-css.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -49,6 +56,12 @@ const chatLastSeen = localForage.createInstance({
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
+export const queue = new RequestQueue();
+
+export const chatLimit = 20
+export const chatLimitHalf = 10
+
+export const totalMsgCount = 60
 class ChatPage extends LitElement {
     static get properties() {
         return {
@@ -74,7 +87,7 @@ class ChatPage extends LitElement {
             hideNewMessageBar: { attribute: false },
             setOpenPrivateMessage: { attribute: false },
             chatEditorPlaceholder: { type: String },
-            messagesRendered: { type: Array },
+            messagesRendered: { type: Object },
             repliedToMessageObj: { type: Object },
             editedMessageObj: { type: Object },
             iframeHeight: { type: Number },
@@ -95,6 +108,7 @@ class ChatPage extends LitElement {
             groupAdmin: { type: Array },
             groupMembers: { type: Array },
             shifted: { type: Boolean },
+            shiftedResources: {type: Boolean},
             groupInfo: { type: Object },
             setActiveChatHeadUrl: { attribute: false },
             userFound: { type: Array },
@@ -112,1167 +126,26 @@ class ChatPage extends LitElement {
             openGifModal: { type: Boolean },
             gifsLoading: { type: Boolean },
             goToRepliedMessage: { attribute: false },
-            isLoadingGoToRepliedMessage: { type: Object }
+            isLoadingGoToRepliedMessage: { type: Object },
+            updateMessageHash: { type: Object},
+            oldMessages: {type: Array},
+            messageQueue: {type: Array},
+            isInProcessQueue: {type: Boolean},
+            loggedInUserName: {type: String},
+            loggedInUserAddress: {type: String}
         }
     }
 
     static get styles() {
-    return css`
-    html {
-        scroll-behavior: smooth;
-    }
-    
-    .chat-head-container {
-        display: flex;
-        justify-content: flex-start;
-        flex-direction: column;
-        height: 50vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        width: 100%;
-    }
-
-    .repliedTo-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 10px 8px 10px;
-    }
-
-    .senderName {
-        margin: 0;
-        color: var(--mdc-theme-primary);
-        font-weight: bold;
-        user-select: none;
-    }
-
-    .original-message {
-        color: var(--chat-bubble-msg-color);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        margin: 0;
-        width: 800px;
-    }
-
-    .close-icon {
-        color: #676b71;
-        width: 18px;
-        transition: all 0.1s ease-in-out;
-    }
-
-    .close-icon:hover {
-        cursor: pointer;
-        color: #494c50;
-    }
-    
-    .chat-text-area .typing-area .chatbar {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: auto;
-        padding: 5px 5px 5px 7px;
-        overflow: hidden;
-    }
-
-    .chat-text-area .typing-area .emoji-button {
-        width: 45px;
-        height: 40px;
-        padding-top: 4px;
-        border: none;
-        outline: none;
-        background: transparent;
-        cursor: pointer;
-        max-height: 40px;
-        color: var(--black);
-    }
-
-    .emoji-button-caption {
-        width: 45px;
-        height: 40px;
-        padding-top: 4px;
-        border: none;
-        outline: none;
-        background: transparent;
-        cursor: pointer;
-        max-height: 40px;
-        color: var(--black);
-    }
-
-    .caption-container {
-        width: 100%;
-        display: flex;
-        height: auto;
-        overflow: hidden;
-        justify-content: center;
-        background-color: var(--white);
-        padding: 5px;
-        border-radius: 1px;
-    }
-
-    .chatbar-caption {
-        font-family: Roboto, sans-serif;
-        width: 70%;
-        margin-right: 10px;
-        outline: none;
-        align-items: center;
-        font-size: 18px;
-        resize: none;
-        border-top: 0;
-        border-right: 0;
-        border-left: 0;
-        border-bottom: 1px solid #cac8c8;
-        padding: 3px;
-    }
-
-    .message-size-container {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-
-    .message-size {
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        color: black;
-    }
-
-    .lds-grid {
-        width: 120px;
-        height: 120px;
-        position: absolute;
-        left: 50%;
-        top: 40%;
-    }
-
-    img {
-        border-radius: 25%;
-    }
-
-    .dialogCustom {
-        position: fixed;
-        z-index: 10000;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        top: 10px;
-        right: 20px;
-        user-select: none;
-    }
-
-    .dialogCustomInner {
-        min-width: 300px;
-        height: 40px;
-        background-color: var(--white);
-        box-shadow: rgb(119 119 119 / 32%) 0px 4px 12px;
-        padding: 10px;
-        border-radius: 4px;
-    }
-
-    .dialogCustomInner ul {
-        padding-left: 0px
-    }
-    
-    .dialogCustomInner li {
-        margin-bottom: 10px;
-    }
-
-    .marginLoader {
-        margin-right: 8px;
-    }
-
-    .last-message-ref {
-        position: absolute;
-        font-size: 18px;
-        top: -40px;
-        right: 30px;
-        width: 50;
-        height: 50;
-        z-index: 5;
-        color: black;
-        background-color: white;
-        border-radius: 50%;
-        transition: all 0.1s ease-in-out;
-    }
-
-    .last-message-ref:hover {
-        cursor: pointer;
-        transform: scale(1.1);
-    }
-
-    .arrow-down-icon {
-        transform: scale(1.15);
-    }
-
-    .chat-container {
-        display: grid;
-        max-height: 100%;
-    }
-
-  .chat-text-area {
-      display: flex;
-      position: relative;
-      justify-content: center;
-      min-height: 60px;
-      max-height: 100%;
-  }
-
-  .chat-text-area .typing-area {
-      display: flex;
-      flex-direction: column;
-      width: 98%;
-      box-sizing: border-box;
-      margin-bottom: 8px;
-      border: 1px solid var(--chat-bubble-bg);
-      border-radius: 10px;
-      background: var(--chat-bubble-bg);
-  }
-
-  .chat-text-area .typing-area textarea {
-      display: none;
-  }
-
-  .chat-text-area .typing-area .chat-editor {
-      display: flex;
-      max-height: -webkit-fill-available;
-      width: 100%;
-      border-color: transparent;
-      margin: 0;
-      padding: 0;
-      border: none;
-  }
-
-  .repliedTo-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 10px 8px 10px;
-  }
-  
-  .repliedTo-subcontainer {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 15px;
-      width: 100%;
-  }
-
-  .repliedTo-message {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      width: 100%;
-      word-break: break-all;
-      text-overflow: ellipsis;
-    overflow: hidden;
-    max-height: 60px;
-  }
-  .repliedTo-message p {
-    margin: 0px;
-    padding: 0px;
-  }
-
-  .repliedTo-message pre {
-    white-space: pre-wrap;
-  }
-
-  .repliedTo-message p mark {
-	background-color: #ffe066;
-    border-radius: 0.25em;
-    box-decoration-break: clone;
-    padding: 0.125em 0;
-  }
-
-  .reply-icon {
-      width: 20px;
-      color: var(--mdc-theme-primary);
-  }
-
-  .close-icon {
-      color: #676b71;
-      width: 18px;
-      transition: all 0.1s ease-in-out;
-  }
-
-  .close-icon:hover {
-      cursor: pointer;
-      color: #494c50;
-  }
-  
-  .chatbar-container {
-      width: 100%;
-      display: flex;
-      height: auto;
-      overflow: hidden;
-  }
-
-  .lds-grid {
-      width: 120px;
-      height: 120px;
-      position: absolute;
-      left: 50%;
-      top: 40%;
-  }
-
-  .lds-grid div {
-      position: absolute;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #03a9f4;
-      animation: lds-grid 1.2s linear infinite;
-  }
-
-  .lds-grid div:nth-child(1) {
-      top: 4px;
-      left: 4px;
-      animation-delay: 0s;
-      }
-
-  .lds-grid div:nth-child(2) {
-      top: 4px;
-      left: 48px;
-      animation-delay: -0.4s;
-  }
-
-  .lds-grid div:nth-child(3) {
-      top: 4px;
-      left: 90px;
-      animation-delay: -0.8s;
-  }
-
-  .lds-grid div:nth-child(4) {
-      top: 50px;
-      left: 4px;
-      animation-delay: -0.4s;
-  }
-
-  .lds-grid div:nth-child(5) {
-      top: 50px;
-      left: 48px;
-      animation-delay: -0.8s;
-  }
-
-  .lds-grid div:nth-child(6) {
-      top: 50px;
-      left: 90px;
-      animation-delay: -1.2s;
-  }
-
-  .lds-grid div:nth-child(7) {
-      top: 95px;
-      left: 4px;
-      animation-delay: -0.8s;
-  }
-
-  .lds-grid div:nth-child(8) {
-      top: 95px;
-      left: 48px;
-      animation-delay: -1.2s;
-  }
-  
-  .lds-grid div:nth-child(9) {
-      top: 95px;
-      left: 90px;
-      animation-delay: -1.6s;
-  }
-
-  @keyframes lds-grid {
-      0%, 100% {
-      opacity: 1;
-      }
-      50% {
-      opacity: 0.5;
-      }
-  }   
-
-  .float-left {
-      float: left;
-  }
-
-  img {
-      border-radius: 25%;
-  }
-
-  paper-dialog.warning {
-            width: 50%;
-            max-width: 50vw;
-            height: 30%;
-            max-height: 30vh;
-            text-align: center;
-            background-color: var(--white);
-            color: var(--black);
-            border: 1px solid var(--black);
-            border-radius: 15px;
-            line-height: 1.6;
-            overflow-y: auto;
-            overflow-x: hidden;
-            width: 100%;
-        }
-    
-        .repliedTo-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 10px 8px 10px;
-        }
-    
-        .senderName {
-            margin: 0;
-            color: var(--mdc-theme-primary);
-            font-weight: bold;
-            user-select: none;
-        }
-    
-        .original-message {
-            color: var(--chat-bubble-msg-color);
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            margin: 0;
-            width: 800px;
-        }
-    
-    
-        .close-icon {
-            color: #676b71;
-            width: 18px;
-            transition: all 0.1s ease-in-out;
-        }
-    
-        .close-icon:hover {
-            cursor: pointer;
-            color: #494c50;
-        }
-        
-        .chat-text-area .typing-area .chatbar {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: auto;
-            padding: 5px 5px 5px 7px;
-            overflow: hidden;
-        }
-    
-        .chat-text-area .typing-area .emoji-button {
-            width: 45px;
-            height: 40px;
-            padding-top: 4px;
-            border: none;
-            outline: none;
-            background: transparent;
-            cursor: pointer;
-            max-height: 40px;
-            color: var(--black);
-        }
-    
-        .emoji-button-caption {
-            width: 45px;
-            height: 40px;
-            padding-top: 4px;
-            border: none;
-            outline: none;
-            background: transparent;
-            cursor: pointer;
-            max-height: 40px;
-            color: var(--black);
-        }
-    
-        .caption-container {
-            width: 100%;
-            display: flex;
-            height: auto;
-            overflow: hidden;
-            justify-content: center;
-            background-color: var(--white);
-            padding: 5px;
-            border-radius: 1px;
-        }
-    
-        .chatbar-caption {
-            font-family: Roboto, sans-serif;
-            width: 70%;
-            margin-right: 10px;
-            outline: none;
-            align-items: center;
-            font-size: 18px;
-            resize: none;
-            border-top: 0;
-            border-right: 0;
-            border-left: 0;
-            border-bottom: 1px solid #cac8c8;
-            padding: 3px;
-        }
-    
-        .message-size-container {
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
-        }
-    
-        .message-size {
-            font-family: Roboto, sans-serif;
-            font-size: 12px;
-            color: black;
-        }
-    
-        .lds-grid {
-            width: 120px;
-            height: 120px;
-            position: absolute;
-            left: 50%;
-            top: 40%;
-        }
-    
-        img {
-            border-radius: 25%;
-        }
-    
-        .dialogCustom {
-            position: fixed;
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
-            top: 10px;
-            right: 20px;
-            user-select: none;
-        }
-    
-        .dialogCustomInner {
-            min-width: 300px;
-            height: 40px;
-            background-color: var(--white);
-            box-shadow: rgb(119 119 119 / 32%) 0px 4px 12px;
-            padding: 10px;
-            border-radius: 4px;
-        }
-    
-        .dialogCustomInner ul {
-            padding-left: 0px
-        }
-        
-        .dialogCustomInner li {
-            margin-bottom: 10px;
-        }
-    
-        .marginLoader {
-            margin-right: 8px;
-        }
-    
-        .last-message-ref {
-            position: absolute;
-            font-size: 18px;
-            top: -40px;
-            right: 30px;
-            width: 50;
-            height: 50;
-            z-index: 5;
-            color: black;
-            background-color: white;
-            border-radius: 50%;
-            transition: all 0.1s ease-in-out;
-        }
-    
-        .last-message-ref:hover {
-            cursor: pointer;
-            transform: scale(1.1);
-        }
-    
-        .arrow-down-icon {
-            transform: scale(1.15);
-        }
-    
-      .chat-container {
-          display: grid;
-          max-height: 100%;
-      }
-    
-      .chat-text-area {
-          display: flex;
-          position: relative;
-          justify-content: center;
-          min-height: 60px;
-          max-height: 100%;
-      }
-    
-      .chat-text-area .typing-area {
-          display: flex;
-          flex-direction: column;
-          width: 98%;
-          box-sizing: border-box;
-          margin-bottom: 8px;
-          border: 1px solid var(--chat-bubble-bg);
-          border-radius: 10px;
-          background: var(--chat-bubble-bg);
-      }
-    
-      .chat-text-area .typing-area textarea {
-          display: none;
-      }
-    
-      .chat-text-area .typing-area .chat-editor {
-          display: flex;
-          max-height: -webkit-fill-available;
-          width: 100%;
-          border-color: transparent;
-          margin: 0;
-          padding: 0;
-          border: none;
-      }
-    
-      .repliedTo-container {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 10px 8px 10px;
-      }
-      
-      .repliedTo-subcontainer {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 15px;
-          width: 100%;
-      }
-    
-      .repliedTo-message {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-          width: 100%;
-          word-break: break-all;
-          text-overflow: ellipsis;
-        overflow: hidden;
-        max-height: 60px;
-      }
-      .repliedTo-message p {
-        margin: 0px;
-        padding: 0px;
-      }
-    
-      .repliedTo-message pre {
-        white-space: pre-wrap;
-      }
-    
-      .repliedTo-message p mark {
-        background-color: #ffe066;
-      border-radius: 0.25em;
-      box-decoration-break: clone;
-      padding: 0.125em 0;
-      }
-    
-      .reply-icon {
-          width: 20px;
-          color: var(--mdc-theme-primary);
-      }
-    
-      .close-icon {
-          color: #676b71;
-          width: 18px;
-          transition: all 0.1s ease-in-out;
-      }
-    
-      .close-icon:hover {
-          cursor: pointer;
-          color: #494c50;
-      }
-      
-      .chatbar-container {
-          width: 100%;
-          display: flex;
-          height: auto;
-          overflow: hidden;
-      }
-    
-      .lds-grid {
-          width: 120px;
-          height: 120px;
-          position: absolute;
-          left: 50%;
-          top: 40%;
-      }
-    
-      .lds-grid div {
-          position: absolute;
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          background: #03a9f4;
-          animation: lds-grid 1.2s linear infinite;
-      }
-    
-      .lds-grid div:nth-child(1) {
-          top: 4px;
-          left: 4px;
-          animation-delay: 0s;
-          }
-    
-      .lds-grid div:nth-child(2) {
-          top: 4px;
-          left: 48px;
-          animation-delay: -0.4s;
-      }
-    
-      .lds-grid div:nth-child(3) {
-          top: 4px;
-          left: 90px;
-          animation-delay: -0.8s;
-      }
-    
-      .lds-grid div:nth-child(4) {
-          top: 50px;
-          left: 4px;
-          animation-delay: -0.4s;
-      }
-    
-      .lds-grid div:nth-child(5) {
-          top: 50px;
-          left: 48px;
-          animation-delay: -0.8s;
-      }
-    
-      .lds-grid div:nth-child(6) {
-          top: 50px;
-          left: 90px;
-          animation-delay: -1.2s;
-      }
-    
-      .lds-grid div:nth-child(7) {
-          top: 95px;
-          left: 4px;
-          animation-delay: -0.8s;
-      }
-    
-      .lds-grid div:nth-child(8) {
-          top: 95px;
-          left: 48px;
-          animation-delay: -1.2s;
-      }
-      
-      .lds-grid div:nth-child(9) {
-          top: 95px;
-          left: 90px;
-          animation-delay: -1.6s;
-      }
-    
-      @keyframes lds-grid {
-          0%, 100% {
-          opacity: 1;
-          }
-          50% {
-          opacity: 0.5;
-          }
-    }   
-    
-      .float-left {
-          float: left;
-      }
-    
-      img {
-          border-radius: 25%;
-      }
-    
-      paper-dialog.warning {
-                width: 50%;
-                max-width: 50vw;
-                height: 30%;
-                max-height: 30vh;
-                text-align: center;
-                background-color: var(--white);
-                color: var(--black);
-                border: 1px solid var(--black);
-                border-radius: 15px;
-                line-height: 1.6;
-                overflow-y: auto;
-            }
-            .buttons {
-                text-align:right;
-            }
-    
-      .dialogCustom {
-          position: fixed;
-          z-index: 10000;
-          display: flex;
-          justify-content: center;
-          flex-direction: column;
-          align-items: center;
-          top: 10px;
-          right: 20px;
-          user-select: none;
-      }
-    
-      .dialogCustom p {
-          color: var(--black)
-      }
-    
-      .dialogCustomInner {
-          min-width: 300px;
-          height: 40px;
-          background-color: var(--white);
-          box-shadow: rgb(119 119 119 / 32%) 0px 4px 12px;
-          padding: 10px;
-          border-radius: 4px;
-      }
-    
-      .dialogCustomInner ul {
-          padding-left: 0px
-      }
-    
-      .dialogCustomInner li {
-          margin-bottom: 10px;
-      }
-    
-      .marginLoader {
-          margin-right: 8px;
-      }
-    
-      .smallLoading,
-      .smallLoading:after {
-          border-radius: 50%;
-          width: 2px;
-          height: 2px;
-      }
-    
-      .smallLoading {
-          border-width: 0.8em;
-          border-style: solid;
-          border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-          rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
-          font-size: 10px;
-          position: relative;
-          text-indent: -9999em;
-          transform: translateZ(0px);
-          animation: 1.1s linear 0s infinite normal none running loadingAnimation;
-      }
-    
-      @-webkit-keyframes loadingAnimation {
-          0% {
-              -webkit-transform: rotate(0deg);
-              transform: rotate(0deg);
-          }
-          100% {
-              -webkit-transform: rotate(360deg);
-              transform: rotate(360deg);
-          }
-      }
-    
-      @keyframes loadingAnimation {
-          0% {
-              -webkit-transform: rotate(0deg);
-              transform: rotate(0deg);
-          }
-          100% {
-              -webkit-transform: rotate(360deg);
-              transform: rotate(360deg);
-          }
-      }
-      
-      /* Add Image Modal Dialog Styling */
-    
-      .dialog-container {
-          position: relative;
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          padding: 0 10px;
-          gap: 10px;
-          height: 100%;
-      }
-    
-      .dialog-container-title {
-          font-family: Montserrat;
-          color: var(--black);
-          font-size: 20px;
-          margin: 15px 0 0 0;
-      }
-      
-      .divider {
-        height: 1px;
-        background-color: var(--chat-bubble-msg-color);
-        user-select: none;
-        width: 70%;
-        margin-bottom: 20px;
-      }
-    
-      .dialog-container-loader {
-          position: relative;
-          display: flex;
-          align-items: center;
-          padding: 0 10px;
-          gap: 10px;
-          height: 100%;
-      }
-    
-      .dialog-image {
-          width: 100%;
-          max-height: 300px;
-          border-radius: 0;
-          object-fit: contain;
-      }
-    
-        .chat-right-panel {
-            flex: 0;
-            border-left: 3px solid rgb(221, 221, 221);
-            height: 100%;
-            overflow-y: auto;
-            background: transparent;
-        }
-    
-        .movedin {
-            flex: 1 !important;
-            background: transparent;
-        }
-    
-        .main-container {
-            display: flex;
-            height: 100%;
-        }
-    
-        .group-nav-container {
-            display: flex;
-            height: 40px; 
-            padding: 25px 5px 25px 20px; 
-            margin: 0px;
-            background-color: var(--chat-bubble-bg); 
-            box-sizing: border-box; 
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: var(--group-drop-shadow);
-        }
-    
-        .top-bar-icon {
-            border-radius: 50%;
-            color: var(--chat-bubble-msg-color);
-            transition: 0.3s all ease-in-out;
-            padding: 5px;
-            background-color: transparent;
-        }
-    
-        .top-bar-icon:hover {
-            background-color: #e6e6e69b;
-            cursor: pointer;
-            color: var(--black)
-        }
-    
-        .group-name {
-            font-family: Raleway, sans-serif;
-            font-size: 16px;
-            color: var(--black);
-            margin:0px;
-            padding:0px;
-        }
-    
-    
-      .modal-button {
-          font-family: Roboto, sans-serif;
-          font-size: 16px;
-          color: var(--mdc-theme-primary);
-          background-color: transparent;
-          padding: 8px 10px;
-          border-radius: 5px;
-          border: none;
-          transition: all 0.3s ease-in-out;
-      }
-    
-      .modal-button-red {
-          font-family: Roboto, sans-serif;
-          font-size: 16px;
-          color: #F44336;
-          background-color: transparent;
-          padding: 8px 10px;
-          border-radius: 5px;
-          border: none;
-          transition: all 0.3s ease-in-out;
-      }
-    
-      .modal-button-red:hover {
-          cursor: pointer;
-          background-color: #f4433663;
-      }
-    
-      .modal-button:hover {
-          cursor: pointer;
-          background-color: #03a8f475;
-      }
-    
-      .name-input {
-          width: 100%;
-          margin-bottom: 15px;
-          outline: 0;
-          border-width: 0 0 2px;
-          border-color: var(--mdc-theme-primary);
-          background-color: transparent;
-          padding: 10px;
-          font-family: Roboto, sans-serif;
-          font-size: 15px;
-          color: var(--chat-bubble-msg-color);
-          box-sizing: border-box;
-      }
-    
-      .name-input::selection {
-          background-color: var(--mdc-theme-primary);
-          color: white;   
-      }
-    
-      .name-input::placeholder {
-          opacity: 0.9;
-          color: var(--black);
-      }
-    
-      .search-results-div {
-        position: absolute;
-        top: 25px;
-        right: 25px;
-      }
-    
-      .search-field {
-          width: 100%;
-          position: relative;
-          margin-bottom: 5px;
-      }
-    
-      .search-icon {
-          position: absolute;
-          right: 3px;
-          top: 0;
-          color: var(--chat-bubble-msg-color);
-          transition: all 0.3s ease-in-out;
-          background: none;
-          border-radius: 50%;
-          padding: 6px 3px;
-          font-size: 21px;
-      }
-    
-      .search-icon:hover {
-        cursor: pointer;
-        background: #d7d7d75c;
-      }
-    
-      .user-verified {
-        position: absolute;
-        top: 0;
-        right: 5px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #04aa2e;
-        font-size: 13px;
-      }
-      
-      .user-selected {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0;
-        box-shadow: rgb(0 0 0 / 16%) 0px 3px 6px, rgb(0 0 0 / 23%) 0px 3px 6px;
-        padding: 18px 20px;
-        color: var(--chat-bubble-msg-color);
-        border-radius: 5px;
-        background-color: #ececec96;
-      }
-    
-      .user-selected-name {
-        font-family: Roboto, sans-serif;
-        margin: 0;
-        font-size: 16px;
-      }
-    
-      .forwarding-container {
-        display: flex;
-        gap: 15px;
-      }
-    
-      .user-selected-forwarding {
-        font-family: Livvic, sans-serif;
-        margin: 0;
-        font-size: 16px;
-      }
-    
-      .close-forwarding {
-          color: #676b71;
-          width: 14px;
-          transition: all 0.1s ease-in-out;
-      }
-    
-      .close-forwarding:hover {
-          cursor: pointer;
-          color: #4e5054;
-      }
-
-      .chat-gifs {
-          position: absolute;
-          right: 15px;
-            bottom: 100px;
-          justify-self: flex-end;
-          width: fit-content;
-          height: auto;
-          transform: translateY(30%);
-          animation: smooth-appear 0.5s ease forwards;
-          z-index: 5;
-      }
-
-        @keyframes smooth-appear {
-            to {
-                transform: translateY(0);
-            }
-        }   
-
-        .gifs-backdrop {
-            top: 0;
-            height: 100vh;
-            width: 100vw;
-            background: transparent;
-            position: fixed;
-        }
-
-  .modal-button-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-  }
+		return [chatpageStyles];
+	}
 
 
-  .attachment-icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 120px;
-    width: 120px;
-    border-radius: 50%;
-    border: none;
-    background-color: var(--mdc-theme-primary);
-  }
-
-  .attachment-icon {
-    width: 70%;
-  }
-  
-  .attachment-name {
-    font-family: Work Sans, sans-serif;
-    font-size: 20px;
-    color: var(--chat-bubble-msg-color);
-    margin: 0px;
-    letter-spacing: 1px;
-    padding: 5px 0px;
-  }
-`
-    }
-
+ 
     constructor() {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
+        this.clearUpdateMessageHashmap = this.clearUpdateMessageHashmap.bind(this)
         this._sendMessage = this._sendMessage.bind(this)
         this.insertFile = this.insertFile.bind(this)
         this.pasteImage = this.pasteImage.bind(this)
@@ -1283,7 +156,7 @@ class ChatPage extends LitElement {
         this.setUserName = this.setUserName.bind(this)
         this.setSelectedHead = this.setSelectedHead.bind(this)
         this.setGifsLoading = this.setGifsLoading.bind(this)
-        this.selectedAddress = {}
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.userName = ""
         this.chatId = ''
         this.myAddress = ''
@@ -1301,7 +174,10 @@ class ChatPage extends LitElement {
         this.isUserDown = false
         this.isPasteMenuOpen = false
         this.chatEditorPlaceholder = ""
-        this.messagesRendered = []
+        this.messagesRendered = {
+            messages: [],
+            type: ''
+        }
         this.repliedToMessageObj = null
         this.editedMessageObj = null
         this.iframeHeight = 42
@@ -1324,6 +200,7 @@ class ChatPage extends LitElement {
         this.groupAdmin = []
         this.groupMembers = []
         this.shifted = false
+        this.shiftedResources = false
         this.groupInfo = {}
         this.pageNumber = 1
         this.userFoundModalOpen = false
@@ -1335,6 +212,8 @@ class ChatPage extends LitElement {
         }
         this.webWorker = null
         this.webWorkerFile = null
+        this.webWorkerSortMessages = null
+        this.webWorkerDecodeMessages = null
         this.currentEditor = '_chatEditorDOM'
         this.initialChat = this.initialChat.bind(this)
         this.setOpenGifModal = this.setOpenGifModal.bind(this)
@@ -1347,7 +226,38 @@ class ChatPage extends LitElement {
             offsetHeight: 0
         }
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.updateMessageHash = {}
+        this.addToUpdateMessageHashmap = this.addToUpdateMessageHashmap.bind(this)
+        this.getAfterMessages = this.getAfterMessages.bind(this)
+        this.oldMessages = []
+        this.lastReadMessageTimestamp =  0
+        this.initUpdate = this.initUpdate.bind(this)
+        this.messageQueue = []
+        this.addToQueue = this.addToQueue.bind(this)
+        this.processQueue = this.processQueue.bind(this)
+        this.isInProcessQueue = false
+        this.nodeUrl = this.getNodeUrl();
+		this.myNode = this.getMyNode();
     }
+
+    getNodeUrl() {
+		const myNode =
+			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+				window.parent.reduxStore.getState().app.nodeConfig.node
+			];
+
+		const nodeUrl =
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+		return nodeUrl;
+	}
+	getMyNode() {
+		const myNode =
+			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+				window.parent.reduxStore.getState().app.nodeConfig.node
+			];
+
+		return myNode;
+	}
 
     setOpenGifModal(value) {
         this.openGifModal = value
@@ -1355,6 +265,10 @@ class ChatPage extends LitElement {
 
     _toggle(value) {
         this.shifted = value === (false || true) ? value : !this.shifted
+        this.requestUpdate()
+    }
+    _toggleResources(value) {
+        this.shiftedResources = value === (false || true) ? value : !this.shiftedResources
         this.requestUpdate()
     }
 
@@ -1392,23 +306,117 @@ class ChatPage extends LitElement {
         this.gifsLoading = props
     }
 
+    addToQueue(outSideMsg, messageQueue) {
+        // Push the new message object to the queue
+        
+        this.messageQueue = [...messageQueue, { ...outSideMsg, timestamp: Date.now()}];
+
+        // Start processing the queue only if the message we just added is the only one in the queue
+        // This ensures that the queue processing starts only once, even if this method is called multiple times
+        if (this.messageQueue.length === 1) {
+            this.processQueue();
+        }
+    
+        // Notify Lit to update/render due to the property change
+        this.requestUpdate();
+    }
+
+    async processQueue() {
+        if (this.messageQueue.length === 0) return;
+        const currentMessage = this.messageQueue[0];
+        try {
+          const res =  await this.sendMessage(currentMessage);
+          if(res === true) {
+            this.messageQueue = this.messageQueue.slice(1);
+          } else {
+            throw new Error('failed')
+          }
+         
+            if (this.messageQueue.length > 0) {
+                setTimeout(() => this.processQueue(), 2000); // Wait for 10 seconds before retrying
+                // setTimeout(() => this.processQueue(), 0); // Process the next message immediately
+            }
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            setTimeout(() => this.processQueue(), 10000); // Wait for 10 seconds before retrying
+        }
+    }
+  
+    async getLastestMessages(){
+        try {
+            let getInitialMessages = []
+            if (this.isReceipient) {
+
+
+     
+            getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+            })
+
+           
+
+        } else {
+            getInitialMessages = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+            })
+
+        }
+        this.processMessages(getInitialMessages, true, false)
+        } catch (error) {
+            console.log
+        }
+    }
+
+    async copyJoinGroupLinkToClipboard() {
+		try {
+            const link = `qortal://use-group/action-join/groupid-${this.groupInfo.groupId}`
+			let copyString1 = get('chatpage.cchange97');
+			await navigator.clipboard.writeText(link);
+			parentEpml.request('showSnackBar', `${copyString1}`);
+		} catch (err) {
+			let copyString2 = get('walletpage.wchange39');
+			parentEpml.request('showSnackBar', `${copyString2}`);
+			console.error('Copy to clipboard error:', err);
+		}
+	}
+    
+
     render() {
         return html`
             <div class="main-container">
             <div 
             class="chat-container" 
-            style=${(!this.isReceipient && +this._chatId !== 0) ? "grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;" : "grid-template-rows: minmax(6%, 92vh) minmax(40px, auto); flex: 2;"}>
-                ${(!this.isReceipient && +this._chatId !== 0) ?
-                html`
+            style="grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;">
+                
                 <div class="group-nav-container">
-                    <div @click=${this._toggle} style="height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: pointer; user-select: none">
+                    <div @click=${()=> {
+                        if(+this._chatId === 0 || this.isReceipient)return
+                        this._toggle()
+                    }} style=${`height: 100%; display: flex; align-items: center;flex-grow: 1; cursor: pointer; cursor: ${+this._chatId === 0 || this.isReceipient ? 'default': 'pointer'}; user-select: none`}>
+                        ${this.isReceipient ? '' : +this._chatId === 0 ? html`
+                        <p class="group-name">Qortal General Chat</p>
+                        `  :  html`
                         <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
+                        `}
+                        
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
-                        <vaadin-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px" icon="vaadin:info" slot="icon"></vaadin-icon>
+                    ${(!this.isReceipient && +this._chatId !== 0 && this.groupInfo.isOpen) ?
+                        html`
+                        <mwc-icon class="top-bar-icon" @click=${this.copyJoinGroupLinkToClipboard} style="margin: 0px 10px">link</mwc-icon>
+                        `
+                       : ''}
+                    <mwc-icon class="top-bar-icon" @click=${this._toggleResources} style="margin: 0px 10px">photo_library</mwc-icon>
+                    ${(!this.isReceipient && +this._chatId !== 0) ?
+                        html`
+                        <mwc-icon class="top-bar-icon" @click=${this._toggle} style="margin: 0px 10px">groups</mwc-icon>
+                        `
+                       : ''}
                     </div>
                 </div>
-                ` : null}
+          
                 <div>
                     ${this.isLoadingMessages ?
                 html`
@@ -1445,10 +453,16 @@ class ChatPage extends LitElement {
                     class='last-message-ref' 
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
                         <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
-                this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
+                             const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
+    if (chatScrollerElement && chatScrollerElement.disableAddingNewMessages) {
+        this.getLastestMessages()
+    } else {
+        this.shadowRoot.querySelector("chat-scroller").shadowRoot.getElementById("downObserver")
                     .scrollIntoView({
                         behavior: 'smooth',
                     });
+    }
+              
             }}>
                         </vaadin-icon>
                         </div>
@@ -1527,6 +541,7 @@ class ChatPage extends LitElement {
                                 ?openGifModal=${this.openGifModal}
                                 .setOpenGifModal=${(val) => this.setOpenGifModal(val)}
                                 chatId=${this.chatId}
+                                .messageQueue=${this.messageQueue}
                                 >                           
                             </chat-text-editor>
                     </div>
@@ -1569,7 +584,7 @@ class ChatPage extends LitElement {
                     <div>
                         <div class="dialog-container">
                             ${this.imageFile && html`
-                                <img src=${URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
+                                <img src=${this.imageFile.identifier ? `${this.nodeUrl}/arbitrary/${this.imageFile.service}/${this.imageFile.name}/${this.imageFile.identifier}?apiKey=${this.myNode.apiKey}` : URL.createObjectURL(this.imageFile)} alt="dialog-img" class="dialog-image" />
                             `}
                             <div class="caption-container">
                                 <chat-text-editor
@@ -1590,18 +605,18 @@ class ChatPage extends LitElement {
                             </div>
                             <div class="modal-button-row">
                                 <button class="modal-button-red" @click=${() => {
-                                    this.removeImage()
-                                }}>
+                this.removeImage()
+            }}>
                                     ${translate("chatpage.cchange33")}
                                 </button>
                                 <button
                                     class="modal-button"
                                     @click=${() => {
-                                        const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
-                                        chatTextEditor.sendMessageFunc({
-                                            type: 'image',
-                                        })
-                                    }}
+                const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
+                chatTextEditor.sendMessageFunc({
+                    type: 'image',
+                })
+            }}
                                 >
                                     ${translate("chatpage.cchange9")}
                                 </button>
@@ -1642,18 +657,18 @@ class ChatPage extends LitElement {
                         </div>
                         <div class="modal-button-row">
                             <button class="modal-button-red" @click=${() => {
-                                this.removeAttachment()
-                            }}>
+                this.removeAttachment()
+            }}>
                                 ${translate("chatpage.cchange33")}
                             </button>
                             <button
                                 class="modal-button"
                                 @click=${() => {
-                                    const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
-                                    chatTextEditor.sendMessageFunc({
-                                        type: 'attachment',
-                                    })
-                                }}
+                const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
+                chatTextEditor.sendMessageFunc({
+                    type: 'attachment',
+                })
+            }}
                             >
                                 ${translate("chatpage.cchange9")}
                             </button>
@@ -1845,6 +860,25 @@ class ChatPage extends LitElement {
             >
             </chat-right-panel>
         </div>
+        <div class="chat-right-panel ${this.shiftedResources ? "movedin" : "movedout"}"   ${animate()}>
+            <chat-right-panel-resources
+            .getMoreMembers=${(val) => this.getMoreMembers(val)} 
+            .toggle=${(val) => this._toggleResources(val)} 
+            .selectedAddress=${this.selectedAddress} 
+            .groupMembers=${this.groupMembers} 
+            .groupAdmin=${this.groupAdmin} 
+            .leaveGroupObj=${this.groupInfo}
+            .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
+            .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
+            .setOpenUserInfo=${(val) => this.setOpenUserInfo(val)}
+            .setUserName=${(val) => this.setUserName(val)}
+            _chatId=${ifDefined(this._chatId)}
+            chatId=${this.chatId}
+            ?isreceipient=${this.isReceipient}
+            .repost=${this.insertFile}
+            >
+            </chat-right-panel-resources>
+        </div>
     </div>
     `
     }
@@ -1864,23 +898,32 @@ class ChatPage extends LitElement {
                         address: member.member,
                         name: name ? name : undefined
                     }
-                } catch (error) {
-                }
+                } catch (error) { /* empty */ }
 
                 return memberItem
             })
             const membersWithName = await Promise.all(getMembersWithName)
             this.groupMembers = [...this.groupMembers, ...membersWithName]
             this.pageNumber = this.pageNumber + 1
-        } catch (error) {
-        }
+        } catch (error) { /* empty */ }
     }
 
     async connectedCallback() {
         super.connectedCallback()
         await this.initUpdate()
-        this.webWorker = new WebWorker()
-        this.webWorkerFile = new WebWorkerFile()
+        if(!this.webWorker){
+            this.webWorker = new WebWorker()
+        }
+        if(!this.webWorkerFile){
+            this.webWorkerFile = new WebWorkerFile()
+        }
+        if(!this.webWorkerSortMessages){
+            this.webWorkerSortMessages = new WebWorkerSortMessages()
+
+        }
+        if(!this.webWorkerDecodeMessages){
+            this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
+        }
         await this.getUpdateCompleteTextEditor()
 
         const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
@@ -1984,14 +1027,7 @@ class ChatPage extends LitElement {
         document.addEventListener('keydown', this.initialChat)
         document.addEventListener('paste', this.pasteImage)
 
-        if (this.chatId) {
-            window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-                key: this.chatId,
-                timestamp: Date.now()
-            }))
-        }
-
-        let callback = (entries, observer) => {
+        let callback = (entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
 
@@ -2034,6 +1070,9 @@ class ChatPage extends LitElement {
         if (this.webWorkerFile) {
             this.webWorkerFile.terminate()
         }
+        if(this.webWorkerSortMessages){
+            this.webWorkerSortMessages.terminate()
+        }
         if (this.editor) {
             this.editor.destroy()
         }
@@ -2046,20 +1085,12 @@ class ChatPage extends LitElement {
 
         document.removeEventListener('keydown', this.initialChat)
         document.removeEventListener('paste', this.pasteImage)
-
-        if (this.chatId) {
-            window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
-                key: this.chatId,
-                timestamp: Date.now()
-            }))
-        }
     }
 
     initialChat(e) {
         if (this.editor && !this.editor.isFocused && this.currentEditor === '_chatEditorDOM' && !this.openForwardOpen && !this.openTipUser && !this.openGifModal) {
             // WARNING: Deprecated methods from KeyBoard Event
-            if (e.code === "Space" || e.keyCode === 32 || e.which === 32) {
-            } else if (inputKeyCodes.includes(e.keyCode)) {
+            if (e.code === "Space" || e.keyCode === 32 || e.which === 32) { /* empty */ } else if (inputKeyCodes.includes(e.keyCode)) {
                 this.editor.commands.insertContent(e.key)
                 this.editor.commands.focus('end')
             } else {
@@ -2067,6 +1098,7 @@ class ChatPage extends LitElement {
             }
         }
     }
+ 
 
     async pasteImage(e) {
         const event = e
@@ -2075,13 +1107,13 @@ class ChatPage extends LitElement {
                 const [firstItem] = dataTransfer.items
                 const blob = firstItem.getAsFile()
                 return blob
-            } catch (error) {
-            }
+            } catch (error) { /* empty */ }
         }
         if (event.clipboardData) {
             const blobFound = handleTransferIntoURL(event.clipboardData)
             if (blobFound) {
-                this.insertImage(blobFound)
+                this.insertFile(blobFound)
+                e.preventDefault();
                 return
             } else {
                 const item_list = await navigator.clipboard.read()
@@ -2100,7 +1132,8 @@ class ChatPage extends LitElement {
                         let file = new File([blob], "name", {
                             type: image_type
                         })
-                        this.insertImage(file)
+                        this.insertFile(file)
+                        e.preventDefault();
                     } catch (error) {
                         console.error(error)
                         let errorMsg = get("chatpage.cchange81")
@@ -2118,7 +1151,7 @@ class ChatPage extends LitElement {
         const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
 
         if (findMessage) {
-            findMessage.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            findMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
             const findElement = findMessage.shadowRoot.querySelector('.message-parent')
             if (findElement) {
                 findElement.classList.add('blink-bg')
@@ -2126,16 +1159,14 @@ class ChatPage extends LitElement {
                     findElement.classList.remove('blink-bg')
                 }, 2000)
             }
+            const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
+            if (chatScrollerElement && chatScrollerElement.disableFetching) {
+                chatScrollerElement.disableFetching = false
+            }
             return
         }
 
-        if ((message.timestamp - this.messagesRendered[0].timestamp) > 86400000) {
-            let errorMsg = get("chatpage.cchange66")
-            parentEpml.request('showSnackBar', `${errorMsg}`)
-            return
-        }
-
-        if ((message.timestamp - this.messagesRendered[0].timestamp) < 86400000) {
+      
             const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.signature)
             if (findOriginalMessage) {
                 const messageClientRect = findOriginalMessage.getBoundingClientRect()
@@ -2146,16 +1177,21 @@ class ChatPage extends LitElement {
                     top: messageClientRect.top,
                     offsetHeight: findOriginalMessage.offsetHeight
                 }
+       
+            await this.getOldMessageDynamic(0, clickedOnMessage.timestamp, message)
+            await this.getUpdateComplete()
+            
+            const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
+            const findMessage2 = marginElements.find((item) => item.messageObj.signature === message.signature) || marginElements.find((item) => item.messageObj.originalSignature === message.signature) || marginElements.find((item) => item.messageObj.signature === message.originalSignature) || marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
+            if (findMessage2) {
+                findMessage2.scrollIntoView({ block: 'center' })
             }
-            await this.getOldMessageDynamic(0, this.messagesRendered[0].timestamp, message.timestamp - 7200000)
-            const findMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(message.signature)
-            if (findMessage) {
+            if (findMessage2) {
                 this.isLoadingGoToRepliedMessage = {
                     ...this.isLoadingGoToRepliedMessage,
                     loading: false
                 }
-                findMessage.scrollIntoView({ block: 'center' })
-                const findElement = findMessage.shadowRoot.querySelector('.message-parent')
+                const findElement = findMessage2.shadowRoot.querySelector('.message-parent')
                 if (findElement) {
                     findElement.classList.add('blink-bg')
                     setTimeout(() => {
@@ -2226,9 +1262,8 @@ class ChatPage extends LitElement {
             }
             delete message.reactions
             const stringifyMessageObject = JSON.stringify(message)
-            this.sendMessage(stringifyMessageObject, undefined, '', true)
-        } catch (error) {
-        }
+            this.sendMessage({messageText: stringifyMessageObject, chatReference: undefined, isForward: true})
+        } catch (error) { /* empty */ }
     }
 
     showLastMessageRefScroller(props) {
@@ -2236,6 +1271,11 @@ class ChatPage extends LitElement {
     }
 
     insertFile(file) {
+        if(file.identifier){
+            this.imageFile = file
+            this.currentEditor = 'newChat'
+            return
+        }else
         if (file.type.includes('image')) {
             this.imageFile = file
             this.currentEditor = 'newChat'
@@ -2265,6 +1305,10 @@ class ChatPage extends LitElement {
     }
 
     async initUpdate() {
+        if (this.webSocket) {
+            this.webSocket.close(1000, 'switch chat')
+            this.webSocket = ''
+        }
         this.pageNumber = 1
         const getAddressPublicKey = () => {
 
@@ -2336,8 +1380,7 @@ class ChatPage extends LitElement {
                             address: member.member,
                             name: name ? name : undefined
                         }
-                    } catch (error) {
-                    }
+                    } catch (error) { /* empty */ }
                     return memberItem
                 })
 
@@ -2351,22 +1394,22 @@ class ChatPage extends LitElement {
                             address: member.member,
                             name: name ? name : undefined
                         }
-                    } catch (error) {
-                    }
+                    } catch (error) { /* empty */ }
                     return memberItem
                 })
                 const membersWithName = await Promise.all(getMembersWithName)
                 this.groupAdmin = membersAdminsWithName
                 this.groupMembers = membersWithName
                 this.groupInfo = getGroupInfo
-            } catch (error) {
-            }
+            } catch (error) { /* empty */ }
         }
     }
 
     async firstUpdated() {
         this.changeTheme()
-
+     
+            // this.processQueue();
+      
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -2381,19 +1424,9 @@ class ChatPage extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
-            parentEpml.request('apiCall', {
-                url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-            }).then(res => {
-                this.balance = res
-            })
-        })
+      
+        this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
+     
         parentEpml.imReady()
 
         const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter')
@@ -2431,6 +1464,36 @@ class ChatPage extends LitElement {
                 this.editor.setEditable(true)
             }
         }
+        if(changedProperties && changedProperties.has('chatId') && this.webSocket){
+            const previousChatId = changedProperties.get('chatId');
+
+            this.isLoadingMessages = true
+            this.initUpdate()
+            
+
+            if (previousChatId) {
+                window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+                    key: previousChatId,
+                    timestamp: Date.now()
+                }))
+            }
+        }
+    }
+
+
+    shouldUpdate(changedProperties) {
+        if(changedProperties.has('chatId')){
+            return true
+        }
+        if (changedProperties.has('setActiveChatHeadUrl')) {
+            return false
+        }
+        if (changedProperties.has('setOpenPrivateMessage')) {
+            return false
+        }
+
+        return true
+        
     }
 
     async getName(recipient) {
@@ -2483,8 +1546,10 @@ class ChatPage extends LitElement {
             <chat-scroller 
                 chatId=${this.chatId}
                 .messages=${this.messagesRendered} 
+                .oldMessages=${this.oldMessages}
                 .escapeHTML=${escape} 
                 .getOldMessage=${this.getOldMessage}
+                .getAfterMessages=${this.getAfterMessages}
                 .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
                 .setEditedMessageObj=${(val) => this.setEditedMessageObj(val)}
                 .sendMessage=${(val) => this._sendMessage(val)}
@@ -2502,7 +1567,11 @@ class ChatPage extends LitElement {
                 ?openTipUser=${this.openTipUser}
                 .selectedHead=${this.selectedHead}
                 .goToRepliedMessage=${(val, val2) => this.goToRepliedMessage(val, val2)}
-               .getOldMessageAfter=${(val) => this.getOldMessageAfter(val)}
+               .updateMessageHash=${this.updateMessageHash}
+               .clearUpdateMessageHashmap=${this.clearUpdateMessageHashmap}
+               .messageQueue=${this.messageQueue}
+               loggedInUserName=${this.loggedInUserName}
+               loggedInUserAddress=${this.loggedInUserAddress}
             >
             </chat-scroller>
         `
@@ -2515,6 +1584,13 @@ class ChatPage extends LitElement {
     async getUpdateComplete() {
         await super.getUpdateComplete()
         const marginElements = Array.from(this.shadowRoot.querySelectorAll('chat-scroller'))
+        await Promise.all(marginElements.map(el => el.updateComplete))
+        return true
+    }
+
+    async getUpdateCompleteMessages() {
+        await super.getUpdateComplete()
+        const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
         await Promise.all(marginElements.map(el => el.updateComplete))
         return true
     }
@@ -2537,94 +1613,179 @@ class ChatPage extends LitElement {
         })
     }
 
-    async getOldMessageDynamic(limit, before, after) {
-
+    async getOldMessageDynamic(limit, timestampClickedOnMessage, messageToGoTo) {
+      const findMsg = await parentEpml.request("apiCall", {
+            type: "api",
+             url: `/chat/message/${messageToGoTo.originalSignature || messageToGoTo.signature}?encoding=BASE64`,
+        })
+        if(!findMsg) return null
         if (this.isReceipient) {
-            const getInitialMessages = await parentEpml.request('apiCall', {
+            const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=true&before=${findMsg.timestamp}&haschatreference=false&encoding=BASE64`
             })
-
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
+            const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${20}&reverse=false&after=${findMsg.timestamp - 1000}&haschatreference=false&encoding=BASE64`
             })
+            const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = () => {
+                    rej()
+                 
+                }
+              })
 
-            const replacedMessages = await replaceMessagesEdited({
+            
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+
+            let list = [...decodeMsgs]
+           
+            await new Promise((res) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered = {
+                messages: list,
+                type: 'inBetween',
+                message: messageToGoTo
+            }
 
             this.isLoadingOldMessages = false
-            await this.getUpdateComplete()
-            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-
-            if (viewElement) {
-                viewElement.scrollTop = 200
-            }
+            
         } else {
-            const getInitialMessages = await parentEpml.request('apiCall', {
+            const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${limit}&reverse=true&before=${before}&after=${after}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=true&before=${findMsg.timestamp}&haschatreference=false&encoding=BASE64`
             })
-
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
+            const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${20}&reverse=false&after=${findMsg.timestamp - 1000}&haschatreference=false&encoding=BASE64`
             })
+            const getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
 
-            const replacedMessages = await replaceMessagesEdited({
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = () => {
+                    rej()
+                 
+                }
+              })
+
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+           
+       
+            let list = [...decodeMsgs]
+           
+            await new Promise((res) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+            this.messagesRendered = {
+                messages: list,
+                type: 'inBetween',
+                signature: messageToGoTo.signature
+            }
 
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
 
             this.isLoadingOldMessages = false
-            await this.getUpdateComplete()
-            const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-
-            if (viewElement) {
-                viewElement.scrollTop = 200
-            }
+           
         }
     }
 
     async getOldMessage(scrollElement) {
+        if(!scrollElement || !scrollElement.messageObj || !scrollElement.messageObj.timestamp){
+            this.messagesRendered = {
+                messages: [],
+                type: 'old',
+                el: scrollElement
+            }
+            return
+        }
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
-
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
-
-            const replacedMessages = await replaceMessagesEdited({
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = () => {
+                    rej()
+                 
+                }
+              })
+            
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
-
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+          
+            let list = [...decodeMsgs]
+           
+          
+           
+              this.messagesRendered = {
+                messages: list,
+                type: 'old',
+                el: scrollElement
+            }
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2638,27 +1799,45 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${chatLimit}&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
 
-            const replacedMessages = await replaceMessagesEdited({
+           
+                await new Promise((res, rej) => {
+                    this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+                
+                    this.webWorkerDecodeMessages.onmessage = e => {
+                        decodeMsgs = e.data
+                        res()
+                     
+                    }
+                    this.webWorkerDecodeMessages.onerror = () => {
+                        rej()
+                     
+                    }
+                  })
+    
+            
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
-
-            this.messagesRendered = [...replacedMessages, ...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
-
-            this.isLoadingOldMessages = false
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+            let list = [...decodeMsgs]
+           
+            
+           
+              this.messagesRendered = {
+                messages: list,
+                type: 'old',
+                el: scrollElement
+            }
+            // this.isLoadingOldMessages = false
             await this.getUpdateComplete()
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
             const findElement = marginElements.find((item) => item.messageObj.signature === scrollElement.messageObj.signature)
@@ -2668,30 +1847,66 @@ class ChatPage extends LitElement {
             }
         }
     }
-
-    async getOldMessageAfter(scrollElement) {
+    async getAfterMessages(scrollElement) {
+        if(!scrollElement || !scrollElement.messageObj || !scrollElement.messageObj.timestamp){
+            this.messagesRendered = {
+                messages: [],
+                type: 'new',
+            }
+            return
+        }
+        const timestamp = scrollElement.messageObj.timestamp
+        
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=true&afer=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=false&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = () => {
+                    rej()
+                 
+                }
+              })
 
-            const replacedMessages = await replaceMessagesEdited({
+            
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
-
-            this.messagesRendered = [...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
+            
+            let list = [ ...decodeMsgs]
+           
+            await new Promise((res) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered = {
+                messages: list,
+                type: 'new'
+              }
+              
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -2705,82 +1920,209 @@ class ChatPage extends LitElement {
         } else {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
-                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=20&reverse=true&after=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
+                url: `/chat/messages?txGroupId=${Number(this._chatId)}&limit=${chatLimit}&reverse=false&after=${timestamp}&haschatreference=false&encoding=BASE64`
             })
+            let decodeMsgs = []
+            await new Promise((res, rej) => {
+                this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+            
+                this.webWorkerDecodeMessages.onmessage = e => {
+                    decodeMsgs = e.data
+                    res()
+                 
+                }
+                this.webWorkerDecodeMessages.onerror = () => {
+                    rej()
+                 
+                }
+              })
 
-            const decodeMsgs = getInitialMessages.map((eachMessage) => {
-                return this.decodeMessage(eachMessage)
-            })
-
-            const replacedMessages = await replaceMessagesEdited({
+            
+            queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
                 isReceipient: this.isReceipient,
                 decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+                _publicKey: this._publicKey,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
-            this.messagesRendered = [...this.messagesRendered, ...replacedMessages].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+           
+
+            let list = [...decodeMsgs]
+           
+            await new Promise((res) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this.messagesRendered = {
+                messages: list,
+                type: 'new'
+              }
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
             const findElement = marginElements.find((item) => item.messageObj.signature === scrollElement.messageObj.signature)
-
             if (findElement) {
                 findElement.scrollIntoView({ behavior: 'auto', block: 'center' })
             }
         }
     }
 
-    async processMessages(messages, isInitial) {
+    async addToUpdateMessageHashmap(array){
+       
+     
+
+        const newObj = {}
+
+        array.forEach((item)=> {
+			const signature = item.originalSignature || item.signature
+            newObj[signature] = item
+			})
+        this.updateMessageHash = {
+            ...this.updateMessageHash,
+            ...newObj
+        }
+        this.requestUpdate()
+        await this.getUpdateComplete()
+
+    }
+
+    async clearUpdateMessageHashmap(){
+        this.updateMessageHash = {}
+        this.requestUpdate()
+    }
+
+    findContent(identifier, data) {
+        const [type, id] = identifier.split('/');
+    
+        if (type === 'group') {
+            for (let group of data.groups) {
+                if (group.groupId === parseInt(id, 10)) {
+                    return group;
+                }
+            }
+        } else if (type === 'direct') {
+            for (let direct of data.direct) {
+                if (direct.address === id) {
+                    return direct;
+                }
+            }
+        }
+        return null;
+    }
+
+  
+
+    async processMessages(messages, isInitial, isUnread, count) {
         const isReceipient = this.chatId.includes('direct')
-        const decodedMessages = messages.map((eachMessage) => {
-
-            if (eachMessage.isText === true) {
-                this.messageSignature = eachMessage.signature
-                let _eachMessage = this.decodeMessage(eachMessage)
-                return _eachMessage
-            } else {
-                this.messageSignature = eachMessage.signature
-                let _eachMessage = this.decodeMessage(eachMessage)
-                return _eachMessage
+        let decodedMessages = []
+           if(!this.webWorkerDecodeMessages){
+            this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
+           }
+           if(!this.webWorkerSortMessages){
+            this.webWorkerSortMessages = new WebWorkerSortMessages()
+           }
+        await new Promise((res, rej) => {
+            this.webWorkerDecodeMessages.postMessage({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
+        
+            this.webWorkerDecodeMessages.onmessage = e => {
+                decodedMessages = e.data
+                res()
+             
             }
-        })
+            this.webWorkerDecodeMessages.onerror = () => {
+                rej()
+             
+            }
+          })
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
-            const replacedMessages = await replaceMessagesEdited({
-                decodedMessages: decodedMessages,
-                parentEpml,
-                isReceipient: isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey
-            })
+          
 
-            this._messages = replacedMessages.sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+            try {
+                queue.push(() => replaceMessagesEdited({
+                    decodedMessages: decodedMessages,
+                    parentEpml,
+                    isReceipient: isReceipient,
+                    decodeMessageFunc: this.decodeMessage,
+                    _publicKey: this._publicKey,
+                    addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+                }));
+            } catch (error) {
+                console.log({error})
+            }
+            
+
+        
+
+            let list = decodedMessages
+           
+            await new Promise((res) => {
+       
+                this.webWorkerSortMessages.postMessage({list});
+            
+                this.webWorkerSortMessages.onmessage = e => {
+              
+                    list = e.data
+                    res()
+                 
+                }
+              })
+           
+              this._messages  = list
 
             // TODO: Determine number of initial messages by screen height...
-            this.messagesRendered = this._messages
+            // this.messagesRendered = this._messages
+            const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
+
+          
+            if(isUnread){
+
+                this.messagesRendered = {
+                    messages: this._messages,
+                    type: 'initialLastSeen',
+                    lastReadMessageTimestamp,
+                    count
+                }
+
+                window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
+                    key: this.chatId,
+                    timestamp: Date.now()
+                }))
+            } else {
+                this.messagesRendered = {
+                    messages: this._messages,
+                    type: 'initial'
+                }
+            }
+            
             this.isLoadingMessages = false
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-            const replacedMessages = await replaceMessagesEdited({
+            
+            queue.push(() => replaceMessagesEdited({
                 decodedMessages: decodedMessages,
                 parentEpml,
                 isReceipient: isReceipient,
                 decodeMessageFunc: this.decodeMessage,
                 _publicKey: this._publicKey,
-                isNotInitial: true
-            })
+                isNotInitial: true,
+                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+            }));
 
-            const renderEachMessage = replacedMessages.map(async (msg) => {
+            const renderEachMessage = decodedMessages.map(async (msg) => {
                 await this.renderNewMessage(msg)
             })
 
@@ -2793,11 +2135,7 @@ class ChatPage extends LitElement {
                 }))
 
             }
-            // this.newMessages = this.newMessages.concat(_newMessages)
-            this.messagesRendered = [...this.messagesRendered].sort(function (a, b) {
-                return a.timestamp
-                    - b.timestamp
-            })
+            
         }
     }
 
@@ -2839,37 +2177,49 @@ class ChatPage extends LitElement {
 
     async renderNewMessage(newMessage) {
         if (newMessage.chatReference) {
-            const findOriginalMessageIndex = this.messagesRendered.findIndex(msg => msg.signature === newMessage.chatReference || (msg.chatReference && msg.chatReference === newMessage.chatReference))
-            if (findOriginalMessageIndex !== -1 && this.messagesRendered[findOriginalMessageIndex].sender === newMessage.sender) {
-                const newMessagesRendered = [...this.messagesRendered]
-                newMessagesRendered[findOriginalMessageIndex] = {
-                    ...newMessage, timestamp: newMessagesRendered[findOriginalMessageIndex].timestamp, senderName: newMessagesRendered[findOriginalMessageIndex].senderName,
-                    sender: newMessagesRendered[findOriginalMessageIndex].sender, editedTimestamp: newMessage.timestamp
-                }
-                this.messagesRendered = newMessagesRendered
-                await this.getUpdateComplete()
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'update',
             }
             return
         }
 
-        const viewElement = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
+        let viewElement = this.shadowRoot.querySelector('chat-scroller')
+        if(viewElement){
+            viewElement = viewElement.shadowRoot.getElementById('viewElement')
+        } else {
+            viewElement = null
+        }
 
         if (newMessage.sender === this.selectedAddress.address) {
 
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'newComingInAuto',
+            }
             await this.getUpdateComplete()
 
-            viewElement.scrollTop = viewElement.scrollHeight
+            // viewElement.scrollTop = viewElement.scrollHeight
         } else if (this.isUserDown) {
 
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'newComingInAuto',
+            }
             // Append the message and scroll to the bottom if user is down the page
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            // this.messagesRendered = [...this.messagesRendered, newMessage]
             await this.getUpdateComplete()
-
-            viewElement.scrollTop = viewElement.scrollHeight
+            if(viewElement){
+                viewElement.scrollTop = viewElement.scrollHeight
+            }
+           
         } else {
 
-            this.messagesRendered = [...this.messagesRendered, newMessage]
+            this.messagesRendered = {
+                messages: [newMessage],
+                type: 'newComingInAuto',
+            } 
             await this.getUpdateComplete()
 
             this.showNewMessageBar()
@@ -2931,7 +2281,9 @@ class ChatPage extends LitElement {
             } else {
                 // Fallback to http
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`
-            }
+            }   
+
+          
 
             this.webSocket = new WebSocket(directSocketLink)
             // Open Connection
@@ -2946,25 +2298,52 @@ class ChatPage extends LitElement {
                     directSocketTimeout = setTimeout(pingDirectSocket, 45000)
                     return
                 }
+               
                 if (initial === 0) {
+                    this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
-                    const cachedData = null
                     let getInitialMessages = []
-                    if (cachedData && cachedData.length !== 0) {
-                        const lastMessage = cachedData[cachedData.length - 1]
-                        const newMessages = await parentEpml.request('apiCall', {
+                    let count = 0
+                    let isUnread = false
+    
+                    const chatId = this.chatId
+                    const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+                    const chatInfoTimestamp = findContent.timestamp || 0
+                    const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
+    
+        
+                    if(lastReadMessageTimestamp && chatInfoTimestamp){
+                        if(lastReadMessageTimestamp < chatInfoTimestamp){
+                            isUnread = true
+                        }
+                    }
+                    if(isUnread){
+                        const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimitHalf}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
                         })
-                        getInitialMessages = [...cachedData, ...newMessages].slice(-20)
+                        const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                        })
+                         getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+                         const lastMessage = getInitialMessagesAfter.at(-1)
+                         if(lastMessage){
+                         count = await parentEpml.request('apiCall', {
+                            type: 'api',
+                            url: `/chat/messages/count?after=${lastMessage.timestamp}&involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=false`
+                        })
+                    }
                     } else {
                         getInitialMessages = await parentEpml.request('apiCall', {
                             type: 'api',
-                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=20&reverse=true&haschatreference=false&encoding=BASE64`
+                            url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
                         })
                     }
+                       
+                    
 
-                    this.processMessages(getInitialMessages, true)
+                    this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
 
@@ -2973,15 +2352,16 @@ class ChatPage extends LitElement {
                         if (e.data) {
                             this.processMessages(JSON.parse(e.data), false)
                         }
-                    } catch (error) {
-                    }
+                    } catch (error) { /* empty */ }
                 }
             }
 
             // Closed Event
             this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
+               
                 if (e.reason === 'switch chat') return
+              
                 restartDirectWebSocket()
             }
 
@@ -3015,7 +2395,7 @@ class ChatPage extends LitElement {
             let groupId = Number(gId)
 
             let initial = 0
-
+            let count = 0
             let groupSocketTimeout
 
             let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -3029,7 +2409,7 @@ class ChatPage extends LitElement {
                 // Fallback to http
                 groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
             }
-
+          
             this.webSocket = new WebSocket(groupSocketLink)
 
             // Open Connection
@@ -3045,26 +2425,53 @@ class ChatPage extends LitElement {
                     return
                 }
                 if (initial === 0) {
+                    this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
-                    const cachedData = null
                     let getInitialMessages = []
-                    if (cachedData && cachedData.length !== 0) {
+                    const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
 
-                        const lastMessage = cachedData[cachedData.length - 1]
+            let isUnread = false
+    
+            const chatId = this.chatId
+            const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+            const chatInfoTimestamp = findContent.timestamp || 0
 
-                        const newMessages = await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&after=${lastMessage.timestamp}&haschatreference=false&encoding=BASE64`
-                        })
-                        getInitialMessages = [...cachedData, ...newMessages].slice(-20)
-                    } else {
-                        getInitialMessages = await parentEpml.request('apiCall', {
-                            type: 'api',
-                            url: `/chat/messages?txGroupId=${groupId}&limit=20&reverse=true&haschatreference=false&encoding=BASE64`
-                        })
-                    }
+            if(lastReadMessageTimestamp && chatInfoTimestamp){
+                if(lastReadMessageTimestamp < chatInfoTimestamp){
+                    isUnread = true
+                }
+            }
+            if(isUnread){
+               
 
-                    this.processMessages(getInitialMessages, true)
+                const getInitialMessagesBefore = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimitHalf}&reverse=true&before=${lastReadMessageTimestamp}&haschatreference=false&encoding=BASE64`
+                })
+                const getInitialMessagesAfter = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimitHalf}&reverse=false&after=${lastReadMessageTimestamp - 1000}&haschatreference=false&encoding=BASE64`
+                })
+                 getInitialMessages = [...getInitialMessagesBefore, ...getInitialMessagesAfter]
+                 const lastMessage = getInitialMessagesAfter.at(-1)
+                 if(lastMessage){
+                    count = await parentEpml.request('apiCall', {
+                        type: 'api',
+                        url: `/chat/messages/count?after=${lastMessage.timestamp}&txGroupId=${groupId}&limit=20&reverse=false`
+                    })
+                 }
+                
+            } else {
+                getInitialMessages = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
+                })
+            }
+                       
+                    
+                    
+
+                    this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
                 } else {
@@ -3072,8 +2479,7 @@ class ChatPage extends LitElement {
                         if (e.data) {
                             this.processMessages(JSON.parse(e.data), false)
                         }
-                    } catch (error) {
-                    }
+                    } catch (error) { /* empty */ }
                 }
             }
 
@@ -3124,11 +2530,16 @@ class ChatPage extends LitElement {
         }
     }
 
-    async _sendMessage(outSideMsg, msg) {
+    async _sendMessage(outSideMsg, msg, messageQueue) {
+       const _chatId= this._chatId 
+       const isReceipient= this.isReceipient 
+       let _publicKey= this._publicKey 
+      const attachment= this.attachment
+     
         try {
             if (this.isReceipient) {
                 let hasPublicKey = true
-                if (!this._publicKey.hasPubKey) {
+                if (!_publicKey.hasPubKey) {
                     hasPublicKey = false
                     try {
                         const res = await parentEpml.request('apiCall', {
@@ -3136,20 +2547,19 @@ class ChatPage extends LitElement {
                             url: `/addresses/publickey/${this.selectedAddress.address}`
                         })
                         if (res.error === 102) {
-                            this._publicKey.key = ''
-                            this._publicKey.hasPubKey = false
+                            _publicKey.key = ''
+                            _publicKey.hasPubKey = false
                         } else if (res !== false) {
-                            this._publicKey.key = res
-                            this._publicKey.hasPubKey = true
+                            _publicKey.key = res
+                            _publicKey.hasPubKey = true
                             hasPublicKey = true
                         } else {
-                            this._publicKey.key = ''
-                            this._publicKey.hasPubKey = false
+                            _publicKey.key = ''
+                            _publicKey.hasPubKey = false
                         }
-                    } catch (error) {
-                    }
+                    } catch (error) { /* empty */ }
     
-                    if (!hasPublicKey || !this._publicKey.hasPubKey) {
+                    if (!hasPublicKey || !_publicKey.hasPubKey) {
                         let err4string = get("chatpage.cchange39")
                         parentEpml.request('showSnackBar', `${err4string}`)
                         return
@@ -3164,7 +2574,7 @@ class ChatPage extends LitElement {
             // create new var called repliedToData and use that to modify the UI
             // find specific object property in local
             let typeMessage = 'regular'
-            this.isLoading = true
+            // this.isLoading = true
             const trimmedMessage = msg
     
             const getName = async (recipient) => {
@@ -3231,7 +2641,7 @@ class ChatPage extends LitElement {
                             compressedFile = file
                             resolve()
                         },
-                        error(err) {
+                        error() {
                         },
                     })
                 })
@@ -3280,11 +2690,11 @@ class ChatPage extends LitElement {
                     isImageDeleted: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
                 this.isDeletingAttachment = true
                 let compressedFile = ''
-                var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+                const str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
                 const userName = outSideMsg.name
                 const identifier = outSideMsg.identifier
     
@@ -3328,7 +2738,7 @@ class ChatPage extends LitElement {
                             compressedFile = file
                             resolve()
                         },
-                        error(err) {
+                        error() {
                         },
                     })
                 })
@@ -3378,9 +2788,11 @@ class ChatPage extends LitElement {
                     isAttachmentDeleted: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'image') {
-                this.isUploadingImage = true
+                if(!this.imageFile.identifier){
+                    this.isUploadingImage = true
+                }
                 const userName = await getName(this.selectedAddress.address)
                 if (!userName) {
                     parentEpml.request('showSnackBar', get("chatpage.cchange27"))
@@ -3389,84 +2801,103 @@ class ChatPage extends LitElement {
                     this.imageFile = null
                     return
                 }
-                const arbitraryFeeData = await modalHelper.getArbitraryFee()
-                const res = await modalHelper.showModalAndWaitPublish(
-                    {
-                        feeAmount: arbitraryFeeData.feeToShow
+                
+               
+              let  service = "QCHAT_IMAGE"
+              let name = userName
+              let identifier
+                if(this.imageFile.identifier){
+                    identifier = this.imageFile.identifier
+                    name = this.imageFile.name
+                    service = this.imageFile.service
+                } else {
+                    const arbitraryFeeData = await modalHelper.getArbitraryFee()
+                    const res = await modalHelper.showModalAndWaitPublish(
+                        {
+                            feeAmount: arbitraryFeeData.feeToShow
+                        }
+                    );
+                if (res.action !== 'accept') throw new Error('User declined publish')
+        
+                    if (this.webWorkerFile) {
+                        this.webWorkerFile.terminate()
+                        this.webWorkerFile = null
                     }
-                );
-            if (res.action !== 'accept') throw new Error('User declined publish')
-    
-                if (this.webWorkerFile) {
-                    this.webWorkerFile.terminate()
-                    this.webWorkerFile = null
-                }
-    
-                this.webWorkerFile = new WebWorkerFile()
-    
-                const image = this.imageFile
-                const id = this.uid.rnd()
-                const identifier = `qchat_${id}`
-                let compressedFile = ''
-                await new Promise(resolve => {
-                    new Compressor(image, {
-                        quality: .6,
-                        maxWidth: 1200,
-                        success(result) {
-                            const file = new File([result], "name", {
-                                type: image.type
-                            })
-                            compressedFile = file
-                            resolve()
-                        },
-                        error(err) {
-                        },
+        
+                    this.webWorkerFile = new WebWorkerFile()
+                    const image = this.imageFile
+                    const id = this.uid.rnd()
+                    let groupPart 
+                    if(this.isReceipient){
+                        groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
+                    } else {
+                        groupPart = `group_${this._chatId}`
+                    }
+                     identifier = `qchat_${groupPart}_${id}`
+                    let compressedFile = ''
+                    await new Promise(resolve => {
+                        new Compressor(image, {
+                            quality: .6,
+                            maxWidth: 1200,
+                            mimeType: 'image/webp',
+                            success(result) {
+                                const file = new File([result], "name", {
+                                    type: 'image/webp'
+                                })
+                                compressedFile = file
+                                resolve()
+                            },
+                            error() {
+                            },
+                        })
                     })
-                })
-                const fileSize = compressedFile.size
-                if (fileSize > 500000) {
-                    parentEpml.request('showSnackBar', get("chatpage.cchange26"))
-                    this.isLoading = false
-                    this.isUploadingImage = false
-                    return
+                    const fileSize = compressedFile.size
+                    if (fileSize > 500000) {
+                        parentEpml.request('showSnackBar', get("chatpage.cchange26"))
+                        this.isLoading = false
+                        this.isUploadingImage = false
+                        return
+                    }
+                  
+                    try {
+                       
+                        await publishData({
+                            registeredName: userName,
+                            file: compressedFile,
+                            service: 'QCHAT_IMAGE',
+                            identifier: identifier,
+                            parentEpml,
+                            metaData: undefined,
+                            uploadType: 'file',
+                            selectedAddress: this.selectedAddress,
+                            worker: this.webWorkerFile,
+                            withFee: true,
+                            feeAmount: arbitraryFeeData.fee
+                        })
+                        this.isUploadingImage = false
+                        this.removeImage()
+                    } catch (error) {
+                        this.isLoading = false
+                        this.isUploadingImage = false
+                        return
+                    }
+        
                 }
-              
-                try {
-                   
-                    await publishData({
-                        registeredName: userName,
-                        file: compressedFile,
-                        service: 'QCHAT_IMAGE',
-                        identifier: identifier,
-                        parentEpml,
-                        metaData: undefined,
-                        uploadType: 'file',
-                        selectedAddress: this.selectedAddress,
-                        worker: this.webWorkerFile,
-                        withFee: true,
-                        feeAmount: arbitraryFeeData.fee
-                    })
-                    this.isUploadingImage = false
-                    this.removeImage()
-                } catch (error) {
-                    this.isLoading = false
-                    this.isUploadingImage = false
-                    return
-                }
-    
+               
                 const messageObject = {
                     messageText: trimmedMessage,
                     images: [{
-                        service: "QCHAT_IMAGE",
-                        name: userName,
-                        identifier: identifier
+                        service: service,
+                        name: name,
+                        identifier: identifier,
                     }],
                     isImageDeleted: false,
                     repliedTo: '',
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+                this.removeImage()
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'gif') {
                 const userName = await getName(this.selectedAddress.address)
                 if (!userName) {
@@ -3487,7 +2918,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'attachment') {
                 this.isUploadingAttachment = true
                 const userName = await getName(this.selectedAddress.address)
@@ -3504,8 +2935,8 @@ class ChatPage extends LitElement {
     
                 this.webWorkerFile = new WebWorkerFile()
     
-                const attachment = this.attachment
-                const id = this.uid.rnd()
+                // const attachment = attachment
+                const id = this.uid()
                 const identifier = `qchat_${id}`
                 const fileSize = attachment.size
                 if (fileSize > 1000000) {
@@ -3556,7 +2987,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (outSideMsg && outSideMsg.type === 'reaction') {
                 const userName = await getName(this.selectedAddress.address)
                 typeMessage = 'edit'
@@ -3611,7 +3042,7 @@ class ChatPage extends LitElement {
                     reactions
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (/^\s*$/.test(trimmedMessage)) {
                 this.isLoading = false
             } else if (this.repliedToMessageObj) {
@@ -3627,7 +3058,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage)
+               return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else if (this.editedMessageObj) {
                 typeMessage = 'edit'
                 let chatReference = this.editedMessageObj.signature
@@ -3650,7 +3081,7 @@ class ChatPage extends LitElement {
                     isEdited: true
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-                this.sendMessage(stringifyMessageObject, typeMessage, chatReference)
+                return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
             } else {
                 const messageObject = {
                     messageText: trimmedMessage,
@@ -3665,7 +3096,7 @@ class ChatPage extends LitElement {
                     this.myTrimmedMeassage = stringifyMessageObject
                     this.shadowRoot.getElementById('confirmDialog').open()
                 } else {
-                    this.sendMessage(stringifyMessageObject, typeMessage)
+                   return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
                 }
             }
         } catch (error) {
@@ -3676,21 +3107,31 @@ class ChatPage extends LitElement {
     
     }
 
-    async sendMessage(messageText, typeMessage, chatReference, isForward) {
-        this.isLoading = true
+    async sendMessage({messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey, messageQueue}) {
 
+        if(messageQueue){
+            this.addToQueue({messageText, typeMessage, chatReference, isForward, isReceipient, _chatId, _publicKey}, messageQueue);
+            this.resetChatEditor()
+            this.closeEditMessageContainer()
+            this.closeRepliedToContainer()
+            return
+        }
+        if(isForward){
+            this.isLoading = true
+        }
+     
         let _reference = new Uint8Array(64)
         window.crypto.getRandomValues(_reference)
         let reference = window.parent.Base58.encode(_reference)
         const sendMessageRequest = async () => {
-            if (this.isReceipient === true) {
+            if (isReceipient === true) {
                 let chatResponse = await parentEpml.request('chat', {
                     type: 18,
                     nonce: this.selectedAddress.nonce,
                     params: {
                         timestamp: Date.now(),
-                        recipient: this._chatId,
-                        recipientPublicKey: this._publicKey.key,
+                        recipient: _chatId,
+                        recipientPublicKey: _publicKey.key,
                         hasChatReference: typeMessage === 'edit' ? 1 : 0,
                         chatReference: chatReference,
                         message: messageText,
@@ -3700,14 +3141,14 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(chatResponse)
+               return _computePow(chatResponse)
             } else {
                 let groupResponse = await parentEpml.request('chat', {
                     type: 181,
                     nonce: this.selectedAddress.nonce,
                     params: {
                         timestamp: Date.now(),
-                        groupID: Number(this._chatId),
+                        groupID: Number(_chatId),
                         hasReceipient: 0,
                         hasChatReference: typeMessage === 'edit' ? 1 : 0,
                         chatReference: chatReference,
@@ -3718,7 +3159,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(groupResponse)
+               return _computePow(groupResponse)
             }
         }
 
@@ -3753,8 +3194,7 @@ class ChatPage extends LitElement {
                         publicKey.key = ''
                         publicKey.hasPubKey = false
                     }
-                } catch (error) {
-                }
+                } catch (error) { /* empty */ }
             }
 
             if (!this.forwardActiveChatHeadUrl.selected && this.shadowRoot.getElementById("sendTo").value !== "") {
@@ -3822,8 +3262,7 @@ class ChatPage extends LitElement {
                         publicKey.key = ''
                         publicKey.hasPubKey = false
                     }
-                } catch (error) {
-                }
+                } catch (error) { /* empty */ }
             }
 
             const isRecipient = this.forwardActiveChatHeadUrl.url.includes('direct') === true ? true : false
@@ -3907,29 +3346,40 @@ class ChatPage extends LitElement {
             })
 
             getSendChatResponse(_response, isForward)
+            return _response
         }
 
-        const getSendChatResponse = (response, isForward, customErrorMessage) => {
+        const getSendChatResponse = (response, isForward) => {
             if (response === true) {
-                this.resetChatEditor()
+                // this.resetChatEditor()
                 if (isForward) {
                     let successString = get("blockpage.bcchange15")
                     parentEpml.request('showSnackBar', `${successString}`)
+                    this.resetChatEditor()
+                    this.closeEditMessageContainer()
+                    this.closeRepliedToContainer()
+                    this.openForwardOpen = false
+                    this.forwardActiveChatHeadUrl = {
+                        url: "",
+                        name: "",
+                        selected: false
+                    }
+                    this.isLoading = false
                 }
 
-                this.closeEditMessageContainer()
-                this.closeRepliedToContainer()
-                this.openForwardOpen = false
-                this.forwardActiveChatHeadUrl = {
-                    url: "",
-                    name: "",
-                    selected: false
-                }
+                // this.closeEditMessageContainer()
+                // this.closeRepliedToContainer()
+                // this.openForwardOpen = false
+                // this.forwardActiveChatHeadUrl = {
+                //     url: "",
+                //     name: "",
+                //     selected: false
+                // }
             } else if (response.error) {
-                parentEpml.request('showSnackBar', response.message)
+                // parentEpml.request('showSnackBar', response.message)
             } else {
-                let err2string = get("chatpage.cchange21")
-                parentEpml.request('showSnackBar', `${customErrorMessage || err2string}`)
+                // let err2string = get("chatpage.cchange21")
+                // parentEpml.request('showSnackBar', `${customErrorMessage || err2string}`)
             }
             if (isForward && response !== true) {
                 this.isLoading = false
@@ -3943,7 +3393,7 @@ class ChatPage extends LitElement {
             sendForwardRequest()
             return
         }
-        sendMessageRequest()
+      return  sendMessageRequest()
     }
 
     /**
@@ -3966,6 +3416,8 @@ class ChatPage extends LitElement {
     }
 
     downElementObserver() {
+        const chatscrollerEl = this.shadowRoot.querySelector('chat-scroller')
+        if(!chatscrollerEl) return
         const downObserver = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('downObserver')
 
         const options = {

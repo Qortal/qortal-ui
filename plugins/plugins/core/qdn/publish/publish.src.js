@@ -276,7 +276,7 @@ class PublishData extends LitElement {
                         <p>
                             <mwc-select id="category" label="${translate("publishpage.pchange7")}" index="0" style="min-width: 130px; max-width:100%; width:100%;">
                                 ${this.categories.map((c, index) => html`
-                                    <mwc-list-item value="${c.id}">${c.name}</mwc-list-item>
+                                    <mwc-list-item style="color:var(--black)" value="${c.id}">${c.name}</mwc-list-item>
                                 `)}
                             </mwc-select>
                         </p>
@@ -300,7 +300,9 @@ class PublishData extends LitElement {
                     <p style="color: green; word-break: break-word;">${this.successMessage}</p>
                     ${this.loading ? html` <paper-progress indeterminate style="width:100%; margin:4px;"></paper-progress> ` : ''}
                     <div class="buttons">
-                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => this.shadowRoot.querySelector('#publishWithFeeDialog').close()}> ${translate("appspage.schange40")}</mwc-button>
+                            <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="science" @click=${(e) => {
+                                this.doPublish(e, true, false)}
+                            }> ${translate("appspage.schange40")}</mwc-button>
                             <mwc-button ?disabled=${this.btnDisable} style="width:49%;" raised icon="send" @click=${(e) => {
                                 this.doPublish(e, false, true)
                             }}> ${translate("publishpage.pchange11")}</mwc-button>

@@ -200,6 +200,8 @@
 		"snack3": "Successfully added and saved custom node",
 		"snack4": "Nodes successfully saved as",
 		"snack5": "Nodes successfully imported",
+		"snack6": "Successfully removed custom node",
+		"snack7": "Successfully edited custom node",
 		"exp1": "Export Private Master Key",
 		"exp2": "Export Master Key",
 		"exp3": "Export",
@@ -519,7 +521,8 @@
 		"nchange44": "To the new name",
 		"nchange45": "On pressing confirm, the name update request will be sent!",
 		"nchange46": "Name Sale History",
-		"nchange47": "Name Update Successful!"
+		"nchange47": "Name Update Successful!",
+		"nchange48": "Warning! If you update your name, you will forfeit the resources associated with the original name. In other words, you will lose ownership of the content under the original name in the QDN. Proceed with caution!"
 	},
 	"websitespage": {
 		"schange1": "Browse Websites",
@@ -829,7 +832,14 @@
 		"cchange80": "This image has been deleted",
 		"cchange81": "This image type is not supported",
 		"cchange82": "This attachment has been deleted",
-		"cchange90": "No messages"
+		"cchange90": "No messages",
+		"cchange91": "Sending...",
+		"cchange92": "Unread messages below",
+		"cchange93": "Image copied to clipboard",
+		"cchange94": "loaded",
+		"cchange95": "Only my resources",
+		"cchange96": "Open Group Management",
+		"cchange97": "Join group link copied to clipboard"
 	},
 	"welcomepage": {
 		"wcchange1": "Welcome to Q-Chat",
@@ -1161,5 +1171,10 @@
 		"lot11": "There are no open lotteries!",
 		"lot12": "There are no finished lotteries!",
 		"lot13": "Players"
+	},
+	"notifications": {
+		"notify1": "Confirming transaction",
+		"notify2": "Transaction confirmed",
+		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon."
 	}
 }
