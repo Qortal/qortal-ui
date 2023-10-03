@@ -42,6 +42,8 @@ import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
 import './start-minting.js'
 import './notification-view/notification-bell.js'
+import './notification-view/notification-bell-general.js'
+
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -556,7 +558,10 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
+                            <div style="display:flex;align-items:center;gap:20px">
                             <notification-bell></notification-bell>
+                            <notification-bell-general></notification-bell-general>
+                            </div>
                             <div style="display: inline;">
                                 <span>
                                     <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">

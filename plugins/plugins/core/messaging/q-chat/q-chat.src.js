@@ -1,10 +1,9 @@
-import { LitElement, html, css } from 'lit'
+import { LitElement, html } from 'lit'
 import { render } from 'lit/html.js'
 import { passiveSupport } from 'passive-events-support/src/utils'
 import { Epml } from '../../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { get, translate } from 'lit-translate'
 import { qchatStyles } from './q-chat-css.src.js'
-import { repeat } from 'lit/directives/repeat.js'
 import { Editor, Extension } from '@tiptap/core'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker.src.js'
@@ -13,19 +12,22 @@ import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import snackbar from '../../components/snackbar.js'
+import ShortUniqueId from 'short-unique-id';
 
 import '../../components/ChatWelcomePage.js'
 import '../../components/ChatHead.js'
 import '../../components/ChatPage.js'
 import '../../components/WrapperModal.js'
 import '../../components/ChatSearchResults.js'
-
+import '../../components/ChatGroupsModal.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
+import '@vaadin/tooltip';
+
 
 passiveSupport({ events: ['touchstart'] })
 
@@ -53,15 +55,20 @@ class Chat extends LitElement {
             userFoundModalOpen: { type: Boolean },
             userSelected: { type: Object },
             editor: {type: Object},
-            groupInvites: { type: Array }
+            groupInvites: { type: Array },
+            loggedInUserName: {type: String},
+            loggedInUserAddress: {type: String},
+            openDialogGroupsModal: {type: Boolean}
         }
     }
 
-    static styles = [qchatStyles]
+    static get styles() {
+		return [qchatStyles];
+	}
 
     constructor() {
         super()
-        this.selectedAddress = {}
+        this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
         this.config = {
             user: {
                 node: {
@@ -92,12 +99,15 @@ class Chat extends LitElement {
         this.userFoundModalOpen = false
         this.userSelected = {}
         this.groupInvites = []
+        this.loggedInUserName = ""
+        this.openDialogGroupsModal = false
+        this.uid = new ShortUniqueId();
+
     }
 
     async setActiveChatHeadUrl(url) {
-        this.activeChatHeadUrl = ''
-        await this.updateComplete;
         this.activeChatHeadUrl = url
+        this.requestUpdate()
     }   
 
     resetChatEditor(){
@@ -146,6 +156,8 @@ class Chat extends LitElement {
 
           this.unsubscribeStore =  window.parent.reduxStore.subscribe(() => {
             try {
+                const currentState = window.parent.reduxStore.getState();
+
                 if(window.parent.location && window.parent.location.search) {
                     const queryString = window.parent.location.search
                     const params = new URLSearchParams(queryString)
@@ -157,8 +169,13 @@ class Chat extends LitElement {
                         this.setActiveChatHeadUrl(chat)
                     }
                 }
-            } catch (error) {
-            }
+                if(currentState.app.accountInfo && currentState.app.accountInfo.names && currentState.app.accountInfo.names.length > 0 && this.loggedInUserName !== currentState.app.accountInfo.names[0].name){
+                    this.loggedInUserName = currentState.app.accountInfo.names[0].name
+                }
+                if(currentState.app.accountInfo && currentState.app.accountInfo.addressInfo && currentState.app.accountInfo.addressInfo.address && this.loggedInUserAddress !== currentState.app.accountInfo.addressInfo.address){
+                    this.loggedInUserAddress = currentState.app.accountInfo.addressInfo.address
+                }
+            } catch (error) { /* empty */ }
           })
       }
 
@@ -178,44 +195,74 @@ class Chat extends LitElement {
         })
     }
 
+    setOpenDialogGroupsModal(val){
+        this.openDialogGroupsModal = val
+    }
+
+    openTabToGroupManagement(){
+        window.parent.reduxStore.dispatch(
+            window.parent.reduxAction.setNewTab({
+                url: `group-management`,
+                id: this.uid.rnd(),
+                myPlugObj: {
+                    "url": "group-management",
+                    "domain": "core",
+                    "page": "group-management/index.html",
+                    "title": "Group Management",
+                    "icon": "vaadin:group",
+                    "mwcicon": "group",
+                    "pluginNumber": "plugin-fJZNpyLGTl",
+                    "menus": [],
+                    "parent": false
+                },
+                openExisting: true
+            })
+        );
+    }
+
     render() {
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
                     <div class="search">
-                        <div class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
-                            ${translate("chatpage.cchange1")}
+                        <div id="openPrivateMessage" class="create-chat" @click=${() => { this.openPrivateMessage = true }}>
+                        <mwc-icon style="color: var(--black);">edit_square</mwc-icon>
+                        <vaadin-tooltip
+                        for="openPrivateMessage"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange1')}>
+                    </vaadin-tooltip>
+                    </div>
+                    <div style="display:flex; align-items:center;gap:10px">
+                       
+                        <div id="goToGroup" class="create-chat" @click=${() => { this.openTabToGroupManagement() }}>
+                        <mwc-icon style="color: var(--black);">group_add</mwc-icon>
+                        <vaadin-tooltip
+                        for="goToGroup"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange96')}>
+                    </vaadin-tooltip>
+                        </div>
+                        <div id="blockedUsers" class="create-chat" @click=${() => { this.shadowRoot.querySelector('#blockedUserDialog').show() }}>
+                        <mwc-icon style="color: var(--black);">person_off</mwc-icon>
+                        <vaadin-tooltip
+                        for="blockedUsers"
+                        position="top"
+                        hover-delay=${200}
+                        hide-delay=${1}
+                        text=${get('chatpage.cchange3')}>
+                    </vaadin-tooltip>
+                        </div>
                         </div>
                     </div>
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
-                    <div class="blockedusers">
-                        <!-- <div class="groups-button-container">
-                                <button 
-                                    @click=${() => { this.redirectToGroups() }}
-                                    class="groups-button">
-                                    <mwc-icon>groups</mwc-icon>
-                                    ${translate("sidemenu.groupmanagement")}
-                                </button>
-                            ${this.groupInvites.length > 0 ? (
-                                html`                                
-                                <div class="groups-button-notif">
-                                   ${this.groupInvites.length} 
-                                </div>
-                                <div class="groups-button-notif-number">
-                                    ${this.groupInvites.length} ${translate("chatpage.cchange60")}
-                                </div>
-                                `
-                            ) : null} 
-                        </div> -->
-                        <mwc-button 
-                            raised 
-                            label="${translate("chatpage.cchange3")}" 
-                            icon="person_off" 
-                            @click=${() => this.shadowRoot.querySelector('#blockedUserDialog').show()}>
-                        </mwc-button>
-                    </div>
+                  
                 </div>
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
@@ -370,7 +417,7 @@ class Chat extends LitElement {
                    </mwc-button>
                 </mwc-dialog>
             </div>
-  
+   
         `
     }
 
@@ -432,23 +479,32 @@ class Chat extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-        if (!isElectron()) {
-        } else {
+        if (!isElectron()) { /* empty */ } else {
             window.addEventListener('contextmenu', (event) => {
-                event.preventDefault()
-                window.parent.electronAPI.showMyMenu()
-            })
+                // Check if the clicked element has the class
+                let target = event.target;
+                while (target !== null) {
+                    if (target.classList && target.classList.contains('customContextMenuDiv')) {
+                        // Your custom context menu logic
+                        this.showContextMenu(event);
+                        return;
+                    }
+                    target = target.parentNode;
+                }
+    
+                // If it doesn't, show the default Electron context menu
+                event.preventDefault();
+                window.parent.electronAPI.showMyMenu();
+            });
+
+
+         
         }
 
         let configLoaded = false
 
         parentEpml.ready().then(() => {
-            parentEpml.subscribe('selected_address', async selectedAddress => {
-                this.selectedAddress = {}
-                selectedAddress = JSON.parse(selectedAddress)
-                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-                this.selectedAddress = selectedAddress
-            })
+          
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(getBlockedUsers, 1)
@@ -464,6 +520,7 @@ class Chat extends LitElement {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
             }).then(res => {
                 this.balance = res
+                this.requestUpdate()
             })
         })
         parentEpml.imReady()
@@ -473,9 +530,10 @@ class Chat extends LitElement {
         }, 60000)
     }
 
+   
+
     clearConsole() {
-        if (!isElectron()) {
-        } else {
+        if (!isElectron()) { /* empty */ } else {
             console.clear()
             window.parent.electronAPI.clearCache()
         }
@@ -565,7 +623,7 @@ class Chat extends LitElement {
             recipient = _recipient
         } else {
             recipient = myNameRes.owner
-        };
+        }
       
         const getAddressPublicKey = async () => {
             let isEncrypted;
@@ -620,7 +678,7 @@ class Chat extends LitElement {
             const worker = new WebWorker()
             let nonce = null
             let chatBytesArray = null;
-              await new Promise((res, rej) => {
+              await new Promise((res) => {
                 worker.postMessage({chatBytes, path, difficulty})
                 worker.onmessage = e => {
                     worker.terminate()
@@ -669,7 +727,7 @@ class Chat extends LitElement {
     }
 
     renderLoadingText() {
-        return html`${translate("chatpage.cchange2")}`
+        return html`<div style="width:100%;display:flex;justify-content:center"> <paper-spinner-lite active></paper-spinner-lite></div>`
     }
 
     renderSendText() {
@@ -833,6 +891,9 @@ class Chat extends LitElement {
                 chatId=${this.activeChatHeadUrl} 
                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                 .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}
+                balance=${this.balance}
+                loggedInUserName=${this.loggedInUserName}
+                loggedInUserAddress=${this.loggedInUserAddress}
             >
             </chat-page>
         `
@@ -897,7 +958,15 @@ class Chat extends LitElement {
 
     scrollToBottom() {
         const viewElement = this.shadowRoot.querySelector('chat-page').shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById('viewElement')
-        viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
+
+        const chatScrollerElement = this.shadowRoot.querySelector('chat-page').shadowRoot.querySelector('chat-scroller')
+        if (chatScrollerElement && chatScrollerElement.disableAddingNewMessages) {
+            const chatPageElement = this.shadowRoot.querySelector('chat-page')
+            if(chatPageElement && chatPageElement.getLastestMessages)
+            chatPageElement.getLastestMessages()
+        } else {
+            viewElement.scroll({ top: viewElement.scrollHeight, left: 0, behavior: 'smooth' })
+        }
     }
 
     showNewMessageBar() {

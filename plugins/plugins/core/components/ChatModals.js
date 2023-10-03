@@ -9,29 +9,29 @@ import '@material/mwc-dialog'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChatModals extends LitElement {
-  static get properties() {
-    return {
-      openDialogPrivateMessage: {type: Boolean},
-      openDialogBlockUser: {type: Boolean},
-      isLoading: { type: Boolean },
-      nametodialog: { type: String, attribute: true },
-      hidePrivateMessageModal: {type: Function},
-      hideBlockUserModal: {type: Function},
-      toblockaddress: { type: String, attribute: true },
-      chatBlockedAdresses: { type: Array }
+    static get properties() {
+        return {
+            openDialogPrivateMessage: { type: Boolean },
+            openDialogBlockUser: { type: Boolean },
+            isLoading: { type: Boolean },
+            nametodialog: { type: String, attribute: true },
+            hidePrivateMessageModal: { type: Function },
+            hideBlockUserModal: { type: Function },
+            toblockaddress: { type: String, attribute: true },
+            chatBlockedAdresses: { type: Array }
+        }
     }
-  }
 
-  constructor() {
-    super()
-    this.isLoading = false
-    this.hidePrivateMessageModal = () => {}
-    this.hideBlockUserModal = () => {}
-    this.chatBlockedAdresses = []
-  }
+    constructor() {
+        super()
+        this.isLoading = false
+        this.hidePrivateMessageModal = () => { }
+        this.hideBlockUserModal = () => { }
+        this.chatBlockedAdresses = []
+    }
 
-  static get styles() {
-    return css`
+    static get styles() {
+        return css`
       .input {
         width: 90%;
         border: none;
@@ -60,52 +60,48 @@ class ChatModals extends LitElement {
         --mdc-theme-primary: red;
     }
     `
-  }
-
-  firstUpdated() {
-
-    const stopKeyEventPropagation = (e) => {
-        e.stopPropagation();
-        return false;
     }
 
-    this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation);
-    this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
+    firstUpdated() {
 
-    parentEpml.ready().then(() => {
-        parentEpml.subscribe('selected_address', async selectedAddress => {
-            this.selectedAddress = {}
-            selectedAddress = JSON.parse(selectedAddress)
-            if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
-            this.selectedAddress = selectedAddress
+        const stopKeyEventPropagation = (e) => {
+            e.stopPropagation();
+            return false;
+        }
+
+        this.shadowRoot.getElementById('sendTo').addEventListener('keydown', stopKeyEventPropagation);
+        this.shadowRoot.getElementById('messageBox').addEventListener('keydown', stopKeyEventPropagation);
+
+        parentEpml.ready().then(() => {
+            parentEpml.subscribe('selected_address', async selectedAddress => {
+                this.selectedAddress = {}
+                selectedAddress = JSON.parse(selectedAddress)
+                if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+                this.selectedAddress = selectedAddress
+            })
+
         })
-        parentEpml.request('apiCall', {
-            url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
-        }).then(res => {
-            this.balance = res
-        })
-    })
-    parentEpml.imReady()
+        parentEpml.imReady()
 
     }
 
-      // Send Private Message
+    // Send Private Message
 
-  _sendMessage() {
-    this.isLoading = true;
+    _sendMessage() {
+        this.isLoading = true;
 
-    const recipient = this.shadowRoot.getElementById('sendTo').value;
-    const messageBox = this.shadowRoot.getElementById('messageBox');
-    const messageText = messageBox.value;
+        const recipient = this.shadowRoot.getElementById('sendTo').value;
+        const messageBox = this.shadowRoot.getElementById('messageBox');
+        const messageText = messageBox.value;
 
-    if (recipient.length === 0) {
-        this.isLoading = false
-    } else if (messageText.length === 0) {
-        this.isLoading = false
-    } else {
-        this.sendMessage()
+        if (recipient.length === 0) {
+            this.isLoading = false
+        } else if (messageText.length === 0) {
+            this.isLoading = false
+        } else {
+            this.sendMessage()
+        }
     }
-  }
 
     async sendMessage() {
         this.isLoading = true
@@ -172,77 +168,77 @@ class ChatModals extends LitElement {
             }
         };
 
-    const sendMessageRequest = async (isEncrypted, _publicKey) => {
-        const messageObject = {
-            messageText,
-            images: [''],
-            repliedTo: '',
-            version: 1
-        }
-        const stringifyMessageObject = JSON.stringify(messageObject)
-        let chatResponse = await parentEpml.request('chat', {
-            type: 18,
-            nonce: this.selectedAddress.nonce,
-            params: {
-                timestamp: sendTimestamp,
-                recipient: recipient,
-                recipientPublicKey: _publicKey,
-                hasChatReference: 0,
-                message: stringifyMessageObject,
-                lastReference: reference,
-                proofOfWorkNonce: 0,
-                isEncrypted: isEncrypted,
-                isText: 1
+        const sendMessageRequest = async (isEncrypted, _publicKey) => {
+            const messageObject = {
+                messageText,
+                images: [''],
+                repliedTo: '',
+                version: 1
             }
-        })
-        _computePow(chatResponse)
-    }
+            const stringifyMessageObject = JSON.stringify(messageObject)
+            let chatResponse = await parentEpml.request('chat', {
+                type: 18,
+                nonce: this.selectedAddress.nonce,
+                params: {
+                    timestamp: sendTimestamp,
+                    recipient: recipient,
+                    recipientPublicKey: _publicKey,
+                    hasChatReference: 0,
+                    message: stringifyMessageObject,
+                    lastReference: reference,
+                    proofOfWorkNonce: 0,
+                    isEncrypted: isEncrypted,
+                    isText: 1
+                }
+            })
+            _computePow(chatResponse)
+        }
 
-    const _computePow = async (chatBytes) => {
+        const _computePow = async (chatBytes) => {
 
-        const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; })
-        const chatBytesArray = new Uint8Array(_chatBytesArray)
-        const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
-        const hashPtr = window.parent.sbrk(32, window.parent.heap)
-        const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
-        hashAry.set(chatBytesHash)
+            const _chatBytesArray = Object.keys(chatBytes).map(function (key) { return chatBytes[key]; })
+            const chatBytesArray = new Uint8Array(_chatBytesArray)
+            const chatBytesHash = new window.parent.Sha256().process(chatBytesArray).finish().result
+            const hashPtr = window.parent.sbrk(32, window.parent.heap)
+            const hashAry = new Uint8Array(window.parent.memory.buffer, hashPtr, 32)
+            hashAry.set(chatBytesHash)
 
-        const difficulty = this.balance < 4 ? 18 : 8
+            const difficulty = this.balance < 4 ? 18 : 8
 
-        const workBufferLength = 8 * 1024 * 1024;
-        const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
+            const workBufferLength = 8 * 1024 * 1024;
+            const workBufferPtr = window.parent.sbrk(workBufferLength, window.parent.heap)
 
-        let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
+            let nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
 
-        let _response = await parentEpml.request('sign_chat', {
-            nonce: this.selectedAddress.nonce,
-            chatBytesArray: chatBytesArray,
-            chatNonce: nonce
-        })
-        getSendChatResponse(_response)
-    }
+            let _response = await parentEpml.request('sign_chat', {
+                nonce: this.selectedAddress.nonce,
+                chatBytesArray: chatBytesArray,
+                chatNonce: nonce
+            })
+            getSendChatResponse(_response)
+        }
 
-      const getSendChatResponse = (response) => {
+        const getSendChatResponse = (response) => {
 
-          if (response === true) {
-              messageBox.value = ''
-              let err2string = get('welcomepage.wcchange8')
-              parentEpml.request('showSnackBar', `${err2string}`)
-              this.isLoading = false
-              this.shadowRoot.querySelector('#startPmDialog').close()
-          } else if (response.error) {
-              parentEpml.request('showSnackBar', response.message)
-              this.isLoading = false
-              this.shadowRoot.querySelector('#startPmDialog').close()
-          } else {
-              let err3string = get('welcomepage.wcchange9')
-              parentEpml.request('showSnackBar', `${err3string}`)
-              this.isLoading = false
-              this.shadowRoot.querySelector('#startPmDialog').close()
-          }
+            if (response === true) {
+                messageBox.value = ''
+                let err2string = get('welcomepage.wcchange8')
+                parentEpml.request('showSnackBar', `${err2string}`)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            } else if (response.error) {
+                parentEpml.request('showSnackBar', response.message)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            } else {
+                let err3string = get('welcomepage.wcchange9')
+                parentEpml.request('showSnackBar', `${err3string}`)
+                this.isLoading = false
+                this.shadowRoot.querySelector('#startPmDialog').close()
+            }
 
-      }
-      getAddressPublicKey()
+        }
+        getAddressPublicKey()
     }
 
     _textArea(e) {
@@ -276,8 +272,8 @@ class ChatModals extends LitElement {
                 fetch(`${nodeUrl}/names/address/${item}?limit=0&reverse=true`).then(res => {
                     return res.json()
                 }).then(jsonRes => {
-                    if(jsonRes.length) {
-                        jsonRes.map (item => {
+                    if (jsonRes.length) {
+                        jsonRes.map(item => {
                             obj.push(item)
                         })
                     } else {
@@ -291,7 +287,7 @@ class ChatModals extends LitElement {
 
     relMessages() {
         setTimeout(() => {
-            window.location.href = window.location.href.split( '#' )[0]
+            window.location.href = window.location.href.split('#')[0]
         }, 500)
     }
 
@@ -345,8 +341,8 @@ class ChatModals extends LitElement {
         return ret
     }
 
-  render() {
-    return html`
+    render() {
+        return html`
           <mwc-dialog  
           id='sendPMDialog'
           tabindex='0'
@@ -366,9 +362,9 @@ class ChatModals extends LitElement {
               <textarea class='textarea' @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id='messageBox' placeholder='${translate('welcomepage.wcchange5')}' rows='1'></textarea>
           </p>
           <mwc-button ?disabled='${this.isLoading}' slot='primaryAction' @click=${() => {
-            this._sendMessage();
-          }
-        }>${translate('welcomepage.wcchange6')}
+                this._sendMessage();
+            }
+            }>${translate('welcomepage.wcchange6')}
         </mwc-button>
           <mwc-button
               ?disabled='${this.isLoading}'
@@ -409,7 +405,7 @@ class ChatModals extends LitElement {
             </mwc-button>
         </mwc-dialog>
     `;
-  }
+    }
 }
 
 customElements.define('chat-modals', ChatModals)

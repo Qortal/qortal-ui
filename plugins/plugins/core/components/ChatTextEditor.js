@@ -36,7 +36,8 @@ class ChatTextEditor extends LitElement {
             isEnabledChatEnter: {type: Boolean},
             openGifModal: { type: Boolean },
             setOpenGifModal: { attribute: false },
-            chatId: {type: String}
+            chatId: {type: String},
+            messageQueue: {type: Array}
 		}
 	}
 
@@ -170,7 +171,7 @@ class ChatTextEditor extends LitElement {
             padding: 0px 10px;
             height: 100%;
     display: flex;
-    align-items: center;
+    align-items: safe center;
         }
         .element::-webkit-scrollbar-track {
                         background-color: whitesmoke;
@@ -376,6 +377,8 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         this.userName = window.parent.reduxStore.getState().app.accountInfo.names[0]
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.editor = null
+        this.messageQueue = []
+
 	}
 
 	render() {
@@ -499,7 +502,11 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" />
                     </div>     
                 </div>
-                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
+                <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"
+           
+                >
+
+                ></textarea>
                 <div id=${this.iframeId}
                 class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}
                 ></div>
@@ -515,7 +522,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 icon="vaadin:check"
                                 slot="icon"
                                 @click=${() => {
-                                    this.sendMessageFunc();
+                                    this.sendMessageFunc(this.messageQueue);
                                 }}
                                 >
                             </vaadin-icon>
@@ -538,7 +545,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 alt="send-icon" 
                                 class="send-icon" 
                                 @click=${() => {
-                                    this.sendMessageFunc();
+                                    this.sendMessageFunc(this.messageQueue);
                                 }} 
                                 />
                             ` : 
@@ -568,6 +575,29 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
            }
 	}
+
+    async handlePasteEvent(e) {
+        if (e.type === 'paste') {
+            e.preventDefault();
+            const item_list = await navigator.clipboard.read();
+            let image_type; // we will feed this later
+            const item = item_list.find( item => // choose the one item holding our image
+                item.types.some( type => { 
+                if (type.startsWith( 'image/')) {
+                    image_type = type; 
+                    return true;
+                }
+            })
+            );
+            if(item){
+                const blob = item && await item.getType( image_type );
+            var file = new File([blob], "name", {
+            type: image_type
+            });
+            this.insertFile(file);
+            } 
+        }
+    }
 
 	async firstUpdated() {      
         window.addEventListener('storage', () => {
@@ -648,7 +678,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             return;
         }
         this.chatMessageSize = 0;
-        this._sendMessage(props, this.editor.getJSON());
+        this._sendMessage(props, this.editor.getJSON(), this.messageQueue);
     }
 
     getMessageSize(message){

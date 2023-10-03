@@ -1743,6 +1743,12 @@ class GroupManagement extends LitElement {
             })
             return joinedG
         }
+        const getGroupInfo = async (groupId) => {
+            let joinedG = await parentEpml.request('apiCall', {
+                url: `/groups/${groupId}`
+            })
+            return joinedG
+        }
 
         const getGroupInvites = async () => {
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -1838,6 +1844,25 @@ class GroupManagement extends LitElement {
                 selectedAddress = JSON.parse(selectedAddress)
                 if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
                 this.selectedAddress = selectedAddress
+            })
+            parentEpml.subscribe('side_effect_action', async sideEffectActionParam => {
+                const sideEffectAction = JSON.parse(sideEffectActionParam)
+
+                if(sideEffectAction && sideEffectAction.type === 'openJoinGroupModal'){
+                   const res = await getGroupInfo(sideEffectAction.data)
+                   if(res && res.groupId){
+                    if(res.isOpen){
+                        this.joinGroup(res)
+
+                    } else {
+                        let snackbarstring = get("managegroup.mg45")
+                        parentEpml.request('showSnackBar', `${snackbarstring}`)
+                    }   
+                   }
+                   window.parent.reduxStore.dispatch(
+                    window.parent.reduxAction.setSideEffectAction(null)
+                );
+                }
             })
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
@@ -2849,6 +2874,17 @@ class GroupManagement extends LitElement {
         }
     }
 
+    setTxNotification(tx){
+        window.parent.reduxStore.dispatch(
+            window.parent.reduxAction.setNewNotification({
+                type: 'JOIN_GROUP',
+                status: 'confirming',
+                reference: tx,
+                timestamp: Date.now()
+            })
+        );
+    }
+
     async _joinGroup(groupId, groupName) {
         this.resetDefaultSettings()
         const joinFeeInput = this.joinFee
@@ -2885,7 +2921,8 @@ class GroupManagement extends LitElement {
                     lastReference: lastRef,
                     groupdialog1: groupdialog1,
                     groupdialog2: groupdialog2
-                }
+                },
+                apiVersion: 2
             })
             return myTxnrequest
         }
@@ -2897,6 +2934,12 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
                 this.message = this.renderErr8Text()
+                this.setTxNotification({
+                    groupName,
+                    groupId,
+                    timestamp: Date.now(),
+                    ...(txnResponse.data || {})
+                })
                 this.error = false
             } else {
                 this.error = true

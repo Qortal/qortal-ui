@@ -21,6 +21,7 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
 import '@vaadin/text-field'
+import { warningModal } from '../../utils/warning-modal.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -753,7 +754,16 @@ class NameRegistration extends LitElement {
         return html`<mwc-button class="warning" @click=${() => this.openUpdateNameDialog(nameObj)}><mwc-icon>update</mwc-icon>&nbsp;${translate("publishpage.pchange2")} ${translate("login.name")}</mwc-button>`
     }
 
-    openUpdateNameDialog(nameObj) {
+    async openUpdateNameDialog(nameObj) {
+        const res = await warningModal.showModalAndWaitPublish(
+            {
+                message: get('registernamepage.nchange48')
+            }
+        );
+        if (res.action !== 'accept'){
+            this.closeUpdateNameDialog()
+            return
+        }
         this.toUpdateName = ''
         this.shadowRoot.getElementById("oldNameInput").value = ''
         this.shadowRoot.getElementById("newNameInput").value = ''
