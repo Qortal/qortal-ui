@@ -24,7 +24,6 @@ const os = require("os")
 const electronDl = require('electron-dl')
 const Store = require('electron-store')
 const extract = require('extract-zip')
-const fetch = require('node-fetch')
 const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
@@ -67,11 +66,15 @@ setInterval (function() {
 if (process.arch === 'arm') {
 	app.disableHardwareAcceleration()
 	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+        app.commandLine.appendSwitch('disable-software-rasterizer')
+        app.commandLine.appendSwitch('in-process-gpu')
 	log.info('We are on 32bit. Hardware Acceleration is disabled !')
 } else {
 	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 	app.commandLine.appendSwitch('disable-renderer-backgrounding')
 	app.commandLine.appendSwitch('disable-http-cache')
+        app.commandLine.appendSwitch('disable-software-rasterizer')
+        app.commandLine.appendSwitch('in-process-gpu')
 	log.info('We are on 64bit. Hardware Acceleration is enabled !')
 }
 
@@ -838,7 +841,7 @@ function createWindow() {
 			contextIsolation: true,
 			enableRemoteModule: false,
 			allowRunningInsecureContent: false,
-			experimentalFeatures: false,
+			experimentalFeatures: true,
 			preload: path.join(__dirname, '/lib/preload.js')
 		},
 		show: false
