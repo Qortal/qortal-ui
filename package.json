@@ -27,12 +27,14 @@
 		"build-electron": "electron-builder build  --publish never",
 		"deploy-electron": "electron-builder build --win --publish never",
 		"release": "NODE_ENV=production electron-builder build --publish never",
-		"publish": "electron-builder -p always"
+		"publish": "electron-builder -p always",
+		"lint": "eslint './**/*.{js,mjs}'"
 	},
 	"dependencies": {
 		"@hapi/hapi": "21.3.2",
 		"@hapi/inert": "7.1.0",
 		"@lit-labs/motion": "1.0.4",
+		"@popperjs/core": "^2.11.8",
 		"@tiptap/core": "2.0.4",
 		"@tiptap/extension-highlight": "2.0.4",
 		"@tiptap/extension-image": "2.0.4",
@@ -125,6 +127,9 @@
 		"electron-builder": "24.6.4",
 		"electron-packager": "17.1.2",
 		"epml": "0.3.3",
+		"eslint": "^8.50.0",
+		"eslint-plugin-lit": "^1.9.1",
+		"eslint-plugin-wc": "^2.0.3",
 		"file-saver": "2.0.5",
 		"highcharts": "11.1.0",
 		"html-escaper": "3.0.3",
