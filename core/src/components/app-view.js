@@ -43,6 +43,7 @@ import '../functional-components/side-menu-item.js'
 import './start-minting.js'
 import './notification-view/notification-bell.js'
 import './notification-view/notification-bell-general.js'
+import './friends-view/friends-side-panel-parent.js'
 
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -559,8 +560,10 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:20px">
+                            <friends-side-panel-parent></friends-side-panel-parent>
                             <notification-bell></notification-bell>
                             <notification-bell-general></notification-bell-general>
+                            
                             </div>
                             <div style="display: inline;">
                                 <span>
@@ -647,6 +650,8 @@ class AppView extends connect(store)(LitElement) {
                     <mwc-button dense unelevated label="${translate("login.lp7")}" icon="lock_open" @click="${() => this.closeLockScreenActive()}"></mwc-button>
                 </div>
             </paper-dialog>
+            <div id="portal-target"></div>
+
         `
     }
 

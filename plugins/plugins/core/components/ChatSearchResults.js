@@ -1,12 +1,10 @@
 import { LitElement, html } from 'lit'
 import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
 import { chatSearchResultsStyles } from './ChatSearchResults-css.js'
 import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 import '@vaadin/icon'
 import '@vaadin/icons'
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export class ChatSearchResults extends LitElement {
   static get properties() {
@@ -19,7 +17,10 @@ export class ChatSearchResults extends LitElement {
     }
   }
 
-  static styles = [chatSearchResultsStyles]
+  static get styles() {
+		return [chatSearchResultsStyles];
+	}
+
 
   render() {
     return html`

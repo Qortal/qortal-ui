@@ -221,6 +221,8 @@ class Chat extends LitElement {
     }
 
     render() {
+        console.log('chatHeads', this.chatHeads)
+        console.log('chatHeadsObj', this.chatHeadsObj)
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
@@ -515,6 +517,26 @@ class Chat extends LitElement {
             parentEpml.subscribe('chat_heads', chatHeads => {
                 chatHeads = JSON.parse(chatHeads)
                 this.getChatHeadFromState(chatHeads)
+            })
+            parentEpml.subscribe('side_effect_action', async sideEffectActionParam => {
+                const sideEffectAction = JSON.parse(sideEffectActionParam)
+
+                if(sideEffectAction && sideEffectAction.type === 'openPrivateChat'){
+                    const name = sideEffectAction.data.name
+                    const address = sideEffectAction.data.address
+                    console.log({address}, this.chatHeadsObj)
+                    if(this.chatHeadsObj.direct && this.chatHeadsObj.direct.find(item=> item.address === address)){
+                        this.setActiveChatHeadUrl(`direct/${address}`)
+                        window.parent.reduxStore.dispatch(
+                         window.parent.reduxAction.setSideEffectAction(null))
+                    } else {
+                        this.setOpenPrivateMessage({
+                            open: true,
+                            name: name
+                        })
+                    }
+                
+                } 
             })
             parentEpml.request('apiCall', {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`

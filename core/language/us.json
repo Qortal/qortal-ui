@@ -1176,5 +1176,18 @@
 		"notify1": "Confirming transaction",
 		"notify2": "Transaction confirmed",
 		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon."
+	},
+	"friends": {
+		"friend1": "Add name",
+		"friend2": "Add friend",
+		"friend3": "Adding a friend allows you to connect easily with that person. Be sure to also follow that user to support the hosting of their published resources.",
+		"friend4": "Notes",
+		"friend5": "Follow name",
+		"friend6": "Alias",
+		"friend7": "Add an alias to better remember your friend (Optional)",
+		"friend8": "Send a Q-Chat message",
+		"friend9": "Send a Q-Mail",
+		"friend10": "Edit friend",
+		"friend11": "Following"
 	}
 }

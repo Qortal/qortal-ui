@@ -26,11 +26,9 @@ import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
 
-const chatLastSeen = localForage.createInstance({
-    name: "chat-last-seen",
-})
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+export const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {

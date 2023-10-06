@@ -111,13 +111,13 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 				>
 					${hasOngoing
 						? html`
-								<mwc-icon style="color: green;cursor:pointer"
+								<mwc-icon style="color: green;cursor:pointer;user-select:none"
 									>notifications</mwc-icon
 								>
 						  `
 						: html`
 								<mwc-icon
-									style="color: var(--black); cursor:pointer"
+									style="color: var(--black); cursor:pointer;user-select:none"
 									>notifications</mwc-icon
 								>
 						  `}
