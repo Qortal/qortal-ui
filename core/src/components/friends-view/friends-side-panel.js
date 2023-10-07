@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import '@material/mwc-icon';
 import './friends-view'
+import './friends-feed'
 class FriendsSidePanel extends LitElement {
     static get properties() {
 		return {
@@ -51,7 +52,10 @@ class FriendsSidePanel extends LitElement {
                 }}>close</mwc-icon>
 			</div>
 			<div class="content">
-            <friends-view></friends-view></div>
+            <friends-view></friends-view>
+			<friends-feed></friends-feed>
+
+		</div>
 			</div>
 		`;
 	}

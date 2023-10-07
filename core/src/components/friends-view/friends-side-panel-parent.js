@@ -46,11 +46,10 @@ class FriendsSidePanelParent extends LitElement {
 		return html`
 			<mwc-icon @click=${()=> {
 				this.isOpen = !this.isOpen
-			}} style="color: var(--black); cursor:pointer"
+			}} style="color: var(--black); cursor:pointer;user-select:none"
 				>group</mwc-icon
 			>
 			<friends-side-panel ?isOpen=${this.isOpen} .setIsOpen=${(val)=> this.isOpen = val}></friends-side-panel>
-			
 			
 		`;
 	}
