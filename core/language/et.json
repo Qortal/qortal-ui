@@ -109,7 +109,7 @@
 		"areyousure": "Oled kindel, et soovid eemaldada seda rahakotti salvestatud rahakottide hulgast?",
 		"error1": "Varukoopia peab olema korrektses JSON-formaadis",
 		"error2": "Sisse logimise viis valimata",
-		"createwelcome": "Tere tulemast Qortalisse! Sulle genereeritakse nüüd uus juhuslik seemnefraas, mida kasutatakse Sinu privaatvõtme (aadressi) loomiseks Qortali plokiahelasse. Lisaks, kui otsustad hakata ka Qortali platvormil nö. müntijaks, on Sul võimalus oma Qortali kontole saavutada kõrgem tase, mis toob Sulle suurema plokkide tasu QORT digimüntidena ning ka suurema hääletusmõjuvõimu Qortaliga seonduvate tulevikuotsuste osas.",
+		"createwelcome": "Tere tulemast Qortalisse! Sulle genereeritakse nüüd uus juhuslik seemnefraas, mida kasutatakse Sinu privaatvõtme ja aadressi loomiseks Qortali plokiahelasse. Lisaks, kui otsustad hakata ka Qortali platvormil nö. müntijaks, on Sul võimalus oma Qortali kontole saavutada kõrgem tase, mis toob Sulle suurema plokkide tasu QORT digimüntidena ning ka suurema hääletusmõjuvõimu Qortaliga seonduvate tulevikuotsuste osas.",
 		"createa": "",
 		"click": "Klõpsa, et vaadata seemnefraasi",
 		"confirmpass": "Kinnita salasõna",
@@ -132,7 +132,29 @@
 		"created1": "Sinu konto on nüüd loodud",
 		"created2": " ja salvestatakse siinse arvuti sirvikus.",
 		"Lae allabackup": "Laadi rahakoti varukoopia fail alla",
-		"passwordhint": "Salasõna peab olema vähemalt 8 tähemärki."
+		"passwordhint": "Salasõna peab olema vähemalt 8 tähemärki.",
+		"lp1": "Lukusta ekraan",
+		"lp2": "Ekraaniluku salasõna pole seatud.",
+		"lp3": "Palun loo selleks salasõna",
+		"lp4": "Vahet pole",
+		"lp5": "Määra salasõna",
+		"lp6": "Uus ekraaniluku salasõna määratud!",
+		"lp7": "AVA LUKUST",
+		"lp8": "Viga: Vale salasõna",
+		"lp9": "ON",
+		"lp10": "LUKUS",
+		"lp11": "AVATUD",
+		"lp12": "Võtme dekodeerimine",
+		"lp13": "Dekrüptimise võtme genereerimine",
+		"lp14": "Võtme kontroll",
+		"lp15": "Vale salasõna",
+		"lp16": "Dekrüpteerimine",
+		"lp17": "Ootame tööliste järgi",
+		"lp18": "Võtme osade kokku kogumine",
+		"lp19": "Vigane võti. ",
+		"lp20": "Vigane nonss",
+		"lp21": "Võtme osade kombineerimine",
+		"lp22": "Võti on valmis"
 	},
 	"logout": {
 		"logout": "LOGI VÄLJA",
@@ -182,7 +204,7 @@
 		"exp2": "Ekspordi üldvõti",
 		"exp3": "Ekspordi",
 		"exp4": "Palun vali rahakott privaatse üldvõtme varundamiseks.",
-		"core": "Käivita Tuuma seaded"
+		"core": "Tuuma käivitamise seaded"
 	},
 	"appinfo": {
 		"blockheight": "Ploki kõrgus",
@@ -209,9 +231,9 @@
 		"continue": "Jätka",
 		"save": "Salvesta",
 		"balance": "Saldo",
-		"balances": "Sinu rahakoti saldoseis",
-		"update": "Uuenda saldoseisu vaadet",
-		"view": "Vaade"
+		"balances": "Sinu saldoseisud",
+		"update": "Saldoseisude uuendamine",
+		"view": "Vaata"
 	},
 	"gifs": {
 		"gchange1": "Gif avastaja",
@@ -511,9 +533,9 @@
 		"schange15": "Blokeeritud Veebilehed",
 		"schange16": "Sa ei ole blokeerinud ühtegi Veebilehte",
 		"schange17": "Nime ei leitud!",
-		"schange18": "Releerežiim on lubatud. See tähendab, et Sinu sõlm (arvuti) aitab võrgus transportida krüpteeritud andmeid, juhul kui teine sõlm seda taotleb.",
-		"schange19": "in",
-		"schange20": "Releerežiim on välja lülitatud.",
+		"schange18": "Releerežiim on lubatud. See tähendab, et Sinu sõlm (arvuti) aitab Qortali võrgus krüpteeritud andmeid transportida, juhul kui teine sõlm seda taotleb. Kui soovid selle kinni keerata, tuleb kirjutada selline rida",
+		"schange19": "konfiguratsioonifaili",
+		"schange20": "Releerežiim on välja lülitatud. Kui tahad selle sisse lülitada, tuleb kirjutada selline rida",
 		"schange21": "Avalda Veebileht",
 		"schange22": "Selle Nime jälgimisel tekkis viga. Palun proovi uuesti!",
 		"schange23": "Selle Nime jälgimise tühistamisel tekkis viga. Palun proovi uuesti!",
@@ -619,7 +641,7 @@
 		"schange42": "Failid alla laetud",
 		"schange43": "Avamine, palun oodake..."
 	},
-	"Avaldapage": {
+	"publishpage": {
 		"pchange1": "Avalda",
 		"pchange2": "Uuenda",
 		"pchange3": "Märkus: enne andmete majutamist on soovitatav seadistada portide suunamine, et võrgukasutajad saaksid neile hõlpsamini ligi..",
@@ -847,7 +869,7 @@
 		"gchange12": "Loo uus Grupp",
 		"gchange13": "Grupi tüüp",
 		"gchange14": "See väli on nõutav",
-		"gchange15": "Vali variant",
+		"gchange15": "Vali nimekirjast",
 		"gchange16": "Avalik",
 		"gchange17": "Privaatne",
 		"gchange18": "Grupi heakskiitmise künnis (tehingute heakskiitmiseks vajalike administraatorite arv/protsent):",
@@ -891,7 +913,7 @@
 		"gchange56": "Otsi grupi nime",
 		"gchange57": "Privaatgrupi nime ei leitud",
 		"gchange58": "Rühma nimi peab olema täpne vaste.",
-		"gchange59": "Näita / Peida sümbol"
+		"gchange59": "Näita / Peida saldod"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzled",
@@ -914,7 +936,7 @@
 	},
 	"nodepage": {
 		"nchange1": "Sõlme haldamine:",
-		"nchange2": "Sõlm on võrgus:",
+		"nchange2": "Sõlm on võrgus olnud:",
 		"nchange3": "Sõlme müntimiskontod",
 		"nchange4": "Lisa müntimiskonto",
 		"nchange5": "Kui soovid oma kontoga müntida, pead looma endale preemiajagamise tehingu (mille preemiajagamise protsent on 0) ja seejärel müntida selle preemiajagamise võtmega, mille ta Sulle annab..",
@@ -925,8 +947,8 @@
 		"nchange10": "Saaja konto",
 		"nchange11": "Tegevus",
 		"nchange12": "Eemalda",
-		"nchange13": "Sellelt sõlmelt ei leitud müntimiskontosid",
-		"nchange14": "Selle sõlmega ühendatud partnerid",
+		"nchange13": "Sellel sõlmel puudub aktiivne müntimiskonto",
+		"nchange14": "Sinu sõlmega ühendatud partnerid (teised sõlmed)",
 		"nchange15": "Lisa partner",
 		"nchange16": "Partneri tüüp, mille soovid lisada aadressile allpool",
 		"nchange17": "Partneri aadress",
@@ -1115,19 +1137,19 @@
 		"inf18": "Lülita tumedale teemale"
 	},
 	"lotterypage": {
-		"lot1": "Ava Qortali loterii",
+		"lot1": "Avatud loteriid",
 		"lot2": "AT-aadress",
 		"lot3": "Alustatud plokk",
 		"lot4": "Väljamaksete plokk",
-		"lot5": "Osale mängus",
-		"lot6": "Lõpetatud Qortali loteriid",
+		"lot5": "Osale",
+		"lot6": "Lõppenud loteriid",
 		"lot7": "Võidusumma",
 		"lot8": "Võitja",
-		"lot9": "välja makstud",
+		"lot9": "Väljamakse",
 		"lot10": "Mängi Qortali loteriid",
 		"lot11": "Avatud loteriisid pole.",
 		"lot12": "Lõppenud loteriid pole.",
-		"lot13": "Mängijad"
+		"lot13": "Mängijaid"
 	},
 	"notifications": {
 		"notify1": "Tehingu kinnitamine",
