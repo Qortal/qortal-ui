@@ -246,7 +246,7 @@ class FriendsView extends connect(store)(LitElement) {
                                     <vaadin-icon 
                                         @click=${this.userSearch}
                                         slot="icon" 
-                                        icon="vaadin:open-book"
+                                        icon="vaadin:search"
                                         class="search-icon">
                                     </vaadin-icon>
                                 

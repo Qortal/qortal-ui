@@ -164,7 +164,7 @@ class ChatSideNavHeads extends LitElement {
             ${this.chatInfo.groupName
               ? this.chatInfo.groupName
               : this.chatInfo.name !== undefined
-              ? this.chatInfo.name
+              ? (this.chatInfo.alias || this.chatInfo.name)
               : this.chatInfo.address.substr(0, 15)}
           </span>
         </div>

@@ -38,6 +38,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 			text-align: center;
 			color: var(--mdc-theme-primary);
 			transition: all 0.3s ease-in-out;
+			display: flex;
+			align-items: center;
+			gap: 10px
 		}
 
 		.send-message-button:hover {
@@ -149,6 +152,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 							this.closePopover();
 						}}"
 					>
+					<mwc-icon style="color: var(--black)"
+						>edit</mwc-icon
+					>
 						${translate('friends.friend10')}
 					</div>
 					<div
@@ -187,6 +193,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 							this.closePopover();
 						}}"
 					>
+					<mwc-icon style="color: var(--black)"
+						>send</mwc-icon
+					>
 						${translate('friends.friend8')}
 					</div>
 					<div
@@ -212,6 +221,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 							);
 							this.closePopover();
 						}}"
+					>
+					<mwc-icon style="color: var(--black)"
+						>mail</mwc-icon
 					>
 						${translate('friends.friend9')}
 					</div>
