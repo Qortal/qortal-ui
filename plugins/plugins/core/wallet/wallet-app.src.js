@@ -881,7 +881,7 @@ class MultiWallet extends LitElement {
                 </div>
 
                 <mwc-tab-bar id="tabs-1" activeIndex="0">
-                    <mwc-tab label="Qortal" hasImageIcon minWidth @click="${(e) => this.tabWalletQort()}">
+                    <mwc-tab label="Qort" hasImageIcon minWidth @click="${(e) => this.tabWalletQort()}">
                         <img slot="icon" width="24px" height="24px" src="/img/qort.png">
                     </mwc-tab>
                     <mwc-tab label="Bitcoin" hasImageIcon minWidth @click="${(e) => this.tabWalletBtc()}">
@@ -1846,7 +1846,7 @@ class MultiWallet extends LitElement {
                 <mwc-dialog id="qortBookDialog">
                     <div style="text-align:center">
                         <img src="/img/qort.png" width="32" height="32">
-                        <h1>Qortal ${translate("walletpage.wchange47")}</h1>
+                        <h1>QORT ${translate("walletpage.wchange47")}</h1>
                     </div>
                     <div class="floatleft">${this.renderExportAddressbookButton()}</div><div class="floatright">${this.renderImportAddressbookButton()}</div><br><br>
                     <hr>
@@ -2277,7 +2277,7 @@ class MultiWallet extends LitElement {
                 <mwc-dialog id="addQortAddressDialog" scrimClickAction="" escapeKeyAction="">
                     <div style="text-align:center">
                         <img src="/img/qort.png" width="32" height="32">
-                        <h1>Qortal ${translate("walletpage.wchange47")}</h1><br />
+                        <h1>QORT ${translate("walletpage.wchange47")}</h1><br />
                         <h2>${translate("walletpage.wchange49")}</h2>
                         <hr>
                         <br>
@@ -2620,7 +2620,7 @@ class MultiWallet extends LitElement {
                 <mwc-dialog id="importQortAddressbookDialog">
                     <div style="text-align:center">
                         <img src="/img/qort.png" width="32" height="32">
-                        <h1>Qortal ${translate("walletpage.wchange53")}</h1><br />
+                        <h1>QORT ${translate("walletpage.wchange53")}</h1><br />
                         <hr>
                         <br>
                     </div>
