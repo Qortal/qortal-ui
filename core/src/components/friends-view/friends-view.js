@@ -270,7 +270,7 @@ class FriendsView extends connect(store)(LitElement) {
                                 ?loading=${this.isLoading}>
                             </chat-search-results>
                         </div>
-					<br />
+					
 
 					${this.friendList.map((item) => {
 						return html`<chat-side-nav-heads

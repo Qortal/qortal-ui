@@ -1,6 +1,9 @@
 import { css } from 'lit'
 
 export const friendsViewStyles = css`
+* {
+    box-sizing: border-box;
+}
       .top-bar-icon {
             cursor: pointer;
             height: 18px;
@@ -41,6 +44,7 @@ export const friendsViewStyles = css`
             padding: 0px 6px;
             box-sizing: border-box;
             align-items: center;
+            gap: 10px;
         }
 
         .container-body::-webkit-scrollbar-track {
@@ -164,7 +168,7 @@ export const friendsViewStyles = css`
     position: absolute;
     right: 3px;
     color: var(--chat-bubble-msg-color);
-    transition: all 0.3s ease-in-out;
+    transition: hover 0.3s ease-in-out;
     background: none;
     border-radius: 50%;
     padding: 6px 3px;

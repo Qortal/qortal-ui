@@ -7,15 +7,23 @@ import axios from 'axios'
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js'
 import { RequestQueueWithPromise } from '../../../../plugins/plugins/utils/queue';
+import '../../../../plugins/plugins/core/components/TimeAgo'
+import { connect } from 'pwa-helpers';
+import { store } from '../../store';
+import { setNewTab } from '../../redux/app/app-actions';
+import ShortUniqueId from 'short-unique-id';
+
 const requestQueue = new RequestQueueWithPromise(5);
 
-export class FeedItem extends LitElement {
+export class FeedItem extends connect(store)(LitElement) {
   static get properties() {
     return {
       resource: { type: Object },
       isReady: { type: Boolean},
       status: {type: Object},
-      feedItem: {type: Object}
+      feedItem: {type: Object},
+      appName: {type: String},
+      link: {type: String}
     };
   }
 
@@ -23,10 +31,15 @@ export class FeedItem extends LitElement {
     return css`
     * {
       --mdc-theme-text-primary-on-background: var(--black);
+      box-sizing: border-box;
+    }
+    :host {
+      width: 100%;
+      box-sizing: border-box;
     }
       img {
-        max-width:45vh; 
-        max-height:40vh; 
+        width:100%; 
+        max-height:30vh; 
         border-radius: 5px; 
         cursor: pointer;
         position: relative;
@@ -51,9 +64,40 @@ export class FeedItem extends LitElement {
   }
 
   .defaultSize {
-		width: 45vh; 
-		height: 40vh;
+		width: 100%; 
+		height: 160px;
 	}
+  .parent-feed-item {
+    position: relative;
+    display: flex;
+		background-color: var(--chat-bubble-bg);
+    flex-grow: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 12px 15px 4px 15px;
+    min-width: 150px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  .avatar {
+		width: 42px; 
+		height: 42px;
+	}
+  .feed-item-name {
+		user-select: none;
+		color: #03a9f4;
+		margin-bottom: 5px;
+	}
+
+  .app-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
 
   mwc-menu {
       position: absolute;
@@ -102,6 +146,7 @@ export class FeedItem extends LitElement {
     this.myNode = this.getMyNode()
     this.hasCalledWhenDownloaded = false
     this.isFetching = false
+    this.uid = new ShortUniqueId()
 
     this.observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -283,11 +328,93 @@ getMyNode(){
 
  
 
-  
+  async goToFeedLink(){
+    try {
+      console.log('this.link', this.link)
+      let newQuery = this.link
+      if (newQuery.endsWith('/')) {
+          newQuery = newQuery.slice(0, -1)
+      }
+      const res = await this.extractComponents(newQuery)
+      if (!res) return
+      const { service, name, identifier, path } = res
+      let query = `?service=${service}`
+      if (name) {
+          query = query + `&name=${name}`
+      }
+      if (identifier) {
+          query = query + `&identifier=${identifier}`
+      }
+      if (path) {
+          query = query + `&path=${path}`
+      }
+
+      store.dispatch(setNewTab({
+				url: `qdn/browser/index.html${query}`,
+				id: this.uid.rnd(),
+				myPlugObj: {
+					"url": "myapp",
+					"domain": "core",
+					"page": `qdn/browser/index.html${query}`,
+					"title": name,
+					"icon": 'vaadin:external-browser',
+					"mwcicon": 'open_in_browser',
+					"menus": [],
+					"parent": false
+				},
+        openExisting: true
+			}))
+    } catch (error) {
+      console.log({error})
+    }
+  }
   
 
 
-  
+  async extractComponents(url) {
+    if (!url.startsWith("qortal://")) {
+        return null
+    }
+
+    url = url.replace(/^(qortal\:\/\/)/, "")
+    if (url.includes("/")) {
+        let parts = url.split("/")
+        const service = parts[0].toUpperCase()
+        parts.shift()
+        const name = parts[0]
+        parts.shift()
+        let identifier
+
+        if (parts.length > 0) {
+            identifier = parts[0] // Do not shift yet
+            // Check if a resource exists with this service, name and identifier combination
+            const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+            const url = `${nodeUrl}/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${myNode.apiKey}}`
+
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.totalChunkCount > 0) {
+                // Identifier exists, so don't include it in the path
+                parts.shift()
+            }
+            else {
+                identifier = null
+            }
+        }
+
+        const path = parts.join("/")
+
+        const components = {}
+        components["service"] = service
+        components["name"] = name
+        components["identifier"] = identifier
+        components["path"] = path
+        return components
+    }
+    return null
+}
+
 
   
   
@@ -297,6 +424,20 @@ getMyNode(){
 
   render() {
     console.log('this.feedItem', this.feedItem)
+    let avatarImg
+    const avatarUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.resource.name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
+			avatarImg = html`<img
+				src="${avatarUrl}"
+				style="max-width:100%; max-height:100%;"
+				onerror="this.onerror=null; this.src='/img/incognito.png';"
+			/>`;
+       let avatarImgApp
+       const avatarUrl2 = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.appName}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
+       avatarImgApp = html`<img
+           src="${avatarUrl2}"
+           style="max-width:100%; max-height:100%;"
+           onerror="this.onerror=null; this.src='/img/incognito.png';"
+         />`;
     return html`
     <div
 														class=${[
@@ -308,12 +449,13 @@ getMyNode(){
 																? 'hideImg'
 																: '',
 														].join(' ')}
+                            style=" box-sizing: border-box;"
 													>
     ${
 										this.status.status !== 'READY' 
 											? html`
 													<div
-														style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center;"
+														style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center; box-sizing: border-box;"
 													>
 														<div
 															class=${`smallLoading`}
@@ -325,8 +467,24 @@ getMyNode(){
 											: ''
 									}
     ${this.status.status === 'READY' && this.feedItem ? html`
-    <div  style="position:relative">
-                  ready
+    <div class="parent-feed-item"  style="position:relative" @click=${this.goToFeedLink}>
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+    <div class="avatar">
+    ${avatarImg}</div> <span class="feed-item-name">${this.resource.name}</span>
+                </div>
+    <div>
+        <p>${this.feedItem.title}</p>
+                </div>
+            <div class="app-name">
+            <div class="avatar">
+            ${avatarImgApp}
+                </div>
+            <message-time
+																timestamp=${this
+																	.resource
+																	.created}
+															></message-time>
+          </div>
     </div>
     ` : ''}
 

@@ -2,12 +2,19 @@ import { LitElement, html, css } from 'lit';
 import '@material/mwc-icon';
 import './friends-view'
 import './friends-feed'
+import { translate } from 'lit-translate';
 class FriendsSidePanel extends LitElement {
     static get properties() {
 		return {
 			setIsOpen: { attribute: false},
-			isOpen: {type: Boolean}
+			isOpen: {type: Boolean},
+			selected: {type: String}
 		};
+	}
+
+	constructor(){
+		super()
+		this.selected = 'friends'
 	}
 	
 	static styles = css`
@@ -21,7 +28,6 @@ class FriendsSidePanel extends LitElement {
     height: calc(100vh - 55px);
     background-color: var(--white);
     border-left: 1px solid rgb(224, 224, 224);
-    overflow-y: auto;
     z-index: 1;
 	transform: translateX(100%); /* start from outside the right edge */
     		transition: transform 0.3s ease-in-out;
@@ -40,22 +46,84 @@ class FriendsSidePanel extends LitElement {
 
 		.content {
 			padding: 16px;
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+			overflow: auto;
 		}
+		.content::-webkit-scrollbar-track {
+        background-color: whitesmoke;
+        border-radius: 7px;
+    }
+
+    .content::-webkit-scrollbar {
+        width: 12px;
+        border-radius: 7px;
+        background-color: whitesmoke;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+        background-color: rgb(180, 176, 176);
+        border-radius: 7px;
+        transition: all 0.3s ease-in-out;
+    }
+		.parent {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
+		.active {
+			font-size: 16px;
+    background: var(--black);
+    color: var(--white);
+    padding: 5px;
+    border-radius: 2px;
+	cursor: pointer;
+		}
+
+		.default {
+			font-size: 16px;
+    color: var(--black);
+    padding: 5px;
+    border-radius: 2px;
+	cursor: pointer;
+		}
+
+		.default-content {
+			visibility: hidden;
+			position: absolute;
+    z-index: -50;
+		}
+		
 	`;
 
 	render() {
 		return html`
+			<div class="parent">
 			<div class="header">
-				<span>Panel Title</span>
+				<div style="display:flex;align-items:center;gap:10px">
+				<span @click=${()=> this.selected = 'friends'} class="${this.selected === 'friends' ? 'active' : 'default'}">${translate('friends.friend12')}</span>
+				<span @click=${()=> this.selected = 'feed'} class="${this.selected === 'feed' ? 'active' : 'default'}">${translate('friends.friend13')}</span>
+		</div>
 				<mwc-icon style="cursor:pointer" @click=${()=> {
                     this.setIsOpen(false)
                 }}>close</mwc-icon>
 			</div>
 			<div class="content">
-            <friends-view></friends-view>
-			<friends-feed></friends-feed>
+				<div class="${this.selected === 'friends' ? 'active-content' : 'default-content'}">
+				<friends-view></friends-view>
+				</div>
+				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
+				<friends-feed></friends-feed>
+				</div>
+				<!-- ${this.selected === 'friends' ? html`<friends-view></friends-view>` : ''}
+
+				${this.selected === 'feed' ? html`<friends-feed></friends-feed>` : ''} -->
+			
 
 		</div>
+			</div>
 			</div>
 		`;
 	}

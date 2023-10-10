@@ -5,6 +5,7 @@ import { friendsViewStyles } from './friends-view-css';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store';
 import './feed-item'
+
 const perEndpointCount = 20;
 const totalDesiredCount = 100;
 const maxResultsInMemory = 300;
@@ -17,17 +18,24 @@ class FriendsFeed extends connect(store)(LitElement) {
 	constructor(){
 		super()
 		this.feed = []
+        this.feedToRender = []
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
         this.endpoints = []
         this.endpointOffsets = []  // Initialize offsets for each endpoint to 0
-
+       
         this.loadAndMergeData = this.loadAndMergeData.bind(this)
+        this.hasInitialFetch = false
+        this.observerHandler = this.observerHandler.bind(this);
+        this.elementObserver = this.elementObserver.bind(this)
+
 	}
 	
 	static get styles() {
 		return [friendsViewStyles];
 	}
+
+   
 
 	getNodeUrl() {
 		const myNode =
@@ -49,45 +57,27 @@ class FriendsFeed extends connect(store)(LitElement) {
 	}
 
 	async firstUpdated(){
-		console.log('sup')
+        this.viewElement = this.shadowRoot.getElementById('viewElement');
+		this.downObserverElement =
+			this.shadowRoot.getElementById('downObserver');
+		this.elementObserver();
 		const feedData = schema.feed[0]
 		let schemaObj = {...schema}
 		const dynamicVars = {
-			name: 'Phil'
+			
 		}
-		const getMail = async () => {
+		const getEndpoints = async () => {
 			
 			const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true`
 			const fullUrl = constructUrl(baseurl, feedData.search, dynamicVars);
-            this.endpoints= ['http://127.0.0.1:12391/arbitrary/resources/search?reverse=true&query=-post-&identifier=q-blog-&service=BLOG_POST&exactmatchnames=true&limit=20']
-            this.endpointOffsets = Array(this.endpoints.length).fill(0);  // Initialize offsets for each endpoint to 0
+            this.endpoints= [{url: fullUrl, schemaName: schema.name, schema: feedData }]
+            this.endpointOffsets = Array(this.endpoints.length).fill(0);  
 
-			console.log('this.endpoints', this.endpoints)
-			const response = await fetch(fullUrl, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-
-			const data = await response.json()
-			return data;
+			
 		}
 		try {
-			getMail()
-			const resource = {
-				name: 'Phil',
-				identifier: 'q-blog-Mugician-post-Love-Explosion-Festival--yJ8kuo'
-			}
-			// First, evaluate methods to get values for customParams
-await updateCustomParamsWithMethods(schemaObj, resource);
-console.log({schemaObj})
-// Now, generate your final URLs
-let clickValue1 = schemaObj.feed[0].click;
+			getEndpoints()
 
-const resolvedClickValue1 = replacePlaceholders(clickValue1, resource, schemaObj.feed[0].customParams);
-
-console.log(resolvedClickValue1);
 this.loadAndMergeData();
 
 
@@ -96,10 +86,59 @@ this.loadAndMergeData();
 		}
 	}
 
+    getMoreFeed(){
+        if(!this.hasInitialFetch) return
+        console.log('getting more feed')
+        if(this.feedToRender.length === this.feed.length ) return
+        this.feedToRender = this.feed.slice(0, this.feedToRender.length + 20)
+        this.requestUpdate()
+    }
+
+
+	elementObserver() {
+		const options = {
+			rootMargin: '0px',
+			threshold: 1,
+		};
+		// identify an element to observe
+        console.log('this', this.viewElement, this.downObserverElement)
+		const elementToObserve = this.downObserverElement;
+		// passing it a callback function
+		const observer = new IntersectionObserver(
+			this.observerHandler,
+			options
+		);
+		// call `observe()` on that MutationObserver instance,
+		// passing it the element to observe, and the options object
+		observer.observe(elementToObserve);
+	}
+
+	observerHandler(entries) {
+        console.log({entries})
+		if (!entries[0].isIntersecting) {
+			return;
+		} else {
+            console.log('this.feedToRender', this.feedToRender)
+			if (this.feedToRender.length < 20) {
+				return;
+			}
+			this.getMoreFeed();
+		}
+	}
+
      async fetchDataFromEndpoint(endpointIndex, count) {
         const offset = this.endpointOffsets[endpointIndex];
-        const url = `${this.endpoints[endpointIndex]}&limit=${count}&offset=${offset}`;
-        return fetch(url).then(res => res.json());
+        const url = `${this.endpoints[endpointIndex].url}&limit=${count}&offset=${offset}`;
+        const res = await fetch(url)
+        const data = await res.json()
+        console.log({data})
+        return data.map((i)=> {
+            return {
+                ...this.endpoints[endpointIndex],
+                ...i
+            }
+        })
+       
     }
     
     
@@ -165,17 +204,55 @@ this.loadAndMergeData();
         const uniqueNewData = newData.filter(item => !existingIds.has(item.identifier));
         return uniqueNewData.concat(existingData);
     }
-    
+
+
+   async addExtraData(data){
+        let newData = []
+        for (let item of data) {
+            let newItem = {
+                ...item,
+                schema: {
+                    ...item.schema,
+                    customParams: {...item.schema.customParams}
+
+                }
+            }
+            let newResource = {
+                identifier: newItem.identifier,
+                service: newItem.service,
+                name: newItem.name
+            }
+            if(newItem.schema){
+                const resource = newItem
+                // First, evaluate methods to get values for customParams
+        await updateCustomParamsWithMethods(newItem.schema, newResource);
+        // Now, generate your final URLs
+        let clickValue1 = newItem.schema.click;
+        
+        const resolvedClickValue1 = replacePlaceholders(clickValue1, resource, newItem.schema.customParams);
+        newItem.link = resolvedClickValue1
+        newData.push(newItem)
+            }
+        }
+      return newData
+  
+    }
     
     async  loadAndMergeData() {
         let allData = this.feed
         const newData = await this.initialLoad();
+        allData = await this.addExtraData(newData)
         allData = this.mergeData(newData, allData);
         allData.sort((a, b) => new Date(b.created) - new Date(a.created));  // Sort by timestamp, most recent first
         allData = this.trimDataToLimit(allData, maxResultsInMemory);  // Trim to the maximum allowed in memory
         this.feed = [...allData]
+        this.feedToRender = this.feed.slice(0,20)
+        this.hasInitialFetch = true
     }
-    
+
+
+
+   
 
 	render() {
 		console.log('ron', this.feed)
@@ -183,13 +260,11 @@ this.loadAndMergeData();
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
 
-					${this.feed.map((item) => {
+					${this.feedToRender.map((item) => {
 						return html`<feed-item
-					.resource=${{
-						name: item.name,
-						service: item.service,
-						identifier: item.identifier,
-					}}
+					.resource=${item}
+                    appName=${'Q-Blog'}
+                    link=${item.link}
 				></feed-item>`;
 					})}
 					<div id="downObserver"></div>
@@ -223,13 +298,43 @@ export function constructUrl(base, search, dynamicVars) {
     return queryStrings.length > 0 ? `${base}&${queryStrings.join('&')}` : base;
 }
 
+function validateMethodString(methodString) {
+    // Check for IIFE
+    const iifePattern = /^\(.*\)\s*\(\)/;
+    if (iifePattern.test(methodString)) {
+        throw new Error("IIFE detected!");
+    }
+    
+    // Check for disallowed keywords
+    const disallowed = ["eval", "Function", "fetch", "XMLHttpRequest"];
+    for (const keyword of disallowed) {
+        if (methodString.includes(keyword)) {
+            throw new Error(`Disallowed keyword detected: ${keyword}`);
+        }
+    }
+    
+    // ... Add more validation steps here ...
+    
+    return true;
+}
+
 function executeMethodInWorker(methodString, externalArgs) {
     return new Promise((resolve, reject) => {
+        if (!validateMethodString(methodString)) {
+            reject(new Error("Invalid method string provided."));
+            return;
+        }
+
         const workerFunction = `
             self.onmessage = function(event) {
-                const method = ${methodString};
-                const result = method(event.data.externalArgs);
-                self.postMessage(result);
+                const methodFunction = new Function("resource", "${methodString}");
+                const result = methodFunction(event.data.externalArgs);
+
+                if (typeof result === 'string' || typeof result === 'number') {
+                    self.postMessage(result);
+                } else {
+                    self.postMessage('');
+                }
             }
         `;
 
@@ -238,9 +343,16 @@ function executeMethodInWorker(methodString, externalArgs) {
         const worker = new Worker(blobURL);
 
         worker.onmessage = function(event) {
-            resolve(event.data);
-            worker.terminate();
-            URL.revokeObjectURL(blobURL);
+            if (typeof event.data === 'string' || typeof event.data === 'number') {
+                resolve(event.data);
+                worker.terminate();
+                URL.revokeObjectURL(blobURL);
+            } else {
+                resolve("");
+                worker.terminate();
+                URL.revokeObjectURL(blobURL);
+            }
+           
         };
 
         worker.onerror = function(error) {
@@ -256,17 +368,24 @@ function executeMethodInWorker(methodString, externalArgs) {
 
 
 export async function updateCustomParamsWithMethods(schema,resource) {
-    for (const key in schema.feed[0].customParams) {
-        const value = schema.feed[0].customParams[key];
-        
+    console.log({schema, resource})
+    for (const key in schema.customParams) {
+        const value = schema.customParams[key];
+        console.log({value})
         if (value.startsWith("**methods.") && value.endsWith("**")) {
             const methodInvocation = value.slice(10, -2).split('(');
             const methodName = methodInvocation[0];
 
-            if (schema.feed[0].methods[methodName]) {
-				const methodResult = await executeMethodInWorker(schema.feed[0].methods[methodName].toString(), resource);
+            if (schema.methods[methodName]) {
+                const newResource = {
+                    identifier: resource.identifier,
+                    name: resource.name,
+                    service: resource.service
+                }
+                console.log({newResource})
+				const methodResult = await executeMethodInWorker(schema.methods[methodName], newResource);
 				console.log({methodResult})
-                schema.feed[0].customParams[key] = methodResult;
+                schema.customParams[key] = methodResult;
             }
         }
     }
@@ -292,9 +411,9 @@ export function replacePlaceholders(template, resource, customParams) {
 
 
 
+// export const schemaList = [schema]
 
-
-export const schema = {
+ const schema = {
     name: "Q-Blog",
     defaultFeedIndex: 0,
     feed: [
@@ -305,7 +424,6 @@ export const schema = {
             title: "Q-Blog Post creations",
             description: "blablabla",
             search: {
-                name:"$${name}$$",
                 query: "-post-",
                 identifier: "q-blog-",
                 service: "BLOG_POST",
@@ -321,27 +439,35 @@ export const schema = {
                 blogId: "**methods.getBlogId(resource)**",
                 shortIdentifier: "**methods.getShortId(resource)**"
             },
-            methods: {
-                getShortId: function(resource) {
-                    const str = resource.identifier
-                    const arr = str.split('-post-')
-                    const shortIdentifier = arr[1]
-                   
-                    return shortIdentifier
-                },
-				getBlogId: function(resource) {
-                    const str = resource.identifier
-                    const arr = str.split('-post-')
-                    const id = arr[0]
-                    let blogId = ""
-                    if (id.startsWith('q-blog-')) {
-                        blogId = id.substring(7);
-                    } else {
-                        blogId= id;
-                    }
-                    return blogId
-                }
+            "methods": {
+                "getShortId": "return resource.identifier.split('-post-')[1];",
+                "getBlogId": "const arr = resource.identifier.split('-post-'); const id = arr[0]; return id.startsWith('q-blog-') ? id.substring(7) : id;"
             }
+            // methods: {
+            //     getShortId: function(resource) {
+            //         console.log({resource})
+            //         const str = resource.identifier
+            //         const arr = str.split('-post-')
+            //         const shortIdentifier = arr[1]
+                   
+            //         return shortIdentifier
+            //     },
+			// 	getBlogId: function(resource) {
+            //         console.log({resource})
+            //         const str = resource.identifier
+            //         const arr = str.split('-post-')
+            //         const id = arr[0]
+            //         let blogId = ""
+            //         if (id.startsWith('q-blog-')) {
+            //             blogId = id.substring(7);
+            //         } else {
+            //             blogId= id;
+            //         }
+            //         return blogId
+            //     }
+            // }
         }
     ]
 }
+
+// export const schema = JSON.stringify(schema2, null, 2); // 2 spaces indentation
