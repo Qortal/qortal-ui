@@ -2,25 +2,25 @@
 	"selectmenu": {
 		"selectlanguage": "Vali keel",
 		"languageflag": "et",
-		"english": "Inglise",
-		"estonian": "Eesti",
 		"chinese1": "Hiina (Lihtsustatud)",
 		"chinese2": "Hiina (Tradits.)",
-		"german": "Saksa",
-		"french": "Prantsuse",
-		"polish": "Poole",
-		"spanish": "Hispaania",
-		"hindi": "Hindi",
 		"croatian": "Horvaatia",
-		"portuguese": "Portugali",
+		"english": "Inglise",
+		"estonian": "Eesti",
+		"french": "Prantsuse",
+		"german": "Saksa",
+		"hindi": "Hindi",
 		"hungarian": "Ungari",
-		"serbian": "Serbia",
 		"italian": "Itaalia",
-		"russian": "Vene",
-		"norwegian": "Norra",
-		"romanian": "Rumeenia",
+		"japanese": "Jaapani",
 		"korean": "Korea",
-		"japanese": "Jaapani"
+		"norwegian": "Norra",
+		"polish": "Poole",
+		"portuguese": "Portugali",
+		"romanian": "Rumeenia",
+		"russian": "Vene",
+		"serbian": "Serbia",
+		"spanish": "Hispaania"
 	},
 	"sidemenu": {
 		"minting": "MÜNTIMINE",
@@ -200,11 +200,14 @@
 		"snack3": "Edukalt lisatud ja salvestatud kohandatud sõlm",
 		"snack4": "Sõlmed edukalt salvestatud kui",
 		"snack5": "Sõlmed edukalt imporditud",
+		"snack6": "Kohandatud sõlm on edukalt eemaldatud",
+		"snack7": "Kohandatud sõlme edukalt redigeeritud",
 		"exp1": "Ekspordi privaatne üldvõti",
 		"exp2": "Ekspordi üldvõti",
 		"exp3": "Ekspordi",
 		"exp4": "Palun vali rahakott privaatse üldvõtme varundamiseks.",
-		"core": "Tuuma käivitamise seaded"
+		"core": "Tuuma käivitamise seaded",
+		"qappNotification1": "Q-App märguanded"
 	},
 	"appinfo": {
 		"blockheight": "Ploki kõrgus",
@@ -216,7 +219,12 @@
 	},
 	"walletprofile": {
 		"minterlevel": "Müntija tase",
-		"blocksminted": "Plokke münditud"
+		"blocksminted": "Plokke münditud",
+		"wp1": "Mündimine",
+		"wp2": "Ei vermita",
+		"wp3": "Põhiteave",
+		"wp4": "Sünkroonitud",
+		"wp5": "Sünkroonimise olek"
 	},
 	"general": {
 		"yes": "Jah",
@@ -513,7 +521,8 @@
 		"nchange44": "Uuele Nimele",
 		"nchange45": "Kui teed kinnituse, edastatakse Nime uuendamise taotlus!",
 		"nchange46": "Nimemüügi ajalugu",
-		"nchange47": "Nime uuendamine tehtud!"
+		"nchange47": "Nime uuendamine tehtud!",
+		"nchange48": "Hoiatus! Kui uuendate oma nime, siis kaotate algse nimega seotud ressursid. Teisisõnu kaotate QDN-is algse nime all oleva sisu omandiõiguse. Jätkake ettevaatlikult!"
 	},
 	"websitespage": {
 		"schange1": "Sirvi Veebilehti",
@@ -715,7 +724,9 @@
 		"bchange43": "Kas annad sellele taotlusele loa lisada sellesse nimekirja?",
 		"bchange44": "Kas annad sellele rakendusele loa kustutada sellest nimekirjast?",
 		"bchange45": "Krüpteeri",
-		"bchange46": "Kas annad sellele rakendusele loa salvestada järgnev fail"
+		"bchange46": "Kas annad sellele rakendusele loa salvestada järgnev fail",
+		"bchange47": "Kiire avaldamine - nõuab",
+		"bchange48": "Kas annate sellele rakendusele loa teile teateid saata"
 	},
 	"datapage": {
 		"dchange1": "Andmete haldamine",
@@ -821,7 +832,14 @@
 		"cchange80": "Pilt kustutatud",
 		"cchange81": "See pilditüüp ei ole toetatud",
 		"cchange82": "Manus kustutatud",
-		"cchange90": "Sõnumeid ei ole"
+		"cchange90": "Sõnumeid ei ole",
+		"cchange91": "Saadamine...",
+		"cchange92": "Lugemata kirjad allpool",
+		"cchange93": "Pilt kopeeriti lõikelauale",
+		"cchange94": "laaditud",
+		"cchange95": "Ainult minu ressursid",
+		"cchange96": "Avatud rühmahaldus",
+		"cchange97": "Grupiga liitumise link on lõikelauale kopeeritud"
 	},
 	"welcomepage": {
 		"wcchange1": "Tere tulemast Q-Chatti",
@@ -1003,7 +1021,16 @@
 		"rewarddialog3": "Kui jah, siis tuleb salvestada allpool olev võti, et selle abil müntida. Seda saab sisestada ka teises arvutis (sõlmes), kui tahad ka seal oma kontoga müntida.",
 		"rewarddialog4": "Kui kinnitad, luuakse preemiajagamine, kuid pead ikkagi andma ülaltoodud võtme sõlmele, et müntida.",
 		"rewarddialog5": "Eemaldad kontoga seotud preemiajagamise tehingu:",
-		"rewarddialog6": "Kinnitamist vajutades eemaldatakse preemiajagamine ja müntimisvõti muutub kehtetuks."
+		"rewarddialog6": "Kinnitamist vajutades eemaldatakse preemiajagamine ja müntimisvõti muutub kehtetuks.",
+		"deployAtdialog1": "Te juurutate AT",
+		"deployAtdialog2": "Kinnita vajutamisel juurutatakse AT!",
+		"deployAtdialog3": "Algsumma saldo",
+		"votedialog1": "Soovite hääletada allolevas küsitluses:",
+		"votedialog2": "Kinnita vajutamisel saadetakse hääletustaotlus!",
+		"votedialog3": "Te taotlete allpool oleva küsitluse loomist:",
+		"votedialog4": "Küsitluse kirjeldus",
+		"votedialog5": "Valikud",
+		"votedialog6": "Kinnita vajutamisel luuakse küsitlus!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktiivsed sponsorlused",

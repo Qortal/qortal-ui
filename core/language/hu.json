@@ -1024,7 +1024,13 @@
 		"rewarddialog6": "A megerősítés megnyomására a jutalommegosztás törlődik, és a pénzverési kulcs érvénytelenné válik.",
 		"deployAtdialog1": "Ön telepíti az AT-t",
 		"deployAtdialog2": "A megerősítés megnyomására az AT telepítésre kerül!",
-		"deployAtdialog3": "Kezdő összeg egyenleg"
+		"deployAtdialog3": "Kezdő összeg egyenleg",
+		"votedialog1": "Az alábbi szavazásra kérsz szavazást:",
+		"votedialog2": "A megerősítés megnyomására a szavazás elküldésre kerül!",
+		"votedialog3": "Az alábbi szavazás létrehozását kéri:",
+		"votedialog4": "Szavazás leírása",
+		"votedialog5": "Lehetőségek",
+		"votedialog6": "A megerősítés megnyomására a szavazás létrejön!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktív szponzorálás",

@@ -1024,7 +1024,13 @@
 		"rewarddialog6": "點擊確認後，鑄幣密鑰將被移除並失效。",
 		"deployAtdialog1": "您正在部署 AT",
 		"deployAtdialog2": "按下確認鍵後，AT 將被部署！",
-		"deployAtdialog3": "初始金額餘額"
+		"deployAtdialog3": "初始金額餘額",
+		"votedialog1": "您要求對以下民意調查進行投票：",
+		"votedialog2": "按下確認後，投票請求將被發送！",
+		"votedialog3": "您請求建立以下投票：",
+		"votedialog4": "投票說明",
+		"votedialog5": "選項",
+		"votedialog6": "按確認後，將創建投票！"
 	},
 	"sponsorshipspage": {
 		"schange1": "目前有效的贊助記錄",

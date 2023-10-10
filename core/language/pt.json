@@ -1024,7 +1024,13 @@
 		"rewarddialog6": "Ao pressionar confirmar, o rewardshare será removido e a chave de cunhagem se tornará inválida.",
 		"deployAtdialog1": "Você está implantando o AT",
 		"deployAtdialog2": "Ao pressionar confirmar, o AT será implantado!",
-		"deployAtdialog3": "Saldo do valor inicial"
+		"deployAtdialog3": "Saldo do valor inicial",
+		"votedialog1": "Você está solicitando votar na enquete abaixo:",
+		"votedialog2": "Ao pressionar confirmar, o pedido de voto será enviado!",
+		"votedialog3": "Você está solicitando a criação da enquete abaixo:",
+		"votedialog4": "Descrição da enquete",
+		"votedialog5": "Opções",
+		"votedialog6": "Ao pressionar confirmar, a enquete será criada!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Patrocínios Ativos",
