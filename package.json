@@ -68,7 +68,7 @@
 		"prosemirror-state": "1.4.3",
 		"prosemirror-transform": "1.8.0",
 		"prosemirror-view": "1.32.0",
-		"sass": "1.69.0",
+		"sass": "1.69.1",
 		"short-unique-id": "5.0.3"
 	},
 	"devDependencies": {
@@ -123,7 +123,7 @@
 		"@vaadin/tooltip": "24.1.11",
 		"@zip.js/zip.js": "2.7.29",
 		"axios": "1.5.1",
-		"electron": "26.3.0",
+		"electron": "27.0.0",
 		"electron-builder": "24.6.4",
 		"electron-packager": "17.1.2",
 		"epml": "0.3.3",
@@ -147,6 +147,6 @@
 		"shelljs": "0.8.5"
 	},
 	"engines": {
-		"node": ">=18.16.1"
+		"node": ">=18.17.1"
 	}
 }
