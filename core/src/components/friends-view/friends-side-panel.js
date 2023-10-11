@@ -8,7 +8,8 @@ class FriendsSidePanel extends LitElement {
 		return {
 			setIsOpen: { attribute: false},
 			isOpen: {type: Boolean},
-			selected: {type: String}
+			selected: {type: String},
+			setHasNewFeed: {attribute: false}
 		};
 	}
 
@@ -115,7 +116,7 @@ class FriendsSidePanel extends LitElement {
 				<friends-view></friends-view>
 				</div>
 				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
-				<friends-feed></friends-feed>
+				<friends-feed .setHasNewFeed=${(val)=> this.setHasNewFeed(val)}></friends-feed>
 				</div>
 				<!-- ${this.selected === 'friends' ? html`<friends-view></friends-view>` : ''}
 

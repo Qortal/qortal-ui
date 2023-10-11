@@ -12,7 +12,8 @@ const maxResultsInMemory = 300;
 class FriendsFeed extends connect(store)(LitElement) {
     static get properties() {
 		return {
-			feed: {type: Array}
+			feed: {type: Array},
+            setHasNewFeed: {attribute:false}
 		};
 	}
 	constructor(){
@@ -88,7 +89,6 @@ this.loadAndMergeData();
 
     getMoreFeed(){
         if(!this.hasInitialFetch) return
-        console.log('getting more feed')
         if(this.feedToRender.length === this.feed.length ) return
         this.feedToRender = this.feed.slice(0, this.feedToRender.length + 20)
         this.requestUpdate()
@@ -101,7 +101,6 @@ this.loadAndMergeData();
 			threshold: 1,
 		};
 		// identify an element to observe
-        console.log('this', this.viewElement, this.downObserverElement)
 		const elementToObserve = this.downObserverElement;
 		// passing it a callback function
 		const observer = new IntersectionObserver(
@@ -114,11 +113,9 @@ this.loadAndMergeData();
 	}
 
 	observerHandler(entries) {
-        console.log({entries})
 		if (!entries[0].isIntersecting) {
 			return;
 		} else {
-            console.log('this.feedToRender', this.feedToRender)
 			if (this.feedToRender.length < 20) {
 				return;
 			}
@@ -131,7 +128,6 @@ this.loadAndMergeData();
         const url = `${this.endpoints[endpointIndex].url}&limit=${count}&offset=${offset}`;
         const res = await fetch(url)
         const data = await res.json()
-        console.log({data})
         return data.map((i)=> {
             return {
                 ...this.endpoints[endpointIndex],
@@ -248,6 +244,13 @@ this.loadAndMergeData();
         this.feed = [...allData]
         this.feedToRender = this.feed.slice(0,20)
         this.hasInitialFetch = true
+        if(allData.length > 0){
+            const created = allData[0].created
+            let value = localStorage.getItem('lastSeenFeed')
+			if (((+value || 0) < created)) {
+				this.setHasNewFeed(true)
+			}
+        }
     }
 
 
@@ -255,7 +258,6 @@ this.loadAndMergeData();
    
 
 	render() {
-		console.log('ron', this.feed)
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
@@ -368,10 +370,8 @@ function executeMethodInWorker(methodString, externalArgs) {
 
 
 export async function updateCustomParamsWithMethods(schema,resource) {
-    console.log({schema, resource})
     for (const key in schema.customParams) {
         const value = schema.customParams[key];
-        console.log({value})
         if (value.startsWith("**methods.") && value.endsWith("**")) {
             const methodInvocation = value.slice(10, -2).split('(');
             const methodName = methodInvocation[0];
@@ -382,9 +382,7 @@ export async function updateCustomParamsWithMethods(schema,resource) {
                     name: resource.name,
                     service: resource.service
                 }
-                console.log({newResource})
 				const methodResult = await executeMethodInWorker(schema.methods[methodName], newResource);
-				console.log({methodResult})
                 schema.customParams[key] = methodResult;
             }
         }
@@ -443,31 +441,8 @@ export function replacePlaceholders(template, resource, customParams) {
                 "getShortId": "return resource.identifier.split('-post-')[1];",
                 "getBlogId": "const arr = resource.identifier.split('-post-'); const id = arr[0]; return id.startsWith('q-blog-') ? id.substring(7) : id;"
             }
-            // methods: {
-            //     getShortId: function(resource) {
-            //         console.log({resource})
-            //         const str = resource.identifier
-            //         const arr = str.split('-post-')
-            //         const shortIdentifier = arr[1]
-                   
-            //         return shortIdentifier
-            //     },
-			// 	getBlogId: function(resource) {
-            //         console.log({resource})
-            //         const str = resource.identifier
-            //         const arr = str.split('-post-')
-            //         const id = arr[0]
-            //         let blogId = ""
-            //         if (id.startsWith('q-blog-')) {
-            //             blogId = id.substring(7);
-            //         } else {
-            //             blogId= id;
-            //         }
-            //         return blogId
-            //     }
-            // }
+         
         }
     ]
 }
 
-// export const schema = JSON.stringify(schema2, null, 2); // 2 spaces indentation

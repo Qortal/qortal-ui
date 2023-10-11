@@ -1,11 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
-class FriendsSidePanelParent extends LitElement {
+class SaveSettingsQdn extends LitElement {
 	static get properties() {
 		return {
-			isOpen: {type: Boolean},
-			hasNewFeed: {type: Boolean}
+			isOpen: {type: Boolean}
 		};
 	}
 	
@@ -13,7 +12,6 @@ class FriendsSidePanelParent extends LitElement {
 	constructor() {
 		super();
 		this.isOpen = false
-		this.hasNewFeed = false
 	}
 	static styles = css`
 		.header {
@@ -44,22 +42,14 @@ class FriendsSidePanelParent extends LitElement {
 		}
 	`;
 
-	setHasNewFeed(val){
-		this.hasNewFeed = val
-	}
 	render() {
 		return html`
 			<mwc-icon @click=${()=> {
 				this.isOpen = !this.isOpen
-				if(this.isOpen && this.hasNewFeed){
-					localStorage.setItem('lastSeenFeed', Date.now());
-					this.hasNewFeed = false
-					this.shadowRoot.querySelector("friends-side-panel").selected = 'feed'
-				}
-			}} style="color: ${this.hasNewFeed ? 'green' : 'var(--black)'}; cursor:pointer;user-select:none"
-				>group</mwc-icon
+			}} style="color: var(--black); cursor:pointer;user-select:none"
+				>save</mwc-icon
 			>
-			<friends-side-panel .setHasNewFeed=${(val)=> this.setHasNewFeed(val)} ?isOpen=${this.isOpen} .setIsOpen=${(val)=> this.isOpen = val}></friends-side-panel>
+			
 			
 		`;
 	}
@@ -67,4 +57,4 @@ class FriendsSidePanelParent extends LitElement {
 
 }
 
-customElements.define('friends-side-panel-parent', FriendsSidePanelParent);
+customElements.define('save-settings-qdn', SaveSettingsQdn);

@@ -137,7 +137,6 @@ class AddFriendsModal extends LitElement {
 	
 	async updated(changedProperties) {
 		if (changedProperties && changedProperties.has('editContent') && this.editContent) {
-			console.log('this.editedContent', this.editContent)
 			this.userSelected = {
 				name: this.editContent.name ?? '',
 			}
@@ -150,7 +149,6 @@ class AddFriendsModal extends LitElement {
 	}
 
 	render() {
-		console.log('hello2', this.editContent)
 		return html`
 			  <div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 			  <div class="modal-content">

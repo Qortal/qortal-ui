@@ -330,7 +330,6 @@ getMyNode(){
 
   async goToFeedLink(){
     try {
-      console.log('this.link', this.link)
       let newQuery = this.link
       if (newQuery.endsWith('/')) {
           newQuery = newQuery.slice(0, -1)
@@ -423,7 +422,6 @@ getMyNode(){
  
 
   render() {
-    console.log('this.feedItem', this.feedItem)
     let avatarImg
     const avatarUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.resource.name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			avatarImg = html`<img

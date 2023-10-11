@@ -215,7 +215,6 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	onClose(){
-		console.log('hello100')
 		this.isLoading = false;
 		this.isOpenAddFriendsModal = false
 		this.editContent = null
@@ -223,7 +222,6 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('friends', this.userSelected);
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
@@ -257,7 +255,6 @@ class FriendsView extends connect(store)(LitElement) {
                                     this.userSelected = result;
 									this.isOpenAddFriendsModal = true
 							
-								console.log({result});
                                     this.userFound = [];
                                     this.userFoundModalOpen = false;
                                 }}

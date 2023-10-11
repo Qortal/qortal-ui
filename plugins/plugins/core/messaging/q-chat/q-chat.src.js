@@ -221,8 +221,6 @@ class Chat extends LitElement {
     }
 
     render() {
-        console.log('chatHeads', this.chatHeads)
-        console.log('chatHeadsObj', this.chatHeadsObj)
         return html`
             <div class="container clearfix">
                 <div class="people-list" id="people-list">
