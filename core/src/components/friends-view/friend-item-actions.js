@@ -90,7 +90,6 @@ export class FriendItemActions extends connect(store)(LitElement) {
 	}
 
 	attachToTarget(target) {
-		console.log({ target });
 		if (!this.popperInstance && target) {
 			this.popperInstance = createPopper(target, this, {
 				placement: 'bottom',

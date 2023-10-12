@@ -5,6 +5,8 @@ import { friendsViewStyles } from './friends-view-css';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store';
 import './feed-item'
+import '@polymer/paper-spinner/paper-spinner-lite.js'
+
 
 const perEndpointCount = 20;
 const totalDesiredCount = 100;
@@ -13,7 +15,8 @@ class FriendsFeed extends connect(store)(LitElement) {
     static get properties() {
 		return {
 			feed: {type: Array},
-            setHasNewFeed: {attribute:false}
+            setHasNewFeed: {attribute:false},
+            isLoading: {type: Boolean}
 		};
 	}
 	constructor(){
@@ -57,30 +60,84 @@ class FriendsFeed extends connect(store)(LitElement) {
 		return myNode;
 	}
 
+    async getSchemas(schemas){
+
+     
+
+        const getAllSchemas = (schemas || []).map(
+    		async (schema) => {
+    			try {
+                    const url = `${this.nodeUrl}/arbitrary/${schema.service}/${schema.name}/${schema.identifier}`;
+                    const res = await fetch(url)
+                    const data = await res.json()
+                    if(data.error) return false
+                    return data
+    			} catch (error) {
+    				console.log(error);
+                    return false
+    			}
+    		}
+    	);
+        const res =	await Promise.all(getAllSchemas);
+        return res.filter((item)=> !!item)
+    }
+
+    getFeedOnInterval(){
+        let interval = null;
+		let stop = false;
+		const getAnswer = async () => {
+			
+			if (!stop) {
+				stop = true;
+				try {
+					await this.reFetchFeedData()
+				} catch (error) {}
+				stop = false;
+			}
+		};
+		interval = setInterval(getAnswer, 600000);
+        
+    }
+
 	async firstUpdated(){
         this.viewElement = this.shadowRoot.getElementById('viewElement');
 		this.downObserverElement =
 			this.shadowRoot.getElementById('downObserver');
 		this.elementObserver();
-		const feedData = schema.feed[0]
 		let schemaObj = {...schema}
 		const dynamicVars = {
 			
 		}
 		const getEndpoints = async () => {
-			
-			const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true`
-			const fullUrl = constructUrl(baseurl, feedData.search, dynamicVars);
-            this.endpoints= [{url: fullUrl, schemaName: schema.name, schema: feedData }]
-            this.endpointOffsets = Array(this.endpoints.length).fill(0);  
+            const schemas = await this.getSchemas(schemaList)
+            const friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
+            console.log({friendList})
+            const names = friendList.map(friend => `name=${friend.name}`).join('&');
+            console.log({names})
+			const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
+            let formEndpoints = []
+            schemas.forEach((schema)=> {
+                const feedData = schema.feed[0]
+                if(feedData){
+                    const copyFeedData = {...feedData}
+                    const fullUrl = constructUrl(baseurl, copyFeedData.search, dynamicVars);
+                    if(fullUrl){
+                        formEndpoints.push({
+                            url: fullUrl, schemaName: schema.name, schema: copyFeedData
+                        })
+                    }
+                }
+              
 
-			
+            })
+            this.endpoints= formEndpoints
+            this.endpointOffsets = Array(this.endpoints.length).fill(0);  
 		}
 		try {
-			getEndpoints()
+			await getEndpoints()
 
 this.loadAndMergeData();
-
+this.getFeedOnInterval()
 
 		} catch (error) {
 			console.log(error)
@@ -147,7 +204,7 @@ this.loadAndMergeData();
     
         while (totalFetched < totalDesiredCount && madeProgress) {
             madeProgress = false;
-    
+            this.isLoading = true
             for (i = 0; i < this.endpoints.length; i++) {
                 if (exhaustedEndpoints.has(i)) {
                     continue;
@@ -182,7 +239,7 @@ this.loadAndMergeData();
                 break;
             }
         }
-    
+        this.isLoading = false
         // Trim the results if somehow they are over the totalDesiredCount
         return results.slice(0, totalDesiredCount);
     }
@@ -233,6 +290,37 @@ this.loadAndMergeData();
       return newData
   
     }
+    async reFetchFeedData() {
+        // Resetting offsets to start fresh.
+        this.endpointOffsets = Array(this.endpoints.length).fill(0);  
+        
+        const oldIdentifiers = new Set(this.feed.map(item => item.identifier));
+        const newData = await this.initialLoad();
+    
+        // Filter out items that are already in the feed
+        const trulyNewData = newData.filter(item => !oldIdentifiers.has(item.identifier));
+    
+        if (trulyNewData.length > 0) {
+            // Adding extra data and merging with old data
+            const enhancedNewData = await this.addExtraData(trulyNewData);
+            
+            // Merge new data with old data immutably
+            this.feed = [...enhancedNewData, ...this.feed];
+    
+            this.feed.sort((a, b) => new Date(b.created) - new Date(a.created));  // Sort by timestamp, most recent first
+            this.feed = this.trimDataToLimit(this.feed, maxResultsInMemory);  // Trim to the maximum allowed in memory
+            this.feedToRender = this.feed.slice(0, 20);
+            this.hasInitialFetch = true;
+    
+            const created = trulyNewData[0].created;
+            let value = localStorage.getItem('lastSeenFeed');
+            if (((+value || 0) < created)) {
+                this.setHasNewFeed(true);
+            }
+        }
+    }
+    
+
     
     async  loadAndMergeData() {
         let allData = this.feed
@@ -261,7 +349,11 @@ this.loadAndMergeData();
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
-
+                    ${this.isLoading ? html`
+                    <div style="width:100%;display: flex; justify-content:center">
+                    <paper-spinner-lite active></paper-spinner-lite>
+                    </div>
+                    ` : ''}
 					${this.feedToRender.map((item) => {
 						return html`<feed-item
 					.resource=${item}
@@ -351,6 +443,7 @@ function executeMethodInWorker(methodString, externalArgs) {
                 URL.revokeObjectURL(blobURL);
             } else {
                 resolve("");
+                event.data = null
                 worker.terminate();
                 URL.revokeObjectURL(blobURL);
             }
@@ -409,9 +502,12 @@ export function replacePlaceholders(template, resource, customParams) {
 
 
 
-// export const schemaList = [schema]
-
- const schema = {
+export const schemaList = [{
+    identifier: 'ui_schema_feed',
+    name: 'Q-Blog',
+    service: 'DOCUMENT'
+}]
+ export const schema = {
     name: "Q-Blog",
     defaultFeedIndex: 0,
     feed: [
@@ -429,9 +525,7 @@ export function replacePlaceholders(template, resource, customParams) {
             },
             click: "qortal://APP/Q-Blog/$${resource.name}$$/$${customParams.blogId}$$/$${customParams.shortIdentifier}$$",
             display: {
-                title: "$${rawdata.title}$$",
-                description: "$${rawdata.description}$$",
-                coverImage: "$${rawdata.image}$$"
+                title: "$${rawdata.title}$$"
             },
             customParams: {
                 blogId: "**methods.getBlogId(resource)**",
@@ -446,3 +540,4 @@ export function replacePlaceholders(template, resource, customParams) {
     ]
 }
 
+export const listSchemas = [schema]

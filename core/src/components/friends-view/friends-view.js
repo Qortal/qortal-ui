@@ -40,7 +40,8 @@ class FriendsView extends connect(store)(LitElement) {
 			userFoundModalOpen: {type: Boolean},
 			userFound: { type: Array},
 			isOpenAddFriendsModal: {type: Boolean},
-			editContent: {type: Object}
+			editContent: {type: Object},
+			mySelectedFeeds: {type: Array}
 		};
 	}
 	static get styles() {
@@ -57,11 +58,7 @@ class FriendsView extends connect(store)(LitElement) {
 			window.parent.reduxStore.getState().app.selectedAddress.address;
 		this.errorMessage = '';
 		this.successMessage = '';
-		this.friendList = [{
-		
-				name: "Phil"
-			
-		}];
+		this.friendList = [];
 		this.userSelected = {};
 		this.isLoading = false;
 		this.userFoundModalOpen = false
@@ -99,6 +96,8 @@ class FriendsView extends connect(store)(LitElement) {
 		this.downObserverElement =
 			this.shadowRoot.getElementById('downObserver');
 		this.elementObserver();
+		this.mySelectedFeeds = JSON.parse(localStorage.getItem('friends-my-selected-feeds') || "[]")
+		this.friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
 	}
 
 	elementObserver() {
@@ -177,41 +176,68 @@ class FriendsView extends connect(store)(LitElement) {
 				body: `${namesJsonString}`
 			})
 	
-			if (ret === true) {
-				this.myFollowedNames = this.myFollowedNames.filter(item => item != name)
-				this.myFollowedNames.push(name)
-			} else {
-				let err3string = get("appspage.schange22")
-				parentEpml.request('showSnackBar', `${err3string}`)
-			}
+			
 			return ret
 		}
-	addToFriendList(val){
-		if(this.editContent){
-			const findFriend = this.friendList.findIndex(item=> item.name === val.name)
+
+		async unFollowName(name) {
+			let items = [
+				name
+			]
+			let namesJsonString = JSON.stringify({ "items": items })
+	
+			let ret = await parentEpml.request('apiCall', {
+				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: `${namesJsonString}`
+			})
+	
+			
+			return ret
+		}
+	addToFriendList(val, isRemove){
+		const copyVal = {...val}
+		delete copyVal.mySelectedFeeds
+		if(isRemove){
+			this.friendList = this.friendList.filter((item)=> item.name !== copyVal.name)
+		}else if(this.editContent){
+			const findFriend = this.friendList.findIndex(item=> item.name === copyVal.name)
 			if(findFriend !== -1){
 				const copyList = [...this.friendList]
-				copyList[findFriend] = val
+				copyList[findFriend] = copyVal
 				this.friendList = copyList
 				
 			}
 			
 		} else {
-			this.friendList = [...this.friendList, val]
+			this.friendList = [...this.friendList, copyVal]
 		}
-		if(val.willFollow){
-			this.myFollowName(val.name)
-		}
-		
+		if(!copyVal.willFollow || isRemove) {
+			this.unFollowName(copyVal.name)
+		} else if(copyVal.willFollow){
+			this.myFollowName(copyVal.name)
+		} 
+		this.setMySelectedFeeds(val.mySelectedFeeds)
 		this.userSelected = {};
 		this.isLoading = false;
 		this.isOpenAddFriendsModal = false
 		this.editContent = null
+		this.setMyFriends(this.friendList)
+	}
+	setMyFriends(friendList){
+		localStorage.setItem('friends-my-friend-list', JSON.stringify(friendList));
+	}
+	setMySelectedFeeds(mySelectedFeeds){
+		this.mySelectedFeeds = mySelectedFeeds
+		localStorage.setItem('friends-my-selected-feeds', JSON.stringify(mySelectedFeeds));
 	}
 	openEditFriend(val){
 		this.isOpenAddFriendsModal = true
 		this.userSelected = val
-		this.editContent = val
+		this.editContent = {...val, mySelectedFeeds: this.mySelectedFeeds}
 	}
 
 	onClose(){
@@ -288,9 +314,10 @@ class FriendsView extends connect(store)(LitElement) {
 					this.isOpenAddFriendsModal = val
 				}}
                 .userSelected=${this.userSelected}
-				.onSubmit=${(val)=> this.addToFriendList(val)}
+				.onSubmit=${(val, isRemove)=> this.addToFriendList(val, isRemove)}
                 .editContent=${this.editContent}
 				.onClose=${()=> this.onClose()}
+				.mySelectedFeeds=${this.mySelectedFeeds}
             >
             </add-friends-modal>
 		`;

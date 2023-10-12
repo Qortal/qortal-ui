@@ -13,7 +13,10 @@ import { store } from '../../store';
 import { setNewTab } from '../../redux/app/app-actions';
 import ShortUniqueId from 'short-unique-id';
 
-const requestQueue = new RequestQueueWithPromise(5);
+const requestQueue = new RequestQueueWithPromise(3);
+const requestQueueRawData = new RequestQueueWithPromise(3);
+const requestQueueStatus = new RequestQueueWithPromise(3);
+
 
 export class FeedItem extends connect(store)(LitElement) {
   static get properties() {
@@ -140,7 +143,6 @@ export class FeedItem extends connect(store)(LitElement) {
     this.status = {
       status: ''
     }
-    this.url = ""
     this.isReady = false
     this.nodeUrl = this.getNodeUrl()
     this.myNode = this.getMyNode()
@@ -195,21 +197,23 @@ getMyNode(){
  async fetchVideoUrl() {
 
       this.fetchResource()
-      this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
      
   }
 
   async getRawData(){
     const url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
-    const response2 = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+   return await requestQueueRawData.enqueue(()=> {
+      return  axios.get(url)
     })
+    // const response2 = await fetch(url, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
 
-    const responseData2 = await response2.json()
-    return responseData2
+    // const responseData2 = await response2.json()
+    // return responseData2
   }
  
    updateDisplayWithPlaceholders(display, resource, rawdata) {
@@ -244,13 +248,16 @@ getMyNode(){
     let isCalling = false
     let percentLoaded = 0
     let timer = 24
-    const response = await axios.get(`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
+    const response =  await requestQueueStatus.enqueue(()=> {
+      return axios.get(`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
+    }) 
     if(response && response.data && response.data.status === 'READY'){
       const rawData = await this.getRawData()
+      console.log({rawData})
       const object = {
-        title: "$${rawdata.title}$$",
+        ...this.resource.schema.display
       }
-      this.updateDisplayWithPlaceholders(object, {},rawData)
+      this.updateDisplayWithPlaceholders(object, {},rawData.data)
       this.feedItem = object
       this.status = response.data
       
@@ -301,8 +308,12 @@ getMyNode(){
 
       // check if progress is 100% and clear interval if true
       if (res.status === 'READY') {
-     
-        this.feedItem = await this.getRawData()
+        const rawData = await this.getRawData()
+        const object = {
+          ...this.resource.schema.display
+        }
+        this.updateDisplayWithPlaceholders(object, {},rawData.data)
+        this.feedItem = object
         clearInterval(intervalId)
         this.status = res
         this.isReady = true
@@ -312,11 +323,7 @@ getMyNode(){
 
   async _fetchImage() {
     try {
-      this.fetchVideoUrl({
-       name: this.resource.name,
-       service: this.resource.service,
-       identifier: this.resource.identifier
-      })
+      this.fetchVideoUrl()
       this.fetchStatus()
     } catch (error) { /* empty */ }
   }

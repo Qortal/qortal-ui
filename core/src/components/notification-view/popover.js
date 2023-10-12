@@ -40,7 +40,6 @@ export class PopoverComponent extends LitElement {
     }
 
     attachToTarget(target) {
-        console.log({target})
         if (!this.popperInstance && target) {
             this.popperInstance = createPopper(target, this, {
                 placement: 'bottom',

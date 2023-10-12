@@ -107,9 +107,15 @@ class FriendsSidePanel extends LitElement {
 				<span @click=${()=> this.selected = 'friends'} class="${this.selected === 'friends' ? 'active' : 'default'}">${translate('friends.friend12')}</span>
 				<span @click=${()=> this.selected = 'feed'} class="${this.selected === 'feed' ? 'active' : 'default'}">${translate('friends.friend13')}</span>
 		</div>
+		<div style="display:flex;gap:15px;align-items:center">
+		<mwc-icon @click=${()=> {
+                this.shadowRoot.querySelector('friends-feed').reFetchFeedData()
+            }} style="color: var(--black); cursor:pointer;">refresh</mwc-icon>
 				<mwc-icon style="cursor:pointer" @click=${()=> {
                     this.setIsOpen(false)
                 }}>close</mwc-icon>
+		</div>
+			
 			</div>
 			<div class="content">
 				<div class="${this.selected === 'friends' ? 'active-content' : 'default-content'}">
@@ -118,9 +124,7 @@ class FriendsSidePanel extends LitElement {
 				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
 				<friends-feed .setHasNewFeed=${(val)=> this.setHasNewFeed(val)}></friends-feed>
 				</div>
-				<!-- ${this.selected === 'friends' ? html`<friends-view></friends-view>` : ''}
-
-				${this.selected === 'feed' ? html`<friends-feed></friends-feed>` : ''} -->
+		
 			
 
 		</div>
