@@ -5,6 +5,8 @@ import { friendsViewStyles } from './friends-view-css';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store';
 import './feed-item'
+import { translate } from 'lit-translate';
+
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 
@@ -16,7 +18,8 @@ class FriendsFeed extends connect(store)(LitElement) {
 		return {
 			feed: {type: Array},
             setHasNewFeed: {attribute:false},
-            isLoading: {type: Boolean}
+            isLoading: {type: Boolean},
+            hasFetched: {type: Boolean}
 		};
 	}
 	constructor(){
@@ -34,6 +37,7 @@ class FriendsFeed extends connect(store)(LitElement) {
         this.elementObserver = this.elementObserver.bind(this)
         this.mySelectedFeeds = []
         this.getSchemas = this.getSchemas.bind(this)
+        this.hasFetched = false
 
 	}
 	
@@ -257,6 +261,7 @@ this.getFeedOnInterval()
             }
         }
         this.isLoading = false
+        this.hasFetched = true;
         // Trim the results if somehow they are over the totalDesiredCount
         return results.slice(0, totalDesiredCount);
     }
@@ -369,6 +374,11 @@ this.getFeedOnInterval()
                     ${this.isLoading ? html`
                     <div style="width:100%;display: flex; justify-content:center">
                     <paper-spinner-lite active></paper-spinner-lite>
+                    </div>
+                    ` : ''}
+                    ${this.hasFetched && !this.isLoading && this.feed.length === 0 ? html`
+                    <div style="width:100%;display: flex; justify-content:center">
+                    <p>${translate('friends.friends18')}</p>
                     </div>
                     ` : ''}
 					${this.feedToRender.map((item) => {

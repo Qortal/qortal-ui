@@ -532,6 +532,8 @@ class Chat extends LitElement {
                             open: true,
                             name: name
                         })
+                        window.parent.reduxStore.dispatch(
+                            window.parent.reduxAction.setSideEffectAction(null))
                     }
                 
                 } 
