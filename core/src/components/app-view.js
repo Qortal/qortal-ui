@@ -560,7 +560,7 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:20px">
-                            <save-settings-qdn></save-settings-qdn>
+                            <!-- <save-settings-qdn></save-settings-qdn> -->
                             <friends-side-panel-parent></friends-side-panel-parent>
                             <notification-bell></notification-bell>
                             <notification-bell-general></notification-bell-general>

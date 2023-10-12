@@ -12,6 +12,7 @@ import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store';
+import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 class AddFriendsModal extends connect(store)(LitElement) {
 	static get properties() {
@@ -27,7 +28,8 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			editContent: { type: Object },
 			onClose: { attribute: false },
 			mySelectedFeeds: { type: Array },
-			availableFeeedSchemas: {type: Array}
+			availableFeeedSchemas: {type: Array},
+			isLoadingSchemas: {type: Boolean}
 		};
 	}
 
@@ -41,7 +43,8 @@ class AddFriendsModal extends connect(store)(LitElement) {
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
 		this.mySelectedFeeds = [];
-		this.availableFeeedSchemas = []
+		this.availableFeeedSchemas = [];
+		this.isLoadingSchemas= false;
 	}
 
 	static get styles() {
@@ -53,6 +56,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				--mdc-dialog-content-ink-color: var(--black);
 				--mdc-dialog-min-width: 400px;
 				--mdc-dialog-max-width: 1024px;
+				box-sizing:border-box;
 			}
 			.input {
 				width: 90%;
@@ -145,9 +149,11 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;
 				z-index: 1001;
 				border-radius: 5px;
-				max-height: 80vh;
-				overflow: auto;
+				display: flex;
+				flex-direction:column;
 			}
+
+
 			.modal-overlay.hidden {
 				display: none;
 			}
@@ -155,7 +161,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				width: 36px;
 				height: 36px;
 				display: flex;
-    align-items: center;
+    			align-items: center;
 			}
 
 			.app-name {
@@ -168,6 +174,30 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				border-radius: 5px;
 				margin-bottom: 10px;
 			}
+			.inner-content {
+				display: flex;
+				flex-direction: column;
+				max-height: 75vh;
+				flex-grow: 1;
+				overflow: auto;
+			}
+
+			.inner-content::-webkit-scrollbar-track {
+        background-color: whitesmoke;
+        border-radius: 7px;
+    }
+
+    .inner-content::-webkit-scrollbar {
+        width: 12px;
+        border-radius: 7px;
+        background-color: whitesmoke;
+    }
+
+    .inner-content::-webkit-scrollbar-thumb {
+        background-color: rgb(180, 176, 176);
+        border-radius: 7px;
+        transition: all 0.3s ease-in-out;
+    }
 		`;
 	}
 
@@ -250,10 +280,10 @@ class AddFriendsModal extends connect(store)(LitElement) {
 
 	async getAvailableFeedSchemas() {
 		try {
+			this.isLoadingSchemas= true
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=ui_schema_feed&prefix=true`;
 			const res = await fetch(url);
 			const data = await res.json();
-
 			if (data.error === 401) {
 				this.availableFeeedSchemas = [];
 			} else {
@@ -264,13 +294,17 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				this.availableFeeedSchemas = result;
 			}
 			this.userFoundModalOpen = true;
-		} catch (error) {}
+		} catch (error) {} finally {
+			this.isLoadingSchemas= false
+		}
 	}
 
 	render() {
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
+				
 				<div class="modal-content">
+					<div class="inner-content">
 					<div style="text-align:center">
 						<h1>
 							${this.editContent
@@ -297,7 +331,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							?checked=${this.willFollow}
 						></mwc-checkbox>
 					</div>
-					<div style="height: 15px"></div>
+					<div style="height:15px"></div>
 					<div style="display: flex;flex-direction: column;">
 						<label
 							for="name"
@@ -315,7 +349,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 								: ''}
 						/>
 					</div>
-					<div style="height: 15px"></div>
+					<div style="height:15px"></div>
 					<div style="display: flex;flex-direction: column;">
 						<label
 							for="alias"
@@ -332,7 +366,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							@change=${(e) => (this.alias = e.target.value)}
 						/>
 					</div>
-					<div style="height: 15px"></div>
+					<div style="height:15px"></div>
 					<div style="margin-bottom:0;">
 						<textarea
 							class="input"
@@ -344,12 +378,17 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							rows="3"
 						></textarea>
 					</div>
-					<div style="height: 15px"></div>
+					<div style="height:15px"></div>
 					<h2>${translate('friends.friend15')}</h2>
 					<div style="margin-bottom:0;">
 						<p>${translate('friends.friend16')}</p>
 					</div>
 					<div>
+					${this.isLoadingSchemas ? html`
+                    <div style="width:100%;display: flex; justify-content:center">
+                    <paper-spinner-lite active></paper-spinner-lite>
+                    </div>
+                    ` : ''}
 						${this.availableFeeedSchemas.map((schema) => {
 							const isAlreadySelected = this.mySelectedFeeds.find(
 								(item) => item.name === schema.name
@@ -400,6 +439,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 								</div>
 							`;
 						})}
+					</div>
 					</div>
 					<div
 						style="display:flex;justify-content:space-between;align-items:center;margin-top:20px"

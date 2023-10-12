@@ -1,6 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
+import '@vaadin/tooltip';
+import { get } from 'lit-translate';
+
+
 class FriendsSidePanelParent extends LitElement {
 	static get properties() {
 		return {
@@ -49,7 +53,7 @@ class FriendsSidePanelParent extends LitElement {
 	}
 	render() {
 		return html`
-			<mwc-icon @click=${()=> {
+			<mwc-icon id="friends-icon" @click=${()=> {
 				this.isOpen = !this.isOpen
 				if(this.isOpen && this.hasNewFeed){
 					localStorage.setItem('lastSeenFeed', Date.now());
@@ -59,6 +63,13 @@ class FriendsSidePanelParent extends LitElement {
 			}} style="color: ${this.hasNewFeed ? 'green' : 'var(--black)'}; cursor:pointer;user-select:none"
 				>group</mwc-icon
 			>
+			<vaadin-tooltip
+			  for="friends-icon"
+			  position="bottom"
+			  hover-delay=${200}
+			  hide-delay=${1}
+			  text=${get('friends.friends17')}>
+		  </vaadin-tooltip>
 			<friends-side-panel .setHasNewFeed=${(val)=> this.setHasNewFeed(val)} ?isOpen=${this.isOpen} .setIsOpen=${(val)=> this.isOpen = val}></friends-side-panel>
 			
 		`;

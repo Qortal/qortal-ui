@@ -84,11 +84,24 @@ export class FeedItem extends connect(store)(LitElement) {
     width: 100%;
     box-sizing: border-box;
     cursor: pointer;
+    font-size: 16px;
   }
   .avatar {
-		width: 42px; 
-		height: 42px;
+		width: 36px; 
+		height: 36px;
+    border-radius:50%;
+    overflow: hidden;
+    display:flex;
+    align-items:center;
 	}
+  .avatarApp {
+    width: 30px; 
+		height: 30px;
+    border-radius:50%;
+    overflow: hidden;
+    display:flex;
+    align-items:center;
+  }
   .feed-item-name {
 		user-select: none;
 		color: #03a9f4;
@@ -433,14 +446,14 @@ getMyNode(){
     const avatarUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.resource.name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			avatarImg = html`<img
 				src="${avatarUrl}"
-				style="max-width:100%; max-height:100%;"
+				style="width:100%; height:100%;"
 				onerror="this.onerror=null; this.src='/img/incognito.png';"
 			/>`;
        let avatarImgApp
        const avatarUrl2 = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.appName}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
        avatarImgApp = html`<img
            src="${avatarUrl2}"
-           style="max-width:100%; max-height:100%;"
+           style="width:100%; height:100%;"
            onerror="this.onerror=null; this.src='/img/incognito.png';"
          />`;
     return html`
@@ -473,7 +486,7 @@ getMyNode(){
 									}
     ${this.status.status === 'READY' && this.feedItem ? html`
     <div class="parent-feed-item"  style="position:relative" @click=${this.goToFeedLink}>
-    <div style="display:flex;gap:10px;margin-bottom:20px">
+    <div style="display:flex;gap:10px;margin-bottom:5px">
     <div class="avatar">
     ${avatarImg}</div> <span class="feed-item-name">${this.resource.name}</span>
                 </div>
@@ -481,7 +494,7 @@ getMyNode(){
         <p>${this.feedItem.title}</p>
                 </div>
             <div class="app-name">
-            <div class="avatar">
+            <div class="avatarApp">
             ${avatarImgApp}
                 </div>
             <message-time

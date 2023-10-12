@@ -32,6 +32,8 @@ class FriendsFeed extends connect(store)(LitElement) {
         this.hasInitialFetch = false
         this.observerHandler = this.observerHandler.bind(this);
         this.elementObserver = this.elementObserver.bind(this)
+        this.mySelectedFeeds = []
+        this.getSchemas = this.getSchemas.bind(this)
 
 	}
 	
@@ -60,10 +62,9 @@ class FriendsFeed extends connect(store)(LitElement) {
 		return myNode;
 	}
 
-    async getSchemas(schemas){
-
-     
-
+    async getSchemas(){
+        this.mySelectedFeeds = JSON.parse(localStorage.getItem('friends-my-selected-feeds') || "[]")
+    const schemas = this.mySelectedFeeds
         const getAllSchemas = (schemas || []).map(
     		async (schema) => {
     			try {
@@ -99,42 +100,49 @@ class FriendsFeed extends connect(store)(LitElement) {
         
     }
 
+    async getEndpoints(){
+        const dynamicVars = {
+			
+		}
+        const schemas = await this.getSchemas()
+        const friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
+        console.log({friendList})
+        const names = friendList.map(friend => `name=${friend.name}`).join('&');
+        if(names.length === 0){
+            this.endpoints= []
+        this.endpointOffsets = Array(this.endpoints.length).fill(0); 
+            return
+        }
+        console.log({names})
+        const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
+        let formEndpoints = []
+        schemas.forEach((schema)=> {
+            const feedData = schema.feed[0]
+            if(feedData){
+                const copyFeedData = {...feedData}
+                const fullUrl = constructUrl(baseurl, copyFeedData.search, dynamicVars);
+                if(fullUrl){
+                    formEndpoints.push({
+                        url: fullUrl, schemaName: schema.name, schema: copyFeedData
+                    })
+                }
+            }
+          
+
+        })
+        this.endpoints= formEndpoints
+        this.endpointOffsets = Array(this.endpoints.length).fill(0);  
+    }
+
 	async firstUpdated(){
         this.viewElement = this.shadowRoot.getElementById('viewElement');
 		this.downObserverElement =
 			this.shadowRoot.getElementById('downObserver');
 		this.elementObserver();
-		let schemaObj = {...schema}
-		const dynamicVars = {
-			
-		}
-		const getEndpoints = async () => {
-            const schemas = await this.getSchemas(schemaList)
-            const friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
-            console.log({friendList})
-            const names = friendList.map(friend => `name=${friend.name}`).join('&');
-            console.log({names})
-			const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
-            let formEndpoints = []
-            schemas.forEach((schema)=> {
-                const feedData = schema.feed[0]
-                if(feedData){
-                    const copyFeedData = {...feedData}
-                    const fullUrl = constructUrl(baseurl, copyFeedData.search, dynamicVars);
-                    if(fullUrl){
-                        formEndpoints.push({
-                            url: fullUrl, schemaName: schema.name, schema: copyFeedData
-                        })
-                    }
-                }
-              
-
-            })
-            this.endpoints= formEndpoints
-            this.endpointOffsets = Array(this.endpoints.length).fill(0);  
-		}
+		
+		
 		try {
-			await getEndpoints()
+			await this.getEndpoints()
 
 this.loadAndMergeData();
 this.getFeedOnInterval()
@@ -149,6 +157,15 @@ this.getFeedOnInterval()
         if(this.feedToRender.length === this.feed.length ) return
         this.feedToRender = this.feed.slice(0, this.feedToRender.length + 20)
         this.requestUpdate()
+    }
+
+    async refresh(){
+        try {
+             await this.getEndpoints()
+             this.reFetchFeedData()
+        } catch (error) {
+            
+        }
     }
 
 
@@ -293,7 +310,7 @@ this.getFeedOnInterval()
     async reFetchFeedData() {
         // Resetting offsets to start fresh.
         this.endpointOffsets = Array(this.endpoints.length).fill(0);  
-        
+        await this.getEndpoints()
         const oldIdentifiers = new Set(this.feed.map(item => item.identifier));
         const newData = await this.initialLoad();
     
@@ -502,42 +519,4 @@ export function replacePlaceholders(template, resource, customParams) {
 
 
 
-export const schemaList = [{
-    identifier: 'ui_schema_feed',
-    name: 'Q-Blog',
-    service: 'DOCUMENT'
-}]
- export const schema = {
-    name: "Q-Blog",
-    defaultFeedIndex: 0,
-    feed: [
-        {
-            id:"post-creation",
-			version: 1,
-            updated: 1696646223261,
-            title: "Q-Blog Post creations",
-            description: "blablabla",
-            search: {
-                query: "-post-",
-                identifier: "q-blog-",
-                service: "BLOG_POST",
-				exactmatchnames: true
-            },
-            click: "qortal://APP/Q-Blog/$${resource.name}$$/$${customParams.blogId}$$/$${customParams.shortIdentifier}$$",
-            display: {
-                title: "$${rawdata.title}$$"
-            },
-            customParams: {
-                blogId: "**methods.getBlogId(resource)**",
-                shortIdentifier: "**methods.getShortId(resource)**"
-            },
-            "methods": {
-                "getShortId": "return resource.identifier.split('-post-')[1];",
-                "getBlogId": "const arr = resource.identifier.split('-post-'); const id = arr[0]; return id.startsWith('q-blog-') ? id.substring(7) : id;"
-            }
-         
-        }
-    ]
-}
 
-export const listSchemas = [schema]

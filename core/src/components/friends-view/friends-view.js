@@ -41,7 +41,8 @@ class FriendsView extends connect(store)(LitElement) {
 			userFound: { type: Array},
 			isOpenAddFriendsModal: {type: Boolean},
 			editContent: {type: Object},
-			mySelectedFeeds: {type: Array}
+			mySelectedFeeds: {type: Array},
+			refreshFeed: {attribute: false}
 		};
 	}
 	static get styles() {
@@ -222,10 +223,14 @@ class FriendsView extends connect(store)(LitElement) {
 		} 
 		this.setMySelectedFeeds(val.mySelectedFeeds)
 		this.userSelected = {};
+		this.shadowRoot.getElementById('sendTo').value = ''
 		this.isLoading = false;
 		this.isOpenAddFriendsModal = false
 		this.editContent = null
 		this.setMyFriends(this.friendList)
+		if(!isRemove && this.friendList.length === 1){
+			this.refreshFeed()
+		}
 	}
 	setMyFriends(friendList){
 		localStorage.setItem('friends-my-friend-list', JSON.stringify(friendList));

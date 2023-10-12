@@ -99,6 +99,13 @@ class FriendsSidePanel extends LitElement {
 		
 	`;
 
+	refreshFeed(){
+	
+			this.shadowRoot.querySelector('friends-feed').refresh()
+
+		
+	}
+
 	render() {
 		return html`
 			<div class="parent">
@@ -109,7 +116,7 @@ class FriendsSidePanel extends LitElement {
 		</div>
 		<div style="display:flex;gap:15px;align-items:center">
 		<mwc-icon @click=${()=> {
-                this.shadowRoot.querySelector('friends-feed').reFetchFeedData()
+                this.refreshFeed()
             }} style="color: var(--black); cursor:pointer;">refresh</mwc-icon>
 				<mwc-icon style="cursor:pointer" @click=${()=> {
                     this.setIsOpen(false)
@@ -119,7 +126,7 @@ class FriendsSidePanel extends LitElement {
 			</div>
 			<div class="content">
 				<div class="${this.selected === 'friends' ? 'active-content' : 'default-content'}">
-				<friends-view></friends-view>
+				<friends-view .refreshFeed=${()=>this.refreshFeed()}></friends-view>
 				</div>
 				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
 				<friends-feed .setHasNewFeed=${(val)=> this.setHasNewFeed(val)}></friends-feed>
