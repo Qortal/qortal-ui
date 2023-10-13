@@ -100,17 +100,17 @@ class TradePortal extends LitElement {
 			--mdc-theme-primary: rgb(3, 169, 244);
 			--mdc-theme-secondary: var(--mdc-theme-primary);
 			--mdc-theme-error: rgb(255, 89, 89);
-                        --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
+			--mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-text-field-label-ink-color: var(--black);
 			--mdc-text-field-ink-color: var(--black);
-                        --mdc-select-outlined-idle-border-color: var(--txtfieldborder);
+			--mdc-select-outlined-idle-border-color: var(--txtfieldborder);
 			--mdc-select-outlined-hover-border-color: var(--txtfieldhoverborder);
 			--mdc-select-label-ink-color: var(--black);
 			--mdc-select-ink-color: var(--black);
 			--mdc-theme-surface: var(--white);
 			--mdc-dialog-content-ink-color: var(--black);
-                        --mdc-dialog-shape-radius: 25px;
+			--mdc-dialog-shape-radius: 25px;
 			--paper-input-container-focus-color: var(--mdc-theme-primary);
 			--lumo-primary-text-color: rgb(0, 167, 245);
 			--lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
@@ -1580,7 +1580,7 @@ class TradePortal extends LitElement {
                 this.selectedAddress = selectedAddress
 
                 this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
-                this.ltcWwallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+                this.ltcWallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
                 this.dogeWallet = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
                 this.dgbWallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
                 this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
