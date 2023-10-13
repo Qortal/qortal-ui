@@ -302,7 +302,6 @@ class AddFriendsModal extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('update2')
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 				

@@ -253,7 +253,6 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('this.friendList', this.friendList)
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
