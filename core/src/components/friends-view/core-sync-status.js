@@ -52,7 +52,6 @@ height:undefined,
 	`;
 
 stateChanged(state) {
-	console.log({state})
 	this.nodeStatus = state.app.nodeStatus
 }
 

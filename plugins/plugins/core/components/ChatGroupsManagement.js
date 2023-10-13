@@ -218,7 +218,6 @@ class ChatGroupsManagement extends LitElement {
     }
 
     nameRenderer(person){
-        console.log({person})
         return html`
           <vaadin-horizontal-layout style="align-items: center;display:flex" theme="spacing">
             <vaadin-avatar style="margin-right:5px" img="${person.pictureUrl}" .name="${person.displayName}"></vaadin-avatar>

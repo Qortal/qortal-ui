@@ -266,7 +266,6 @@ getMyNode(){
     }) 
     if(response && response.data && response.data.status === 'READY'){
       const rawData = await this.getRawData()
-      console.log({rawData})
       const object = {
         ...this.resource.schema.display
       }

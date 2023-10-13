@@ -110,14 +110,12 @@ class FriendsFeed extends connect(store)(LitElement) {
 		}
         const schemas = await this.getSchemas()
         const friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
-        console.log({friendList})
         const names = friendList.map(friend => `name=${friend.name}`).join('&');
         if(names.length === 0){
             this.endpoints= []
         this.endpointOffsets = Array(this.endpoints.length).fill(0); 
             return
         }
-        console.log({names})
         const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
         let formEndpoints = []
         schemas.forEach((schema)=> {

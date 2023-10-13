@@ -522,7 +522,6 @@ class Chat extends LitElement {
                 if(sideEffectAction && sideEffectAction.type === 'openPrivateChat'){
                     const name = sideEffectAction.data.name
                     const address = sideEffectAction.data.address
-                    console.log({address}, this.chatHeadsObj)
                     if(this.chatHeadsObj.direct && this.chatHeadsObj.direct.find(item=> item.address === address)){
                         this.setActiveChatHeadUrl(`direct/${address}`)
                         window.parent.reduxStore.dispatch(
