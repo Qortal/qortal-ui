@@ -8,7 +8,6 @@ font-size: 28px;
 color: var(--chat-bubble-msg-color);
 margin-bottom: 10px;
 padding: 10px 0;
-user-select: none;
 }
 
 .avatar-container {

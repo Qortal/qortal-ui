@@ -1,14 +1,11 @@
 import { LitElement, html } from 'lit'
-import { render } from 'lit/html.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import { translate } from 'lit-translate'
 import { userInfoStyles } from './UserInfo-css.js'
-import { Epml } from '../../../../epml'
 import { cropAddress } from '../../../utils/cropAddress.js'
 
 import '@polymer/paper-progress/paper-progress.js'
 import '@vaadin/button'
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 export class UserInfo extends LitElement {
     static get properties() {
@@ -29,7 +26,10 @@ export class UserInfo extends LitElement {
         this.imageFetches = 0
     }
 
-    static styles = [userInfoStyles]
+    static get styles() {
+		return [userInfoStyles];
+	}
+
 
     createImage(imageUrl)  {
         const imageHTMLRes = new Image()
