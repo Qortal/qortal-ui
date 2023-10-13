@@ -66,7 +66,7 @@ class FriendsSidePanelParent extends LitElement {
 			<vaadin-tooltip
 			  for="friends-icon"
 			  position="bottom"
-			  hover-delay=${200}
+			  hover-delay=${400}
 			  hide-delay=${1}
 			  text=${get('friends.friends17')}>
 		  </vaadin-tooltip>

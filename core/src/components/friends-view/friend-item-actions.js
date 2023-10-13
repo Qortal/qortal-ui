@@ -64,6 +64,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 			message: { type: String },
 			openEditFriend: { attribute: false },
 			name: { type: String },
+			closeSidePanel: {attribute: false, type: Object}
 		};
 	}
 
@@ -190,6 +191,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 								})
 							);
 							this.closePopover();
+							this.closeSidePanel()
 						}}"
 					>
 					<mwc-icon style="color: var(--black)"
@@ -219,6 +221,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 								})
 							);
 							this.closePopover();
+							this.closeSidePanel()
 						}}"
 					>
 					<mwc-icon style="color: var(--black)"

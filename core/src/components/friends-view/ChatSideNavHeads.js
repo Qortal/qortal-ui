@@ -16,7 +16,8 @@ class ChatSideNavHeads extends LitElement {
             activeChatHeadUrl: { type: String },
             isImageLoaded: { type: Boolean },
             setActiveChatHeadUrl: {attribute: false},
-            openEditFriend: {attribute: false}
+            openEditFriend: {attribute: false},
+            closeSidePanel: {attribute: false, type: Object}
         }
     }
 
@@ -192,6 +193,7 @@ class ChatSideNavHeads extends LitElement {
                         this.openEditFriend(this.chatInfo)
                     }}
                     name=${this.chatInfo.name}
+                    .closeSidePanel=${this.closeSidePanel}
 				></friend-item-actions>
     `
     }

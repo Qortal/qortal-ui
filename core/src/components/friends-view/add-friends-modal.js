@@ -268,6 +268,8 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			this.notes = this.editContent.notes ?? '';
 			this.willFollow = this.editContent.willFollow ?? true;
 			this.alias = this.editContent.alias ?? '';
+			this.requestUpdate()
+			console.log('this.editContent', this.editContent )
 		}
 		if (
 			changedProperties &&
@@ -300,6 +302,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 	}
 
 	render() {
+		console.log('update2')
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 				
@@ -362,16 +365,20 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="alias"
 							placeholder=${translate('friends.friend7')}
 							class="input"
-							value=${this.alias}
-							@change=${(e) => (this.alias = e.target.value)}
+							.value=${this.alias}
+							@change=${(e) => {
+								this.alias = e.target.value
+							}}
 						/>
 					</div>
 					<div style="height:15px"></div>
 					<div style="margin-bottom:0;">
 						<textarea
 							class="input"
-							@change=${(e) => (this.notes = e.target.value)}
-							value=${this.notes}
+							@change=${(e) => {
+								this.notes = e.target.value
+							}}
+							.value=${this.notes}
 							?disabled=${this.isLoading}
 							id="messageBoxAddFriend"
 							placeholder="${translate('friends.friend4')}"

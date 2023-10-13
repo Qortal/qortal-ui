@@ -42,7 +42,8 @@ class FriendsView extends connect(store)(LitElement) {
 			isOpenAddFriendsModal: {type: Boolean},
 			editContent: {type: Object},
 			mySelectedFeeds: {type: Array},
-			refreshFeed: {attribute: false}
+			refreshFeed: {attribute: false},
+			closeSidePanel: {attribute: false, type: Object}
 		};
 	}
 	static get styles() {
@@ -145,8 +146,7 @@ class FriendsView extends connect(store)(LitElement) {
 					this.userFound = []
 				} else {
 					this.userFound = [
-						...this.userFound, 
-						result,
+						result
 					  ];
 				}
 				this.userFoundModalOpen = true;
@@ -253,6 +253,7 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
+		console.log('this.friendList', this.friendList)
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
@@ -308,6 +309,7 @@ class FriendsView extends connect(store)(LitElement) {
 							}}
 							.chatInfo=${item}
 							.openEditFriend=${(val)=> this.openEditFriend(val)}
+							.closeSidePanel=${this.closeSidePanel}
 						></chat-side-nav-heads>`;
 					})}
 					<div id="downObserver"></div>

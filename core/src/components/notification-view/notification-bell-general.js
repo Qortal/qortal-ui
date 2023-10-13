@@ -147,6 +147,9 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 					@blur=${this.handleBlur}
 				>
 					<div class="notifications-list">
+						${this.notifications.length === 0 ? html`
+						<p style="font-size: 16px; width: 100%; text-align:center;margin-top:20px;">${translate('notifications.notify3')}</p>
+						` : ''}
 						${repeat(
 							this.notifications,
 							(notification) => notification.reference.signature, // key function
@@ -169,7 +172,6 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 	}
 
 	_toggleNotifications() {
-		if (this.notifications.length === 0) return;
 		this.showNotifications = !this.showNotifications;
 		if (this.showNotifications) {
 			requestAnimationFrame(() => {
@@ -184,7 +186,6 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 			flex-direction: column;
 			align-items: center;
 			position: relative;
-			margin-right: 20px;
 		}
 
 		.count {

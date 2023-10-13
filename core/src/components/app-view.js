@@ -45,7 +45,7 @@ import './notification-view/notification-bell.js'
 import './notification-view/notification-bell-general.js'
 import './friends-view/friends-side-panel-parent.js'
 import './friends-view/save-settings-qdn.js'
-
+import './friends-view/core-sync-status.js'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class AppView extends connect(store)(LitElement) {
@@ -564,7 +564,7 @@ class AppView extends connect(store)(LitElement) {
                             <friends-side-panel-parent></friends-side-panel-parent>
                             <notification-bell></notification-bell>
                             <notification-bell-general></notification-bell-general>
-                            
+                            <core-sync-status></core-sync-status>
                             </div>
                             <div style="display: inline;">
                                 <span>
