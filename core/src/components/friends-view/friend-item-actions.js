@@ -93,13 +93,13 @@ export class FriendItemActions extends connect(store)(LitElement) {
 	attachToTarget(target) {
 		if (!this.popperInstance && target) {
 			this.popperInstance = createPopper(target, this, {
-				placement: 'bottom',
-				strategy: 'fixed',
+				placement: 'bottom'
 			});
 		}
 	}
 
 	openPopover(target) {
+		console.log({target})
 		this.attachToTarget(target);
 		this.style.display = 'block';
 		setTimeout(() => {
