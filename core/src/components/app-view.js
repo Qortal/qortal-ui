@@ -72,11 +72,23 @@ class AppView extends connect(store)(LitElement) {
             rvnWalletBalance: { type: Number },
             arrrWalletBalance: { type: Number },
             tradesOpenBtcQortal: { type: Array },
+            tradesFailedBtcQortal: { type: Array },
+            tradesOpenBtcQortalCleaned: { type: Array },
             tradesOpenLtcQortal: { type: Array },
+            tradesFailedLtcQortal: { type: Array },
+            tradesOpenLtcQortalCleaned: { type: Array },
             tradesOpenDogeQortal: { type: Array },
+            tradesFailedDogeQortal: { type: Array },
+            tradesOpenDogeQortalCleaned: { type: Array },
             tradesOpenDgbQortal: { type: Array },
+            tradesFailedDgbQortal: { type: Array },
+            tradesOpenDgbQortalCleaned: { type: Array },
             tradesOpenRvnQortal: { type: Array },
+            tradesFailedRvnQortal: { type: Array },
+            tradesOpenRvnQortalCleaned: { type: Array },
             tradesOpenArrrQortal: { type: Array },
+            tradesFailedArrrQortal: { type: Array },
+            tradesOpenArrrQortalCleaned: { type: Array },
             tradeBotBtcBook: { type: Array },
             tradeBotLtcBook: { type: Array },
             tradeBotDogeBook: { type: Array },
@@ -450,11 +462,23 @@ class AppView extends connect(store)(LitElement) {
         this.rvnWalletBalance = 0
         this.arrrWalletBalance = 0
         this.tradesOpenBtcQortal = []
+        this.tradesFailedBtcQortal = []
+        this.tradesOpenBtcQortalCleaned = []
         this.tradesOpenLtcQortal = []
+        this.tradesFailedLtcQortal = []
+        this.tradesOpenLtcQortalCleaned = []
         this.tradesOpenDogeQortal = []
+        this.tradesFailedDogeQortal = []
+        this.tradesOpenDogeQortalCleaned = []
         this.tradesOpenDgbQortal = []
+        this.tradesFailedDgbQortal = []
+        this.tradesOpenDgbQortalCleaned = []
         this.tradesOpenRvnQortal = []
+        this.tradesFailedRvnQortal = []
+        this.tradesOpenRvnQortalCleaned = []
         this.tradesOpenArrrQortal = []
+        this.tradesFailedArrrQortal = []
+        this.tradesOpenArrrQortalCleaned = []
         this.tradeBotBtcBook = []
         this.tradeBotLtcBook = []
         this.tradeBotDogeBook = []
@@ -766,10 +790,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedBtcQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedBtcQortal = await fetch(tradesFailedBtcQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedBtcQortal = tradesFailedBtcQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedBtcQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenBtcQortalCleaned = this.tradesOpenBtcQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesBTC()
@@ -788,7 +837,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableBtcQortal = this.tradesOpenBtcQortal.map(item => {
+            this.tradeBotAvailableBtcQortal = this.tradesOpenBtcQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotBtcBook[0].botBtcPrice)
@@ -799,7 +848,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
@@ -907,10 +957,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedLtcQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedLtcQortal = await fetch(tradesFailedLtcQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedLtcQortal = tradesFailedLtcQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedLtcQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenLtcQortalCleaned = this.tradesOpenLtcQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesLTC()
@@ -929,7 +1004,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableLtcQortal = this.tradesOpenLtcQortal.map(item => {
+            this.tradeBotAvailableLtcQortal = this.tradesOpenLtcQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotLtcBook[0].botLtcPrice)
@@ -940,7 +1015,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
@@ -1048,10 +1124,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedDogeQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedDogeQortal = await fetch(tradesFailedDogeQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedDogeQortal = tradesFailedDogeQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedDogeQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenDogeQortalCleaned = this.tradesOpenDogeQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesDOGE()
@@ -1070,7 +1171,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableDogeQortal = this.tradesOpenDogeQortal.map(item => {
+            this.tradeBotAvailableDogeQortal = this.tradesOpenDogeQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotDogeBook[0].botDogePrice)
@@ -1081,7 +1182,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
@@ -1189,10 +1291,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedDgbQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedDgbQortal = await fetch(tradesFailedDgbQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedDgbQortal = tradesFailedDgbQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedDgbQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenDgbQortalCleaned = this.tradesOpenDgbQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesDGB()
@@ -1211,7 +1338,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableDgbQortal = this.tradesOpenDgbQortal.map(item => {
+            this.tradeBotAvailableDgbQortal = this.tradesOpenDgbQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotDgbBook[0].botDgbPrice)
@@ -1222,7 +1349,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
@@ -1330,10 +1458,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedRvnQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedRvnQortal = await fetch(tradesFailedRvnQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedRvnQortal = tradesFailedRvnQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedRvnQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenRvnQortalCleaned = this.tradesOpenRvnQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesRVN()
@@ -1352,7 +1505,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableRvnQortal = this.tradesOpenRvnQortal.map(item => {
+            this.tradeBotAvailableRvnQortal = this.tradesOpenRvnQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotRvnBook[0].botRvnPrice)
@@ -1363,7 +1516,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
@@ -1471,10 +1625,35 @@ class AppView extends connect(store)(LitElement) {
                             price: roundedPrice,
                             foreignAmount: item.expectedForeignAmount,
                             qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress
+                            qortalAtAddress: item.qortalAtAddress,
+                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                         }
                     }
                 }).filter(item => !!item)
+
+                const tradesFailedArrrQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+                const tradesFailedArrrQortal = await fetch(tradesFailedArrrQortalUrl).then(response => {
+                    return response.json()
+                })
+
+                this.tradesFailedArrrQortal = tradesFailedArrrQortal.map(item => {
+                    const messageTimeDiff = Date.now() - item.timestamp
+                    const oneHour = 60 * 60 * 1000
+                    if (Number(messageTimeDiff) > Number(oneHour)) {
+                        return {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                    }
+                }).filter(item => !!item)
+
+                this.tradesFailedArrrQortal.map(item => {
+                    const recipientToRemove = item.recipient
+                    this.tradesOpenArrrQortalCleaned = this.tradesOpenArrrQortal.filter(obj => {
+                        return obj.qortalCreatorTradeAddress !== recipientToRemove
+                    })
+                })
 
                 await appDelay(1000)
                 filterMyBotPriceTradesARRR()
@@ -1493,7 +1672,7 @@ class AppView extends connect(store)(LitElement) {
 
             await appDelay(1000)
 
-            this.tradeBotAvailableArrrQortal = this.tradesOpenArrrQortal.map(item => {
+            this.tradeBotAvailableArrrQortal = this.tradesOpenArrrQortalCleaned.map(item => {
                 const listprice = parseFloat(item.price)
                 const listamount = parseFloat(item.qortAmount)
                 const checkprice = parseFloat(this.tradeBotArrrBook[0].botArrrPrice)
@@ -1504,7 +1683,8 @@ class AppView extends connect(store)(LitElement) {
                         price: item.price,
                         foreignAmount: item.foreignAmount,
                         qortalCreator: item.qortalCreator,
-                        qortalAtAddress: item.qortalAtAddress
+                        qortalAtAddress: item.qortalAtAddress,
+                        qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
                     }
                 }
             }).filter(item => !!item)
