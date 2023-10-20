@@ -19,7 +19,8 @@ class FriendsFeed extends connect(store)(LitElement) {
 			feed: {type: Array},
             setHasNewFeed: {attribute:false},
             isLoading: {type: Boolean},
-            hasFetched: {type: Boolean}
+            hasFetched: {type: Boolean},
+            mySelectedFeeds: {type: Array}
 		};
 	}
 	constructor(){
@@ -38,6 +39,7 @@ class FriendsFeed extends connect(store)(LitElement) {
         this.mySelectedFeeds = []
         this.getSchemas = this.getSchemas.bind(this)
         this.hasFetched = false
+        this._updateFeeds = this._updateFeeds.bind(this)
 
 	}
 	
@@ -64,6 +66,24 @@ class FriendsFeed extends connect(store)(LitElement) {
 			];
 
 		return myNode;
+	}
+
+    _updateFeeds(event) {
+		const detail = event.detail
+        console.log('detail2', detail)
+        this.mySelectedFeeds = detail
+        this.reFetchFeedData()
+        this.requestUpdate()
+	}
+
+	connectedCallback() {
+		super.connectedCallback()
+		console.log('callback')
+		window.addEventListener('friends-my-selected-feeds-event', this._updateFeeds)	}
+
+	disconnectedCallback() {
+		window.removeEventListener('friends-my-selected-feeds-event', this._updateFeeds)
+		super.disconnectedCallback()
 	}
 
     async getSchemas(){
@@ -100,7 +120,7 @@ class FriendsFeed extends connect(store)(LitElement) {
 				stop = false;
 			}
 		};
-		interval = setInterval(getAnswer, 600000);
+		interval = setInterval(getAnswer, 900000);
         
     }
 
@@ -144,9 +164,17 @@ class FriendsFeed extends connect(store)(LitElement) {
 		
 		
 		try {
-			await this.getEndpoints()
+            await new Promise(()=> {
+                setTimeout((res) => {
+                    res()
+                }, 5000);
+            })
+            if(this.mySelectedFeeds.length === 0){
+                await this.getEndpoints()
 
 this.loadAndMergeData();
+            }
+			
 this.getFeedOnInterval()
 
 		} catch (error) {

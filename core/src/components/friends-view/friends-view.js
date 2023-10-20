@@ -70,6 +70,9 @@ class FriendsView extends connect(store)(LitElement) {
 		this.isOpenAddFriendsModal = false
 		this.editContent = null
 		this.addToFriendList = this.addToFriendList.bind(this)
+		this._updateFriends = this._updateFriends.bind(this)
+		this._updateFeed = this._updateFeed.bind(this)
+
 	}
 
 	getNodeUrl() {
@@ -100,6 +103,35 @@ class FriendsView extends connect(store)(LitElement) {
 		this.elementObserver();
 		this.mySelectedFeeds = JSON.parse(localStorage.getItem('friends-my-selected-feeds') || "[]")
 		this.friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
+		
+
+
+	
+	}
+
+	_updateFriends(event) {
+		const detail = event.detail
+        this.friendList = detail
+	}
+	_updateFeed(event) {
+		console.log({event})
+		const detail = event.detail
+		console.log({detail})
+        this.mySelectedFeeds = detail
+		this.requestUpdate()
+	}
+
+	connectedCallback() {
+		super.connectedCallback()
+		console.log('callback')
+		window.addEventListener('friends-my-friend-list-event', this._updateFriends)	
+		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)	
+	}
+
+	disconnectedCallback() {
+		window.removeEventListener('friends-my-friend-list-event', this._updateFriends)
+		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)	
+		super.disconnectedCallback()
 	}
 
 	elementObserver() {
@@ -150,7 +182,7 @@ class FriendsView extends connect(store)(LitElement) {
 					  ];
 				}
 				this.userFoundModalOpen = true;
-			} catch (error) {
+			} catch (error) {		
 				// let err4string = get("chatpage.cchange35");
 				// parentEpml.request('showSnackBar', `${err4string}`)
 			}
@@ -199,7 +231,7 @@ class FriendsView extends connect(store)(LitElement) {
 			
 			return ret
 		}
-	addToFriendList(val, isRemove){
+	async addToFriendList(val, isRemove){
 		const copyVal = {...val}
 		delete copyVal.mySelectedFeeds
 		if(isRemove){
@@ -222,6 +254,11 @@ class FriendsView extends connect(store)(LitElement) {
 			this.myFollowName(copyVal.name)
 		} 
 		this.setMySelectedFeeds(val.mySelectedFeeds)
+		await new Promise((res)=> {
+			setTimeout(()=> {
+				res()
+			},50)
+		})
 		this.userSelected = {};
 		this.shadowRoot.getElementById('sendTo').value = ''
 		this.isLoading = false;
@@ -234,9 +271,36 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 	setMyFriends(friendList){
 		localStorage.setItem('friends-my-friend-list', JSON.stringify(friendList));
+		const tempSettingsData= JSON.parse(localStorage.getItem('temp-settings-data') || "{}")
+		const newTemp = {
+			...tempSettingsData,
+			userLists: {
+				data: [friendList],
+				timestamp: Date.now()
+			}
+		}
+
+		localStorage.setItem('temp-settings-data', JSON.stringify(newTemp));
+		this.dispatchEvent(
+			new CustomEvent('temp-settings-data-event', {
+			  bubbles: true,
+			  composed: true
+			}),
+		  );
+
 	}
 	setMySelectedFeeds(mySelectedFeeds){
 		this.mySelectedFeeds = mySelectedFeeds
+		const tempSettingsData= JSON.parse(localStorage.getItem('temp-settings-data') || "{}")
+		const newTemp = {
+			...tempSettingsData,
+			friendsFeed: {
+				data: mySelectedFeeds,
+				timestamp: Date.now()
+			}
+		}
+
+		localStorage.setItem('temp-settings-data', JSON.stringify(newTemp));
 		localStorage.setItem('friends-my-selected-feeds', JSON.stringify(mySelectedFeeds));
 	}
 	openEditFriend(val){
@@ -253,6 +317,7 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
+		console.log('rendered1')
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>

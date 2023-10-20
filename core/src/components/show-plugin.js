@@ -532,6 +532,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         })
 
         window.addEventListener('storage', () => {
+            console.log('show plugin')
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
 

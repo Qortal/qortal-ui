@@ -109,12 +109,13 @@ class QortThemeToggle extends LitElement {
 
 
   toggleTheme() {
+    console.log('toggle')
     if (this.theme === 'light') {
       this.theme = 'dark';
     } else {
       this.theme = 'light';
     }
-
+    console.log('dispatch')
     this.dispatchEvent(
       new CustomEvent('qort-theme-change', {
         bubbles: true,

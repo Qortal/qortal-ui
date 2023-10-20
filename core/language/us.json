@@ -1199,5 +1199,10 @@
 		"friend16": "Select the Q-Apps you want updates from, especially those related to your friends.",
 		"friends17": "Friends",
 		"friends18": "No items in your feed"
+	},
+	"save": {
+		"saving1": "Unable to fetch saved settings",
+		"saving2": "Nothing to save",
+		"saving3": "Save unsaved changes"
 	}
 }
