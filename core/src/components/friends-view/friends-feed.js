@@ -164,8 +164,8 @@ class FriendsFeed extends connect(store)(LitElement) {
 		
 		
 		try {
-            await new Promise(()=> {
-                setTimeout((res) => {
+            await new Promise((res)=> {
+                setTimeout(() => {
                     res()
                 }, 5000);
             })

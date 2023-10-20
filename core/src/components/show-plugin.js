@@ -995,6 +995,7 @@ class NavBar extends connect(store)(LitElement) {
             border-top-right-radius: 20px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 10px;
+            position: relative;
         }
 
         .app-list .app-icon:hover .removeIcon {
@@ -1008,14 +1009,14 @@ class NavBar extends connect(store)(LitElement) {
         }
           
         .menuIconPos {
-            position: relative;
             right: -2px;
         }
           
         .removeIconPos {
             position: absolute;
-            top: -36px;
-            left: 0;
+    top: -10px;
+    right: -10px;
+    z-index: 1;
         }
           
         .menuIconPos:hover .removeIcon {
@@ -1027,9 +1028,7 @@ class NavBar extends connect(store)(LitElement) {
             color: var(--black);
             --mdc-icon-size: 28px;
             cursor: pointer;
-            position: absolute;
-            top: 30px;
-            left: 123px;
+            position: relative
             z-index: 1;
         }
                      
@@ -2147,12 +2146,19 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     renderRemoveIcon(appurl, appicon, appname, appid, appplugin) {
+        console.log({appurl, appname, appid})
         return html`
+           
+            <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
             <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname, appid, appurl)}">
                 <mwc-icon class="removeIcon">backspace</mwc-icon>
             </div>
-            <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
+                ${appurl === 'myapp' ? html`
+                <app-avatar appicon=${appicon} appname=${appname}></app-avatar>
+                ` : html`
                 <mwc-icon class="menuIcon">${appicon}</mwc-icon>
+
+                `}
             </div>
         `
     }
@@ -2347,3 +2353,85 @@ class NavBar extends connect(store)(LitElement) {
 }
 
 customElements.define('nav-bar', NavBar)
+
+
+class AppAvatar extends LitElement {
+    static get properties() {
+        return {
+            hasAvatar: { type: Boolean },
+            isImageLoaded: {type: Boolean},
+            appicon: {type: String},
+            appname: {type: String}
+        }
+    }
+
+    constructor() {
+        super()
+       
+        this.hasAvatar = false
+        this.isImageLoaded = false
+        this.imageFetches = 0
+    }
+
+    static get styles() {
+      
+        return css`
+          :host {
+            position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+        }
+        .menuIcon {
+        color: var(--app-icon);
+        --mdc-icon-size: 64px;
+        cursor: pointer;
+    }
+
+
+            `
+    }
+   
+    createImage(imageUrl)  {
+        const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "border-radius:10px; font-size:14px; object-fit: fill;height:60px;width:60px";
+       
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
+        }
+        imageHTMLRes.onerror = () => {   
+            if (this.imageFetches < 4) {
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 2000);
+            } else {
+               this.isImageLoaded = false
+            }
+        };
+        return imageHTMLRes;
+      }
+
+    render(){
+        let avatarImg = ""
+        if (this.appname) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.appname}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+           avatarImg = this.createImage(avatarUrl)
+        }
+
+        return html`
+            ${this.isImageLoaded ? html`
+            ${avatarImg}
+            ` : html`
+            <mwc-icon class="menuIcon">${this.appicon}</mwc-icon>
+            `}
+        `
+    }
+
+}
+
+customElements.define('app-avatar', AppAvatar)
