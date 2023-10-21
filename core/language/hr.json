@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Potvrđivanje transakcije",
 		"notify2": "Transakcija potvrđena",
-		"explanation": "Vaša se transakcija potvrđuje. Da biste pratili napredak, kliknite na ikonu zvona."
+		"explanation": "Vaša se transakcija potvrđuje. Da biste pratili napredak, kliknite na ikonu zvona.",
+		"status1": "Potpuno sinkronizirano",
+		"status2": "Nije sinkronizirano",
+		"notify3": "Nema obavijesti",
+		"notify4": "Tx obavijesti"
+	},
+	"friends": {
+		"friend1": "Dodajte ime",
+		"friend2": "Dodaj prijatelja",
+		"friend3": "Dodavanje prijatelja omogućuje vam jednostavno povezivanje s tom osobom. Obavezno također pratite tog korisnika kako biste podržali hosting njihovih objavljenih izvora.",
+		"friend4": "Bilješke",
+		"friend5": "Slijedite ime",
+		"friend6": "Alias",
+		"friend7": "Dodajte pseudonim da bolje zapamtite svog prijatelja (nije obavezno)",
+		"friend8": "Pošalji Q-Chat",
+		"friend9": "Pošalji Q-Mail",
+		"friend10": "Uredi prijatelja",
+		"friend11": "Praćenje",
+		"friend12": "Prijatelji",
+		"friend13": "Hraniti se",
+		"friend14": "Ukloni prijatelja",
+		"friend15": "Postavke feeda",
+		"friend16": "Odaberite Q-aplikacije iz kojih želite ažuriranja, posebno one koje se odnose na vaše prijatelje.",
+		"friend17": "Nema stavki u vašem feedu"
+	},
+	"save": {
+		"saving1": "Nije moguće dohvatiti spremljene postavke",
+		"saving2": "Ništa za spasiti",
+		"saving3": "Spremi nespremljene promjene",
+		"saving4": "Poništi promjene"
 	}
 }

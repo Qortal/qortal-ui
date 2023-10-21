@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Confirmando transacción",
 		"notify2": "Transacción confirmada",
-		"explanation": "Su transacción se está confirmando. Para seguir su progreso, haga clic en el ícono de campana."
+		"explanation": "Su transacción se está confirmando. Para seguir su progreso, haga clic en el ícono de campana.",
+		"status1": "Totalmente sincronizado",
+		"status2": "No sincronizado",
+		"notify3": "No Notificaciones",
+		"notify4": "Notificaciones de transmisión"
+	},
+	"friends": {
+		"friend1": "Agregar nombre",
+		"friend2": "Añadir amigo",
+		"friend3": "Agregar un amigo te permite conectarte fácilmente con esa persona. Asegúrese también de seguir a ese usuario para respaldar el alojamiento de sus recursos publicados.",
+		"friend4": "Notas",
+		"friend5": "Seguir nombre",
+		"friend6": "Alias",
+		"friend7": "Añade un alias para recordar mejor a tu amigo (opcional)",
+		"friend8": "Enviar Q-Chat",
+		"friend9": "Enviar correo electrónico",
+		"friend10": "Editar amigo",
+		"friend11": "Siguiente",
+		"friend12": "Amigos",
+		"friend13": "Alimentar",
+		"friend14": "Eliminar amigo",
+		"friend15": "Configuración de alimentación",
+		"friend16": "Seleccione las Q-Apps de las que desea recibir actualizaciones, especialmente aquellas relacionadas con sus amigos.",
+		"friend17": "No hay elementos en tu feed"
+	},
+	"save": {
+		"saving1": "No se pueden recuperar las configuraciones guardadas",
+		"saving2": "Nada que salvar",
+		"saving3": "Guardar cambios no guardados",
+		"saving4": "Deshacer cambios"
 	}
 }

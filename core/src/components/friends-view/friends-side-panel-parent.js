@@ -68,7 +68,7 @@ class FriendsSidePanelParent extends LitElement {
 			  position="bottom"
 			  hover-delay=${400}
 			  hide-delay=${1}
-			  text=${get('friends.friends17')}>
+			  text=${get('friends.friend12')}>
 		  </vaadin-tooltip>
 			<friends-side-panel .setHasNewFeed=${(val)=> this.setHasNewFeed(val)} ?isOpen=${this.isOpen} .setIsOpen=${(val)=> this.isOpen = val}></friends-side-panel>
 			
