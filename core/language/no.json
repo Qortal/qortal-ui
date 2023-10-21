@@ -207,7 +207,8 @@
 		"exp3": "Eksporter",
 		"exp4": "Velg en lommebok for å sikkerhetskopiere den private hovednøkkelen.",
 		"core": "Start kjerneinnstillinger",
-		"qappNotification1": "Q-App varsler"
+		"qappNotification1": "Q-App varsler",
+		"selectnode": "Vennligst velg et alternativ"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",

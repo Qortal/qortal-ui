@@ -207,7 +207,8 @@
 		"exp3": "Izvoz",
 		"exp4": "Odaberite novčanik za sigurnosnu kopiju privatnog glavnog ključa.",
 		"core": "Pokreni osnovne postavke",
-		"qappNotification1": "Obavijesti Q-App"
+		"qappNotification1": "Obavijesti Q-App",
+		"selectnode": "Molimo odaberite opciju"
 	},
 	"appinfo": {
 		"blockheight": "Visina bloka",

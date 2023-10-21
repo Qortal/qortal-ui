@@ -207,7 +207,8 @@
 		"exp3": "Exportar",
 		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada.",
 		"core": "Iniciar configuración básica",
-		"qappNotification1": "Notificaciones de Q-App"
+		"qappNotification1": "Notificaciones de Q-App",
+		"selectnode": "Por favor seleccione una opción"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",

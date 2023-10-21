@@ -207,7 +207,8 @@
 		"exp3": "Exporter",
 		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
 		"core": "Démarrer les paramètres du noyau",
-		"qappNotification1": "Notifications Q-App"
+		"qappNotification1": "Notifications Q-App",
+		"selectnode": "Veuillez sélectionner une option"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",

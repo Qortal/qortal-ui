@@ -207,7 +207,8 @@
 		"exp3": "エクスポート",
 		"exp4": "秘密マスターキーをバックアップするウォレットを選択してください。",
 		"core": "Core設定を開始",
-		"qappNotification1": "Q-App 通知"
+		"qappNotification1": "Q-App 通知",
+		"selectnode": "オプションを選択してください"
 	},
 	"appinfo": {
 		"blockheight": "ブロック高",

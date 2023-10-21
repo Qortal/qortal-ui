@@ -207,7 +207,8 @@
 		"exp3": "導出",
 		"exp4": "請選擇一個錢包來備份私鑰。",
 		"core": "開始核心設置",
-		"qappNotification1": "Q-App 通知"
+		"qappNotification1": "Q-App 通知",
+		"selectnode": "請選擇一個選項"
 	},
 	"appinfo": {
 		"blockheight": "區塊高度",

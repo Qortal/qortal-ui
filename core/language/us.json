@@ -207,7 +207,8 @@
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
 		"core": "Start Core Settings",
-		"qappNotification1": "Q-App Notifications"
+		"qappNotification1": "Q-App Notifications",
+		"selectnode": "Please select an option"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",

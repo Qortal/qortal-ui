@@ -207,7 +207,8 @@
 		"exp3": "Ekspordi",
 		"exp4": "Palun vali rahakott privaatse üldvõtme varundamiseks.",
 		"core": "Tuuma käivitamise seaded",
-		"qappNotification1": "Q-App märguanded"
+		"qappNotification1": "Q-App märguanded",
+		"selectnode": "Palun tehke valik"
 	},
 	"appinfo": {
 		"blockheight": "Ploki kõrgus",

@@ -207,7 +207,8 @@
 		"exp3": "Eksportuj",
 		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego.",
 		"core": "Uruchom podstawowe ustawienia",
-		"qappNotification1": "Powiadomienia Q-App"
+		"qappNotification1": "Powiadomienia Q-App",
+		"selectnode": "Proszę wybrać opcję"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",

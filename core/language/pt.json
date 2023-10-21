@@ -207,7 +207,8 @@
 		"exp3": "Exportar",
 		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada.",
 		"core": "Iniciar configurações do núcleo",
-		"qappNotification1": "Notificações de Q-App"
+		"qappNotification1": "Notificações de Q-App",
+		"selectnode": "Por favor selecione uma opção"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",

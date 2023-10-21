@@ -207,7 +207,8 @@
 		"exp3": "Exportálás",
 		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez.",
 		"core": "Alapbeállítások indítása",
-		"qappNotification1": "Q-App értesítések"
+		"qappNotification1": "Q-App értesítések",
+		"selectnode": "Kérjük, válasszon egy lehetőséget"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",

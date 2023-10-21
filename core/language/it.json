@@ -207,7 +207,8 @@
 		"exp3": "Esporta",
 		"exp4": "Scegli un portafoglio per il backup della chiave master privata.",
 		"core": "Avvia impostazioni principali",
-		"qappNotification1": "Notifiche Q-App"
+		"qappNotification1": "Notifiche Q-App",
+		"selectnode": "Seleziona un'opzione"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",

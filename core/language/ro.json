@@ -207,7 +207,8 @@
 		"exp3": "Export",
 		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
 		"core": "Porniți setările de bază",
-		"qappNotification1": "Notificări Q-App"
+		"qappNotification1": "Notificări Q-App",
+		"selectnode": "Vă rugăm să selectați o opțiune"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",

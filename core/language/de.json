@@ -207,7 +207,8 @@
 		"exp3": "Exportieren",
 		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern.",
 		"core": "Core-Einstellungen starten",
-		"qappNotification1": "Q-App Benachrichtigungen"
+		"qappNotification1": "Q-App Benachrichtigungen",
+		"selectnode": "Bitte wählen Sie eine Option"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",
