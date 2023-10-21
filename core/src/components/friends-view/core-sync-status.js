@@ -58,7 +58,7 @@ stateChanged(state) {
 	render() {
 		return html`
 			<mwc-icon id="icon"  style="color: ${this.nodeStatus.syncPercent === 100 ? 'green': 'red'};user-select:none;margin-right:20px"
-				>wifi</mwc-icon
+				>lightbulb</mwc-icon
 			>
 			<vaadin-tooltip
 			  for="icon"

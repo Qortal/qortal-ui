@@ -1178,7 +1178,8 @@
 		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon.",
 		"status1": "Fully synced",
 		"status2": "Not synced",
-		"notify3": "No notifications"
+		"notify3": "No notifications",
+		"notify4": "Tx notifications"
 	},
 	"friends": {
 		"friend1": "Add name",

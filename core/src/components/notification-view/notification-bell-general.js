@@ -111,15 +111,30 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 				>
 					${hasOngoing
 						? html`
-								<mwc-icon style="color: green;cursor:pointer;user-select:none"
+								<mwc-icon id="notification-general-icon" style="color: green;cursor:pointer;user-select:none"
 									>notifications</mwc-icon
 								>
+								<vaadin-tooltip
+			  for="notification-general-icon"
+			  position="bottom"
+			  hover-delay=${400}
+			  hide-delay=${1}
+			  text=${get('notifications.notify4')}>
+		  </vaadin-tooltip>
 						  `
 						: html`
 								<mwc-icon
+								id="notification-general-icon"
 									style="color: var(--black); cursor:pointer;user-select:none"
 									>notifications</mwc-icon
 								>
+								<vaadin-tooltip
+			  for="notification-general-icon"
+			  position="bottom"
+			  hover-delay=${400}
+			  hide-delay=${1}
+			  text=${get('notifications.notify4')}>
+		  </vaadin-tooltip>
 						  `}
 				</div>
 				${hasOngoing

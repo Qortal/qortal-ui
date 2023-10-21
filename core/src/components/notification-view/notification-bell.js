@@ -8,6 +8,8 @@ import '@polymer/iron-icons/iron-icons.js'
 import { store } from '../../store.js'
 import { setNewTab } from '../../redux/app/app-actions.js'
 import { routes } from '../../plugins/routes.js'
+import '@material/mwc-icon';
+
 import config from '../../notifications/config.js'
 import '../../../../plugins/plugins/core/components/TimeAgo.js'
 
@@ -138,11 +140,29 @@ class NotificationBell extends connect(store)(LitElement) {
         return html`
             <div class="layout">
                 ${this.notificationCount ? html`
-                    <paper-icon-button style="color: green;" icon="icons:mail" @click=${() => this._toggleNotifications()} title="Q-Mail"></paper-icon-button>
+                <mwc-icon @click=${() => this._toggleNotifications()} id="notification-mail-icon" style="color: green;cursor:pointer;user-select:none"
+									>mail</mwc-icon
+								>
+								<vaadin-tooltip
+			  for="notification-mail-icon"
+			  position="bottom"
+			  hover-delay=${400}
+			  hide-delay=${1}
+			  text="Q-Mail">
+		  </vaadin-tooltip>
+                  
                 ` : html`
-                    <paper-icon-button icon="icons:mail" @click=${() => {
-                       this._openTabQmail()
-                    }} title="Q-Mail"></paper-icon-button>
+                <mwc-icon @click=${() =>  this._openTabQmail()} id="notification-mail-icon" style="color: var(--black); cursor:pointer;user-select:none"
+									>mail</mwc-icon
+								>
+								<vaadin-tooltip
+			  for="notification-mail-icon"
+			  position="bottom"
+			  hover-delay=${400}
+			  hide-delay=${1}
+			  text="Q-Mail">
+		  </vaadin-tooltip>
+                   
                 `}
 
                 ${this.notificationCount ? html`
