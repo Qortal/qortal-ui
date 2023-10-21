@@ -345,7 +345,7 @@ class ChatScroller extends LitElement {
 		this.requestUpdate();
 	}
 
-	async newListMessages(newMessages) {
+	async newListMessages(newMessages, count) {
 		let data = [];
 		const copy = [...newMessages];
 		copy.forEach((newMessage) => {
@@ -368,6 +368,9 @@ class ChatScroller extends LitElement {
 		//     url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&before=${scrollElement.messageObj.timestamp}&haschatreference=false&encoding=BASE64`
 		// })
 		this.messagesToRender = data;
+		if (count > 0) {
+			this.disableAddingNewMessages = true;
+		}
 		this.clearLoaders();
 		this.requestUpdate();
 		await this.updateComplete;
@@ -645,7 +648,7 @@ class ChatScroller extends LitElement {
 			else if (this.messages.type === 'inBetween')
 				this.newListMessages(
 					this.messages.messages,
-					this.messages.signature
+					this.messages.count
 				);
 			else if (this.messages.type === 'update')
 				this.replaceMessagesWithUpdateByArray(this.messages.messages);

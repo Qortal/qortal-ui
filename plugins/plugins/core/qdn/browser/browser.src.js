@@ -281,10 +281,7 @@ class WebBrowser extends LitElement {
 				else {
 					identifier = null;
 				}
-			}
-
-			const path = parts.join("/");
-
+			}extractComponents
 			const components = {};
 			components["service"] = service;
 			components["name"] = name;

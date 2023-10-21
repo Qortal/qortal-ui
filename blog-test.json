@@ -1,0 +1,31 @@
+{
+    "name": "Q-Blog",
+    "defaultFeedIndex": 0,
+    "feed": [
+        {
+            "id": "post-creation",
+            "version": 1,
+            "updated": 1696646223261,
+            "title": "Q-Blog Post creations",
+            "description": "blablabla",
+            "search": {
+                "query": "-post-",
+                "identifier": "q-blog-",
+                "service": "BLOG_POST",
+                "exactmatchnames": true
+            },
+            "click": "qortal://APP/Q-Blog/$${resource.name}$$/$${customParams.blogId}$$/$${customParams.shortIdentifier}$$",
+            "display": {
+                "title": "$${rawdata.title}$$"
+            },
+            "customParams": {
+                "blogId": "**methods.getBlogId(resource)**",
+                "shortIdentifier": "**methods.getShortId(resource)**"
+            },
+            "methods": {
+                "getShortId": "return resource.identifier.split('-post-')[1];",
+                "getBlogId": "const arr = resource.identifier.split('-post-'); const id = arr[0]; return id.startsWith('q-blog-') ? id.substring(7) : id;"
+            }
+        }
+    ]
+}

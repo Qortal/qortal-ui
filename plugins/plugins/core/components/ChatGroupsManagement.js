@@ -218,7 +218,6 @@ class ChatGroupsManagement extends LitElement {
     }
 
     nameRenderer(person){
-        console.log({person})
         return html`
           <vaadin-horizontal-layout style="align-items: center;display:flex" theme="spacing">
             <vaadin-avatar style="margin-right:5px" img="${person.pictureUrl}" .name="${person.displayName}"></vaadin-avatar>
@@ -229,9 +228,7 @@ class ChatGroupsManagement extends LitElement {
 
   render() {
     return html`
-         <!-- <vaadin-icon @click=${()=> {
-            this.isOpenLeaveModal = true
-         }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon> -->
+
          <!-- Leave Group Dialog -->
          <wrapper-modal 
                 .removeImage=${() => {

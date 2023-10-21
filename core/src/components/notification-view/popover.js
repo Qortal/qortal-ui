@@ -23,6 +23,8 @@ export class PopoverComponent extends LitElement {
             margin-left: 10px;
             color: var(--black)
         }
+
+        
     `;
 
     static properties = {
@@ -40,7 +42,6 @@ export class PopoverComponent extends LitElement {
     }
 
     attachToTarget(target) {
-        console.log({target})
         if (!this.popperInstance && target) {
             this.popperInstance = createPopper(target, this, {
                 placement: 'bottom',
@@ -66,7 +67,8 @@ export class PopoverComponent extends LitElement {
     render() {
         return html`
             <span class="close-icon" @click="${this.closePopover}"><mwc-icon style="color: var(--black)">close</mwc-icon></span>
-            <div><mwc-icon style="color: var(--black)">info</mwc-icon> ${this.message}</div>
+            <div><mwc-icon style="color: var(--black)">info</mwc-icon> ${this.message} <slot></slot>
+</div>
         `;
     }
 }

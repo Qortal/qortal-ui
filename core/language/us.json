@@ -1182,6 +1182,36 @@
 	"notifications": {
 		"notify1": "Confirming transaction",
 		"notify2": "Transaction confirmed",
-		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon."
+		"explanation": "Your transaction is getting confirmed. To track its progress, click on the bell icon.",
+		"status1": "Fully synced",
+		"status2": "Not synced",
+		"notify3": "No notifications",
+		"notify4": "Tx notifications"
+	},
+	"friends": {
+		"friend1": "Add name",
+		"friend2": "Add friend",
+		"friend3": "Adding a friend allows you to connect easily with that person. Be sure to also follow that user to support the hosting of their published resources.",
+		"friend4": "Notes",
+		"friend5": "Follow name",
+		"friend6": "Alias",
+		"friend7": "Add an alias to better remember your friend (Optional)",
+		"friend8": "Send Q-Chat",
+		"friend9": "Send Q-Mail",
+		"friend10": "Edit friend",
+		"friend11": "Following",
+		"friend12": "Friends",
+		"friend13": "Feed",
+		"friend14": "Remove friend",
+		"friend15": "Feed settings",
+		"friend16": "Select the Q-Apps you want updates from, especially those related to your friends.",
+		"friends17": "Friends",
+		"friends18": "No items in your feed"
+	},
+	"save": {
+		"saving1": "Unable to fetch saved settings",
+		"saving2": "Nothing to save",
+		"saving3": "Save unsaved changes",
+		"saving4": "Undo changes"
 	}
 }

@@ -114,7 +114,6 @@ class QortThemeToggle extends LitElement {
     } else {
       this.theme = 'light';
     }
-
     this.dispatchEvent(
       new CustomEvent('qort-theme-change', {
         bubbles: true,

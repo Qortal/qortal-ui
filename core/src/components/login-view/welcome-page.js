@@ -49,7 +49,7 @@ class WelcomePage extends LitElement {
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
-    firstUpdate() {
+    firstUpdated() {
         // ...
     }
 

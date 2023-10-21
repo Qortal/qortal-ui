@@ -89,6 +89,47 @@ export function base64ToUint8Array(base64) {
     return bytes
 }
 
+export function uint8ArrayToObject(uint8Array) {
+    // Decode the byte array using TextDecoder
+    const decoder = new TextDecoder()
+    const jsonString = decoder.decode(uint8Array)
+
+    // Convert the JSON string back into an object
+    const obj = JSON.parse(jsonString)
+
+    return obj
+  }
+
+  export function objectToBase64(obj) {
+    // Step 1: Convert the object to a JSON string
+    const jsonString = JSON.stringify(obj);
+  
+    // Step 2: Create a Blob from the JSON string
+    const blob = new Blob([jsonString], { type: 'application/json' });
+  
+    // Step 3: Create a FileReader to read the Blob as a base64-encoded string
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          // Remove 'data:application/json;base64,' prefix
+          const base64 = reader.result.replace(
+            'data:application/json;base64,',
+            ''
+          );
+          resolve(base64);
+        } else {
+          reject(new Error('Failed to read the Blob as a base64-encoded string'));
+        }
+      };
+      reader.onerror = () => {
+        reject(reader.error);
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
+  
+
 
 export const encryptData = ({ data64, recipientPublicKey }) => {
 

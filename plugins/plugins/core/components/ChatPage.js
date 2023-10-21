@@ -1199,6 +1199,11 @@ class ChatPage extends LitElement {
                     }, 2000)
                 }
 
+                const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
+                if (chatScrollerElement && chatScrollerElement.disableFetching) {
+                    chatScrollerElement.disableFetching = false
+                }
+
                 return
             }
             this.isLoadingGoToRepliedMessage = {
@@ -1668,12 +1673,20 @@ class ChatPage extends LitElement {
                  
                 }
               })
-           
-              this.messagesRendered = {
-                messages: list,
-                type: 'inBetween',
-                message: messageToGoTo
-            }
+              const lastMsg = list.at(-1)
+              if(lastMsg){
+                const count = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages/count?after=${lastMsg.timestamp}&involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=20&reverse=false`
+                })
+                  this.messagesRendered = {
+                    messages: list,
+                    type: 'inBetween',
+                    message: messageToGoTo,
+                    count
+                }
+              }
+            
 
             this.isLoadingOldMessages = false
             
@@ -1727,11 +1740,20 @@ class ChatPage extends LitElement {
                 }
               })
            
-            this.messagesRendered = {
-                messages: list,
-                type: 'inBetween',
-                signature: messageToGoTo.signature
-            }
+              const lastMsg = list.at(-1)
+              if(lastMsg){
+                const count = await parentEpml.request('apiCall', {
+                    type: 'api',
+                    url: `/chat/messages/count?after=${lastMsg.timestamp}&txGroupId=${Number(this._chatId)}&limit=20&reverse=false`
+                })
+                this.messagesRendered = {
+                    messages: list,
+                    type: 'inBetween',
+                    signature: messageToGoTo.signature,
+                    count
+                }
+              }
+            
 
 
             this.isLoadingOldMessages = false

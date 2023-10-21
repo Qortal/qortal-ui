@@ -26,11 +26,9 @@ import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
 
-const chatLastSeen = localForage.createInstance({
-    name: "chat-last-seen",
-})
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+export const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ShowPlugin extends connect(store)(LitElement) {
     static get properties() {
@@ -435,9 +433,21 @@ class ShowPlugin extends connect(store)(LitElement) {
                             @click="${() => {
                                 this.currentTab = index
                             }}"
+                             @mousedown="${(event) => {
+        if (event.button === 1) {
+            event.preventDefault(); 
+            this.removeTab(index, tab.id);
+        }
+    }}"
                         >
                             <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
-                                <mwc-icon>${icon}</mwc-icon>
+                            ${tab.myPlugObj && tab.myPlugObj.url === "myapp" ? html`
+                            <tab-avatar appname=${title} appicon=${icon}></tab-avatar>
+                            ` : html`
+                            <mwc-icon>${icon}</mwc-icon>
+                            `}
+                    
+                               
                             </div>
                             <div class="tabCard">
                                 ${count ? html`
@@ -996,6 +1006,7 @@ class NavBar extends connect(store)(LitElement) {
             border-top-right-radius: 20px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 10px;
+            position: relative;
         }
 
         .app-list .app-icon:hover .removeIcon {
@@ -1009,14 +1020,14 @@ class NavBar extends connect(store)(LitElement) {
         }
           
         .menuIconPos {
-            position: relative;
             right: -2px;
         }
           
         .removeIconPos {
             position: absolute;
-            top: -36px;
-            left: 0;
+    top: -10px;
+    right: -10px;
+    z-index: 1;
         }
           
         .menuIconPos:hover .removeIcon {
@@ -1028,9 +1039,7 @@ class NavBar extends connect(store)(LitElement) {
             color: var(--black);
             --mdc-icon-size: 28px;
             cursor: pointer;
-            position: absolute;
-            top: 30px;
-            left: 123px;
+            position: relative;
             z-index: 1;
         }
                      
@@ -1192,6 +1201,7 @@ class NavBar extends connect(store)(LitElement) {
         this.myFollowedNamesList = []
         this.searchContentString = ''
         this.searchNameResources = []
+        this._updateMyMenuPlugins = this._updateMyMenuPlugins.bind(this)
     }
 
     render() {
@@ -1458,6 +1468,49 @@ class NavBar extends connect(store)(LitElement) {
         await this.getMyFollowedNamesList()
     }
 
+    async _updateMyMenuPlugins(event) {
+        await new Promise((res)=> {
+            setTimeout(() => {
+                res()
+            }, 1000);
+        })
+		const detail = event.detail
+        this.myMenuPlugins = detail
+        const addressInfo = this.addressInfo
+        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
+        const isSponsor = +addressInfo?.level >= 5
+       
+
+        if (!isMinter) {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
+                return minter.url !== 'minting'
+            })
+        } else {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
+                return minter.url !== 'become-minter'
+            })
+        }
+
+        if (!isSponsor) {
+            this.myMenuList = this.newMenuList.filter((sponsor) => {
+                return sponsor.url !== 'sponsorship-list'
+            })
+        } else {
+            this.myMenuList = this.newMenuList
+        }
+       
+        this.requestUpdate()
+	}
+
+	connectedCallback() {
+		super.connectedCallback()
+		window.addEventListener('myMenuPlugs-event', this._updateMyMenuPlugins)	}
+
+	disconnectedCallback() {
+		window.removeEventListener('myMenuPlugs-event', this._updateMyMenuPlugins)
+		super.disconnectedCallback()
+	}
+
     openImportDialog() {
         this.shadowRoot.getElementById('importTabMenutDialog').show()
     }
@@ -1468,7 +1521,9 @@ class NavBar extends connect(store)(LitElement) {
         localStorage.removeItem("myMenuPlugs")
         myFile = file
         const newTabMenu = JSON.parse((myFile) || "[]")
+        const copyPayload = [...newTabMenu]
         localStorage.setItem("myMenuPlugs", JSON.stringify(newTabMenu))
+        this.saveSettingToTemp(copyPayload)
         this.shadowRoot.getElementById('importTabMenutDialog').close()
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
@@ -1951,8 +2006,10 @@ class NavBar extends connect(store)(LitElement) {
 
             if (myNameRes !== false) {
                 oldMenuPlugs.push(newMenuPlugsItem)
+                const copyPayload = [...oldMenuPlugs]
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
+                this.saveSettingToTemp(copyPayload)
 
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
@@ -2014,9 +2071,10 @@ class NavBar extends connect(store)(LitElement) {
 
             if (myNameRes !== false) {
                 oldMenuPlugs.push(newMenuPlugsItem)
+                const copyPayload = [...oldMenuPlugs]
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-
+                this.saveSettingToTemp(copyPayload)
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2084,9 +2142,10 @@ class NavBar extends connect(store)(LitElement) {
             }
 
             oldMenuPlugs.push(newMenuPlugsItem)
+            const copyPayload = [...oldMenuPlugs]
 
             localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-
+            this.saveSettingToTemp(copyPayload)
             let myplugstring2 = get("walletpage.wchange52")
             parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2149,11 +2208,20 @@ class NavBar extends connect(store)(LitElement) {
 
     renderRemoveIcon(appurl, appicon, appname, appid, appplugin) {
         return html`
-            <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname, appid, appurl)}">
+           
+            <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
+            <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${(event) => {
+                              event.stopPropagation();
+                              this.openRemoveApp(appname, appid, appurl)
+            } }">
                 <mwc-icon class="removeIcon">backspace</mwc-icon>
             </div>
-            <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
+                ${appurl === 'myapp' ? html`
+                <app-avatar appicon=${appicon} appname=${appname}></app-avatar>
+                ` : html`
                 <mwc-icon class="menuIcon">${appicon}</mwc-icon>
+
+                `}
             </div>
         `
     }
@@ -2210,12 +2278,34 @@ class NavBar extends connect(store)(LitElement) {
         const pluginToRemove = this.pluginNumberToDelete
         this.newMenuFilter = []
         this.newMenuFilter = this.myMenuList.filter((item) => item.pluginNumber !== pluginToRemove)
+        const copyPayload = [...this.newMenuFilter]
+
         const myNewObj = JSON.stringify(this.newMenuFilter)
         localStorage.removeItem("myMenuPlugs")
         localStorage.setItem("myMenuPlugs", myNewObj)
+        this.saveSettingToTemp(copyPayload)
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
         this.closeRemoveApp()
+    }
+
+    saveSettingToTemp(data){
+        const tempSettingsData= JSON.parse(localStorage.getItem('temp-settings-data') || "{}")
+		const newTemp = {
+			...tempSettingsData,
+			myMenuPlugs: {
+				data: data,
+				timestamp: Date.now()
+			}
+		}
+
+		localStorage.setItem('temp-settings-data', JSON.stringify(newTemp));
+		this.dispatchEvent(
+			new CustomEvent('temp-settings-data-event', {
+			  bubbles: true,
+			  composed: true
+			}),
+		  );
     }
 
     closeRemoveApp() {
@@ -2348,3 +2438,148 @@ class NavBar extends connect(store)(LitElement) {
 }
 
 customElements.define('nav-bar', NavBar)
+
+
+class AppAvatar extends LitElement {
+    static get properties() {
+        return {
+            hasAvatar: { type: Boolean },
+            isImageLoaded: {type: Boolean},
+            appicon: {type: String},
+            appname: {type: String}
+        }
+    }
+
+    constructor() {
+        super()
+       
+        this.hasAvatar = false
+        this.isImageLoaded = false
+        this.imageFetches = 0
+    }
+
+    static get styles() {
+      
+        return css`
+          :host {
+            position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+        }
+        .menuIcon {
+        color: var(--app-icon);
+        --mdc-icon-size: 64px;
+        cursor: pointer;
+    }
+
+
+            `
+    }
+   
+    createImage(imageUrl)  {
+        const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "border-radius:10px; font-size:14px; object-fit: fill;height:60px;width:60px";
+       
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
+        }
+        imageHTMLRes.onerror = () => {   
+            if (this.imageFetches < 1) {
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 5000);
+            } else {
+               this.isImageLoaded = false
+            }
+        };
+        return imageHTMLRes;
+      }
+
+    render(){
+        let avatarImg = ""
+        if (this.appname) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.appname}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+           avatarImg = this.createImage(avatarUrl)
+        }
+
+        return html`
+            ${this.isImageLoaded ? html`
+            ${avatarImg}
+            ` : html`
+            <mwc-icon class="menuIcon">${this.appicon}</mwc-icon>
+            `}
+        `
+    }
+
+}
+
+customElements.define('app-avatar', AppAvatar)
+
+class TabAvatar extends LitElement {
+    static get properties() {
+        return {
+            hasAvatar: { type: Boolean },
+            isImageLoaded: {type: Boolean},
+            appicon: {type: String},
+            appname: {type: String}
+        }
+    }
+
+    constructor() {
+        super()
+       
+        this.hasAvatar = false
+        this.isImageLoaded = false
+        this.imageFetches = 0
+    }
+
+  
+   
+    createImage(imageUrl)  {
+        const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "border-radius:4px; font-size:14px; object-fit: fill;height:24px;width:24px";
+       
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
+        }
+        imageHTMLRes.onerror = () => {   
+            if (this.imageFetches < 1) {
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 5000);
+            } else {
+               this.isImageLoaded = false
+            }
+        };
+        return imageHTMLRes;
+      }
+
+    render(){
+        let avatarImg = ""
+        if (this.appname) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.appname}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+           avatarImg = this.createImage(avatarUrl)
+        }
+
+        return html`
+            ${this.isImageLoaded ? html`
+            ${avatarImg}
+            ` : html`
+            <mwc-icon>${this.appicon}</mwc-icon>
+            `}
+        `
+    }
+
+}
+
+customElements.define('tab-avatar', TabAvatar)

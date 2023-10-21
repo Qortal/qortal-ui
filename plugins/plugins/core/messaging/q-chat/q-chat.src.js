@@ -516,6 +516,27 @@ class Chat extends LitElement {
                 chatHeads = JSON.parse(chatHeads)
                 this.getChatHeadFromState(chatHeads)
             })
+            parentEpml.subscribe('side_effect_action', async sideEffectActionParam => {
+                const sideEffectAction = JSON.parse(sideEffectActionParam)
+
+                if(sideEffectAction && sideEffectAction.type === 'openPrivateChat'){
+                    const name = sideEffectAction.data.name
+                    const address = sideEffectAction.data.address
+                    if(this.chatHeadsObj.direct && this.chatHeadsObj.direct.find(item=> item.address === address)){
+                        this.setActiveChatHeadUrl(`direct/${address}`)
+                        window.parent.reduxStore.dispatch(
+                         window.parent.reduxAction.setSideEffectAction(null))
+                    } else {
+                        this.setOpenPrivateMessage({
+                            open: true,
+                            name: name
+                        })
+                        window.parent.reduxStore.dispatch(
+                            window.parent.reduxAction.setSideEffectAction(null))
+                    }
+                
+                } 
+            })
             parentEpml.request('apiCall', {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
             }).then(res => {
