@@ -207,7 +207,8 @@
 		"exp3": "Export",
 		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
 		"core": "Porniți setările de bază",
-		"qappNotification1": "Notificări Q-App"
+		"qappNotification1": "Notificări Q-App",
+		"selectnode": "Vă rugăm să selectați o opțiune"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "La apasarea butonului de confirmare, recompensa va fi eliminata, iar cheia de obtinere de recompensa (minting) va deveni invalida.",
 		"deployAtdialog1": "Implementați AT",
 		"deployAtdialog2": "La apăsarea confirmării, AT va fi implementat!",
-		"deployAtdialog3": "Soldul sumei inițiale"
+		"deployAtdialog3": "Soldul sumei inițiale",
+		"votedialog1": "Soliciți să votați la sondajul de mai jos:",
+		"votedialog2": "La apăsarea confirmării, cererea de vot va fi trimisă!",
+		"votedialog3": "Soliciți să creezi sondajul de mai jos:",
+		"votedialog4": "Descrierea sondajului",
+		"votedialog5": "Opțiuni",
+		"votedialog6": "La apăsarea confirmării, sondajul va fi creat!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Sponsorizari active",

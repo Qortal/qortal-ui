@@ -207,7 +207,8 @@
 		"exp3": "导出",
 		"exp4": "请选择一个钱包来备份私钥。",
 		"core": "开始核心设置",
-		"qappNotification1": "Q-App 通知"
+		"qappNotification1": "Q-App 通知",
+		"selectnode": "请选择一个选项"
 	},
 	"appinfo": {
 		"blockheight": "区块高度",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "点击确认后，铸币密钥将被移除并失效。",
 		"deployAtdialog1": "您正在部署 AT",
 		"deployAtdialog2": "按下确认键后，AT 将被部署！",
-		"deployAtdialog3": "初始金额余额"
+		"deployAtdialog3": "初始金额余额",
+		"votedialog1": "您请求对以下民意调查进行投票：",
+		"votedialog2": "按下确认后，投票请求将被发送！",
+		"votedialog3": "您请求创建以下投票：",
+		"votedialog4": "投票说明",
+		"votedialog5": "选项",
+		"votedialog6": "按确认后，将创建投票！"
 	},
 	"sponsorshipspage": {
 		"schange1": "目前有效的赞助记录",

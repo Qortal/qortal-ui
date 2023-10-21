@@ -207,7 +207,8 @@
 		"exp3": "Izvoz",
 		"exp4": "Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa.",
 		"core": "Pokreni podešavanja jezgra",
-		"qappNotification1": "Obaveštenja o Q-App"
+		"qappNotification1": "Obaveštenja o Q-App",
+		"selectnode": "Izaberite opciju"
 	},
 	"appinfo": {
 		"blockheight": "Visina Bloka",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "Pritiskom na potvrdu, udeo nagrade će biti uklonjen i ključ za kovanje će postati nevažeći.",
 		"deployAtdialog1": "Postavljate AT",
 		"deployAtdialog2": "Pritiskom na potvrdi, AT će biti raspoređen!",
-		"deployAtdialog3": "Početni saldo iznosa"
+		"deployAtdialog3": "Početni saldo iznosa",
+		"votedialog1": "Tražite da glasate u anketi ispod:",
+		"votedialog2": "Pritiskom na potvrdi, zahtev za glasanje će biti poslat!",
+		"votedialog3": "Zahtevate da napravite anketu ispod:",
+		"votedialog4": "Opis ankete",
+		"votedialog5": "Opcije",
+		"votedialog6": "Pritiskom na potvrdi, anketa će biti kreirana!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktivna sponzorstva",

@@ -207,7 +207,8 @@
 		"exp3": "Eksportuj",
 		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego.",
 		"core": "Uruchom podstawowe ustawienia",
-		"qappNotification1": "Powiadomienia Q-App"
+		"qappNotification1": "Powiadomienia Q-App",
+		"selectnode": "Proszę wybrać opcję"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "Po naciśnięciu przycisku Potwierdź udział w nagrodach zostanie usunięty, a klucz bicia stanie się nieważny.",
 		"deployAtdialog1": "Wdrażasz terminal AT",
 		"deployAtdialog2": "Po naciśnięciu przycisku potwierdzenia terminal AT zostanie wdrożony!",
-		"deployAtdialog3": "Saldo kwoty początkowej"
+		"deployAtdialog3": "Saldo kwoty początkowej",
+		"votedialog1": "Prosimy o oddanie głosu w poniższej ankiecie:",
+		"votedialog2": "Po naciśnięciu potwierdzenia zostanie wysłana prośba o głos!",
+		"votedialog3": "Prosisz o utworzenie poniższej ankiety:",
+		"votedialog4": "Opis ankiety",
+		"votedialog5": "Opcje",
+		"votedialog6": "Po naciśnięciu potwierdzenia ankieta zostanie utworzona!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktywny Sponsoring",

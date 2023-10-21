@@ -179,6 +179,30 @@ class StartMinting extends connect(store)(LitElement) {
 		this.openDialogRewardShare = false;
 		this.status = 0;
 		this.privateRewardShareKey = "";
+		this.address = this.getAddress();
+		this.nonce = this.getNonce();
+		this.base58PublicKey = this.getBase58PublicKey()
+	}
+	getBase58PublicKey(){
+		const appState = window.parent.reduxStore.getState().app;
+const selectedAddress = appState && appState.selectedAddress;
+const base58PublicKey = selectedAddress && selectedAddress.base58PublicKey;
+		return base58PublicKey || ""
+	}
+
+	getAddress(){
+		const appState = window.parent.reduxStore.getState().app;
+const selectedAddress = appState && appState.selectedAddress;
+const address = selectedAddress && selectedAddress.address;
+		return address || ""
+
+	}
+	getNonce(){
+		const appState = window.parent.reduxStore.getState().app;
+const selectedAddress = appState && appState.selectedAddress;
+const nonce = selectedAddress && selectedAddress.nonce;
+		return nonce || ""
+
 	}
 
 	render() {
@@ -223,7 +247,7 @@ class StartMinting extends connect(store)(LitElement) {
 		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 		this.status = value
-		const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+		const address = this.address
 
 		// Check to see if a sponsorship key on a newly-level 1 minter exists. If it does, remove it.
 		const findMintingAccountFromOtherUser = this.mintingAccountData.find((ma) => ma.recipientAccount === address && ma.mintingAccount !== address);
@@ -247,12 +271,14 @@ class StartMinting extends connect(store)(LitElement) {
 		try {
 			if (
 				findMintingAccountFromOtherUser &&
-				findMintingAccountFromOtherUser?.publicKey[0]
+				findMintingAccountFromOtherUser.publicKey &&
+				findMintingAccountFromOtherUser.publicKey[0]
 			) {
 				await removeMintingAccount(
-					findMintingAccountFromOtherUser?.publicKey[0]
+					findMintingAccountFromOtherUser.publicKey[0]
 				);
 			}
+			
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg2();
 			return;
@@ -292,7 +318,7 @@ class StartMinting extends connect(store)(LitElement) {
 			if (!stop) {
 				stop = true;
 				try {
-					const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+					const address = this.address
 					const myRewardShareArray = await rewardShares(address);
 					if (myRewardShareArray.length > 0) {
 						clearInterval(interval)
@@ -313,12 +339,12 @@ class StartMinting extends connect(store)(LitElement) {
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 		const mintingAccountData = this.mintingAccountData;
 		const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
-		const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
-		const nonce = window.parent.reduxStore.getState().app?.selectedAddress?.nonce;
-		const publicAddress = window.parent.reduxStore.getState().app?.selectedAddress ?.base58PublicKey;
+		const address = this.address
+		const nonce = this.nonce
+		const publicAddress = this.base58PublicKey
 		const findMintingAccount = mintingAccountData.find((ma) => ma.mintingAccount === address);
-		const isMinterButKeyMintingKeyNotAssigned = addressInfo?.error !== 124 && addressInfo?.level >= 1 && !findMintingAccount;
-
+		const isMinterButKeyMintingKeyNotAssigned = addressInfo && addressInfo.error !== 124 && addressInfo.level >= 1 && !findMintingAccount;
+	
 		const makeTransactionRequest = async (lastRef) => {
 			let mylastRef = lastRef;
 			let rewarddialog1 = get('transactions.rewarddialog1');
@@ -347,31 +373,33 @@ class StartMinting extends connect(store)(LitElement) {
 
 		const getTxnRequestResponse = (txnResponse) => {
 			let err6string = get('rewardsharepage.rchange21');
-			if (txnResponse?.extraData?.rewardSharePrivateKey && (txnResponse?.data?.message?.includes('multiple') || txnResponse?.data?.message?.includes('SELF_SHARE_EXISTS'))) {
-				return err6string
+		
+			if (txnResponse && txnResponse.extraData && txnResponse.extraData.rewardSharePrivateKey &&
+				txnResponse.data && (txnResponse.data.message && (txnResponse.data.message.includes('multiple') || txnResponse.data.message.includes('SELF_SHARE_EXISTS')))) {
+				return err6string;
 			}
+		
 			if (txnResponse.success === false && txnResponse.message) {
-				throw (txnResponse);
-			} else if (
-				txnResponse.success === true &&
-				!txnResponse.data.error
-			) {
-
+				throw txnResponse;
+			} else if (txnResponse.success === true && txnResponse.data && !txnResponse.data.error) {
 				return err6string;
 			} else {
-				throw (txnResponse);
+				throw txnResponse;
 			}
 		};
+		
 
 		const createSponsorshipKey = async () => {
-			this.status = 1
+			this.status = 1;
 			let lastRef = await getLastRef();
-
 			let myTransaction = await makeTransactionRequest(lastRef);
-
 			getTxnRequestResponse(myTransaction);
-			return myTransaction?.extraData?.rewardSharePrivateKey
+		
+			if (myTransaction && myTransaction.extraData) {
+				return myTransaction.extraData.rewardSharePrivateKey;
+			}
 		};
+		
 
 		const getLastRef = async () => {
 			const url = `${nodeUrl}/addresses/lastreference/${address}`;
@@ -383,7 +411,7 @@ class StartMinting extends connect(store)(LitElement) {
 		const startMinting = async () => {
 			this.openDialogRewardShare = true
 			this.errorMsg = '';
-			const address = window.parent.reduxStore.getState().app?.selectedAddress?.address;
+			const address = this.address
 
 			const findMintingAccountsFromUser = this.mintingAccountData.filter((ma) => ma.recipientAccount === address && ma.mintingAccount === address);
 
@@ -397,7 +425,7 @@ class StartMinting extends connect(store)(LitElement) {
 				this.confirmRelationship(publicAddress)
 			} catch (error) {
 				console.log({ error })
-				this.errorMsg = error?.data?.message || this.renderErrorMsg4();
+				this.errorMsg = (error && error.data && error.data.message) ? error.data.message : this.renderErrorMsg4();
 				return;
 			}
 		};

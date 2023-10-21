@@ -207,7 +207,8 @@
 		"exp3": "Exporter",
 		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
 		"core": "Démarrer les paramètres du noyau",
-		"qappNotification1": "Notifications Q-App"
+		"qappNotification1": "Notifications Q-App",
+		"selectnode": "Veuillez sélectionner une option"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "En appuyant sur confirmer, le partage de récompense sera supprimé et la clé de frappe deviendra invalide.",
 		"deployAtdialog1": "Vous déployez l'AT",
 		"deployAtdialog2": "En appuyant sur confirmer, l'AT sera déployé !",
-		"deployAtdialog3": "Solde du montant initial"
+		"deployAtdialog3": "Solde du montant initial",
+		"votedialog1": "Vous demandez à voter sur le sondage ci-dessous :",
+		"votedialog2": "En appuyant sur confirmer, la demande de vote sera envoyée !",
+		"votedialog3": "Vous demandez la création du sondage ci-dessous :",
+		"votedialog4": "Description du sondage",
+		"votedialog5": "Options",
+		"votedialog6": "En appuyant sur confirmer, le sondage sera créé !"
 	},
 	"sponsorshipspage": {
 		"schange1": "Parrainages actifs",

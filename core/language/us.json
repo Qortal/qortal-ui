@@ -207,7 +207,8 @@
 		"exp3": "Export",
 		"exp4": "Please choose a wallet to backup the private master key.",
 		"core": "Start Core Settings",
-		"qappNotification1": "Q-App Notifications"
+		"qappNotification1": "Q-App Notifications",
+		"selectnode": "Please select an option"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "On pressing confirm, the rewardshare will be removed and the minting key will become invalid.",
 		"deployAtdialog1": "You are deploying the AT",
 		"deployAtdialog2": "On pressing confirm, the AT will be deployed!",
-		"deployAtdialog3": "Initial amount balance"
+		"deployAtdialog3": "Initial amount balance",
+		"votedialog1": "You are requesting to vote on the poll below:",
+		"votedialog2": "On pressing confirm, the vote request will be sent!",
+		"votedialog3": "You are requesting to create the poll below:",
+		"votedialog4": "Poll Description",
+		"votedialog5": "Options",
+		"votedialog6": "On pressing confirm, the poll will be created!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Active Sponsorships",

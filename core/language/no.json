@@ -207,7 +207,8 @@
 		"exp3": "Eksporter",
 		"exp4": "Velg en lommebok for å sikkerhetskopiere den private hovednøkkelen.",
 		"core": "Start kjerneinnstillinger",
-		"qappNotification1": "Q-App varsler"
+		"qappNotification1": "Q-App varsler",
+		"selectnode": "Vennligst velg et alternativ"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "Ved å trykke på Bekreft, vil belønningsdelen bli fjernet og mintnøkkelen blir ugyldig.",
 		"deployAtdialog1": "Du distribuerer AT",
 		"deployAtdialog2": "Når du trykker på bekreftelse, vil AT bli distribuert!",
-		"deployAtdialog3": "Startbeløpssaldo"
+		"deployAtdialog3": "Startbeløpssaldo",
+		"votedialog1": "Du ber om å stemme på avstemningen nedenfor:",
+		"votedialog2": "Ved å trykke bekreft vil stemmeforespørselen bli sendt!",
+		"votedialog3": "Du ber om å lage avstemningen nedenfor:",
+		"votedialog4": "Avstemningsbeskrivelse",
+		"votedialog5": "Alternativer",
+		"votedialog6": "Når du trykker på bekreft, blir avstemningen opprettet!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Aktive sponsorer",

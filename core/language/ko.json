@@ -207,7 +207,8 @@
 		"exp3": "내보내기",
 		"exp4": "개인 마스터 키를 백업할 지갑을 선택하세요.",
 		"core": "코어 설정 시작",
-		"qappNotification1": "Q-App 알림"
+		"qappNotification1": "Q-App 알림",
+		"selectnode": "옵션을 선택하세요"
 	},
 	"appinfo": {
 		"blockheight": "블록 높이",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "확인을 누르면 보상 공유가 제거되고 조폐 키가 유효하지 않게 됩니다.",
 		"deployAtdialog1": "AT를 배치하고 있습니다",
 		"deployAtdialog2": "확인을 누르면 AT가 배치됩니다!",
-		"deployAtdialog3": "초기 잔액"
+		"deployAtdialog3": "초기 잔액",
+		"votedialog1": "아래 설문조사에 투표를 요청합니다:",
+		"votedialog2": "확인을 누르면 투표 요청이 전송됩니다!",
+		"votedialog3": "아래 설문조사 생성을 요청하고 있습니다.",
+		"votedialog4": "설문조사 설명",
+		"votedialog5": "옵션",
+		"votedialog6": "확인을 누르면 설문조사가 생성됩니다!"
 	},
 	"sponsorshipspage": {
 		"schange1": "적극적인 후원",

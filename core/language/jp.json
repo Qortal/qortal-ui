@@ -207,7 +207,8 @@
 		"exp3": "エクスポート",
 		"exp4": "秘密マスターキーをバックアップするウォレットを選択してください。",
 		"core": "Core設定を開始",
-		"qappNotification1": "Q-App 通知"
+		"qappNotification1": "Q-App 通知",
+		"selectnode": "オプションを選択してください"
 	},
 	"appinfo": {
 		"blockheight": "ブロック高",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "確認を押すと、報酬シェアが削除され、ミントキーが無効になります。",
 		"deployAtdialog1": "AT を展開しています",
 		"deployAtdialog2": "確認を押すと、AT が展開されます!",
-		"deployAtdialog3": "初期金額残高"
+		"deployAtdialog3": "初期金額残高",
+		"votedialog1": "以下のアンケートへの投票をリクエストしています。",
+		"votedialog2": "確認を押すと、投票リクエストが送信されます。",
+		"votedialog3": "以下の投票の作成をリクエストしています:",
+		"votedialog4": "投票の説明",
+		"votedialog5": "オプション",
+		"votedialog6": "確認を押すと投票が作成されます。"
 	},
 	"sponsorshipspage": {
 		"schange1": "アクティブなスポンサーシップ",

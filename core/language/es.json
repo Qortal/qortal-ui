@@ -207,7 +207,8 @@
 		"exp3": "Exportar",
 		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada.",
 		"core": "Iniciar configuración básica",
-		"qappNotification1": "Notificaciones de Q-App"
+		"qappNotification1": "Notificaciones de Q-App",
+		"selectnode": "Por favor seleccione una opción"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "Al presionar confirmar, se eliminará la recompensa compartida y la clave de acuñación dejará de ser válida.",
 		"deployAtdialog1": "Estás implementando el AT",
 		"deployAtdialog2": "¡Al presionar confirmar, el AT será implementado!",
-		"deployAtdialog3": "Saldo del importe inicial"
+		"deployAtdialog3": "Saldo del importe inicial",
+		"votedialog1": "Estás solicitando votar en la siguiente encuesta:",
+		"votedialog2": "¡Al presionar confirmar, se enviará la solicitud de voto!",
+		"votedialog3": "Estás solicitando crear la encuesta a continuación:",
+		"votedialog4": "Descripción de la encuesta",
+		"votedialog5": "Opciones",
+		"votedialog6": "¡Al presionar confirmar, se creará la encuesta!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Patrocinios Activos",

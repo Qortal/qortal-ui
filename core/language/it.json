@@ -207,7 +207,8 @@
 		"exp3": "Esporta",
 		"exp4": "Scegli un portafoglio per il backup della chiave master privata.",
 		"core": "Avvia impostazioni principali",
-		"qappNotification1": "Notifiche Q-App"
+		"qappNotification1": "Notifiche Q-App",
+		"selectnode": "Seleziona un'opzione"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",
@@ -1024,7 +1025,13 @@
 		"rewarddialog6": "Premendo conferma, la condivisione del premio verrà rimossa e la chiave di conio non sarà più valida.",
 		"deployAtdialog1": "Stai distribuendo l'AT",
 		"deployAtdialog2": "Premendo conferma, l'AT verrà schierato!",
-		"deployAtdialog3": "Saldo importo iniziale"
+		"deployAtdialog3": "Saldo importo iniziale",
+		"votedialog1": "Stai richiedendo di votare per il sondaggio qui sotto:",
+		"votedialog2": "Premendo conferma, la richiesta di voto verrà inviata!",
+		"votedialog3": "Stai richiedendo di creare il sondaggio qui sotto:",
+		"votedialog4": "Descrizione sondaggio",
+		"votedialog5": "Opzioni",
+		"votedialog6": "Premendo conferma, il sondaggio verrà creato!"
 	},
 	"sponsorshipspage": {
 		"schange1": "Sponsorizzazioni attive",
