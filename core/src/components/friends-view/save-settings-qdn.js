@@ -158,6 +158,37 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		return decryptedDataToBase64;
 	}
 
+	async getMyFollowedNames() {
+		
+        let myFollowedNames = []
+		try {
+			 myFollowedNames = await parentEpml.request('apiCall', {
+				url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`
+			})
+		} catch (error) {
+			
+		}
+
+        return myFollowedNames
+    }
+
+	async followNames(names) {
+		let items = names
+		let namesJsonString = JSON.stringify({ "items": items })
+
+		let ret = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`,
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: `${namesJsonString}`
+		})
+
+		
+		return ret
+	}
+
 	async setValues(response, resource) {
 		this.settingsRawData = response;
 		const rawDataTimestamp = resource.updated;
@@ -179,6 +210,14 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		) {
 			const friendList = userLists[0];
 			const copyPayload = [...friendList];
+			const onlyNames = copyPayload.map((item)=> item.name)
+			const followedList = await this.getMyFollowedNames()
+
+			const namesNotInFollowedList = onlyNames.filter(name => !followedList.includes(name));
+			if(namesNotInFollowedList.length > 0){
+				await this.followNames(namesNotInFollowedList)
+
+			}
 
 			localStorage.setItem(
 				'friends-my-friend-list',
