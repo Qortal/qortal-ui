@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Confirmation de la transaction",
 		"notify2": "Transaction confirmée",
-		"explanation": "Votre transaction est en cours de confirmation. Pour suivre sa progression, cliquez sur l'icône en forme de cloche."
+		"explanation": "Votre transaction est en cours de confirmation. Pour suivre sa progression, cliquez sur l'icône en forme de cloche.",
+		"status1": "Entièrement synchronisé",
+		"status2": "Non synchronisé",
+		"notify3": "Aucune notification",
+		"notify4": "Notifications d'émission"
+	},
+	"friends": {
+		"friend1": "Ajouter un nom",
+		"friend2": "Ajouter un ami",
+		"friend3": "Ajouter un ami vous permet de vous connecter facilement avec cette personne. Assurez-vous également de suivre cet utilisateur pour prendre en charge l'hébergement de ses ressources publiées.",
+		"friend4": "Remarques",
+		"friend5": "Suivre le nom",
+		"friend6": "Alias",
+		"friend7": "Ajoutez un alias pour mieux vous souvenir de votre ami (facultatif)",
+		"friend8": "Envoyer un Q-Chat",
+		"friend9": "Envoyer un Q-Mail",
+		"friend10": "Modifier un ami",
+		"friend11": "Suivant",
+		"friend12": "Amis",
+		"friend13": "Alimentation",
+		"friend14": "Supprimer un ami",
+		"friend15": "Paramètres du flux",
+		"friend16": "Sélectionnez les Q-Apps pour lesquelles vous souhaitez des mises à jour, en particulier celles liées à vos amis.",
+		"friend17": "Aucun élément dans votre flux"
+	},
+	"save": {
+		"saving1": "Impossible de récupérer les paramètres enregistrés",
+		"saving2": "Rien à sauver",
+		"saving3": "Enregistrer les modifications non enregistrées",
+		"saving4": "Annuler les changements"
 	}
 }

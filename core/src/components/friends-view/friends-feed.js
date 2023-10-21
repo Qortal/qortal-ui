@@ -400,7 +400,7 @@ this.getFeedOnInterval()
                     ` : ''}
                     ${this.hasFetched && !this.isLoading && this.feed.length === 0 ? html`
                     <div style="width:100%;display: flex; justify-content:center">
-                    <p>${translate('friends.friends18')}</p>
+                    <p>${translate('friends.friend17')}</p>
                     </div>
                     ` : ''}
 					${this.feedToRender.map((item) => {

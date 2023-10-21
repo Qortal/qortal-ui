@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Potvrđivanje transakcije",
 		"notify2": "Transakcija potvrđena",
-		"explanation": "Vaša transakcija se potvrđuje. Da biste pratili njen napredak, kliknite na ikonu zvona."
+		"explanation": "Vaša transakcija se potvrđuje. Da biste pratili njen napredak, kliknite na ikonu zvona.",
+		"status1": "Potpuno sinhronizovano",
+		"status2": "Nije sinhronizovano",
+		"notify3": "Nema obaveštenja",
+		"notify4": "Tk obaveštenja"
+	},
+	"friends": {
+		"friend1": "Dodajte ime",
+		"friend2": "Dodaj prijatelja",
+		"friend3": "Dodavanje prijatelja vam omogućava da se lako povežete sa tom osobom. Obavezno pratite i tog korisnika kako biste podržali hostovanje njihovih objavljenih resursa.",
+		"friend4": "Napomene",
+		"friend5": "Pratite ime",
+		"friend6": "Alias",
+		"friend7": "Dodajte pseudonim da biste bolje zapamtili svog prijatelja (opciono)",
+		"friend8": "Pošalji K-Chat",
+		"friend9": "Pošaljite K-Mail",
+		"friend10": "Uredi prijatelja",
+		"friend11": "Sledeći",
+		"friend12": "Prijatelji",
+		"friend13": "Napajanje",
+		"friend14": "Ukloni prijatelja",
+		"friend15": "Podešavanja fida",
+		"friend16": "Izaberite K-aplikacije iz kojih želite ažuriranja, posebno one koje se odnose na vaše prijatelje.",
+		"friend17": "Nema stavki u vašem fidu"
+	},
+	"save": {
+		"saving1": "Nije moguće preuzeti sačuvana podešavanja",
+		"saving2": "Nema šta da se spase",
+		"saving3": "Sačuvajte nesačuvane promene",
+		"saving4": "Poništi promene"
 	}
 }

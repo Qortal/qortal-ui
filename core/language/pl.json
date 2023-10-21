@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Potwierdzenie transakcji",
 		"notify2": "Transakcja potwierdzona",
-		"explanation": "Twoja transakcja jest potwierdzana. Aby śledzić jej postęp, kliknij ikonę dzwonka."
+		"explanation": "Twoja transakcja jest potwierdzana. Aby śledzić jej postęp, kliknij ikonę dzwonka.",
+		"status1": "W pełni zsynchronizowane",
+		"status2": "Nie zsynchronizowane",
+		"notify3": "Brak powiadomień",
+		"notify4": "Powiadomienia o wysyłaniu"
+	},
+	"friends": {
+		"friend1": "Dodaj nazwę",
+		"friend2": "Dodaj znajomego",
+		"friend3": "Dodanie znajomego umożliwia łatwe nawiązanie kontaktu z tą osobą. Pamiętaj także o obserwowaniu tego użytkownika, aby wesprzeć hosting jego opublikowanych zasobów.",
+		"friend4": "Notatki",
+		"friend5": "Podążaj za imieniem",
+		"friend6": "Alias",
+		"friend7": "Dodaj alias, aby lepiej zapamiętać znajomego (opcjonalnie)",
+		"friend8": "Wyślij Q-Chat",
+		"friend9": "Wyślij Q-Maila",
+		"friend10": "Edytuj przyjaciela",
+		"friend11": "Następny",
+		"friend12": "Przyjaciele",
+		"friend13": "Karmić",
+		"friend14": "Usunąć znajomego",
+		"friend15": "Ustawienia kanału",
+		"friend16": "Wybierz aplikacje Q-Apps, z których chcesz otrzymywać aktualizacje, szczególnie te dotyczące Twoich znajomych.",
+		"friend17": "Brak elementów w Twoim kanale"
+	},
+	"save": {
+		"saving1": "Nie można pobrać zapisanych ustawień",
+		"saving2": "Nic do uratowania",
+		"saving3": "Zapisz niezapisane zmiany",
+		"saving4": "Cofnij zmiany"
 	}
 }

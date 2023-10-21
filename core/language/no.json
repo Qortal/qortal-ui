@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Bekrefter transaksjon",
 		"notify2": "Transaksjonen bekreftet",
-		"explanation": "Transaksjonen din blir bekreftet. Klikk på bjelleikonet for å spore fremdriften."
+		"explanation": "Transaksjonen din blir bekreftet. Klikk på bjelleikonet for å spore fremdriften.",
+		"status1": "Fullstendig synkronisert",
+		"status2": "Ikke synkronisert",
+		"notify3": "Ingen varsler",
+		"notify4": "Tx-varsler"
+	},
+	"friends": {
+		"friend1": "Legg til navn",
+		"friend2": "Legge til venn",
+		"friend3": "Ved å legge til en venn kan du enkelt koble deg til den personen. Sørg også for å følge den brukeren for å støtte hosting av publiserte ressurser.",
+		"friend4": "Notater",
+		"friend5": "Følg navn",
+		"friend6": "Alias",
+		"friend7": "Legg til et alias for å huske vennen din bedre (valgfritt)",
+		"friend8": "Send Q-Chat",
+		"friend9": "Send Q-Mail",
+		"friend10": "Rediger venn",
+		"friend11": "Følgende",
+		"friend12": "Venner",
+		"friend13": "Mate",
+		"friend14": "Fjern venn",
+		"friend15": "Innmatingsinnstillinger",
+		"friend16": "Velg Q-appene du vil ha oppdateringer fra, spesielt de som er relatert til vennene dine.",
+		"friend17": "Ingen varer i feeden din"
+	},
+	"save": {
+		"saving1": "Kan ikke hente lagrede innstillinger",
+		"saving2": "Ingenting å spare",
+		"saving3": "Lagre ulagrede endringer",
+		"saving4": "Angre endringer"
 	}
 }

@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Se confirmă tranzacția",
 		"notify2": "Tranzacție confirmată",
-		"explanation": "Tranzacția dvs. este confirmată. Pentru a urmări progresul acesteia, faceți clic pe pictograma clopoțel."
+		"explanation": "Tranzacția dvs. este confirmată. Pentru a urmări progresul acesteia, faceți clic pe pictograma clopoțel.",
+		"status1": "Sincronizat complet",
+		"status2": "Nu este sincronizat",
+		"notify3": "Nicio notificare",
+		"notify4": "Notificări Tx"
+	},
+	"friends": {
+		"friend1": "Adăugați numele",
+		"friend2": "Adauga prieten",
+		"friend3": "Adăugarea unui prieten vă permite să vă conectați ușor cu acea persoană. Asigurați-vă că urmăriți și acel utilizator pentru a sprijini găzduirea resurselor publicate.",
+		"friend4": "Note",
+		"friend5": "Urmăriți numele",
+		"friend6": "Alias",
+		"friend7": "Adăugați un alias pentru a vă aminti mai bine de prietenul dvs. (Opțional)",
+		"friend8": "Trimiteți Q-Chat",
+		"friend9": "Trimiteți Q-Mail",
+		"friend10": "Editează prieten",
+		"friend11": "Ca urmare a",
+		"friend12": "Prieteni",
+		"friend13": "A hrani",
+		"friend14": "Șterge prieten",
+		"friend15": "Setări pentru feed",
+		"friend16": "Selectați Q-Apps de la care doriți actualizări, în special cele legate de prietenii dvs.",
+		"friend17": "Nu există articole în feedul dvs"
+	},
+	"save": {
+		"saving1": "Nu se pot prelua setările salvate",
+		"saving2": "Nimic de salvat",
+		"saving3": "Salvați modificările nesalvate",
+		"saving4": "Anulează modificările"
 	}
 }

@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "确认交易",
 		"notify2": "交易已确认",
-		"explanation": "您的交易正在得到确认。要跟踪其进度，请单击响铃图标。"
+		"explanation": "您的交易正在得到确认。要跟踪其进度，请单击响铃图标。",
+		"status1": "完全同步",
+		"status2": "未同步",
+		"notify3": "无通知",
+		"notify4": "发送通知"
+	},
+	"friends": {
+		"friend1": "添加姓名",
+		"friend2": "添加好友",
+		"friend3": "添加好友可以让您轻松地与该人联系。 请务必关注该用户以支持其已发布资源的托管。",
+		"friend4": "笔记",
+		"friend5": "关注姓名",
+		"friend6": "别名",
+		"friend7": "添加别名以更好地记住您的朋友（可选）",
+		"friend8": "发送 Q 聊天",
+		"friend9": "发送 Q 邮件",
+		"friend10": "编辑好友",
+		"friend11": "下列的",
+		"friend12": "朋友们",
+		"friend13": "喂养",
+		"friend14": "删除好友",
+		"friend15": "饲料设置",
+		"friend16": "选择您想要更新的 Q-App，尤其是与您的朋友相关的 Q-App。",
+		"friend17": "您的 Feed 中没有任何项目"
+	},
+	"save": {
+		"saving1": "无法获取保存的设置",
+		"saving2": "没有什么可保存的",
+		"saving3": "保存未保存的更改",
+		"saving4": "取消更改"
 	}
 }

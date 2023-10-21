@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Tranzakció megerősítése",
 		"notify2": "Tranzakció megerősítve",
-		"explanation": "Tranzakciója megerősítés alatt áll. A folyamat nyomon követéséhez kattintson a csengő ikonra."
+		"explanation": "Tranzakciója megerősítés alatt áll. A folyamat nyomon követéséhez kattintson a csengő ikonra.",
+		"status1": "Teljesen szinkronizálva",
+		"status2": "Nincs szinkronizálva",
+		"notify3": "Nincsenek értesítések",
+		"notify4": "Tx értesítések"
+	},
+	"friends": {
+		"friend1": "Név hozzáadása",
+		"friend2": "Ismerős hozzáadása",
+		"friend3": "Ha hozzáad egy barátot, akkor könnyedén kapcsolatba léphet vele. Ügyeljen arra is, hogy kövesse az adott felhasználót, hogy támogassa közzétett forrásai tárolását.",
+		"friend4": "Megjegyzések",
+		"friend5": "Kövesse a nevet",
+		"friend6": "Álnév",
+		"friend7": "Adjon hozzá aliast, hogy jobban emlékezzen barátjára (opcionális)",
+		"friend8": "Q-Chat küldése",
+		"friend9": "Q-Mail küldése",
+		"friend10": "Ismerős szerkesztése",
+		"friend11": "Következő",
+		"friend12": "Barátok",
+		"friend13": "Takarmány",
+		"friend14": "Barát eltávolítása",
+		"friend15": "Hírcsatorna beállításai",
+		"friend16": "Válassza ki azokat a Q-alkalmazásokat, amelyekről frissítéseket szeretne, különösen azokat, amelyek a barátaival kapcsolatosak.",
+		"friend17": "Nincsenek tételek a hírcsatornában"
+	},
+	"save": {
+		"saving1": "Nem sikerült lekérni a mentett beállításokat",
+		"saving2": "Nincs mit menteni",
+		"saving3": "Mentse a nem mentett változtatásokat",
+		"saving4": "Változtatások visszavonása"
 	}
 }

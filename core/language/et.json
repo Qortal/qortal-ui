@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Tehingu kinnitamine",
 		"notify2": "Tehing kinnitatud",
-		"explanation": "Sinu tehing kinnitatakse. Edenemise jälgimiseks klõpsa kellaikoonil."
+		"explanation": "Sinu tehing kinnitatakse. Edenemise jälgimiseks klõpsa kellaikoonil.",
+		"status1": "Täielikult sünkroonitud",
+		"status2": "Pole sünkroonitud",
+		"notify3": "Märguandeid pole",
+		"notify4": "Tx-teatised"
+	},
+	"friends": {
+		"friend1": "Lisa nimi",
+		"friend2": "Lisa sõber",
+		"friend3": "Sõbra lisamine võimaldab teil selle inimesega hõlpsalt ühendust luua. Jälgige kindlasti ka seda kasutajat, et toetada avaldatud ressursside hostimist.",
+		"friend4": "Märkmed",
+		"friend5": "Jälgi nime",
+		"friend6": "Teise nimega",
+		"friend7": "Lisage alias, et oma sõpra paremini meeles pidada (valikuline)",
+		"friend8": "Saada Q-Chat",
+		"friend9": "Saada Q-Mail",
+		"friend10": "Redigeeri sõpra",
+		"friend11": "Järgnev",
+		"friend12": "Sõbrad",
+		"friend13": "Sööda",
+		"friend14": "Eemalda sõber",
+		"friend15": "Voo seaded",
+		"friend16": "Valige Q-Apps, mille värskendusi soovite, eriti need, mis on seotud teie sõpradega.",
+		"friend17": "Teie voos pole üksusi"
+	},
+	"save": {
+		"saving1": "Salvestatud seadeid ei saa tuua",
+		"saving2": "Pole midagi päästa",
+		"saving3": "Salvestage salvestamata muudatused",
+		"saving4": "Võta muudatused tagasi"
 	}
 }

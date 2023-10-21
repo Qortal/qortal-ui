@@ -1205,8 +1205,7 @@
 		"friend14": "Remove friend",
 		"friend15": "Feed settings",
 		"friend16": "Select the Q-Apps you want updates from, especially those related to your friends.",
-		"friends17": "Friends",
-		"friends18": "No items in your feed"
+		"friend17": "No items in your feed"
 	},
 	"save": {
 		"saving1": "Unable to fetch saved settings",

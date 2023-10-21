@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Conferma transazione",
 		"notify2": "Transazione confermata",
-		"explanation": "La tua transazione è in fase di conferma. Per seguirne l'avanzamento, fai clic sull'icona della campana."
+		"explanation": "La tua transazione è in fase di conferma. Per seguirne l'avanzamento, fai clic sull'icona della campana.",
+		"status1": "Completamente sincronizzato",
+		"status2": "Non sincronizzato",
+		"notify3": "Nessuna notifica",
+		"notify4": "Notifiche Tx"
+	},
+	"friends": {
+		"friend1": "Aggiungi nome",
+		"friend2": "Aggiungi amico",
+		"friend3": "L'aggiunta di un amico ti consente di connetterti facilmente con quella persona. Assicurati di seguire l'utente anche per supportare l'hosting delle sue risorse pubblicate.",
+		"friend4": "Appunti",
+		"friend5": "Segui il nome",
+		"friend6": "Alias",
+		"friend7": "Aggiungi un alias per ricordare meglio il tuo amico (facoltativo)",
+		"friend8": "Invia Q-Chat",
+		"friend9": "Invia una Q-Mail",
+		"friend10": "Modifica amico",
+		"friend11": "Seguente",
+		"friend12": "Amici",
+		"friend13": "Foraggio",
+		"friend14": "Rimuovi amico",
+		"friend15": "Impostazioni del feed",
+		"friend16": "Seleziona le Q-App da cui desideri ricevere aggiornamenti, in particolare quelle relative ai tuoi amici.",
+		"friend17": "Nessun articolo nel tuo feed"
+	},
+	"save": {
+		"saving1": "Impossibile recuperare le impostazioni salvate",
+		"saving2": "Niente da salvare",
+		"saving3": "Salva le modifiche non salvate",
+		"saving4": "Cancella i cambiamenti"
 	}
 }

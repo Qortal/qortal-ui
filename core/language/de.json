@@ -1182,6 +1182,35 @@
 	"notifications": {
 		"notify1": "Transaktion wird bestätigt",
 		"notify2": "Transaktion bestätigt",
-		"explanation": "Ihre Transaktion wird bestätigt. Um den Fortschritt zu verfolgen, klicken Sie auf das Glockensymbol."
+		"explanation": "Ihre Transaktion wird bestätigt. Um den Fortschritt zu verfolgen, klicken Sie auf das Glockensymbol.",
+		"status1": "Vollständig synchronisiert",
+		"status2": "Nicht synchronisiert",
+		"notify3": "Keine Benachrichtigungen",
+		"notify4": "Tx-Benachrichtigungen"
+	},
+	"friends": {
+		"friend1": "Namen hinzufügen",
+		"friend2": "Freund hinzufügen",
+		"friend3": "Durch das Hinzufügen eines Freundes können Sie problemlos mit dieser Person in Kontakt treten. Achten Sie darauf, diesem Benutzer auch zu folgen, um das Hosting seiner veröffentlichten Ressourcen zu unterstützen.",
+		"friend4": "Anmerkungen",
+		"friend5": "Folgen Sie dem Namen",
+		"friend6": "Alias",
+		"friend7": "Fügen Sie einen Alias hinzu, um sich besser an Ihren Freund zu erinnern (optional)",
+		"friend8": "Senden Sie Q-Chat",
+		"friend9": "Q-Mail senden",
+		"friend10": "Freund bearbeiten",
+		"friend11": "Nachfolgend",
+		"friend12": "Freunde",
+		"friend13": "Füttern",
+		"friend14": "Freund entfernen",
+		"friend15": "Feed-Einstellungen",
+		"friend16": "Wählen Sie die Q-Apps aus, von denen Sie Updates erhalten möchten, insbesondere diejenigen, die sich auf Ihre Freunde beziehen.",
+		"friend17": "Keine Artikel in Ihrem Feed"
+	},
+	"save": {
+		"saving1": "Gespeicherte Einstellungen können nicht abgerufen werden",
+		"saving2": "Nichts zu speichern",
+		"saving3": "Speichern Sie nicht gespeicherte Änderungen",
+		"saving4": "Veränderungen rückgängig machen"
 	}
 }
