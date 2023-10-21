@@ -238,8 +238,8 @@ class NotificationBell extends connect(store)(LitElement) {
 
         .count {
           position: absolute;
-          top: 2px;
-          right: 0px;
+          top: -5px;
+          right: -5px;
           font-size: 12px;
           background-color: red;
           color: white;
@@ -249,6 +249,7 @@ class NotificationBell extends connect(store)(LitElement) {
           display: flex;
           align-items: center;
           justify-content: center;
+          user-select: none;
         }
 
         .nocount {
