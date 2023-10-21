@@ -1,46 +1,34 @@
-import { LitElement, html, css } from 'lit';
-import { connect } from 'pwa-helpers';
-import { store } from '../store.js';
-import {
-	doAddNode,
-	doSetNode,
-	doLoadNodeConfig,
-	doRemoveNode,
-	doEditNode,
-} from '../redux/app/app-actions.js';
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
-import snackbar from './snackbar.js';
-import '../components/language-selector.js';
-import '../custom-elements/frag-file-input.js';
-import FileSaver from 'file-saver';
+import { LitElement, html, css } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../store.js'
+import { doAddNode, doSetNode, doLoadNodeConfig, doRemoveNode, doEditNode } from '../redux/app/app-actions.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import snackbar from './snackbar.js'
+import '../components/language-selector.js'
+import '../custom-elements/frag-file-input.js'
+import FileSaver from 'file-saver'
 
-import '@material/mwc-dialog';
-import '@material/mwc-button';
-import '@material/mwc-select';
-import '@material/mwc-textfield';
-import '@material/mwc-icon';
-import '@material/mwc-list/mwc-list-item.js';
+import '@material/mwc-dialog'
+import '@material/mwc-button'
+import '@material/mwc-select'
+import '@material/mwc-textfield'
+import '@material/mwc-icon'
+import '@material/mwc-list/mwc-list-item.js'
 
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-});
+	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
+})
 
-const checkLanguage = localStorage.getItem('qortalLanguage');
+const checkLanguage = localStorage.getItem('qortalLanguage')
 
 if (checkLanguage === null || checkLanguage.length === 0) {
-	localStorage.setItem('qortalLanguage', 'us');
-	use('us');
+	localStorage.setItem('qortalLanguage', 'us')
+	use('us')
 } else {
-	use(checkLanguage);
+	use(checkLanguage)
 }
 
-let settingsDialog;
+let settingsDialog
 
 class SettingsPage extends connect(store)(LitElement) {
 	static get properties() {
@@ -50,8 +38,8 @@ class SettingsPage extends connect(store)(LitElement) {
 			theme: { type: String, reflect: true },
 			nodeIndex: { type: Number },
 			isBeingEdited: { type: Boolean },
-			dropdownOpen: { type: Boolean },
-		};
+			dropdownOpen: { type: Boolean }
+		}
 	}
 
 	static get styles() {
@@ -98,9 +86,11 @@ class SettingsPage extends connect(store)(LitElement) {
 			.buttongreen {
 				color: #03c851;
 			}
-            .buttonBlue {
-                color: #03a9f4;
-            }
+
+			.buttonBlue {
+				color: #03a9f4;
+			}
+
 			.floatleft {
 				float: left;
 			}
@@ -108,24 +98,26 @@ class SettingsPage extends connect(store)(LitElement) {
 			.floatright {
 				float: right;
 			}
+
 			.list-parent {
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
 				width: 100%;
 			}
+
 			#customSelect {
 				position: relative;
 				border: 1px solid #ccc;
 				cursor: pointer;
-                background: var(--plugback);
+				background: var(--plugback);
 			}
 
 			#customSelect .selected {
 				padding: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 			}
 
 			#customSelect ul {
@@ -149,32 +141,32 @@ class SettingsPage extends connect(store)(LitElement) {
 
 			#customSelect ul li {
 				padding: 10px;
-                transition: 0.2s all;
+				transition: 0.2s all;
 			}
 
 			#customSelect ul li:hover {
 				background-color: var(--graylight);
 			}
-            .selected-left-side{
-                display: flex;
-                align-items: center;
-            }
-		`;
+
+			.selected-left-side {
+				display: flex;
+				align-items: center;
+			}
+		`
 	}
 
 	constructor() {
-		super();
-		this.nodeConfig = {};
-		this.nodeIndex = localStorage.getItem('mySelectedNode');
-		this.theme = localStorage.getItem('qortalTheme')
-			? localStorage.getItem('qortalTheme')
-			: 'light';
-		this.isBeingEdited = false;
-		this.isBeingEditedIndex = null;
-		this.dropdownOpen = false;
+		super()
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+		this.nodeConfig = {}
+		this.nodeIndex = localStorage.getItem('mySelectedNode')
+		this.isBeingEdited = false
+		this.isBeingEditedIndex = null
+		this.dropdownOpen = false
 	}
 
 	render() {
+		this.nodeSelectedOnNewStart()
 		return html`
 			<mwc-dialog id="settingsDialog" opened="false">
 				<div style="display: inline; text-align: center;">
@@ -182,129 +174,58 @@ class SettingsPage extends connect(store)(LitElement) {
 					<hr />
 				</div>
 				<br />
-				<div
-					style="min-height: 250px; min-width: 500px; box-sizing: border-box; position: relative;"
-				>
-					<div id="customSelect" @click="${this.toggleDropdown}"  @blur="${
-			this.handleBlur
-		}" tabindex="0">
+				<div style="min-height: 250px; min-width: 500px; box-sizing: border-box; position: relative;">
+					<div id="customSelect" @click="${this.toggleDropdown}" @blur="${this.handleBlur}" tabindex="0">
 						<div class="selected">
-                            <div class="selected-left-side">
-                            <mwc-icon style="margin-right: 10px"
-														>link</mwc-icon
-													>
-                            
-							${
-								this.selectedItem
-									? html`
-											<div>
-                                      
-												<span class="name"
-													>${this.selectedItem
-														.name}</span
-												>
-												<span
-													>${this.selectedItem
-														.protocol +
-													'://' +
-													this.selectedItem.domain +
-													':' +
-													this.selectedItem
-														.port}</span
-												>
-											</div>
-									  `
-									: 'Please select an option'
+							<div class="selected-left-side">
+								<mwc-icon style="margin-right: 10px">link</mwc-icon>
+							${this.selectedItem ? html
+								`
+									<div>
+										<span class="name">${this.selectedItem.name}</span>
+										<span>${this.selectedItem.protocol + '://' + this.selectedItem.domain + ':' + this.selectedItem.port}</span>
+									</div>
+								` : html`${translate('settings.selectnode')}`
 							}
-                            </div>
-                            <mwc-icon 
-														>expand_more</mwc-icon
-													>
+						</div>
+							<mwc-icon>expand_more</mwc-icon>
 						</div>
 						<ul class="${this.dropdownOpen ? 'open' : ''}">
 							${this.nodeConfig.knownNodes.map(
 								(n, index) => html`
-									<li
-										@click="${(e) =>
-											this.handleSelection(e, n, index)}"
-									>
+									<li @click="${(e) => this.handleSelection(e, n, index)}">
 										<div class="list-parent">
 											<div>
-												<span class="name"
-													>${n.name}</span
-												>
-												<span
-													>${n.protocol +
-													'://' +
-													n.domain +
-													':' +
-													n.port}</span
-												>
+												<span class="name">${n.name}</span>
+												<span>${n.protocol + '://' + n.domain + ':' + n.port}</span>
 											</div>
 											<div>
 												<mwc-button
 													outlined
 													@click="${(e) => {
 														e.stopPropagation();
-														const currentValues =
-															this.nodeConfig
-																.knownNodes[
-																index
-															];
-														const dialog =
-															this.shadowRoot.querySelector(
-																'#addNodeDialog'
-															);
+														const currentValues = this.nodeConfig.knownNodes[index]
+														const dialog = this.shadowRoot.querySelector('#addNodeDialog')
 
 														// Set the value for mwc-textfield elements
-														dialog.querySelector(
-															'#nameInput'
-														).value =
-															currentValues.name;
-														dialog.querySelector(
-															'#domainInput'
-														).value =
-															currentValues.domain;
-														dialog.querySelector(
-															'#portInput'
-														).value =
-															currentValues.port;
+														dialog.querySelector('#nameInput').value = currentValues.name
+														dialog.querySelector('#domainInput').value = currentValues.domain
+														dialog.querySelector('#portInput').value = currentValues.port
 
 														// Set the selected value for mwc-select
-														const protocolList =
-															dialog.querySelector(
-																'#protocolList'
-															);
-														const desiredProtocol =
-															currentValues.protocol;
-
-														protocolList.value =
-															desiredProtocol;
-
-														this.isBeingEdited = true;
-														this.isBeingEditedIndex =
-															index;
-														this.shadowRoot
-															.querySelector(
-																'#addNodeDialog'
-															)
-															.show();
+														const protocolList = dialog.querySelector('#protocolList')
+														const desiredProtocol = currentValues.protocol
+														protocolList.value = desiredProtocol
+														this.isBeingEdited = true
+														this.isBeingEditedIndex = index
+														this.shadowRoot.querySelector('#addNodeDialog').show()
 													}}"
-													><mwc-icon class="buttonBlue"
-														>edit</mwc-icon
-													></mwc-button
 												>
-												<mwc-button
-													outlined
-													@click="${(e) =>
-														this.removeNode(
-															e,
-															index
-														)}"
-													><mwc-icon class="buttonred"
-														>remove</mwc-icon
-													></mwc-button
-												>
+													<mwc-icon class="buttonBlue">edit</mwc-icon>
+												</mwc-button>
+												<mwc-button outlined @click="${(e) => this.removeNode(e, index)}">
+													<mwc-icon class="buttonred">remove</mwc-icon>
+												</mwc-button>
 											</div>
 										</div>
 									</li>
@@ -312,9 +233,6 @@ class SettingsPage extends connect(store)(LitElement) {
 							)}
 						</ul>
 					</div>
-
-					
-
 					<p style="margin-top: 30px; text-align: center;">
 						${translate('settings.nodehint')}
 					</p>
@@ -323,14 +241,15 @@ class SettingsPage extends connect(store)(LitElement) {
 							outlined
 							@click="${() => this.shadowRoot.querySelector('#addNodeDialog').show()}"
 							><mwc-icon class="buttongreen">add</mwc-icon
-							>${translate('settings.addcustomnode')}</mwc-button
 						>
+							${translate('settings.addcustomnode')}
+						</mwc-button>
 					</center>
 					<center>
-						<mwc-button outlined @click="${() => this.removeList()}"
-							><mwc-icon class="buttonred">remove</mwc-icon
-							>${translate('settings.deletecustomnode')}</mwc-button
-						>
+						<mwc-button outlined @click="${() => this.removeList()}">
+							<mwc-icon class="buttonred">remove</mwc-icon>
+							${translate('settings.deletecustomnode')}
+						</mwc-button>
 					</center>
 					<br />
 					<div class="floatleft">
@@ -341,9 +260,7 @@ class SettingsPage extends connect(store)(LitElement) {
 					</div>
 					<br /><br />
 				</div>
-				<div
-					style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;"
-				>
+				<div style="min-height:100px; min-width: 300px; box-sizing: border-box; position: relative;">
 					<hr />
 					<br />
 					<center>
@@ -353,11 +270,7 @@ class SettingsPage extends connect(store)(LitElement) {
 						</div>
 					</center>
 				</div>
-				<mwc-button
-					slot="primaryAction"
-					dialogAction="close"
-					class="red"
-				>
+				<mwc-button slot="primaryAction" dialogAction="close" class="red">
 					${translate('general.close')}
 				</mwc-button>
 			</mwc-dialog>
@@ -368,36 +281,16 @@ class SettingsPage extends connect(store)(LitElement) {
 					<hr />
 				</div>
 				<br />
-				<mwc-textfield
-					id="nameInput"
-					style="width:100%;"
-					label="${translate('login.name')}"
-				></mwc-textfield>
+				<mwc-textfield id="nameInput" style="width:100%;" label="${translate('login.name')}"></mwc-textfield>
 				<br />
-				<mwc-select
-					id="protocolList"
-					style="width:100%;"
-					label="${translate('settings.protocol')}"
-				>
+				<mwc-select id="protocolList" style="width:100%;" label="${translate('settings.protocol')}">
 					<mwc-list-item value="http">http</mwc-list-item>
 					<mwc-list-item value="https">https</mwc-list-item>
 				</mwc-select>
 				<br />
-				<mwc-textfield
-					id="domainInput"
-					style="width:100%;"
-					label="${translate('settings.domain')}"
-				></mwc-textfield>
-				<mwc-textfield
-					id="portInput"
-					style="width:100%;"
-					label="${translate('settings.port')}"
-				></mwc-textfield>
-				<mwc-button
-					slot="secondaryAction"
-					dialogAction="close"
-					class="red"
-				>
+				<mwc-textfield id="domainInput" style="width:100%;" label="${translate('settings.domain')}"></mwc-textfield>
+				<mwc-textfield id="portInput" style="width:100%;" label="${translate('settings.port')}"></mwc-textfield>
+				<mwc-button slot="secondaryAction" dialogAction="close" class="red">
 					${translate('general.close')}
 				</mwc-button>
 				<mwc-button slot="primaryAction" @click="${this.addNode}">
@@ -411,17 +304,16 @@ class SettingsPage extends connect(store)(LitElement) {
 					<hr />
 					<br />
 				</div>
-				<div
-					style="min-height: 150px; min-width: 500px; box-sizing: border-box; position: relative;"
-				>
-					<frag-file-input
-						accept=".nodes"handleBlur(event) {
-    if (!this.shadowRoot.querySelector("#customSelect").contains(event.relatedTarget)) {
-        this.dropdownOpen = false;
-    }
-}
+				<div style="min-height: 150px; min-width: 500px; box-sizing: border-box; position: relative;">
+					<frag-file-input accept=".nodes"handleBlur(event)
+						{
+							if (!this.shadowRoot.querySelector("#customSelect").contains(event.relatedTarget)) {
+								this.dropdownOpen = false
+							}
+						}
 						@file-read-success="${(e) => this.importQortalNodesList(e.detail.result)}"
-					></frag-file-input>
+					>
+					</frag-file-input>
 					<h4 style="color: #F44336; text-align: center;">
 						${translate('walletpage.wchange56')}
 					</h4>
@@ -429,255 +321,257 @@ class SettingsPage extends connect(store)(LitElement) {
 						${translate('settings.warning')}
 					</h5>
 				</div>
-				<mwc-button
-					slot="primaryAction"
-					dialogAction="cancel"
-					class="red"
-				>
+				<mwc-button slot="primaryAction" dialogAction="cancel" class="red">
 					${translate('general.close')}
 				</mwc-button>
 			</mwc-dialog>
-		`;
+		`
 	}
 
 	firstUpdated() {
-		const checkNode = localStorage.getItem('mySelectedNode');
+		const checkNode = localStorage.getItem('mySelectedNode')
 		if (checkNode === null || checkNode.length === 0) {
 			localStorage.setItem('mySelectedNode', 0);
 		} else {
+			this.handleSelectionOnNewStart(checkNode)
 		}
+	}
+
+	handleSelectionOnNewStart(index) {
+		this.localSavedNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
+		this.dropdownOpen = false
+		this.selectedItem = this.localSavedNodes[index]
+		this.requestUpdate()
+	}
+
+	nodeSelectedOnNewStart() {
+		const selectedNodeIndexOnNewStart = localStorage.getItem('mySelectedNode')
+		this.catchSavedNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
+		const selectedNodeOnNewStart = this.catchSavedNodes[selectedNodeIndexOnNewStart]
+		const selectedNameOnNewStart = `${selectedNodeOnNewStart.name}`
+		const selectedNodeUrlOnNewStart = `${selectedNodeOnNewStart.protocol + '://' + selectedNodeOnNewStart.domain +':' + selectedNodeOnNewStart.port}`
+
+		const index = parseInt(selectedNodeIndexOnNewStart)
+		if (isNaN(index)) return
+
+		const snack0string = get('settings.snack2')
+
+		snackbar.add({
+			labelText: `${snack0string} : ${selectedNameOnNewStart} ${selectedNodeUrlOnNewStart}`,
+			dismiss: true
+		})
 	}
 
 	toggleDropdown() {
-		this.dropdownOpen = !this.dropdownOpen;
+		this.dropdownOpen = !this.dropdownOpen
 	}
 
 	handleBlur(event) {
-		if (
-			!this.shadowRoot
-				.querySelector('#customSelect')
-				.contains(event.relatedTarget)
-		) {
-			this.dropdownOpen = false;
+		if (!this.shadowRoot.querySelector('#customSelect').contains(event.relatedTarget)) {
+			this.dropdownOpen = false
 		}
 	}
+
 	focusOnCustomSelect() {
-		const customSelect = this.shadowRoot.querySelector('#customSelect');
+		const customSelect = this.shadowRoot.querySelector('#customSelect')
 		if (customSelect) {
-			customSelect.focus();
+			customSelect.focus()
 		}
 	}
 
 	handleSelection(event, node, index) {
-		event.stopPropagation();
+		event.stopPropagation()
 
-		this.selectedItem = node;
-		this.dropdownOpen = false;
-		this.requestUpdate();
-		this.nodeSelected(index);
+		this.selectedItem = node
+		this.dropdownOpen = false
+		this.requestUpdate()
+		this.nodeSelected(index)
+		localStorage.setItem('mySelectedNode', index)
 	}
 
 	show() {
-		this.shadowRoot.getElementById('settingsDialog').show();
+		this.shadowRoot.getElementById('settingsDialog').show()
 	}
 
 	close() {
-		this.shadowRoot.getElementById('settingsDialog').close();
+		this.shadowRoot.getElementById('settingsDialog').close()
 	}
 
 	removeList() {
-		localStorage.removeItem('myQortalNodes');
+		localStorage.removeItem('myQortalNodes')
 
 		const obj1 = {
 			name: 'Local Node',
 			protocol: 'http',
 			domain: '127.0.0.1',
 			port: 12391,
-			enableManagement: true,
-		};
+			enableManagement: true
+		}
 
 		const obj2 = {
 			name: 'Local Testnet',
 			protocol: 'http',
 			domain: '127.0.0.1',
 			port: 62391,
-			enableManagement: true,
-		};
+			enableManagement: true
+		}
 
-		var renewNodes = [];
-		renewNodes.push(obj1, obj2);
-		localStorage.setItem('myQortalNodes', JSON.stringify(renewNodes));
+		var renewNodes = []
+		renewNodes.push(obj1, obj2)
+		localStorage.setItem('myQortalNodes', JSON.stringify(renewNodes))
 
-		let snack1string = get('settings.snack1');
+		let snack1string = get('settings.snack1')
 		snackbar.add({
 			labelText: `${snack1string}`,
-			dismiss: true,
-		});
+			dismiss: true
+		})
 
-		localStorage.removeItem('mySelectedNode');
-		localStorage.setItem('mySelectedNode', 0);
+		localStorage.removeItem('mySelectedNode')
+		localStorage.setItem('mySelectedNode', 0)
 
-		store.dispatch(doLoadNodeConfig());
+		store.dispatch(doLoadNodeConfig())
 	}
 
 	nodeSelected(selectedNodeIndex) {
-		const selectedNode = this.nodeConfig.knownNodes[selectedNodeIndex];
-		const selectedNodeUrl = `${
-			selectedNode.protocol +
-			'://' +
-			selectedNode.domain +
-			':' +
-			selectedNode.port
-		}`;
+		const selectedNode = this.nodeConfig.knownNodes[selectedNodeIndex]
+		const selectedName = `${selectedNode.name}`
+		const selectedNodeUrl = `${selectedNode.protocol + '://' + selectedNode.domain +':' + selectedNode.port}`
 
-		const index = parseInt(selectedNodeIndex);
-		if (isNaN(index)) return;
+		const index = parseInt(selectedNodeIndex)
+		if (isNaN(index)) return
 
-		store.dispatch(doSetNode(selectedNodeIndex));
+		store.dispatch(doSetNode(selectedNodeIndex))
 
 		localStorage.removeItem('mySelectedNode');
-		localStorage.setItem('mySelectedNode', selectedNodeIndex);
+		localStorage.setItem('mySelectedNode', selectedNodeIndex)
 
-		let snack2string = get('settings.snack2');
+		let snack2string = get('settings.snack2')
 		snackbar.add({
-			labelText: `${snack2string} : ${selectedNodeUrl}`,
-			dismiss: true,
-		});
-
-		// this.shadowRoot.querySelector('#settingsDialog').close();
+			labelText: `${snack2string} : ${selectedName} ${selectedNodeUrl}`,
+			dismiss: true
+		})
 	}
 
 	addNode(e) {
-		e.stopPropagation();
+		e.stopPropagation()
 		if (this.isBeingEdited) {
-			this.editNode(this.isBeingEditedIndex);
-			return;
+			this.editNode(this.isBeingEditedIndex)
+			return
 		}
-		const nameInput = this.shadowRoot.getElementById('nameInput').value;
-		const protocolList =
-			this.shadowRoot.getElementById('protocolList').value;
-		const domainInput = this.shadowRoot.getElementById('domainInput').value;
-		const portInput = this.shadowRoot.getElementById('portInput').value;
 
-		if (
-			protocolList.length >= 4 &&
-			domainInput.length >= 3 &&
-			portInput.length >= 2
-		) {
+		const nameInput = this.shadowRoot.getElementById('nameInput').value
+		const protocolList = this.shadowRoot.getElementById('protocolList').value
+		const domainInput = this.shadowRoot.getElementById('domainInput').value
+		const portInput = this.shadowRoot.getElementById('portInput').value
+
+		if (protocolList.length >= 4 && domainInput.length >= 3 && portInput.length >= 2) {
 			const nodeObject = {
 				name: nameInput,
 				protocol: protocolList,
 				domain: domainInput,
 				port: portInput,
-				enableManagement: true,
-			};
+				enableManagement: true
+			}
 
-			store.dispatch(doAddNode(nodeObject));
+			store.dispatch(doAddNode(nodeObject))
 
-			const haveNodes = JSON.parse(localStorage.getItem('myQortalNodes'));
+			const haveNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
 
 			if (haveNodes === null || haveNodes.length === 0) {
-				var savedNodes = [];
-				savedNodes.push(nodeObject);
-				localStorage.setItem(
-					'myQortalNodes',
-					JSON.stringify(savedNodes)
-				);
+				var savedNodes = []
+				savedNodes.push(nodeObject)
+				localStorage.setItem('myQortalNodes', JSON.stringify(savedNodes))
 
-				let snack3string = get('settings.snack3');
+				let snack3string = get('settings.snack3')
 				snackbar.add({
 					labelText: `${snack3string}`,
-					dismiss: true,
-				});
+					dismiss: true
+				})
 
-				this.shadowRoot.getElementById('nameInput').value = '';
-				this.shadowRoot.getElementById('protocolList').value = '';
-				this.shadowRoot.getElementById('domainInput').value = '';
-				this.shadowRoot.getElementById('portInput').value = '';
+				this.shadowRoot.getElementById('nameInput').value = ''
+				this.shadowRoot.getElementById('protocolList').value = ''
+				this.shadowRoot.getElementById('domainInput').value = ''
+				this.shadowRoot.getElementById('portInput').value = ''
 
-				this.shadowRoot.querySelector('#addNodeDialog').close();
+				this.shadowRoot.querySelector('#addNodeDialog').close()
 			} else {
-				var stored = JSON.parse(localStorage.getItem('myQortalNodes'));
-				stored.push(nodeObject);
-				localStorage.setItem('myQortalNodes', JSON.stringify(stored));
+				var stored = JSON.parse(localStorage.getItem('myQortalNodes'))
+				stored.push(nodeObject)
+				localStorage.setItem('myQortalNodes', JSON.stringify(stored))
 
 				let snack3string = get('settings.snack3');
 				snackbar.add({
 					labelText: `${snack3string}`,
-					dismiss: true,
-				});
+					dismiss: true
+				})
 
-				this.shadowRoot.getElementById('nameInput').value = '';
-				this.shadowRoot.getElementById('protocolList').value = '';
-				this.shadowRoot.getElementById('domainInput').value = '';
-				this.shadowRoot.getElementById('portInput').value = '';
+				this.shadowRoot.getElementById('nameInput').value = ''
+				this.shadowRoot.getElementById('protocolList').value = ''
+				this.shadowRoot.getElementById('domainInput').value = ''
+				this.shadowRoot.getElementById('portInput').value = ''
 
-				this.shadowRoot.querySelector('#addNodeDialog').close();
+				this.shadowRoot.querySelector('#addNodeDialog').close()
 			}
 		}
 	}
 
 	removeNode(event, index) {
-		event.stopPropagation();
-		let stored = JSON.parse(localStorage.getItem('myQortalNodes'));
-		stored.splice(index, 1);
-		localStorage.setItem('myQortalNodes', JSON.stringify(stored));
+		event.stopPropagation()
+		let stored = JSON.parse(localStorage.getItem('myQortalNodes'))
+		stored.splice(index, 1)
+		localStorage.setItem('myQortalNodes', JSON.stringify(stored))
 		store.dispatch(doRemoveNode(index));
-		let snack3string = get('settings.snack6');
+		let snack3string = get('settings.snack6')
 		snackbar.add({
 			labelText: `${snack3string}`,
-			dismiss: true,
-		});
+			dismiss: true
+		})
 
-		this.shadowRoot.querySelector('#addNodeDialog').close();
+		this.shadowRoot.querySelector('#addNodeDialog').close()
 	}
-	editNode(index) {
-		const nameInput = this.shadowRoot.getElementById('nameInput').value;
-		const protocolList =
-			this.shadowRoot.getElementById('protocolList').value;
-		const domainInput = this.shadowRoot.getElementById('domainInput').value;
-		const portInput = this.shadowRoot.getElementById('portInput').value;
 
-		if (
-			protocolList.length >= 4 &&
-			domainInput.length >= 3 &&
-			portInput.length >= 2
-		) {
+	editNode(index) {
+		const nameInput = this.shadowRoot.getElementById('nameInput').value
+		const protocolList = this.shadowRoot.getElementById('protocolList').value
+		const domainInput = this.shadowRoot.getElementById('domainInput').value
+		const portInput = this.shadowRoot.getElementById('portInput').value
+
+		if (protocolList.length >= 4 && domainInput.length >= 3 && portInput.length >= 2) {
 			const nodeObject = {
 				name: nameInput,
 				protocol: protocolList,
 				domain: domainInput,
 				port: portInput,
 				enableManagement: true,
-			};
+			}
 
-			let stored = JSON.parse(localStorage.getItem('myQortalNodes'));
-			const copyStored = [...stored];
-			copyStored[index] = nodeObject;
-			localStorage.setItem('myQortalNodes', JSON.stringify(copyStored));
-			store.dispatch(doEditNode(index, nodeObject));
-			let snack3string = get('settings.snack7');
+			let stored = JSON.parse(localStorage.getItem('myQortalNodes'))
+			const copyStored = [...stored]
+			copyStored[index] = nodeObject
+			localStorage.setItem('myQortalNodes', JSON.stringify(copyStored))
+			store.dispatch(doEditNode(index, nodeObject))
+			let snack3string = get('settings.snack7')
 			snackbar.add({
 				labelText: `${snack3string}`,
-				dismiss: true,
-			});
-			this.shadowRoot.getElementById('nameInput').value = '';
-			this.shadowRoot.getElementById('protocolList').value = '';
-			this.shadowRoot.getElementById('domainInput').value = '';
-			this.shadowRoot.getElementById('portInput').value = '';
-			this.isBeingEdited = false;
-			this.isBeingEditedIndex = null;
+				dismiss: true
+			})
+			this.shadowRoot.getElementById('nameInput').value = ''
+			this.shadowRoot.getElementById('protocolList').value = ''
+			this.shadowRoot.getElementById('domainInput').value = ''
+			this.shadowRoot.getElementById('portInput').value = ''
+			this.isBeingEdited = false
+			this.isBeingEditedIndex = null
 
-			this.shadowRoot.querySelector('#addNodeDialog').close();
+			this.shadowRoot.querySelector('#addNodeDialog').close()
 		}
 	}
 
 	openImportNodesDialog() {
-		this.shadowRoot.querySelector('#importQortalNodesListDialog').show();
+		this.shadowRoot.querySelector('#importQortalNodesListDialog').show()
 	}
 
 	closeImportNodesDialog() {
-		this.shadowRoot.querySelector('#importQortalNodesListDialog').close();
+		this.shadowRoot.querySelector('#importQortalNodesListDialog').close()
 	}
 
 	renderExportNodesListButton() {
@@ -687,8 +581,9 @@ class SettingsPage extends connect(store)(LitElement) {
 				unelevated
 				label="${translate('settings.export')}"
 				@click="${() => this.exportQortalNodesList()}"
-			></mwc-button>
-		`;
+			>
+			</mwc-button>
+		`
 	}
 
 	exportQortalNodesList() {
@@ -696,40 +591,38 @@ class SettingsPage extends connect(store)(LitElement) {
 		const qortalNodesList = JSON.stringify(
 			localStorage.getItem('myQortalNodes')
 		);
-		const qortalNodesListSave = JSON.parse(qortalNodesList || '[]');
+		const qortalNodesListSave = JSON.parse(qortalNodesList || '[]')
 		const blob = new Blob([qortalNodesListSave], {
 			type: 'text/plain;charset=utf-8',
 		});
-		nodelist = 'qortal.nodes';
-		this.saveFileToDisk(blob, nodelist);
+		nodelist = 'qortal.nodes'
+		this.saveFileToDisk(blob, nodelist)
 	}
 
 	async saveFileToDisk(blob, fileName) {
 		try {
 			const fileHandle = await self.showSaveFilePicker({
 				suggestedName: fileName,
-				types: [
-					{
-						description: 'File',
-					},
-				],
-			});
+				types: [{
+					description: 'File'
+				}],
+			})
 			const writeFile = async (fileHandle, contents) => {
-				const writable = await fileHandle.createWritable();
-				await writable.write(contents);
-				await writable.close();
+				const writable = await fileHandle.createWritable()
+				await writable.write(contents)
+				await writable.close()
 			};
 			writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'));
-			let snack4string = get('settings.snack4');
+			let snack4string = get('settings.snack4')
 			snackbar.add({
 				labelText: `${snack4string} qortal.nodes`,
-				dismiss: true,
-			});
+				dismiss: true
+			})
 		} catch (error) {
 			if (error.name === 'AbortError') {
-				return;
+				return
 			}
-			FileSaver.saveAs(blob, fileName);
+			FileSaver.saveAs(blob, fileName)
 		}
 	}
 
@@ -741,25 +634,25 @@ class SettingsPage extends connect(store)(LitElement) {
 				label="${translate('settings.import')}"
 				@click="${() => this.openImportNodesDialog()}"
 			></mwc-button>
-		`;
+		`
 	}
 
 	async importQortalNodesList(file) {
-		localStorage.removeItem('myQortalNodes');
-		const newItems = JSON.parse(file || '[]');
-		localStorage.setItem('myQortalNodes', JSON.stringify(newItems));
-		this.shadowRoot.querySelector('#importQortalNodesListDialog').close();
+		localStorage.removeItem('myQortalNodes')
+		const newItems = JSON.parse(file || '[]')
+		localStorage.setItem('myQortalNodes', JSON.stringify(newItems))
+		this.shadowRoot.querySelector('#importQortalNodesListDialog').close()
 
-		let snack5string = get('settings.snack5');
+		let snack5string = get('settings.snack5')
 		snackbar.add({
 			labelText: `${snack5string}`,
 			dismiss: true,
 		});
 
-		localStorage.removeItem('mySelectedNode');
-		localStorage.setItem('mySelectedNode', 0);
+		localStorage.removeItem('mySelectedNode')
+		localStorage.setItem('mySelectedNode', 0)
 
-		store.dispatch(doLoadNodeConfig());
+		store.dispatch(doLoadNodeConfig())
 	}
 
 	stateChanged(state) {
@@ -768,9 +661,9 @@ class SettingsPage extends connect(store)(LitElement) {
 	}
 }
 
-window.customElements.define('settings-page', SettingsPage);
+window.customElements.define('settings-page', SettingsPage)
 
-const settings = document.createElement('settings-page');
-settingsDialog = document.body.appendChild(settings);
+const settings = document.createElement('settings-page')
+settingsDialog = document.body.appendChild(settings)
 
-export default settingsDialog;
+export default settingsDialog
