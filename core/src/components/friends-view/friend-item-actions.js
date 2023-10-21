@@ -99,7 +99,6 @@ export class FriendItemActions extends connect(store)(LitElement) {
 	}
 
 	openPopover(target) {
-		console.log({target})
 		this.attachToTarget(target);
 		this.style.display = 'block';
 		setTimeout(() => {

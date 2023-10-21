@@ -166,7 +166,6 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			localStorage.getItem('temp-settings-data') || '{}'
 		);
 
-		console.log({ response });
 		const userLists = response.userLists || [];
 		const friendsFeed = response.friendsFeed;
 		const myMenuPlugs = response.myMenuPlugs;
@@ -242,7 +241,6 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 					tempSettingsData.myMenuPlugs.timestamp < rawDataTimestamp))
 		) {
 			if (Array.isArray(myMenuPlugs)) {
-				console.log('isArray')
 				const copyPayload = [...myMenuPlugs];
 
 				localStorage.setItem(
