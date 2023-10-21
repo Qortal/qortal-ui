@@ -1203,6 +1203,7 @@
 	"save": {
 		"saving1": "Unable to fetch saved settings",
 		"saving2": "Nothing to save",
-		"saving3": "Save unsaved changes"
+		"saving3": "Save unsaved changes",
+		"saving4": "Undo changes"
 	}
 }

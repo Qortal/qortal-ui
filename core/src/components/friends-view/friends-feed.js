@@ -70,7 +70,6 @@ class FriendsFeed extends connect(store)(LitElement) {
 
     _updateFeeds(event) {
 		const detail = event.detail
-        console.log('detail2', detail)
         this.mySelectedFeeds = detail
         this.reFetchFeedData()
         this.requestUpdate()
@@ -78,7 +77,6 @@ class FriendsFeed extends connect(store)(LitElement) {
 
 	connectedCallback() {
 		super.connectedCallback()
-		console.log('callback')
 		window.addEventListener('friends-my-selected-feeds-event', this._updateFeeds)	}
 
 	disconnectedCallback() {
@@ -325,9 +323,7 @@ this.getFeedOnInterval()
             }
             if(newItem.schema){
                 const resource = newItem
-                // First, evaluate methods to get values for customParams
-        await updateCustomParamsWithMethods(newItem.schema, newResource);
-        // Now, generate your final URLs
+
         let clickValue1 = newItem.schema.click;
         
         const resolvedClickValue1 = replacePlaceholders(clickValue1, resource, newItem.schema.customParams);
@@ -445,95 +441,12 @@ export function constructUrl(base, search, dynamicVars) {
     return queryStrings.length > 0 ? `${base}&${queryStrings.join('&')}` : base;
 }
 
-function validateMethodString(methodString) {
-    // Check for IIFE
-    const iifePattern = /^\(.*\)\s*\(\)/;
-    if (iifePattern.test(methodString)) {
-        throw new Error("IIFE detected!");
-    }
-    
-    // Check for disallowed keywords
-    const disallowed = ["eval", "Function", "fetch", "XMLHttpRequest"];
-    for (const keyword of disallowed) {
-        if (methodString.includes(keyword)) {
-            throw new Error(`Disallowed keyword detected: ${keyword}`);
-        }
-    }
-    
-    // ... Add more validation steps here ...
-    
-    return true;
-}
-
-function executeMethodInWorker(methodString, externalArgs) {
-    return new Promise((resolve, reject) => {
-        if (!validateMethodString(methodString)) {
-            reject(new Error("Invalid method string provided."));
-            return;
-        }
-
-        const workerFunction = `
-            self.onmessage = function(event) {
-                const methodFunction = new Function("resource", "${methodString}");
-                const result = methodFunction(event.data.externalArgs);
-
-                if (typeof result === 'string' || typeof result === 'number') {
-                    self.postMessage(result);
-                } else {
-                    self.postMessage('');
-                }
-            }
-        `;
-
-        const blob = new Blob([workerFunction], { type: 'application/javascript' });
-        const blobURL = URL.createObjectURL(blob);
-        const worker = new Worker(blobURL);
-
-        worker.onmessage = function(event) {
-            if (typeof event.data === 'string' || typeof event.data === 'number') {
-                resolve(event.data);
-                worker.terminate();
-                URL.revokeObjectURL(blobURL);
-            } else {
-                resolve("");
-                event.data = null
-                worker.terminate();
-                URL.revokeObjectURL(blobURL);
-            }
-           
-        };
-
-        worker.onerror = function(error) {
-            reject(error);
-            worker.terminate();
-            URL.revokeObjectURL(blobURL);
-        };
-
-        worker.postMessage({ externalArgs });
-    });
-}
 
 
 
-export async function updateCustomParamsWithMethods(schema,resource) {
-    for (const key in schema.customParams) {
-        const value = schema.customParams[key];
-        if (value.startsWith("**methods.") && value.endsWith("**")) {
-            const methodInvocation = value.slice(10, -2).split('(');
-            const methodName = methodInvocation[0];
 
-            if (schema.methods[methodName]) {
-                const newResource = {
-                    identifier: resource.identifier,
-                    name: resource.name,
-                    service: resource.service
-                }
-				const methodResult = await executeMethodInWorker(schema.methods[methodName], newResource);
-                schema.customParams[key] = methodResult;
-            }
-        }
-    }
-}
+
+
 
 export function replacePlaceholders(template, resource, customParams) {
     const dataSource = { resource, customParams };

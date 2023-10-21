@@ -344,6 +344,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         return html`
             <div class="tabs">
                 ${this.tabs.map((tab, index) => {
+                    console.log({tab})
                     let title = ''
                     let icon = ''
                     let count = 0
@@ -433,9 +434,21 @@ class ShowPlugin extends connect(store)(LitElement) {
                             @click="${() => {
                                 this.currentTab = index
                             }}"
+                             @mousedown="${(event) => {
+        if (event.button === 1) {
+            event.preventDefault(); 
+            this.removeTab(index, tab.id);
+        }
+    }}"
                         >
                             <div id="icon-${tab.id}" class="${this.currentTab === index ? "iconActive" : "iconInactive"}">
-                                <mwc-icon>${icon}</mwc-icon>
+                            ${tab.myPlugObj && tab.myPlugObj.url === "myapp" ? html`
+                            <tab-avatar appname=${title} appicon=${icon}></tab-avatar>
+                            ` : html`
+                            <mwc-icon>${icon}</mwc-icon>
+                            `}
+                    
+                               
                             </div>
                             <div class="tabCard">
                                 ${count ? html`
@@ -1028,7 +1041,7 @@ class NavBar extends connect(store)(LitElement) {
             color: var(--black);
             --mdc-icon-size: 28px;
             cursor: pointer;
-            position: relative
+            position: relative;
             z-index: 1;
         }
                      
@@ -1190,6 +1203,7 @@ class NavBar extends connect(store)(LitElement) {
         this.myFollowedNamesList = []
         this.searchContentString = ''
         this.searchNameResources = []
+        this._updateMyMenuPlugins = this._updateMyMenuPlugins.bind(this)
     }
 
     render() {
@@ -1456,6 +1470,46 @@ class NavBar extends connect(store)(LitElement) {
         await this.getMyFollowedNamesList()
     }
 
+    _updateMyMenuPlugins(event) {
+		const detail = event.detail
+        console.log({detailPlugs: detail})
+        this.myMenuPlugins = detail
+        const addressInfo = this.addressInfo
+        const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
+        const isSponsor = +addressInfo?.level >= 5
+       
+
+        if (!isMinter) {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
+                return minter.url !== 'minting'
+            })
+        } else {
+            this.newMenuList = this.myMenuPlugins.filter((minter) => {
+                return minter.url !== 'become-minter'
+            })
+        }
+
+        if (!isSponsor) {
+            this.myMenuList = this.newMenuList.filter((sponsor) => {
+                return sponsor.url !== 'sponsorship-list'
+            })
+        } else {
+            this.myMenuList = this.newMenuList
+        }
+       
+        this.requestUpdate()
+	}
+
+	connectedCallback() {
+		super.connectedCallback()
+		console.log('callback')
+		window.addEventListener('myMenuPlugs-event', this._updateMyMenuPlugins)	}
+
+	disconnectedCallback() {
+		window.removeEventListener('myMenuPlugs-event', this._updateMyMenuPlugins)
+		super.disconnectedCallback()
+	}
+
     openImportDialog() {
         this.shadowRoot.getElementById('importTabMenutDialog').show()
     }
@@ -1467,6 +1521,7 @@ class NavBar extends connect(store)(LitElement) {
         myFile = file
         const newTabMenu = JSON.parse((myFile) || "[]")
         localStorage.setItem("myMenuPlugs", JSON.stringify(newTabMenu))
+        this.saveSettingToTemp(newTabMenu)
         this.shadowRoot.getElementById('importTabMenutDialog').close()
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
@@ -1951,6 +2006,7 @@ class NavBar extends connect(store)(LitElement) {
                 oldMenuPlugs.push(newMenuPlugsItem)
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
+                this.saveSettingToTemp(oldMenuPlugs)
 
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
@@ -2014,7 +2070,7 @@ class NavBar extends connect(store)(LitElement) {
                 oldMenuPlugs.push(newMenuPlugsItem)
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-
+                this.saveSettingToTemp(oldMenuPlugs)
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2084,7 +2140,7 @@ class NavBar extends connect(store)(LitElement) {
             oldMenuPlugs.push(newMenuPlugsItem)
 
             localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-
+            this.saveSettingToTemp(oldMenuPlugs)
             let myplugstring2 = get("walletpage.wchange52")
             parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2150,7 +2206,10 @@ class NavBar extends connect(store)(LitElement) {
         return html`
            
             <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
-            <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${() => this.openRemoveApp(appname, appid, appurl)}">
+            <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${(event) => {
+                              event.stopPropagation();
+                              this.openRemoveApp(appname, appid, appurl)
+            } }">
                 <mwc-icon class="removeIcon">backspace</mwc-icon>
             </div>
                 ${appurl === 'myapp' ? html`
@@ -2218,9 +2277,29 @@ class NavBar extends connect(store)(LitElement) {
         const myNewObj = JSON.stringify(this.newMenuFilter)
         localStorage.removeItem("myMenuPlugs")
         localStorage.setItem("myMenuPlugs", myNewObj)
+        this.saveSettingToTemp(myNewObj)
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
         this.closeRemoveApp()
+    }
+
+    saveSettingToTemp(data){
+        const tempSettingsData= JSON.parse(localStorage.getItem('temp-settings-data') || "{}")
+		const newTemp = {
+			...tempSettingsData,
+			myMenuPlugs: {
+				data: data,
+				timestamp: Date.now()
+			}
+		}
+
+		localStorage.setItem('temp-settings-data', JSON.stringify(newTemp));
+		this.dispatchEvent(
+			new CustomEvent('temp-settings-data-event', {
+			  bubbles: true,
+			  composed: true
+			}),
+		  );
     }
 
     closeRemoveApp() {
@@ -2402,11 +2481,11 @@ class AppAvatar extends LitElement {
             this.isImageLoaded = true;
         }
         imageHTMLRes.onerror = () => {   
-            if (this.imageFetches < 4) {
+            if (this.imageFetches < 1) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
-                }, 2000);
+                }, 5000);
             } else {
                this.isImageLoaded = false
             }
@@ -2435,3 +2514,66 @@ class AppAvatar extends LitElement {
 }
 
 customElements.define('app-avatar', AppAvatar)
+
+class TabAvatar extends LitElement {
+    static get properties() {
+        return {
+            hasAvatar: { type: Boolean },
+            isImageLoaded: {type: Boolean},
+            appicon: {type: String},
+            appname: {type: String}
+        }
+    }
+
+    constructor() {
+        super()
+       
+        this.hasAvatar = false
+        this.isImageLoaded = false
+        this.imageFetches = 0
+    }
+
+  
+   
+    createImage(imageUrl)  {
+        const imageHTMLRes = new Image();
+        imageHTMLRes.src = imageUrl;
+        imageHTMLRes.style= "border-radius:4px; font-size:14px; object-fit: fill;height:24px;width:24px";
+       
+        imageHTMLRes.onload = () => {
+            this.isImageLoaded = true;
+        }
+        imageHTMLRes.onerror = () => {   
+            if (this.imageFetches < 1) {
+                setTimeout(() => {
+                    this.imageFetches = this.imageFetches + 1;
+                    imageHTMLRes.src = imageUrl;
+                }, 5000);
+            } else {
+               this.isImageLoaded = false
+            }
+        };
+        return imageHTMLRes;
+      }
+
+    render(){
+        let avatarImg = ""
+        if (this.appname) {
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
+            const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
+            const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.appname}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
+           avatarImg = this.createImage(avatarUrl)
+        }
+
+        return html`
+            ${this.isImageLoaded ? html`
+            ${avatarImg}
+            ` : html`
+            <mwc-icon>${this.appicon}</mwc-icon>
+            `}
+        `
+    }
+
+}
+
+customElements.define('tab-avatar', TabAvatar)

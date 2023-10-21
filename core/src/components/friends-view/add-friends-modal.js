@@ -269,7 +269,6 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			this.willFollow = this.editContent.willFollow ?? true;
 			this.alias = this.editContent.alias ?? '';
 			this.requestUpdate()
-			console.log('this.editContent', this.editContent )
 		}
 		if (
 			changedProperties &&
@@ -420,6 +419,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 													item.name === schema.name
 											);
 										if (findIndex === -1) {
+											if(this.mySelectedFeeds.length > 4) return
 											copymySelectedFeeds.push({
 												name: schema.name,
 												identifier: schema.identifier,

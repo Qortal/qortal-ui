@@ -68,7 +68,9 @@ export default (state = INITIAL_STATE, action) => {
                 loggedIn: false,
                 loggingIn: false,
                 wallet: INITIAL_STATE.wallet,
-                selectedAddress: INITIAL_STATE.selectedAddress
+                selectedAddress: INITIAL_STATE.selectedAddress,
+                accountInfo: INITIAL_STATE.accountInfo
+                
             }
         case ADD_PLUGIN:
             return {
