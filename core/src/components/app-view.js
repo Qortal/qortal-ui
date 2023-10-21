@@ -588,7 +588,6 @@ class AppView extends connect(store)(LitElement) {
                             <notification-bell></notification-bell>
                             <notification-bell-general></notification-bell-general>
                             <save-settings-qdn></save-settings-qdn>
-                            <core-sync-status></core-sync-status>
                             </div>
                             <div style="display: inline;">
                                 <span>
@@ -762,7 +761,6 @@ class AppView extends connect(store)(LitElement) {
         await this.botArrrTradebook()
 
         window.addEventListener('storage', async () => {
-            console.log('testing')
             this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
             this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
             this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")

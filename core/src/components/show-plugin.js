@@ -344,7 +344,6 @@ class ShowPlugin extends connect(store)(LitElement) {
         return html`
             <div class="tabs">
                 ${this.tabs.map((tab, index) => {
-                    console.log({tab})
                     let title = ''
                     let icon = ''
                     let count = 0
@@ -545,7 +544,6 @@ class ShowPlugin extends connect(store)(LitElement) {
         })
 
         window.addEventListener('storage', () => {
-            console.log('show plugin')
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
 
@@ -1470,9 +1468,13 @@ class NavBar extends connect(store)(LitElement) {
         await this.getMyFollowedNamesList()
     }
 
-    _updateMyMenuPlugins(event) {
+    async _updateMyMenuPlugins(event) {
+        await new Promise((res)=> {
+            setTimeout(() => {
+                res()
+            }, 1000);
+        })
 		const detail = event.detail
-        console.log({detailPlugs: detail})
         this.myMenuPlugins = detail
         const addressInfo = this.addressInfo
         const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
@@ -1502,7 +1504,6 @@ class NavBar extends connect(store)(LitElement) {
 
 	connectedCallback() {
 		super.connectedCallback()
-		console.log('callback')
 		window.addEventListener('myMenuPlugs-event', this._updateMyMenuPlugins)	}
 
 	disconnectedCallback() {
@@ -1520,8 +1521,9 @@ class NavBar extends connect(store)(LitElement) {
         localStorage.removeItem("myMenuPlugs")
         myFile = file
         const newTabMenu = JSON.parse((myFile) || "[]")
+        const copyPayload = [...newTabMenu]
         localStorage.setItem("myMenuPlugs", JSON.stringify(newTabMenu))
-        this.saveSettingToTemp(newTabMenu)
+        this.saveSettingToTemp(copyPayload)
         this.shadowRoot.getElementById('importTabMenutDialog').close()
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
@@ -2004,9 +2006,10 @@ class NavBar extends connect(store)(LitElement) {
 
             if (myNameRes !== false) {
                 oldMenuPlugs.push(newMenuPlugsItem)
+                const copyPayload = [...oldMenuPlugs]
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-                this.saveSettingToTemp(oldMenuPlugs)
+                this.saveSettingToTemp(copyPayload)
 
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
@@ -2068,9 +2071,10 @@ class NavBar extends connect(store)(LitElement) {
 
             if (myNameRes !== false) {
                 oldMenuPlugs.push(newMenuPlugsItem)
+                const copyPayload = [...oldMenuPlugs]
 
                 localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-                this.saveSettingToTemp(oldMenuPlugs)
+                this.saveSettingToTemp(copyPayload)
                 let myplugstring2 = get("walletpage.wchange52")
                 parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2138,9 +2142,10 @@ class NavBar extends connect(store)(LitElement) {
             }
 
             oldMenuPlugs.push(newMenuPlugsItem)
+            const copyPayload = [...oldMenuPlugs]
 
             localStorage.setItem("myMenuPlugs", JSON.stringify(oldMenuPlugs))
-            this.saveSettingToTemp(oldMenuPlugs)
+            this.saveSettingToTemp(copyPayload)
             let myplugstring2 = get("walletpage.wchange52")
             parentEpml.request('showSnackBar', `${myplugstring2}`)
 
@@ -2202,7 +2207,6 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     renderRemoveIcon(appurl, appicon, appname, appid, appplugin) {
-        console.log({appurl, appname, appid})
         return html`
            
             <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
@@ -2274,10 +2278,12 @@ class NavBar extends connect(store)(LitElement) {
         const pluginToRemove = this.pluginNumberToDelete
         this.newMenuFilter = []
         this.newMenuFilter = this.myMenuList.filter((item) => item.pluginNumber !== pluginToRemove)
+        const copyPayload = [...this.newMenuFilter]
+
         const myNewObj = JSON.stringify(this.newMenuFilter)
         localStorage.removeItem("myMenuPlugs")
         localStorage.setItem("myMenuPlugs", myNewObj)
-        this.saveSettingToTemp(myNewObj)
+        this.saveSettingToTemp(copyPayload)
         this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         this.firstUpdated()
         this.closeRemoveApp()

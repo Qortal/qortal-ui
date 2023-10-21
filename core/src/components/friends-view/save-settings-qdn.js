@@ -50,6 +50,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		this.fee = null;
 	}
 	static styles = css`
+		:host {
+			margin-right: 20px;
+		}
 		.header {
 			display: flex;
 			align-items: center;
@@ -97,7 +100,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			display: flex;
 			align-items: center;
 			gap: 10px;
-			font-size: 18px
+			font-size: 18px;
 		}
 
 		.accept-button:hover {
@@ -117,7 +120,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			display: flex;
 			align-items: center;
 			gap: 10px;
-			font-size: 18px
+			font-size: 18px;
 		}
 
 		.undo-button:hover {
@@ -162,11 +165,11 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		const tempSettingsData = JSON.parse(
 			localStorage.getItem('temp-settings-data') || '{}'
 		);
-		if (tempSettingsData) {
-		}
+
+		console.log({ response });
 		const userLists = response.userLists || [];
 		const friendsFeed = response.friendsFeed;
-		const myMenuPlugs = response.myMenuPlugs
+		const myMenuPlugs = response.myMenuPlugs;
 
 		this.valuesToBeSavedOnQdn = {};
 		if (
@@ -176,6 +179,8 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 					tempSettingsData.userLists.timestamp < rawDataTimestamp))
 		) {
 			const friendList = userLists[0];
+			const copyPayload = [...friendList];
+
 			localStorage.setItem(
 				'friends-my-friend-list',
 				JSON.stringify(friendList)
@@ -184,7 +189,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				new CustomEvent('friends-my-friend-list-event', {
 					bubbles: true,
 					composed: true,
-					detail: friendList,
+					detail: copyPayload,
 				})
 			);
 		} else if (
@@ -205,6 +210,8 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				(tempSettingsData.friendsFeed &&
 					tempSettingsData.friendsFeed.timestamp < rawDataTimestamp))
 		) {
+			const copyPayload = [...friendsFeed];
+
 			localStorage.setItem(
 				'friends-my-selected-feeds',
 				JSON.stringify(friendsFeed)
@@ -213,7 +220,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				new CustomEvent('friends-my-selected-feeds-event', {
 					bubbles: true,
 					composed: true,
-					detail: friendsFeed,
+					detail: copyPayload,
 				})
 			);
 		} else if (
@@ -228,24 +235,29 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			};
 		}
 
-
 		if (
 			myMenuPlugs &&
 			(!tempSettingsData.myMenuPlugs ||
 				(tempSettingsData.myMenuPlugs &&
 					tempSettingsData.myMenuPlugs.timestamp < rawDataTimestamp))
 		) {
-			localStorage.setItem(
-				'myMenuPlugs',
-				JSON.stringify(myMenuPlugs)
-			);
-			this.dispatchEvent(
-				new CustomEvent('myMenuPlugs-event', {
-					bubbles: true,
-					composed: true,
-					detail: myMenuPlugs,
-				})
-			);
+			if (Array.isArray(myMenuPlugs)) {
+				console.log('isArray')
+				const copyPayload = [...myMenuPlugs];
+
+				localStorage.setItem(
+					'myMenuPlugs',
+					JSON.stringify(myMenuPlugs)
+				);
+
+				this.dispatchEvent(
+					new CustomEvent('myMenuPlugs-event', {
+						bubbles: true,
+						composed: true,
+						detail: copyPayload,
+					})
+				);
+			}
 		} else if (
 			tempSettingsData.myMenuPlugs &&
 			tempSettingsData.myMenuPlugs.timestamp > rawDataTimestamp
@@ -315,7 +327,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 
 	stateChanged(state) {
 		if (
-			state.app.accountInfo && state.app.accountInfo.names.length && state.app.nodeStatus &&
+			state.app.accountInfo &&
+			state.app.accountInfo.names.length &&
+			state.app.nodeStatus &&
 			state.app.nodeStatus.syncPercent !== this.syncPercentage
 		) {
 			this.syncPercentage = state.app.nodeStatus.syncPercent;
@@ -365,6 +379,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			const friendsFeed = JSON.parse(
 				localStorage.getItem('friends-my-selected-feeds') || '[]'
 			);
+			const myMenuPlugs = JSON.parse(
+				localStorage.getItem('myMenuPlugs') || '[]'
+			);
 
 			let newObject;
 
@@ -373,6 +390,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 					version: 1,
 					userLists: [friendsList],
 					friendsFeed,
+					myMenuPlugs,
 				};
 			} else if (this.settingsRawData) {
 				const tempSettingsData = JSON.parse(
@@ -383,6 +401,21 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				};
 				for (const key in tempSettingsData) {
 					if (tempSettingsData[key].hasOwnProperty('data')) {
+						if (
+							key === 'userLists' &&
+							!Array.isArray(tempSettingsData[key].data)
+						)
+							continue;
+						if (
+							key === 'friendsFeed' &&
+							!Array.isArray(tempSettingsData[key].data)
+						)
+							continue;
+						if (
+							key === 'myMenuPlugs' &&
+							!Array.isArray(tempSettingsData[key].data)
+						)
+							continue;
 						newObject[key] = tempSettingsData[key].data;
 					}
 				}
@@ -506,50 +539,52 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 								: get('save.saving2')}
 						>
 						</vaadin-tooltip>
-						<popover-component
-							for="save-icon"
-							message=""
-						>
-						<div style="margin-bottom:20px">
-							<p style="margin:10px 0px; font-size:16px">${`${get('walletpage.wchange12')}: ${
-								this.fee ? this.fee.feeToShow : ''
-							}`}</p>
-						</div>
-						<div style="display:flex;justify-content:space-between;gap:10px">
-						<div
-								class="undo-button"
-								@click="${() => {
-									localStorage.setItem('temp-settings-data', JSON.stringify({}));
-									this.valuesToBeSavedOnQdn = {}
-									const popover =
-										this.shadowRoot.querySelector(
-											'popover-component'
-										);
-									if (popover) {
-										popover.closePopover();
-									}
-									this.getGeneralSettingsQdn()
-								}}"
-							>
-								
-								${translate('save.saving4')}
+						<popover-component for="save-icon" message="">
+							<div style="margin-bottom:20px">
+								<p style="margin:10px 0px; font-size:16px">
+									${`${get('walletpage.wchange12')}: ${
+										this.fee ? this.fee.feeToShow : ''
+									}`}
+								</p>
 							</div>
 							<div
-								class="accept-button"
-								@click="${() => {
-									this.saveToQdn();
-									const popover =
-										this.shadowRoot.querySelector(
-											'popover-component'
-										);
-									if (popover) {
-										popover.closePopover();
-									}
-								}}"
+								style="display:flex;justify-content:space-between;gap:10px"
 							>
-								
-								${translate('browserpage.bchange28')}
-							</div>
+								<div
+									class="undo-button"
+									@click="${() => {
+										localStorage.setItem(
+											'temp-settings-data',
+											JSON.stringify({})
+										);
+										this.valuesToBeSavedOnQdn = {};
+										const popover =
+											this.shadowRoot.querySelector(
+												'popover-component'
+											);
+										if (popover) {
+											popover.closePopover();
+										}
+										this.getGeneralSettingsQdn();
+									}}"
+								>
+									${translate('save.saving4')}
+								</div>
+								<div
+									class="accept-button"
+									@click="${() => {
+										this.saveToQdn();
+										const popover =
+											this.shadowRoot.querySelector(
+												'popover-component'
+											);
+										if (popover) {
+											popover.closePopover();
+										}
+									}}"
+								>
+									${translate('browserpage.bchange28')}
+								</div>
 							</div>
 						</popover-component>
 				  `}
