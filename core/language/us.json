@@ -1212,5 +1212,12 @@
 		"saving2": "Nothing to save",
 		"saving3": "Save unsaved changes",
 		"saving4": "Undo changes"
+	},
+	"profile": {
+		"profile1": "You do not have a name",
+		"profile2": "Go to name registration",
+		"profile3": "Update profile",
+		"profile4": "Tagline",
+		"profile5": "Bio"
 	}
 }

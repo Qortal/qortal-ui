@@ -3,13 +3,14 @@ import '@material/mwc-icon';
 import './friends-side-panel.js';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store.js';
-import WebWorker from '../WebWorkerFile.js';
+import WebWorker2 from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
 import { get, translate } from 'lit-translate';
+import ShortUniqueId from 'short-unique-id';
+
 import {
 	decryptGroupData,
-	
 	encryptDataGroup,
 	objectToBase64,
 	uint8ArrayToBase64,
@@ -18,8 +19,11 @@ import {
 import { publishData } from '../../../../plugins/plugins/utils/publish-image.js';
 import { parentEpml } from '../show-plugin.js';
 import '../notification-view/popover.js';
+import './avatar.js';
+import { setNewTab } from '../../redux/app/app-actions.js';
+import './profile-modal-update.js'
 
-class SaveSettingsQdn extends connect(store)(LitElement) {
+class ProfileQdn extends connect(store)(LitElement) {
 	static get properties() {
 		return {
 			isOpen: { type: Boolean },
@@ -29,13 +33,16 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			resourceExists: { type: Boolean },
 			isSaving: { type: Boolean },
 			fee: { type: Object },
+			name: { type: String },
+			isOpenProfileModalUpdate: {type: Boolean},
+			editContent: {type: Object}
 		};
 	}
 
 	constructor() {
 		super();
 		this.isOpen = false;
-		this.getGeneralSettingsQdn = this.getGeneralSettingsQdn.bind(this);
+		this.getProfile = this.getProfile.bind(this);
 		this._updateTempSettingsData = this._updateTempSettingsData.bind(this);
 		this.setValues = this.setValues.bind(this);
 		this.saveToQdn = this.saveToQdn.bind(this);
@@ -49,11 +56,12 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		this.valuesToBeSavedOnQdn = {};
 		this.isSaving = false;
 		this.fee = null;
+		this.name = undefined;
+		this.uid = new ShortUniqueId();
+		this.isOpenProfileModalUpdate = false
+		this.editContent = null
 	}
 	static styles = css`
-		:host {
-			margin-right: 20px;
-		}
 		.header {
 			display: flex;
 			align-items: center;
@@ -149,6 +157,16 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		return myNode;
 	}
 
+	async getAvatar(dataItem) {
+		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}?encoding=base64`;
+		const res = await fetch(url);
+		const data = await res.text();
+		if (data.error) throw new Error('Cannot retrieve your data from qdn');
+		const decryptedData = decryptGroupData(data);
+		const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
+		return decryptedDataToBase64;
+	}
+
 	async getRawData(dataItem) {
 		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}?encoding=base64`;
 		const res = await fetch(url);
@@ -160,34 +178,30 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 	}
 
 	async getMyFollowedNames() {
-		
-        let myFollowedNames = []
+		let myFollowedNames = [];
 		try {
-			 myFollowedNames = await parentEpml.request('apiCall', {
-				url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`
-			})
-		} catch (error) {
-			
-		}
+			myFollowedNames = await parentEpml.request('apiCall', {
+				url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`,
+			});
+		} catch (error) {}
 
-        return myFollowedNames
-    }
+		return myFollowedNames;
+	}
 
 	async followNames(names) {
-		let items = names
-		let namesJsonString = JSON.stringify({ "items": items })
+		let items = names;
+		let namesJsonString = JSON.stringify({ items: items });
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`,
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
 			},
-			body: `${namesJsonString}`
-		})
+			body: `${namesJsonString}`,
+		});
 
-		
-		return ret
+		return ret;
 	}
 
 	async setValues(response, resource) {
@@ -211,13 +225,14 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		) {
 			const friendList = userLists[0];
 			const copyPayload = [...friendList];
-			const onlyNames = copyPayload.map((item)=> item.name)
-			const followedList = await this.getMyFollowedNames()
+			const onlyNames = copyPayload.map((item) => item.name);
+			const followedList = await this.getMyFollowedNames();
 
-			const namesNotInFollowedList = onlyNames.filter(name => !followedList.includes(name));
-			if(namesNotInFollowedList.length > 0){
-				await this.followNames(namesNotInFollowedList)
-
+			const namesNotInFollowedList = onlyNames.filter(
+				(name) => !followedList.includes(name)
+			);
+			if (namesNotInFollowedList.length > 0) {
+				await this.followNames(namesNotInFollowedList);
 			}
 
 			localStorage.setItem(
@@ -309,24 +324,28 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		}
 	}
 
-	async getGeneralSettingsQdn() {
+	async getProfile() {
 		try {
 			const arbFee = await this.getArbitraryFee();
 			this.fee = arbFee;
 			this.hasAttemptedToFetchResource = true;
 			let resource;
 			const nameObject = store.getState().app.accountInfo.names[0];
-			if (!nameObject) throw new Error('no name');
+			if (!nameObject) {
+				this.name = null;
+				throw new Error('no name');
+			}
 			const name = nameObject.name;
+			this.name = name;
 			this.error = '';
-			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT_PRIVATE&identifier=qortal_general_settings&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
+			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
 				data = await res.json();
 				if (Array.isArray(data)) {
 					data = data.filter(
-						(item) => item.identifier === 'qortal_general_settings'
+						(item) => item.identifier === 'qortal_profile'
 					);
 
 					if (data.length > 0) {
@@ -335,7 +354,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 						try {
 							const response = await this.getRawData(dataItem);
 							if (response.version) {
-								this.setValues(response, dataItem);
+								// this.setValues(response, dataItem);
 							} else {
 								this.error = 'Cannot get saved user settings';
 							}
@@ -376,7 +395,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				!this.hasAttemptedToFetchResource &&
 				state.app.nodeStatus.syncPercent === 100
 			) {
-				this.getGeneralSettingsQdn();
+				this.getProfile();
 			}
 		}
 	}
@@ -465,7 +484,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				publicKeys: [],
 			});
 
-			const worker = new WebWorker();
+			const worker = new WebWorker2();
 			try {
 				const resPublish = await publishData({
 					registeredName: encodeURIComponent(name),
@@ -521,7 +540,16 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		);
 		super.disconnectedCallback();
 	}
+
+	publishProfile(){
+
+	}
+
+	onClose(){
+		this.isOpenProfileModalUpdate = false
+	}
 	render() {
+		console.log('sup profile2', this.name);
 		return html`
 			${this.isSaving ||
 			(!this.error && this.resourceExists === undefined)
@@ -531,40 +559,31 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 							style="display: block; margin: 0 auto;"
 						></paper-spinner-lite>
 				  `
-				: html`
+				: !this.name
+				? html`
 						<mwc-icon
-							id="save-icon"
+							id="profile-icon"
 							class=${Object.values(this.valuesToBeSavedOnQdn)
 								.length > 0 || this.resourceExists === false
 								? 'active'
 								: 'notActive'}
 							@click=${() => {
-								if (
-									Object.values(this.valuesToBeSavedOnQdn)
-										.length > 0 ||
-									this.resourceExists === false
-								) {
-									if (!this.fee) return;
-									// this.saveToQdn()
-									const target =
-										this.shadowRoot.getElementById(
-											'popover-notification'
-										);
-									const popover =
-										this.shadowRoot.querySelector(
-											'popover-component'
-										);
-									if (popover) {
-										popover.openPopover(target);
-									}
+								const target = this.shadowRoot.getElementById(
+									'popover-notification'
+								);
+								const popover =
+									this.shadowRoot.querySelector(
+										'popover-component'
+									);
+								if (popover) {
+									popover.openPopover(target);
 								}
-								// this.isOpen = !this.isOpen
 							}}
-							style="user-select:none"
-							>save</mwc-icon
+							style="user-select:none;cursor:pointer"
+							>account_circle</mwc-icon
 						>
 						<vaadin-tooltip
-							for="save-icon"
+							for="profile-icon"
 							position="bottom"
 							hover-delay=${300}
 							hide-delay=${1}
@@ -577,41 +596,37 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 								: get('save.saving2')}
 						>
 						</vaadin-tooltip>
-						<popover-component for="save-icon" message="">
+						<popover-component for="profile-icon" message="">
 							<div style="margin-bottom:20px">
 								<p style="margin:10px 0px; font-size:16px">
-									${`${get('walletpage.wchange12')}: ${
-										this.fee ? this.fee.feeToShow : ''
-									}`}
+									${`${get('profile.profile1')}`}
 								</p>
 							</div>
 							<div
-								style="display:flex;justify-content:space-between;gap:10px"
+								style="display:flex;justify-content:center;gap:10px"
 							>
-								<div
-									class="undo-button"
-									@click="${() => {
-										localStorage.setItem(
-											'temp-settings-data',
-											JSON.stringify({})
-										);
-										this.valuesToBeSavedOnQdn = {};
-										const popover =
-											this.shadowRoot.querySelector(
-												'popover-component'
-											);
-										if (popover) {
-											popover.closePopover();
-										}
-										this.getGeneralSettingsQdn();
-									}}"
-								>
-									${translate('save.saving4')}
-								</div>
 								<div
 									class="accept-button"
 									@click="${() => {
-										this.saveToQdn();
+										store.dispatch(
+											setNewTab({
+												url: `group-management`,
+												id: this.uid.rnd(),
+												myPlugObj: {
+													url: 'name-registration',
+													domain: 'core',
+													page: 'name-registration/index.html',
+													title: 'Name Registration',
+													icon: 'vaadin:user-check',
+													mwcicon: 'manage_accounts',
+													pluginNumber:
+														'plugin-qCmtXAQmtu',
+													menus: [],
+													parent: false,
+												},
+												openExisting: true,
+											})
+										);
 										const popover =
 											this.shadowRoot.querySelector(
 												'popover-component'
@@ -621,13 +636,37 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 										}
 									}}"
 								>
-									${translate('browserpage.bchange28')}
+									${translate('profile.profile2')}
 								</div>
 							</div>
 						</popover-component>
+				  `
+				: html`
+						<div style="user-select:none;cursor:pointer" @click=${()=> {
+							this.isOpenProfileModalUpdate = !this.isOpenProfileModalUpdate
+						}}>
+							<avatar-component
+								.resource=${{
+									name: this.name,
+									service: 'THUMBNAIL',
+									identifier: 'qortal_avatar',
+								}}
+								name=${this.name}
+							></avatar-component>
+						</div>
 				  `}
+
+			<profile-modal-update
+				?isOpen=${this.isOpenProfileModalUpdate} 
+				.setIsOpen=${(val)=> {
+					this.isOpenProfileModalUpdate = val
+				}}
+				.onSubmit=${(val, isEdit)=> this.publishProfile(val, isEdit)}
+                .editContent=${this.editContent}
+				.onClose=${()=> this.onClose()}
+			></profile-modal-update>
 		`;
 	}
 }
 
-customElements.define('save-settings-qdn', SaveSettingsQdn);
+customElements.define('profile-qdn', ProfileQdn);
