@@ -23,8 +23,9 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			onSubmit: { attribute: false },
 			editContent: { type: Object },
 			onClose: { attribute: false },
-			tagline: {type: String},
-			bio: {type: String}
+			tagline: { type: String },
+			bio: { type: String },
+			wallets: { type: Array },
 		};
 	}
 
@@ -34,11 +35,21 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.isLoading = false;
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
-		this.tagline = "";
-		this.bio = "",
-		this.walletList = [
-			"btcWallet", "ltcWallet", "dogeWallet","dgbWallet", "rvnWallet", "arrrWallet"
-		]
+		this.tagline = '';
+		(this.bio = ''),
+			(this.walletList = [
+				'btc_Address',
+				'ltc_Address',
+				'doge_Address',
+				'dgb_Address',
+				'rvn_Address',
+				'arrr_Address',
+			]);
+		let wallets = {};
+		this.walletList.forEach((item) => {
+			wallets[item] = '';
+		});
+		this.wallets = wallets;
 	}
 
 	static get styles() {
@@ -222,50 +233,68 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 				<div class="modal-content">
 					<div class="inner-content">
-					<div style="height:15px"></div>
-					<div style="display: flex;flex-direction: column;">
-						<label
-							for="tagline"
-							id="taglineLabel"
-							style="color: var(--black);"
-						>
-							${get('profile.profile4')}
-						</label>
-						<textarea
-							class="input"
-							@change=${(e) => {
-								this.tagline = e.target.value
-							}}
-							.value=${this.tagline}
-							?disabled=${this.isLoading}
-							id="tagline"
-							placeholder="${translate('profile.profile4')}"
-							rows="3"
-						></textarea>
-						
-					</div>
-					<div style="height:15px"></div>
-					<div style="display: flex;flex-direction: column;">
-						<label
-							for="bio"
-							id="bioLabel"
-							style="color: var(--black);"
-						>
-							${get('profile.profile5')}
-						</label>
-						<textarea
-							class="input"
-							@change=${(e) => {
-								this.bio = e.target.value
-							}}
-							.value=${this.bio}
-							?disabled=${this.isLoading}
-							id="bio"
-							placeholder="${translate('profile.profile5')}"
-							rows="3"
-						></textarea>
-						
-					</div>
+						<div style="height:15px"></div>
+						<div style="display: flex;flex-direction: column;">
+							<label
+								for="tagline"
+								id="taglineLabel"
+								style="color: var(--black);"
+							>
+								${get('profile.profile4')}
+							</label>
+							<textarea
+								class="input"
+								@change=${(e) => {
+									this.tagline = e.target.value;
+								}}
+								.value=${this.tagline}
+								?disabled=${this.isLoading}
+								id="tagline"
+								placeholder="${translate('profile.profile4')}"
+								rows="3"
+							></textarea>
+						</div>
+						<div style="height:15px"></div>
+						<div style="display: flex;flex-direction: column;">
+							<label
+								for="bio"
+								id="bioLabel"
+								style="color: var(--black);"
+							>
+								${get('profile.profile5')}
+							</label>
+							<textarea
+								class="input"
+								@change=${(e) => {
+									this.bio = e.target.value;
+								}}
+								.value=${this.bio}
+								?disabled=${this.isLoading}
+								id="bio"
+								placeholder="${translate('profile.profile5')}"
+								rows="3"
+							></textarea>
+						</div>
+						<div style="height:15px"></div>
+						<p>${get('profile.profile6')}</p>
+						<div style="display: flex;flex-direction: column;">
+							${Object.keys(this.wallets).map((key) => {
+								return html`
+									<input
+										id=${key}
+										placeholder=${key}
+										class="input"
+										.value=${this.wallets[key]}
+										@change=${(e) => {
+											this.wallets = {
+												...this.wallets,
+												[key]: e.target.value,
+											};
+										}}
+									/>
+								`;
+							})}
+						</div>
 					</div>
 					<div
 						style="display:flex;justify-content:space-between;align-items:center;margin-top:20px"
