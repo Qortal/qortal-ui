@@ -249,17 +249,17 @@ class CoinBalancesController extends connect(store)(LitElement) {
                 if(coin === 'ltc'){
                     await this.updateLtcWalletBalance()
                 } else if(coin === 'qort'){
-                    this.updateQortWalletBalance()
+                    await this.updateQortWalletBalance()
                 } else if(coin === 'doge'){
-                    this.updateDogeWalletBalance()
+                    await this.updateDogeWalletBalance()
                 } else if(coin === 'btc'){
-                    this.updateBtcWalletBalance()
+                    await this.updateBtcWalletBalance()
                 } else if(coin === 'dgb'){
-                    this.updateDgbWalletBalance()
+                    await this.updateDgbWalletBalance()
                 } else if(coin === 'rvn'){
-                    this.updateRvnWalletBalance()
+                    await this.updateRvnWalletBalance()
                 }else if(coin === 'arrr'){
-                    this.updateArrrWalletBalance()
+                    await this.updateArrrWalletBalance()
                 }
             })
 
