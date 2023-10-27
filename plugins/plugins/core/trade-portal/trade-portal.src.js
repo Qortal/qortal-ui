@@ -904,6 +904,7 @@ class TradePortal extends LitElement {
         this.myTradeLockScreenPass = ''
         this.myTradeLockScreenSet = ''
         this.tradeHelperMessage = ''
+        this.pingCoinBalancesController = this.pingCoinBalancesController.bind(this)
     }
 
     historicTradesTemplate() {
@@ -1416,6 +1417,52 @@ class TradePortal extends LitElement {
         `
     }
 
+    pingCoinBalancesController(){
+        if(!this.selectedCoin) return
+        let coin = ''
+                switch (this.selectedCoin) {
+                    case 'BITCOIN':
+                        coin ='btc'
+                        break
+                    case 'LITECOIN':
+                        coin = 'ltc'
+                        break
+                    case 'DOGECOIN':
+                        coin = 'doge'
+                        break
+                    case 'DIGIBYTE':
+                       coin = 'dgb'
+                    break
+                case 'RAVENCOIN':
+                        coin = 'rnv'
+                        break
+                    case 'PIRATECHAIN':
+                        coin = 'arrr'
+                        break
+                    default:
+                        break
+                }
+        const customEvent = new CustomEvent('ping-coin-controller-with-coin', {
+            detail: coin
+        });
+        window.parent.dispatchEvent(customEvent);
+    }
+
+	connectedCallback() {
+		super.connectedCallback();
+        this.intervalID = setInterval(this.pingCoinBalancesController, 30000);
+
+	}
+
+	disconnectedCallback() {
+	
+		super.disconnectedCallback();
+        if(this.intervalID){
+            clearInterval(this.intervalID);
+
+        }
+	}
+
     firstUpdated() {
         let _this = this
 
@@ -1585,7 +1632,6 @@ class TradePortal extends LitElement {
                 this.dgbWallet = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
                 this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
                 this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.address
-
                 this.updateAccountBalance()
             })
 
@@ -1601,6 +1647,41 @@ class TradePortal extends LitElement {
                     configLoaded = true
                 }
                 this.config = JSON.parse(c)
+            })
+            parentEpml.subscribe('coin_balances', async (payload) => {
+                const coinBalances = JSON.parse(payload)
+                let coin = ''
+                switch (this.selectedCoin) {
+                    case 'BITCOIN':
+                        coin ='btc'
+                        break
+                    case 'LITECOIN':
+                        coin = 'ltc'
+                        break
+                    case 'DOGECOIN':
+                        coin = 'doge'
+                        break
+                    case 'DIGIBYTE':
+                       coin = 'dgb'
+                    break
+                case 'RAVENCOIN':
+                        coin = 'rnv'
+                        break
+                    case 'PIRATECHAIN':
+                        coin = 'arrr'
+                        break
+                    default:
+                        break
+                }
+                if(coinBalances[coin]){
+                    const res = coinBalances[coin].fullValue
+                    let value = (Number(res) / 1e8).toFixed(8)
+                    if(coin !== 'qort'){
+                        value = (Number(res) / 1e8).toFixed(8)
+                    }
+                    this.listedCoins.get(this.selectedCoin).balance = value
+                    this.requestUpdate()
+                }
             })
 
             let coinSelectionMenu = this.shadowRoot.getElementById("coinSelectionMenu")
