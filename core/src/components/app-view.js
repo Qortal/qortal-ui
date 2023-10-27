@@ -46,6 +46,7 @@ import './notification-view/notification-bell-general.js'
 import './friends-view/friends-side-panel-parent.js'
 import './friends-view/save-settings-qdn.js'
 import './friends-view/core-sync-status.js'
+import './controllers/coin-balances-controller.js'
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class AppView extends connect(store)(LitElement) {
@@ -675,7 +676,7 @@ class AppView extends connect(store)(LitElement) {
                 </div>
             </paper-dialog>
             <div id="portal-target"></div>
-
+            <coin-balances-controller></coin-balances-controller>
         `
     }
 

@@ -114,16 +114,13 @@ class FriendsView extends connect(store)(LitElement) {
         this.friendList = detail
 	}
 	_updateFeed(event) {
-		console.log({event})
 		const detail = event.detail
-		console.log({detail})
         this.mySelectedFeeds = detail
 		this.requestUpdate()
 	}
 
 	connectedCallback() {
 		super.connectedCallback()
-		console.log('callback')
 		window.addEventListener('friends-my-friend-list-event', this._updateFriends)	
 		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)	
 	}
@@ -317,7 +314,6 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('rendered1')
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
