@@ -1434,7 +1434,7 @@ class TradePortal extends LitElement {
                        coin = 'dgb'
                     break
                 case 'RAVENCOIN':
-                        coin = 'rnv'
+                        coin = 'rvn'
                         break
                     case 'PIRATECHAIN':
                         coin = 'arrr'
@@ -1665,7 +1665,7 @@ class TradePortal extends LitElement {
                        coin = 'dgb'
                     break
                 case 'RAVENCOIN':
-                        coin = 'rnv'
+                        coin = 'rvn'
                         break
                     case 'PIRATECHAIN':
                         coin = 'arrr'
