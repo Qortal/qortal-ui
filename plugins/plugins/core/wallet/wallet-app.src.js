@@ -884,6 +884,36 @@ class MultiWallet extends LitElement {
         this.pingCoinBalancesController = this.pingCoinBalancesController.bind(this)
     }
 
+    refreshWallet(){
+        const coin = this._selectedWallet
+        switch (coin) {
+            case 'qort':
+                this.tabWalletQort();
+                break
+            case 'arrr':
+                this.tabWalletArrr();
+                break
+            case 'btc':
+                this.tabWalletBtc();
+                break;
+            case 'ltc':
+                this.tabWalletLtc();
+                break;
+            case 'doge':
+                this.tabWalletDoge();
+                break
+            case 'dgb':
+                this.tabWalletDgb()
+                break;
+            case 'rvn':
+                this.tabWalletRvn();
+                break
+            default:
+                break
+        }
+    
+    }
+
     render() {
         return html`
             <div class="wrapper">
@@ -921,7 +951,11 @@ class MultiWallet extends LitElement {
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
+                        <div style="display:flex;align-items:center;gap:20px">
                         ${translate("walletpage.wchange2")}
+
+                        <vaadin-icon @click=${this.refreshWallet} style="cursor:pointer" icon="vaadin:refresh" slot="prefix"></vaadin-icon>
+                        </div>
                         <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy
@@ -954,9 +988,7 @@ class MultiWallet extends LitElement {
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
                     <div id="transactions">
-                    <div style="display:flex;width:100%;justify-content:flex-end">
-                    <vaadin-button theme="primary medium" style="width: auto;" @click=${() => this.fetchWalletDetails(this._selectedWallet)}><vaadin-icon icon="vaadin:refresh" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange60")}</vaadin-button>
-                    </div>
+                   
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
                     </div>
