@@ -61,7 +61,7 @@ class NotificationBell extends connect(store)(LitElement) {
                     0,
                     20
                 )}_${recipientAddress.slice(-6)}_mail_`
-                const url = `${nodeUrl}/arbitrary/resources/search?service=MAIL_PRIVATE&query=${query}&limit=10&includemetadata=true&offset=0&reverse=true&excludeblocked=true`
+                const url = `${nodeUrl}/arbitrary/resources/search?service=MAIL_PRIVATE&query=${query}&limit=10&includemetadata=false&offset=0&reverse=true&excludeblocked=true`
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
