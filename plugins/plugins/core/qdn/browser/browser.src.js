@@ -130,8 +130,8 @@ class WebBrowser extends LitElement {
 	}
 
 	constructor() {
-		super();
-		this.url = 'about:blank';
+		super()
+		this.url = 'about:blank'
 		this.uid = new ShortUniqueId()
 		this.myAddress = window.parent.reduxStore.getState().app.selectedAddress
 		this._publicKey = { key: '', hasPubKey: false }
@@ -141,13 +141,13 @@ class WebBrowser extends LitElement {
 		this.identifier =
 			urlParams.get('identifier') != null
 				? urlParams.get('identifier')
-				: null;
+				: null
 		this.path =
 			urlParams.get('path') != null
 				? (urlParams.get('path').startsWith('/') ? '' : '/') +
 				urlParams.get('path')
-				: '';
-		this.preview = urlParams.get('preview');
+				: ''
+		this.preview = urlParams.get('preview')
 		this.link = urlParams.get('link')
 		this.dev = urlParams.get('dev')
 		this.followedNames = []
@@ -189,7 +189,7 @@ class WebBrowser extends LitElement {
 				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
 			})
 
-			this.blockedNames = blockedNames;
+			this.blockedNames = blockedNames
 			setTimeout(
 				getBlockedNames,
 				this.config.user.nodeSettings.pingInterval
@@ -226,7 +226,7 @@ class WebBrowser extends LitElement {
 		this.rvnFeePerByte = 0.00001125
 		this.arrrWalletAddress = ''
 
-		let configLoaded = false;
+		let configLoaded = false
 
 		parentEpml.ready().then(() => {
 			parentEpml.subscribe('selected_address', async (selectedAddress) => {
@@ -242,12 +242,12 @@ class WebBrowser extends LitElement {
 				this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 			})
 			parentEpml.subscribe('config', (c) => {
-				this.config = JSON.parse(c);
+				this.config = JSON.parse(c)
 				if (!configLoaded) {
-					render();
-					setTimeout(getFollowedNames, 1);
-					setTimeout(getBlockedNames, 1);
-					configLoaded = true;
+					render()
+					setTimeout(getFollowedNames, 1)
+					setTimeout(getBlockedNames, 1)
+					configLoaded = true
 				}
 			})
 		})
@@ -255,20 +255,20 @@ class WebBrowser extends LitElement {
 
 	async extractComponents(url) {
 		if (!url.startsWith("qortal://")) {
-			return null;
+			return null
 		}
 
-		url = url.replace(/^(qortal\:\/\/)/, "");
+		url = url.replace(/^(qortal\:\/\/)/, "")
 		if (url.includes("/")) {
-			let parts = url.split("/");
-			const service = parts[0].toUpperCase();
-			parts.shift();
-			const name = parts[0];
-			parts.shift();
-			let identifier;
+			let parts = url.split("/")
+			const service = parts[0].toUpperCase()
+			parts.shift()
+			const name = parts[0]
+			parts.shift()
+			let identifier
 
 			if (parts.length > 0) {
-				identifier = parts[0]; // Do not shift yet
+				identifier = parts[0] // Do not shift yet
 				// Check if a resource exists with this service, name and identifier combination
 				let responseObj = await parentEpml.request('apiCall', {
 					url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
@@ -276,29 +276,29 @@ class WebBrowser extends LitElement {
 
 				if (responseObj.totalChunkCount > 0) {
 					// Identifier exists, so don't include it in the path
-					parts.shift();
+					parts.shift()
 				}
 				else {
-					identifier = null;
+					identifier = null
 				}
 			}extractComponents
-			const components = {};
-			components["service"] = service;
-			components["name"] = name;
-			components["identifier"] = identifier;
-			components["path"] = path;
-			return components;
+			const components = {}
+			components["service"] = service
+			components["name"] = name
+			components["identifier"] = identifier
+			components["path"] = path
+			return components
 		}
 
-		return null;
+		return null
 	}
 
 	async _handleKeyDown(e) {
 		if (e.key === 'Enter') {
 			const value = e.target.value
-			let newQuery = value;
+			let newQuery = value
 			if (newQuery.endsWith('/')) {
-				newQuery = newQuery.slice(0, -1);
+				newQuery = newQuery.slice(0, -1)
 			}
 			const res = await this.extractComponents(newQuery)
 			if (!res) return
@@ -320,9 +320,9 @@ class WebBrowser extends LitElement {
 	async linkOpenNewTab(link) {
 	
 			const value = link
-			let newQuery = value;
+			let newQuery = value
 			if (newQuery.endsWith('/')) {
-				newQuery = newQuery.slice(0, -1);
+				newQuery = newQuery.slice(0, -1)
 			}
 			const res = await this.extractComponents(newQuery)
 			if (!res) return
@@ -441,7 +441,7 @@ class WebBrowser extends LitElement {
 		const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching join fee');
+			throw new Error('Error when fetching join fee')
 		}
 
 		const data = await response.json()
@@ -455,21 +455,22 @@ class WebBrowser extends LitElement {
 		const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching join fee');
+			throw new Error('Error when fetching join fee')
 		}
 
 		const data = await response.json()
 		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
-	 async getArbitraryFee (){
+
+	async getArbitraryFee (){
 		const timestamp = Date.now()
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const url = `${nodeUrl}/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching arbitrary fee');
+			throw new Error('Error when fetching arbitrary fee')
 		}
 		const data = await response.json()
 		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
@@ -478,14 +479,15 @@ class WebBrowser extends LitElement {
 			fee : Number(data),
 			feeToShow: arbitraryFee
 		}
-    }
+	}
+
 	async sendQortFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching join fee');
+			throw new Error('Error when fetching join fee')
 		}
 
 		const data = await response.json()
@@ -499,20 +501,21 @@ class WebBrowser extends LitElement {
 		const url = `${nodeUrl}/transactions/unitfee?txType=VOTE_ON_POLL`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching vote fee');
+			throw new Error('Error when fetching vote fee')
 		}
 
 		const data = await response.json()
 		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
+
 	async unitCreatePollFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_POLL`
 		const response = await fetch(url)
 		if (!response.ok) {
-			throw new Error('Error when fetching vote fee');
+			throw new Error('Error when fetching vote fee')
 		}
 
 		const data = await response.json()
@@ -528,10 +531,10 @@ class WebBrowser extends LitElement {
 				url: `/addresses/lastreference/${this.selectedAddress.address}`
 			})
 			return myRef
-		};
+		}
 
 		const validateReceiver = async () => {
-			let lastRef = await getLastRef();
+			let lastRef = await getLastRef()
 			let myTransaction = await makeTransactionRequest(lastRef)
 			const res = getTxnRequestResponse(myTransaction)
 			return res
@@ -581,10 +584,10 @@ class WebBrowser extends LitElement {
 				url: `/addresses/lastreference/${this.selectedAddress.address}`
 			})
 			return myRef
-		};
+		}
 
 		const validateReceiver = async () => {
-			let lastRef = await getLastRef();
+			let lastRef = await getLastRef()
 			let myTransaction = await makeTransactionRequest(lastRef)
 			const res = getTxnRequestResponse(myTransaction)
 			return res
@@ -642,10 +645,10 @@ class WebBrowser extends LitElement {
 				url: `/addresses/lastreference/${this.selectedAddress.address}`
 			})
 			return myRef
-		};
+		}
 
 		const validateReceiver = async () => {
-			let lastRef = await getLastRef();
+			let lastRef = await getLastRef()
 			let myTransaction = await makeTransactionRequest(lastRef)
 			const res = getTxnRequestResponse(myTransaction)
 			return res
@@ -689,6 +692,7 @@ class WebBrowser extends LitElement {
 		return voteRes
 
 	}
+
 	async _createPoll(pollName, pollDescription, options, pollOwnerAddress) {
 		const voteFeeInput = await this.unitCreatePollFee()
 		const getLastRef = async () => {
@@ -697,10 +701,10 @@ class WebBrowser extends LitElement {
 				url: `/addresses/lastreference/${this.selectedAddress.address}`
 			})
 			return myRef
-		};
+		}
 
 		const validateReceiver = async () => {
-			let lastRef = await getLastRef();
+			let lastRef = await getLastRef()
 			let myTransaction = await makeTransactionRequest(lastRef)
 			const res = getTxnRequestResponse(myTransaction)
 			return res
@@ -751,8 +755,8 @@ class WebBrowser extends LitElement {
 	}
 
 	firstUpdated() {
-		this.changeTheme();
-		this.changeLanguage();
+		this.changeTheme()
+		this.changeLanguage()
 
 		this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet
 		this.ltcWallet = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet
@@ -762,18 +766,18 @@ class WebBrowser extends LitElement {
 		this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 
 		window.addEventListener('storage', () => {
-			const checkLanguage = localStorage.getItem('qortalLanguage');
-			const checkTheme = localStorage.getItem('qortalTheme');
+			const checkLanguage = localStorage.getItem('qortalLanguage')
+			const checkTheme = localStorage.getItem('qortalTheme')
 
-			use(checkLanguage);
+			use(checkLanguage)
 
 			if (checkTheme === 'dark') {
-				this.theme = 'dark';
+				this.theme = 'dark'
 			} else {
-				this.theme = 'light';
+				this.theme = 'light'
 			}
-			document.querySelector('html').setAttribute('theme', this.theme);
-		});
+			document.querySelector('html').setAttribute('theme', this.theme)
+		})
 
 		if (!isElectron()) {
 		} else {
@@ -790,20 +794,20 @@ class WebBrowser extends LitElement {
 				event.data.length == 0 ||
 				event.data.action == null
 			) {
-				return;
+				return
 			}
 
-			let response = '{"error": "Request could not be fulfilled"}';
-			let data = event.data;
+			let response = '{"error": "Request could not be fulfilled"}'
+			let data = event.data
 
 			switch (data.action) {
 				case actions.GET_USER_ACCOUNT: {
 
-					let skip = false;
+					let skip = false
 					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
-						skip = true;
+						skip = true
 					}
-					let res1;
+					let res1
 					if (!skip) {
 						res1 = await showModalAndWait(
 							actions.GET_USER_ACCOUNT,
@@ -811,21 +815,21 @@ class WebBrowser extends LitElement {
 								service: this.service,
 								name: this.name
 							}
-						);
-					};
+						)
+					}
 					if ((res1 && res1.action === 'accept') || skip) {
-						let account = {};
-						account['address'] = this.selectedAddress.address;
+						let account = {}
+						account['address'] = this.selectedAddress.address
 						account['publicKey'] =
-							this.selectedAddress.base58PublicKey;
-						response = JSON.stringify(account);
-						break;
+							this.selectedAddress.base58PublicKey
+						response = JSON.stringify(account)
+						break
 					} else {
-						const data = {};
+						const data = {}
 						const errorMsg = "User declined to share account details"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break;
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
 					}
 				}
 
@@ -834,89 +838,89 @@ class WebBrowser extends LitElement {
 					const { encryptedData, publicKey } = data
 
 					try {
-						let data = {};
+						let data = {}
 						if (!encryptedData) {
 							const errorMsg = `Missing fields: encryptedData`
 
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
 							break
 
 						}
 						const uint8Array = base64ToUint8Array(encryptedData)
-						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData");
+						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData")
 						if (startsWithQortalEncryptedData) {
 
 							if (!publicKey) {
 								const errorMsg = `Missing fields: publicKey`
 
-								data['error'] = errorMsg;
-								response = JSON.stringify(data);
+								data['error'] = errorMsg
+								response = JSON.stringify(data)
 								break
 							}
 
 
 							const decryptedDataToBase64 = decryptDeprecatedSingle(uint8Array, publicKey)
-							response = JSON.stringify(decryptedDataToBase64);
-							break;
+							response = JSON.stringify(decryptedDataToBase64)
+							break
 
 
 						}
-						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData");
+						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData")
 						if (startsWithQortalGroupEncryptedData) {
 
 							const decryptedData = decryptGroupData(encryptedData)
 							const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
-							response = JSON.stringify(decryptedDataToBase64);
-							break;
+							response = JSON.stringify(decryptedDataToBase64)
+							break
 
 						}
 
 						const errorMsg = "Unable to decrypt"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					} catch (error) {
 
-						const data = {};
+						const data = {}
 						const errorMsg = error.message || "Error in decrypting data"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 				}
 
 				case actions.GET_LIST_ITEMS: {
-					const requiredFields = ['list_name'];
-					const missingFields = [];
+					const requiredFields = ['list_name']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-					let skip = false;
+					let skip = false
 					if (window.parent.reduxStore.getState().app.qAPPAutoLists) {
-						skip = true;
+						skip = true
 					}
-					let res1;
+					let res1
 					if (!skip) {
 						res1 = await showModalAndWait(
 							actions.GET_LIST_ITEMS,
 							{
 								list_name: data.list_name
 							}
-						);
-					};
+						)
+					}
 
 
 					if (res1 && res1.action === 'accept' || skip) {
@@ -925,42 +929,43 @@ class WebBrowser extends LitElement {
 							const list = await parentEpml.request('apiCall', {
 								type: 'api',
 								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`,
-							});
-							response = JSON.stringify(list);
+							})
+							response = JSON.stringify(list)
 
 						} catch (error) {
-							const data = {};
+							const data = {}
 							const errorMsg = "Error in retrieving list"
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
 						} finally {
-							break;
+							break
 						}
 
 					} else {
-						const data = {};
+						const data = {}
 						const errorMsg = "User declined to share list"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break;
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
 					}
-				};
+				}
+
 				case actions.ADD_LIST_ITEMS: {
-					const requiredFields = ['list_name', 'items'];
-					const missingFields = [];
+					const requiredFields = ['list_name', 'items']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					const items = data.items
@@ -971,16 +976,16 @@ class WebBrowser extends LitElement {
 							list_name: list_name,
 							items: items
 						}
-					);
+					)
 
 					if (res && res.action === 'accept') {
 
 						try {
 							const body = {
 								items: items,
-							};
+							}
 
-							const bodyToString = JSON.stringify(body);
+							const bodyToString = JSON.stringify(body)
 							const data = await parentEpml.request('apiCall', {
 								type: 'api',
 								method: 'POST',
@@ -989,41 +994,42 @@ class WebBrowser extends LitElement {
 								headers: {
 									'Content-Type': 'application/json',
 								},
-							});
+							})
 							response = data
 						} catch (error) {
-							const data = {};
+							const data = {}
 							const errorMsg = "Error in adding to list"
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
 						} finally {
-							break;
+							break
 						}
 
 					} else {
-						const data = {};
+						const data = {}
 						const errorMsg = "User declined add to list"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break;
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
 					}
-				};
+				}
+
 				case actions.DELETE_LIST_ITEM: {
-					const requiredFields = ['list_name', 'item'];
-					const missingFields = [];
+					const requiredFields = ['list_name', 'item']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					const item = data.item
@@ -1034,16 +1040,16 @@ class WebBrowser extends LitElement {
 							list_name: list_name,
 							item: item
 						}
-					);
+					)
 
 					if (res && res.action === 'accept') {
 
 						try {
 							const body = {
 								items: [item],
-							};
+							}
 
-							const bodyToString = JSON.stringify(body);
+							const bodyToString = JSON.stringify(body)
 
 							const data = await parentEpml.request('apiCall', {
 								type: 'api',
@@ -1053,53 +1059,52 @@ class WebBrowser extends LitElement {
 								headers: {
 									'Content-Type': 'application/json',
 								},
-							});
+							})
 							response = data
 						} catch (error) {
-							const data = {};
+							const data = {}
 							const errorMsg = "Error in adding to list"
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
 						} finally {
-							break;
+							break
 						}
 
 					} else {
-						const data = {};
+						const data = {}
 						const errorMsg = "User declined add to list"
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
-						break;
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
 					}
-				};
-
+				}
 
 				case actions.LINK_TO_QDN_RESOURCE:
 				case actions.QDN_RESOURCE_DISPLAYED:
 					// Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
 					// Note: don't update this.url here, as we don't want to force reload the iframe each time.
 					if (this.preview != null && this.preview.length > 0) {
-						this.displayUrl = translate("appspage.schange40");
-						return;
+						this.displayUrl = translate("appspage.schange40")
+						return
 					}
 
-					let url = 'qortal://' + data.service + '/' + data.name;
+					let url = 'qortal://' + data.service + '/' + data.name
 					this.path =
 						data.path != null
 							? (data.path.startsWith('/') ? '' : '/') + data.path
-							: null;
+							: null
 					if (
 						data.identifier != null &&
 						data.identifier != '' &&
 						data.identifier != 'default'
 					)
-						url = url.concat('/' + data.identifier);
+						url = url.concat('/' + data.identifier)
 					if (this.path != null && this.path != '/')
-						url = url.concat(this.path);
-					this.name = data.name;
-					this.service = data.service;
-					this.identifier = data.identifier;
-					this.displayUrl = url;
+						url = url.concat(this.path)
+					this.name = data.name
+					this.service = data.service
+					this.identifier = data.identifier
+					this.displayUrl = url
 
 					const frame = window.frameElement
 					let tabId = ""
@@ -1116,7 +1121,8 @@ class WebBrowser extends LitElement {
 						service: data.service,
 						id: tabId ? tabId : ""
 					}))
-					return;
+					return
+
 				case actions.SET_TAB_NOTIFICATIONS: {
 					const { count } = data
 					if (isNaN(count)) {
@@ -1139,58 +1145,58 @@ class WebBrowser extends LitElement {
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
-					const requiredFields = ['service', 'name'];
-					const missingFields = [];
+					const requiredFields = ['service', 'name']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					if (!data.file && !data.data64) {
-						let data = {};
-						data['error'] = "No data or file was submitted";
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = "No data or file was submitted"
+						response = JSON.stringify(data)
 						break
 					}
 					// Use "default" if user hasn't specified an identifer
-					const service = data.service;
-					const name = data.name;
-					let identifier = data.identifier;
-					let data64 = data.data64;
-					const filename = data.filename;
-					const title = data.title;
-					const description = data.description;
-					const category = data.category;
-					const tag1 = data.tag1;
-					const tag2 = data.tag2;
-					const tag3 = data.tag3;
-					const tag4 = data.tag4;
-					const tag5 = data.tag5;
+					const service = data.service
+					const name = data.name
+					let identifier = data.identifier
+					let data64 = data.data64
+					const filename = data.filename
+					const title = data.title
+					const description = data.description
+					const category = data.category
+					const tag1 = data.tag1
+					const tag2 = data.tag2
+					const tag3 = data.tag3
+					const tag4 = data.tag4
+					const tag5 = data.tag5
 					let feeAmount = null
 					if (data.identifier == null) {
-						identifier = 'default';
+						identifier = 'default'
 					}
 
 					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
-						let data = {};
-						data['error'] = "Encrypting data requires public keys";
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = "Encrypting data requires public keys"
+						response = JSON.stringify(data)
 						break
 					}
 					if (!data.encrypt && data.service.endsWith("_PRIVATE")) {
-						let data = {};
-						data['error'] = "Only encrypted data can go into private services";
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = "Only encrypted data can go into private services"
+						response = JSON.stringify(data)
 						break
 					}
 					if (data.file) {
@@ -1209,17 +1215,14 @@ class WebBrowser extends LitElement {
 							}
 
 						} catch (error) {
-							const obj = {};
-							const errorMsg = error.message || 'Upload failed due to failed encryption';
-							obj['error'] = errorMsg;
-							response = JSON.stringify(obj);
+							const obj = {}
+							const errorMsg = error.message || 'Upload failed due to failed encryption'
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
 							break
 						}
 
 					}
-
-				
-
 
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
@@ -1230,14 +1233,14 @@ class WebBrowser extends LitElement {
 							encrypt: data.encrypt,
 							feeAmount: getArbitraryFee.feeToShow
 						}
-					);
+					)
 					if (res2.action === 'accept') {
 						if (data.file && !data.encrypt) {
 							data64 = await fileToBase64(data.file)
 						}
-						const worker = new WebWorker();
+						const worker = new WebWorker()
 						try {
-							this.loader.show();
+							this.loader.show()
 							const resPublish = await publishData({
 								registeredName: encodeURIComponent(name),
 								file: data64,
@@ -1260,65 +1263,66 @@ class WebBrowser extends LitElement {
 								apiVersion: 2,
 								withFee: res2.userData.isWithFee === true ? true : false,
 								feeAmount: feeAmount
-							});
+							})
 
-							response = JSON.stringify(resPublish);
-							worker.terminate();
+							response = JSON.stringify(resPublish)
+							worker.terminate()
 						} catch (error) {
-							worker.terminate();
-							const obj = {};
-							const errorMsg = error.message || 'Upload failed';
-							obj['error'] = errorMsg;
-							response = JSON.stringify(obj);
-							console.error(error);
-							break;
+							worker.terminate()
+							const obj = {}
+							const errorMsg = error.message || 'Upload failed'
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							console.error(error)
+							break
 						} finally {
-							this.loader.hide();
+							this.loader.hide()
 						}
 					} else if (res2.action === 'reject') {
-						response = '{"error": "User declined request"}';
+						response = '{"error": "User declined request"}'
 					}
 					// Params: data.service, data.name, data.identifier, data.data64,
 					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break;
+					break
 				}
+
 				case actions.PUBLISH_MULTIPLE_QDN_RESOURCES: {
-					const requiredFields = ['resources'];
-					const missingFields = [];
+					const requiredFields = ['resources']
+					const missingFields = []
 					let feeAmount = null
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					const resources = data.resources
 					if (!Array.isArray(resources)) {
-						let data = {};
+						let data = {}
 						data['error'] = "Invalid data"
-						response = JSON.stringify(data);
+						response = JSON.stringify(data)
 						break
 					}
 					if (resources.length === 0) {
-						let data = {};
+						let data = {}
 						data['error'] = "No resources to publish"
-						response = JSON.stringify(data);
+						response = JSON.stringify(data)
 						break
 					}
 					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
-						let data = {};
-						data['error'] = "Encrypting data requires public keys";
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = "Encrypting data requires public keys"
+						response = JSON.stringify(data)
 						break
 					}
 					const getArbitraryFee = await this.getArbitraryFee()
@@ -1330,25 +1334,25 @@ class WebBrowser extends LitElement {
 							encrypt: data.encrypt,
 							feeAmount: getArbitraryFee.feeToShow
 						}
-					);
+					)
 
 					if (res2.action === 'reject') {
-						response = '{"error": "User declined request"}';
+						response = '{"error": "User declined request"}'
 						break
 
 					}
 					const resourcesMap = resources.map(async (resource) => {
-						const requiredFields = ['service', 'name'];
-						const missingFields = [];
+						const requiredFields = ['service', 'name']
+						const missingFields = []
 
 						requiredFields.forEach((field) => {
 							if (!resource[field]) {
-								missingFields.push(field);
+								missingFields.push(field)
 							}
-						});
+						})
 
 						if (missingFields.length > 0) {
-							const missingFieldsString = missingFields.join(', ');
+							const missingFieldsString = missingFields.join(', ')
 							const errorMsg = `Missing fields: ${missingFieldsString}`
 							throw new Error(errorMsg)
 						}
@@ -1358,21 +1362,21 @@ class WebBrowser extends LitElement {
 							throw new Error('No data or file was submitted')
 						}
 
-						const service = resource.service;
-						const name = resource.name;
-						let identifier = resource.identifier;
-						let data64 = resource.data64;
-						const filename = resource.filename;
-						const title = resource.title;
-						const description = resource.description;
-						const category = resource.category;
-						const tag1 = resource.tag1;
-						const tag2 = resource.tag2;
-						const tag3 = resource.tag3;
-						const tag4 = resource.tag4;
-						const tag5 = resource.tag5;
+						const service = resource.service
+						const name = resource.name
+						let identifier = resource.identifier
+						let data64 = resource.data64
+						const filename = resource.filename
+						const title = resource.title
+						const description = resource.description
+						const category = resource.category
+						const tag1 = resource.tag1
+						const tag2 = resource.tag2
+						const tag3 = resource.tag3
+						const tag4 = resource.tag4
+						const tag5 = resource.tag5
 						if (resource.identifier == null) {
-							identifier = 'default';
+							identifier = 'default'
 						}
 
 						if (!data.encrypt && service.endsWith("_PRIVATE")) {
@@ -1403,8 +1407,7 @@ class WebBrowser extends LitElement {
 							data64 = await fileToBase64(resource.file)
 						}
 
-
-						const worker = new WebWorker();
+						const worker = new WebWorker()
 						try {
 
 							const resPublish = await publishData({
@@ -1429,13 +1432,13 @@ class WebBrowser extends LitElement {
 								apiVersion: 2,
 								withFee: res2.userData.isWithFee === true ? true : false,
 								feeAmount: feeAmount
-							});
+							})
 
-							worker.terminate();
+							worker.terminate()
 							return resPublish
 						} catch (error) {
-							worker.terminate();
-							const errorMsg = error.message || 'Upload failed';
+							worker.terminate()
+							const errorMsg = error.message || 'Upload failed'
 							throw new Error(errorMsg)
 						}
 
@@ -1443,147 +1446,152 @@ class WebBrowser extends LitElement {
 					})
 
 					try {
-						this.loader.show();
-						const results = await Promise.all(resourcesMap);
-						response = JSON.stringify(results);
-						this.loader.hide();
+						this.loader.show()
+						const results = await Promise.all(resourcesMap)
+						response = JSON.stringify(results)
+						this.loader.hide()
 						break
 						// handle successful results
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Upload failed';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						this.loader.hide();
-						break;
+						const obj = {}
+						const errorMsg = error.message || 'Upload failed'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
+						this.loader.hide()
+						break
 					}
 
 					// Params: data.service, data.name, data.identifier, data.data64,
 					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break;
+					break
 				}
+
 				case actions.VOTE_ON_POLL: {
-					const requiredFields = ['pollName', 'optionIndex'];
-					const missingFields = [];
+					const requiredFields = ['pollName', 'optionIndex']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-					const pollName = data.pollName;
-					const optionIndex = data.optionIndex;
-					
+
+					const pollName = data.pollName
+					const optionIndex = data.optionIndex
 
 					let pollInfo = null
 					try {
 						pollInfo = await parentEpml.request("apiCall", {
 							type: "api",
 							url: `/polls/${pollName}`,
-						});
+						})
 					} catch (error) {
-						const errorMsg = (error && error.message) || 'Poll not found';
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const errorMsg = (error && error.message) || 'Poll not found'
+						let obj = {}
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 						break
 					}
 
 					if (!pollInfo || pollInfo.error) {
-						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found';
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found'
+						let obj = {}
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 						break
 					}
 
 					try {
-						this.loader.show();
+						this.loader.show()
 						const resVoteOnPoll = await this._voteOnPoll(pollName, optionIndex)
-						response = JSON.stringify(resVoteOnPoll);
+						response = JSON.stringify(resVoteOnPoll)
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to vote on the poll.';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = error.message || 'Failed to vote on the poll.'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
 
-					break;
+					break
 				}
+
 				case actions.CREATE_POLL: {
-					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress'];
-					const missingFields = [];
+					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-					const pollName = data.pollName;
+
+					const pollName = data.pollName
 					const pollDescription = data.pollDescription	
 					const pollOptions = data.pollOptions
 					const pollOwnerAddress = data.pollOwnerAddress				
 				
 					try {
-						this.loader.show();
+						this.loader.show()
 						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
-						response = JSON.stringify(resCreatePoll);
+						response = JSON.stringify(resCreatePoll)
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to created poll.';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = error.message || 'Failed to created poll.'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
 
-					break;
+					break
 				}
+
 				case actions.OPEN_NEW_TAB: {
 					if(!data.qortalLink){
-						const obj = {};
-						const errorMsg = 'Please enter a qortal link - qortal://...';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = 'Please enter a qortal link - qortal://...'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 						break
 					}
 
 					try {
 						await this.linkOpenNewTab(data.qortalLink)
 						response = true
-						break;
+						break
 					} catch (error) {
 						console.log('error', error)
-						const obj = {};
-						const errorMsg = "Invalid qortal link";
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
+						const obj = {}
+						const errorMsg = "Invalid qortal link"
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
+						break
 					}
 				
 				}
+
 				case actions.NOTIFICATIONS_PERMISSION: {
 					try {
 
@@ -1592,32 +1600,33 @@ class WebBrowser extends LitElement {
 							{
 								name: this.name
 							}
-						);
+						)
 						if (res.action === 'accept'){
 							this.addAppToNotificationList(this.name)
 						response = true
-						break;
+						break
 						} else {
 							response = false
-							break;
+							break
 						}
 						
 					} catch (error) {
-						break;
+						break
 					}
 				
 				}
+
 				case actions.SEND_LOCAL_NOTIFICATION: {
 					const {title, url, icon, message} = data
 					try {
 						const id = `appNotificationList-${this.selectedAddress.address}`
-						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
 			if(!checkData || !checkData[this.name]) throw new Error('App not on permission list')
 					const appInfo = checkData[this.name]
 					const lastNotification = appInfo.lastNotification
 					const interval = appInfo.interval
 					if (lastNotification && interval) {
-						const timeDifference = Date.now() - lastNotification;
+						const timeDifference = Date.now() - lastNotification
 					  
 						if (timeDifference > interval) {
 							parentEpml.request('showNotification', {
@@ -1625,7 +1634,7 @@ class WebBrowser extends LitElement {
 						   })
 						   response = true
 						   this.updateLastNotification(id, this.name)
-						   break;
+						   break
 						} else {
 							throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
 						}
@@ -1635,31 +1644,31 @@ class WebBrowser extends LitElement {
 					   })
 					   response = true
 					   this.updateLastNotification(id)
-					   break;
+					   break
 					  } else {
 						throw new Error(`invalid data`)
 					  }
 						
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || "error in pushing notification";
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
-						break;
+						const obj = {}
+						const errorMsg = error.message || "error in pushing notification"
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
+						break
 					
 					}
 				
 				}
 				case actions.SEND_CHAT_MESSAGE: {
-					const message = data.message;
-					const recipient = data.destinationAddress;
-					const groupId = data.groupId;
+					const message = data.message
+					const recipient = data.destinationAddress
+					const groupId = data.groupId
 					const isRecipient = groupId ? false : true
 					const sendMessage = async (messageText, chatReference) => {
 
-						let _reference = new Uint8Array(64);
-						window.crypto.getRandomValues(_reference);
-						let reference = window.parent.Base58.encode(_reference);
+						let _reference = new Uint8Array(64)
+						window.crypto.getRandomValues(_reference)
+						let reference = window.parent.Base58.encode(_reference)
 						const sendMessageRequest = async () => {
 							let chatResponse
 
@@ -1679,7 +1688,7 @@ class WebBrowser extends LitElement {
 										isEncrypted: 1,
 										isText: 1
 									}
-								});
+								})
 
 
 							}
@@ -1700,85 +1709,85 @@ class WebBrowser extends LitElement {
 										isEncrypted: 0,
 										isText: 1
 									}
-								});
+								})
 
 
 							}
 
 							const msgResponse = await _computePow(chatResponse)
-							return msgResponse;
-						};
+							return msgResponse
+						}
 
 						const _computePow = async (chatBytes) => {
-							const difficulty = 8;
+							const difficulty = 8
 							const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
-							const worker = new WebWorkerChat();
-							let nonce = null;
-							let chatBytesArray = null;
+							const worker = new WebWorkerChat()
+							let nonce = null
+							let chatBytesArray = null
 
 							await new Promise((res) => {
-								worker.postMessage({ chatBytes, path, difficulty });
+								worker.postMessage({ chatBytes, path, difficulty })
 								worker.onmessage = e => {
-									chatBytesArray = e.data.chatBytesArray;
-									nonce = e.data.nonce;
-									res();
+									chatBytesArray = e.data.chatBytesArray
+									nonce = e.data.nonce
+									res()
 								}
-							});
+							})
 
 							let _response = await parentEpml.request('sign_chat', {
 								nonce: this.selectedAddress.nonce,
 								chatBytesArray: chatBytesArray,
 								chatNonce: nonce,
 								apiVersion: 2
-							});
+							})
 
-							const chatResponse = getSendChatResponse(_response);
-							return chatResponse;
-						};
+							const chatResponse = getSendChatResponse(_response)
+							return chatResponse
+						}
 
 						const getSendChatResponse = (res) => {
 							if (res.signature) {
 								return res
 							} else if (res.error) {
-								throw new Error(res.message);
+								throw new Error(res.message)
 							} else {
-								throw new Error('ERROR: Could not send message');
+								throw new Error('ERROR: Could not send message')
 							}
-						};
+						}
 
-						const chatResponse = await sendMessageRequest();
-						return chatResponse;
+						const chatResponse = await sendMessageRequest()
+						return chatResponse
 					}
 
 					const result = await showModalAndWait(
 						actions.SEND_CHAT_MESSAGE
-					);
+					)
 					if (result.action === "accept") {
-						let hasPublicKey = true;
+						let hasPublicKey = true
 
 						if (isRecipient) {
 							const res = await parentEpml.request('apiCall', {
 								type: 'api',
 								url: `/addresses/publickey/${recipient}`
-							});
+							})
 
 							if (res.error === 102) {
 								this._publicKey.key = ''
 								this._publicKey.hasPubKey = false
-								hasPublicKey = false;
+								hasPublicKey = false
 							} else if (res !== false) {
 								this._publicKey.key = res
 								this._publicKey.hasPubKey = true
 							} else {
 								this._publicKey.key = ''
 								this._publicKey.hasPubKey = false
-								hasPublicKey = false;
+								hasPublicKey = false
 							}
 						}
 
 
 						if (!hasPublicKey && isRecipient) {
-							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}';
+							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}'
 							break
 						}
 
@@ -1805,64 +1814,64 @@ class WebBrowser extends LitElement {
 							images: [''],
 							repliedTo: '',
 							version: 3
-						};
+						}
 
-						const stringifyMessageObject = JSON.stringify(messageObject);
+						const stringifyMessageObject = JSON.stringify(messageObject)
 						// if (this.balance < 4) {
 						// 		this.myTrimmedMeassage = ''
 						// 		this.myTrimmedMeassage = stringifyMessageObject
 						// 		this.shadowRoot.getElementById('confirmDialog').open()
 						// } else {
-						// this.sendMessage(stringifyMessageObject, typeMessage);
+						// this.sendMessage(stringifyMessageObject, typeMessage)
 						// }
 						try {
-							this.loader.show();
-							const msgResponse = await sendMessage(stringifyMessageObject);
-							response = msgResponse;
+							this.loader.show()
+							const msgResponse = await sendMessage(stringifyMessageObject)
+							response = msgResponse
 						} catch (error) {
-							console.error(error);
+							console.error(error)
 							if (error.message) {
-								let data = {};
-								data['error'] = error.message;
-								response = JSON.stringify(data);
+								let data = {}
+								data['error'] = error.message
+								response = JSON.stringify(data)
 								break
 							}
-							response = '{"error": "Request could not be fulfilled"}';
+							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
-							this.loader.hide();
+							this.loader.hide()
 
 						}
 
 					} else {
-						response = '{"error": "User declined request"}';
+						response = '{"error": "User declined request"}'
 					}
-					// this.loader.show();
+					// this.loader.show()
 					// Params: data.groupId, data.destinationAddress, data.message
 					// TODO: prompt user to send chat message. If they confirm, sign+process a CHAT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break;
+					break
 				}
 
 				case actions.JOIN_GROUP: {
-					const requiredFields = ['groupId'];
-					const missingFields = [];
+					const requiredFields = ['groupId']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-					const groupId = data.groupId;
+					const groupId = data.groupId
 
 
 					let groupInfo = null
@@ -1870,60 +1879,61 @@ class WebBrowser extends LitElement {
 						groupInfo = await parentEpml.request("apiCall", {
 							type: "api",
 							url: `/groups/${groupId}`,
-						});
+						})
 					} catch (error) {
-						const errorMsg = (error && error.message) || 'Group not found';
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const errorMsg = (error && error.message) || 'Group not found'
+						let obj = {}
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 						break
 					}
 
 					if (!groupInfo || groupInfo.error) {
-						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found';
-						let obj = {};
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found'
+						let obj = {}
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 						break
 					}
 
 					try {
-						this.loader.show();
+						this.loader.show()
 						const resJoinGroup = await this._joinGroup(groupId, groupInfo.groupName)
-						response = JSON.stringify(resJoinGroup);
+						response = JSON.stringify(resJoinGroup)
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to join the group.';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = error.message || 'Failed to join the group.'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
 
 					// Params: data.groupId
 					// TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break;
+					break
 				}
+
 				case actions.SAVE_FILE: {
 					try {
 
-						const requiredFields = ['filename', 'blob'];
-						const missingFields = [];
+						const requiredFields = ['filename', 'blob']
+						const missingFields = []
 
 						requiredFields.forEach((field) => {
 							if (!data[field]) {
-								missingFields.push(field);
+								missingFields.push(field)
 							}
-						});
+						})
 
 						if (missingFields.length > 0) {
-							const missingFieldsString = missingFields.join(', ');
+							const missingFieldsString = missingFields.join(', ')
 							const errorMsg = `Missing fields: ${missingFieldsString}`
-							let data = {};
-							data['error'] = errorMsg;
-							response = JSON.stringify(data);
+							let data = {}
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
 							break
 						}
 
@@ -1937,10 +1947,10 @@ class WebBrowser extends LitElement {
 							{
 								filename
 							}
-						);
+						)
 
 						if (res.action === 'reject') {
-							response = '{"error": "User declined request"}';
+							response = '{"error": "User declined request"}'
 							break
 
 						}
@@ -1953,17 +1963,17 @@ class WebBrowser extends LitElement {
 						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
 						let fileHandleOptions = {}
 						if (!mimeType) {
-							const obj = {};
-							const errorMsg = 'A mimeType could not be derived';
-							obj['error'] = errorMsg;
-							response = JSON.stringify(obj);
+							const obj = {}
+							const errorMsg = 'A mimeType could not be derived'
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
 							break
 						}
 						if (!fileExtension) {
-							const obj = {};
-							const errorMsg = 'A file extension could not be derived';
-							obj['error'] = errorMsg;
-							response = JSON.stringify(obj);
+							const obj = {}
+							const errorMsg = 'A file extension could not be derived'
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
 							break
 						}
 						if (fileExtension && mimeType) {
@@ -1994,78 +2004,77 @@ class WebBrowser extends LitElement {
 							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
 						} catch (error) {
 							if (error.name === 'AbortError') {
-								const obj = {};
-								const errorMsg = 'User declined the download';
-								obj['error'] = errorMsg;
-								response = JSON.stringify(obj);
+								const obj = {}
+								const errorMsg = 'User declined the download'
+								obj['error'] = errorMsg
+								response = JSON.stringify(obj)
 								break
 							}
 							FileSaver.saveAs(blob, filename)
 						}
 
-						response = JSON.stringify(true);
+						response = JSON.stringify(true)
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to initiate download';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = error.message || 'Failed to initiate download'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 					}
-					break;
+					break
 				}
 
 				case 'DEPLOY_AT': {
-					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type'];
-					const missingFields = [];
+					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 
 
 					try {
-						this.loader.show();
+						this.loader.show()
 					
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
-						response = JSON.stringify(resDeployAt);
+						response = JSON.stringify(resDeployAt)
 					} catch (error) {
-						const obj = {};
-						const errorMsg = error.message || 'Failed to join the group.';
-						obj['error'] = errorMsg;
-						response = JSON.stringify(obj);
+						const obj = {}
+						const errorMsg = error.message || 'Failed to join the group.'
+						obj['error'] = errorMsg
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
-					break;
+					break
 				}
 
-
 				case actions.GET_WALLET_BALANCE: {
-					const requiredFields = ['coin'];
-					const missingFields = [];
+					const requiredFields = ['coin']
+					const missingFields = []
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
+					})
 
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					// Params: data.coin (QORT / BTC / LTC / DOGE / DGB / RVN / ARRR)
@@ -2074,14 +2083,14 @@ class WebBrowser extends LitElement {
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
-					);
+					)
 
 					if (res3.action === 'accept') {
-						let coin = data.coin;
+						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 							try {
-								this.loader.show();
+								this.loader.show()
 								const QORTBalance = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
 								})
@@ -2089,14 +2098,14 @@ class WebBrowser extends LitElement {
 
 
 							} catch (error) {
-								console.error(error);
-								const data = {};
-								const errorMsg = error.message || get("browserpage.bchange21");
-								data['error'] = errorMsg;
-								response = JSON.stringify(data);
+								console.error(error)
+								const data = {}
+								const errorMsg = error.message || get("browserpage.bchange21")
+								data['error'] = errorMsg
+								response = JSON.stringify(data)
 
 							} finally {
-								this.loader.hide();
+								this.loader.hide()
 							}
 						} else {
 							let _url = ``
@@ -2131,39 +2140,55 @@ class WebBrowser extends LitElement {
 									break
 							}
 							try {
-								this.loader.show();
+								this.loader.show()
 								const res = await parentEpml.request('apiCall', {
 									url: _url,
 									method: 'POST',
 									body: _body,
 								})
 								if (isNaN(Number(res))) {
-									const data = {};
-									const errorMsg = error.message || get("browserpage.bchange21");
-									data['error'] = errorMsg;
-									response = JSON.stringify(data);
-									return;
+									const data = {}
+									const errorMsg = error.message || get("browserpage.bchange21")
+									data['error'] = errorMsg
+									response = JSON.stringify(data)
+									return
 								} else {
-									response = (Number(res) / 1e8).toFixed(8);
+									response = (Number(res) / 1e8).toFixed(8)
 								}
 							} catch (error) {
-								console.error(error);
-								const data = {};
-								const errorMsg = error.message || get("browserpage.bchange21");
-								data['error'] = errorMsg;
-								response = JSON.stringify(data);
-								return;
+								console.error(error)
+								const data = {}
+								const errorMsg = error.message || get("browserpage.bchange21")
+								data['error'] = errorMsg
+								response = JSON.stringify(data)
+								return
 							} finally {
 								this.loader.hide()
 							}
 						}
 					} else if (res3.action === 'reject') {
-						response = '{"error": "User declined request"}';
+						response = '{"error": "User declined request"}'
 					}
 
-					break;
+					break
 				}
 
+				case actions.GET_DAY_SUMMARY: {
+					try {
+						const summary = await parentEpml.request('apiCall', {
+							type: 'api',
+							url: `/admin/summary?apiKey=${this.getApiKey()}`,
+						})
+						response = summary
+					} catch (error) {
+						const data = {}
+						const errorMsg = "Error in retrieving summary"
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
 
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'destinationAddress', 'amount']
@@ -3048,26 +3073,26 @@ class WebBrowser extends LitElement {
 			}
 
 			// Parse response
-			let responseObj;
+			let responseObj
 			try {
-				responseObj = JSON.parse(response);
+				responseObj = JSON.parse(response)
 			} catch (e) {
 				// Not all responses will be JSON
-				responseObj = response;
+				responseObj = response
 			}
 			// Respond to app
 			if (responseObj.error != null) {
 				event.ports[0].postMessage({
 					result: null,
 					error: responseObj,
-				});
+				})
 			} else {
 				event.ports[0].postMessage({
 					result: responseObj,
 					error: null,
-				});
+				})
 			}
-		});
+		})
 		this.clearConsole()
 		setInterval(() => {
 			this.clearConsole()
@@ -3083,29 +3108,30 @@ class WebBrowser extends LitElement {
 	}
 
 	changeTheme() {
-		const checkTheme = localStorage.getItem('qortalTheme');
+		const checkTheme = localStorage.getItem('qortalTheme')
 		if (checkTheme === 'dark') {
-			this.theme = 'dark';
+			this.theme = 'dark'
 		} else {
-			this.theme = 'light';
+			this.theme = 'light'
 		}
-		document.querySelector('html').setAttribute('theme', this.theme);
+		document.querySelector('html').setAttribute('theme', this.theme)
 	}
 
 	changeLanguage() {
-		const checkLanguage = localStorage.getItem('qortalLanguage');
+		const checkLanguage = localStorage.getItem('qortalLanguage')
 
 		if (checkLanguage === null || checkLanguage.length === 0) {
-			localStorage.setItem('qortalLanguage', 'us');
-			use('us');
+			localStorage.setItem('qortalLanguage', 'us')
+			use('us')
 		} else {
-			use(checkLanguage);
+			use(checkLanguage)
 		}
 	}
+
 	addAppToNotificationList(appName) {
 		if(!appName) throw new Error('unknown app name')
-		const id = `appNotificationList-${this.selectedAddress.address}`;
-		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+		const id = `appNotificationList-${this.selectedAddress.address}`
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
 	  
 		if (!checkData) {
 		  const newData = {
@@ -3113,32 +3139,32 @@ class WebBrowser extends LitElement {
 			  interval: 900000, // 15mins in milliseconds
 			  lastNotification: null,
 			},
-		  };
-		  localStorage.setItem(id, JSON.stringify(newData));
+		  }
+		  localStorage.setItem(id, JSON.stringify(newData))
 		} else {
-		  const copyData = { ...checkData };
+		  const copyData = { ...checkData }
 		  copyData[appName] = {
 			interval: 900000, // 15mins in milliseconds
 			lastNotification: null,
-		  };
-		  localStorage.setItem(id, JSON.stringify(copyData));
+		  }
+		  localStorage.setItem(id, JSON.stringify(copyData))
 		}
 	  }
 
 	  updateLastNotification(id, appName) {
-		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
 	  
 		if (checkData) {
-		  const copyData = { ...checkData };
+		  const copyData = { ...checkData }
 		  if (copyData[appName]) {
-			copyData[appName].lastNotification = Date.now(); // Make sure to use Date.now(), not date.now()
+			copyData[appName].lastNotification = Date.now() // Make sure to use Date.now(), not date.now()
 		  } else {
 			copyData[appName] = {
 			  interval: 900000, // 15mins in milliseconds
 			  lastNotification: Date.now(),
-			};
+			}
 		  }
-		  localStorage.setItem(id, JSON.stringify(copyData));
+		  localStorage.setItem(id, JSON.stringify(copyData))
 		}
 	  }
 	  
@@ -3146,7 +3172,7 @@ class WebBrowser extends LitElement {
 	renderFollowUnfollowButton() {
 		// Only show the follow/unfollow button if we have permission to modify the list on this node
 		if (this.followedNames == null || !Array.isArray(this.followedNames)) {
-			return html``;
+			return html``
 		}
 
 		if (this.followedNames.indexOf(this.name) === -1) {
@@ -3156,7 +3182,7 @@ class WebBrowser extends LitElement {
 				title="${translate('browserpage.bchange7')} ${this.name}"
 				class="address-bar-button float-right"
 				><mwc-icon>add_to_queue</mwc-icon></mwc-button
-			>`;
+			>`
 		} else {
 			// render unfollow button
 			return html`<mwc-button
@@ -3164,14 +3190,14 @@ class WebBrowser extends LitElement {
 				title="${translate('browserpage.bchange8')} ${this.name}"
 				class="address-bar-button float-right"
 				><mwc-icon>remove_from_queue</mwc-icon></mwc-button
-			>`;
+			>`
 		}
 	}
 
 	renderBlockUnblockButton() {
 		// Only show the block/unblock button if we have permission to modify the list on this node
 		if (this.blockedNames == null || !Array.isArray(this.blockedNames)) {
-			return html``;
+			return html``
 		}
 
 		if (this.blockedNames.indexOf(this.name) === -1) {
@@ -3181,7 +3207,7 @@ class WebBrowser extends LitElement {
 				title="${translate('browserpage.bchange9')} ${this.name}"
 				class="address-bar-button float-right"
 				><mwc-icon>block</mwc-icon></mwc-button
-			>`;
+			>`
 		} else {
 			// render unblock button
 			return html`<mwc-button
@@ -3189,18 +3215,18 @@ class WebBrowser extends LitElement {
 				title="${translate('browserpage.bchange10')} ${this.name}"
 				class="address-bar-button float-right"
 				><mwc-icon>radio_button_unchecked</mwc-icon></mwc-button
-			>`;
+			>`
 		}
 	}
 
 	// Navigation
 
 	goBack() {
-		window.history.back();
+		window.history.back()
 	}
 
 	goForward() {
-		window.history.forward();
+		window.history.forward()
 	}
 
 	refresh() {
@@ -3218,37 +3244,37 @@ class WebBrowser extends LitElement {
 	goBackToList() {
 		if (this.service == "APP") {
 			this.exitFullScreen()
-			window.location = '../../q-app/index.html';
+			window.location = '../../q-app/index.html'
 		}
 		else { // Default to websites list
 			this.exitFullScreen()
-			window.location = '../index.html';
+			window.location = '../index.html'
 		}
 	}
 
 	follow() {
-		this.followName(this.name);
+		this.followName(this.name)
 	}
 
 	unfollow() {
-		this.unfollowName(this.name);
+		this.unfollowName(this.name)
 	}
 
 	block() {
-		this.blockName(this.name);
+		this.blockName(this.name)
 	}
 
 	unblock() {
-		this.unblockName(this.name);
+		this.unblockName(this.name)
 	}
 
 	delete() {
-		this.deleteCurrentResource();
+		this.deleteCurrentResource()
 	}
 
 	async followName(name) {
-		let items = [name];
-		let namesJsonString = JSON.stringify({ items: items });
+		let items = [name]
+		let namesJsonString = JSON.stringify({ items: items })
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -3257,7 +3283,7 @@ class WebBrowser extends LitElement {
 				'Content-Type': 'application/json',
 			},
 			body: `${namesJsonString}`,
-		});
+		})
 
 		if (ret === true) {
 			// Successfully followed - add to local list
@@ -3265,19 +3291,19 @@ class WebBrowser extends LitElement {
 			// immediately, as apposed to only adding if it doesn't already exist
 			this.followedNames = this.followedNames.filter(
 				(item) => item != name
-			);
-			this.followedNames.push(name);
+			)
+			this.followedNames.push(name)
 		} else {
-			let err1string = get('browserpage.bchange11');
-			parentEpml.request('showSnackBar', `${err1string}`);
+			let err1string = get('browserpage.bchange11')
+			parentEpml.request('showSnackBar', `${err1string}`)
 		}
 
-		return ret;
+		return ret
 	}
 
 	async unfollowName(name) {
-		let items = [name];
-		let namesJsonString = JSON.stringify({ items: items });
+		let items = [name]
+		let namesJsonString = JSON.stringify({ items: items })
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
@@ -3286,24 +3312,24 @@ class WebBrowser extends LitElement {
 				'Content-Type': 'application/json',
 			},
 			body: `${namesJsonString}`,
-		});
+		})
 
 		if (ret === true) {
 			// Successfully unfollowed - remove from local list
 			this.followedNames = this.followedNames.filter(
 				(item) => item != name
-			);
+			)
 		} else {
-			let err2string = get('browserpage.bchange12');
-			parentEpml.request('showSnackBar', `${err2string}`);
+			let err2string = get('browserpage.bchange12')
+			parentEpml.request('showSnackBar', `${err2string}`)
 		}
 
-		return ret;
+		return ret
 	}
 
 	async blockName(name) {
-		let items = [name];
-		let namesJsonString = JSON.stringify({ items: items });
+		let items = [name]
+		let namesJsonString = JSON.stringify({ items: items })
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -3312,7 +3338,7 @@ class WebBrowser extends LitElement {
 				'Content-Type': 'application/json',
 			},
 			body: `${namesJsonString}`,
-		});
+		})
 
 		if (ret === true) {
 			// Successfully blocked - add to local list
@@ -3320,19 +3346,19 @@ class WebBrowser extends LitElement {
 			// immediately, as apposed to only adding if it doesn't already exist
 			this.blockedNames = this.blockedNames.filter(
 				(item) => item != name
-			);
-			this.blockedNames.push(name);
+			)
+			this.blockedNames.push(name)
 		} else {
-			let err3string = get('browserpage.bchange13');
-			parentEpml.request('showSnackBar', `${err3string}`);
+			let err3string = get('browserpage.bchange13')
+			parentEpml.request('showSnackBar', `${err3string}`)
 		}
 
-		return ret;
+		return ret
 	}
 
 	async unblockName(name) {
-		let items = [name];
-		let namesJsonString = JSON.stringify({ items: items });
+		let items = [name]
+		let namesJsonString = JSON.stringify({ items: items })
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
@@ -3341,66 +3367,66 @@ class WebBrowser extends LitElement {
 				'Content-Type': 'application/json',
 			},
 			body: `${namesJsonString}`,
-		});
+		})
 
 		if (ret === true) {
 			// Successfully unblocked - remove from local list
 			this.blockedNames = this.blockedNames.filter(
 				(item) => item != name
-			);
+			)
 		} else {
-			let err4string = get('browserpage.bchange14');
-			parentEpml.request('showSnackBar', `${err4string}`);
+			let err4string = get('browserpage.bchange14')
+			parentEpml.request('showSnackBar', `${err4string}`)
 		}
 
-		return ret;
+		return ret
 	}
 
 	async deleteCurrentResource() {
 		if (this.followedNames.indexOf(this.name) != -1) {
 			// Following name - so deleting won't work
-			let err5string = get('browserpage.bchange15');
-			parentEpml.request('showSnackBar', `${err5string}`);
-			return;
+			let err5string = get('browserpage.bchange15')
+			parentEpml.request('showSnackBar', `${err5string}`)
+			return
 		}
 
-		let identifier = (this.identifier == null || this.identifier.length == 0) ? 'default' : this.identifier;
+		let identifier = (this.identifier == null || this.identifier.length == 0) ? 'default' : this.identifier
 
 		let ret = await parentEpml.request('apiCall', {
 			url: `/arbitrary/resource/${this.service}/${this.name
 				}/${identifier}?apiKey=${this.getApiKey()}`,
 			method: 'DELETE',
-		});
+		})
 
 		if (ret === true) {
-			this.goBackToList();
+			this.goBackToList()
 		} else {
-			let err6string = get('browserpage.bchange16');
-			parentEpml.request('showSnackBar', `${err6string}`);
+			let err6string = get('browserpage.bchange16')
+			parentEpml.request('showSnackBar', `${err6string}`)
 		}
 
-		return ret;
+		return ret
 	}
 
 	getApiKey() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 			window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-		let apiKey = myNode.apiKey;
-		return apiKey;
+			]
+		let apiKey = myNode.apiKey
+		return apiKey
 	}
 }
 
-window.customElements.define('web-browser', WebBrowser);
+window.customElements.define('web-browser', WebBrowser)
 
 async function showModalAndWait(type, data) {
 	// Create a new Promise that resolves with user data and an action when the user clicks a button
 	return new Promise((resolve) => {
 		// Create the modal and add it to the DOM
-		const modal = document.createElement('div');
+		const modal = document.createElement('div')
 		modal.id = "backdrop"
-		modal.classList.add("backdrop");
+		modal.classList.add("backdrop")
 		modal.innerHTML = `
 			<div class="modal my-modal-class">
 				<div class="modal-content">
@@ -3516,49 +3542,49 @@ async function showModalAndWait(type, data) {
 					</div>
 				</div>
 			</div>
-		`;
-		document.body.appendChild(modal);
+		`
+		document.body.appendChild(modal)
 
 		// Add click event listeners to the buttons
-		const okButton = modal.querySelector('#ok-button');
+		const okButton = modal.querySelector('#ok-button')
 		okButton.addEventListener('click', () => {
-			const userData = {};
+			const userData = {}
 			if (type === actions.PUBLISH_QDN_RESOURCE || type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES) {
-				const isWithFeeCheckbox = modal.querySelector('#isWithFee');
-				// userData.isWithFee = isWithFeeCheckbox.checked;
+				const isWithFeeCheckbox = modal.querySelector('#isWithFee')
+				// userData.isWithFee = isWithFeeCheckbox.checked
 				userData.isWithFee = true
 			}
 			if (modal.parentNode === document.body) {
-				document.body.removeChild(modal);
+				document.body.removeChild(modal)
 			}
-			resolve({ action: 'accept', userData });
-		});
-		const modalContent = modal.querySelector('.modal-content');
+			resolve({ action: 'accept', userData })
+		})
+		const modalContent = modal.querySelector('.modal-content')
 		modalContent.addEventListener('click', (e) => {
-			e.stopPropagation();
-			return;
-		});
-		const backdropClick = document.getElementById('backdrop');
+			e.stopPropagation()
+			return
+		})
+		const backdropClick = document.getElementById('backdrop')
 		backdropClick.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
-				document.body.removeChild(modal);
+				document.body.removeChild(modal)
 			}
-			resolve({ action: 'reject' });
-		});
-		const cancelButton = modal.querySelector('#cancel-button');
+			resolve({ action: 'reject' })
+		})
+		const cancelButton = modal.querySelector('#cancel-button')
 		cancelButton.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
-				document.body.removeChild(modal);
+				document.body.removeChild(modal)
 			}
-			resolve({ action: 'reject' });
-		});
-		const labelButton = modal.querySelector('#authButtonLabel');
+			resolve({ action: 'reject' })
+		})
+		const labelButton = modal.querySelector('#authButtonLabel')
 		if (labelButton) {
 			labelButton.addEventListener('click', () => {
-				this.shadowRoot.getElementById('authButton').click();
+				this.shadowRoot.getElementById('authButton').click()
 			})
 		}
-		const checkbox = modal.querySelector('#authButton');
+		const checkbox = modal.querySelector('#authButton')
 		if (checkbox) {
 			checkbox.addEventListener('click', (e) => {
 				if (e.target.checked) {
@@ -3568,13 +3594,13 @@ async function showModalAndWait(type, data) {
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
 			})
 		}
-		const labelButton2 = modal.querySelector('#listsButtonLabel');
+		const labelButton2 = modal.querySelector('#listsButtonLabel')
 		if (labelButton2) {
 			labelButton2.addEventListener('click', () => {
-				this.shadowRoot.getElementById('listsButton').click();
+				this.shadowRoot.getElementById('listsButton').click()
 			})
 		}
-		const checkbox2 = modal.querySelector('#listsButton');
+		const checkbox2 = modal.querySelector('#listsButton')
 		if (checkbox2) {
 			checkbox2.addEventListener('click', (e) => {
 				if (e.target.checked) {
@@ -3584,15 +3610,15 @@ async function showModalAndWait(type, data) {
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoLists(true))
 			})
 		}
-	});
+	})
 }
 
 async function showErrorAndWait(type, data, data1) {
 	// Create the modal and add it to the DOM
 	const modalDelay = ms => new Promise(res => setTimeout(res, ms))
-	const error = document.createElement('div');
+	const error = document.createElement('div')
 	error.id = "backdrop"
-	error.classList.add("backdrop");
+	error.classList.add("backdrop")
 	error.innerHTML = `
 		<div class="modal my-modal-class">
 			<div class="modal-content">
@@ -3664,7 +3690,7 @@ async function showErrorAndWait(type, data, data1) {
 				</div>
 			</div>
 		</div>
-	`;
+	`
 	document.body.appendChild(error)
 
 	await modalDelay(3000)
@@ -3830,9 +3856,9 @@ const styles = `
 	#cancel-button:hover {
 		background-color: #d32f2f;
 	}
-`;
+`
 
-const styleSheet = new CSSStyleSheet();
-styleSheet.replaceSync(styles);
+const styleSheet = new CSSStyleSheet()
+styleSheet.replaceSync(styles)
 
-document.adoptedStyleSheets = [styleSheet];
+document.adoptedStyleSheets = [styleSheet]

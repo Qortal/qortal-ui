@@ -619,6 +619,7 @@ class QortalLottery extends LitElement {
         this.successMessage = ''
         this.sendQortLoading = false
         this.lotteryAtAddress = dataObj.aTAddress
+        this.lotteryEnterAmount = dataObj.enter
 
         if (!isNaN(this.lotteryEnterAmount) && !isNaN(parseFloat(this.lotteryEnterAmount))) {
             this.lotteryEnterAmount = parseFloat(dataObj.enter)
