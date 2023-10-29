@@ -728,7 +728,8 @@
 		"bchange45": "Versleutelen",
 		"bchange46": "Geeft U deze applicatie toelating om volgend bestand op te slaan?",
 		"bchange47": "Onmiddellijk publiceren - Kost",
-		"bchange48": "Geeft U deze applicatie toelating om U verwittigingen te sturen?"
+		"bchange48": "Geeft U deze applicatie toelating om U verwittigingen te sturen?",
+		"bchange49": "Geeft U deze applicatie toelating om uw portemonnee-informatie te consulteren?"
 	},
 	"datapage": {
 		"dchange1": "Data-beheer",

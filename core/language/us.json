@@ -399,8 +399,7 @@
 		"wchange56": "WARNING!",
 		"wchange57": "Memo",
 		"wchange58": "New Address",
-		"wchange59": "Coin",
-		"wchange60": "Reload txs"
+		"wchange59": "Coin"
 	},
 	"tradepage": {
 		"tchange1": "Trade Portal",

@@ -5,7 +5,7 @@
 		"chinese1": "Hiina (Lihtsustatud)",
 		"chinese2": "Hiina (Tradits.)",
 		"croatian": "Horvaatia",
-		"dutch": "hollandi",
+		"dutch": "Hollandi",
 		"english": "Inglise",
 		"estonian": "Eesti",
 		"french": "Prantsuse",
@@ -728,7 +728,8 @@
 		"bchange45": "Krüpteeri",
 		"bchange46": "Kas annad sellele rakendusele loa salvestada järgnev fail",
 		"bchange47": "Kiire avaldamine - nõuab",
-		"bchange48": "Kas annate sellele rakendusele loa teile teateid saata"
+		"bchange48": "Kas annate sellele rakendusele loa teile teateid saata",
+		"bchange49": "Kas annad sellele rakendusele loa näha oma rahakoti teabe?"
 	},
 	"datapage": {
 		"dchange1": "Andmete haldamine",

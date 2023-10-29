@@ -728,7 +728,8 @@
 		"bchange45": "Criptați",
 		"bchange46": "Dați această aplicație permisiunea de a salva următorul fișier",
 		"bchange47": "Publicare instantanee - necesită",
-		"bchange48": "Acordați acestei aplicații permisiunea de a vă trimite notificări"
+		"bchange48": "Acordați acestei aplicații permisiunea de a vă trimite notificări",
+		"bchange49": "Oferiți acestei aplicații permisiunea de a obține informațiile despre portofel?"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",

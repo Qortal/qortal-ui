@@ -728,7 +728,8 @@
 		"bchange45": "Crypter",
 		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant",
 		"bchange47": "Publication instantanée - nécessite",
-		"bchange48": "Autorisez-vous cette application à vous envoyer des notifications"
+		"bchange48": "Autorisez-vous cette application à vous envoyer des notifications",
+		"bchange49": "Autorisez-vous cette application à récupérer les informations de votre portefeuille ?"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",
