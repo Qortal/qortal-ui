@@ -579,9 +579,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 						<popover-component for="save-icon" message="">
 							<div style="margin-bottom:20px">
 								<p style="margin:10px 0px; font-size:16px">
-									${`${translate('walletpage.wchange12')}: ${
+									${translate('walletpage.wchange12')}: ${
 										this.fee ? this.fee.feeToShow : ''
-									}`}
+									}
 								</p>
 							</div>
 							<div
