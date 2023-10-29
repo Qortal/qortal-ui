@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
 import '@vaadin/tooltip';
-import { get } from 'lit-translate';
+import { translate } from 'lit-translate';
 
 
 class FriendsSidePanelParent extends LitElement {
@@ -68,7 +68,7 @@ class FriendsSidePanelParent extends LitElement {
 			  position="bottom"
 			  hover-delay=${400}
 			  hide-delay=${1}
-			  text=${get('friends.friend12')}>
+			  text=${translate('friends.friend12')}>
 		  </vaadin-tooltip>
 			<friends-side-panel .setHasNewFeed=${(val)=> this.setHasNewFeed(val)} ?isOpen=${this.isOpen} .setIsOpen=${(val)=> this.isOpen = val}></friends-side-panel>
 			

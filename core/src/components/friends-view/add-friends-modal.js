@@ -321,7 +321,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="willFollowLabel"
 							style="color: var(--black);"
 						>
-							${get('friends.friend5')}
+							${translate('friends.friend5')}
 						</label>
 						<mwc-checkbox
 							style="margin-right: -15px;"
@@ -339,7 +339,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="nameLabel"
 							style="color: var(--black);"
 						>
-							${get('login.name')}
+							${translate('login.name')}
 						</label>
 						<input
 							id="name"
@@ -357,7 +357,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="aliasLabel"
 							style="color: var(--black);"
 						>
-							${get('friends.friend6')}
+							${translate('friends.friend6')}
 						</label>
 						<input
 							id="alias"
