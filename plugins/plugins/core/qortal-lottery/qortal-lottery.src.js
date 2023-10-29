@@ -275,13 +275,13 @@ class QortalLottery extends LitElement {
                         <div class="loading"></div>
                         <div style="text-align: center;"><span style="color: var(--black);">${translate("login.loading")}</span></div>
                     </div>
-                    <vaadin-grid theme="large, wrap-cell-content" id="lotteryGrid" ?hidden="${this.isEmptyArray(this.openLotteriesArray)}" aria-label="Open" .items="${this.openLotteriesArray}" all-rows-visible>
+                    <vaadin-grid theme="compact, wrap-cell-content" id="lotteryGrid" ?hidden="${this.isEmptyArray(this.openLotteriesArray)}" aria-label="Open" .items="${this.openLotteriesArray}" all-rows-visible>
                         <vaadin-grid-column width="40%" header="${translate('grouppage.gchange5')}" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column width="22em" header="${translate('lotterypage.lot2')}" path="aTAddress"></vaadin-grid-column>
-                        <vaadin-grid-column width="8em" header="${translate('lotterypage.lot3')}" path="startBlock"></vaadin-grid-column>
-                        <vaadin-grid-column width="9em" header="${translate('lotterypage.lot4')}" path="endBlock"></vaadin-grid-column>
-                        <vaadin-grid-column width="8em" header="${translate('lotterypage.lot13')}" path="joined"></vaadin-grid-column>
-                        <vaadin-grid-column width="13em" header="${translate('grouppage.gchange7')}" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="22%" header="${translate('lotterypage.lot2')}" path="aTAddress"></vaadin-grid-column>
+                        <vaadin-grid-column width="8%" header="${translate('lotterypage.lot3')}" path="startBlock"></vaadin-grid-column>
+                        <vaadin-grid-column width="9%" header="${translate('lotterypage.lot4')}" path="endBlock"></vaadin-grid-column>
+                        <vaadin-grid-column width="8%" header="${translate('lotterypage.lot13')}" path="joined"></vaadin-grid-column>
+                        <vaadin-grid-column width="13%" header="${translate('grouppage.gchange7')}" .renderer=${(root, column, data) => {
                             render(html`${this.renderPlayButton(data.item)}`, root)
                         }}></vaadin-grid-column>
                     </vaadin-grid>
@@ -297,15 +297,15 @@ class QortalLottery extends LitElement {
                         <div class="loading"></div>
                         <div style="text-align: center;"><span style="color: var(--black);">${translate("login.loading")}</span></div>
                     </div>
-                    <vaadin-grid theme="large, wrap-cell-content" id="lotteryGrid" ?hidden="${this.isEmptyArray(this.closedLotteriesArray)}" aria-label="Finished" .items="${this.closedLotteriesArray}" all-rows-visible>
+                    <vaadin-grid theme="compact, wrap-cell-content" id="lotteryGrid" ?hidden="${this.isEmptyArray(this.closedLotteriesArray)}" aria-label="Finished" .items="${this.closedLotteriesArray}" all-rows-visible>
                         <vaadin-grid-column width="40%" header="${translate('grouppage.gchange5')}" path="description"></vaadin-grid-column>
-                        <vaadin-grid-column width="8em" header="${translate('lotterypage.lot3')}" path="startblock"></vaadin-grid-column>
-                        <vaadin-grid-column width="9em" header="${translate('lotterypage.lot4')}" path="endblock"></vaadin-grid-column>
-                        <vaadin-grid-column width="12em" header="${translate('lotterypage.lot7')}" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="9%" header="${translate('lotterypage.lot3')}" path="startblock"></vaadin-grid-column>
+                        <vaadin-grid-column width="9%" header="${translate('lotterypage.lot4')}" path="endblock"></vaadin-grid-column>
+                        <vaadin-grid-column width="12%" header="${translate('lotterypage.lot7')}" .renderer=${(root, column, data) => {
                             render(html`${data.item.jackpot} QORT`, root)
                         }}></vaadin-grid-column>
-                        <vaadin-grid-column width="22em" header="${translate('lotterypage.lot8')}" path="winner"></vaadin-grid-column>
-                        <vaadin-grid-column width="8em" header="${translate('lotterypage.lot9')}" .renderer=${(root, column, data) => {
+                        <vaadin-grid-column width="22%" header="${translate('lotterypage.lot8')}" path="winner"></vaadin-grid-column>
+                        <vaadin-grid-column width="8%" header="${translate('lotterypage.lot9')}" .renderer=${(root, column, data) => {
                             render(html`<mwc-icon style="color: #00C851">check</mwc-icon>`, root)
                         }}></vaadin-grid-column>
                     </vaadin-grid>
