@@ -237,9 +237,11 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			changedProperties.has('editContent') &&
 			this.editContent
 		) {
-			this.bio = this.editContent.bio ?? '';
-			this.tagline = this.editContent.tagline ?? '';
-			this.wallets = this.editContent.wallets ?? {};
+			const {bio, tagline, wallets, customData} = this.editContent
+			this.bio = bio ?? '';
+			this.tagline = tagline ?? '';
+			this.wallets = wallets ?? {};
+			this.customData = {...customData}
 			this.requestUpdate();
 		}
 	}
@@ -353,6 +355,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				tagline: this.tagline,
 				bio: this.bio,
 				wallets: this.wallets,
+				customData: this.customData
 			};
 			await this.onSubmit(data);
 			this.setIsOpen(false);
@@ -377,6 +380,22 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	addCustomData(){
 		const copyObj = {...this.customData}
 		copyObj[this.newCustomDataKey] = this.newCustomDataField
+		this.customData = copyObj
+		this.newCustomDataKey = ""
+		this.newCustomDataField = {};
+		this.newFieldName = ''
+		this.isOpenCustomDataModal = false;
+	}
+
+	updateCustomData(key, data){
+		this.isOpenCustomDataModal = true
+		this.newCustomDataField = data
+		this.newCustomDataKey = key
+
+	}
+	removeCustomData(key){
+		const copyObj = {...this.customData}
+		delete copyObj[key]
 		this.customData = copyObj
 	}
 
@@ -466,6 +485,40 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 													this.fillAddress(key)}
 												style="color:var(--black);cursor:pointer"
 												>upload_2</mwc-icon
+											>
+										</div>
+									</div>
+								`;
+							})}
+						</div>
+						<div style="display: flex;flex-direction: column;">
+							${Object.keys(this.customData).map((key) => {
+								return html`
+									<div
+										style="display:flex;justify-content:center;flex-direction:column;gap:25px"
+									>
+										
+										<div
+											style="display:flex;gap:15px;align-items:center"
+										>
+										<p
+										
+											style="color: var(--black);font-size:16px"
+										>
+											${key}
+											</p>
+
+											<mwc-icon
+												@click=${() =>
+													this.updateCustomData(key,this.customData[key])}
+												style="color:var(--black);cursor:pointer"
+												>edit</mwc-icon
+											>
+											<mwc-icon
+												@click=${() =>
+													this.removeCustomData(key)}
+												style="color:var(--black);cursor:pointer"
+												>remove</mwc-icon
 											>
 										</div>
 									</div>

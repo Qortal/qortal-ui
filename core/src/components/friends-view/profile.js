@@ -198,8 +198,34 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async setValues(response, resource) {
 		console.log('hello', response)
+		
 		if(response){
-			this.profileData = response
+			let data = {...response}
+		let customData = {}
+			for (const key of Object.keys(data.customData || {})) {
+				if (key.includes('-private')) {
+					try {
+						console.log('key', data.customData[key])
+						const decryptedData = decryptGroupData(data.customData[key]);
+
+						console.log({decryptedData})
+						if(decryptedData && !decryptedData.error){
+							const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
+							if(decryptedDataToBase64 && !decryptedDataToBase64.error){
+								customData[key] = decryptedDataToBase64;
+							}
+
+						}
+					} catch (error) {
+						console.log({error})
+					}
+					
+				} 
+			}
+			this.profileData = {
+				...response,
+				customData
+			}
 		}
 	}
 
@@ -315,18 +341,18 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const getArbitraryFee = await this.getArbitraryFee();
 			const feeAmount = getArbitraryFee.fee;
 
-			let newObject = {};
+			let newObject = {...data};
 
-			for (const key of Object.keys(data)) {
+			for (const key of Object.keys(newObject.customData || {})) {
 				if (key.includes('-private')) {
-					const toBase64 = await objectToBase64(newObject);
+					const toBase64 = await objectToBase64(newObject.customData[key]);
 					const encryptedData = encryptDataGroup({
 						data64: toBase64,
 						publicKeys: [],
 					});
-					newObject[key] = encryptedData;
+					newObject['customData'][key] = encryptedData;
 				} else {
-					newObject[key] = data[key];
+					newObject['customData'][key] = data[key];
 				}
 			}
 
