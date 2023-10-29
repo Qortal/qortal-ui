@@ -412,7 +412,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 								id="taglineLabel"
 								style="color: var(--black);"
 							>
-								${get('profile.profile4')}
+								${translate('profile.profile4')}
 							</label>
 							<textarea
 								class="input"
@@ -433,7 +433,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 								id="bioLabel"
 								style="color: var(--black);"
 							>
-								${get('profile.profile5')}
+								${translate('profile.profile5')}
 							</label>
 							<textarea
 								class="input"
@@ -448,7 +448,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							></textarea>
 						</div>
 						<div style="height:15px"></div>
-						<p>${get('profile.profile6')}</p>
+						<p>${translate('profile.profile6')}</p>
 						<div style="display: flex;flex-direction: column;">
 							${Object.keys(this.wallets).map((key) => {
 								return html`
@@ -467,7 +467,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 										>
 											<input
 												id=${key}
-												placeholder=${`${key}  ${get(
+												placeholder=${`${key}  ${translate(
 													'settings.address'
 												)}`}
 												class="input"
@@ -591,7 +591,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							>
 								<input
 									id="key-name"
-									placeholder=${`${get(
+									placeholder=${`${translate(
 										'profile.profile9'
 									)}`}
 									class="input"
@@ -603,7 +603,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							</div>
 						</div>
 						<div style="height:15px"></div>
-						<p>${get('profile.profile10')}</p>
+						<p>${translate('profile.profile10')}</p>
 						<div style="display: flex;flex-direction: column;">
 							${Object.keys(this.newCustomDataField).map((key) => {
 								return html`
@@ -623,7 +623,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 										
 											<input
 												id=${key}
-												placeholder=${`${get('profile.profile13')}`}
+												placeholder=${`${translate('profile.profile13')}`}
 												class="input"
 												.value=${this.newCustomDataField[key]}
 												@change=${(e) => {
@@ -649,7 +649,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						<div style="width:100%;display:flex;justify-content:center;gap:10px">
 						<input
 												
-												placeholder=${`${get('profile.profile12')}`}
+												placeholder=${`${translate('profile.profile12')}`}
 												class="input"
 												.value=${this.newFieldName}
 												@change=${(e) => {
