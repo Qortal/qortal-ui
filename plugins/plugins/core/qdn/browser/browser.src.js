@@ -2059,6 +2059,70 @@ class WebBrowser extends LitElement {
 					break
 				}
 
+				case actions.GET_USER_WALLET: {
+					const requiredFields = ['coin'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+					const res3 = await showModalAndWait(
+						actions.GET_USER_WALLET
+					);
+
+					if (res3.action === 'accept') {
+						let coin = data.coin;
+						let userWallet = {};
+
+						switch (coin) {
+							case 'QORT':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
+								break
+							case 'BTC':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+								break
+							case 'LTC':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+								break
+							case 'DOGE':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+								break
+							case 'DGB':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+								break
+							case 'RVN':
+								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
+								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+								break
+							case 'ARRR':
+								break
+							default:
+								break
+						}
+						response = JSON.stringify(userWallet);
+						break;
+					} else if (res3.action === 'reject') {
+						response = '{"error": "User declined request"}';
+					}
+					break;
+				}
+
 				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin']
 					const missingFields = []
@@ -3490,6 +3554,11 @@ async function showModalAndWait(type, data) {
 							</div>
 						` : ''}
 
+						${type === actions.GET_USER_WALLET ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange49")}</p>
+							</div>
+						` : ''}
 						${type === actions.GET_WALLET_BALANCE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>

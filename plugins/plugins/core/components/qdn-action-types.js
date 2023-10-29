@@ -19,6 +19,9 @@ export const JOIN_GROUP = 'JOIN_GROUP';
 // DEPLOY_AT action
 export const DEPLOY_AT = 'DEPLOY_AT';
 
+// GET_USER_WALLET action
+export const GET_USER_WALLET = 'GET_USER_WALLET';
+
 // GET_WALLET_BALANCE action
 export const GET_WALLET_BALANCE = 'GET_WALLET_BALANCE';
 
