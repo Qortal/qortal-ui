@@ -568,20 +568,20 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 							hover-delay=${300}
 							hide-delay=${1}
 							text=${this.error
-								? get('save.saving1')
+								? translate('save.saving1')
 								: Object.values(this.valuesToBeSavedOnQdn)
 										.length > 0 ||
 								  this.resourceExists === false
-								? get('save.saving3')
-								: get('save.saving2')}
+								? translate('save.saving3')
+								: translate('save.saving2')}
 						>
 						</vaadin-tooltip>
 						<popover-component for="save-icon" message="">
 							<div style="margin-bottom:20px">
 								<p style="margin:10px 0px; font-size:16px">
-									${`${get('walletpage.wchange12')}: ${
+									${translate('walletpage.wchange12')}: ${
 										this.fee ? this.fee.feeToShow : ''
-									}`}
+									}
 								</p>
 							</div>
 							<div
