@@ -728,7 +728,8 @@
 		"bchange45": "Szyfruj",
 		"bchange46": "Czy zezwalasz tej aplikacji na zapisanie następującego pliku",
 		"bchange47": "Błyskawiczna publikacja - wymaga",
-		"bchange48": "Czy dajesz tej aplikacji pozwolenie na wysyłanie Ci powiadomień"
+		"bchange48": "Czy dajesz tej aplikacji pozwolenie na wysyłanie Ci powiadomień",
+		"bchange49": "Czy dajesz tej aplikacji pozwolenie na uzyskanie informacji o Twoim portfelu?"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

@@ -728,7 +728,8 @@
 		"bchange45": "Verschlüsseln",
 		"bchange46": "Geben Sie dieser Anwendung die Erlaubnis, die folgende Datei zu speichern?",
 		"bchange47": "Sofortige Veröffentlichung – erforderlich",
-		"bchange48": "Erteilen Sie dieser Anwendung die Berechtigung, Ihnen Benachrichtigungen zu senden?"
+		"bchange48": "Erteilen Sie dieser Anwendung die Berechtigung, Ihnen Benachrichtigungen zu senden?",
+		"bchange49": "Erteilen Sie dieser Anwendung die Erlaubnis, Ihr Wallet-Informationen abzurufen?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",

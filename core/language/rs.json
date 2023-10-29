@@ -728,7 +728,8 @@
 		"bchange45": "Šifrovanje",
 		"bchange46": "Da li ovoj aplikaciji dajete dozvolu da sačuva sledeću datoteku",
 		"bchange47": "Trenutno objavljivanje - zahteva",
-		"bchange48": "Da li ovoj aplikaciji dajete dozvolu da vam šalje obaveštenja"
+		"bchange48": "Da li ovoj aplikaciji dajete dozvolu da vam šalje obaveštenja",
+		"bchange49": "Da li ovoj aplikaciji dajete dozvolu da dobije informacije o vašem novčaniku?"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",

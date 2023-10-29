@@ -728,7 +728,8 @@
 		"bchange45": "Titkosítás",
 		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését",
 		"bchange47": "Azonnali közzététel – szükséges",
-		"bchange48": "Engedélyezi ennek az alkalmazásnak, hogy értesítéseket küldjön Önnek"
+		"bchange48": "Engedélyezi ennek az alkalmazásnak, hogy értesítéseket küldjön Önnek",
+		"bchange49": "Engedélyt ad ennek az alkalmazásnak, hogy megszerezze a pénztárca adatait?"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",

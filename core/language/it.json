@@ -728,7 +728,8 @@
 		"bchange45": "Cripta",
 		"bchange46": "Concedi a questa applicazione il permesso di salvare il seguente file",
 		"bchange47": "Pubblicazione istantanea - richiede",
-		"bchange48": "Concedi a questa applicazione il permesso di inviarti notifiche"
+		"bchange48": "Concedi a questa applicazione il permesso di inviarti notifiche",
+		"bchange49": "Concedi a questa applicazione il permesso di ottenere informazioni sul tuo portafoglio?"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",
