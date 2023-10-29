@@ -729,7 +729,8 @@
 		"bchange45": "Encrypt",
 		"bchange46": "Do you give this application permission to save the following file",
 		"bchange47": "Instant publish - requires",
-		"bchange48": "Do you give this application permission to send you notifications"
+		"bchange48": "Do you give this application permission to send you notifications",
+		"bchange49": "Do you give this application permission to get your wallet information?"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
