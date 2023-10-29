@@ -21,7 +21,7 @@ import { parentEpml } from '../show-plugin.js';
 import '../notification-view/popover.js';
 import './avatar.js';
 import { setNewTab } from '../../redux/app/app-actions.js';
-import './profile-modal-update.js'
+import './profile-modal-update.js';
 
 class ProfileQdn extends connect(store)(LitElement) {
 	static get properties() {
@@ -34,8 +34,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 			isSaving: { type: Boolean },
 			fee: { type: Object },
 			name: { type: String },
-			isOpenProfileModalUpdate: {type: Boolean},
-			editContent: {type: Object}
+			isOpenProfileModalUpdate: { type: Boolean },
+			editContent: { type: Object },
+			profileData: {type: Object}
 		};
 	}
 
@@ -58,8 +59,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.fee = null;
 		this.name = undefined;
 		this.uid = new ShortUniqueId();
-		this.isOpenProfileModalUpdate = false
-		this.editContent = null
+		this.isOpenProfileModalUpdate = false;
+		this.editContent = null;
+		this.profileData = null
 	}
 	static styles = css`
 		.header {
@@ -157,24 +159,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 		return myNode;
 	}
 
-	async getAvatar(dataItem) {
-		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}?encoding=base64`;
-		const res = await fetch(url);
-		const data = await res.text();
-		if (data.error) throw new Error('Cannot retrieve your data from qdn');
-		const decryptedData = decryptGroupData(data);
-		const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
-		return decryptedDataToBase64;
-	}
+	
 
 	async getRawData(dataItem) {
-		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}?encoding=base64`;
+		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}`;
 		const res = await fetch(url);
-		const data = await res.text();
+		const data = await res.json();
 		if (data.error) throw new Error('Cannot retrieve your data from qdn');
-		const decryptedData = decryptGroupData(data);
-		const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
-		return decryptedDataToBase64;
+		return data
 	}
 
 	async getMyFollowedNames() {
@@ -205,122 +197,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	async setValues(response, resource) {
-		this.settingsRawData = response;
-		const rawDataTimestamp = resource.updated;
-
-		const tempSettingsData = JSON.parse(
-			localStorage.getItem('temp-settings-data') || '{}'
-		);
-
-		const userLists = response.userLists || [];
-		const friendsFeed = response.friendsFeed;
-		const myMenuPlugs = response.myMenuPlugs;
-
-		this.valuesToBeSavedOnQdn = {};
-		if (
-			userLists.length > 0 &&
-			(!tempSettingsData.userLists ||
-				(tempSettingsData.userLists &&
-					tempSettingsData.userLists.timestamp < rawDataTimestamp))
-		) {
-			const friendList = userLists[0];
-			const copyPayload = [...friendList];
-			const onlyNames = copyPayload.map((item) => item.name);
-			const followedList = await this.getMyFollowedNames();
-
-			const namesNotInFollowedList = onlyNames.filter(
-				(name) => !followedList.includes(name)
-			);
-			if (namesNotInFollowedList.length > 0) {
-				await this.followNames(namesNotInFollowedList);
-			}
-
-			localStorage.setItem(
-				'friends-my-friend-list',
-				JSON.stringify(friendList)
-			);
-			this.dispatchEvent(
-				new CustomEvent('friends-my-friend-list-event', {
-					bubbles: true,
-					composed: true,
-					detail: copyPayload,
-				})
-			);
-		} else if (
-			tempSettingsData.userLists &&
-			tempSettingsData.userLists.timestamp > rawDataTimestamp
-		) {
-			this.valuesToBeSavedOnQdn = {
-				...this.valuesToBeSavedOnQdn,
-				userLists: {
-					data: tempSettingsData.userLists.data,
-				},
-			};
-		}
-
-		if (
-			friendsFeed &&
-			(!tempSettingsData.friendsFeed ||
-				(tempSettingsData.friendsFeed &&
-					tempSettingsData.friendsFeed.timestamp < rawDataTimestamp))
-		) {
-			const copyPayload = [...friendsFeed];
-
-			localStorage.setItem(
-				'friends-my-selected-feeds',
-				JSON.stringify(friendsFeed)
-			);
-			this.dispatchEvent(
-				new CustomEvent('friends-my-selected-feeds-event', {
-					bubbles: true,
-					composed: true,
-					detail: copyPayload,
-				})
-			);
-		} else if (
-			tempSettingsData.friendsFeed &&
-			tempSettingsData.friendsFeed.timestamp > rawDataTimestamp
-		) {
-			this.valuesToBeSavedOnQdn = {
-				...this.valuesToBeSavedOnQdn,
-				friendsFeed: {
-					data: tempSettingsData.friendsFeed.data,
-				},
-			};
-		}
-
-		if (
-			myMenuPlugs &&
-			(!tempSettingsData.myMenuPlugs ||
-				(tempSettingsData.myMenuPlugs &&
-					tempSettingsData.myMenuPlugs.timestamp < rawDataTimestamp))
-		) {
-			if (Array.isArray(myMenuPlugs)) {
-				const copyPayload = [...myMenuPlugs];
-
-				localStorage.setItem(
-					'myMenuPlugs',
-					JSON.stringify(myMenuPlugs)
-				);
-
-				this.dispatchEvent(
-					new CustomEvent('myMenuPlugs-event', {
-						bubbles: true,
-						composed: true,
-						detail: copyPayload,
-					})
-				);
-			}
-		} else if (
-			tempSettingsData.myMenuPlugs &&
-			tempSettingsData.myMenuPlugs.timestamp > rawDataTimestamp
-		) {
-			this.valuesToBeSavedOnQdn = {
-				...this.valuesToBeSavedOnQdn,
-				myMenuPlugs: {
-					data: tempSettingsData.myMenuPlugs.data,
-				},
-			};
+		console.log('hello', response)
+		if(response){
+			this.profileData = response
 		}
 	}
 
@@ -342,7 +221,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const res = await fetch(url);
 			let data = '';
 			try {
+				console.log({res})
 				data = await res.json();
+				console.log({data})
 				if (Array.isArray(data)) {
 					data = data.filter(
 						(item) => item.identifier === 'qortal_profile'
@@ -353,8 +234,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const dataItem = data[0];
 						try {
 							const response = await this.getRawData(dataItem);
-							if (response.version) {
-								// this.setValues(response, dataItem);
+							console.log({response})
+							if (response.wallets) {
+								this.setValues(response, dataItem);
 							} else {
 								this.error = 'Cannot get saved user settings';
 							}
@@ -369,6 +251,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 					this.error = 'Unable to perform query';
 				}
 			} catch (error) {
+				console.log({error})
 				data = {
 					error: 'No resource found',
 				};
@@ -416,8 +299,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 		};
 	}
 
-	async saveToQdn() {
+	async saveToQdn(data) {
 		try {
+			console.log({data})
 			this.isSaving = true;
 			if (this.resourceExists === true && this.error)
 				throw new Error('Unable to save');
@@ -425,71 +309,39 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const nameObject = store.getState().app.accountInfo.names[0];
 			if (!nameObject) throw new Error('no name');
 			const name = nameObject.name;
-			const identifer = 'qortal_general_settings';
-			const filename = 'qortal_general_settings.json';
+			const identifer = 'qortal_profile';
+			const filename = 'qortal_profile.json';
 			const selectedAddress = store.getState().app.selectedAddress;
 			const getArbitraryFee = await this.getArbitraryFee();
 			const feeAmount = getArbitraryFee.fee;
-			const friendsList = JSON.parse(
-				localStorage.getItem('friends-my-friend-list') || '[]'
-			);
-			const friendsFeed = JSON.parse(
-				localStorage.getItem('friends-my-selected-feeds') || '[]'
-			);
-			const myMenuPlugs = JSON.parse(
-				localStorage.getItem('myMenuPlugs') || '[]'
-			);
 
-			let newObject;
+			let newObject = {};
 
-			if (this.resourceExists === false) {
-				newObject = {
-					version: 1,
-					userLists: [friendsList],
-					friendsFeed,
-					myMenuPlugs,
-				};
-			} else if (this.settingsRawData) {
-				const tempSettingsData = JSON.parse(
-					localStorage.getItem('temp-settings-data') || '{}'
-				);
-				newObject = {
-					...this.settingsRawData,
-				};
-				for (const key in tempSettingsData) {
-					if (tempSettingsData[key].hasOwnProperty('data')) {
-						if (
-							key === 'userLists' &&
-							!Array.isArray(tempSettingsData[key].data)
-						)
-							continue;
-						if (
-							key === 'friendsFeed' &&
-							!Array.isArray(tempSettingsData[key].data)
-						)
-							continue;
-						if (
-							key === 'myMenuPlugs' &&
-							!Array.isArray(tempSettingsData[key].data)
-						)
-							continue;
-						newObject[key] = tempSettingsData[key].data;
-					}
+			for (const key of Object.keys(data)) {
+				if (key.includes('-private')) {
+					const toBase64 = await objectToBase64(newObject);
+					const encryptedData = encryptDataGroup({
+						data64: toBase64,
+						publicKeys: [],
+					});
+					newObject[key] = encryptedData;
+				} else {
+					newObject[key] = data[key];
 				}
 			}
 
 			const newObjectToBase64 = await objectToBase64(newObject);
-			const encryptedData = encryptDataGroup({
-				data64: newObjectToBase64,
-				publicKeys: [],
-			});
+			// const encryptedData = encryptDataGroup({
+			// 	data64: newObjectToBase64,
+			// 	publicKeys: [],
+			// });
 
 			const worker = new WebWorker2();
 			try {
 				const resPublish = await publishData({
 					registeredName: encodeURIComponent(name),
-					file: encryptedData,
-					service: 'DOCUMENT_PRIVATE',
+					file: newObjectToBase64,
+					service: 'DOCUMENT',
 					identifier: encodeURIComponent(identifer),
 					parentEpml: parentEpml,
 					uploadType: 'file',
@@ -503,17 +355,17 @@ class ProfileQdn extends connect(store)(LitElement) {
 				});
 
 				this.resourceExists = true;
-				this.setValues(newObject, {
-					updated: Date.now(),
-				});
-				localStorage.setItem('temp-settings-data', JSON.stringify({}));
-				this.valuesToBeSavedOnQdn = {};
+				this.profileData = data
+				// this.setValues(newObject, {
+				// 	updated: Date.now(),
+				// });
 				worker.terminate();
 			} catch (error) {
 				worker.terminate();
 			}
 		} catch (error) {
 			console.log({ error });
+			throw new Error(error.message)
 		} finally {
 			this.isSaving = false;
 		}
@@ -541,15 +393,12 @@ class ProfileQdn extends connect(store)(LitElement) {
 		super.disconnectedCallback();
 	}
 
-	publishProfile(){
-
-	}
-
-	onClose(){
-		this.isOpenProfileModalUpdate = false
+	onClose() {
+		this.isOpenProfileModalUpdate = false;
+		this.editContent = null
 	}
 	render() {
-		console.log('sup profile2', this.name);
+		console.log('sup profile2', {profileData: this.profileData});
 		return html`
 			${this.isSaving ||
 			(!this.error && this.resourceExists === undefined)
@@ -641,10 +490,33 @@ class ProfileQdn extends connect(store)(LitElement) {
 							</div>
 						</popover-component>
 				  `
-				: html`
-						<div style="user-select:none;cursor:pointer" @click=${()=> {
-							this.isOpenProfileModalUpdate = !this.isOpenProfileModalUpdate
-						}}>
+				: this.error ? html`
+						<div
+							style="user-select:none;cursor:pointer;opacity:0.5"
+			
+						>
+							<avatar-component
+								.resource=${{
+									name: this.name,
+									service: 'THUMBNAIL',
+									identifier: 'qortal_avatar',
+								}}
+								name=${this.name}
+							></avatar-component>
+						</div>
+				  ` : html`
+						<div
+							style="user-select:none;cursor:pointer"
+							@click=${() => {
+								if(this.resourceExists && this.profileData){
+									this.editContent = this.profileData
+								} else if(this.resourceExists && !this.profileData){
+									return
+								}
+								this.isOpenProfileModalUpdate =
+									!this.isOpenProfileModalUpdate;
+							}}
+						>
 							<avatar-component
 								.resource=${{
 									name: this.name,
@@ -657,13 +529,13 @@ class ProfileQdn extends connect(store)(LitElement) {
 				  `}
 
 			<profile-modal-update
-				?isOpen=${this.isOpenProfileModalUpdate} 
-				.setIsOpen=${(val)=> {
-					this.isOpenProfileModalUpdate = val
+				?isOpen=${this.isOpenProfileModalUpdate}
+				.setIsOpen=${(val) => {
+					this.isOpenProfileModalUpdate = val;
 				}}
-				.onSubmit=${(val, isEdit)=> this.publishProfile(val, isEdit)}
-                .editContent=${this.editContent}
-				.onClose=${()=> this.onClose()}
+				.onSubmit=${this.saveToQdn}
+				.editContent=${this.editContent}
+				.onClose=${() => this.onClose()}
 			></profile-modal-update>
 		`;
 	}

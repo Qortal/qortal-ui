@@ -8,11 +8,13 @@ import {
 	registerTranslateConfig,
 } from 'lit-translate';
 import '@material/mwc-button';
+import '@material/mwc-icon';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
 import { connect } from 'pwa-helpers';
 import { store } from '../../store';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
+import { parentEpml } from '../show-plugin';
 
 class ProfileModalUpdate extends connect(store)(LitElement) {
 	static get properties() {
@@ -26,6 +28,11 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			tagline: { type: String },
 			bio: { type: String },
 			wallets: { type: Array },
+			hasFetchedArrr: { type: Boolean },
+			isOpenCustomDataModal: { type: Boolean },
+			customData: { type: Object },
+			newCustomDataField: {type: Object},
+			newFieldName: {type: String}
 		};
 	}
 
@@ -36,20 +43,40 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
 		this.tagline = '';
-		(this.bio = ''),
-			(this.walletList = [
-				'btc_Address',
-				'ltc_Address',
-				'doge_Address',
-				'dgb_Address',
-				'rvn_Address',
-				'arrr_Address',
-			]);
+		this.bio = '';
+		this.walletList = ['btc', 'ltc', 'doge', 'dgb', 'rvn', 'arrr'];
 		let wallets = {};
 		this.walletList.forEach((item) => {
 			wallets[item] = '';
 		});
 		this.wallets = wallets;
+		this.walletsUi = new Map();
+		let coinProp = {
+			wallet: null,
+		};
+
+		this.walletList.forEach((c, i) => {
+			this.walletsUi.set(c, { ...coinProp });
+		});
+		this.walletsUi.get('btc').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.btcWallet;
+		this.walletsUi.get('ltc').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.ltcWallet;
+		this.walletsUi.get('doge').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.dogeWallet;
+		this.walletsUi.get('dgb').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.dgbWallet;
+		this.walletsUi.get('rvn').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.rvnWallet;
+		this.walletsUi.get('arrr').wallet =
+			window.parent.reduxStore.getState().app.selectedAddress.arrrWallet;
+		this.hasFetchedArrr = false;
+		this.isOpenCustomDataModal = false;
+		this.customData = {};
+		this.newCustomDataKey = ""
+		this.newCustomDataField = {};
+		this.newFieldName = ''
+		
 	}
 
 	static get styles() {
@@ -75,7 +102,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				color: var(--chat-bubble-msg-color);
 				box-sizing: border-box;
 			}
-
 			.input::selection {
 				background-color: var(--mdc-theme-primary);
 				color: white;
@@ -205,7 +231,85 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		`;
 	}
 
-	firstUpdated() {}
+	async updated(changedProperties) {
+		if (
+			changedProperties &&
+			changedProperties.has('editContent') &&
+			this.editContent
+		) {
+			this.bio = this.editContent.bio ?? '';
+			this.tagline = this.editContent.tagline ?? '';
+			this.wallets = this.editContent.wallets ?? {};
+			this.requestUpdate();
+		}
+	}
+
+	async firstUpdated() {
+		try {
+			await this.fetchWalletAddress('arrr');
+		} catch (error) {
+			console.log({ error });
+		} finally {
+		}
+	}
+
+	async fetchWalletAddress(coin) {
+		console.log({ coin });
+		switch (coin) {
+			case 'arrr':
+				console.log('arrr');
+				const arrrWalletName = `${coin}Wallet`;
+
+				const res2 = await parentEpml.request('apiCall', {
+					url: `/crosschain/${coin}/syncstatus?apiKey=${this.myNode.apiKey}`,
+					method: 'POST',
+					body: `${
+						window.parent.reduxStore.getState().app.selectedAddress[
+							arrrWalletName
+						].seed58
+					}`,
+				});
+				if (res2 !== null && res2 !== 'Synchronized') {
+					// Check again shortly after
+					await new Promise((resolve) => setTimeout(resolve, 2000));
+					this.fetchWalletAddress('arrr');
+
+					// No need to make balance or transaction list calls yet
+					return;
+				}
+
+				let res = await parentEpml.request('apiCall', {
+					url: `/crosschain/${coin}/walletaddress?apiKey=${this.myNode.apiKey}`,
+					method: 'POST',
+					body: `${
+						window.parent.reduxStore.getState().app.selectedAddress[
+							arrrWalletName
+						].seed58
+					}`,
+				});
+				if (res != null && res.error != 1201 && res.length === 78) {
+					this.arrrWalletAddress = res;
+					this.hasFetchedArrr = true;
+				}
+				break;
+
+			default:
+				// Not used for other coins yet
+				break;
+		}
+	}
+
+	getSelectedWalletAddress(wallet) {
+		switch (wallet) {
+			case 'arrr':
+				// Use address returned by core API
+				return this.arrrWalletAddress;
+
+			default:
+				// Use locally derived address
+				return this.walletsUi.get(wallet).wallet.address;
+		}
+	}
 
 	getNodeUrl() {
 		const myNode =
@@ -226,9 +330,58 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		return myNode;
 	}
 
-	clearFields() {}
+	clearFields() {
+		this.bio = '';
+		this.tagline = '';
+		this.wallets = {};
+	}
+
+	fillAddress(coin) {
+		const address = this.getSelectedWalletAddress(coin);
+		if (address) {
+			this.wallets = {
+				...this.wallets,
+				[coin]: address,
+			};
+		}
+	}
+
+	async saveProfile() {
+		try {
+			const data = {
+				version: 1,
+				tagline: this.tagline,
+				bio: this.bio,
+				wallets: this.wallets,
+			};
+			await this.onSubmit(data);
+			this.setIsOpen(false);
+			this.clearFields();
+			this.onClose();
+		} catch (error) {}
+	}
+
+	removeField(key){
+		const copyObj = {...this.newCustomDataField}
+		delete copyObj[key]
+		this.newCustomDataField = copyObj
+	}
+
+	addField(){
+		const copyObj = {...this.newCustomDataField}
+		copyObj[this.newFieldName] = ''
+		this.newCustomDataField = copyObj
+		this.newFieldName = ""
+	}
+
+	addCustomData(){
+		const copyObj = {...this.customData}
+		copyObj[this.newCustomDataKey] = this.newCustomDataField
+		this.customData = copyObj
+	}
 
 	render() {
+		console.log('modal');
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 				<div class="modal-content">
@@ -280,18 +433,42 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						<div style="display: flex;flex-direction: column;">
 							${Object.keys(this.wallets).map((key) => {
 								return html`
-									<input
-										id=${key}
-										placeholder=${key}
-										class="input"
-										.value=${this.wallets[key]}
-										@change=${(e) => {
-											this.wallets = {
-												...this.wallets,
-												[key]: e.target.value,
-											};
-										}}
-									/>
+									<div
+										style="display:flex;justify-content:center;flex-direction:column"
+									>
+										<label
+											for=${key}
+											id="taglineLabel"
+											style="color: var(--black);font-size:16px"
+										>
+											${key}
+										</label>
+										<div
+											style="display:flex;gap:15px;align-items:center"
+										>
+											<input
+												id=${key}
+												placeholder=${`${key}  ${get(
+													'settings.address'
+												)}`}
+												class="input"
+												.value=${this.wallets[key]}
+												@change=${(e) => {
+													this.wallets = {
+														...this.wallets,
+														[key]: e.target.value,
+													};
+												}}
+											/>
+
+											<mwc-icon
+												@click=${() =>
+													this.fillAddress(key)}
+												style="color:var(--black);cursor:pointer"
+												>upload_2</mwc-icon
+											>
+										</div>
+									</div>
 								`;
 							})}
 						</div>
@@ -310,15 +487,156 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						>
 							${translate('general.close')}
 						</button>
+						
+						<div style="display:flex;gap:10px;align-items:center">
+						
+						<button
+							?disabled="${this.isLoading}"
+							class="modal-button"
+							@click=${() => {
+								this.isOpenCustomDataModal = true;
+							}}
+						>
+							${translate('profile.profile8')}
+						</button>
+						<button
+							?disabled="${this.isLoading}"
+							class="modal-button"
+							@click=${() => {
+								this.saveProfile();
+							}}
+						>
+							${translate('profile.profile3')}
+						</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- add custom vars -->
+			<div
+				class="modal-overlay ${this.isOpenCustomDataModal
+					? ''
+					: 'hidden'}"
+				style="z-index:1001"
+			>
+				<div class="modal-content">
+					<div class="inner-content">
+						<div style="height:15px"></div>
+						<div
+							style="display:flex;justify-content:center;flex-direction:column"
+						>
+							<label
+								for="key-name"
+								id="taglineLabel"
+								style="color: var(--black);font-size:16px"
+							>
+								${translate('profile.profile9')}
+							</label>
+							<div
+								style="display:flex;gap:15px;align-items:center"
+							>
+								<input
+									id="key-name"
+									placeholder=${`${get(
+										'profile.profile9'
+									)}`}
+									class="input"
+									.value=${this.newCustomDataKey}
+									@change=${(e) => {
+										this.newCustomDataKey = e.target.value
+									}}
+								/>
+							</div>
+						</div>
+						<div style="height:15px"></div>
+						<p>${get('profile.profile10')}</p>
+						<div style="display: flex;flex-direction: column;">
+							${Object.keys(this.newCustomDataField).map((key) => {
+								return html`
+									<div
+										style="display:flex;justify-content:center;flex-direction:column"
+									>
+										<label
+											for=${key}
+											id="taglineLabel"
+											style="color: var(--black);font-size:16px"
+										>
+											${key}
+										</label>
+										<div
+											style="display:flex;gap:15px;align-items:center"
+										>
+										
+											<input
+												id=${key}
+												placeholder=${`${get('profile.profile13')}`}
+												class="input"
+												.value=${this.newCustomDataField[key]}
+												@change=${(e) => {
+													this.newCustomDataField = {
+														...this.newCustomDataField,
+														[key]: e.target.value,
+													};
+												}}
+											/>
+
+											<mwc-icon
+												@click=${() =>
+													this.removeField(key)}
+												style="color:var(--black);cursor:pointer"
+												>remove</mwc-icon
+											>
+										</div>
+									</div>
+								`;
+							})}
+						</div>
+						<div style="height:15px"></div>
+						<div style="width:100%;display:flex;justify-content:center;gap:10px">
+						<input
+												
+												placeholder=${`${get('profile.profile12')}`}
+												class="input"
+												.value=${this.newFieldName}
+												@change=${(e) => {
+													this.newFieldName = e.target.value
+													
+												}}
+											/>
+						<button
+							class="modal-button"
+							@click=${() => {
+								this.addField();
+							}}
+						>
+							${translate('profile.profile11')}
+						</button>
+						</div>
+					</div>
+					<div
+						style="display:flex;justify-content:space-between;align-items:center;margin-top:20px"
+					>
+						<button
+							class="modal-button-red"
+							?disabled="${this.isLoading}"
+							@click="${() => {
+								this.isOpenCustomDataModal = false
+								this.newCustomDataKey = ""
+								this.newCustomDataField = {};
+							}}"
+						>
+							${translate('general.close')}
+						</button>
 
 						<button
 							?disabled="${this.isLoading}"
 							class="modal-button"
 							@click=${() => {
-								this.addFriend();
+								this.addCustomData();
 							}}
 						>
-							${translate('profile.profile3')}
+							${translate('profile.profile8')}
 						</button>
 					</div>
 				</div>

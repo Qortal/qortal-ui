@@ -1219,6 +1219,13 @@
 		"profile3": "Update profile",
 		"profile4": "Tagline",
 		"profile5": "Bio",
-		"profile6": "Wallet Addresses"
+		"profile6": "Wallet Addresses",
+		"profile7": "Fill from UI",
+		"profile8": "Add custom data",
+		"profile9": "key name",
+		"profile10": "Fields",
+		"profile11": "Add new field",
+		"profile12": "Field name",
+		"profile13": "Fill out"
 	}
 }
