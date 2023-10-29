@@ -3554,6 +3554,11 @@ async function showModalAndWait(type, data) {
 							</div>
 						` : ''}
 
+						${type === actions.GET_USER_WALLET ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange49")}</p>
+							</div>
+						` : ''}
 						${type === actions.GET_WALLET_BALANCE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
