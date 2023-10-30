@@ -210,8 +210,8 @@ class LoginView extends connect(store)(LitElement) {
 
                 .login-card h5 {
                     margin-top: -16px;
-                    margin-left: 50px;
-                    font-size: 12px;
+                    margin-left: 100px;
+                    font-size: 14px;
                     color: var(--black);
                 }
 
@@ -270,7 +270,7 @@ class LoginView extends connect(store)(LitElement) {
                     .login-card h5 {
                         margin-top: 0px;
                         margin-left: 0px;
-                        font-size: 12px;
+                        font-size: 14px;
                         color: var(--black);
                     }
                 }
@@ -322,7 +322,7 @@ class LoginView extends connect(store)(LitElement) {
                     <div class="login-card-center-container">
                         <div class="login-card" id="login-card">
                         <img class="qortal-logo" src="${this.config.coin.logo}">
-                            <h5 ?hidden="${this.selectedPage != "welcome"}">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
+                            <h5 ?hidden="${this.selectedPage != "welcome"}">UI: v${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
                             ${this.renderSelectedNodeOnStart()}
                             <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="loginContainerPages">
                                 <welcome-page @next=${e => this.selectedPageElement.next(e)} page="welcome"></welcome-page>
