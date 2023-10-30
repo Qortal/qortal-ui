@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui",
-	"version": "4.4.0",
+	"version": "4.4.1",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -113,7 +113,7 @@
 		"@rollup/plugin-babel": "6.0.4",
 		"@rollup/plugin-commonjs": "25.0.7",
 		"@rollup/plugin-node-resolve": "15.2.3",
-		"@rollup/plugin-replace": "5.0.4",
+		"@rollup/plugin-replace": "5.0.5",
 		"@rollup/plugin-terser": "0.4.4",
 		"@vaadin/avatar": "24.2.1",
 		"@vaadin/button": "24.2.1",
@@ -140,7 +140,7 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "4.2.1",
 		"redux-thunk": "2.4.2",
-		"rollup": "4.1.4",
+		"rollup": "4.1.5",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
