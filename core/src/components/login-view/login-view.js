@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
 import { stateAwait } from '../../stateAwait.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import { translate, get, translateUnsafeHTML } from 'lit-translate'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -15,7 +15,20 @@ import './login-section.js'
 import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
-import { addAutoLoadImageChat, removeAutoLoadImageChat, addChatLastSeen, allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists, addTabInfo, setTabNotifications, setNewTab, setNewNotification, setSideEffectAction } from '../../redux/app/app-actions.js'
+import {
+    addAutoLoadImageChat,
+    removeAutoLoadImageChat,
+    addChatLastSeen,
+    allowQAPPAutoAuth,
+    removeQAPPAutoAuth,
+    removeQAPPAutoLists,
+    allowQAPPAutoLists,
+    addTabInfo,
+    setTabNotifications,
+    setNewTab,
+    setNewNotification,
+    setSideEffectAction
+} from '../../redux/app/app-actions.js'
 
 window.reduxStore = store
 window.reduxAction = {
@@ -137,6 +150,7 @@ class LoginView extends connect(store)(LitElement) {
                     left:0;
                     z-index:1;
                 }
+
                 .login-card-container {
                     max-width:1240px;
                     max-height:var(--window-height);
@@ -144,6 +158,7 @@ class LoginView extends connect(store)(LitElement) {
                     margin-left: auto;
                     width: calc(100vw);
                 }
+
                 .qortal-logo {
 		    margin-left: auto;
 		    margin-right: auto;
@@ -151,6 +166,7 @@ class LoginView extends connect(store)(LitElement) {
                     max-width:40%;
                     z-index:1;
                 }
+
                 .login-card-center-container {
                     max-width:100%;
                     max-height:var(--window-height);
@@ -160,13 +176,16 @@ class LoginView extends connect(store)(LitElement) {
                     height: var(--window-height);
                     overflow:hidden;
                 }
+
                 #loginContainerPages {
                     display:inline;
                 }
+
                 #loginContainerPages [page] {
                     background: none;
                     padding:0;
                 }
+
                 .login-card {
                     min-width: 340px;
                     border-bottom: 2px solid var(--mdc-theme-primary);
@@ -177,30 +196,49 @@ class LoginView extends connect(store)(LitElement) {
                     border: 0;
                     border-radius: 4px;
                 }
+
                 .login-card p {
                     margin-top: 0;
                     font-size: 1rem;
                     font-style: italic;
                 }
-                .login-card h1{
+
+                .login-card h1 {
                     margin-bottom:12px;
                     font-size:64px;
                 }
+
+                .login-card h5 {
+                    margin-top: -16px;
+                    margin-left: 50px;
+                    font-size: 12px;
+                    color: var(--black);
+                }
+
+                .login-card h6 {
+                    font-size: 12px;
+                    color: var(--mdc-theme-primary);
+                }
+
                 .login-card iron-pages {
                     height:100%;
+                    margin-top: -16px;
                 }
+
                 .backButton {
                     padding-top:18px;
                     text-align:center;
                 }
+
                 #login-pages-nav {
                     text-align: left;
-                    /* padding-bottom:8px; */
                     padding: 12px 0 8px 0;
                 }
+
                 #nav-next {
                     float: right;
                 }
+
                 @media only screen and (min-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
                     /* Desktop/tablet */
                     .login-card {
@@ -212,13 +250,14 @@ class LoginView extends connect(store)(LitElement) {
                     #loginContainerPages [page="welcome"] {
                     }
                 }
+
                 @media only screen and (max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
                     /* Mobile */
                     .qortal-logo {
                         display:none;
                         visibility:hidden;
                     }
-                    .login-card{
+                    .login-card {
                         width:100%;
                         margin:0;
                         top:0;
@@ -228,7 +267,14 @@ class LoginView extends connect(store)(LitElement) {
                         text-align: left;
                         padding-left:12px;
                     }
+                    .login-card h5 {
+                        margin-top: 0px;
+                        margin-left: 0px;
+                        font-size: 12px;
+                        color: var(--black);
+                    }
                 }
+
                 @keyframes fade {
                     from {
                         opacity: 0;
@@ -239,6 +285,7 @@ class LoginView extends connect(store)(LitElement) {
                         transform: translateX(0);
                     }
                 }
+
                 @keyframes grow-up {
                     from {
                         overflow:hidden;
@@ -249,16 +296,20 @@ class LoginView extends connect(store)(LitElement) {
                         max-height:var(--window-height);
                     }
                 }
+
                 iron-pages .animated, .animated {
                     animation-duration: ${animationDuration}s;
                     animation-name: grow-up;
                 }
+
                 div[page] > paper-icon-button {
                     margin:12px;
                 }
+
                 .corner-box {
                     border-color: var(--mdc-theme-primary) !important;
                 }
+
                 [hidden] {
                     visibility: hidden;
                     display: none;
@@ -271,7 +322,8 @@ class LoginView extends connect(store)(LitElement) {
                     <div class="login-card-center-container">
                         <div class="login-card" id="login-card">
                         <img class="qortal-logo" src="${this.config.coin.logo}">
-						<h5 style="color:var(--mdc-theme-primary)" ?hidden="${this.selectedPage != "welcome"}">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
+                            <h5 ?hidden="${this.selectedPage != "welcome"}">${translate("appinfo.uiversion")}: ${this.nodeConfig.version ? this.nodeConfig.version : ''}</h5>
+                            ${this.renderSelectedNodeOnStart()}
                             <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="loginContainerPages">
                                 <welcome-page @next=${e => this.selectedPageElement.next(e)} page="welcome"></welcome-page>
                                 <create-account-section @next=${e => this.selectedPageElement.next(e)} page="create-account"></create-account-section>
@@ -290,6 +342,18 @@ class LoginView extends connect(store)(LitElement) {
                 </div>
             </div>
         `
+    }
+
+    renderSelectedNodeOnStart() {
+        const selectedNodeIndexOnStart = localStorage.getItem('mySelectedNode')
+        const catchSavedNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
+        const selectedNodeOnStart = catchSavedNodes[selectedNodeIndexOnStart]
+        const selectedNameOnStart = `${selectedNodeOnStart.name}`
+        const selectedNodeUrlOnStart = `${selectedNodeOnStart.protocol + '://' + selectedNodeOnStart.domain +':' + selectedNodeOnStart.port}`
+
+        let connectString = get('settings.snack2')
+
+        return html`<h6>${connectString} : ${selectedNameOnStart} ${selectedNodeUrlOnStart}</h6>`
     }
 
     selectPage(newPage) {

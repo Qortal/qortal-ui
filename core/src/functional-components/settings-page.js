@@ -36,7 +36,6 @@ class SettingsPage extends connect(store)(LitElement) {
 			lastSelected: { type: Number },
 			nodeConfig: { type: Object },
 			theme: { type: String, reflect: true },
-			nodeIndex: { type: Number },
 			isBeingEdited: { type: Boolean },
 			dropdownOpen: { type: Boolean }
 		}
@@ -159,14 +158,12 @@ class SettingsPage extends connect(store)(LitElement) {
 		super()
 		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 		this.nodeConfig = {}
-		this.nodeIndex = localStorage.getItem('mySelectedNode')
 		this.isBeingEdited = false
 		this.isBeingEditedIndex = null
 		this.dropdownOpen = false
 	}
 
 	render() {
-		this.nodeSelectedOnNewStart()
 		return html`
 			<mwc-dialog id="settingsDialog" opened="false">
 				<div style="display: inline; text-align: center;">
@@ -331,7 +328,7 @@ class SettingsPage extends connect(store)(LitElement) {
 	firstUpdated() {
 		const checkNode = localStorage.getItem('mySelectedNode')
 		if (checkNode === null || checkNode.length === 0) {
-			localStorage.setItem('mySelectedNode', 0);
+			localStorage.setItem('mySelectedNode', 0)
 		} else {
 			this.handleSelectionOnNewStart(checkNode)
 		}
@@ -342,24 +339,6 @@ class SettingsPage extends connect(store)(LitElement) {
 		this.dropdownOpen = false
 		this.selectedItem = this.localSavedNodes[index]
 		this.requestUpdate()
-	}
-
-	nodeSelectedOnNewStart() {
-		const selectedNodeIndexOnNewStart = localStorage.getItem('mySelectedNode')
-		this.catchSavedNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
-		const selectedNodeOnNewStart = this.catchSavedNodes[selectedNodeIndexOnNewStart]
-		const selectedNameOnNewStart = `${selectedNodeOnNewStart.name}`
-		const selectedNodeUrlOnNewStart = `${selectedNodeOnNewStart.protocol + '://' + selectedNodeOnNewStart.domain +':' + selectedNodeOnNewStart.port}`
-
-		const index = parseInt(selectedNodeIndexOnNewStart)
-		if (isNaN(index)) return
-
-		const snack0string = get('settings.snack2')
-
-		snackbar.add({
-			labelText: `${snack0string} : ${selectedNameOnNewStart} ${selectedNodeUrlOnNewStart}`,
-			dismiss: true
-		})
 	}
 
 	toggleDropdown() {
@@ -387,6 +366,19 @@ class SettingsPage extends connect(store)(LitElement) {
 		this.requestUpdate()
 		this.nodeSelected(index)
 		localStorage.setItem('mySelectedNode', index)
+
+		const selectedNodeIndexOnNewStart = localStorage.getItem('mySelectedNode')
+		const catchSavedNodes = JSON.parse(localStorage.getItem('myQortalNodes'))
+		const selectedNodeOnNewStart = catchSavedNodes[selectedNodeIndexOnNewStart]
+		const selectedNameOnNewStart = `${selectedNodeOnNewStart.name}`
+		const selectedNodeUrlOnNewStart = `${selectedNodeOnNewStart.protocol + '://' + selectedNodeOnNewStart.domain +':' + selectedNodeOnNewStart.port}`
+
+		let snack2string = get('settings.snack2')
+
+		snackbar.add({
+			labelText: `${snack2string} : ${selectedNameOnNewStart} ${selectedNodeUrlOnNewStart}`,
+			dismiss: true
+		})
 	}
 
 	show() {
@@ -444,16 +436,11 @@ class SettingsPage extends connect(store)(LitElement) {
 
 		localStorage.removeItem('mySelectedNode');
 		localStorage.setItem('mySelectedNode', selectedNodeIndex)
-
-		let snack2string = get('settings.snack2')
-		snackbar.add({
-			labelText: `${snack2string} : ${selectedName} ${selectedNodeUrl}`,
-			dismiss: true
-		})
 	}
 
 	addNode(e) {
 		e.stopPropagation()
+
 		if (this.isBeingEdited) {
 			this.editNode(this.isBeingEditedIndex)
 			return
@@ -517,13 +504,15 @@ class SettingsPage extends connect(store)(LitElement) {
 
 	removeNode(event, index) {
 		event.stopPropagation()
+
 		let stored = JSON.parse(localStorage.getItem('myQortalNodes'))
 		stored.splice(index, 1)
 		localStorage.setItem('myQortalNodes', JSON.stringify(stored))
-		store.dispatch(doRemoveNode(index));
-		let snack3string = get('settings.snack6')
+		store.dispatch(doRemoveNode(index))
+
+		let snack6string = get('settings.snack6')
 		snackbar.add({
-			labelText: `${snack3string}`,
+			labelText: `${snack6string}`,
 			dismiss: true
 		})
 
@@ -550,11 +539,13 @@ class SettingsPage extends connect(store)(LitElement) {
 			copyStored[index] = nodeObject
 			localStorage.setItem('myQortalNodes', JSON.stringify(copyStored))
 			store.dispatch(doEditNode(index, nodeObject))
-			let snack3string = get('settings.snack7')
+
+			let snack7string = get('settings.snack7')
 			snackbar.add({
-				labelText: `${snack3string}`,
+				labelText: `${snack7string}`,
 				dismiss: true
 			})
+
 			this.shadowRoot.getElementById('nameInput').value = ''
 			this.shadowRoot.getElementById('protocolList').value = ''
 			this.shadowRoot.getElementById('domainInput').value = ''
@@ -587,14 +578,14 @@ class SettingsPage extends connect(store)(LitElement) {
 	}
 
 	exportQortalNodesList() {
-		let nodelist = '';
+		let nodelist = ''
 		const qortalNodesList = JSON.stringify(
 			localStorage.getItem('myQortalNodes')
 		);
 		const qortalNodesListSave = JSON.parse(qortalNodesList || '[]')
 		const blob = new Blob([qortalNodesListSave], {
 			type: 'text/plain;charset=utf-8',
-		});
+		})
 		nodelist = 'qortal.nodes'
 		this.saveFileToDisk(blob, nodelist)
 	}
@@ -611,8 +602,9 @@ class SettingsPage extends connect(store)(LitElement) {
 				const writable = await fileHandle.createWritable()
 				await writable.write(contents)
 				await writable.close()
-			};
-			writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'));
+			}
+			writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'))
+
 			let snack4string = get('settings.snack4')
 			snackbar.add({
 				labelText: `${snack4string} qortal.nodes`,
@@ -633,7 +625,8 @@ class SettingsPage extends connect(store)(LitElement) {
 				unelevated
 				label="${translate('settings.import')}"
 				@click="${() => this.openImportNodesDialog()}"
-			></mwc-button>
+			>
+			</mwc-button>
 		`
 	}
 
@@ -647,7 +640,7 @@ class SettingsPage extends connect(store)(LitElement) {
 		snackbar.add({
 			labelText: `${snack5string}`,
 			dismiss: true,
-		});
+		})
 
 		localStorage.removeItem('mySelectedNode')
 		localStorage.setItem('mySelectedNode', 0)
@@ -656,8 +649,8 @@ class SettingsPage extends connect(store)(LitElement) {
 	}
 
 	stateChanged(state) {
-		this.config = state.config;
-		this.nodeConfig = state.app.nodeConfig;
+		this.config = state.config
+		this.nodeConfig = state.app.nodeConfig
 	}
 }
 
