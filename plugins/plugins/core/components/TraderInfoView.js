@@ -51,11 +51,8 @@ class TraderInfoView extends LitElement {
             slicedArray: { type: Array },
             allReceivedPayments: { type: Array },
             allSendPayments: { type: Array },
-            actualBlockheight: { type: Number },
-            reduceBlockheight: { type: Number },
-            startMintBlockheight: { type: Number },
             startMintTime: { type: String },
-            startMintBlock: { type: Array },
+            startMinting: { type: Array },
             totalSent: { type: Number },
             totalReceived: { type: Number },
             txtimestamp: { type: String },
@@ -508,11 +505,8 @@ class TraderInfoView extends LitElement {
         this.slicedArray = []
         this.allReceivedPayments = []
         this.allSendPayments = []
-        this.actualBlockheight = 0
-        this.reduceBlockheight = 0
-        this.startMintBlockheight = 0
         this.startMintTime = ''
-        this.startMintBlock = []
+        this.startMinting = []
         this.totalSent = 0
         this.totalReceived = 0
         this.txtimestamp = ''
@@ -1398,7 +1392,7 @@ class TraderInfoView extends LitElement {
         this.displayLevel = this.addressResult.level
         this.isLoadingCompleteInfo = true
         this.shadowRoot.getElementById('userFullInfoDialog').open()
-        await this.getStartMint()
+        await this.getStartMint(myAddress)
         await this.getPaymentsGridItems()
         this.isLoadingCompleteInfo = false
     }
@@ -1450,12 +1444,9 @@ class TraderInfoView extends LitElement {
         this.displayBalance = qortalBalanceInfo.toFixed(4)
     }
 
-    async getStartMint() {
-        this.actualBlockheight = 0
-        this.reduceBlockheight = 0
-        this.startMintBlockheight = 0
+    async getStartMint(mintAddress) {
         this.startMintTime = ''
-        this.startMintBlock = []
+        this.startMinting = []
         const checkBlocks = this.addressResult.blocksMinted + this.addressResult.blocksMintedAdjustment
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -1464,24 +1455,15 @@ class TraderInfoView extends LitElement {
             let noMinterString = get("explorerpage.exp16")
             this.startMintTime = noMinterString
         } else {
-            const blockheightUrl = `${nodeUrl}/blocks/height`
+            const rewardshareUrl = `${nodeUrl}/transactions/search?txType=REWARD_SHARE&address=${mintAddress}&confirmationStatus=CONFIRMED&limit=1&reverse=false`
 
-            const currentBlockheight = await fetch(blockheightUrl).then(response => {
+            const startMinting = await fetch(rewardshareUrl).then(response => {
                 return response.json()
             })
 
-            this.actualBlockheight = currentBlockheight
-            this.reduceBlockheight = this.addressResult.blocksMinted + this.addressResult.blocksMintedAdjustment
-            this.startMintBlockheight = (this.actualBlockheight - this.reduceBlockheight)
-            const startMintUrl = `${nodeUrl}/blocks/byheight/${this.startMintBlockheight}?includeOnlineSignatures=false`
+            this.startMinting = startMinting
 
-            const startMintBlock = await fetch(startMintUrl).then(response => {
-                return response.json()
-            })
-
-            this.startMintBlock = startMintBlock
-
-            const mintString = new Date(this.startMintBlock.timestamp).toLocaleDateString()
+            const mintString = new Date(this.startMinting[0].timestamp).toLocaleDateString()
             this.startMintTime = mintString
         }
     }
