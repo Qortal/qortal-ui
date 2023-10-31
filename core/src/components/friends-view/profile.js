@@ -20,7 +20,7 @@ import { publishData } from '../../../../plugins/plugins/utils/publish-image.js'
 import { parentEpml } from '../show-plugin.js';
 import '../notification-view/popover.js';
 import './avatar.js';
-import { setNewTab } from '../../redux/app/app-actions.js';
+import { setNewTab, setProfileData } from '../../redux/app/app-actions.js';
 import './profile-modal-update.js';
 
 class ProfileQdn extends connect(store)(LitElement) {
@@ -220,12 +220,16 @@ class ProfileQdn extends connect(store)(LitElement) {
 						console.log({error})
 					}
 					
-				} 
+				} else {
+					customData[key] = data.customData[key];
+				}
 			}
 			this.profileData = {
 				...response,
 				customData
 			}
+
+			store.dispatch(setProfileData(this.profileData))
 		}
 	}
 
@@ -352,10 +356,10 @@ class ProfileQdn extends connect(store)(LitElement) {
 					});
 					newObject['customData'][key] = encryptedData;
 				} else {
-					newObject['customData'][key] = data[key];
+					newObject['customData'][key] = newObject.customData[key];
 				}
 			}
-
+			console.log({newObject})
 			const newObjectToBase64 = await objectToBase64(newObject);
 			// const encryptedData = encryptDataGroup({
 			// 	data64: newObjectToBase64,
@@ -382,6 +386,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 				this.resourceExists = true;
 				this.profileData = data
+				store.dispatch(setProfileData(data))
+
 				// this.setValues(newObject, {
 				// 	updated: Date.now(),
 				// });

@@ -281,7 +281,7 @@ class WebBrowser extends LitElement {
 				else {
 					identifier = null;
 				}
-			}extractComponents
+			} extractComponents
 			const components = {};
 			components["service"] = service;
 			components["name"] = name;
@@ -318,41 +318,41 @@ class WebBrowser extends LitElement {
 	}
 
 	async linkOpenNewTab(link) {
-	
-			const value = link
-			let newQuery = value;
-			if (newQuery.endsWith('/')) {
-				newQuery = newQuery.slice(0, -1);
+
+		const value = link
+		let newQuery = value;
+		if (newQuery.endsWith('/')) {
+			newQuery = newQuery.slice(0, -1);
+		}
+		const res = await this.extractComponents(newQuery)
+		if (!res) return
+		const { service, name, identifier, path } = res
+		let query = `?service=${service}`
+		if (name) {
+			query = query + `&name=${name}`
+		}
+		if (identifier) {
+			query = query + `&identifier=${identifier}`
+		}
+		if (path) {
+			query = query + `&path=${path}`
+		}
+
+		window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
+			url: `qdn/browser/index.html${query}`,
+			id: this.uid.rnd(),
+			myPlugObj: {
+				"url": service === 'WEBSITE' ? "websites" : "qapps",
+				"domain": "core",
+				"page": `qdn/browser/index.html${query}`,
+				"title": name,
+				"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
+				"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
+				"menus": [],
+				"parent": false
 			}
-			const res = await this.extractComponents(newQuery)
-			if (!res) return
-			const { service, name, identifier, path } = res
-			let query = `?service=${service}`
-			if (name) {
-				query = query + `&name=${name}`
-			}
-			if (identifier) {
-				query = query + `&identifier=${identifier}`
-			}
-			if (path) {
-				query = query + `&path=${path}`
-			}
-			
-			window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
-				url: `qdn/browser/index.html${query}`,
-				id: this.uid.rnd(),
-				myPlugObj: {
-					"url": service === 'WEBSITE' ? "websites" : "qapps",
-					"domain": "core",
-					"page": `qdn/browser/index.html${query}`,
-					"title": name,
-					"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
-					"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
-					"menus": [],
-					"parent": false
-				}
-			}))
-	
+		}))
+
 	}
 
 	render() {
@@ -462,7 +462,7 @@ class WebBrowser extends LitElement {
 		const joinFee = (Number(data) / 1e8).toFixed(8)
 		return joinFee
 	}
-	 async getArbitraryFee (){
+	async getArbitraryFee() {
 		const timestamp = Date.now()
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -475,10 +475,10 @@ class WebBrowser extends LitElement {
 		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
 		return {
 			timestamp,
-			fee : Number(data),
+			fee: Number(data),
 			feeToShow: arbitraryFee
 		}
-    }
+	}
 	async sendQortFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -652,9 +652,9 @@ class WebBrowser extends LitElement {
 		}
 
 		const makeTransactionRequest = async (lastRef) => {
-			let votedialog1 =   get("transactions.votedialog1")
-			let votedialog2 =  get("transactions.votedialog2")
-			let feeDialog =  get("walletpage.wchange12")
+			let votedialog1 = get("transactions.votedialog1")
+			let votedialog2 = get("transactions.votedialog2")
+			let feeDialog = get("walletpage.wchange12")
 
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 9,
@@ -707,12 +707,12 @@ class WebBrowser extends LitElement {
 		}
 
 		const makeTransactionRequest = async (lastRef) => {
-			let votedialog3 =   get("transactions.votedialog3")
-			let votedialog4 =  get("transactions.votedialog4")
-			let votedialog5 =   get("transactions.votedialog5")
-			let votedialog6 =  get("transactions.votedialog6")
-			let feeDialog =  get("walletpage.wchange12")
-			
+			let votedialog3 = get("transactions.votedialog3")
+			let votedialog4 = get("transactions.votedialog4")
+			let votedialog5 = get("transactions.votedialog5")
+			let votedialog6 = get("transactions.votedialog6")
+			let feeDialog = get("walletpage.wchange12")
+
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 8,
 				nonce: this.selectedAddress.nonce,
@@ -1218,7 +1218,7 @@ class WebBrowser extends LitElement {
 
 					}
 
-				
+
 
 
 					const res2 = await showModalAndWait(
@@ -1484,7 +1484,7 @@ class WebBrowser extends LitElement {
 					}
 					const pollName = data.pollName;
 					const optionIndex = data.optionIndex;
-					
+
 
 					let pollInfo = null
 					try {
@@ -1542,10 +1542,10 @@ class WebBrowser extends LitElement {
 						break
 					}
 					const pollName = data.pollName;
-					const pollDescription = data.pollDescription	
+					const pollDescription = data.pollDescription
 					const pollOptions = data.pollOptions
-					const pollOwnerAddress = data.pollOwnerAddress				
-				
+					const pollOwnerAddress = data.pollOwnerAddress
+
 					try {
 						this.loader.show();
 						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
@@ -1562,7 +1562,7 @@ class WebBrowser extends LitElement {
 					break;
 				}
 				case actions.OPEN_NEW_TAB: {
-					if(!data.qortalLink){
+					if (!data.qortalLink) {
 						const obj = {};
 						const errorMsg = 'Please enter a qortal link - qortal://...';
 						obj['error'] = errorMsg;
@@ -1582,7 +1582,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj);
 						break;
 					}
-				
+
 				}
 				case actions.NOTIFICATIONS_PERMISSION: {
 					try {
@@ -1593,62 +1593,62 @@ class WebBrowser extends LitElement {
 								name: this.name
 							}
 						);
-						if (res.action === 'accept'){
+						if (res.action === 'accept') {
 							this.addAppToNotificationList(this.name)
-						response = true
-						break;
+							response = true
+							break;
 						} else {
 							response = false
 							break;
 						}
-						
+
 					} catch (error) {
 						break;
 					}
-				
+
 				}
 				case actions.SEND_LOCAL_NOTIFICATION: {
-					const {title, url, icon, message} = data
+					const { title, url, icon, message } = data
 					try {
 						const id = `appNotificationList-${this.selectedAddress.address}`
 						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
-			if(!checkData || !checkData[this.name]) throw new Error('App not on permission list')
-					const appInfo = checkData[this.name]
-					const lastNotification = appInfo.lastNotification
-					const interval = appInfo.interval
-					if (lastNotification && interval) {
-						const timeDifference = Date.now() - lastNotification;
-					  
-						if (timeDifference > interval) {
+						if (!checkData || !checkData[this.name]) throw new Error('App not on permission list')
+						const appInfo = checkData[this.name]
+						const lastNotification = appInfo.lastNotification
+						const interval = appInfo.interval
+						if (lastNotification && interval) {
+							const timeDifference = Date.now() - lastNotification;
+
+							if (timeDifference > interval) {
+								parentEpml.request('showNotification', {
+									title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon }
+								})
+								response = true
+								this.updateLastNotification(id, this.name)
+								break;
+							} else {
+								throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
+							}
+						} else if (!lastNotification) {
 							parentEpml.request('showNotification', {
-								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
-						   })
-						   response = true
-						   this.updateLastNotification(id, this.name)
-						   break;
+								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon }
+							})
+							response = true
+							this.updateLastNotification(id)
+							break;
 						} else {
-							throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
+							throw new Error(`invalid data`)
 						}
-					  } else if(!lastNotification){
-						parentEpml.request('showNotification', {
-							title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
-					   })
-					   response = true
-					   this.updateLastNotification(id)
-					   break;
-					  } else {
-						throw new Error(`invalid data`)
-					  }
-						
+
 					} catch (error) {
 						const obj = {};
 						const errorMsg = error.message || "error in pushing notification";
 						obj['error'] = errorMsg;
 						response = JSON.stringify(obj);
 						break;
-					
+
 					}
-				
+
 				}
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message;
@@ -2035,9 +2035,164 @@ class WebBrowser extends LitElement {
 
 					try {
 						this.loader.show();
-					
+
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
 						response = JSON.stringify(resDeployAt);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
+
+				case 'GET_PROFILE_DATA': {
+					const defaultProperties = ['tagline', 'bio', 'wallets']
+					const requiredFields = ['property'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						const profileData = window.parent.reduxStore.getState().app.profileData
+						if (!profileData) {
+							throw new Error('User does not have a profile')
+						}
+						const property = data.property
+						const propertyIndex = defaultProperties.indexOf(property)
+						if (propertyIndex !== -1) {
+							const requestedData = profileData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
+						if (property.includes('-private')) {
+							const resPrivateProperty = await showModalAndWait(
+								actions.GET_PROFILE_DATA, {
+								property
+							}
+							);
+
+							if (resPrivateProperty.action === 'accept') {
+
+								const requestedData = profileData.customData[property]
+								if (requestedData) {
+									response = JSON.stringify(requestedData);
+									break
+								} else {
+									throw new Error('Cannot find requested data')
+								}
+							} else {
+								throw new Error('User denied permission for private property')
+							}
+						} else {
+							const requestedData = profileData.customData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
+				case 'SET_PROFILE_DATA': {
+					const defaultProperties = ['tagline', 'bio', 'wallets']
+					const requiredFields = ['property', 'data'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						const profileData = window.parent.reduxStore.getState().app.profileData
+						if (!profileData) {
+							throw new Error('User does not have a profile')
+						}
+						const property = data.property
+						const propertyIndex = defaultProperties.indexOf(property)
+						if (propertyIndex !== -1) {
+							const requestedData = profileData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
+						if (property.includes('-private')) {
+							const resPrivateProperty = await showModalAndWait(
+								actions.GET_PROFILE_DATA, {
+								property
+							}
+							);
+
+							if (resPrivateProperty.action === 'accept') {
+
+								const requestedData = profileData.customData[property]
+								if (requestedData) {
+									response = JSON.stringify(requestedData);
+									break
+								} else {
+									throw new Error('Cannot find requested data')
+								}
+							} else {
+								throw new Error('User denied permission for private property')
+							}
+						} else {
+							const requestedData = profileData.customData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
 					} catch (error) {
 						const obj = {};
 						const errorMsg = error.message || 'Failed to join the group.';
@@ -3103,45 +3258,45 @@ class WebBrowser extends LitElement {
 		}
 	}
 	addAppToNotificationList(appName) {
-		if(!appName) throw new Error('unknown app name')
+		if (!appName) throw new Error('unknown app name')
 		const id = `appNotificationList-${this.selectedAddress.address}`;
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
-	  
-		if (!checkData) {
-		  const newData = {
-			[appName]: {
-			  interval: 900000, // 15mins in milliseconds
-			  lastNotification: null,
-			},
-		  };
-		  localStorage.setItem(id, JSON.stringify(newData));
-		} else {
-		  const copyData = { ...checkData };
-		  copyData[appName] = {
-			interval: 900000, // 15mins in milliseconds
-			lastNotification: null,
-		  };
-		  localStorage.setItem(id, JSON.stringify(copyData));
-		}
-	  }
 
-	  updateLastNotification(id, appName) {
-		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
-	  
-		if (checkData) {
-		  const copyData = { ...checkData };
-		  if (copyData[appName]) {
-			copyData[appName].lastNotification = Date.now(); // Make sure to use Date.now(), not date.now()
-		  } else {
-			copyData[appName] = {
-			  interval: 900000, // 15mins in milliseconds
-			  lastNotification: Date.now(),
+		if (!checkData) {
+			const newData = {
+				[appName]: {
+					interval: 900000, // 15mins in milliseconds
+					lastNotification: null,
+				},
 			};
-		  }
-		  localStorage.setItem(id, JSON.stringify(copyData));
+			localStorage.setItem(id, JSON.stringify(newData));
+		} else {
+			const copyData = { ...checkData };
+			copyData[appName] = {
+				interval: 900000, // 15mins in milliseconds
+				lastNotification: null,
+			};
+			localStorage.setItem(id, JSON.stringify(copyData));
 		}
-	  }
-	  
+	}
+
+	updateLastNotification(id, appName) {
+		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null;
+
+		if (checkData) {
+			const copyData = { ...checkData };
+			if (copyData[appName]) {
+				copyData[appName].lastNotification = Date.now(); // Make sure to use Date.now(), not date.now()
+			} else {
+				copyData[appName] = {
+					interval: 900000, // 15mins in milliseconds
+					lastNotification: Date.now(),
+				};
+			}
+			localStorage.setItem(id, JSON.stringify(copyData));
+		}
+	}
+
 
 	renderFollowUnfollowButton() {
 		// Only show the follow/unfollow button if we have permission to modify the list on this node
@@ -3491,6 +3646,11 @@ async function showModalAndWait(type, data) {
 						${type === actions.SAVE_FILE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
+							</div>
+						` : ''}
+						${type === actions.GET_PROFILE_DATA ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
 							</div>
 						` : ''}
 						${type === actions.NOTIFICATIONS_PERMISSION ? `
