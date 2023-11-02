@@ -105,9 +105,7 @@ const doNodeStatus = async (nodeStatusObject) => {
 }
 
 const initNodeStatusCall = (nodeConfig) => {
-    if (nodeConfig.node == 0) {
-        pingNodeStatusSocket()
-    } else if (nodeConfig.node == 1) {
+    if (nodeConfig.node >= 0) {
         pingNodeStatusSocket()
     } else if (nodeStatusSocketObject !== undefined) {
         nodeStatusSocketObject.close()
