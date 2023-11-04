@@ -42,7 +42,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 			imageUrl: { type: String },
 			dialogOpenedProfile: {type: Boolean},
 			profileDataVisiting: {type: Object},
-			nameVisiting: {type: String}
+			nameVisiting: {type: String},
+			hasName: {type: Boolean}
 		};
 	}
 
@@ -74,6 +75,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.dialogOpenedProfile = false
 		this.profileDataVisiting = null;
 		this.nameVisiting = ""
+		this.hasName = false
 	}
 	static styles = css`
 	
@@ -370,6 +372,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 				this.name = null;
 				throw new Error('no name');
 			}
+			this.hasName = true
 			const name = nameObject.name;
 			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			this.name = name;
@@ -437,6 +440,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 			) {
 				this.getProfile();
 			}
+		}
+		if (
+			state.app.accountInfo &&
+			state.app.accountInfo.names.length &&
+			state.app.nodeStatus &&
+			state.app.nodeStatus.syncPercent === 100 && this.hasName === false && this.hasAttemptedToFetchResource && state.app.accountInfo && state.app.accountInfo.names && state.app.accountInfo.names.length > 0
+		) {
+			this.getProfile();
 		}
 	}
 
