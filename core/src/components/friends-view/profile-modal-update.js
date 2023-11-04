@@ -32,7 +32,10 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			isOpenCustomDataModal: { type: Boolean },
 			customData: { type: Object },
 			newCustomDataField: {type: Object},
-			newFieldName: {type: String}
+			newFieldName: {type: String},
+			qortalRequestCustomData: {type: Object},
+			newCustomDataKey: {type: String},
+			isSaving: {type: Boolean}
 		};
 	}
 
@@ -75,7 +78,8 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.customData = {};
 		this.newCustomDataKey = ""
 		this.newCustomDataField = {};
-		this.newFieldName = ''
+		this.newFieldName = '';
+		this.isSaving = false
 		
 	}
 
@@ -244,6 +248,19 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			this.customData = {...customData}
 			this.requestUpdate();
 		}
+		if (
+			changedProperties &&
+			changedProperties.has('qortalRequestCustomData') &&
+			this.qortalRequestCustomData
+		) {
+			console.log('this.qortalRequestCustomData', this.qortalRequestCustomData)
+			this.isOpenCustomDataModal = true
+			this.newCustomDataField = {...this.qortalRequestCustomData.payload.customData}
+			this.newCustomDataKey = this.qortalRequestCustomData.property
+			this.requestUpdate();
+		}
+
+		
 	}
 
 	async firstUpdated() {
@@ -357,11 +374,14 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				wallets: this.wallets,
 				customData: this.customData
 			};
+			this.isSaving = true
 			await this.onSubmit(data);
 			this.setIsOpen(false);
 			this.clearFields();
-			this.onClose();
-		} catch (error) {}
+			this.onClose('success');
+		} catch (error) {} finally {
+			this.isSaving = false
+		}
 	}
 
 	removeField(key){
@@ -554,10 +574,14 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							?disabled="${this.isLoading}"
 							class="modal-button"
 							@click=${() => {
+								if(this.isSaving) return
 								this.saveProfile();
 							}}
 						>
-							${translate('profile.profile3')}
+						${this.isSaving ? html`
+							<paper-spinner-lite active></paper-spinner-lite>
+							` : ''}
+							${this.isSaving ? '' : translate('profile.profile3') }
 						</button>
 						</div>
 					</div>
@@ -592,6 +616,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 									placeholder=${translate(
 										'profile.profile9'
 									)}
+									?disabled=${!!this.qortalRequestCustomData}
 									class="input"
 									.value=${this.newCustomDataKey}
 									@change=${(e) => {
@@ -681,13 +706,13 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						</button>
 
 						<button
-							?disabled="${this.isLoading}"
+							?disabled="${this.isSaving}"
 							class="modal-button"
 							@click=${() => {
 								this.addCustomData();
 							}}
 						>
-							${translate('profile.profile8')}
+							 ${translate('profile.profile8')}
 						</button>
 					</div>
 				</div>

@@ -281,7 +281,7 @@ class WebBrowser extends LitElement {
 				else {
 					identifier = null;
 				}
-			} extractComponents
+			} 
 			const components = {};
 			components["service"] = service;
 			components["name"] = name;
@@ -2148,51 +2148,59 @@ class WebBrowser extends LitElement {
 
 
 					try {
-						const profileData = window.parent.reduxStore.getState().app.profileData
-						if (!profileData) {
-							throw new Error('User does not have a profile')
-						}
+						// const profileData = window.parent.reduxStore.getState().app.profileData
+						// if (!profileData) {
+						// 	throw new Error('User does not have a profile')
+						// }
 						const property = data.property
-						const propertyIndex = defaultProperties.indexOf(property)
-						if (propertyIndex !== -1) {
-							const requestedData = profileData[property]
-							if (requestedData) {
-								response = JSON.stringify(requestedData);
-								break
-							} else {
-								throw new Error('Cannot find requested data')
-							}
+						const payload = data.data
+						const uniqueId = this.uid.rnd()
+						const fee = await this.getArbitraryFee()
+						const resSetPrivateProperty = await showModalAndWait(
+							actions.SET_PROFILE_DATA, {
+							property,
+							fee: fee.feeToShow
 						}
+						);
 
-						if (property.includes('-private')) {
-							const resPrivateProperty = await showModalAndWait(
-								actions.GET_PROFILE_DATA, {
-								property
+
+						if (resSetPrivateProperty.action !== 'accept') throw new Error('User declined permission')
+
+						//dispatch event and wait until I get a response to continue
+
+						// Create and dispatch custom event
+						const customEvent = new CustomEvent('qortal-request-set-profile-data', {
+							detail: {
+								property,
+								payload,
+								uniqueId
 							}
-							);
+						});
+						window.parent.dispatchEvent(customEvent);
 
-							if (resPrivateProperty.action === 'accept') {
+						// Wait for response event
+						const res = await new Promise((resolve, reject) => {
+							function handleResponseEvent(event) {
+								// Handle the data from the event, if any
+								const responseData = event.detail;
+								if(responseData && responseData.uniqueId !== uniqueId) return
+								console.log({responseData})
+								// Clean up by removing the event listener once we've received the response
+								window.removeEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
 
-								const requestedData = profileData.customData[property]
-								if (requestedData) {
-									response = JSON.stringify(requestedData);
-									break
+								if (responseData.response === 'saved') {
+									resolve(responseData);
 								} else {
-									throw new Error('Cannot find requested data')
+									reject(new Error('not saved'));
 								}
-							} else {
-								throw new Error('User denied permission for private property')
 							}
-						} else {
-							const requestedData = profileData.customData[property]
-							if (requestedData) {
-								response = JSON.stringify(requestedData);
-								break
-							} else {
-								throw new Error('Cannot find requested data')
-							}
-						}
 
+							// Set up an event listener to wait for the response
+							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
+						});
+
+						console.log({res})
+						response = JSON.stringify(res);
 					} catch (error) {
 						const obj = {};
 						const errorMsg = error.message || 'Failed to join the group.';
@@ -3651,6 +3659,16 @@ async function showModalAndWait(type, data) {
 						${type === actions.GET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
+								
+							</div>
+						` : ''}
+						${type === actions.SET_PROFILE_DATA ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange50")}: <span style="font-weight: bold"> ${data.property}</span></p>
+								<br>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.fee} QORT fee</span></p>
+								<br>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange51')} </p>
 							</div>
 						` : ''}
 						${type === actions.NOTIFICATIONS_PERMISSION ? `

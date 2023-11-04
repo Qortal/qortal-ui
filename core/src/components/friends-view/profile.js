@@ -8,6 +8,7 @@ import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
 import { get, translate } from 'lit-translate';
 import ShortUniqueId from 'short-unique-id';
+import '@polymer/paper-dialog/paper-dialog.js';
 
 import {
 	decryptGroupData,
@@ -22,6 +23,7 @@ import '../notification-view/popover.js';
 import './avatar.js';
 import { setNewTab, setProfileData } from '../../redux/app/app-actions.js';
 import './profile-modal-update.js';
+import { modalHelper } from '../../../../plugins/plugins/utils/publish-modal.js';
 
 class ProfileQdn extends connect(store)(LitElement) {
 	static get properties() {
@@ -36,7 +38,11 @@ class ProfileQdn extends connect(store)(LitElement) {
 			name: { type: String },
 			isOpenProfileModalUpdate: { type: Boolean },
 			editContent: { type: Object },
-			profileData: {type: Object}
+			profileData: { type: Object },
+			imageUrl: { type: String },
+			dialogOpenedProfile: {type: Boolean},
+			profileDataVisiting: {type: Object},
+			nameVisiting: {type: String}
 		};
 	}
 
@@ -44,7 +50,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 		super();
 		this.isOpen = false;
 		this.getProfile = this.getProfile.bind(this);
-		this._updateTempSettingsData = this._updateTempSettingsData.bind(this);
+		this._handleQortalRequestSetData =
+			this._handleQortalRequestSetData.bind(this);
 		this.setValues = this.setValues.bind(this);
 		this.saveToQdn = this.saveToQdn.bind(this);
 		this.syncPercentage = 0;
@@ -61,9 +68,25 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.uid = new ShortUniqueId();
 		this.isOpenProfileModalUpdate = false;
 		this.editContent = null;
-		this.profileData = null
+		this.profileData = null;
+		this.qortalRequestCustomData = null;
+		this.imageUrl = '';
+		this.dialogOpenedProfile = false
+		this.profileDataVisiting = null;
+		this.nameVisiting = ""
 	}
 	static styles = css`
+	
+		* {
+		
+                --mdc-theme-primary: rgb(3, 169, 244);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-theme-surface: var(--white);
+                --mdc-dialog-content-ink-color: var(--black);
+                box-sizing: border-box;
+            }
+
+			
 		.header {
 			display: flex;
 			align-items: center;
@@ -138,6 +161,107 @@ class ProfileQdn extends connect(store)(LitElement) {
 			cursor: pointer;
 			background-color: #f4433663;
 		}
+		.full-info-wrapper {
+			width: 100%;
+			min-width: 600px;
+			max-width: 600px;
+			text-align: center;
+			background: var(--white);
+			border: 1px solid var(--black);
+			border-radius: 15px;
+			padding: 25px;
+			box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+			display: block !important
+		}
+
+		.full-info-logo {
+			width: 120px;
+			height: 120px;
+			background: var(--white);
+			border: 1px solid var(--black);
+			border-radius: 50%;
+			position: relative;
+			top: -110px;
+			left: 210px;
+		}
+
+		.data-info{
+		    margin-top: 10px;
+		    margin-right: 25px;
+			display:flex;
+			flex-direction: column;
+			align-items: flex-start;
+			max-height: 55vh;
+    overflow: auto;
+		}
+	
+		.data-info::-webkit-scrollbar-track {
+		background: #a1a1a1;
+	}
+
+	.data-info::-webkit-scrollbar-thumb {
+		background-color: #6a6c75;
+		border-radius: 6px;
+		border: 3px solid #a1a1a1;
+	}
+		.data-info > * {
+    flex-shrink: 0;
+}
+		.decline {
+                --mdc-theme-primary: var(--mdc-theme-error)
+            }
+
+            .warning {
+                --mdc-theme-primary: #f0ad4e;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
+            }
+
+            .buttons {
+                display: inline;
+                float: right;
+                margin-bottom: 5px;
+            }
+
+            .paybutton {
+                display: inline;
+                float: left;
+                margin-bottom: 5px;
+            }
+			.round-fullinfo {
+			position: relative;
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			right: 25px;
+			top: -1px;
+		}
+
+		h2 {
+                margin: 10px 0;
+            }
+
+		h3 {
+			margin-top: -80px;
+		    color: #03a9f4;
+		    font-size: 18px;
+		}
+
+            h4 {
+                margin: 5px 0;
+            }
+
+            p {
+		   		 margin-top: 5px;
+                line-height: 1.2;
+				font-size: 16px;
+    			color: var(--black);
+    			text-align: start;
+    			overflow: hidden;
+    			word-break: break-word;
+            }
 	`;
 
 	getNodeUrl() {
@@ -159,14 +283,12 @@ class ProfileQdn extends connect(store)(LitElement) {
 		return myNode;
 	}
 
-	
-
 	async getRawData(dataItem) {
 		const url = `${this.nodeUrl}/arbitrary/${dataItem.service}/${dataItem.name}/${dataItem.identifier}`;
 		const res = await fetch(url);
 		const data = await res.json();
 		if (data.error) throw new Error('Cannot retrieve your data from qdn');
-		return data
+		return data;
 	}
 
 	async getMyFollowedNames() {
@@ -197,39 +319,43 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	async setValues(response, resource) {
-		console.log('hello', response)
-		
-		if(response){
-			let data = {...response}
-		let customData = {}
+		console.log('hello', response);
+
+		if (response) {
+			let data = { ...response };
+			let customData = {};
 			for (const key of Object.keys(data.customData || {})) {
 				if (key.includes('-private')) {
 					try {
-						console.log('key', data.customData[key])
-						const decryptedData = decryptGroupData(data.customData[key]);
+						console.log('key', data.customData[key]);
+						const decryptedData = decryptGroupData(
+							data.customData[key]
+						);
 
-						console.log({decryptedData})
-						if(decryptedData && !decryptedData.error){
-							const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
-							if(decryptedDataToBase64 && !decryptedDataToBase64.error){
+						console.log({ decryptedData });
+						if (decryptedData && !decryptedData.error) {
+							const decryptedDataToBase64 =
+								uint8ArrayToObject(decryptedData);
+							if (
+								decryptedDataToBase64 &&
+								!decryptedDataToBase64.error
+							) {
 								customData[key] = decryptedDataToBase64;
 							}
-
 						}
 					} catch (error) {
-						console.log({error})
+						console.log({ error });
 					}
-					
 				} else {
 					customData[key] = data.customData[key];
 				}
 			}
 			this.profileData = {
 				...response,
-				customData
-			}
+				customData,
+			};
 
-			store.dispatch(setProfileData(this.profileData))
+			store.dispatch(setProfileData(this.profileData));
 		}
 	}
 
@@ -245,15 +371,16 @@ class ProfileQdn extends connect(store)(LitElement) {
 				throw new Error('no name');
 			}
 			const name = nameObject.name;
+			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			this.name = name;
 			this.error = '';
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
-				console.log({res})
+				console.log({ res });
 				data = await res.json();
-				console.log({data})
+				console.log({ data });
 				if (Array.isArray(data)) {
 					data = data.filter(
 						(item) => item.identifier === 'qortal_profile'
@@ -264,7 +391,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const dataItem = data[0];
 						try {
 							const response = await this.getRawData(dataItem);
-							console.log({response})
+							console.log({ response });
 							if (response.wallets) {
 								this.setValues(response, dataItem);
 							} else {
@@ -281,7 +408,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 					this.error = 'Unable to perform query';
 				}
 			} catch (error) {
-				console.log({error})
+				console.log({ error });
 				data = {
 					error: 'No resource found',
 				};
@@ -331,13 +458,20 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async saveToQdn(data) {
 		try {
-			console.log({data})
+			console.log({ data });
 			this.isSaving = true;
 			if (this.resourceExists === true && this.error)
 				throw new Error('Unable to save');
 
 			const nameObject = store.getState().app.accountInfo.names[0];
 			if (!nameObject) throw new Error('no name');
+
+			const arbitraryFeeData = await modalHelper.getArbitraryFee();
+			const res = await modalHelper.showModalAndWaitPublish({
+				feeAmount: arbitraryFeeData.feeToShow,
+			});
+			if (res.action !== 'accept')
+				throw new Error('User declined publish');
 			const name = nameObject.name;
 			const identifer = 'qortal_profile';
 			const filename = 'qortal_profile.json';
@@ -345,11 +479,13 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const getArbitraryFee = await this.getArbitraryFee();
 			const feeAmount = getArbitraryFee.fee;
 
-			let newObject = {...data};
+			let newObject = { ...data };
 
 			for (const key of Object.keys(newObject.customData || {})) {
 				if (key.includes('-private')) {
-					const toBase64 = await objectToBase64(newObject.customData[key]);
+					const toBase64 = await objectToBase64(
+						newObject.customData[key]
+					);
 					const encryptedData = encryptDataGroup({
 						data64: toBase64,
 						publicKeys: [],
@@ -359,7 +495,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 					newObject['customData'][key] = newObject.customData[key];
 				}
 			}
-			console.log({newObject})
+			console.log({ newObject });
 			const newObjectToBase64 = await objectToBase64(newObject);
 			// const encryptedData = encryptDataGroup({
 			// 	data64: newObjectToBase64,
@@ -385,8 +521,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 				});
 
 				this.resourceExists = true;
-				this.profileData = data
-				store.dispatch(setProfileData(data))
+				this.profileData = data;
+				store.dispatch(setProfileData(data));
 
 				// this.setValues(newObject, {
 				// 	updated: Date.now(),
@@ -397,40 +533,154 @@ class ProfileQdn extends connect(store)(LitElement) {
 			}
 		} catch (error) {
 			console.log({ error });
-			throw new Error(error.message)
+			throw new Error(error.message);
 		} finally {
 			this.isSaving = false;
 		}
 	}
 
-	_updateTempSettingsData() {
-		this.valuesToBeSavedOnQdn = JSON.parse(
-			localStorage.getItem('temp-settings-data') || '{}'
-		);
+	sendBackEvent(detail) {
+		let iframes;
+
+		const mainApp = document.getElementById('main-app');
+		if (mainApp && mainApp.shadowRoot) {
+			const appView = mainApp.shadowRoot.querySelector('app-view');
+			if (appView && appView.shadowRoot) {
+				const showPlugin =
+					appView.shadowRoot.querySelector('show-plugin');
+				if (showPlugin && showPlugin.shadowRoot) {
+					iframes = showPlugin.shadowRoot.querySelectorAll('iframe');
+				}
+			}
+		}
+
+		iframes.forEach((iframe) => {
+			const iframeWindow = iframe.contentWindow;
+			const customEvent = new CustomEvent(
+				'qortal-request-set-profile-data-response',
+				{
+					detail: detail,
+				}
+			);
+			try {
+				console.log(
+					'hello100',
+					iframeWindow.document.querySelector('multi-wallet')
+				);
+			} catch (error) {
+				console.log({ error });
+			}
+			iframeWindow.dispatchEvent(customEvent);
+		});
+	}
+
+	async _handleQortalRequestSetData(event) {
+		const detail = event.detail;
+
+		try {
+			if (!detail.property || !detail.payload)
+				throw new Error('not saved');
+			if (
+				!this.profileData &&
+				(this.resourceExists || this.resourceExists === undefined)
+			)
+				throw new Error("unable to fetch the user's profile data");
+			this.isOpenProfileModalUpdate = true;
+			this.editContent = {
+				...(this.profileData || {}),
+			};
+			console.log({ detail });
+			if (detail.payload.customData) {
+				this.qortalRequestCustomData = detail;
+			}
+
+			// Wait for response event
+			const response = await new Promise((resolve, reject) => {
+				function handleResponseEvent(event) {
+					// Handle the data from the event, if any
+					const responseData = event.detail;
+					// Clean up by removing the event listener once we've received the response
+					window.removeEventListener(
+						'send-back-event',
+						handleResponseEvent
+					);
+
+					if (responseData.response === 'saved') {
+						resolve(responseData);
+					} else {
+						reject(new Error(responseData.error));
+					}
+				}
+
+				// Set up an event listener to wait for the response
+				window.addEventListener('send-back-event', handleResponseEvent);
+			});
+
+			this.sendBackEvent({
+				response: response.response,
+				uniqueId: detail.uniqueId,
+			});
+		} catch (error) {
+			console.log({ error });
+			this.sendBackEvent({
+				response: 'error',
+				uniqueId: detail.uniqueId,
+			});
+		}
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 		window.addEventListener(
-			'temp-settings-data-event',
-			this._updateTempSettingsData
+			'qortal-request-set-profile-data',
+			this._handleQortalRequestSetData
 		);
 	}
 
 	disconnectedCallback() {
 		window.removeEventListener(
-			'temp-settings-data-event',
-			this._updateTempSettingsData
+			'qortal-request-set-profile-data',
+			this._handleQortalRequestSetData
 		);
 		super.disconnectedCallback();
 	}
 
-	onClose() {
+	onClose(isSuccess) {
 		this.isOpenProfileModalUpdate = false;
-		this.editContent = null
+		this.editContent = null;
+		if (this.qortalRequestCustomData) {
+			// Create and dispatch custom event
+			const customEvent = new CustomEvent('send-back-event', {
+				detail: {
+					response: isSuccess ? 'saved' : 'not saved',
+				},
+			});
+			window.dispatchEvent(customEvent);
+
+			this.qortalRequestCustomData = null;
+		}
+	}
+
+	avatarFullImage() {
+		return html`<img
+			class="round-fullinfo"
+			src="${this.imageUrl}"
+			onerror="this.src='/img/incognito.png';"
+		/>`;
+	}
+
+	openUserInfo() {
+		
+			const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')
+			infoDialog.openUserInfo(this.name)
+		
+	}
+
+	openEdit(){
+		this.isOpenProfileModalUpdate = !this.isOpenProfileModalUpdate;
 	}
 	render() {
-		console.log('sup profile2', {profileData: this.profileData});
+		console.log('sup profile2', this.error, this.profileDataVisiting, this.dialogOpenedProfile );
 		return html`
 			${this.isSaving ||
 			(!this.error && this.resourceExists === undefined)
@@ -522,10 +772,10 @@ class ProfileQdn extends connect(store)(LitElement) {
 							</div>
 						</popover-component>
 				  `
-				: this.error ? html`
+				: this.error
+				? html`
 						<div
 							style="user-select:none;cursor:pointer;opacity:0.5"
-			
 						>
 							<avatar-component
 								.resource=${{
@@ -536,17 +786,28 @@ class ProfileQdn extends connect(store)(LitElement) {
 								name=${this.name}
 							></avatar-component>
 						</div>
-				  ` : html`
+				  `
+				: html`
 						<div
 							style="user-select:none;cursor:pointer"
 							@click=${() => {
-								if(this.resourceExists && this.profileData){
-									this.editContent = this.profileData
-								} else if(this.resourceExists && !this.profileData){
-									return
+								if (this.resourceExists && this.profileData) {
+									this.editContent = this.profileData;
+								} else if (
+									this.resourceExists &&
+									!this.profileData
+								) {
+									return;
 								}
-								this.isOpenProfileModalUpdate =
+								if(this.profileData){
+									this.profileDataVisiting = this.profileData
+									this.nameVisiting = this.name
+									this.dialogOpenedProfile = true
+								} else {
+									this.isOpenProfileModalUpdate =
 									!this.isOpenProfileModalUpdate;
+								}
+								
 							}}
 						>
 							<avatar-component
@@ -567,8 +828,79 @@ class ProfileQdn extends connect(store)(LitElement) {
 				}}
 				.onSubmit=${this.saveToQdn}
 				.editContent=${this.editContent}
-				.onClose=${() => this.onClose()}
+				.onClose=${(val) => this.onClose(val)}
+				.qortalRequestCustomData=${this.qortalRequestCustomData}
 			></profile-modal-update>
+
+		
+
+			<!-- Profile read-view -->
+			${this.profileDataVisiting && this.dialogOpenedProfile ? html`
+			<paper-dialog
+				class="full-info-wrapper"
+				
+				?opened="${this.dialogOpenedProfile}"
+				
+			>
+				<div class="full-info-logo">${this.avatarFullImage()}</div>
+				<h3>${this.name}</h3>
+				
+				
+				<div
+					class="data-info"
+				>
+					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile4')}</p>
+					<p style="font-size:15px">${this.profileDataVisiting.tagline || translate('profile.profile15')}</p>
+					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile5')}</p>
+					<p>${this.profileDataVisiting.bio || translate('profile.profile15')}</p>
+					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile6')}</p>
+					${Object.keys(this.profileDataVisiting.wallets).map((key, i)=> {
+						return html `
+						<p>
+						<span style="font-weight:bold">${key}</span>: <span>${this.profileDataVisiting.wallets[key] || translate('profile.profile15')}</span>
+						</p>
+						`
+					})}
+				</div>
+				
+			
+				<div>
+					<span class="paybutton">
+						<mwc-button
+							class="green"
+							@click=${() => this.openUserInfo()}
+							>${translate('profile.profile14')}</mwc-button
+						>
+					</span>
+					<span class="buttons">
+						${this.nameVisiting === this.name ? html`
+						<mwc-button @click=${() => this.openEdit()}>${translate("profile.profile3")}</mwc-button>
+						` : ''}
+					
+						<mwc-button
+							class="decline"
+							@click=${() => {
+								this.dialogOpenedProfile = false
+							}}
+							>${translate('general.close')}</mwc-button
+						>
+					</span>
+				</div>
+			</paper-dialog>
+
+			
+			` : ''}
+			
+
+
+		
+
+		
+
+			
+
+		
+		
 		`;
 	}
 }

@@ -728,7 +728,9 @@
 		"bchange46": "Do you give this application permission to save the following file",
 		"bchange47": "Instant publish - requires",
 		"bchange48": "Do you give this application permission to send you notifications",
-		"bchange49": "Do you grant this application permission to access the following private information from your profile?"
+		"bchange49": "Do you grant this application permission to access the following private information from your profile?",
+		"bchange50": "This app has requested a change to your public profile. Property: ",
+		"bchange51": "To submit the changes don't forget to click on 'Update profile'"
 	},
 	"datapage": {
 		"dchange1": "Data Management",
@@ -1223,10 +1225,12 @@
 		"profile6": "Wallet Addresses",
 		"profile7": "Fill from UI",
 		"profile8": "Add custom data",
-		"profile9": "key name",
+		"profile9": "Property name",
 		"profile10": "Fields",
 		"profile11": "Add new field",
 		"profile12": "Field name",
-		"profile13": "Fill out"
+		"profile13": "Fill out",
+		"profile14": "Activity",
+		"profile15": "No data"
 	}
 }
