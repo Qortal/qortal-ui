@@ -44,7 +44,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 			profileDataVisiting: {type: Object},
 			nameVisiting: {type: String},
 			hasName: {type: Boolean},
-			resourceExistsVisiting: {type:Boolean}
+			resourceExistsVisiting: {type:Boolean},
+			error: {type: String}
 		};
 	}
 
@@ -79,6 +80,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.nameVisiting = ""
 		this.hasName = false
 		this.resourceExistsVisiting = undefined
+		this.error = ""
 	}
 	static styles = css`
 	
@@ -368,10 +370,10 @@ class ProfileQdn extends connect(store)(LitElement) {
 	async getVisitingProfile(name) {
 		console.log('name2', name)
 		try {
+			// this.error = '';
 			this.isLoadingVisitingProfile = true
 			this.nameVisiting = name
 			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
-			this.error = '';
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
@@ -394,17 +396,17 @@ class ProfileQdn extends connect(store)(LitElement) {
 								this.profileDataVisiting = response
 								// this.setValues(response, dataItem);
 							} else {
-								this.error = 'Cannot get saved user settings';
+								// this.error = 'Cannot get saved user settings';
 							}
 						} catch (error) {
 							console.log({ error });
-							this.error = 'Cannot get saved user settings';
+							// this.error = 'Cannot get saved user settings';
 						}
 					} else {
 						this.resourceExistsVisiting = false;
 					}
 				} else {
-					this.error = 'Unable to perform query';
+					// this.error = 'Unable to perform query';
 				}
 			} catch (error) {
 				console.log({ error });
@@ -423,20 +425,30 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async getProfile() {
 		try {
+			console.log('hello start')
+			this.error = ''
 			const arbFee = await this.getArbitraryFee();
 			this.fee = arbFee;
 			this.hasAttemptedToFetchResource = true;
 			let resource;
-			const nameObject = store.getState().app.accountInfo.names[0];
+
+			let nameObject
+			try {
+			 nameObject = store.getState().app.accountInfo.names[0];
+
+			} catch (error) {
+				
+			}
 			if (!nameObject) {
 				this.name = null;
+				this.error = 'no name'
+				console.log('hello', this.error)
 				throw new Error('no name');
 			}
 			this.hasName = true
 			const name = nameObject.name;
 			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			this.name = name;
-			this.error = '';
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
@@ -487,8 +499,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	stateChanged(state) {
 		if (
-			state.app.accountInfo &&
-			state.app.accountInfo.names.length &&
 			state.app.nodeStatus &&
 			state.app.nodeStatus.syncPercent !== this.syncPercentage
 		) {
@@ -764,7 +774,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 	openUserInfo() {
 		
 			const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')
-			infoDialog.openUserInfo(this.name)
+			infoDialog.openUserInfo(this.nameVisiting)
 		
 	}
 
@@ -830,19 +840,13 @@ class ProfileQdn extends connect(store)(LitElement) {
 							position="bottom"
 							hover-delay=${300}
 							hide-delay=${1}
-							text=${this.error
-								? translate('save.saving1')
-								: Object.values(this.valuesToBeSavedOnQdn)
-										.length > 0 ||
-								  this.resourceExists === false
-								? translate('save.saving3')
-								: translate('save.saving2')}
+							text=${translate('profile.profile20')}
 						>
 						</vaadin-tooltip>
 						<popover-component for="profile-icon" message="">
 							<div style="margin-bottom:20px">
 								<p style="margin:10px 0px; font-size:16px">
-									${`${translate('profile.profile1')}`}
+									${translate('profile.profile1')}
 								</p>
 							</div>
 							<div
@@ -888,6 +892,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 				? html`
 						<div
 							style="user-select:none;cursor:pointer;opacity:0.5"
+							id="profile-error"
 						>
 							<avatar-component
 								.resource=${{
@@ -898,6 +903,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 								name=${this.name}
 							></avatar-component>
 						</div>
+						<vaadin-tooltip
+							for="profile-error"
+							position="bottom"
+							hover-delay=${200}
+							hide-delay=${1}
+							text=${translate('profile.profile19')}
+						>
+						</vaadin-tooltip>
 				  `
 				: html`
 						<div

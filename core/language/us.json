@@ -1234,6 +1234,8 @@
 		"profile15": "No data",
 		"profile16": "This name has no profile",
 		"profile17": "Unable to fetch profile",
-		"profile18": "Open profile"
+		"profile18": "Open profile",
+		"profile19": "Cannot fetch profile",
+		"profile20": "Register name"
 	}
 }
