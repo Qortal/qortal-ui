@@ -43,7 +43,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 			dialogOpenedProfile: {type: Boolean},
 			profileDataVisiting: {type: Object},
 			nameVisiting: {type: String},
-			hasName: {type: Boolean}
+			hasName: {type: Boolean},
+			resourceExistsVisiting: {type:Boolean}
 		};
 	}
 
@@ -53,6 +54,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.getProfile = this.getProfile.bind(this);
 		this._handleQortalRequestSetData =
 			this._handleQortalRequestSetData.bind(this);
+		this._handleOpenVisiting = this._handleOpenVisiting.bind(this)
 		this.setValues = this.setValues.bind(this);
 		this.saveToQdn = this.saveToQdn.bind(this);
 		this.syncPercentage = 0;
@@ -76,6 +78,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.profileDataVisiting = null;
 		this.nameVisiting = ""
 		this.hasName = false
+		this.resourceExistsVisiting = undefined
 	}
 	static styles = css`
 	
@@ -173,7 +176,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 			border-radius: 15px;
 			padding: 25px;
 			box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
-			display: block !important
+			display: block !important;
 		}
 
 		.full-info-logo {
@@ -193,6 +196,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 			display:flex;
 			flex-direction: column;
 			align-items: flex-start;
+			min-height: 55vh;
 			max-height: 55vh;
     overflow: auto;
 		}
@@ -358,6 +362,62 @@ class ProfileQdn extends connect(store)(LitElement) {
 			};
 
 			store.dispatch(setProfileData(this.profileData));
+		}
+	}
+
+	async getVisitingProfile(name) {
+		console.log('name2', name)
+		try {
+			this.isLoadingVisitingProfile = true
+			this.nameVisiting = name
+			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
+			this.error = '';
+			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
+			const res = await fetch(url);
+			let data = '';
+			try {
+				console.log({ res });
+				data = await res.json();
+				console.log({ data });
+				if (Array.isArray(data)) {
+					data = data.filter(
+						(item) => item.identifier === 'qortal_profile'
+					);
+
+					if (data.length > 0) {
+						this.resourceExistsVisiting = true;
+						const dataItem = data[0];
+						try {
+							const response = await this.getRawData(dataItem);
+							console.log({ response });
+							if (response.wallets) {
+								this.profileDataVisiting = response
+								// this.setValues(response, dataItem);
+							} else {
+								this.error = 'Cannot get saved user settings';
+							}
+						} catch (error) {
+							console.log({ error });
+							this.error = 'Cannot get saved user settings';
+						}
+					} else {
+						this.resourceExistsVisiting = false;
+					}
+				} else {
+					this.error = 'Unable to perform query';
+				}
+			} catch (error) {
+				console.log({ error });
+				data = {
+					error: 'No resource found',
+				};
+			}
+
+		} catch (error) {
+			console.log({ error });
+		} finally {
+			this.isLoadingVisitingProfile = false
+
 		}
 	}
 
@@ -640,11 +700,28 @@ class ProfileQdn extends connect(store)(LitElement) {
 		}
 	}
 
+	_handleOpenVisiting(event){
+		try {
+			console.log({event})
+			const name = event.detail;
+			console.log({name})
+			// if(!name) return
+			this.getVisitingProfile(name)
+			this.dialogOpenedProfile = true
+		} catch (error) {
+			
+		}
+	}
+
 	connectedCallback() {
 		super.connectedCallback();
 		window.addEventListener(
 			'qortal-request-set-profile-data',
 			this._handleQortalRequestSetData
+		);
+		window.addEventListener(
+			'open-visiting-profile',
+			this._handleOpenVisiting
 		);
 	}
 
@@ -652,6 +729,10 @@ class ProfileQdn extends connect(store)(LitElement) {
 		window.removeEventListener(
 			'qortal-request-set-profile-data',
 			this._handleQortalRequestSetData
+		);
+		window.removeEventListener(
+			'open-visiting-profile',
+			this._handleOpenVisiting
 		);
 		super.disconnectedCallback();
 	}
@@ -689,6 +770,26 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	openEdit(){
 		this.isOpenProfileModalUpdate = !this.isOpenProfileModalUpdate;
+	}
+
+	onCloseVisitingProfile(){
+		this.profileDataVisiting = null;
+		this.nameVisiting = ""
+		this.imageUrl = '';
+		this.resourceExistsVisiting = undefined
+	}
+
+	updated(changedProperties){
+		if (
+			changedProperties &&
+			changedProperties.has('dialogOpenedProfile') &&
+			this.dialogOpenedProfile === false
+		) {  
+
+			const prevVal = changedProperties.get('dialogOpenedProfile')
+			if(prevVal === true) this.onCloseVisitingProfile()
+		}
+		
 	}
 	render() {
 		console.log('sup profile2', this.error, this.profileDataVisiting, this.dialogOpenedProfile );
@@ -846,20 +947,35 @@ class ProfileQdn extends connect(store)(LitElement) {
 		
 
 			<!-- Profile read-view -->
-			${this.profileDataVisiting && this.dialogOpenedProfile ? html`
+			${this.dialogOpenedProfile ? html`
 			<paper-dialog
 				class="full-info-wrapper"
-				
 				?opened="${this.dialogOpenedProfile}"
-				
+								
 			>
 				<div class="full-info-logo">${this.avatarFullImage()}</div>
-				<h3>${this.name}</h3>
+				<h3>${this.nameVisiting}</h3>
 				
 				
 				<div
 					class="data-info"
 				>
+					${this.isLoadingVisitingProfile ? html`
+						<div style="width:100%;display:flex;justify-content:center">
+						<paper-spinner-lite
+							active
+							style="display: block; margin: 0 auto;"
+						></paper-spinner-lite>
+						</div>
+					` : this.resourceExistsVisiting === false ? html`
+					<div style="width:100%;display:flex;justify-content:center">
+					<p>${translate('profile.profile16')}</p>
+						</div>
+					`  : this.profileDataVisiting === null ? html`
+					<div style="width:100%;display:flex;justify-content:center">
+					<p>${translate('profile.profile17')}</p>
+						</div>
+					` :  html`
 					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile4')}</p>
 					<p style="font-size:15px">${this.profileDataVisiting.tagline || translate('profile.profile15')}</p>
 					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile5')}</p>
@@ -872,6 +988,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 						</p>
 						`
 					})}
+					`}
+				
 				</div>
 				
 			

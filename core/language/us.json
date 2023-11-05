@@ -1231,6 +1231,9 @@
 		"profile12": "Field name",
 		"profile13": "Fill out",
 		"profile14": "Activity",
-		"profile15": "No data"
+		"profile15": "No data",
+		"profile16": "This name has no profile",
+		"profile17": "Unable to fetch profile",
+		"profile18": "Open profile"
 	}
 }
