@@ -57,7 +57,6 @@ class AppView extends connect(store)(LitElement) {
             nodeType: { type: String, reflect: true },
             theme: { type: String, reflect: true },
             addressInfo: { type: Object },
-            getAllBalancesLoading: { type: Boolean },
             botQortWallet: { type: String },
             botBtcWallet: { type: String },
             botLtcWallet: { type: String },
@@ -447,7 +446,6 @@ class AppView extends connect(store)(LitElement) {
         this.urls = []
         this.nodeType = ''
         this.addressInfo = {}
-        this.getAllBalancesLoading = false
         this.botQortWallet = ''
         this.botBtcWallet = ''
         this.botLtcWallet = ''
@@ -553,24 +551,6 @@ class AppView extends connect(store)(LitElement) {
                                     </side-menu>
                                 </div>
                             </div>
-                            <button class="balanceButton" @click="${() => this.shBalanceTicker()}">${translate("grouppage.gchange59")}</button>
-                            <div id="theTicker" style="display: none; margin-bottom: 20px;">
-                            <div id="balanceheader">
-                                <span class="balanceheadertext">
-                                    ${this.getAllBalancesLoading ? html`
-                                        ${translate("general.update")}
-                                    ` : html`
-                                        ${translate("general.balances")}
-                                        <vaadin-button theme="icon" id="reload" @click="${() => this.getAllBalances()}">
-                                             <vaadin-icon icon="vaadin:refresh"></vaadin-icon>
-                                        </vaadin-button>
-                                        <vaadin-tooltip text="${translate("general.update")}" for="reload" position="top"></vaadin-tooltip>
-                                    `}
-                                </span>
-                            </div>
-                            ${this.getAllBalancesLoading ? html`<paper-progress indeterminate style="width: 100%; margin: 4px;"></paper-progress>` : ''}
-                            ${this.balanceTicker}
-                            </div>
                             <app-info></app-info>
                         </div>
                     </app-header-layout>
@@ -598,6 +578,8 @@ class AppView extends connect(store)(LitElement) {
                             <div>&nbsp;&nbsp;</div>
                             <language-selector></language-selector>
                             <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <core-sync-status></core-sync-status>
+                            <div>&nbsp;&nbsp;</div>
                             <theme-toggle></theme-toggle>
                             <div>&nbsp;&nbsp;</div>
                             ${this.renderLockButton()}
@@ -752,8 +734,6 @@ class AppView extends connect(store)(LitElement) {
         this.botRvnWallet = store.getState().app.selectedAddress.rvnWallet.address
         this.botArrrWallet = store.getState().app.selectedAddress.arrrWallet.address
 
-        await this.getAllBalances()
-
         await this.botBtcTradebook()
         await this.botLtcTradebook()
         await this.botDogeTradebook()
@@ -769,8 +749,6 @@ class AppView extends connect(store)(LitElement) {
             this.tradeBotRvnBook = JSON.parse(localStorage.getItem(this.botRvnWallet) || "[]")
             this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
         })
-
-        this.renderBalances()
 
         const getOpenTradesBTC = async () => {
             let timerBTC
@@ -1802,15 +1780,6 @@ class AppView extends connect(store)(LitElement) {
         }, 60000)
     }
 
-    shBalanceTicker() {
-        const targetDiv = this.shadowRoot.getElementById("theTicker")
-        if (targetDiv.style.display !== "none") {
-            targetDiv.style.display = "none"
-        } else {
-            targetDiv.style.display = "inline"
-        }
-    }
-
     clearTheCache() {
         if (!isElectron()) {
         } else {
@@ -2090,55 +2059,6 @@ class AppView extends connect(store)(LitElement) {
             `
         } else {
             return html``
-        }
-    }
-
-    async getAllBalances() {
-        this.getAllBalancesLoading = true
-        await this.updateQortWalletBalance()
-        await this.updateBtcWalletBalance()
-        await this.updateLtcWalletBalance()
-        await this.updateDogeWalletBalance()
-        await this.updateDgbWalletBalance()
-        await this.updateRvnWalletBalance()
-        await this.fetchArrrWalletAddress()
-        await this.updateArrrWalletBalance()
-        this.getAllBalancesLoading = false
-    }
-
-    async renderBalances() {
-        const tickerTime = ms => new Promise(res => setTimeout(res, ms))
-        clearTimeout(this.updateBalancesTimeout)
-        this.balanceTicker = html`
-            <div id="balances">
-                <div class="balancelist"></div>
-            </div>
-        `
-        await tickerTime(1000)
-        this.balanceTicker = html`
-            <div id="balances">
-                <div class="balancelist">
-                    <span class="balanceinfo qort">QORT ${translate("general.balance")}: ${this.qortWalletBalance}</span>
-                    <span class="balanceinfo btc">BTC ${translate("general.balance")}: ${this.btcWalletBalance}</span>
-                    <span class="balanceinfo ltc">LTC ${translate("general.balance")}: ${this.ltcWalletBalance}</span>
-                    <span class="balanceinfo doge">DOGE ${translate("general.balance")}: ${this.dogeWalletBalance}</span>
-                    <span class="balanceinfo dgb">DGB ${translate("general.balance")}: ${this.dgbWalletBalance}</span>
-                    <span class="balanceinfo rvn">RVN ${translate("general.balance")}: ${this.rvnWalletBalance}</span>
-                    <span class="balanceinfo arrr">ARRR ${translate("general.balance")}: ${this.arrrWalletBalance}</span>
-                </div>
-            </div>
-        `
-        this.updateBalancesTimeout = setTimeout(() => this.renderBalances(), 45000)
-    }
-
-    async fetchArrrWalletAddress() {
-        let res = await parentEpml.request('apiCall', {
-            url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
-            method: 'POST',
-            body: `${store.getState().app.selectedAddress.arrrWallet.seed58}`,
-        })
-        if (res != null && res.error != 1201) {
-            this.arrrWalletAddress = res
         }
     }
 
