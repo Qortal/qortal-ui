@@ -816,10 +816,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 				? html`
 						<mwc-icon
 							id="profile-icon"
-							class=${Object.values(this.valuesToBeSavedOnQdn)
-								.length > 0 || this.resourceExists === false
-								? 'active'
-								: 'notActive'}
+							class=${'notActive'}
 							@click=${() => {
 								const target = this.shadowRoot.getElementById(
 									'popover-notification'
