@@ -1,4 +1,12 @@
-import { Epml, EpmlReadyPlugin, RequestPlugin, ContentWindow as EpmlContentWindowPlugin, EpmlStreamPlugin, EpmlProxyPlugin, EpmlStream } from 'epml'
+import {
+	ContentWindow as EpmlContentWindowPlugin,
+	Epml,
+	EpmlProxyPlugin,
+	EpmlReadyPlugin,
+	EpmlStream,
+	EpmlStreamPlugin,
+	RequestPlugin
+} from 'epml'
 
 Epml.registerPlugin(RequestPlugin)
 Epml.registerPlugin(EpmlReadyPlugin)

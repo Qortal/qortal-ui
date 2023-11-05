@@ -1,5 +1,5 @@
-import { store } from '../store.js'
-import { EpmlStream } from 'epml'
+import {store} from '../store.js'
+import {EpmlStream} from 'epml'
 
 const LOGIN_STREAM_NAME = 'logged_in'
 const CONFIG_STREAM_NAME = 'config'

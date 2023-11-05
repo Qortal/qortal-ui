@@ -1,10 +1,10 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const chatpageStyles = css`
  html {
         scroll-behavior: smooth;
     }
-    
+
     .chat-head-container {
         display: flex;
         justify-content: flex-start;
@@ -49,7 +49,7 @@ export const chatpageStyles = css`
         cursor: pointer;
         color: #494c50;
     }
-    
+
     .chat-text-area .typing-area .chatbar {
         position: relative;
         display: flex;
@@ -159,7 +159,7 @@ export const chatpageStyles = css`
     .dialogCustomInner ul {
         padding-left: 0px
     }
-    
+
     .dialogCustomInner li {
         margin-bottom: 10px;
     }
@@ -236,7 +236,7 @@ export const chatpageStyles = css`
       align-items: center;
       padding: 10px 10px 8px 10px;
   }
-  
+
   .repliedTo-subcontainer {
       display: flex;
       flex-direction: row;
@@ -286,7 +286,7 @@ export const chatpageStyles = css`
       cursor: pointer;
       color: #494c50;
   }
-  
+
   .chatbar-container {
       width: 100%;
       display: flex;
@@ -358,7 +358,7 @@ export const chatpageStyles = css`
       left: 48px;
       animation-delay: -1.2s;
   }
-  
+
   .lds-grid div:nth-child(9) {
       top: 95px;
       left: 90px;
@@ -372,7 +372,7 @@ export const chatpageStyles = css`
       50% {
       opacity: 0.5;
       }
-  }   
+  }
 
   .float-left {
       float: left;
@@ -397,7 +397,7 @@ export const chatpageStyles = css`
             overflow-x: hidden;
             width: 100%;
         }
-    
+
         .repliedTo-container {
             display: flex;
             flex-direction: row;
@@ -405,14 +405,14 @@ export const chatpageStyles = css`
             align-items: center;
             padding: 10px 10px 8px 10px;
         }
-    
+
         .senderName {
             margin: 0;
             color: var(--mdc-theme-primary);
             font-weight: bold;
             user-select: none;
         }
-    
+
         .original-message {
             color: var(--chat-bubble-msg-color);
             text-overflow: ellipsis;
@@ -421,19 +421,19 @@ export const chatpageStyles = css`
             margin: 0;
             width: 800px;
         }
-    
-    
+
+
         .close-icon {
             color: #676b71;
             width: 18px;
             transition: all 0.1s ease-in-out;
         }
-    
+
         .close-icon:hover {
             cursor: pointer;
             color: #494c50;
         }
-        
+
         .chat-text-area .typing-area .chatbar {
             position: relative;
             display: flex;
@@ -444,7 +444,7 @@ export const chatpageStyles = css`
             padding: 5px 5px 5px 7px;
             overflow: hidden;
         }
-    
+
         .chat-text-area .typing-area .emoji-button {
             width: 45px;
             height: 40px;
@@ -456,7 +456,7 @@ export const chatpageStyles = css`
             max-height: 40px;
             color: var(--black);
         }
-    
+
         .emoji-button-caption {
             width: 45px;
             height: 40px;
@@ -468,7 +468,7 @@ export const chatpageStyles = css`
             max-height: 40px;
             color: var(--black);
         }
-    
+
         .caption-container {
             width: 100%;
             display: flex;
@@ -479,7 +479,7 @@ export const chatpageStyles = css`
             padding: 5px;
             border-radius: 1px;
         }
-    
+
         .chatbar-caption {
             font-family: Roboto, sans-serif;
             width: 70%;
@@ -494,19 +494,19 @@ export const chatpageStyles = css`
             border-bottom: 1px solid #cac8c8;
             padding: 3px;
         }
-    
+
         .message-size-container {
             display: flex;
             justify-content: flex-end;
             width: 100%;
         }
-    
+
         .message-size {
             font-family: Roboto, sans-serif;
             font-size: 12px;
             color: black;
         }
-    
+
         .lds-grid {
             width: 120px;
             height: 120px;
@@ -514,11 +514,11 @@ export const chatpageStyles = css`
             left: 50%;
             top: 40%;
         }
-    
+
         img {
             border-radius: 25%;
         }
-    
+
         .dialogCustom {
             position: fixed;
             z-index: 10000;
@@ -530,7 +530,7 @@ export const chatpageStyles = css`
             right: 20px;
             user-select: none;
         }
-    
+
         .dialogCustomInner {
             min-width: 300px;
             height: 40px;
@@ -539,19 +539,19 @@ export const chatpageStyles = css`
             padding: 10px;
             border-radius: 4px;
         }
-    
+
         .dialogCustomInner ul {
             padding-left: 0px
         }
-        
+
         .dialogCustomInner li {
             margin-bottom: 10px;
         }
-    
+
         .marginLoader {
             margin-right: 8px;
         }
-    
+
         .last-message-ref {
             position: absolute;
             font-size: 18px;
@@ -565,21 +565,21 @@ export const chatpageStyles = css`
             border-radius: 50%;
             transition: all 0.1s ease-in-out;
         }
-    
+
         .last-message-ref:hover {
             cursor: pointer;
             transform: scale(1.1);
         }
-    
+
         .arrow-down-icon {
             transform: scale(1.15);
         }
-    
+
       .chat-container {
           display: grid;
           max-height: 100%;
       }
-    
+
       .chat-text-area {
           display: flex;
           position: relative;
@@ -587,7 +587,7 @@ export const chatpageStyles = css`
           min-height: 60px;
           max-height: 100%;
       }
-    
+
       .chat-text-area .typing-area {
           display: flex;
           flex-direction: column;
@@ -598,11 +598,11 @@ export const chatpageStyles = css`
           border-radius: 10px;
           background: var(--chat-bubble-bg);
       }
-    
+
       .chat-text-area .typing-area textarea {
           display: none;
       }
-    
+
       .chat-text-area .typing-area .chat-editor {
           display: flex;
           max-height: -webkit-fill-available;
@@ -612,7 +612,7 @@ export const chatpageStyles = css`
           padding: 0;
           border: none;
       }
-    
+
       .repliedTo-container {
           display: flex;
           flex-direction: row;
@@ -620,7 +620,7 @@ export const chatpageStyles = css`
           align-items: center;
           padding: 10px 10px 8px 10px;
       }
-      
+
       .repliedTo-subcontainer {
           display: flex;
           flex-direction: row;
@@ -628,7 +628,7 @@ export const chatpageStyles = css`
           gap: 15px;
           width: 100%;
       }
-    
+
       .repliedTo-message {
           display: flex;
           flex-direction: column;
@@ -643,41 +643,41 @@ export const chatpageStyles = css`
         margin: 0px;
         padding: 0px;
       }
-    
+
       .repliedTo-message pre {
         white-space: pre-wrap;
       }
-    
+
       .repliedTo-message p mark {
         background-color: #ffe066;
       border-radius: 0.25em;
       box-decoration-break: clone;
       padding: 0.125em 0;
       }
-    
+
       .reply-icon {
           width: 20px;
           color: var(--mdc-theme-primary);
       }
-    
+
       .close-icon {
           color: #676b71;
           width: 18px;
           transition: all 0.1s ease-in-out;
       }
-    
+
       .close-icon:hover {
           cursor: pointer;
           color: #494c50;
       }
-      
+
       .chatbar-container {
           width: 100%;
           display: flex;
           height: auto;
           overflow: hidden;
       }
-    
+
       .lds-grid {
           width: 120px;
           height: 120px;
@@ -685,7 +685,7 @@ export const chatpageStyles = css`
           left: 50%;
           top: 40%;
       }
-    
+
       .lds-grid div {
           position: absolute;
           width: 34px;
@@ -694,61 +694,61 @@ export const chatpageStyles = css`
           background: #03a9f4;
           animation: lds-grid 1.2s linear infinite;
       }
-    
+
       .lds-grid div:nth-child(1) {
           top: 4px;
           left: 4px;
           animation-delay: 0s;
           }
-    
+
       .lds-grid div:nth-child(2) {
           top: 4px;
           left: 48px;
           animation-delay: -0.4s;
       }
-    
+
       .lds-grid div:nth-child(3) {
           top: 4px;
           left: 90px;
           animation-delay: -0.8s;
       }
-    
+
       .lds-grid div:nth-child(4) {
           top: 50px;
           left: 4px;
           animation-delay: -0.4s;
       }
-    
+
       .lds-grid div:nth-child(5) {
           top: 50px;
           left: 48px;
           animation-delay: -0.8s;
       }
-    
+
       .lds-grid div:nth-child(6) {
           top: 50px;
           left: 90px;
           animation-delay: -1.2s;
       }
-    
+
       .lds-grid div:nth-child(7) {
           top: 95px;
           left: 4px;
           animation-delay: -0.8s;
       }
-    
+
       .lds-grid div:nth-child(8) {
           top: 95px;
           left: 48px;
           animation-delay: -1.2s;
       }
-      
+
       .lds-grid div:nth-child(9) {
           top: 95px;
           left: 90px;
           animation-delay: -1.6s;
       }
-    
+
       @keyframes lds-grid {
           0%, 100% {
           opacity: 1;
@@ -756,16 +756,16 @@ export const chatpageStyles = css`
           50% {
           opacity: 0.5;
           }
-    }   
-    
+    }
+
       .float-left {
           float: left;
       }
-    
+
       img {
           border-radius: 25%;
       }
-    
+
       paper-dialog.warning {
                 width: 50%;
                 max-width: 50vw;
@@ -782,7 +782,7 @@ export const chatpageStyles = css`
             .buttons {
                 text-align:right;
             }
-    
+
       .dialogCustom {
           position: fixed;
           z-index: 10000;
@@ -794,11 +794,11 @@ export const chatpageStyles = css`
           right: 20px;
           user-select: none;
       }
-    
+
       .dialogCustom p {
           color: var(--black)
       }
-    
+
       .dialogCustomInner {
           min-width: 300px;
           height: 40px;
@@ -807,26 +807,26 @@ export const chatpageStyles = css`
           padding: 10px;
           border-radius: 4px;
       }
-    
+
       .dialogCustomInner ul {
           padding-left: 0px
       }
-    
+
       .dialogCustomInner li {
           margin-bottom: 10px;
       }
-    
+
       .marginLoader {
           margin-right: 8px;
       }
-    
+
       .smallLoading,
       .smallLoading:after {
           border-radius: 50%;
           width: 2px;
           height: 2px;
       }
-    
+
       .smallLoading {
           border-width: 0.8em;
           border-style: solid;
@@ -838,7 +838,7 @@ export const chatpageStyles = css`
           transform: translateZ(0px);
           animation: 1.1s linear 0s infinite normal none running loadingAnimation;
       }
-    
+
       @-webkit-keyframes loadingAnimation {
           0% {
               -webkit-transform: rotate(0deg);
@@ -849,7 +849,7 @@ export const chatpageStyles = css`
               transform: rotate(360deg);
           }
       }
-    
+
       @keyframes loadingAnimation {
           0% {
               -webkit-transform: rotate(0deg);
@@ -860,9 +860,9 @@ export const chatpageStyles = css`
               transform: rotate(360deg);
           }
       }
-      
+
       /* Add Image Modal Dialog Styling */
-    
+
       .dialog-container {
           position: relative;
           display: flex;
@@ -872,14 +872,14 @@ export const chatpageStyles = css`
           gap: 10px;
           height: 100%;
       }
-    
+
       .dialog-container-title {
           font-family: Montserrat;
           color: var(--black);
           font-size: 20px;
           margin: 15px 0 0 0;
       }
-      
+
       .divider {
         height: 1px;
         background-color: var(--chat-bubble-msg-color);
@@ -887,7 +887,7 @@ export const chatpageStyles = css`
         width: 70%;
         margin-bottom: 20px;
       }
-    
+
       .dialog-container-loader {
           position: relative;
           display: flex;
@@ -896,14 +896,14 @@ export const chatpageStyles = css`
           gap: 10px;
           height: 100%;
       }
-    
+
       .dialog-image {
           width: 100%;
           max-height: 300px;
           border-radius: 0;
           object-fit: contain;
       }
-    
+
         .chat-right-panel {
             flex: 0;
             border-left: 3px solid rgb(221, 221, 221);
@@ -911,30 +911,30 @@ export const chatpageStyles = css`
             overflow-y: auto;
             background: transparent;
         }
-    
+
         .movedin {
             flex: 1 !important;
             background: transparent;
         }
-    
+
         .main-container {
             display: flex;
             height: 100%;
         }
-    
+
         .group-nav-container {
             display: flex;
-            height: 40px; 
-            padding: 5px; 
+            height: 40px;
+            padding: 5px;
             margin: 0px;
-            background-color: var(--chat-bubble-bg); 
-            box-sizing: border-box; 
+            background-color: var(--chat-bubble-bg);
+            box-sizing: border-box;
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--group-drop-shadow);
             z-index: 1;
         }
-    
+
         .top-bar-icon {
             border-radius: 50%;
             color: var(--chat-bubble-msg-color);
@@ -942,13 +942,13 @@ export const chatpageStyles = css`
             padding: 5px;
             background-color: transparent;
         }
-    
+
         .top-bar-icon:hover {
             background-color: #e6e6e69b;
             cursor: pointer;
             color: var(--black)
         }
-    
+
         .group-name {
             font-family: Raleway, sans-serif;
             font-size: 16px;
@@ -956,8 +956,8 @@ export const chatpageStyles = css`
             margin:0px;
             padding:0px;
         }
-    
-    
+
+
       .modal-button {
           font-family: Roboto, sans-serif;
           font-size: 16px;
@@ -968,7 +968,7 @@ export const chatpageStyles = css`
           border: none;
           transition: all 0.3s ease-in-out;
       }
-    
+
       .modal-button-red {
           font-family: Roboto, sans-serif;
           font-size: 16px;
@@ -979,17 +979,17 @@ export const chatpageStyles = css`
           border: none;
           transition: all 0.3s ease-in-out;
       }
-    
+
       .modal-button-red:hover {
           cursor: pointer;
           background-color: #f4433663;
       }
-    
+
       .modal-button:hover {
           cursor: pointer;
           background-color: #03a8f475;
       }
-    
+
       .name-input {
           width: 100%;
           margin-bottom: 15px;
@@ -1003,29 +1003,29 @@ export const chatpageStyles = css`
           color: var(--chat-bubble-msg-color);
           box-sizing: border-box;
       }
-    
+
       .name-input::selection {
           background-color: var(--mdc-theme-primary);
-          color: white;   
+          color: white;
       }
-    
+
       .name-input::placeholder {
           opacity: 0.9;
           color: var(--black);
       }
-    
+
       .search-results-div {
         position: absolute;
         top: 25px;
         right: 25px;
       }
-    
+
       .search-field {
           width: 100%;
           position: relative;
           margin-bottom: 5px;
       }
-    
+
       .search-icon {
           position: absolute;
           right: 3px;
@@ -1037,12 +1037,12 @@ export const chatpageStyles = css`
           padding: 6px 3px;
           font-size: 21px;
       }
-    
+
       .search-icon:hover {
         cursor: pointer;
         background: #d7d7d75c;
       }
-    
+
       .user-verified {
         position: absolute;
         top: 0;
@@ -1053,7 +1053,7 @@ export const chatpageStyles = css`
         color: #04aa2e;
         font-size: 13px;
       }
-      
+
       .user-selected {
         display: flex;
         justify-content: space-between;
@@ -1065,30 +1065,30 @@ export const chatpageStyles = css`
         border-radius: 5px;
         background-color: #ececec96;
       }
-    
+
       .user-selected-name {
         font-family: Roboto, sans-serif;
         margin: 0;
         font-size: 16px;
       }
-    
+
       .forwarding-container {
         display: flex;
         gap: 15px;
       }
-    
+
       .user-selected-forwarding {
         font-family: Livvic, sans-serif;
         margin: 0;
         font-size: 16px;
       }
-    
+
       .close-forwarding {
           color: #676b71;
           width: 14px;
           transition: all 0.1s ease-in-out;
       }
-    
+
       .close-forwarding:hover {
           cursor: pointer;
           color: #4e5054;
@@ -1110,7 +1110,7 @@ export const chatpageStyles = css`
             to {
                 transform: translateY(0);
             }
-        }   
+        }
 
         .gifs-backdrop {
             top: 0;
@@ -1142,7 +1142,7 @@ export const chatpageStyles = css`
   .attachment-icon {
     width: 70%;
   }
-  
+
   .attachment-name {
     font-family: Work Sans, sans-serif;
     font-size: 20px;

@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { stateAwait } from '../../stateAwait.js'
-import { translate, get, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {stateAwait} from '../../stateAwait.js'
+import {get} from 'lit-translate'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -16,18 +16,18 @@ import '../qort-theme-toggle.js'
 
 import settings from '../../functional-components/settings-page.js'
 import {
-    addAutoLoadImageChat,
-    removeAutoLoadImageChat,
-    addChatLastSeen,
-    allowQAPPAutoAuth,
-    removeQAPPAutoAuth,
-    removeQAPPAutoLists,
-    allowQAPPAutoLists,
-    addTabInfo,
-    setTabNotifications,
-    setNewTab,
-    setNewNotification,
-    setSideEffectAction
+	addAutoLoadImageChat,
+	addChatLastSeen,
+	addTabInfo,
+	allowQAPPAutoAuth,
+	allowQAPPAutoLists,
+	removeAutoLoadImageChat,
+	removeQAPPAutoAuth,
+	removeQAPPAutoLists,
+	setNewNotification,
+	setNewTab,
+	setSideEffectAction,
+	setTabNotifications
 } from '../../redux/app/app-actions.js'
 
 window.reduxStore = store
@@ -135,7 +135,7 @@ class LoginView extends connect(store)(LitElement) {
                     display: block;
                     vertical-align: bottom;
                 }
-            
+
                 .login-page {
                     background: var(--background);
                     background-repeat: no-repeat;

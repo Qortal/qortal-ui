@@ -1,5 +1,4 @@
-
-import { LOAD_NOTIFICATION_CONFIG, SET_QCHAT_NOTIFICATION_CONFIG } from '../user-action-types.js'
+import {LOAD_NOTIFICATION_CONFIG, SET_QCHAT_NOTIFICATION_CONFIG} from '../user-action-types.js'
 
 const configUrl = '/getConfig'
 

@@ -1,8 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 import localForage from "localforage"
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {translate} from 'lit-translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -29,7 +28,7 @@ class ChatHead extends LitElement {
     static get styles() {
         return css`
             li {
-           
+
                 width: 100%;
                 padding: 10px 5px 10px 5px;
                 cursor: pointer;
@@ -121,7 +120,7 @@ class ChatHead extends LitElement {
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1
@@ -138,7 +137,7 @@ class ChatHead extends LitElement {
         let avatarImg = ''
         let backupAvatarImg = ''
         let isUnread = false
-    
+
         if(this.chatInfo.name){
             const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -170,16 +169,16 @@ class ChatHead extends LitElement {
                     <div class="name"><span style="font-weight: bold;float:left; padding-left: 8px; color: var(--chat-group);font-size:14px;word-break:${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? 'break-word': 'break-all'}">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
                 </div>
                 <div class="about" style="margin-top:7px">
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:14px"></span> 
+                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:14px"></span>
                     <div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
-                    <div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div> 
+                    <div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
                     <message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>
                     <span style="font-size:12px;color:var(--black);display: ${(!this.chatInfo.timestamp || this.chatInfo.timestamp > 100000) ? 'none' : 'block'}">${translate('chatpage.cchange90')}</span>
                     </div>
                     </div>
                 </div>
                 </div>
-            
+
             </li>
         `
     }
@@ -210,7 +209,7 @@ class ChatHead extends LitElement {
             parentEpml.subscribe('chat_last_seen', async chatList => {
                 const parsedChatList = JSON.parse(chatList)
                 const findChatSeen = parsedChatList.find(chat=> chat.key === this.chatInfo.url)
-  
+
                 if(findChatSeen && this.lastReadMessageTimestamp !== findChatSeen.timestamp){
                     this.lastReadMessageTimestamp = findChatSeen.timestamp
                     this.requestUpdate()
@@ -244,20 +243,20 @@ class ChatHead extends LitElement {
             return true
         }
         if(changedProperties.has('chatInfo')){
-    
+
             const prevChatInfo = changedProperties.get('chatInfo')
 
             if(prevChatInfo.address !== this.chatInfo.address){
-    
+
                 this.isImageLoaded = false
                 this.requestUpdate()
             }
             return true
         }
-        
+
         return false
       }
-   
+
     getUrl(chatUrl) {
         this.setActiveChatHeadUrl(chatUrl)
     }

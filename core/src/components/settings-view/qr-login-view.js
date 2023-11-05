@@ -1,7 +1,7 @@
-import { css, html, LitElement } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { translate } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {translate} from 'lit-translate'
 
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
@@ -59,21 +59,21 @@ class QRLoginView extends connect(store)(LitElement) {
                 text-decoration: none;
                 transition: all .2s;
                 position: relative;
-            }   
-            
+            }
+
             .q-button.outlined {
                 background: unset;
                 border: 1px solid #03a9f4;
             }
-            
+
             :host([theme="light"]) .q-button.outlined {
                 color: #03a9f4;
             }
-            
+
             #qr-toggle-button {
                 margin-left: 12px;
             }
-            
+
             #login-qr-code {
                 margin: auto;
             }
@@ -101,7 +101,7 @@ class QRLoginView extends connect(store)(LitElement) {
                 <div style="max-width: 600px; display: flex; justify-content: center; margin: auto;">
                     <div id="qr-toggle-button" @click=${() => this.showQRCode()} class="q-button outlined"> ${translate(this.translateButtonKey)} </div>
                 </div>
-              
+
                 <div id="login-qr-code" style="display: none;">
                     <qortal-qrcode-generator id="login-qr-code" data="${this.savedWalletDataJson}" mode="octet" format="html" auto></qortal-qrcode-generator>
                 </div>

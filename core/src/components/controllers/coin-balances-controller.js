@@ -1,11 +1,10 @@
-import { LitElement, html, css } from 'lit';
+import {html, LitElement} from 'lit';
 import '@material/mwc-icon';
-import { store } from '../../store';
-import { connect } from 'pwa-helpers';
+import {store} from '../../store';
+import {connect} from 'pwa-helpers';
 import '@vaadin/tooltip';
-import { get } from 'lit-translate';
-import { parentEpml } from '../show-plugin';
-import { setCoinBalances } from '../../redux/app/app-actions';
+import {parentEpml} from '../show-plugin';
+import {setCoinBalances} from '../../redux/app/app-actions';
 
 class CoinBalancesController extends connect(store)(LitElement) {
 	static get properties() {
@@ -43,7 +42,7 @@ class CoinBalancesController extends connect(store)(LitElement) {
 		return myNode;
 	}
 
-    
+
     async updateArrrWalletBalance() {
         let _url = `/crosschain/arrr/walletbalance?apiKey=${this.myNode.apiKey}`
         let _body = store.getState().app.selectedAddress.arrrWallet.seed58
@@ -205,7 +204,7 @@ class CoinBalancesController extends connect(store)(LitElement) {
                         fullValue: Number(res)
                     })
                 );
-            
+
             }
         }).catch(()=> {
             console.log('error')
@@ -233,7 +232,7 @@ class CoinBalancesController extends connect(store)(LitElement) {
                     this.updateArrrWalletBalance()
                 }
             } catch (error) {
-                
+
             }
         }
         copyCoinList[coin] = Date.now() + 120000;
@@ -264,9 +263,9 @@ class CoinBalancesController extends connect(store)(LitElement) {
             })
 
         await Promise.all(getCoinBalances);
-        
+
     }
-   
+
    async fetchBalance(){
         try {
             let arrayOfCoins = []
@@ -303,7 +302,7 @@ class CoinBalancesController extends connect(store)(LitElement) {
 	}
 
 	disconnectedCallback() {
-		
+
 		super.disconnectedCallback();
         window.removeEventListener(
 			'ping-coin-controller-with-coin',
@@ -316,7 +315,7 @@ class CoinBalancesController extends connect(store)(LitElement) {
 
 	}
 
-    
+
 
 	render() {
 		return html``;

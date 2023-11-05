@@ -1,4 +1,4 @@
-import { LOG_IN, LOG_OUT, SELECT_ADDRESS } from '../app-action-types.js'
+import {LOG_IN, LOG_OUT, SELECT_ADDRESS} from '../app-action-types.js'
 
 export const doSelectAddress = address => {
     return (dispatch, getState) => {

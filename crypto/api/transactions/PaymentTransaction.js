@@ -1,7 +1,7 @@
 'use strict'
 import TransactionBase from './TransactionBase.js'
 import Base58 from '../deps/Base58.js'
-import { store } from '../../api.js'
+import {store} from '../../api.js'
 
 export default class PaymentTransaction extends TransactionBase {
 	constructor() {
@@ -17,12 +17,12 @@ export default class PaymentTransaction extends TransactionBase {
 					<th>${this._dialogto}:</th>
 				</tr>
 				<tr>
-					<td>${this.dialogAddress} ${' '}-</td> 
-					<td>${Base58.encode(this._recipient)}</td> 
+					<td>${this.dialogAddress} ${' '}-</td>
+					<td>${Base58.encode(this._recipient)}</td>
 				</tr>
 				${this.recipientName ? html`
 					<tr>
-						<td>${this.dialogName} ${' '}-</td> 
+						<td>${this.dialogName} ${' '}-</td>
 						<td>${this.recipientName}</td>
 					</tr>
 				` : ''}

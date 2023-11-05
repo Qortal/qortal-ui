@@ -1,17 +1,10 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {translate,} from 'lit-translate';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 class AddFriendsModal extends connect(store)(LitElement) {
@@ -235,7 +228,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			notes: this.notes,
 			willFollow: this.willFollow,
 			mySelectedFeeds: this.mySelectedFeeds
-			
+
 		});
 		this.clearFields();
 		this.onClose();
@@ -303,7 +296,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 	render() {
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
-				
+
 				<div class="modal-content">
 					<div class="inner-content">
 					<div style="text-align:center">

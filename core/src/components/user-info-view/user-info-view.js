@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {get, translate} from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
@@ -354,7 +354,7 @@ class UserInfoView extends connect(store)(LitElement) {
 
 		.border-wrapper {
 			border: 1px var(--tradeborder) solid;
-			overflow: hidden; 
+			overflow: hidden;
 		}
 
 
@@ -1531,7 +1531,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     creatorAddress: item.creatorAddress,
                     recipient: item.recipient,
                     amount: item.amount
-   
+
                 }
             }
         }).filter(item => !!item)
@@ -1548,7 +1548,7 @@ class UserInfoView extends connect(store)(LitElement) {
                     creatorAddress: item.creatorAddress,
                     recipient: item.recipient,
                     amount: item.amount
-   
+
                 }
             }
         }).filter(item => !!item)
@@ -1594,7 +1594,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1616,7 +1616,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1638,7 +1638,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1660,7 +1660,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1682,7 +1682,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1704,7 +1704,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1726,7 +1726,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1748,7 +1748,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1770,7 +1770,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1792,7 +1792,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1814,7 +1814,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1836,7 +1836,7 @@ class UserInfoView extends connect(store)(LitElement) {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)

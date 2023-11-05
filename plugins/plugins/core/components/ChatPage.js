@@ -1,15 +1,14 @@
-import { LitElement, html } from 'lit'
-import { animate } from '@lit-labs/motion'
-import { Epml } from '../../../epml.js'
-import { get, translate } from 'lit-translate'
-import { generateHTML } from '@tiptap/core'
-import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-import { Editor, Extension } from '@tiptap/core'
-import { escape } from 'html-escaper'
-import { inputKeyCodes } from '../../utils/keyCodes.js'
-import { replaceMessagesEdited } from '../../utils/replace-messages-edited.js'
-import { publishData } from '../../utils/publish-image.js'
-import { EmojiPicker } from 'emoji-picker-js'
+import {html, LitElement} from 'lit'
+import {animate} from '@lit-labs/motion'
+import {Epml} from '../../../epml.js'
+import {get, translate} from 'lit-translate'
+import {Editor, Extension, generateHTML} from '@tiptap/core'
+import {unsafeHTML} from 'lit/directives/unsafe-html.js'
+import {escape} from 'html-escaper'
+import {inputKeyCodes} from '../../utils/keyCodes.js'
+import {replaceMessagesEdited} from '../../utils/replace-messages-edited.js'
+import {publishData} from '../../utils/publish-image.js'
+import {EmojiPicker} from 'emoji-picker-js'
 import {ifDefined} from 'lit/directives/if-defined.js';
 
 
@@ -45,10 +44,10 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-import { RequestQueue } from '../../utils/queue.js'
-import { modalHelper } from '../../utils/publish-modal.js'
-import { generateIdFromAddresses } from '../../utils/id-generation.js'
-import { chatpageStyles } from './ChatPage-css.js'
+import {RequestQueue} from '../../utils/queue.js'
+import {modalHelper} from '../../utils/publish-modal.js'
+import {generateIdFromAddresses} from '../../utils/id-generation.js'
+import {chatpageStyles} from './ChatPage-css.js'
 
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
@@ -141,7 +140,7 @@ class ChatPage extends LitElement {
 	}
 
 
- 
+
     constructor() {
         super()
         this.getOldMessage = this.getOldMessage.bind(this)
@@ -308,7 +307,7 @@ class ChatPage extends LitElement {
 
     addToQueue(outSideMsg, messageQueue) {
         // Push the new message object to the queue
-        
+
         this.messageQueue = [...messageQueue, { ...outSideMsg, timestamp: Date.now()}];
 
         // Start processing the queue only if the message we just added is the only one in the queue
@@ -316,7 +315,7 @@ class ChatPage extends LitElement {
         if (this.messageQueue.length === 1) {
             this.processQueue();
         }
-    
+
         // Notify Lit to update/render due to the property change
         this.requestUpdate();
     }
@@ -331,7 +330,7 @@ class ChatPage extends LitElement {
           } else {
             throw new Error('failed')
           }
-         
+
             if (this.messageQueue.length > 0) {
                 setTimeout(() => this.processQueue(), 2000); // Wait for 10 seconds before retrying
                 // setTimeout(() => this.processQueue(), 0); // Process the next message immediately
@@ -341,20 +340,20 @@ class ChatPage extends LitElement {
             setTimeout(() => this.processQueue(), 10000); // Wait for 10 seconds before retrying
         }
     }
-  
+
     async getLastestMessages(){
         try {
             let getInitialMessages = []
             if (this.isReceipient) {
 
 
-     
+
             getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${this._chatId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
             })
 
-           
+
 
         } else {
             getInitialMessages = await parentEpml.request('apiCall', {
@@ -381,15 +380,15 @@ class ChatPage extends LitElement {
 			console.error('Copy to clipboard error:', err);
 		}
 	}
-    
+
 
     render() {
         return html`
             <div class="main-container">
-            <div 
-            class="chat-container" 
+            <div
+            class="chat-container"
             style="grid-template-rows: minmax(40px, auto) minmax(6%, 92vh) minmax(40px, auto); flex: 3;">
-                
+
                 <div class="group-nav-container">
                     <div @click=${()=> {
                         if(+this._chatId === 0 || this.isReceipient)return
@@ -400,7 +399,7 @@ class ChatPage extends LitElement {
                         `  :  html`
                         <p class="group-name">${this.groupInfo && this.groupInfo.groupName}</p>
                         `}
-                        
+
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
                     ${(!this.isReceipient && +this._chatId !== 0 && this.groupInfo.isOpen) ?
@@ -416,7 +415,7 @@ class ChatPage extends LitElement {
                        : ''}
                     </div>
                 </div>
-          
+
                 <div>
                     ${this.isLoadingMessages ?
                 html`
@@ -434,14 +433,14 @@ class ChatPage extends LitElement {
                         ` :
                 this.renderChatScroller()}
                 </div>
-                <div 
-                class="gifs-backdrop" 
+                <div
+                class="gifs-backdrop"
                 @click=${() => {
                 if (this.gifsLoading) return;
                 this.setOpenGifModal(false);
                 this.editor.commands.focus("end");
                 this.shadowRoot.querySelector("chat-gifs").clearGifSelections();
-            }} 
+            }}
                     style=${this.openGifModal ? "visibility: visible; z-index: 4" : "visibility: hidden; z-index: -100"}>
                 </div>
                 <!-- main chat bar -->
@@ -449,8 +448,8 @@ class ChatPage extends LitElement {
                 <div style="position: fixed; top:${parseInt(this.isLoadingGoToRepliedMessage.top)}px;left: ${parseInt(this.isLoadingGoToRepliedMessage.left)}px" class=${`smallLoading marginLoader`}></div>
                 ` : ''}
                 <div class="chat-text-area" style="${`${(this.repliedToMessageObj || this.editedMessageObj) && "min-height: 120px"}`}">
-                    <div 
-                    class='last-message-ref' 
+                    <div
+                    class='last-message-ref'
                     style=${(this.lastMessageRefVisible && !this.imageFile && !this.openGifModal) ? 'opacity: 1;' : 'opacity: 0;'}>
                         <vaadin-icon class='arrow-down-icon' icon='vaadin:arrow-circle-down' slot='icon' @click=${() => {
                              const chatScrollerElement = this.shadowRoot.querySelector('chat-scroller');
@@ -462,7 +461,7 @@ class ChatPage extends LitElement {
                         behavior: 'smooth',
                     });
     }
-              
+
             }}>
                         </vaadin-icon>
                         </div>
@@ -542,12 +541,12 @@ class ChatPage extends LitElement {
                                 .setOpenGifModal=${(val) => this.setOpenGifModal(val)}
                                 chatId=${this.chatId}
                                 .messageQueue=${this.messageQueue}
-                                >                           
+                                >
                             </chat-text-editor>
                     </div>
                 </div>
             </div>
-          
+
                 ${(this.isUploadingImage || this.isDeletingImage) ? html`
 					<div class="dialogCustom">
                         <div class="dialogCustomInner">
@@ -557,8 +556,8 @@ class ChatPage extends LitElement {
                                     ${this.isDeletingImage ?
                     translate("chatpage.cchange31") : translate("chatpage.cchange30")}
                                     </p>
-                                </div>			
-                            </div>                        
+                                </div>
+                            </div>
 			            </div>
                     </div>
 			    `: ''}
@@ -571,15 +570,15 @@ class ChatPage extends LitElement {
                                     ${this.isDeletingAttachment ?
                     translate("chatpage.cchange76") : translate("chatpage.cchange75")}
                                     </p>
-                                </div>			
-                            </div>                        
+                                </div>
+                            </div>
 			            </div>
                     </div>
                 `: ''}
-                <wrapper-modal 
+                <wrapper-modal
                 .onClickFunc=${() => {
                 this.removeImage()
-            }} 
+            }}
                 style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible; z-index:50" : "visibility: hidden;z-index:-100"}>
                     <div>
                         <div class="dialog-container">
@@ -622,12 +621,12 @@ class ChatPage extends LitElement {
                                 </button>
                             </div>
                         </div>
-                </div>    	
+                </div>
             </wrapper-modal>
-            <wrapper-modal 
+            <wrapper-modal
             .onClickFunc=${() => {
                 this.removeAttachment()
-            }} 
+            }}
             style=${this.attachment && !this.isUploadingAttachment ? "visibility: visible; z-index: 50" : "visibility: hidden; z-index: -100"}>
                 <div>
                     <div class="dialog-container">
@@ -674,7 +673,7 @@ class ChatPage extends LitElement {
                             </button>
                         </div>
                     </div>
-            </div>    	
+            </div>
             </wrapper-modal>
             <paper-dialog class="warning" id="confirmDialog" modal>
                 <h2 style="color: var(--black);">${translate("chatpage.cchange41")}</h2>
@@ -685,12 +684,12 @@ class ChatPage extends LitElement {
                     <mwc-button @click=${() => this.sendMessage(this.myTrimmedMeassage)} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
                 </div>
             </paper-dialog>
-            <wrapper-modal 
+            <wrapper-modal
                 .onClickFunc=${() => {
                 this.openForwardOpen = false
                 this.forwardActiveChatHeadUrl = {}
                 this.requestUpdate()
-            }} 
+            }}
                 style=${this.openForwardOpen ? "display: block" : "display: none"}>
                     <div>
                         <div class="dialog-container">
@@ -700,11 +699,11 @@ class ChatPage extends LitElement {
                             <div class="divider"></div>
                           <div class="chat-head-container">
                             <div class="search-field">
-                                <input 
+                                <input
                                     type="text"
-                                    class="name-input" 
-                                    id="sendTo" 
-                                    placeholder="${translate("chatpage.cchange7")}" 
+                                    class="name-input"
+                                    id="sendTo"
+                                    placeholder="${translate("chatpage.cchange7")}"
                                     @keydown=${() => {
                 if (this.forwardActiveChatHeadUrl.selected) {
                     this.forwardActiveChatHeadUrl = {}
@@ -721,16 +720,16 @@ class ChatPage extends LitElement {
                                     </div>
                                     `
             ) : (
-                html`              
-                                    <vaadin-icon 
+                html`
+                                    <vaadin-icon
                                         @click=${this.userSearch}
-                                        slot="icon" 
+                                        slot="icon"
                                         icon="vaadin:open-book"
                                         class="search-icon">
                                     </vaadin-icon>
                                     `
             )}
-                            </div>  
+                            </div>
                             ${this.forwardActiveChatHeadUrl.selected ? (
                 html`
                                 <div class="user-selected">
@@ -741,7 +740,7 @@ class ChatPage extends LitElement {
                                         <p class="user-selected-forwarding">
                                             Forwarding...
                                         </p>
-                                        <vaadin-icon  
+                                        <vaadin-icon
                                         class="close-forwarding"
                                         icon="vaadin:close-big"
                                         slot="icon"
@@ -759,22 +758,22 @@ class ChatPage extends LitElement {
                 html`
                             ${this.chatHeads.map((item) => {
                     return html`
-                                <chat-select 
-                                    activeChatHeadUrl=${this.forwardActiveChatHeadUrl.url} 
+                                <chat-select
+                                    activeChatHeadUrl=${this.forwardActiveChatHeadUrl.url}
                                     .setActiveChatHeadUrl=${(val) => {
                             this.forwardActiveChatHeadUrl = {
                                 ...this.forwardActiveChatHeadUrl,
                                 url: val
                             }
                             this.userFound = []
-                        }} 
+                        }}
                                     chatInfo=${JSON.stringify(item)}>
                                 </chat-select>`
                 })}
                             `
             )}
                         </div>
-                          
+
                             <div class="modal-button-row">
                                 <button class="modal-button-red" @click=${() => {
                 this.openForwardOpen = false
@@ -794,7 +793,7 @@ class ChatPage extends LitElement {
                             </div>
                         </div>
                         <div class="search-results-div">
-                            <chat-search-results 
+                            <chat-search-results
                                 .onClickFunc=${(result) => {
                 this.forwardActiveChatHeadUrl = {
                     ...this.forwardActiveChatHeadUrl,
@@ -814,7 +813,7 @@ class ChatPage extends LitElement {
                                 ?loading=${this.isLoading}>
                             </chat-search-results>
                         </div>
-                    </div>    	
+                    </div>
             </wrapper-modal>
             <wrapper-modal
                 .onClickFunc=${() => {
@@ -828,12 +827,12 @@ class ChatPage extends LitElement {
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}>
                 </tip-user>
             </wrapper-modal>
-            <wrapper-modal 
+            <wrapper-modal
             .onClickFunc=${() => {
                 this.setOpenUserInfo(false)
                 this.setUserName("")
                 this.setSelectedHead({})
-            }} 
+            }}
             style=${this.openUserInfo ? "display: block" : "display: none"
             }>
                 <user-info
@@ -841,17 +840,17 @@ class ChatPage extends LitElement {
                     .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
                     .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                     .userName=${this.userName}
-                    .selectedHead=${this.selectedHead} 
+                    .selectedHead=${this.selectedHead}
                 ></user-info>
             </wrapper-modal>
         </div>
         <div class="chat-right-panel ${this.shifted ? "movedin" : "movedout"}"   ${animate()}>
-            <chat-right-panel 
-            .getMoreMembers=${(val) => this.getMoreMembers(val)} 
-            .toggle=${(val) => this._toggle(val)} 
-            .selectedAddress=${this.selectedAddress} 
-            .groupMembers=${this.groupMembers} 
-            .groupAdmin=${this.groupAdmin} 
+            <chat-right-panel
+            .getMoreMembers=${(val) => this.getMoreMembers(val)}
+            .toggle=${(val) => this._toggle(val)}
+            .selectedAddress=${this.selectedAddress}
+            .groupMembers=${this.groupMembers}
+            .groupAdmin=${this.groupAdmin}
             .leaveGroupObj=${this.groupInfo}
             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
@@ -862,11 +861,11 @@ class ChatPage extends LitElement {
         </div>
         <div class="chat-right-panel ${this.shiftedResources ? "movedin" : "movedout"}"   ${animate()}>
             <chat-right-panel-resources
-            .getMoreMembers=${(val) => this.getMoreMembers(val)} 
-            .toggle=${(val) => this._toggleResources(val)} 
-            .selectedAddress=${this.selectedAddress} 
-            .groupMembers=${this.groupMembers} 
-            .groupAdmin=${this.groupAdmin} 
+            .getMoreMembers=${(val) => this.getMoreMembers(val)}
+            .toggle=${(val) => this._toggleResources(val)}
+            .selectedAddress=${this.selectedAddress}
+            .groupMembers=${this.groupMembers}
+            .groupAdmin=${this.groupAdmin}
             .leaveGroupObj=${this.groupInfo}
             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
             .setOpenTipUser=${(val) => this.setOpenTipUser(val)}
@@ -1098,7 +1097,7 @@ class ChatPage extends LitElement {
             }
         }
     }
- 
+
 
     async pasteImage(e) {
         const event = e
@@ -1166,7 +1165,7 @@ class ChatPage extends LitElement {
             return
         }
 
-      
+
             const findOriginalMessage = this.shadowRoot.querySelector('chat-scroller').shadowRoot.getElementById(clickedOnMessage.signature)
             if (findOriginalMessage) {
                 const messageClientRect = findOriginalMessage.getBoundingClientRect()
@@ -1177,10 +1176,10 @@ class ChatPage extends LitElement {
                     top: messageClientRect.top,
                     offsetHeight: findOriginalMessage.offsetHeight
                 }
-       
+
             await this.getOldMessageDynamic(0, clickedOnMessage.timestamp, message)
             await this.getUpdateComplete()
-            
+
             const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
             const findMessage2 = marginElements.find((item) => item.messageObj.signature === message.signature) || marginElements.find((item) => item.messageObj.originalSignature === message.signature) || marginElements.find((item) => item.messageObj.signature === message.originalSignature) || marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
             if (findMessage2) {
@@ -1412,9 +1411,9 @@ class ChatPage extends LitElement {
 
     async firstUpdated() {
         this.changeTheme()
-     
+
             // this.processQueue();
-      
+
         window.addEventListener('storage', () => {
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
@@ -1429,9 +1428,9 @@ class ChatPage extends LitElement {
             document.querySelector('html').setAttribute('theme', this.theme)
         })
 
-      
+
         this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
-     
+
         parentEpml.imReady()
 
         const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter')
@@ -1474,7 +1473,7 @@ class ChatPage extends LitElement {
 
             this.isLoadingMessages = true
             this.initUpdate()
-            
+
 
             if (previousChatId) {
                 window.parent.reduxStore.dispatch(window.parent.reduxAction.addChatLastSeen({
@@ -1498,7 +1497,7 @@ class ChatPage extends LitElement {
         }
 
         return true
-        
+
     }
 
     async getName(recipient) {
@@ -1548,11 +1547,11 @@ class ChatPage extends LitElement {
 
     renderChatScroller() {
         return html`
-            <chat-scroller 
+            <chat-scroller
                 chatId=${this.chatId}
-                .messages=${this.messagesRendered} 
+                .messages=${this.messagesRendered}
                 .oldMessages=${this.oldMessages}
-                .escapeHTML=${escape} 
+                .escapeHTML=${escape}
                 .getOldMessage=${this.getOldMessage}
                 .getAfterMessages=${this.getAfterMessages}
                 .setRepliedToMessageObj=${(val) => this.setRepliedToMessageObj(val)}
@@ -1560,7 +1559,7 @@ class ChatPage extends LitElement {
                 .sendMessage=${(val) => this._sendMessage(val)}
                 .sendMessageForward=${(messageText, typeMessage, chatReference, isForward, forwardParams) => this.sendMessage(messageText, typeMessage, chatReference, isForward, forwardParams)}
                 .showLastMessageRefScroller=${(val) => this.showLastMessageRefScroller(val)}
-                .emojiPicker=${this.emojiPicker} 
+                .emojiPicker=${this.emojiPicker}
                 ?isLoadingMessages=${this.isLoadingOldMessages}
                 .setIsLoadingMessages=${(val) => this.setIsLoadingMessages(val)}
                 .setForwardProperties=${(forwardedMessage) => this.setForwardProperties(forwardedMessage)}
@@ -1637,19 +1636,19 @@ class ChatPage extends LitElement {
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-            
+
                 this.webWorkerDecodeMessages.onmessage = e => {
                     decodeMsgs = e.data
                     res()
-                 
+
                 }
                 this.webWorkerDecodeMessages.onerror = () => {
                     rej()
-                 
+
                 }
               })
 
-            
+
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
@@ -1661,16 +1660,16 @@ class ChatPage extends LitElement {
 
 
             let list = [...decodeMsgs]
-           
+
             await new Promise((res) => {
-       
+
                 this.webWorkerSortMessages.postMessage({list});
-            
+
                 this.webWorkerSortMessages.onmessage = e => {
-              
+
                     list = e.data
                     res()
-                 
+
                 }
               })
               const lastMsg = list.at(-1)
@@ -1686,10 +1685,10 @@ class ChatPage extends LitElement {
                     count
                 }
               }
-            
+
 
             this.isLoadingOldMessages = false
-            
+
         } else {
             const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -1704,15 +1703,15 @@ class ChatPage extends LitElement {
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-            
+
                 this.webWorkerDecodeMessages.onmessage = e => {
                     decodeMsgs = e.data
                     res()
-                 
+
                 }
                 this.webWorkerDecodeMessages.onerror = () => {
                     rej()
-                 
+
                 }
               })
 
@@ -1724,22 +1723,22 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-           
-       
+
+
             let list = [...decodeMsgs]
-           
+
             await new Promise((res) => {
-       
+
                 this.webWorkerSortMessages.postMessage({list});
-            
+
                 this.webWorkerSortMessages.onmessage = e => {
-              
+
                     list = e.data
                     res()
-                 
+
                 }
               })
-           
+
               const lastMsg = list.at(-1)
               if(lastMsg){
                 const count = await parentEpml.request('apiCall', {
@@ -1753,11 +1752,11 @@ class ChatPage extends LitElement {
                     count
                 }
               }
-            
+
 
 
             this.isLoadingOldMessages = false
-           
+
         }
     }
 
@@ -1778,18 +1777,18 @@ class ChatPage extends LitElement {
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-            
+
                 this.webWorkerDecodeMessages.onmessage = e => {
                     decodeMsgs = e.data
                     res()
-                 
+
                 }
                 this.webWorkerDecodeMessages.onerror = () => {
                     rej()
-                 
+
                 }
               })
-            
+
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
@@ -1798,11 +1797,11 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-          
+
             let list = [...decodeMsgs]
-           
-          
-           
+
+
+
               this.messagesRendered = {
                 messages: list,
                 type: 'old',
@@ -1826,22 +1825,22 @@ class ChatPage extends LitElement {
 
             let decodeMsgs = []
 
-           
+
                 await new Promise((res, rej) => {
                     this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-                
+
                     this.webWorkerDecodeMessages.onmessage = e => {
                         decodeMsgs = e.data
                         res()
-                     
+
                     }
                     this.webWorkerDecodeMessages.onerror = () => {
                         rej()
-                     
+
                     }
                   })
-    
-            
+
+
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
@@ -1851,9 +1850,9 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
             let list = [...decodeMsgs]
-           
-            
-           
+
+
+
               this.messagesRendered = {
                 messages: list,
                 type: 'old',
@@ -1878,7 +1877,7 @@ class ChatPage extends LitElement {
             return
         }
         const timestamp = scrollElement.messageObj.timestamp
-        
+
         if (this.isReceipient) {
             const getInitialMessages = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -1888,19 +1887,19 @@ class ChatPage extends LitElement {
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-            
+
                 this.webWorkerDecodeMessages.onmessage = e => {
                     decodeMsgs = e.data
                     res()
-                 
+
                 }
                 this.webWorkerDecodeMessages.onerror = () => {
                     rej()
-                 
+
                 }
               })
 
-            
+
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
@@ -1909,26 +1908,26 @@ class ChatPage extends LitElement {
                 _publicKey: this._publicKey,
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
-            
+
             let list = [ ...decodeMsgs]
-           
+
             await new Promise((res) => {
-       
+
                 this.webWorkerSortMessages.postMessage({list});
-            
+
                 this.webWorkerSortMessages.onmessage = e => {
-              
+
                     list = e.data
                     res()
-                 
+
                 }
               })
-           
+
               this.messagesRendered = {
                 messages: list,
                 type: 'new'
               }
-              
+
 
             this.isLoadingOldMessages = false
             await this.getUpdateComplete()
@@ -1947,19 +1946,19 @@ class ChatPage extends LitElement {
             let decodeMsgs = []
             await new Promise((res, rej) => {
                 this.webWorkerDecodeMessages.postMessage({messages: getInitialMessages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-            
+
                 this.webWorkerDecodeMessages.onmessage = e => {
                     decodeMsgs = e.data
                     res()
-                 
+
                 }
                 this.webWorkerDecodeMessages.onerror = () => {
                     rej()
-                 
+
                 }
               })
 
-            
+
             queue.push(() =>  replaceMessagesEdited({
                 decodedMessages: decodeMsgs,
                 parentEpml,
@@ -1969,22 +1968,22 @@ class ChatPage extends LitElement {
                 addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
             }));
 
-           
+
 
             let list = [...decodeMsgs]
-           
+
             await new Promise((res) => {
-       
+
                 this.webWorkerSortMessages.postMessage({list});
-            
+
                 this.webWorkerSortMessages.onmessage = e => {
-              
+
                     list = e.data
                     res()
-                 
+
                 }
               })
-           
+
               this.messagesRendered = {
                 messages: list,
                 type: 'new'
@@ -2002,8 +2001,8 @@ class ChatPage extends LitElement {
     }
 
     async addToUpdateMessageHashmap(array){
-       
-     
+
+
 
         const newObj = {}
 
@@ -2027,7 +2026,7 @@ class ChatPage extends LitElement {
 
     findContent(identifier, data) {
         const [type, id] = identifier.split('/');
-    
+
         if (type === 'group') {
             for (let group of data.groups) {
                 if (group.groupId === parseInt(id, 10)) {
@@ -2044,7 +2043,7 @@ class ChatPage extends LitElement {
         return null;
     }
 
-  
+
 
     async processMessages(messages, isInitial, isUnread, count) {
         const isReceipient = this.chatId.includes('direct')
@@ -2057,20 +2056,20 @@ class ChatPage extends LitElement {
            }
         await new Promise((res, rej) => {
             this.webWorkerDecodeMessages.postMessage({messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey });
-        
+
             this.webWorkerDecodeMessages.onmessage = e => {
                 decodedMessages = e.data
                 res()
-             
+
             }
             this.webWorkerDecodeMessages.onerror = () => {
                 rej()
-             
+
             }
           })
         if (isInitial) {
             this.chatEditorPlaceholder = await this.renderPlaceholder()
-          
+
 
             try {
                 queue.push(() => replaceMessagesEdited({
@@ -2084,31 +2083,31 @@ class ChatPage extends LitElement {
             } catch (error) {
                 console.log({error})
             }
-            
 
-        
+
+
 
             let list = decodedMessages
-           
+
             await new Promise((res) => {
-       
+
                 this.webWorkerSortMessages.postMessage({list});
-            
+
                 this.webWorkerSortMessages.onmessage = e => {
-              
+
                     list = e.data
                     res()
-                 
+
                 }
               })
-           
+
               this._messages  = list
 
             // TODO: Determine number of initial messages by screen height...
             // this.messagesRendered = this._messages
             const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
 
-          
+
             if(isUnread){
 
                 this.messagesRendered = {
@@ -2128,12 +2127,12 @@ class ChatPage extends LitElement {
                     type: 'initial'
                 }
             }
-            
+
             this.isLoadingMessages = false
 
             setTimeout(() => this.downElementObserver(), 500)
         } else {
-            
+
             queue.push(() => replaceMessagesEdited({
                 decodedMessages: decodedMessages,
                 parentEpml,
@@ -2157,7 +2156,7 @@ class ChatPage extends LitElement {
                 }))
 
             }
-            
+
         }
     }
 
@@ -2215,7 +2214,7 @@ class ChatPage extends LitElement {
 
         if (newMessage.sender === this.selectedAddress.address) {
 
-            
+
             this.messagesRendered = {
                 messages: [newMessage],
                 type: 'newComingInAuto',
@@ -2235,13 +2234,13 @@ class ChatPage extends LitElement {
             if(viewElement){
                 viewElement.scrollTop = viewElement.scrollHeight
             }
-           
+
         } else {
 
             this.messagesRendered = {
                 messages: [newMessage],
                 type: 'newComingInAuto',
-            } 
+            }
             await this.getUpdateComplete()
 
             this.showNewMessageBar()
@@ -2250,8 +2249,8 @@ class ChatPage extends LitElement {
 
     /**
      *  Decode Message Method. Takes in a message object and returns a decoded message object
-     * @param {Object} encodedMessageObj 
-     * 
+     * @param {Object} encodedMessageObj
+     *
      */
     decodeMessage(encodedMessageObj, isReceipient, _publicKey) {
         let isReceipientVar
@@ -2303,9 +2302,9 @@ class ChatPage extends LitElement {
             } else {
                 // Fallback to http
                 directSocketLink = `ws://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`
-            }   
+            }
 
-          
+
 
             this.webSocket = new WebSocket(directSocketLink)
             // Open Connection
@@ -2320,20 +2319,20 @@ class ChatPage extends LitElement {
                     directSocketTimeout = setTimeout(pingDirectSocket, 45000)
                     return
                 }
-               
+
                 if (initial === 0) {
                     this.lastReadMessageTimestamp =  await chatLastSeen.getItem(this.chatId) || 0
                     if (noInitial) return
                     let getInitialMessages = []
                     let count = 0
                     let isUnread = false
-    
+
                     const chatId = this.chatId
-                    const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+                    const findContent = this.chatHeads.find((item)=> item.url === chatId)
                     const chatInfoTimestamp = findContent.timestamp || 0
                     const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
-    
-        
+
+
                     if(lastReadMessageTimestamp && chatInfoTimestamp){
                         if(lastReadMessageTimestamp < chatInfoTimestamp){
                             isUnread = true
@@ -2362,8 +2361,8 @@ class ChatPage extends LitElement {
                             url: `/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
                         })
                     }
-                       
-                    
+
+
 
                     this.processMessages(getInitialMessages, true, isUnread, count)
 
@@ -2381,9 +2380,9 @@ class ChatPage extends LitElement {
             // Closed Event
             this.webSocket.onclose = (e) => {
                 clearTimeout(directSocketTimeout)
-               
+
                 if (e.reason === 'switch chat') return
-              
+
                 restartDirectWebSocket()
             }
 
@@ -2431,7 +2430,7 @@ class ChatPage extends LitElement {
                 // Fallback to http
                 groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
             }
-          
+
             this.webSocket = new WebSocket(groupSocketLink)
 
             // Open Connection
@@ -2453,9 +2452,9 @@ class ChatPage extends LitElement {
                     const lastReadMessageTimestamp =  this.lastReadMessageTimestamp
 
             let isUnread = false
-    
+
             const chatId = this.chatId
-            const findContent = this.chatHeads.find((item)=> item.url === chatId) 
+            const findContent = this.chatHeads.find((item)=> item.url === chatId)
             const chatInfoTimestamp = findContent.timestamp || 0
 
             if(lastReadMessageTimestamp && chatInfoTimestamp){
@@ -2464,7 +2463,7 @@ class ChatPage extends LitElement {
                 }
             }
             if(isUnread){
-               
+
 
                 const getInitialMessagesBefore = await parentEpml.request('apiCall', {
                     type: 'api',
@@ -2482,16 +2481,16 @@ class ChatPage extends LitElement {
                         url: `/chat/messages/count?after=${lastMessage.timestamp}&txGroupId=${groupId}&limit=20&reverse=false`
                     })
                  }
-                
+
             } else {
                 getInitialMessages = await parentEpml.request('apiCall', {
                     type: 'api',
                     url: `/chat/messages?txGroupId=${groupId}&limit=${chatLimit}&reverse=true&haschatreference=false&encoding=BASE64`
                 })
             }
-                       
-                    
-                    
+
+
+
 
                     this.processMessages(getInitialMessages, true, isUnread, count)
 
@@ -2537,7 +2536,7 @@ class ChatPage extends LitElement {
         } else {
             // ... Render a nice "Error, Go Back" component.
         }
-        // Add to the messages... TODO: Save messages to localstorage and fetch from it to make it persistent... 
+        // Add to the messages... TODO: Save messages to localstorage and fetch from it to make it persistent...
     }
 
     resetChatEditor() {
@@ -2553,11 +2552,11 @@ class ChatPage extends LitElement {
     }
 
     async _sendMessage(outSideMsg, msg, messageQueue) {
-       const _chatId= this._chatId 
-       const isReceipient= this.isReceipient 
-       let _publicKey= this._publicKey 
+       const _chatId= this._chatId
+       const isReceipient= this.isReceipient
+       let _publicKey= this._publicKey
       const attachment= this.attachment
-     
+
         try {
             if (this.isReceipient) {
                 let hasPublicKey = true
@@ -2580,73 +2579,73 @@ class ChatPage extends LitElement {
                             _publicKey.hasPubKey = false
                         }
                     } catch (error) { /* empty */ }
-    
+
                     if (!hasPublicKey || !_publicKey.hasPubKey) {
                         let err4string = get("chatpage.cchange39")
                         parentEpml.request('showSnackBar', `${err4string}`)
                         return
                     }
-    
+
                 }
             }
             // have params to determine if it's a reply or not
             // have variable to determine if it's a response, holds signature in constructor
-            // need original message signature 
+            // need original message signature
             // need whole original message object, transform the data and put it in local storage
             // create new var called repliedToData and use that to modify the UI
             // find specific object property in local
             let typeMessage = 'regular'
             // this.isLoading = true
             const trimmedMessage = msg
-    
+
             const getName = async (recipient) => {
                 try {
                     const getNames = await parentEpml.request("apiCall", {
                         type: "api",
                         url: `/names/address/${recipient}`
                     })
-    
+
                     if (Array.isArray(getNames) && getNames.length > 0) {
                         return getNames[0].name
                     } else {
                         return ''
                     }
-    
+
                 } catch (error) {
                     return ""
                 }
             }
-    
+
             if (outSideMsg && outSideMsg.type === 'delete') {
                 this.isDeletingImage = true
                 const userName = outSideMsg.name
                 const identifier = outSideMsg.identifier
                 let compressedFile = ''
                 var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
-    
+
                 if (this.webWorkerFile) {
                     this.webWorkerFile.terminate()
                     this.webWorkerFile = null
                 }
-    
+
                 this.webWorkerFile = new WebWorkerFile()
-    
+
                 const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
                     const byteCharacters = atob(b64Data)
                     const byteArrays = []
-    
+
                     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
                         const slice = byteCharacters.slice(offset, offset + sliceSize)
-    
+
                         const byteNumbers = new Array(slice.length)
                         for (let i = 0; i < slice.length; i++) {
                             byteNumbers[i] = slice.charCodeAt(i)
                         }
-    
+
                         const byteArray = new Uint8Array(byteNumbers)
                         byteArrays.push(byteArray)
                     }
-    
+
                     const blob = new Blob(byteArrays, { type: contentType })
                     return blob
                 }
@@ -2659,7 +2658,7 @@ class ChatPage extends LitElement {
                             const file = new File([result], "name", {
                                 type: 'image/png'
                             })
-    
+
                             compressedFile = file
                             resolve()
                         },
@@ -2695,11 +2694,11 @@ class ChatPage extends LitElement {
                 }
                 typeMessage = 'edit'
                 let chatReference = outSideMsg.editedMessageObj.signature
-    
+
                 if (outSideMsg.editedMessageObj.chatReference) {
                     chatReference = outSideMsg.editedMessageObj.chatReference
                 }
-    
+
                 let message = ""
                 try {
                     const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
@@ -2719,34 +2718,34 @@ class ChatPage extends LitElement {
                 const str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
                 const userName = outSideMsg.name
                 const identifier = outSideMsg.identifier
-    
+
                 if (this.webWorkerFile) {
                     this.webWorkerFile.terminate()
                     this.webWorkerFile = null
                 }
-    
+
                 this.webWorkerFile = new WebWorkerFile()
-    
+
                 const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
                     const byteCharacters = atob(b64Data)
                     const byteArrays = []
-    
+
                     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
                         const slice = byteCharacters.slice(offset, offset + sliceSize)
-    
+
                         const byteNumbers = new Array(slice.length)
                         for (let i = 0; i < slice.length; i++) {
                             byteNumbers[i] = slice.charCodeAt(i)
                         }
-    
+
                         const byteArray = new Uint8Array(byteNumbers)
                         byteArrays.push(byteArray)
                     }
-    
+
                     const blob = new Blob(byteArrays, { type: contentType })
                     return blob
                 }
-    
+
                 const blob = b64toBlob(str, 'image/png')
                 await new Promise(resolve => {
                     new Compressor(blob, {
@@ -2756,7 +2755,7 @@ class ChatPage extends LitElement {
                             const file = new File([result], "name", {
                                 type: 'image/png'
                             })
-    
+
                             compressedFile = file
                             resolve()
                         },
@@ -2792,16 +2791,16 @@ class ChatPage extends LitElement {
                 }
                 typeMessage = 'edit'
                 let chatReference = outSideMsg.editedMessageObj.signature
-    
+
                 if (outSideMsg.editedMessageObj.chatReference) {
                     chatReference = outSideMsg.editedMessageObj.chatReference
                 }
-    
+
                 let message = ""
                 try {
                     const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
                     message = parsedMessageObj
-    
+
                 } catch (error) {
                     message = outSideMsg.editedMessageObj.decodedMessage
                 }
@@ -2823,8 +2822,8 @@ class ChatPage extends LitElement {
                     this.imageFile = null
                     return
                 }
-                
-               
+
+
               let  service = "QCHAT_IMAGE"
               let name = userName
               let identifier
@@ -2840,16 +2839,16 @@ class ChatPage extends LitElement {
                         }
                     );
                 if (res.action !== 'accept') throw new Error('User declined publish')
-        
+
                     if (this.webWorkerFile) {
                         this.webWorkerFile.terminate()
                         this.webWorkerFile = null
                     }
-        
+
                     this.webWorkerFile = new WebWorkerFile()
                     const image = this.imageFile
                     const id = this.uid.rnd()
-                    let groupPart 
+                    let groupPart
                     if(this.isReceipient){
                         groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
                     } else {
@@ -2880,9 +2879,9 @@ class ChatPage extends LitElement {
                         this.isUploadingImage = false
                         return
                     }
-                  
+
                     try {
-                       
+
                         await publishData({
                             registeredName: userName,
                             file: compressedFile,
@@ -2903,9 +2902,9 @@ class ChatPage extends LitElement {
                         this.isUploadingImage = false
                         return
                     }
-        
+
                 }
-               
+
                 const messageObject = {
                     messageText: trimmedMessage,
                     images: [{
@@ -2927,7 +2926,7 @@ class ChatPage extends LitElement {
                     this.isLoading = false
                     return
                 }
-    
+
                 const messageObject = {
                     messageText: '',
                     gifs: [{
@@ -2949,14 +2948,14 @@ class ChatPage extends LitElement {
                     this.isLoading = false
                     return
                 }
-    
+
                 if (this.webWorkerFile) {
                     this.webWorkerFile.terminate()
                     this.webWorkerFile = null
                 }
-    
+
                 this.webWorkerFile = new WebWorkerFile()
-    
+
                 // const attachment = attachment
                 const id = this.uid()
                 const identifier = `qchat_${id}`
@@ -3014,20 +3013,20 @@ class ChatPage extends LitElement {
                 const userName = await getName(this.selectedAddress.address)
                 typeMessage = 'edit'
                 let chatReference = outSideMsg.editedMessageObj.signature
-    
+
                 if (outSideMsg.editedMessageObj.chatReference) {
                     chatReference = outSideMsg.editedMessageObj.chatReference
                 }
-    
+
                 let message = ""
-    
+
                 try {
                     const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
                     message = parsedMessageObj
                 } catch (error) {
                     message = outSideMsg.editedMessageObj.decodedMessage
                 }
-    
+
                 let reactions = message.reactions || []
                 const findEmojiIndex = reactions.findIndex((reaction) => reaction.type === outSideMsg.reaction)
                 if (findEmojiIndex !== -1) {
@@ -3084,16 +3083,16 @@ class ChatPage extends LitElement {
             } else if (this.editedMessageObj) {
                 typeMessage = 'edit'
                 let chatReference = this.editedMessageObj.signature
-    
+
                 if (this.editedMessageObj.chatReference) {
                     chatReference = this.editedMessageObj.chatReference
                 }
-    
+
                 let message = ""
                 try {
                     const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
                     message = parsedMessageObj
-    
+
                 } catch (error) {
                     message = this.editedMessageObj.decodedMessage
                 }
@@ -3112,7 +3111,7 @@ class ChatPage extends LitElement {
                     version: 3
                 }
                 const stringifyMessageObject = JSON.stringify(messageObject)
-    
+
                 if (this.balance < 4) {
                     this.myTrimmedMeassage = ''
                     this.myTrimmedMeassage = stringifyMessageObject
@@ -3126,7 +3125,7 @@ class ChatPage extends LitElement {
             this.isUploadingImage = false
             return
         }
-    
+
     }
 
     async sendMessage({messageText, typeMessage, chatReference, isForward,isReceipient, _chatId, _publicKey, messageQueue}) {
@@ -3141,7 +3140,7 @@ class ChatPage extends LitElement {
         if(isForward){
             this.isLoading = true
         }
-     
+
         let _reference = new Uint8Array(64)
         window.crypto.getRandomValues(_reference)
         let reference = window.parent.Base58.encode(_reference)
@@ -3420,7 +3419,7 @@ class ChatPage extends LitElement {
 
     /**
      * Method to set if the user's location is down in the chat
-     * @param { Boolean } isDown 
+     * @param { Boolean } isDown
      */
     setIsUserDown(isDown) {
         this.isUserDown = isDown

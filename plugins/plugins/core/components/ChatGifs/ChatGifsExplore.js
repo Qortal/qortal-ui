@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../../epml.js'
-import { chatGifsExploreStyles } from './ChatGifsExplore-css.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {html, LitElement} from 'lit'
+import {Epml} from '../../../../epml.js'
+import {chatGifsExploreStyles} from './ChatGifsExplore-css.js'
+import {get, translate} from 'lit-translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -146,7 +146,7 @@ class ChatGifsExplore extends LitElement {
 						<div style=${'margin-top: 10px;'}>
 						<p class='gifs-loading-message'>${translate('gifs.gchange18')}
 						</p>
-						<div class='lds-circle'><div></div></div> 
+						<div class='lds-circle'><div></div></div>
 					</div>`
 					: this.isSearched && this.exploreCollections.length === 0 ? (
 						html`<p style=${'margin-top: 10px;'} class='gifs-loading-message'>${translate('gifs.gchange19')}</p>`

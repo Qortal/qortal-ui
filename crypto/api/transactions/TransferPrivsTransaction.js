@@ -1,8 +1,7 @@
 'use strict'
 import TransactionBase from './TransactionBase.js'
-import Base58 from '../deps/Base58.js'
-import { store } from '../../api.js'
-import { QORT_DECIMALS } from '../constants.js'
+import {store} from '../../api.js'
+import {QORT_DECIMALS} from '../constants.js'
 
 export default class TransferPrivsTransaction extends TransactionBase {
 	constructor() {

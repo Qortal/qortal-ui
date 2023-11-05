@@ -1,7 +1,7 @@
-import { LitElement, html } from 'lit'
-import { translate } from 'lit-translate'
-import { userInfoStyles } from './UserInfo-css.js'
-import { cropAddress } from '../../../utils/cropAddress.js'
+import {html, LitElement} from 'lit'
+import {translate} from 'lit-translate'
+import {userInfoStyles} from './UserInfo-css.js'
+import {cropAddress} from '../../../utils/cropAddress.js'
 
 import '@polymer/paper-progress/paper-progress.js'
 import '@vaadin/button'
@@ -38,7 +38,7 @@ export class UserInfo extends LitElement {
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1
@@ -90,7 +90,7 @@ export class UserInfo extends LitElement {
                 <div class="send-message-button" @click="${() => {
                     this.setOpenPrivateMessage({
                         name: this.userName,
-                        open: true   
+                        open: true
                     })
                     this.setOpenUserInfo(false)
                 }}">

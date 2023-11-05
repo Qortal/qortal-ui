@@ -1,5 +1,5 @@
-import { updateAccountInfo } from './update-account-info.js'
-import { doUpdateStoredWalletName } from './store-wallet.js'
+import {updateAccountInfo} from './update-account-info.js'
+import {doUpdateStoredWalletName} from './store-wallet.js'
 
 const GET_NAME_URL = 'names/address/'
 const CHECK_NAME_INTERVAL = 1000 * 10 // Every 10 seconds

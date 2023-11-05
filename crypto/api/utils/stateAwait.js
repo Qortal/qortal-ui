@@ -1,4 +1,4 @@
-import { store } from '../../api.js'
+import {store} from '../../api.js'
 
 let subscriptions = []
 

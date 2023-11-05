@@ -1,5 +1,5 @@
 'use strict'
-import { Epml, EpmlStream } from '../epml.js'
+import {Epml, EpmlStream} from '../epml.js'
 
 window.Epml = Epml
 window.EpmlStream = EpmlStream

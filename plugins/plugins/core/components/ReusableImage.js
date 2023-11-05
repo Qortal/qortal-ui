@@ -1,9 +1,7 @@
-import { LitElement, html, css } from 'lit';
-import {
-	translate,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {translate,} from 'lit-translate';
 import axios from 'axios';
-import { RequestQueueWithPromise } from '../../utils/queue';
+import {RequestQueueWithPromise} from '../../utils/queue';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';
 import '@material/mwc-dialog'
@@ -149,7 +147,7 @@ export class ResuableImage extends LitElement {
 		try {
 			if (this.isFetching) return;
 			this.isFetching = true;
-		
+
       await requestQueue2.enqueue(() => {
 				return  axios.get(
           `${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
@@ -301,9 +299,9 @@ export class ResuableImage extends LitElement {
 					: ''}
 			</div>
 
-			<mwc-dialog 
-                id="showDialogPublicKey" 
-                ?open=${this.openDialogImage} 
+			<mwc-dialog
+                id="showDialogPublicKey"
+                ?open=${this.openDialogImage}
                 @closed=${() => {
 					this.openDialogImage = false;
 				}}>
@@ -312,7 +310,7 @@ export class ResuableImage extends LitElement {
                         ${this.openDialogImage ? html`
                         <img src=${this.url} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
                         ` : ''}
-                        
+
 					</div>
 					<mwc-button
 						slot="primaryAction"

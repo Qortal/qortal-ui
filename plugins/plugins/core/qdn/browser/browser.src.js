@@ -1,14 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../../epml'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../../epml'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import ShortUniqueId from 'short-unique-id';
-
-registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
-})
-
 import FileSaver from 'file-saver'
 import * as actions from '../../components/qdn-action-types'
 import '@material/mwc-button'
@@ -16,13 +10,24 @@ import '@material/mwc-icon'
 import '@material/mwc-checkbox'
 import WebWorker from 'web-worker:./computePowWorkerFile.src.js'
 import WebWorkerChat from 'web-worker:./computePowWorker.src.js'
-import { publishData } from '../../../utils/publish-image.js'
-import { Loader } from '../../../utils/loader.js';
-import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
-import nacl from '../../../../../crypto/api/deps/nacl-fast.js'
-import ed2curve from '../../../../../crypto/api/deps/ed2curve.js'
-import { mimeToExtensionMap } from '../../components/qdn-action-constants';
-import { base64ToUint8Array, decryptDeprecatedSingle, decryptGroupData, encryptDataGroup, fileToBase64, uint8ArrayStartsWith, uint8ArrayToBase64 } from '../../components/qdn-action-encryption';
+import {publishData} from '../../../utils/publish-image.js'
+import {Loader} from '../../../utils/loader.js';
+import {QORT_DECIMALS} from '../../../../../crypto/api/constants'
+import {mimeToExtensionMap} from '../../components/qdn-action-constants';
+import {
+	base64ToUint8Array,
+	decryptDeprecatedSingle,
+	decryptGroupData,
+	encryptDataGroup,
+	fileToBase64,
+	uint8ArrayStartsWith,
+	uint8ArrayToBase64
+} from '../../components/qdn-action-encryption';
+
+registerTranslateConfig({
+	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
+})
+
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
 class WebBrowser extends LitElement {
@@ -117,7 +122,7 @@ class WebBrowser extends LitElement {
 			input {
     			outline: none
 			}
-			
+
 
 			paper-progress {
 				--paper-progress-active-color: var(--mdc-theme-primary);
@@ -318,7 +323,7 @@ class WebBrowser extends LitElement {
 	}
 
 	async linkOpenNewTab(link) {
-	
+
 			const value = link
 			let newQuery = value
 			if (newQuery.endsWith('/')) {
@@ -337,7 +342,7 @@ class WebBrowser extends LitElement {
 			if (path) {
 				query = query + `&path=${path}`
 			}
-			
+
 			window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
 				url: `qdn/browser/index.html${query}`,
 				id: this.uid.rnd(),
@@ -352,7 +357,7 @@ class WebBrowser extends LitElement {
 					"parent": false
 				}
 			}))
-	
+
 	}
 
 	render() {
@@ -716,7 +721,7 @@ class WebBrowser extends LitElement {
 			let votedialog5 =   get("transactions.votedialog5")
 			let votedialog6 =  get("transactions.votedialog6")
 			let feeDialog =  get("walletpage.wchange12")
-			
+
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 8,
 				nonce: this.selectedAddress.nonce,
@@ -1548,10 +1553,10 @@ class WebBrowser extends LitElement {
 					}
 
 					const pollName = data.pollName
-					const pollDescription = data.pollDescription	
+					const pollDescription = data.pollDescription
 					const pollOptions = data.pollOptions
-					const pollOwnerAddress = data.pollOwnerAddress				
-				
+					const pollOwnerAddress = data.pollOwnerAddress
+
 					try {
 						this.loader.show()
 						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
@@ -1589,7 +1594,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-				
+
 				}
 
 				case actions.NOTIFICATIONS_PERMISSION: {
@@ -1609,11 +1614,11 @@ class WebBrowser extends LitElement {
 							response = false
 							break
 						}
-						
+
 					} catch (error) {
 						break
 					}
-				
+
 				}
 
 				case actions.SEND_LOCAL_NOTIFICATION: {
@@ -1627,10 +1632,10 @@ class WebBrowser extends LitElement {
 					const interval = appInfo.interval
 					if (lastNotification && interval) {
 						const timeDifference = Date.now() - lastNotification
-					  
+
 						if (timeDifference > interval) {
 							parentEpml.request('showNotification', {
-								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+								title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon }
 						   })
 						   response = true
 						   this.updateLastNotification(id, this.name)
@@ -1640,7 +1645,7 @@ class WebBrowser extends LitElement {
 						}
 					  } else if(!lastNotification){
 						parentEpml.request('showNotification', {
-							title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon } 
+							title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon }
 					   })
 					   response = true
 					   this.updateLastNotification(id)
@@ -1648,16 +1653,16 @@ class WebBrowser extends LitElement {
 					  } else {
 						throw new Error(`invalid data`)
 					  }
-						
+
 					} catch (error) {
 						const obj = {}
 						const errorMsg = error.message || "error in pushing notification"
 						obj['error'] = errorMsg
 						response = JSON.stringify(obj)
 						break
-					
+
 					}
-				
+
 				}
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message
@@ -2045,7 +2050,7 @@ class WebBrowser extends LitElement {
 
 					try {
 						this.loader.show()
-					
+
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
 						response = JSON.stringify(resDeployAt)
 					} catch (error) {
@@ -3196,7 +3201,7 @@ class WebBrowser extends LitElement {
 		if(!appName) throw new Error('unknown app name')
 		const id = `appNotificationList-${this.selectedAddress.address}`
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
-	  
+
 		if (!checkData) {
 		  const newData = {
 			[appName]: {
@@ -3217,7 +3222,7 @@ class WebBrowser extends LitElement {
 
 	  updateLastNotification(id, appName) {
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
-	  
+
 		if (checkData) {
 		  const copyData = { ...checkData }
 		  if (copyData[appName]) {
@@ -3231,7 +3236,7 @@ class WebBrowser extends LitElement {
 		  localStorage.setItem(id, JSON.stringify(copyData))
 		}
 	  }
-	  
+
 
 	renderFollowUnfollowButton() {
 		// Only show the follow/unfollow button if we have permission to modify the list on this node
@@ -3510,7 +3515,7 @@ async function showModalAndWait(type, data) {
 							</div>
 						` : ''}
 
-						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `			
+						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange19")}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${data.encrypt ? true : false}</p>
@@ -3593,7 +3598,7 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange48")}</p>
 							</div>
 						` : ''}
-					
+
 						${type === actions.DELETE_LIST_ITEM ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange44")}</p>
@@ -3786,7 +3791,7 @@ const styles = `
 		height: 100%;
 		background: rgb(186 186 186 / 26%);
 		overflow: hidden;
-		animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards; 
+		animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
 		z-index: 1000000;
 	}
 
@@ -3795,7 +3800,7 @@ const styles = `
 			backdrop-filter: blur(0px);
 			background: transparent;
 		}
-		100% { 
+		100% {
 			backdrop-filter: blur(5px);
 			background: rgb(186 186 186 / 26%);
 		}
@@ -3882,7 +3887,7 @@ const styles = `
 		font-weight: 300;
 		color: var(--black);
 		margin: 0;
-		word-wrap: break-word; 
+		word-wrap: break-word;
   		overflow-wrap: break-word;
 	}
 

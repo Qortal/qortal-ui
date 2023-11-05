@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-import { overviewStyle } from './overview-page-css.js'
-import { asyncReplace } from 'lit/directives/async-replace.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {overviewStyle} from './overview-page-css.js'
+import {asyncReplace} from 'lit/directives/async-replace.js'
 import isElectron from 'is-electron'
 
 import "@material/mwc-button"
@@ -752,7 +752,7 @@ class StartMintingNow extends LitElement {
 				</div>
 
 				<!-- Dialog for tracking the progress of starting minting -->
-			
+
 				${this.openDialogRewardShare ? html`
 					<div class="dialogCustom">
 						<div class="dialogCustomInner">
@@ -806,7 +806,7 @@ class StartMintingNow extends LitElement {
 									Warning: do not close the Qortal UI until completion!
 								</p>
 								<p class="message-error">${this.errorMsg}</p>
-							</div>	
+							</div>
 						</div>
 						<div class="modalFooter">
 							${this.errorMsg || this.status === 5 ? html`

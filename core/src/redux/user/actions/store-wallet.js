@@ -1,4 +1,4 @@
-import { STORE_WALLET, REMOVE_WALLET, UPDATE_STORED_WALLET_NAME } from '../user-action-types.js'
+import {REMOVE_WALLET, STORE_WALLET, UPDATE_STORED_WALLET_NAME} from '../user-action-types.js'
 
 export const doStoreWallet = (wallet, password, name, statusUpdateFn = () => { }) => {
     return (dispatch, getState) => {

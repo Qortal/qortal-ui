@@ -1,10 +1,10 @@
-import { LitElement, html } from 'lit'
-import { render } from 'lit/html.js'
-import { passiveSupport } from 'passive-events-support/src/utils'
-import { Epml } from '../../../../epml.js'
-import { get, translate } from 'lit-translate'
-import { qchatStyles } from './q-chat-css.src.js'
-import { Editor, Extension } from '@tiptap/core'
+import {html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {passiveSupport} from 'passive-events-support/src/utils'
+import {Epml} from '../../../../epml.js'
+import {get, translate} from 'lit-translate'
+import {qchatStyles} from './q-chat-css.src.js'
+import {Editor, Extension} from '@tiptap/core'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker.src.js'
 import StarterKit from '@tiptap/starter-kit'
@@ -108,7 +108,7 @@ class Chat extends LitElement {
     async setActiveChatHeadUrl(url) {
         this.activeChatHeadUrl = url
         this.requestUpdate()
-    }   
+    }
 
     resetChatEditor(){
         this.editor.commands.setContent('')
@@ -188,7 +188,7 @@ class Chat extends LitElement {
     updatePlaceholder(editor, text) {
         editor.extensionManager.extensions.forEach((extension) => {
             if (extension.name === "placeholder") {
-    
+
               extension.options["placeholder"] = text
               editor.commands.focus('end')
             }
@@ -236,7 +236,7 @@ class Chat extends LitElement {
                     </vaadin-tooltip>
                     </div>
                     <div style="display:flex; align-items:center;gap:10px">
-                       
+
                         <div id="goToGroup" class="create-chat" @click=${() => { this.openTabToGroupManagement() }}>
                         <mwc-icon style="color: var(--black);">group_add</mwc-icon>
                         <vaadin-tooltip
@@ -262,7 +262,7 @@ class Chat extends LitElement {
                     <ul class="list">
                         ${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
                     </ul>
-                  
+
                 </div>
                 <div class="chat">
                     <div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
@@ -270,19 +270,19 @@ class Chat extends LitElement {
                         <span>${translate("chatpage.cchange5")} <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
                     </div>
                     <div class="chat-history">
-               
+
                         ${this.activeChatHeadUrl ? html`${this.renderChatPage()}` : html`${this.renderChatWelcomePage()}`}
                     </div>
                 </div>
                 <!-- Start Chatting Dialog -->
-                <wrapper-modal 
+                <wrapper-modal
                     .onClickFunc=${() => {
                         this.resetChatEditor()
                         this.openPrivateMessage = false
                         this.shadowRoot.getElementById('sendTo').value = ""
                         this.userFoundModalOpen = false;
                         this.userFound = []
-                    } } 
+                    } }
                     style=${this.openPrivateMessage ? "visibility:visible;z-index:50" : "visibility: hidden;z-index:-100;position: relative"}>
                     <div style=${"position: relative"}>
                         <div class="dialog-container">
@@ -292,12 +292,12 @@ class Chat extends LitElement {
                             </div>
                             <p class="dialog-subheader">${translate("chatpage.cchange6")}</p>
                             <div class="search-field">
-                                <input 
+                                <input
                                     type="text"
-                                    class="name-input" 
-                                    ?disabled=${this.isLoading} 
-                                    id="sendTo" 
-                                    placeholder="${translate("chatpage.cchange7")}" 
+                                    class="name-input"
+                                    ?disabled=${this.isLoading}
+                                    id="sendTo"
+                                    placeholder="${translate("chatpage.cchange7")}"
                                     value=${this.userSelected.name ? this.userSelected.name: ''}
                                     @keypress=${() => {
                                         this.userSelected = {}
@@ -312,19 +312,19 @@ class Chat extends LitElement {
                                     </div>
                                     `
                                 ) : (
-                                    html`                                    
-                                    <vaadin-icon 
+                                    html`
+                                    <vaadin-icon
                                         @click=${this.userSearch}
-                                        slot="icon" 
+                                        slot="icon"
                                         icon="vaadin:open-book"
                                         class="search-icon">
                                     </vaadin-icon>
                                     `
                                 )}
                             </div>
-                            
-                            <chat-text-editor 
-                                iframeId="privateMessage" 
+
+                            <chat-text-editor
+                                iframeId="privateMessage"
                                 ?hasGlobalEvents=${false}
                                 placeholder="${translate("chatpage.cchange8")}"
                                 .imageFile=${this.imageFile}
@@ -338,8 +338,8 @@ class Chat extends LitElement {
                                 >
                             </chat-text-editor>
                             <div class="modal-button-row">
-                                <button 
-                                    class="modal-button-red" 
+                                <button
+                                    class="modal-button-red"
                                     @click=${() => {
                                     this.resetChatEditor();
                                     this.openPrivateMessage = false;
@@ -356,8 +356,8 @@ class Chat extends LitElement {
                                         })
                                     }}
                                     ?disabled="${this.isLoading}">
-                                        ${this.isLoading === false 
-                                        ? this.renderSendText() 
+                                        ${this.isLoading === false
+                                        ? this.renderSendText()
                                         : html`
                                             <paper-spinner-lite active></paper-spinner-lite>
                                         `}
@@ -365,7 +365,7 @@ class Chat extends LitElement {
                             </div>
                         </div>
                         <div class="search-results-div">
-                            <chat-search-results 
+                            <chat-search-results
                                 .onClickFunc=${(result) => {
                                     this.userSelected = result;
                                     this.userFound = [];
@@ -380,7 +380,7 @@ class Chat extends LitElement {
                                 ?loading=${this.isLoading}>
                             </chat-search-results>
                         </div>
-                    </div>    	
+                    </div>
                 </wrapper-modal>
 
                 <!-- Blocked User Dialog -->
@@ -417,7 +417,7 @@ class Chat extends LitElement {
                    </mwc-button>
                 </mwc-dialog>
             </div>
-   
+
         `
     }
 
@@ -491,20 +491,20 @@ class Chat extends LitElement {
                     }
                     target = target.parentNode;
                 }
-    
+
                 // If it doesn't, show the default Electron context menu
                 event.preventDefault();
                 window.parent.electronAPI.showMyMenu();
             });
 
 
-         
+
         }
 
         let configLoaded = false
 
         parentEpml.ready().then(() => {
-          
+
             parentEpml.subscribe('config', c => {
                 if (!configLoaded) {
                     setTimeout(getBlockedUsers, 1)
@@ -534,8 +534,8 @@ class Chat extends LitElement {
                         window.parent.reduxStore.dispatch(
                             window.parent.reduxAction.setSideEffectAction(null))
                     }
-                
-                } 
+
+                }
             })
             parentEpml.request('apiCall', {
                 url: `/addresses/balance/${window.parent.reduxStore.getState().app.selectedAddress.address}`
@@ -551,7 +551,7 @@ class Chat extends LitElement {
         }, 60000)
     }
 
-   
+
 
     clearConsole() {
         if (!isElectron()) { /* empty */ } else {
@@ -581,7 +581,7 @@ class Chat extends LitElement {
                 this.userFound = []
             } else {
                 this.userFound = [
-                    ...this.userFound, 
+                    ...this.userFound,
                     result,
                   ];
             }
@@ -596,7 +596,7 @@ class Chat extends LitElement {
         window.location.href = `../../group-management/index.html`
     }
 
-    async _sendMessage(outSideMsg, msg) { 
+    async _sendMessage(outSideMsg, msg) {
         this.isLoading = true;
 
         const trimmedMessage = msg
@@ -613,17 +613,17 @@ class Chat extends LitElement {
             this.sendMessage(stringifyMessageObject)
         }
     }
-      
+
       async sendMessage(messageText) {
         this.isLoading = true
-      
+
         const _recipient = this.shadowRoot.getElementById('sendTo').value
-      
+
         let recipient
-      
-        const validateName = async (receiverName) => {  
+
+        const validateName = async (receiverName) => {
             let myRes
-            try {                
+            try {
                 let myNameRes = await parentEpml.request('apiCall', {
                     type: 'api',
                     url: `/names/${receiverName}`
@@ -638,23 +638,23 @@ class Chat extends LitElement {
                 return ""
             }
         };
-      
+
         const myNameRes = await validateName(_recipient)
         if (!myNameRes) {
             recipient = _recipient
         } else {
             recipient = myNameRes.owner
         }
-      
+
         const getAddressPublicKey = async () => {
             let isEncrypted;
             let _publicKey;
-      
+
             let addressPublicKey = await parentEpml.request('apiCall', {
                 type: 'api',
                 url: `/addresses/publickey/${recipient}`
             })
-            
+
             if (addressPublicKey.error === 102) {
                 _publicKey = false
                 let err4string = get("chatpage.cchange19")
@@ -689,10 +689,10 @@ class Chat extends LitElement {
                     isText: 1
                 }
             })
-            
+
             _computePow(chatResponse);
     };
-      
+
         const _computePow = async (chatBytes) => {
             const difficulty = this.balance < 4 ? 18 : 8
             const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
@@ -708,16 +708,16 @@ class Chat extends LitElement {
                     res()
                 }
               })
-              
+
             let _response = await parentEpml.request('sign_chat', {
                 nonce: this.selectedAddress.nonce,
                 chatBytesArray: chatBytesArray,
                 chatNonce: nonce
             });
-           
+
             getSendChatResponse(_response)
         };
-      
+
         const getSendChatResponse = (response) => {
             if (response === true) {
                 this.setActiveChatHeadUrl(`direct/${recipient}`)
@@ -730,20 +730,20 @@ class Chat extends LitElement {
                 let err2string = get("chatpage.cchange21")
                 parentEpml.request('showSnackBar', `${err2string}`)
             }
-      
+
             this.isLoading = false
         }
-      
+
         // Exec..
         getAddressPublicKey()
-      
+
       }
 
     insertImage(file) {
         if (file.type.includes('image')) {
             this.imageFile = file
             return
-        }       
+        }
          parentEpml.request('showSnackBar', get("chatpage.cchange28"))
     }
 
@@ -777,7 +777,7 @@ class Chat extends LitElement {
                 hidelist.push(item)
             })
             localStorage.setItem("MessageBlockedAddresses", JSON.stringify(hidelist))
-     
+
             this.blockedUserList = hidelist
         })
     }
@@ -885,7 +885,7 @@ class Chat extends LitElement {
 
     renderChatWelcomePage() {
         return html`
-        <chat-welcome-page 
+        <chat-welcome-page
             myAddress=${JSON.stringify(this.selectedAddress)}
             .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
         >
@@ -902,14 +902,14 @@ class Chat extends LitElement {
         // Check for the chat ID from and render chat messages
         // Else render Welcome to Q-CHat
 
-        // TODO: DONE: Do the above in the ChatPage 
+        // TODO: DONE: Do the above in the ChatPage
         return html`
-            <chat-page 
-                .chatHeads=${this.chatHeads} 
-                .hideNewMessageBar=${this.hideNewMessageBar} 
-                .showNewMessageBar=${this.showNewMessageBar} 
-                myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address} 
-                chatId=${this.activeChatHeadUrl} 
+            <chat-page
+                .chatHeads=${this.chatHeads}
+                .hideNewMessageBar=${this.hideNewMessageBar}
+                .showNewMessageBar=${this.showNewMessageBar}
+                myAddress=${window.parent.reduxStore.getState().app.selectedAddress.address}
+                chatId=${this.activeChatHeadUrl}
                 .setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
                 .setActiveChatHeadUrl=${(val)=> this.setActiveChatHeadUrl(val)}
                 balance=${this.balance}

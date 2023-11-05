@@ -1,11 +1,11 @@
-import { store } from './store.js'
-import { doLoadConfigFromAPI } from './redux/config/config-actions.js'
-import { doLoadNodeConfig, doInitWorkers } from './redux/app/app-actions.js'
-import { doLoadNotificationConfig } from './redux/user/user-actions.js'
+import {store} from './store.js'
+import {doLoadConfigFromAPI} from './redux/config/config-actions.js'
+import {doInitWorkers, doLoadNodeConfig} from './redux/app/app-actions.js'
+import {doLoadNotificationConfig} from './redux/user/user-actions.js'
 
 import './persistState.js'
 
-import { initApi } from 'qortal-ui-crypto'
+import {initApi} from 'qortal-ui-crypto'
 
 initApi(store)
 

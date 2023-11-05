@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const chatSearchResultsStyles = css`
   .chat-results-card {
@@ -65,7 +65,7 @@ export const chatSearchResultsStyles = css`
     .chat-result-container::-webkit-scrollbar-thumb:hover {
         background-color: rgb(148, 146, 146);
         cursor: pointer;
-  }      
+  }
 
   .chat-result-card {
     padding: 12px;

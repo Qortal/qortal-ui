@@ -1,6 +1,6 @@
 'use strict'
 import ChatBase from "./ChatBase.js"
-import { CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP } from '../../constants.js'
+import {CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP} from '../../constants.js'
 
 export default class GroupChatTransaction extends ChatBase {
 	constructor() {

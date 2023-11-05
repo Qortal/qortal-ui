@@ -1,4 +1,4 @@
-import { Sha256 } from 'asmcrypto.js'
+import {Sha256} from 'asmcrypto.js'
 
 
 function sbrk(size, heap){
@@ -39,7 +39,7 @@ const computePow = async (chatBytes, path, difficulty) => {
   const hashAry = new Uint8Array(memory.buffer, hashPtr, 32);
   hashAry.set(chatBytesHash);
 
- 
+
   const workBufferLength = 8 * 1024 * 1024;
   const workBufferPtr = sbrk(workBufferLength, heap);
 
@@ -72,11 +72,11 @@ loadWebAssembly(path)
         }
 
          resolve()
-    
+
     });
 
 
- })  
+ })
 
   return response
 }

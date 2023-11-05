@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const sideMenuItemStyle = css`
   :host {
@@ -21,7 +21,7 @@ export const sideMenuItemStyle = css`
 
     --overlay-box-shadow: 0 2px 4px -1px hsla(214, 53%, 23%, 0.16), 0 3px 12px -1px hsla(214, 50%, 22%, 0.26);
     --overlay-background-color: #ffffff;
-    
+
     --spacing: 4px;
 
     font-family: var(--font-family);
@@ -86,7 +86,7 @@ export const sideMenuItemStyle = css`
   :host([expanded]){
     background-color: var(--item-selected-color);
   }
-  
+
   :host([hasSelectedChild]){
     background-color: var(--item-selected-color);
   }
@@ -109,7 +109,7 @@ export const sideMenuItemStyle = css`
   }
 
   #collapse-button {
-    float: right; 
+    float: right;
   }
 
   :host([compact]) #itemLink[level]:not([level="0"]) {
@@ -143,7 +143,7 @@ export const sideMenuItemStyle = css`
     z-index: 1;
     animation: pop 200ms forwards;
   }
-  
+
   @keyframes pop{
       0% {
         transform: translateX(-5px);

@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { svgSun, svgMoon } from '../../assets/js/svg.js'
+import {css, html, LitElement} from 'lit'
+import {svgMoon, svgSun} from '../../assets/js/svg.js'
 
 class QortThemeToggle extends LitElement {
   static get properties() {

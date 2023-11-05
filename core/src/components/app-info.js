@@ -1,10 +1,10 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { doPageUrl } from '../redux/app/app-actions.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {doPageUrl} from '../redux/app/app-actions.js'
+import {translate} from 'lit-translate'
 import WebWorker from 'web-worker:./computePowWorker.js';
-import { routes } from '../plugins/routes.js';
+import {routes} from '../plugins/routes.js';
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -124,7 +124,7 @@ class AppInfo extends connect(store)(LitElement) {
         // } catch (error) {
         //     console.error(error)
         // }
-       
+
         setInterval(() => {
             this.getNodeInfo()
             this.getCoreInfo()
@@ -198,13 +198,13 @@ class AppInfo extends connect(store)(LitElement) {
                                     lastReference: reference,
                                     proofOfWorkNonce: 0,
                                     fee: 0,
-                                    timestamp: Date.now(), 
+                                    timestamp: Date.now(),
                                 },
                                 disableModal: true
                             },
                             disableModal: true,
                         });
-                      
+
                         try {
                             const powRes = await _computePow2(chatRes)
                             if(powRes === true) {
@@ -216,7 +216,7 @@ class AppInfo extends connect(store)(LitElement) {
                             console.error(error)
                         }
                     }
-                  
+
                     if (!data.error && data !== 'false' && data) {
                         clearInterval(this.interval)
                         localStorage.removeItem(this.publicizeAddress)

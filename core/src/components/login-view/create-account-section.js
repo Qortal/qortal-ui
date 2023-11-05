@@ -1,12 +1,12 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {get, translate} from 'lit-translate'
 
-import { createWallet } from '../../../../crypto/api/createWallet.js'
-import { doLogin, doLogout, doSelectAddress } from '../../redux/app/app-actions.js'
-import { doStoreWallet } from '../../redux/user/user-actions.js'
-import { checkApiKey } from '../../apiKeyUtils.js'
+import {createWallet} from '../../../../crypto/api/createWallet.js'
+import {doLogin, doLogout, doSelectAddress} from '../../redux/app/app-actions.js'
+import {doStoreWallet} from '../../redux/user/user-actions.js'
+import {checkApiKey} from '../../apiKeyUtils.js'
 import FileSaver from 'file-saver'
 import ripple from '../../functional-components/loading-ripple.js'
 import snackbar from '../../functional-components/snackbar.js'
@@ -252,7 +252,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         return html`
             <style>
                 div[hidden] {
-                    display:none !important; 
+                    display:none !important;
                 }
 
                 .flex {
@@ -360,7 +360,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
                     padding: 0;
                 }
             </style>
-            
+
             <div id="createAccountSection" class="flex column">
                 <iron-pages selected="${this.selectedPage}" attr-for-selected="page" id="createAccountPages">
                     <div page="info">

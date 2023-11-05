@@ -1,7 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml'
-import snackbar from './snackbar.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
@@ -12,8 +10,7 @@ import '@vaadin/tabs/theme/material/vaadin-tabs.js'
 import '@vaadin/avatar'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
-import { columnBodyRenderer } from '@vaadin/grid/lit.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -83,9 +80,9 @@ class ChatGroupsManagement extends LitElement {
         let _joinedGroups = await this.getJoinedGroups()
         this.joinedGroups = _joinedGroups
     } catch (error) {
-        
+
     }
-    
+
     }
 
     _tabChanged(e) {
@@ -105,7 +102,7 @@ class ChatGroupsManagement extends LitElement {
         } catch (error) {
             fee = null
         }
-  
+
       return fee
     }
 
@@ -126,7 +123,7 @@ class ChatGroupsManagement extends LitElement {
     }
 
     async confirmRelationship() {
-		
+
 
 		let interval = null
 		let stop = false
@@ -155,7 +152,7 @@ class ChatGroupsManagement extends LitElement {
     async _leaveGroup(groupId, groupName) {
         // Reset Default Settings...
         this.resetDefaultSettings()
-    
+
         const leaveFeeInput = await this.unitFee()
         if(!leaveFeeInput){
             throw Error()
@@ -230,29 +227,29 @@ class ChatGroupsManagement extends LitElement {
     return html`
 
          <!-- Leave Group Dialog -->
-         <wrapper-modal 
+         <wrapper-modal
                 .removeImage=${() => {
                     if(this.isLoading) return
                     this.isOpenLeaveModal = false
-                } } 
+                } }
                 customStyle=${"width: 90%; max-width: 900px; height: 90%"}
                 style=${(this.isOpenLeaveModal) ? "display: block" : "display: none"}>
-             <div style="width: 100%;height: 100%;display: flex; flex-direction: column;background:var(--mdc-theme-surface)">    
+             <div style="width: 100%;height: 100%;display: flex; flex-direction: column;background:var(--mdc-theme-surface)">
                 <div style="height: 50px;display: flex; flex:0">
                 <vaadin-tabs id="tabs" selected="${this.currentTab}" @selected-changed="${this._tabChanged}" style="width: 100%">
-            
+
                 <vaadin-tab>Groups</vaadin-tab>
                 <vaadin-tab>Group Join Requests</vaadin-tab>
                 <vaadin-tab>Invites</vaadin-tab>
                 <vaadin-tab>Blocked Users</vaadin-tab>
 </vaadin-tabs>
                 </div>
-                    
+
                 <div style="width: 100%;display: flex; flex-direction: column; flex-grow: 1; overflow:auto;background:var(--mdc-theme-surface)">
-             
+
                     ${this.currentTab === 0 ? html`
                     <div>
-                    
+
 
                      <!-- Groups tab -->
                     <!-- Search groups and be able to join -->
@@ -262,10 +259,10 @@ class ChatGroupsManagement extends LitElement {
                     <p>Current groups as member</p>
                     </div>
                     ` : ''}
-                   
-                   
+
+
                 </div>
-                <div style="width: 100%;height: 50;display: flex; flex: 0">  
+                <div style="width: 100%;height: 50;display: flex; flex: 0">
                     <button
                     class="modal-button"
                         ?disabled="${this.isLoading}"
@@ -279,12 +276,12 @@ class ChatGroupsManagement extends LitElement {
                     }}
                     class="modal-button"
                         ?disabled="${this.isLoading}"
-                    
+
                     >
                     ${translate("general.close")}
                     </button>
                 </div>
-                    </div>  
+                    </div>
                 </wrapper-modal >
     `;
   }

@@ -1,15 +1,9 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-import { columnBodyRenderer, gridRowDetailsRenderer } from '@vaadin/grid/lit.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import isElectron from 'is-electron'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -21,6 +15,10 @@ import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/text-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -432,7 +430,7 @@ class QApps extends LitElement {
 	                          <span style="color: var(--black);">${translate("appspage.schange10")}</span>
 	                      ` : ''}
 	                  ${this.renderRelayModeText()}<br>
-                    
+
 	              </div>
                     <div id="tab-followed-content">
 	                  <div style="min-height:48px; display: flex; padding-bottom: 6px; margin: 2px;">
@@ -744,7 +742,7 @@ class QApps extends LitElement {
       const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
       let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=APP&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
         this.isLoading = true
-        
+
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
       const jsonOffsetData = await jsonOffsetRes.json()
 

@@ -1,4 +1,4 @@
-import { css } from "lit"
+import {css} from "lit"
 
 export const pageStyles = css`
 	* {
@@ -268,11 +268,11 @@ export const pageStyles = css`
 		gap: 5px;
 		width: 100%;
 		margin-bottom: 15px;
-		padding: 5px;	
+		padding: 5px;
 	}
 
 	.header {
-		align-self: flex-start;		
+		align-self: flex-start;
 	}
 
 	.header p {
@@ -340,7 +340,7 @@ export const pageStyles = css`
 	.red {
 		--mdc-theme-primary: #f44336;
 		border-radius: 2px;
-		
+
 	}
 
 	.btn--sponsorshipfinished  {
@@ -361,7 +361,7 @@ export const pageStyles = css`
 		padding: 5px;
 		display: flex;
 		align-items: flex-start;
-		flex-direction: column;	
+		flex-direction: column;
 	}
 
 	.dialog-paragraph {

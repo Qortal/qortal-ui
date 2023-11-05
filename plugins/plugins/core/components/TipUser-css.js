@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const tipUserStyles = css`
   .tip-user-header {
@@ -45,7 +45,7 @@ export const tipUserStyles = css`
 
   .tip-input::selection {
     background-color: var(--mdc-theme-primary);
-    color: white;   
+    color: white;
   }
 
   .tip-input::placeholder {

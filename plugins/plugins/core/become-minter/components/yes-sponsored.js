@@ -1,14 +1,13 @@
-import { LitElement, html } from 'lit'
-import { Epml } from '../../../../epml.js'
+import {html, LitElement} from 'lit'
 import '../../components/ButtonIconCopy.js'
-import { use, get, translate, registerTranslateConfig } from 'lit-translate'
+import {translate} from 'lit-translate'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@vaadin/button'
-import { blocksNeed } from '../../../utils/blocks-needed.js'
-import { pageStyles } from '../become-minter-css.src.js'
+import {blocksNeed} from '../../../utils/blocks-needed.js'
+import {pageStyles} from '../become-minter-css.src.js'
 
 class YesSponsored extends LitElement {
 	static get properties() {

@@ -1,5 +1,5 @@
-import { store } from '../../store.js'
-import { doPageUrl, setNewTab } from '../../redux/app/app-actions.js'
+import {store} from '../../store.js'
+import {doPageUrl, setNewTab} from '../../redux/app/app-actions.js'
 import isElectron from 'is-electron'
 import ShortUniqueId from 'short-unique-id';
 

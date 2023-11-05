@@ -1,12 +1,12 @@
-import { LitElement, html } from 'lit'
-import { installRouter } from 'pwa-helpers/router.js'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { doNavigate } from '../redux/app/app-actions.js'
+import {html, LitElement} from 'lit'
+import {installRouter} from 'pwa-helpers/router.js'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {doNavigate} from '../redux/app/app-actions.js'
 import isElectron from 'is-electron'
 import '../plugins/streams.js'
 
-import { loadPlugins } from '../plugins/load-plugins.js'
+import {loadPlugins} from '../plugins/load-plugins.js'
 
 import '../styles/app-styles.js'
 import './login-view/login-view.js'
@@ -31,8 +31,8 @@ class MainApp extends connect(store)(LitElement) {
     }
 
     /**
-     * Dynamic renderViews method to introduce conditional rendering of views based on user's logged in state. 
-     * @param {Boolean} isLoggedIn 
+     * Dynamic renderViews method to introduce conditional rendering of views based on user's logged in state.
+     * @param {Boolean} isLoggedIn
      */
 
     renderViews(isLoggedIn) {

@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {get, translate} from 'lit-translate'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -1465,7 +1465,7 @@ class QortalInfoView extends LitElement {
                     creatorAddress: item.creatorAddress,
                     recipient: item.recipient,
                     amount: item.amount
-   
+
                 }
             }
         }).filter(item => !!item)
@@ -1482,7 +1482,7 @@ class QortalInfoView extends LitElement {
                     creatorAddress: item.creatorAddress,
                     recipient: item.recipient,
                     amount: item.amount
-   
+
                 }
             }
         }).filter(item => !!item)
@@ -1524,7 +1524,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1546,7 +1546,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1568,7 +1568,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1590,7 +1590,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1612,7 +1612,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1634,7 +1634,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1656,7 +1656,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1678,7 +1678,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1700,7 +1700,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1722,7 +1722,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1744,7 +1744,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -1766,7 +1766,7 @@ class QortalInfoView extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)

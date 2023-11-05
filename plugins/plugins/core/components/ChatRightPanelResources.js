@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { Epml } from '../../../epml';
+import {css, html, LitElement} from 'lit';
+import {Epml} from '../../../epml';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
@@ -11,11 +11,8 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {
-	get,
-	translate,
-} from 'lit-translate';
-import { generateIdFromAddresses } from '../../utils/id-generation';
+import {get, translate,} from 'lit-translate';
+import {generateIdFromAddresses} from '../../utils/id-generation';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -248,7 +245,7 @@ class ChatRightPanelResources extends LitElement {
 			const groupPart = this.isReceipient
 				? `direct_${generateIdFromAddresses(this._chatId, this.myAddress)}`
 				: `group_${this._chatId}`;
-            
+
 			let offset = reset ? 0 : this.images.length;
             let endpoint = `/arbitrary/resources/search?service=QCHAT_IMAGE&identifier=qchat_${groupPart}&reverse=true&limit=20&reverse=true&offset=${offset}`
             if(this.onlyMyImages){
@@ -337,7 +334,7 @@ class ChatRightPanelResources extends LitElement {
 
 	render() {
 		return html`
-     
+
         <div class="container">
             <div class="close-row" style="margin-top: 15px">
             <mwc-icon @click=${()=> {
@@ -361,7 +358,7 @@ class ChatRightPanelResources extends LitElement {
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.selectMyImages(e)} ?checked=${this.onlyMyImages}></mwc-checkbox>
                     </div>
             <div id="viewElement" class="container-body">
-              
+
                 ${this.images.map((image) => {
 					return html`<image-parent .repost=${this.repost} .image=${image} ?autoView=${this.autoView}></image-parent>`;
 				})}
@@ -659,7 +656,7 @@ class ImageParent extends LitElement {
 								<button class="repost-btn" @click=${()=> this.repost(this.image)}>repost</button>
 							</div>
 							` : ''}
-							
+
 						</div>
 				  `
 				: ''}

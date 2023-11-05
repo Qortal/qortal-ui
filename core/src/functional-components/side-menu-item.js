@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit'
-import { ifDefined } from 'lit/directives/if-defined.js'
-import { sideMenuItemStyle } from './side-menu-item-style.js'
+import {css, html, LitElement} from 'lit'
+import {ifDefined} from 'lit/directives/if-defined.js'
+import {sideMenuItemStyle} from './side-menu-item-style.js'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@polymer/paper-tooltip'
@@ -50,8 +50,8 @@ export class SideMenuItem extends LitElement {
 
     _itemLinkTemplate() {
         return html`
-            <a id="itemLink" 
-                level=${this._getLevel} 
+            <a id="itemLink"
+                level=${this._getLevel}
                 href=${this.href || '#!'}
                 @click="${(e) => this._onClick(e)}"
                 target=${ifDefined(this.target)}

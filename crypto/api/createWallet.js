@@ -1,7 +1,7 @@
-import { kdf } from './kdf.js'
+import {kdf} from './kdf.js'
 import PhraseWallet from './PhraseWallet.js'
 import Base58 from './deps/Base58.js'
-import { decryptStoredWallet } from './decryptStoredWallet.js'
+import {decryptStoredWallet} from './decryptStoredWallet.js'
 
 export const createWallet = async (sourceType, source, statusUpdateFn) => {
 	let version, seed

@@ -1,8 +1,6 @@
-import { LitElement, html, css } from "lit";
-import { render } from "lit/html.js";
-import { Epml } from "../../../epml";
-import { getUserNameFromAddress } from "../../utils/getUserNameFromAddress";
-import snackbar from "./snackbar.js";
+import {css, html, LitElement} from "lit";
+import {Epml} from "../../../epml";
+import {getUserNameFromAddress} from "../../utils/getUserNameFromAddress";
 import "@material/mwc-button";
 import "@material/mwc-dialog";
 import "@polymer/paper-spinner/paper-spinner-lite.js";
@@ -12,7 +10,6 @@ import '@vaadin/button';
 import "./WrapperModal";
 import "./TipUser"
 import "./UserInfo/UserInfo";
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -93,9 +90,9 @@ class ChatRightPanel extends LitElement {
 
         .container-body {
             width: 100%;
-            display: flex; 
-            flex-direction: column; 
-            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             overflow:auto;
             margin-top: 5px;
             padding: 0px 6px;
@@ -106,13 +103,13 @@ class ChatRightPanel extends LitElement {
             background-color: whitesmoke;
             border-radius: 7px;
         }
-        
+
         .container-body::-webkit-scrollbar {
             width: 6px;
             border-radius: 7px;
             background-color: whitesmoke;
         }
-        
+
         .container-body::-webkit-scrollbar-thumb {
             background-color: rgb(180, 176, 176);
             border-radius: 7px;
@@ -122,7 +119,7 @@ class ChatRightPanel extends LitElement {
         .container-body::-webkit-scrollbar-thumb:hover {
             background-color: rgb(148, 146, 146);
             cursor: pointer;
-        }   
+        }
 
         p {
             color: var(--black);
@@ -196,7 +193,7 @@ class ChatRightPanel extends LitElement {
 
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('selectedHead')) {
-            if (this.selectedHead !== {}) {             
+            if (this.selectedHead !== {}) {
                 const userName = await getUserNameFromAddress(this.selectedHead.address);
                 this.userName = userName;
             }
@@ -237,7 +234,7 @@ class ChatRightPanel extends LitElement {
                 <vaadin-icon class="top-bar-icon" @click=${()=> this.toggle(false)} style="margin: 0px 10px" icon="vaadin:close" slot="icon"></vaadin-icon>
             </div>
             <div id="viewElement" class="container-body">
-                <p class="group-name">${this.leaveGroupObj && this.leaveGroupObj.groupName}</p> 
+                <p class="group-name">${this.leaveGroupObj && this.leaveGroupObj.groupName}</p>
                 <div class="group-info">
                     <p class="group-description">${this.leaveGroupObj && this.leaveGroupObj.description}</p>
                     <p class="group-subheader">Members: <span class="group-data">${this.leaveGroupObj && this.leaveGroupObj.memberCount}</span></p>

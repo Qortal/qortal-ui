@@ -1,6 +1,6 @@
 "use strict";
 import ChatBase from "./chat/ChatBase.js"
-import { QORT_DECIMALS } from "../constants.js"
+import {QORT_DECIMALS} from "../constants.js"
 
 export default class PublicizeTransaction extends ChatBase {
 	constructor() {

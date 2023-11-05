@@ -1,4 +1,4 @@
-import { ADD_PLUGIN, ADD_PLUGIN_URL, PAGE_URL } from '../app-action-types.js'
+import {ADD_PLUGIN, ADD_PLUGIN_URL, PAGE_URL} from '../app-action-types.js'
 
 export const doAddPluginUrl = (pluginUrlsConf) => {
     return (dispatch, getState) => {

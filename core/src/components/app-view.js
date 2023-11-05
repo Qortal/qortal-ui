@@ -1,18 +1,13 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { Epml } from '../epml.js'
-import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {Epml} from '../epml.js'
+import {addTradeBotRoutes} from '../tradebot/addTradeBotRoutes.js'
+import {get, translate} from 'lit-translate'
 import localForage from 'localforage'
-import { encryptData, decryptData } from '../lockScreen.js'
-import { setChatLastSeen } from '../redux/app/app-actions.js'
+import {decryptData, encryptData} from '../lockScreen.js'
+import {setChatLastSeen} from '../redux/app/app-actions.js'
 import isElectron from 'is-electron'
-
-const chatLastSeen = localForage.createInstance({
-    name: "chat-last-seen",
-})
-
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@polymer/paper-icon-button/paper-icon-button.js'
@@ -47,6 +42,11 @@ import './friends-view/friends-side-panel-parent.js'
 import './friends-view/save-settings-qdn.js'
 import './friends-view/core-sync-status.js'
 import './controllers/coin-balances-controller.js'
+
+const chatLastSeen = localForage.createInstance({
+    name: "chat-last-seen",
+})
+
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class AppView extends connect(store)(LitElement) {
@@ -230,13 +230,13 @@ class AppView extends connect(store)(LitElement) {
                     background-color: whitesmoke;
                     border-radius: 7px;
                 }
-        
+
                 .sideBarMenu::-webkit-scrollbar {
                     width: 6px;
                     border-radius: 7px;
                     background-color: whitesmoke;
                 }
-        
+
                 .sideBarMenu::-webkit-scrollbar-thumb {
                     background-color: rgb(180, 176, 176);
                     border-radius: 7px;
@@ -363,7 +363,7 @@ class AppView extends connect(store)(LitElement) {
                     0%,100% { opacity: 0; }
                     50% { opacity: 10; }
                 }
-        
+
                 .sideBarMenu::-webkit-scrollbar-thumb:hover {
                     background-color: rgb(148, 146, 146);
                     cursor: pointer;
@@ -1837,7 +1837,7 @@ class AppView extends connect(store)(LitElement) {
                     <side-menu-item id="qbminter" label="${translate('sidemenu.becomeAMinter')}" href="/app/become-minter" ?hide=${isMinter}>
                         <vaadin-icon icon="vaadin:thumbs-up" slot="icon"></vaadin-icon>
                     </side-menu-item>
-				
+
                     <side-menu-item id="qiminter" label="${translate('mintingpage.mchange35')}" href="/app/sponsorship-list" ?hide=${!isSponsor}>
                         <vaadin-icon icon="vaadin:list-ol" slot="icon"></vaadin-icon>
                     </side-menu-item>

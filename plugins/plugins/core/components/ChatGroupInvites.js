@@ -1,13 +1,11 @@
-import { LitElement, html, css } from "lit"
-import { render } from "lit/html.js"
-import { Epml } from "../../../epml"
-import snackbar from "./snackbar.js"
+import {css, html, LitElement} from "lit"
+import {Epml} from "../../../epml"
 import "@material/mwc-button"
 import "@material/mwc-dialog"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
 import "@material/mwc-icon"
 import "./WrapperModal"
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {translate} from 'lit-translate'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
 
@@ -147,7 +145,7 @@ class ChatGroupInvites extends LitElement {
             }
         })
     }
-   
+
     async process(body){
         return  await parentEpml.request("apiCall", {
             type: "api",
@@ -277,11 +275,11 @@ class ChatGroupInvites extends LitElement {
             this.isOpenLeaveModal = true
          }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:users" slot="icon"></vaadin-icon>
 
-         <wrapper-modal 
+         <wrapper-modal
                 .removeImage=${() => {
 					if (this.isLoading) return
 					this.isOpenLeaveModal = false
-				}} 
+				}}
                 style=${
 					this.isOpenLeaveModal ? "display: block" : "display: none"
 				}>
@@ -289,7 +287,7 @@ class ChatGroupInvites extends LitElement {
                         <h1>${translate("grouppage.gchange35")}</h1>
                         <hr>
                     </div>
-                    
+
                     <button @click=${() =>
 						this._addAdmin(
 							this.leaveGroupObj.groupId
@@ -315,15 +313,15 @@ class ChatGroupInvites extends LitElement {
                             ${this.message}
                         </span>
                     </div>
-                    
-                  
+
+
                     <button
                     @click=${() => {
 						this.isOpenLeaveModal = false
 					}}
                     class="modal-button"
                         ?disabled="${this.isLoading}"
-                    
+
                     >
                     ${translate("general.close")}
                     </button>

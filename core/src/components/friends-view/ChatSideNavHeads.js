@@ -1,6 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {get} from 'lit-translate'
 import '@material/mwc-icon'
 import '@vaadin/tooltip';
 
@@ -100,7 +99,7 @@ class ChatSideNavHeads extends LitElement {
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
@@ -170,13 +169,13 @@ class ChatSideNavHeads extends LitElement {
           </span>
         </div>
       </div>
-  
+
         </div>
         <div style="display:flex; align-items: center">
         ${this.chatInfo.willFollow ? html`
         <mwc-icon   id="willFollowIcon" style="color: var(--black)">connect_without_contact</mwc-icon>
         <vaadin-tooltip
-              
+
                         for="willFollowIcon"
                         position="top"
                         hover-delay=${200}
@@ -210,10 +209,10 @@ class ChatSideNavHeads extends LitElement {
         if(changedProperties.has('isImageLoaded')){
             return true
         }
-        
+
         return false
       }
-   
+
     getUrl(chatUrl) {
         this.setActiveChatHeadUrl(chatUrl)
     }

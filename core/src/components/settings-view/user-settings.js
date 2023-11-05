@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {translate} from 'lit-translate'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
@@ -11,8 +11,6 @@ import './security-view.js'
 import './notifications-view.js'
 import './qr-login-view.js'
 import './export-keys.js'
-
-import { doLogout } from '../../redux/app/app-actions.js'
 
 class UserSettings extends connect(store)(LitElement) {
     static get properties() {

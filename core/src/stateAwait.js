@@ -1,7 +1,7 @@
 /**
  * Simple helper function so that I can do `await stateAwait(state => state.something === true)` or `await stateAwait(state => state.name === 'myName')`
  */
-import { store } from './store.js'
+import {store} from './store.js'
 
 let subscriptions = []
 store.subscribe(() => {

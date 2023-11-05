@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../epml.js'
+import {html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 
 import '@material/mwc-icon-button'
 
@@ -44,10 +44,10 @@ class ButtonIconCopy extends LitElement {
 
     render() {
         return html`
-            <mwc-icon-button 
+            <mwc-icon-button
                 title=${this.title}
                 label=${this.title}
-                icon="content_copy" 
+                icon="content_copy"
                 @click=${() => this.saveToClipboard(this.textToCopy)}
             >
             </mwc-icon-button>

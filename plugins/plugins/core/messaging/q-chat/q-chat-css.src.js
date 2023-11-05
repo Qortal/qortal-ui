@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const qchatStyles = css`
   * {
@@ -115,14 +115,14 @@ export const qchatStyles = css`
     display: block;
     opacity: 1;
     animation: fadeIn 0.6s;
-}       
+}
 
 @keyframes fadeIn {
     from {
         opacity: 0;
         top: -10px;
     }
-    
+
     to {
         opacity: 1;
         top: -60px;
@@ -194,7 +194,7 @@ export const qchatStyles = css`
       padding: 0px 0px 60px 0px;
       height: 85vh;
       overflow-y: auto;
-      overflow-x: hidden;     
+      overflow-x: hidden;
   }
 
     .people-list ul::-webkit-scrollbar-track {
@@ -213,7 +213,7 @@ export const qchatStyles = css`
         border-radius: 7px;
         transition: all 0.3s ease-in-out;
     }
-    
+
   .chat {
       width: 80vw;
       height: 100vh;

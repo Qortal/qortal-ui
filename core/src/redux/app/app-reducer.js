@@ -1,10 +1,47 @@
 // Loading state, login state, isNavDrawOpen state etc. None of this needs to be saved to localstorage.
-import { loadStateFromLocalStorage, saveStateToLocalStorage } from '../../localStorageHelpers.js'
-import { LOG_IN, LOG_OUT, NETWORK_CONNECTION_STATUS, INIT_WORKERS, ADD_PLUGIN_URL, ADD_PLUGIN, ADD_NEW_PLUGIN_URL, NAVIGATE, SELECT_ADDRESS, ACCOUNT_INFO, CHAT_HEADS, UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, PAGE_URL, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS, SET_NEW_TAB, ADD_TAB_INFO, SET_TAB_NOTIFICATIONS, IS_OPEN_DEV_DIALOG, REMOVE_NODE, EDIT_NODE, SET_NEW_NOTIFICATION, SET_SIDE_EFFECT, SET_COIN_BALANCES } from './app-action-types.js'
-import { initWorkersReducer } from './reducers/init-workers.js'
-import { loginReducer } from './reducers/login-reducer.js'
-import { setNode, addNode, removeNode, editNode } from './reducers/manage-node.js'
+import {loadStateFromLocalStorage, saveStateToLocalStorage} from '../../localStorageHelpers.js'
+import {
+	ACCOUNT_INFO,
+	ADD_AUTO_LOAD_IMAGES_CHAT,
+	ADD_CHAT_LAST_SEEN,
+	ADD_NEW_PLUGIN_URL,
+	ADD_NODE,
+	ADD_PLUGIN,
+	ADD_PLUGIN_URL,
+	ADD_TAB_INFO,
+	ALLOW_QAPP_AUTO_AUTH,
+	ALLOW_QAPP_AUTO_LISTS,
+	CHAT_HEADS,
+	EDIT_NODE,
+	INIT_WORKERS,
+	IS_OPEN_DEV_DIALOG,
+	LOAD_NODE_CONFIG,
+	LOG_IN,
+	LOG_OUT,
+	NAVIGATE,
+	NETWORK_CONNECTION_STATUS,
+	PAGE_URL,
+	REMOVE_AUTO_LOAD_IMAGES_CHAT,
+	REMOVE_NODE,
+	REMOVE_QAPP_AUTO_AUTH,
+	REMOVE_QAPP_AUTO_LISTS,
+	SELECT_ADDRESS,
+	SET_CHAT_LAST_SEEN,
+	SET_COIN_BALANCES,
+	SET_NEW_NOTIFICATION,
+	SET_NEW_TAB,
+	SET_NODE,
+	SET_SIDE_EFFECT,
+	SET_TAB_NOTIFICATIONS,
+	UPDATE_BLOCK_INFO,
+	UPDATE_NODE_INFO,
+	UPDATE_NODE_STATUS
+} from './app-action-types.js'
+import {initWorkersReducer} from './reducers/init-workers.js'
+import {loginReducer} from './reducers/login-reducer.js'
+import {addNode, editNode, removeNode, setNode} from './reducers/manage-node.js'
 import localForage from "localforage";
+
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 });
@@ -71,7 +108,7 @@ export default (state = INITIAL_STATE, action) => {
                 wallet: INITIAL_STATE.wallet,
                 selectedAddress: INITIAL_STATE.selectedAddress,
                 accountInfo: INITIAL_STATE.accountInfo
-                
+
             }
         case ADD_PLUGIN:
             return {

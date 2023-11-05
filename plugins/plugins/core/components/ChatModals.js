@@ -1,8 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml'
 import snackbar from './snackbar.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 
@@ -343,10 +342,10 @@ class ChatModals extends LitElement {
 
     render() {
         return html`
-          <mwc-dialog  
+          <mwc-dialog
           id='sendPMDialog'
           tabindex='0'
-          ?open=${this.openDialogPrivateMessage} 
+          ?open=${this.openDialogPrivateMessage}
           scrimClickAction='${this.isLoading ? '' : 'close'}'
           escapeKeyAction='close'
           defaultAction='close'
@@ -375,10 +374,10 @@ class ChatModals extends LitElement {
           ${translate('general.close')}
           </mwc-button>
       </mwc-dialog>
-        <mwc-dialog 
+        <mwc-dialog
         id='blockNameDialog'
         tabindex='0'
-        ?open=${this.openDialogBlockUser} 
+        ?open=${this.openDialogBlockUser}
         escapeKeyAction='close'
         defaultAction='close'
         @blur=${() => this.hideBlockUserModal()}

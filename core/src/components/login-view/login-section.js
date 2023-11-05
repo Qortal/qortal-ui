@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { checkApiKey } from '../../apiKeyUtils.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {checkApiKey} from '../../apiKeyUtils.js'
+import {translate} from 'lit-translate'
 
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
@@ -18,9 +18,9 @@ import '@polymer/iron-collapse'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/text-field/vaadin-text-field.js'
 import '@vaadin/password-field/vaadin-password-field.js'
-import { doLogin, doSelectAddress } from '../../redux/app/app-actions.js'
-import { doStoreWallet, doRemoveWallet } from '../../redux/user/user-actions.js'
-import { createWallet } from '../../../../crypto/api/createWallet.js'
+import {doLogin, doSelectAddress} from '../../redux/app/app-actions.js'
+import {doRemoveWallet, doStoreWallet} from '../../redux/user/user-actions.js'
+import {createWallet} from '../../../../crypto/api/createWallet.js'
 import snackbar from '../../functional-components/snackbar.js'
 import '../../custom-elements/frag-file-input.js'
 import ripple from '../../functional-components/loading-ripple.js'
@@ -195,7 +195,7 @@ class LoginSection extends connect(store)(LitElement) {
                     right: 5px;
                     top: 20px;
                     color: tomato;
-                    --mdc-icon-size: 30px;                      
+                    --mdc-icon-size: 30px;
                 }
 
                 .login-option {
@@ -212,7 +212,7 @@ class LoginSection extends connect(store)(LitElement) {
                     color: var(--black);
                 }
 
-                *[hidden] { 
+                *[hidden] {
                     display:none !important;
                     visibility: hidden;
                 }
@@ -268,7 +268,7 @@ class LoginSection extends connect(store)(LitElement) {
                     cursor: pointer;
                 }
             </style>
-            
+
             <div id="loginSection">
                 <div id="pagesContainer">
                     <iron-pages style="padding: 0;" selected="${this.selectedPage}" attr-for-selected="page" id="loginPages">

@@ -1,4 +1,5 @@
-import { strftime, makeFormatter, makeRelativeFormat, isDayFirst, isThisYear, isYearSeparator } from './utils';
+import {isDayFirst, isThisYear, isYearSeparator, makeFormatter, makeRelativeFormat, strftime} from './utils';
+
 export default class RelativeTime {
     constructor(date, locale) {
         this.date = date;

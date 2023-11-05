@@ -1,13 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import isElectron from 'is-electron'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
@@ -21,6 +16,10 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/grid'
 import '@vaadin/text-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -57,7 +57,7 @@ class Messaging extends LitElement {
             }
 
             .sub-title:hover {
-                cursor: pointer;                
+                cursor: pointer;
             }
 
             .sub-url {
@@ -102,11 +102,11 @@ class Messaging extends LitElement {
                         <li class="sub-url" @click=${() => this.getUrl('q-chat')}><strong>Q-Chat</strong></li>
                     </ul>
                 </div>
-                
+
                 <div class="divCard">
                     <h3 class="sub-title" @click=${() => this.getUrl('chain-messaging')}>Chain-Based Messaging</h3>
-                    <p style="font-size: 17px;">A long-term message that is stored <strong>ON CHAIN</strong>. 
-                    These messages <strong>are able</strong> to be <strong>sent to groups or individual accounts</strong>, and are essentially <strong>the 'e-mail' of Qortal</strong>. 
+                    <p style="font-size: 17px;">A long-term message that is stored <strong>ON CHAIN</strong>.
+                    These messages <strong>are able</strong> to be <strong>sent to groups or individual accounts</strong>, and are essentially <strong>the 'e-mail' of Qortal</strong>.
                     Use these messages if you intend on the message being a <strong>PERMANENT message</strong> that stays when and where you send it.</p>
 
                     <ul>
@@ -121,8 +121,8 @@ class Messaging extends LitElement {
 
                 <div class="divCard">
                     <h3 class="sub-title" @click=${() => this.getUrl('q-chat')}>Q-Chat</h3>
-                    <p style="font-size: 17px;">Is a custom chat system that is UNLIKE ANY OTHER in existence. It is the FIRST OF ITS KIND IN THE WORLD. 
-                    It is a real-time, blockchain-based chat system that utilizes a memory-based PoW (Proof Of Work) algorithm, to implement a specialized transaction that is 'temporary', on the Qortal blockchain. 
+                    <p style="font-size: 17px;">Is a custom chat system that is UNLIKE ANY OTHER in existence. It is the FIRST OF ITS KIND IN THE WORLD.
+                    It is a real-time, blockchain-based chat system that utilizes a memory-based PoW (Proof Of Work) algorithm, to implement a specialized transaction that is 'temporary', on the Qortal blockchain.
                     Q-Chat messages will DISSAPEAR AFTER 24 HOURS and therefore are not a great choice for things you wish to be permanent.</p>
 
                     <ul>

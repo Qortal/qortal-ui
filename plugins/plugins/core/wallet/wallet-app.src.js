@@ -1,15 +1,10 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
-import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import FileSaver from 'file-saver'
 import '../components/ButtonIconCopy.js'
 import '../components/QortalQrcodeGenerator.js'
@@ -34,6 +29,10 @@ import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/password-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -911,7 +910,7 @@ class MultiWallet extends LitElement {
             default:
                 break
         }
-    
+
     }
 
     render() {
@@ -988,7 +987,7 @@ class MultiWallet extends LitElement {
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
                     <div id="transactions">
-                   
+
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
                     </div>
@@ -2871,7 +2870,7 @@ class MultiWallet extends LitElement {
     }
 
     firstUpdated() {
-        
+
         this.changeTheme()
         this.changeLanguage()
         this.paymentFee()
@@ -2987,7 +2986,7 @@ class MultiWallet extends LitElement {
         }
     }
 
-   
+
     pingCoinBalancesController(){
         if(!this._selectedWallet) return
         const customEvent = new CustomEvent('ping-coin-controller-with-coin', {
@@ -3003,7 +3002,7 @@ class MultiWallet extends LitElement {
 	}
 
 	disconnectedCallback() {
-	
+
 		super.disconnectedCallback();
         if(this.intervalID){
             clearInterval(this.intervalID);

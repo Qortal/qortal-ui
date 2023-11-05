@@ -1,9 +1,9 @@
-import { Sha256 } from 'asmcrypto.js'
+import {Sha256} from 'asmcrypto.js'
 import Base58 from './api/deps/Base58'
 import Base64 from './api/deps/Base64'
-import { base58PublicKeyToAddress } from './api/wallet/base58PublicKeyToAddress'
-import { validateAddress } from './api/wallet/validateAddress'
-import { decryptChatMessage, decryptChatMessageBase64 } from './api/transactions/chat/decryptChatMessage'
+import {base58PublicKeyToAddress} from './api/wallet/base58PublicKeyToAddress'
+import {validateAddress} from './api/wallet/validateAddress'
+import {decryptChatMessage, decryptChatMessageBase64} from './api/transactions/chat/decryptChatMessage'
 import _ from 'lodash'
 
 window.Sha256 = Sha256

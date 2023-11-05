@@ -1,15 +1,10 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
-import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
@@ -34,6 +29,10 @@ import chartsdgb from './charts/dgb-charts.js'
 import chartsrvn from './charts/rvn-charts.js'
 import chartsarrr from './charts/arrr-charts.js'
 import '../components/TraderInfoView.js'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -193,7 +192,7 @@ class TradePortal extends LitElement {
                   padding-top: 3px;
 		}
 		#tab-sell[active] {
-			--mdc-theme-primary: rgb(255, 89, 89); 
+			--mdc-theme-primary: rgb(255, 89, 89);
 		}
 		#trade-portal-page {
 			background: var(--white);
@@ -1035,7 +1034,7 @@ class TradePortal extends LitElement {
 									required readOnly
                                                       label=""
 									placeholder="0.0000"
-									type="text" 
+									type="text"
 									auto-validate="false"
 									outlined value="${this.initialAmount}"
 								>
@@ -1155,7 +1154,7 @@ class TradePortal extends LitElement {
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 		</div>
         `
     }
@@ -1308,7 +1307,7 @@ class TradePortal extends LitElement {
                                 <div style="padding-left: 10px; padding-top: 12px; color: var(--black);">
                                    ${this.renderTradeLockButton()}
 			        </div>
-                                
+
 			</div>
 			<div id="trade-portal">
 				<div id="first-trade-section">
@@ -1455,7 +1454,7 @@ class TradePortal extends LitElement {
 	}
 
 	disconnectedCallback() {
-	
+
 		super.disconnectedCallback();
         if(this.intervalID){
             clearInterval(this.intervalID);
@@ -2175,7 +2174,7 @@ class TradePortal extends LitElement {
                     this._historicTradesGrid.clearCache()
                 }
                 this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
-                        
+
             }
         } catch(e) {
             console.log("Error processing redeemed trade offer from "+offer.foreignBlockchain)
@@ -2185,7 +2184,7 @@ class TradePortal extends LitElement {
     processTradingTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
                 if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                     this.updateWalletBalance()
                 }
@@ -2205,7 +2204,7 @@ class TradePortal extends LitElement {
     processRefundedTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
             if (offer.qortalCreator === this.selectedAddress.address) {
                 if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                     this.updateWalletBalance()
@@ -2223,7 +2222,7 @@ class TradePortal extends LitElement {
     processCancelledTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
                 if (offer.qortalCreator === this.selectedAddress.address) {
                     if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                         this.updateWalletBalance()

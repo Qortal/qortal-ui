@@ -3,7 +3,7 @@ import TradeBotCreateRequest from './transactions/trade-portal/tradebot/TradeBot
 import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBotRespondRequest.js'
 import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction.js'
 import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer.js'
-import { request } from './fetch-request'
+import {request} from './fetch-request'
 
 // TradeBotCreateRequest
 export const tradeBotCreateRequest = (requestObject) => {
@@ -55,7 +55,7 @@ export const deleteTradeOffer = (requestObject) => {
 	})
 }
 
-// Send BTC 
+// Send BTC
 export const sendBtc = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
@@ -69,7 +69,7 @@ export const sendBtc = (requestObject) => {
 	})
 }
 
-// Send LTC 
+// Send LTC
 export const sendLtc = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
@@ -83,7 +83,7 @@ export const sendLtc = (requestObject) => {
 	})
 }
 
-// Send DOGE 
+// Send DOGE
 export const sendDoge = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
@@ -97,7 +97,7 @@ export const sendDoge = (requestObject) => {
 	})
 }
 
-// Send DGB 
+// Send DGB
 export const sendDgb = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
@@ -111,7 +111,7 @@ export const sendDgb = (requestObject) => {
 	})
 }
 
-// Send RVN 
+// Send RVN
 export const sendRvn = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
@@ -125,7 +125,7 @@ export const sendRvn = (requestObject) => {
 	})
 }
 
-// Send ARRR 
+// Send ARRR
 export const sendArrr = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 

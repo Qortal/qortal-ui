@@ -1,10 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import snackbar from './snackbar.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
+import {translate} from 'lit-translate'
 import '@polymer/paper-tooltip/paper-tooltip.js'
-import { RequestQueue } from '../../utils/queue.js'
+import {RequestQueue} from '../../utils/queue.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -116,7 +114,7 @@ class LevelFounder extends LitElement {
         } catch (error) {
             console.error(error)
         }
-       
+
     }
 
     renderFounder() {

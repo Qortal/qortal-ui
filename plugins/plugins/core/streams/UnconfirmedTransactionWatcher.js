@@ -1,4 +1,4 @@
-import { parentEpml } from '../connect.js'
+import {parentEpml} from '../connect.js'
 
 export class UnconfirmedTransactionWatcher {
     constructor() {

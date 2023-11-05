@@ -1,6 +1,6 @@
 'use strict'
 import TransactionBase from '../TransactionBase.js'
-import { QORT_DECIMALS } from '../../constants.js'
+import {QORT_DECIMALS} from '../../constants.js'
 
 export default class CreatePollTransaction extends TransactionBase {
 	constructor() {
@@ -79,14 +79,14 @@ export default class CreatePollTransaction extends TransactionBase {
 
 	set rOptions(rOptions) {
 		const optionsArray = rOptions[0].split(', ').map(opt => opt.trim());
-		this._pollOptions = optionsArray 
+		this._pollOptions = optionsArray
 		for (let i = 0; i < optionsArray.length; i++) {
 			this.addOption(optionsArray[i]);
 		}
-	
+
 		this._rNumberOfOptionsBytes = this.constructor.utils.int32ToBytes(optionsArray.length);
 	}
-	
+
 
 	get params() {
 		const params = super.params

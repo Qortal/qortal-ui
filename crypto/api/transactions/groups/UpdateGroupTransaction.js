@@ -1,8 +1,7 @@
 'use strict';
 import TransactionBase from '../TransactionBase.js'
-import Base58 from '../../deps/Base58.js'
-import { store } from '../../../api.js'
-import { QORT_DECIMALS } from "../../constants.js"
+import {store} from '../../../api.js'
+import {QORT_DECIMALS} from "../../constants.js"
 
 export default class UpdateGroupTransaction extends TransactionBase {
     constructor() {
@@ -15,7 +14,7 @@ export default class UpdateGroupTransaction extends TransactionBase {
         return html`
             Are you sure to update this group ?
             <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-              
+
             </div>
             On pressing confirm, the group details will be updated!
         `

@@ -1,13 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '../components/time-elements/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -25,6 +20,10 @@ import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
 import '@vaadin/grid/vaadin-grid-sort-column.js'
 import '@vaadin/text-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -302,7 +301,7 @@ class GroupManagement extends LitElement {
 
             }
 
-            mwc-textfield { 
+            mwc-textfield {
                 width:100%;
             }
 
@@ -1505,7 +1504,7 @@ class GroupManagement extends LitElement {
                             <b>${translate("walletpage.wchange21")} ${this.createFee} QORT.</b>
                         </span>
                     </div>
-                    
+
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
@@ -1529,7 +1528,7 @@ class GroupManagement extends LitElement {
                         <h1>${translate("grouppage.gchange30")}</h1>
                         <hr>
                     </div>
-                    
+
                     <div class="itemList">
                         <span class="title">${translate("grouppage.gchange4")}</span>
                         <br>
@@ -1565,7 +1564,7 @@ class GroupManagement extends LitElement {
                             <b>${translate("walletpage.wchange21")} ${this.joinFee} QORT.</b>
                         </span>
                     </div>
-                    
+
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
@@ -1589,7 +1588,7 @@ class GroupManagement extends LitElement {
                         <h1>${translate("grouppage.gchange35")}</h1>
                         <hr>
                     </div>
-                    
+
                     <div class="itemList">
                         <span class="title">${translate("grouppage.gchange4")}</span>
                         <br>
@@ -1630,7 +1629,7 @@ class GroupManagement extends LitElement {
                             <b>${translate("walletpage.wchange21")} ${this.leaveFee} QORT.</b>
                         </span>
                     </div>
-                    
+
                     <mwc-button
                         ?disabled="${this.isLoading}"
                         slot="primaryAction"
@@ -1857,7 +1856,7 @@ class GroupManagement extends LitElement {
                     } else {
                         let snackbarstring = get("managegroup.mg45")
                         parentEpml.request('showSnackBar', `${snackbarstring}`)
-                    }   
+                    }
                    }
                    window.parent.reduxStore.dispatch(
                     window.parent.reduxAction.setSideEffectAction(null)

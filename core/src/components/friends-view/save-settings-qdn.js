@@ -1,21 +1,20 @@
-import { LitElement, html, css } from 'lit';
+import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store.js';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store.js';
 import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from 'lit-translate';
+import {translate} from 'lit-translate';
 import {
 	decryptGroupData,
 	encryptDataGroup,
 	objectToBase64,
-	uint8ArrayToBase64,
 	uint8ArrayToObject,
 } from '../../../../plugins/plugins/core/components/qdn-action-encryption.js';
-import { publishData } from '../../../../plugins/plugins/utils/publish-image.js';
-import { parentEpml } from '../show-plugin.js';
+import {publishData} from '../../../../plugins/plugins/utils/publish-image.js';
+import {parentEpml} from '../show-plugin.js';
 import '../notification-view/popover.js';
 
 class SaveSettingsQdn extends connect(store)(LitElement) {
@@ -159,14 +158,14 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 	}
 
 	async getMyFollowedNames() {
-		
+
         let myFollowedNames = []
 		try {
 			 myFollowedNames = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`
 			})
 		} catch (error) {
-			
+
 		}
 
         return myFollowedNames
@@ -185,7 +184,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			body: `${namesJsonString}`
 		})
 
-		
+
 		return ret
 	}
 

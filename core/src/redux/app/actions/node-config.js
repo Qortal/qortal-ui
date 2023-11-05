@@ -1,6 +1,6 @@
 // Node Config Actions here...
-import { LOAD_NODE_CONFIG, SET_NODE, ADD_NODE, REMOVE_NODE, EDIT_NODE } from '../app-action-types.js'
-import { UI_VERSION } from '../version.js'
+import {ADD_NODE, EDIT_NODE, LOAD_NODE_CONFIG, REMOVE_NODE, SET_NODE} from '../app-action-types.js'
+import {UI_VERSION} from '../version.js'
 
 const nodeConfigUrl = '/getConfig'
 

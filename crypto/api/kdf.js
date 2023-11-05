@@ -1,8 +1,8 @@
-import { store } from '../api_deps.js'
-import { stateAwait } from './utils/stateAwait.js'
-import { Sha512 } from 'asmcrypto.js'
+import {store} from '../api_deps.js'
+import {stateAwait} from './utils/stateAwait.js'
+import {Sha512} from 'asmcrypto.js'
 import utils from '../api/deps/utils.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig} from 'lit-translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
