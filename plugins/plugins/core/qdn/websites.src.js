@@ -1024,17 +1024,8 @@ class Websites extends LitElement {
     }
 
     renderPublishedBy(websiteObj) {
-        if (websiteObj.status != null) {
-            return html`
-                    <div class="resourceRegisteredName">${websiteObj.name}</div>
-                    <div class="resourceStatus">${translate("websitespage.schange28")}: <span title="${websiteObj.status.description}">${websiteObj.status.title}</span></div>
-            `
-        } else {
-            return html`
-                    <div class="resourceRegisteredName">${websiteObj.name}</div>
-                    <div class="resourceStatus">${translate("websitespage.schange28")}: <span title="Published but not yet downloaded">Published</span></div>
-            `
-        }
+        return html`<div class="resourceRegisteredName">${websiteObj.name}</div>
+        <div class="resourceStatus">${translate("websitespage.schange28")}: <span title="${websiteObj.status.description}">${websiteObj.status.title}</span></div>`
     }
 
     renderSize(websiteObj) {

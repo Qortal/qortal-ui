@@ -910,14 +910,12 @@ class QApps extends LitElement {
     }
 
     renderDownload(downObj) {
-        if (downObj.status != null) {
-            if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
-                return html`<mwc-button ?disabled="${this.btnDisabled}" dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
-            } else if (downObj.status.description === "Ready" || downObj.status.status === "DOWNLOADED") {
-                return html`<a class="visitSite" href="../qdn/browser/index.html?name=${downObj.name}&service=${this.service}"><mwc-button class="green" dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
-            }
-        } else {
+        if (downObj.status.description === "Published but not yet downloaded" || downObj.status.status === "MISSING_DATA") {
             return html`<mwc-button ?disabled="${this.btnDisabled}" dense unelevated label="${translate("appspage.schange36")}" icon="download" @click=${() => this.downloadApp(downObj)}></mwc-button>`
+        } else if (downObj.status.description === "Ready" || downObj.status.status === "DOWNLOADED") {
+            return html`<a class="visitSite" href="../qdn/browser/index.html?name=${downObj.name}&service=${this.service}"><mwc-button class="green" dense unelevated label="${translate("appspage.schange39")}" icon="open_in_browser"></mwc-button></a>`
+        } else {
+            return html``
         }
     }
 
