@@ -363,9 +363,7 @@ class ChatPage extends LitElement {
 
         }
         this.processMessages(getInitialMessages, true, false)
-        } catch (error) {
-            console.log
-        }
+        } catch (error) { /* empty */ }
     }
 
     async copyJoinGroupLinkToClipboard() {
@@ -681,7 +679,10 @@ class ChatPage extends LitElement {
                 <br>
                 <h3 style="color: var(--black);">${translate("chatpage.cchange42")}</h3>
                 <div class="buttons">
-                    <mwc-button @click=${() => this.sendMessage(this.myTrimmedMeassage)} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
+                    <mwc-button @click=${() => {
+                                    this.sendMessage(this.myMessageUnder4Qort)
+
+                    }} dialog-confirm>${translate("transpage.tchange3")}</mwc-button>
                 </div>
             </paper-dialog>
             <wrapper-modal
@@ -1345,6 +1346,7 @@ class ChatPage extends LitElement {
             const isRecipient = this.chatId.includes('direct') === true ? true : false
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false
             this._chatId = this.chatId.split('/')[1]
+
             const mstring = get("chatpage.cchange8")
             const placeholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`
             this.chatEditorPlaceholder = placeholder
@@ -3113,8 +3115,8 @@ class ChatPage extends LitElement {
                 const stringifyMessageObject = JSON.stringify(messageObject)
 
                 if (this.balance < 4) {
-                    this.myTrimmedMeassage = ''
-                    this.myTrimmedMeassage = stringifyMessageObject
+                    this.myMessageUnder4Qort = null
+                    this.myMessageUnder4Qort = {messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue}
                     this.shadowRoot.getElementById('confirmDialog').open()
                 } else {
                    return this.sendMessage({messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue})
@@ -3164,23 +3166,23 @@ class ChatPage extends LitElement {
                 })
                return _computePow(chatResponse)
             } else {
-                let groupResponse = await parentEpml.request('chat', {
-                    type: 181,
-                    nonce: this.selectedAddress.nonce,
-                    params: {
-                        timestamp: Date.now(),
-                        groupID: Number(_chatId),
-                        hasReceipient: 0,
-                        hasChatReference: typeMessage === 'edit' ? 1 : 0,
-                        chatReference: chatReference,
-                        message: messageText,
-                        lastReference: reference,
-                        proofOfWorkNonce: 0,
-                        isEncrypted: 0, // Set default to not encrypted for groups
-                        isText: 1
-                    }
-                })
-               return _computePow(groupResponse)
+                    let groupResponse = await parentEpml.request('chat', {
+                        type: 181,
+                        nonce: this.selectedAddress.nonce,
+                        params: {
+                            timestamp: Date.now(),
+                            groupID: Number(_chatId),
+                            hasReceipient: 0,
+                            hasChatReference: typeMessage === 'edit' ? 1 : 0,
+                            chatReference: chatReference,
+                            message: messageText,
+                            lastReference: reference,
+                            proofOfWorkNonce: 0,
+                            isEncrypted: 0, // Set default to not encrypted for groups
+                            isText: 1
+                        }
+                    })
+                    return _computePow(groupResponse)
             }
         }
 

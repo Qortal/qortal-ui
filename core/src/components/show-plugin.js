@@ -334,7 +334,6 @@ class ShowPlugin extends connect(store)(LitElement) {
     }
 
     render() {
-        console.log('this.tabs', this.tabs)
         const plugSrc = (myPlug) => {
             return myPlug === undefined ? 'about:blank' : `${window.location.origin}/plugin/${myPlug.domain}/${myPlug.page}${this.linkParam}`
         }
