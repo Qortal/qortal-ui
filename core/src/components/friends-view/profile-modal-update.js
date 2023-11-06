@@ -9,6 +9,7 @@ import {
 } from 'lit-translate';
 import '@material/mwc-button';
 import '@material/mwc-icon';
+import '@vaadin/tooltip';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
 import { connect } from 'pwa-helpers';
@@ -244,7 +245,16 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			const {bio, tagline, wallets, customData} = this.editContent
 			this.bio = bio ?? '';
 			this.tagline = tagline ?? '';
-			this.wallets = wallets ?? {};
+			let formWallets = {...this.wallets}
+			if(wallets && Object.keys(wallets).length){
+				Object.keys(formWallets).forEach((key)=> {
+					if(wallets[key]){
+						formWallets[key] = wallets[key]
+					}
+				})
+			}
+			this.wallets = formWallets
+
 			this.customData = {...customData}
 			this.requestUpdate();
 		}
@@ -253,7 +263,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			changedProperties.has('qortalRequestCustomData') &&
 			this.qortalRequestCustomData
 		) {
-			console.log('this.qortalRequestCustomData', this.qortalRequestCustomData)
 			this.isOpenCustomDataModal = true
 			this.newCustomDataField = {...this.qortalRequestCustomData.payload.customData}
 			this.newCustomDataKey = this.qortalRequestCustomData.property
@@ -273,10 +282,8 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	}
 
 	async fetchWalletAddress(coin) {
-		console.log({ coin });
 		switch (coin) {
 			case 'arrr':
-				console.log('arrr');
 				const arrrWalletName = `${coin}Wallet`;
 
 				const res2 = await parentEpml.request('apiCall', {
@@ -352,7 +359,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	clearFields() {
 		this.bio = '';
 		this.tagline = '';
-		this.wallets = {};
 	}
 
 	fillAddress(coin) {
@@ -420,7 +426,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('modal');
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
 				<div class="modal-content">
@@ -499,11 +504,20 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 											/>
 
 											<mwc-icon
+												id=${`${key}-upload`}
 												@click=${() =>
 													this.fillAddress(key)}
 												style="color:var(--black);cursor:pointer"
 												>upload_2</mwc-icon
 											>
+											<vaadin-tooltip
+							for=${`${key}-upload`}
+							position="bottom"
+							hover-delay=${200}
+							hide-delay=${1}
+							text=${translate('profile.profile21')}
+						>
+						</vaadin-tooltip>
 										</div>
 									</div>
 								`;
@@ -669,7 +683,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							})}
 						</div>
 						<div style="height:15px"></div>
-						<div style="width:100%;display:flex;justify-content:center;gap:10px">
+						<div style="width:100%;display:flex;justify-content:center;gap:10px;margin-top:30px">
 						<input
 												
 												placeholder=${translate('profile.profile12')}

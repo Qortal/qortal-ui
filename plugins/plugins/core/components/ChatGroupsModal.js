@@ -67,7 +67,6 @@ export class ChatGroupsModal extends LitElement {
 
 
 	render() {
-		console.log('hello')
 		return html`
 		
 			<mwc-dialog 

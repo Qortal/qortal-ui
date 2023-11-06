@@ -2127,7 +2127,6 @@ class WebBrowser extends LitElement {
 					break;
 				}
 				case 'SET_PROFILE_DATA': {
-					const defaultProperties = ['tagline', 'bio', 'wallets']
 					const requiredFields = ['property', 'data'];
 					const missingFields = [];
 
@@ -2148,10 +2147,6 @@ class WebBrowser extends LitElement {
 
 
 					try {
-						// const profileData = window.parent.reduxStore.getState().app.profileData
-						// if (!profileData) {
-						// 	throw new Error('User does not have a profile')
-						// }
 						const property = data.property
 						const payload = data.data
 						const uniqueId = this.uid.rnd()
@@ -2184,7 +2179,6 @@ class WebBrowser extends LitElement {
 								// Handle the data from the event, if any
 								const responseData = event.detail;
 								if(responseData && responseData.uniqueId !== uniqueId) return
-								console.log({responseData})
 								// Clean up by removing the event listener once we've received the response
 								window.removeEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
 
@@ -2199,7 +2193,6 @@ class WebBrowser extends LitElement {
 							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
 						});
 
-						console.log({res})
 						response = JSON.stringify(res);
 					} catch (error) {
 						const obj = {};
@@ -2209,6 +2202,41 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide();
 					}
+					break;
+				}
+
+				case 'OPEN_PROFILE': {
+					const requiredFields = ['name'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						 const customEvent = new CustomEvent('open-visiting-profile', {
+                			detail: data.name
+            		});
+            window.parent.dispatchEvent(customEvent);
+						response = JSON.stringify(true);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to open profile';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} 
 					break;
 				}
 

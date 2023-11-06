@@ -327,20 +327,16 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	async setValues(response, resource) {
-		console.log('hello', response);
-
 		if (response) {
 			let data = { ...response };
 			let customData = {};
 			for (const key of Object.keys(data.customData || {})) {
 				if (key.includes('-private')) {
 					try {
-						console.log('key', data.customData[key]);
 						const decryptedData = decryptGroupData(
 							data.customData[key]
 						);
 
-						console.log({ decryptedData });
 						if (decryptedData && !decryptedData.error) {
 							const decryptedDataToBase64 =
 								uint8ArrayToObject(decryptedData);
@@ -368,19 +364,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	async getVisitingProfile(name) {
-		console.log('name2', name)
 		try {
-			// this.error = '';
 			this.isLoadingVisitingProfile = true
 			this.nameVisiting = name
-			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
-				console.log({ res });
 				data = await res.json();
-				console.log({ data });
 				if (Array.isArray(data)) {
 					data = data.filter(
 						(item) => item.identifier === 'qortal_profile'
@@ -391,7 +382,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const dataItem = data[0];
 						try {
 							const response = await this.getRawData(dataItem);
-							console.log({ response });
 							if (response.wallets) {
 								this.profileDataVisiting = response
 								// this.setValues(response, dataItem);
@@ -425,7 +415,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async getProfile() {
 		try {
-			console.log('hello start')
 			this.error = ''
 			const arbFee = await this.getArbitraryFee();
 			this.fee = arbFee;
@@ -442,20 +431,16 @@ class ProfileQdn extends connect(store)(LitElement) {
 			if (!nameObject) {
 				this.name = null;
 				this.error = 'no name'
-				console.log('hello', this.error)
 				throw new Error('no name');
 			}
 			this.hasName = true
 			const name = nameObject.name;
-			this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
 			this.name = name;
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
-				console.log({ res });
 				data = await res.json();
-				console.log({ data });
 				if (Array.isArray(data)) {
 					data = data.filter(
 						(item) => item.identifier === 'qortal_profile'
@@ -466,14 +451,12 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const dataItem = data[0];
 						try {
 							const response = await this.getRawData(dataItem);
-							console.log({ response });
 							if (response.wallets) {
 								this.setValues(response, dataItem);
 							} else {
 								this.error = 'Cannot get saved user settings';
 							}
 						} catch (error) {
-							console.log({ error });
 							this.error = 'Cannot get saved user settings';
 						}
 					} else {
@@ -483,7 +466,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 					this.error = 'Unable to perform query';
 				}
 			} catch (error) {
-				console.log({ error });
 				data = {
 					error: 'No resource found',
 				};
@@ -539,7 +521,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async saveToQdn(data) {
 		try {
-			console.log({ data });
 			this.isSaving = true;
 			if (this.resourceExists === true && this.error)
 				throw new Error('Unable to save');
@@ -576,13 +557,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 					newObject['customData'][key] = newObject.customData[key];
 				}
 			}
-			console.log({ newObject });
 			const newObjectToBase64 = await objectToBase64(newObject);
-			// const encryptedData = encryptDataGroup({
-			// 	data64: newObjectToBase64,
-			// 	publicKeys: [],
-			// });
-
+		
 			const worker = new WebWorker2();
 			try {
 				const resPublish = await publishData({
@@ -605,9 +581,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 				this.profileData = data;
 				store.dispatch(setProfileData(data));
 
-				// this.setValues(newObject, {
-				// 	updated: Date.now(),
-				// });
+			
 				worker.terminate();
 			} catch (error) {
 				worker.terminate();
@@ -643,14 +617,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 					detail: detail,
 				}
 			);
-			try {
-				console.log(
-					'hello100',
-					iframeWindow.document.querySelector('multi-wallet')
-				);
-			} catch (error) {
-				console.log({ error });
-			}
+			
 			iframeWindow.dispatchEvent(customEvent);
 		});
 	}
@@ -670,7 +637,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 			this.editContent = {
 				...(this.profileData || {}),
 			};
-			console.log({ detail });
 			if (detail.payload.customData) {
 				this.qortalRequestCustomData = detail;
 			}
@@ -702,7 +668,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 				uniqueId: detail.uniqueId,
 			});
 		} catch (error) {
-			console.log({ error });
 			this.sendBackEvent({
 				response: 'error',
 				uniqueId: detail.uniqueId,
@@ -712,10 +677,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	_handleOpenVisiting(event){
 		try {
-			console.log({event})
 			const name = event.detail;
-			console.log({name})
-			// if(!name) return
 			this.getVisitingProfile(name)
 			this.dialogOpenedProfile = true
 		} catch (error) {
@@ -764,6 +726,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	avatarFullImage() {
+		this.imageUrl = `${this.nodeUrl}/arbitrary/THUMBNAIL/${this.nameVisiting}/qortal_avatar?async=true&apiKey=${this.myNode.apiKey}`;
+
 		return html`<img
 			class="round-fullinfo"
 			src="${this.imageUrl}"
@@ -802,7 +766,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 		
 	}
 	render() {
-		console.log('sup profile2', this.error, this.profileDataVisiting, this.dialogOpenedProfile );
 		return html`
 			${this.isSaving ||
 			(!this.error && this.resourceExists === undefined)
