@@ -1,20 +1,14 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { Epml } from '../epml.js'
-import { addPluginRoutes } from '../plugins/addPluginRoutes.js'
-import { repeat } from 'lit/directives/repeat.js';
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {Epml} from '../epml.js'
+import {addPluginRoutes} from '../plugins/addPluginRoutes.js'
+import {repeat} from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
-import { setIsOpenDevDialog, setNewTab } from '../redux/app/app-actions.js'
-import localForage from 'localforage'
+import {setIsOpenDevDialog, setNewTab} from '../redux/app/app-actions.js'
 import FileSaver from 'file-saver'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -26,6 +20,9 @@ import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
 
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 
 export const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -91,7 +88,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 border-radius: 6px;
                 border: 3px solid var(--scrollbarBG);
             }
-            
+
             .hideIframe  {
                 display: none;
                 position: absolute;
@@ -436,7 +433,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                             }}"
                              @mousedown="${(event) => {
         if (event.button === 1) {
-            event.preventDefault(); 
+            event.preventDefault();
             this.removeTab(index, tab.id);
         }
     }}"
@@ -447,8 +444,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                             ` : html`
                             <mwc-icon>${icon}</mwc-icon>
                             `}
-                    
-                               
+
+
                             </div>
                             <div class="tabCard">
                                 ${count ? html`
@@ -456,7 +453,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                                     <span class="count ml-5">${count}</span>
                                     <span class="show ml-25"><mwc-icon class="close" @click=${(event) => {
                                         event.stopPropagation(); this.removeTab(index, tab.id)
-                                        
+
                                         }}>close</mwc-icon></span>
                                 ` : html`
                                     <span class="tabTitle ml-30">${title}</span>
@@ -466,7 +463,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                         </div>
                     `
                 })}
-                <button 
+                <button
                     class="add-tab-button"
                     title="${translate('tabmenu.tm18')}"
                     @click=${() => {
@@ -476,7 +473,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                             id: this.uid.rnd()
                         })
                         this.currentTab = lengthOfTabs
-                        
+
                     }}
                 >+</button>
             </div>
@@ -500,8 +497,8 @@ class ShowPlugin extends connect(store)(LitElement) {
                     </nav-bar>
                 </div>
             `)}
-            <mwc-dialog id="addDevDialog"  
-                ?open=${this.isOpenDevDialog} 
+            <mwc-dialog id="addDevDialog"
+                ?open=${this.isOpenDevDialog}
                 @closed=${() => {
                     this.shadowRoot.getElementById('domainInput').value = ''
                     this.shadowRoot.getElementById('portInput').value = ''
@@ -532,7 +529,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 >
                 ${translate('tabmenu.tm40')}
                 </mwc-button>
-            </mwc-dialog>    
+            </mwc-dialog>
         `
     }
 
@@ -1019,22 +1016,22 @@ class NavBar extends connect(store)(LitElement) {
             --mdc-icon-size: 64px;
             cursor: pointer;
         }
-          
+
         .menuIconPos {
             right: -2px;
         }
-          
+
         .removeIconPos {
             position: absolute;
     top: -10px;
     right: -10px;
     z-index: 1;
         }
-          
+
         .menuIconPos:hover .removeIcon {
             display: inline;
         }
-          
+
         .removeIcon {
             display: none;
             color: var(--black);
@@ -1043,7 +1040,7 @@ class NavBar extends connect(store)(LitElement) {
             position: relative;
             z-index: 1;
         }
-                     
+
         .removeIcon:hover {
             color: #C6011F;
             font-weight: bold;
@@ -1480,7 +1477,7 @@ class NavBar extends connect(store)(LitElement) {
         const addressInfo = this.addressInfo
         const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
         const isSponsor = +addressInfo?.level >= 5
-       
+
 
         if (!isMinter) {
             this.newMenuList = this.myMenuPlugins.filter((minter) => {
@@ -1499,7 +1496,7 @@ class NavBar extends connect(store)(LitElement) {
         } else {
             this.myMenuList = this.newMenuList
         }
-       
+
         this.requestUpdate()
 	}
 
@@ -2209,7 +2206,7 @@ class NavBar extends connect(store)(LitElement) {
 
     renderRemoveIcon(appurl, appicon, appname, appid, appplugin) {
         return html`
-           
+
             <div class="menuIconPos" @click="${() => this.changePage(appplugin)}">
             <div class="removeIconPos" title="${translate('tabmenu.tm22')}" @click="${(event) => {
                               event.stopPropagation();
@@ -2453,14 +2450,14 @@ class AppAvatar extends LitElement {
 
     constructor() {
         super()
-       
+
         this.hasAvatar = false
         this.isImageLoaded = false
         this.imageFetches = 0
     }
 
     static get styles() {
-      
+
         return css`
           :host {
             position: absolute;
@@ -2478,16 +2475,16 @@ class AppAvatar extends LitElement {
 
             `
     }
-   
+
     createImage(imageUrl)  {
         const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "border-radius:10px; font-size:14px; object-fit: fill;height:60px;width:60px";
-       
+
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 1) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
@@ -2534,23 +2531,23 @@ class TabAvatar extends LitElement {
 
     constructor() {
         super()
-       
+
         this.hasAvatar = false
         this.isImageLoaded = false
         this.imageFetches = 0
     }
 
-  
-   
+
+
     createImage(imageUrl)  {
         const imageHTMLRes = new Image();
         imageHTMLRes.src = imageUrl;
         imageHTMLRes.style= "border-radius:4px; font-size:14px; object-fit: fill;height:24px;width:24px";
-       
+
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 1) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;

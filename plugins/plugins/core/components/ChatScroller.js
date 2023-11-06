@@ -1,15 +1,12 @@
-import { LitElement, html, } from 'lit';
-import { repeat } from 'lit/directives/repeat.js';
-import {
-	get,
-	translate,
-} from 'lit-translate';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { chatStyles } from './ChatScroller-css.js';
-import { Epml } from '../../../epml';
-import { cropAddress } from '../../utils/cropAddress';
-import { roundToNearestDecimal } from '../../utils/roundToNearestDecimal.js';
-import { generateHTML } from '@tiptap/core';
+import {html, LitElement,} from 'lit';
+import {repeat} from 'lit/directives/repeat.js';
+import {get, translate,} from 'lit-translate';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+import {chatStyles} from './ChatScroller-css.js';
+import {Epml} from '../../../epml';
+import {cropAddress} from '../../utils/cropAddress';
+import {roundToNearestDecimal} from '../../utils/roundToNearestDecimal.js';
+import {generateHTML} from '@tiptap/core';
 import isElectron from 'is-electron';
 
 import axios from 'axios';
@@ -31,7 +28,7 @@ import '@material/mwc-icon';
 import '@vaadin/icon';
 import '@vaadin/icons';
 import '@vaadin/tooltip';
-import { chatLimit, totalMsgCount } from './ChatPage.js';
+import {chatLimit, totalMsgCount} from './ChatPage.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 let toggledMessage = {};
@@ -503,7 +500,7 @@ class ChatScroller extends LitElement {
 				!previousMessage ||
 				!this.shouldGroupWithLastMessage(message, previousMessage)
 			) {
-		
+
 				if (currentMessageGroup) {
 					this.messagesToRender.unshift(currentMessageGroup);
 				}
@@ -690,7 +687,7 @@ class ChatScroller extends LitElement {
 	}
 
 	render() {
-	
+
 		let formattedMessages = this.messagesToRender;
 
 		return html`
@@ -1454,19 +1451,19 @@ class MessageTemplate extends LitElement {
 		return hideit
 			? html`<li class="clearfix"></li>`
 			: html`
-            <li 
-            class="clearfix message-parent" 
+            <li
+            class="clearfix message-parent"
             style="${
 				this.isSingleMessageInGroup === true &&
 				this.isLastMessageInGroup === false &&
 				reactions.length === 0
 					? 'padding-bottom: 0;'
 					: null
-			} 
+			}
             ${this.isFirstMessage && 'margin-top: 20px;'}">
                 <div>
-                    <div 
-                    class="message-container" 
+                    <div
+                    class="message-container"
                     style="${
 						this.isSingleMessageInGroup === true &&
 						this.isLastMessageInGroup === false &&
@@ -1507,8 +1504,8 @@ class MessageTemplate extends LitElement {
 											></div>
 									  `
 							}
-                            <div 
-                            class="${`message-subcontainer2 
+                            <div
+                            class="${`message-subcontainer2
                             ${
 								this.myAddress === this.messageObj.sender &&
 								'message-myBg'
@@ -1530,7 +1527,7 @@ class MessageTemplate extends LitElement {
 									  this.myAddress === this.messageObj.sender
 									? 'message-myTriangle'
 									: null
-							}`}" 
+							}`}"
                             style="${
 								this.isSingleMessageInGroup === true &&
 								this.isLastMessageInGroup === false
@@ -1684,7 +1681,7 @@ class MessageTemplate extends LitElement {
 											  `
 											: html``
 									}
-                                    
+
                                     ${
 										image &&
 										!isImageDeleted &&
@@ -1864,9 +1861,9 @@ class MessageTemplate extends LitElement {
 											  `
 											: html``
 									}
-                                    <div 
-                                    id="messageContent" 
-                                    class="message" 
+                                    <div
+                                    id="messageContent"
+                                    class="message"
                                     style=${
 										image &&
 										replacedMessage !== '' &&
@@ -1908,7 +1905,7 @@ class MessageTemplate extends LitElement {
 												  `
 												: ''
 										}
-                                        <div 
+                                        <div
                                             style=${
 												isEdited
 													? 'justify-content: space-between;'
@@ -1959,7 +1956,7 @@ class MessageTemplate extends LitElement {
 															></message-time>
 													  `
 											}
-                                            
+
                                         </div>
                                     </div>
                             </div>
@@ -2025,7 +2022,7 @@ class MessageTemplate extends LitElement {
 											</chat-menu>
 									  `
 							}
-                               
+
                         </div>
                         <div class="message-reactions" style="${
 							reactions.length > 0 &&
@@ -2062,7 +2059,7 @@ class MessageTemplate extends LitElement {
 																			.users[0]
 																			.address
 																  )
-													  }, 
+													  },
                                         ${
 											reaction.users[1].name
 												? reaction.users[1].name
@@ -2109,7 +2106,7 @@ class MessageTemplate extends LitElement {
 																			.users[0]
 																			.address
 																  )
-													  }, 
+													  },
                                         ${
 											reaction.users[1].name
 												? reaction.users[1].name
@@ -2117,8 +2114,8 @@ class MessageTemplate extends LitElement {
 														reaction.users[1]
 															.address
 												  )
-										} 
-                                        ${get('chatpage.cchange71')} 
+										}
+                                        ${get('chatpage.cchange71')}
                                         ${
 											reaction.users[2].name
 												? reaction.users[2].name
@@ -2143,7 +2140,7 @@ class MessageTemplate extends LitElement {
 																			.address
 																  )
 													  }
-                                        ${get('chatpage.cchange71')} 
+                                        ${get('chatpage.cchange71')}
                                         ${
 											reaction.users[1].name
 												? reaction.users[1]
@@ -2182,22 +2179,22 @@ class MessageTemplate extends LitElement {
                 </div>
             </div>
             </li>
-            <chat-modals 
-                .openDialogPrivateMessage=${this.openDialogPrivateMessage} 
-                .openDialogBlockUser=${this.openDialogBlockUser} 
+            <chat-modals
+                .openDialogPrivateMessage=${this.openDialogPrivateMessage}
+                .openDialogBlockUser=${this.openDialogBlockUser}
                 nametodialog="${
 					this.messageObj.senderName
 						? this.messageObj.senderName
 						: this.messageObj.sender
-				}" 
+				}"
                 .hidePrivateMessageModal=${() => this.hidePrivateMessageModal()}
                 .hideBlockUserModal=${() => this.hideBlockUserModal()}
                 toblockaddress=${this.messageObj.sender}
             >
             </chat-modals>
-            <mwc-dialog 
-                id="showDialogPublicKey" 
-                ?open=${this.openDialogImage} 
+            <mwc-dialog
+                id="showDialogPublicKey"
+                ?open=${this.openDialogImage}
                 @closed=${() => {
 					this.openDialogImage = false;
 				}}>
@@ -2206,7 +2203,7 @@ class MessageTemplate extends LitElement {
                         ${this.openDialogImage ? html`
                         <img src=${imageUrl} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
                         ` : ''}
-                        
+
 					</div>
 					<mwc-button
 						slot="primaryAction"
@@ -2219,9 +2216,9 @@ class MessageTemplate extends LitElement {
 					    ${translate('general.close')}
 					</mwc-button>
 				</mwc-dialog>
-            <mwc-dialog 
-                id="showDialogPublicKey" 
-                ?open=${this.openDialogGif} 
+            <mwc-dialog
+                id="showDialogPublicKey"
+                ?open=${this.openDialogGif}
                 @closed=${() => {
 					this.openDialogGif = false;
 				}}>MessageTemplate
@@ -2242,7 +2239,7 @@ class MessageTemplate extends LitElement {
 				</mwc-dialog>
                 <mwc-dialog
                 hideActions
-                ?open=${this.openDeleteImage} 
+                ?open=${this.openDeleteImage}
                 @closed=${() => {
 					this.openDeleteImage = false;
 				}}>
@@ -2252,10 +2249,10 @@ class MessageTemplate extends LitElement {
                 <div class="modal-button-row" @click=${() =>
 					(this.openDeleteImage = false)}>
                     <button class="modal-button-red">
-                       Cancel 
+                       Cancel
                     </button>
                     <button
-                    class="modal-button" 
+                    class="modal-button"
                     @click=${() =>
 						this.sendMessage({
 							type: 'delete',
@@ -2269,7 +2266,7 @@ class MessageTemplate extends LitElement {
                 </mwc-dialog>
                 <mwc-dialog
                 hideActions
-                ?open=${this.openDeleteAttachment} 
+                ?open=${this.openDeleteAttachment}
                 @closed=${() => {
 					this.openDeleteAttachment = false;
 				}}>
@@ -2279,10 +2276,10 @@ class MessageTemplate extends LitElement {
                 <div class="modal-button-row" @click=${() =>
 					(this.openDeleteAttachment = false)}>
                     <button class="modal-button-red">
-                       Cancel 
+                       Cancel
                     </button>
                     <button
-                    class="modal-button" 
+                    class="modal-button"
                     @click=${() => {
 						this.sendMessage({
 							type: 'deleteAttachment',

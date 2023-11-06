@@ -1,7 +1,7 @@
-import { Epml, EpmlReadyPlugin, RequestPlugin, EpmlWorkerPlugin } from 'epml'
+import {Epml, EpmlReadyPlugin, EpmlWorkerPlugin, RequestPlugin} from 'epml'
 
 import utils from './cryptoUtils.js'
-import { Sha512, bytes_to_base64 as bytesToBase64 } from 'asmcrypto.js'
+import {bytes_to_base64 as bytesToBase64, Sha512} from 'asmcrypto.js'
 import bcrypt from 'bcryptjs'
 
 Epml.registerPlugin(RequestPlugin)

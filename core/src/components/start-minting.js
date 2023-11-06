@@ -1,11 +1,11 @@
-import { LitElement, html, css } from 'lit';
-import { connect } from 'pwa-helpers';
-import { store } from '../store.js';
-import { translate, get } from 'lit-translate';
-import { asyncReplace } from 'lit/directives/async-replace.js';
+import {css, html, LitElement} from 'lit';
+import {connect} from 'pwa-helpers';
+import {store} from '../store.js';
+import {get, translate} from 'lit-translate';
+import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import '../functional-components/my-button.js';
-import { routes } from '../plugins/routes.js';
+import {routes} from '../plugins/routes.js';
 import "@material/mwc-button"
 import '@material/mwc-dialog'
 
@@ -278,7 +278,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 					findMintingAccountFromOtherUser.publicKey[0]
 				);
 			}
-			
+
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg2();
 			return;
@@ -344,7 +344,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 		const publicAddress = this.base58PublicKey
 		const findMintingAccount = mintingAccountData.find((ma) => ma.mintingAccount === address);
 		const isMinterButKeyMintingKeyNotAssigned = addressInfo && addressInfo.error !== 124 && addressInfo.level >= 1 && !findMintingAccount;
-	
+
 		const makeTransactionRequest = async (lastRef) => {
 			let mylastRef = lastRef;
 			let rewarddialog1 = get('transactions.rewarddialog1');
@@ -373,12 +373,12 @@ const nonce = selectedAddress && selectedAddress.nonce;
 
 		const getTxnRequestResponse = (txnResponse) => {
 			let err6string = get('rewardsharepage.rchange21');
-		
+
 			if (txnResponse && txnResponse.extraData && txnResponse.extraData.rewardSharePrivateKey &&
 				txnResponse.data && (txnResponse.data.message && (txnResponse.data.message.includes('multiple') || txnResponse.data.message.includes('SELF_SHARE_EXISTS')))) {
 				return err6string;
 			}
-		
+
 			if (txnResponse.success === false && txnResponse.message) {
 				throw txnResponse;
 			} else if (txnResponse.success === true && txnResponse.data && !txnResponse.data.error) {
@@ -387,19 +387,19 @@ const nonce = selectedAddress && selectedAddress.nonce;
 				throw txnResponse;
 			}
 		};
-		
+
 
 		const createSponsorshipKey = async () => {
 			this.status = 1;
 			let lastRef = await getLastRef();
 			let myTransaction = await makeTransactionRequest(lastRef);
 			getTxnRequestResponse(myTransaction);
-		
+
 			if (myTransaction && myTransaction.extraData) {
 				return myTransaction.extraData.rewardSharePrivateKey;
 			}
 		};
-		
+
 
 		const getLastRef = async () => {
 			const url = `${nodeUrl}/addresses/lastreference/${address}`;
@@ -448,7 +448,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 				</div>
 
 				<!-- Dialog for tracking the progress of starting minting -->
-			
+
 				${this.openDialogRewardShare ? html`
 					<div class="dialogCustom">
 						<div class="dialogCustomInner">
@@ -502,7 +502,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 									Warning: do not close the Qortal UI until completion!
 								</p>
 								<p class="message-error">${this.errorMsg}</p>
-							</div>	
+							</div>
 						</div>
 						<div class="modalFooter">
 							${this.errorMsg || this.status === 5 ? html`
@@ -520,8 +520,8 @@ const nonce = selectedAddress && selectedAddress.nonce;
 					</div>
 				</div>
 			</div>
-					
-			` : ""}			
+
+			` : ""}
 			` : ''}
 		`;
 	}

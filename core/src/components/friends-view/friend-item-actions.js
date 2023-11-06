@@ -1,11 +1,11 @@
 // popover-component.js
-import { LitElement, html, css } from 'lit';
-import { createPopper } from '@popperjs/core';
+import {css, html, LitElement} from 'lit';
+import {createPopper} from '@popperjs/core';
 import '@material/mwc-icon';
-import { use, get, translate } from 'lit-translate';
-import { store } from '../../store';
-import { connect } from 'pwa-helpers';
-import { setNewTab, setSideEffectAction } from '../../redux/app/app-actions';
+import {translate} from 'lit-translate';
+import {store} from '../../store';
+import {connect} from 'pwa-helpers';
+import {setNewTab, setSideEffectAction} from '../../redux/app/app-actions';
 import ShortUniqueId from 'short-unique-id';
 
 export class FriendItemActions extends connect(store)(LitElement) {

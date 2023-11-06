@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit'
+import {html, LitElement} from 'lit'
 
 import './styles.scss'
 import './app-theme.js'
@@ -21,7 +21,7 @@ class AppStyles extends LitElement {
                     --shadow-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
                     --shadow-5: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
                     --paper-input-container-focus-color: var(--mdc-theme-secondary);
-                    
+
                     font-family: "Roboto", sans-serif;
                     color: var(--mdc-theme-on-surface);
                     --window-height: ${this.windowHeight};

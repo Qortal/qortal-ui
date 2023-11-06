@@ -1,17 +1,15 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {registerTranslateConfig, translate, use} from 'lit-translate'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-textfield'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

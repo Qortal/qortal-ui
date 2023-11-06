@@ -1,19 +1,18 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
 import '@material/mwc-textfield'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@vaadin/grid'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
 

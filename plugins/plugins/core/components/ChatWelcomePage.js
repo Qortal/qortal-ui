@@ -1,7 +1,6 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import isElectron from 'is-electron'
 
 import '@material/mwc-icon'
@@ -214,8 +213,8 @@ class ChatWelcomePage extends LitElement {
                     <div class="center-box">
                         <mwc-icon class="img-icon">chat</mwc-icon><br>
                         <span style="font-size: 20px; color: var(--black);">${this.myAddress.address}</span>
-                        <div 
-                            class="start-chat" 
+                        <div
+                            class="start-chat"
                             @click="${() => this.setOpenPrivateMessage({
             name: "",
             open: true
@@ -233,12 +232,12 @@ class ChatWelcomePage extends LitElement {
                     </div>
 
                     <p>${translate("welcomepage.wcchange3")}</p>
-                    
+
                     <textarea class="input" ?disabled=${this.isLoading} id="sendTo" placeholder="${translate("welcomepage.wcchange4")}" rows="1"></textarea>
                     <p style="margin-bottom:0;">
                         <textarea class="textarea" @keydown=${(e) => this._textArea(e)} ?disabled=${this.isLoading} id="messageBox" placeholder="${translate("welcomepage.wcchange5")}" rows="1"></textarea>
                     </p>
-                    
+
                     <mwc-button ?disabled="${this.isLoading}" slot="primaryAction" @click=${() => {
                 this._sendMessage();
             }

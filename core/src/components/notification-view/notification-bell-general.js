@@ -1,22 +1,17 @@
-import { LitElement, html, css } from 'lit';
-import { connect } from 'pwa-helpers';
+import {css, html, LitElement} from 'lit';
+import {connect} from 'pwa-helpers';
 
 import '@vaadin/item';
 import '@vaadin/list-box';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/iron-icons/iron-icons.js';
-import { store } from '../../store.js';
-import { setNewNotification, setNewTab } from '../../redux/app/app-actions.js';
-import { routes } from '../../plugins/routes.js';
+import {store} from '../../store.js';
+import {setNewNotification} from '../../redux/app/app-actions.js';
 import '@material/mwc-icon';
-import { translate, get } from 'lit-translate';
-import { repeat } from 'lit/directives/repeat.js';
-
-import config from '../../notifications/config.js';
+import {get, translate} from 'lit-translate';
+import {repeat} from 'lit/directives/repeat.js';
 import '../../../../plugins/plugins/core/components/TimeAgo.js';
 import './popover.js';
-
-
 
 
 class NotificationBellGeneral extends connect(store)(LitElement) {
@@ -91,7 +86,7 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 				status: statusTx,
 			};
 			this.notifications = copyNotifications;
-			
+
 		}
 	}
 

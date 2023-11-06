@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit'
+import {css, html, LitElement} from 'lit'
 
 const TRANSITION_EVENT_NAMES = ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'MSTransitionEnd']
 
@@ -99,7 +99,7 @@ class LoadingRipple extends LitElement {
                 opacity: 1;
                 transition: var(--ripple-activating-transition);
             }
-            
+
         `
     }
 

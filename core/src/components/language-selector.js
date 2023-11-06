@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { use, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {registerTranslateConfig, translate, use} from 'lit-translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -56,7 +56,7 @@ class LanguageSelector extends LitElement {
                     outline: none;
                 }
 
-                select option { 
+                select option {
                     color: var(--black);
                     background: var(--white);
                     line-height: 34px;
@@ -85,6 +85,7 @@ class LanguageSelector extends LitElement {
                     <option value="it">IT - ${translate("selectmenu.italian")}</option>
                     <option value="jp">JP - ${translate("selectmenu.japanese")}</option>
                     <option value="ko">KO - ${translate("selectmenu.korean")}</option>
+                    <option value="nl">NL - ${translate("selectmenu.dutch")}</option>
                     <option value="no">NO - ${translate("selectmenu.norwegian")}</option>
                     <option value="pl">PL - ${translate("selectmenu.polish")}</option>
                     <option value="pt">PT - ${translate("selectmenu.portuguese")}</option>

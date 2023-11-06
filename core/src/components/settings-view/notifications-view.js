@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { doSetQChatNotificationConfig } from '../../redux/user/user-actions.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {doSetQChatNotificationConfig} from '../../redux/user/user-actions.js'
+import {translate} from 'lit-translate'
 import isElectron from 'is-electron'
 
 import '@material/mwc-checkbox'
@@ -111,7 +111,7 @@ class NotificationsView extends connect(store)(LitElement) {
                 text-decoration: none;
                 transition: all .2s;
                 position: relative;
-            } 
+            }
 
             .remove-button {
             font-family: Roboto, sans-serif;
@@ -171,7 +171,7 @@ class NotificationsView extends connect(store)(LitElement) {
               <button class="remove-button" @click=${() => this.removeApp(app)}>Remove</button>
             </div>
         `)}
-        
+
       </div>
                     </div>
                     ${this.renderSetCoreButton()}
@@ -194,7 +194,7 @@ class NotificationsView extends connect(store)(LitElement) {
         // Update the apps list in the component
         this.appNotificationList = this.appNotificationList.filter(app => app !== appName);
       }
-    
+
       removeAppFromStorage(appName) {
         // Your method to remove the app from local storage
         const address= store.getState().app.selectedAddress.address

@@ -1,13 +1,11 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml'
-import snackbar from './snackbar.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
 import './WrapperModal'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -61,7 +59,7 @@ class ChatLeaveGroup extends LitElement {
   }
 
   firstUpdated() {
-    
+
     }
 
     async unitFee() {
@@ -77,7 +75,7 @@ class ChatLeaveGroup extends LitElement {
         } catch (error) {
             fee = null
         }
-  
+
       return fee
     }
 
@@ -98,7 +96,7 @@ class ChatLeaveGroup extends LitElement {
     }
 
     async confirmRelationship() {
-		
+
 
 		let interval = null
 		let stop = false
@@ -127,7 +125,7 @@ class ChatLeaveGroup extends LitElement {
     async _leaveGroup(groupId, groupName) {
         // Reset Default Settings...
         this.resetDefaultSettings()
-    
+
         const leaveFeeInput = await this.unitFee()
         if(!leaveFeeInput){
             throw Error()
@@ -195,17 +193,17 @@ class ChatLeaveGroup extends LitElement {
             this.isOpenLeaveModal = true
          }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:exit" slot="icon"></vaadin-icon>
          <!-- Leave Group Dialog -->
-         <wrapper-modal 
+         <wrapper-modal
                 .removeImage=${() => {
                     if(this.isLoading) return
                     this.isOpenLeaveModal = false
-                } } 
+                } }
                 style=${(this.isOpenLeaveModal) ? "display: block" : "display: none"}>
                     <div style="text-align:center">
                         <h1>${translate("grouppage.gchange35")}</h1>
                         <hr>
                     </div>
-                    
+
                     <div class="itemList">
                         <span class="title">${translate("grouppage.gchange4")}</span>
                         <br>
@@ -243,7 +241,7 @@ class ChatLeaveGroup extends LitElement {
                             ${this.message}
                         </span>
                     </div>
-                    
+
                     <button
                     class="modal-button"
                         ?disabled="${this.isLoading}"
@@ -257,7 +255,7 @@ class ChatLeaveGroup extends LitElement {
                     }}
                     class="modal-button"
                         ?disabled="${this.isLoading}"
-                    
+
                     >
                     ${translate("general.close")}
                     </button>

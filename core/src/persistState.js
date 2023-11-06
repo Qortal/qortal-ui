@@ -1,5 +1,5 @@
-import { store } from './store.js'
-import { saveStateToLocalStorage } from './localStorageHelpers.js'
+import {store} from './store.js'
+import {saveStateToLocalStorage} from './localStorageHelpers.js'
 
 const keys = [
     'config',

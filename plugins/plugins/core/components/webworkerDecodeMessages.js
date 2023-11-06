@@ -1,4 +1,5 @@
-import { Sha256 } from 'asmcrypto.js';
+import {Sha256} from 'asmcrypto.js';
+
 const nacl = {}
 //(function(nacl) {
 'use strict';
@@ -2767,7 +2768,7 @@ export const decryptChatMessageBase64 = (
 	recipientPublicKey,
 	lastReference
 ) => {
-   
+
 	let _encryptedMessage = atob(encryptedMessage);
 	const binaryLength = _encryptedMessage.length;
 	const bytes = new Uint8Array(binaryLength);

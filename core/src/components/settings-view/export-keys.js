@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {get, translate} from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
 

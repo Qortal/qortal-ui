@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {translate} from 'lit-translate'
 
 import '@polymer/paper-toast'
 import '@material/mwc-icon-button'

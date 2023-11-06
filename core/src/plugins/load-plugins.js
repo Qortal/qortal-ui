@@ -1,7 +1,7 @@
-import { store } from '../store.js'
-import { Epml } from '../epml.js'
-import { addPluginRoutes } from './addPluginRoutes'
-import { doAddPlugin } from '../redux/app/app-actions.js'
+import {store} from '../store.js'
+import {Epml} from '../epml.js'
+import {addPluginRoutes} from './addPluginRoutes'
+import {doAddPlugin} from '../redux/app/app-actions.js'
 
 let retryLoadPluginsInterval = 0
 export const loadPlugins = () => fetch('/getPlugins')

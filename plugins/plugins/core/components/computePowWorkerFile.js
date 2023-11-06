@@ -1,5 +1,4 @@
-import { Sha256 } from 'asmcrypto.js'
-
+import {Sha256} from 'asmcrypto.js'
 
 
 function sbrk(size, heap){
@@ -19,7 +18,7 @@ function sbrk(size, heap){
 self.addEventListener('message', async e => {
  const response = await computePow(e.data.convertedBytes, e.data.path)
  postMessage(response)
- 
+
 })
 
 
@@ -79,14 +78,14 @@ loadWebAssembly(path)
     .then(wasmModule => {
         response =  {
           nonce : wasmModule.exports.compute2(hashPtr, workBufferPtr, workBufferLength, difficulty),
-         
+
         }
          resolve()
-    
+
     });
 
 
- })  
+ })
 
   return response
 }

@@ -1,10 +1,9 @@
-import { LitElement, html, css } from "lit";
-import { render } from 'lit/html.js'
-import { EmojiPicker } from 'emoji-picker-js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from "lit";
+import {EmojiPicker} from 'emoji-picker-js'
+import {Epml} from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -55,9 +54,9 @@ class ChatTextEditor extends LitElement {
 
       }
       * {
-		 
+
                     --mdc-checkbox-unchecked-color: var(--black);
-                    
+
                 }
         .chatbar-container {
             width: 100%;
@@ -135,9 +134,9 @@ class ChatTextEditor extends LitElement {
             overflow: hidden;
         }
 
-        input[type=file]::-webkit-file-upload-button { 
-            cursor: pointer; 
-        }   
+        input[type=file]::-webkit-file-upload-button {
+            cursor: pointer;
+        }
 
         .chatbar-container textarea {
             display: none;
@@ -152,7 +151,7 @@ class ChatTextEditor extends LitElement {
             padding: 0;
             border: none;
         }
-        
+
         .checkmark-icon {
             width: 30px;
             color: var(--mdc-theme-primary);
@@ -177,23 +176,23 @@ class ChatTextEditor extends LitElement {
                         background-color: whitesmoke;
                         border-radius: 7px;
                     }
-            
+
                     .element::-webkit-scrollbar {
                         width: 6px;
                         border-radius: 7px;
                         background-color: whitesmoke;
                     }
-            
+
                     .element::-webkit-scrollbar-thumb {
                         background-color: rgb(180, 176, 176);
                         border-radius: 7px;
                         transition: all 0.3s ease-in-out;
                     }
-            
+
                     .element::-webkit-scrollbar-thumb:hover {
                         background-color: rgb(148, 146, 146);
                         cursor: pointer;
-                    } 
+                    }
         .ProseMirror:focus {
             outline: none;
         }
@@ -281,7 +280,7 @@ class ChatTextEditor extends LitElement {
   }
   .chatbar-button-single:hover {
     filter: brightness(120%);
-   
+
   }
 
   .chatbar-buttons {
@@ -295,7 +294,7 @@ class ChatTextEditor extends LitElement {
     justify-content: center;
   }
   :host(:hover) .chatbar-button-single {
-   
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -383,14 +382,14 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 
 	render() {
 		return html`
-            <div 
+            <div
              class=${["chatbar-container", "chatbar-buttons", this.iframeId !=="_chatEditorDOM" && 'hide-styling'].join(" ")}
              style="align-items: center;justify-content:space-between">
             <div style="display: flex;align-items: center">
              <button
         @click=${() => this.editor.chain().focus().toggleBold().run()}
         ?disabled=${
-            this.editor && 
+            this.editor &&
           !this.editor.can()
             .chain()
             .focus()
@@ -404,7 +403,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
       </button>
       <button
         @click=${() => this.editor.chain().focus().toggleItalic().run()}
-        ?disabled=${ this.editor && 
+        ?disabled=${ this.editor &&
           !this.editor.can()
             .chain()
             .focus()
@@ -415,7 +414,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
       >
       <span class="material-symbols-outlined">&#xe23f;</span>
       </button>
-    
+
       <button
         @click=${() => this.editor.chain().focus().toggleUnderline().run()}
         class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('underline') ? 'is-active' : ''].join(' ')}
@@ -444,7 +443,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
       ` : html`
       ${translate("chatpage.cchange64")}
       `}
-  
+
       </button>
     </div>
         ${this.iframeId === "_chatEditorDOM" ? html`
@@ -456,26 +455,26 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                                 for="qChatShowAutoMsg"
                                 @click=${() => this.shadowRoot.getElementById('qChatShowAutoMsg').click()}
                                 >${translate('chatpage.cchange69')}</label>
-        
+
         <mwc-checkbox style="margin-right: -15px;"  id="qChatShowAutoMsg" @click=${e => {
         if(e.target.checked){
             window.parent.reduxStore.dispatch( window.parent.reduxAction.removeAutoLoadImageChat(this.chatId))
             return
         }
         window.parent.reduxStore.dispatch( window.parent.reduxAction.addAutoLoadImageChat(this.chatId))
-        
+
       }} ?checked=${(window.parent.reduxStore.getState().app?.autoLoadImageChats || []).includes(this.chatId)}></mwc-checkbox>
-    </div>            
+    </div>
         ` : ''}
-     
+
             </div>
-            <div 
+            <div
              class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")}
              style="align-items: flex-end; position: relative">
-             
-                <div 
-                    style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} 
-                    class="file-picker-container" 
+
+                <div
+                    style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"}
+                    class="file-picker-container"
                     @click=${(e) => {
                         this.preventUserSendingImage(e)
                     }}>
@@ -484,26 +483,26 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         icon="vaadin:paperclip"
                         slot="icon"
                     >
-                    </vaadin-icon>     
+                    </vaadin-icon>
                     <div class="file-picker-input-container">
-                    <input 
+                    <input
                         @change="${e => {
                             this.insertFile(e.target.files[0]);
                             const filePickerInput = this.shadowRoot.getElementById('file-picker');
                             if (filePickerInput) {
                                     filePickerInput.value = "";
-                                }   
+                                }
                             }
                         }"
                         id="file-picker"
-                        class="file-picker-input" 
-                        type="file" 
-                        name="myImage" 
+                        class="file-picker-input"
+                        type="file"
+                        name="myImage"
                         accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" />
-                    </div>     
+                    </div>
                 </div>
                 <textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"
-           
+
                 >
 
                 ></textarea>
@@ -532,23 +531,23 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         `}
                     </div>
                         `
-                ) : 
+                ) :
                     html`
-                        <div 
+                        <div
                         style="margin-bottom: 10px;
                         ${(this.iframeId === 'newChat'  || this.iframeId === "newAttachmentChat")
-                        ? 'display: none;' 
+                        ? 'display: none;'
                         : 'display: flex;'}">
                             ${this.isLoading === false ? html`
-                                <img 
-                                src="/img/qchat-send-message-icon.svg" 
-                                alt="send-icon" 
-                                class="send-icon" 
+                                <img
+                                src="/img/qchat-send-message-icon.svg"
+                                alt="send-icon"
+                                class="send-icon"
                                 @click=${() => {
                                     this.sendMessageFunc(this.messageQueue);
-                                }} 
+                                }}
                                 />
-                            ` : 
+                            ` :
                             html`
                                 <paper-spinner-lite active></paper-spinner-lite>
                         `}
@@ -556,14 +555,14 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
                         `
                     }
                 </div>
-                    ${this.chatMessageSize >= 750 ? 
+                    ${this.chatMessageSize >= 750 ?
                         html`
                         <div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
                             <div class="message-size" style="${this.chatMessageSize > 4000 && 'color: #bd1515'}">
                                 ${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 4000`}
                             </div>
                         </div>
-                        ` : 
+                        ` :
                     html``}
             </div>
 		`
@@ -582,9 +581,9 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             const item_list = await navigator.clipboard.read();
             let image_type; // we will feed this later
             const item = item_list.find( item => // choose the one item holding our image
-                item.types.some( type => { 
+                item.types.some( type => {
                 if (type.startsWith( 'image/')) {
-                    image_type = type; 
+                    image_type = type;
                     return true;
                 }
             })
@@ -595,29 +594,29 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
             type: image_type
             });
             this.insertFile(file);
-            } 
+            }
         }
     }
 
-	async firstUpdated() {      
+	async firstUpdated() {
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme');
             const chatbar = this.shadowRoot.querySelector('.element')
             if (checkTheme === 'dark') {
                 this.theme = 'dark'
                 chatbar.style.cssText = "color:#ffffff;"
-               
+
             } else {
                 this.theme = 'light'
                 chatbar.style.cssText = "color:#080808;"
-             
+
             }
         })
 
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
         this.mirrorChatInput = this.shadowRoot.getElementById('messageBox');
-        this.chatMessageInput = this.shadowRoot.querySelector('.element')   
-        
+        this.chatMessageInput = this.shadowRoot.querySelector('.element')
+
         this.emojiPicker = new EmojiPicker({
             style: "twemoji",
             twemojiBaseUrl: '/emoji/',
@@ -631,7 +630,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         });
 
         this.emojiPicker.on('emoji', selection => {
-         
+
             this.editor.commands.insertContent(selection.emoji, {
                 parseOptions: {
                     preserveWhitespace: false
@@ -658,7 +657,7 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         if (changedProperties && changedProperties.has('placeholder') && this.updatePlaceholder && this.editor) {
             this.updatePlaceholder(this.editor, this.placeholder )
         }
-       
+
         if (changedProperties && changedProperties.has("imageFile")) {
             this.chatMessageInput = "newChat";
         }
@@ -749,10 +748,10 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
         } catch (error) {
             console.error(error)
         }
-        
+
     }
 
-   
+
 }
 
 window.customElements.define("chat-text-editor", ChatTextEditor)

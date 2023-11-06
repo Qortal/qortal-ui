@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const wrapperModalStyles = css`
   .backdrop {
@@ -9,7 +9,7 @@ export const wrapperModalStyles = css`
     bottom: 0;
     background: rgb(186 186 186 / 26%);
     overflow: hidden;
-    animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards; 
+    animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
     z-index: 50
   }
 
@@ -34,11 +34,11 @@ export const wrapperModalStyles = css`
   }
 
   @keyframes backdrop_blur {
-    0% { 
+    0% {
         backdrop-filter: blur(0px);
         background: transparent;
         }
-    100% { 
+    100% {
         backdrop-filter: blur(5px);
         background: rgb(186 186 186 / 26%);
         }

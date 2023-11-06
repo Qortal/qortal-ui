@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../../epml.js'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
@@ -45,7 +45,7 @@ class GroupTransaction extends LitElement {
                 background:#fff;
             }
 
-            mwc-textfield { 
+            mwc-textfield {
                 width:100%;
             }
 

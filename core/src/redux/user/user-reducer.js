@@ -1,5 +1,12 @@
-import { loadStateFromLocalStorage } from '../../localStorageHelpers'
-import { STORE_WALLET, REMOVE_WALLET, CLAIM_AIRDROP, UPDATE_ACCOUNT_INFO, LOAD_NOTIFICATION_CONFIG, SET_QCHAT_NOTIFICATION_CONFIG } from './user-action-types.js'
+import {loadStateFromLocalStorage} from '../../localStorageHelpers'
+import {
+	CLAIM_AIRDROP,
+	LOAD_NOTIFICATION_CONFIG,
+	REMOVE_WALLET,
+	SET_QCHAT_NOTIFICATION_CONFIG,
+	STORE_WALLET,
+	UPDATE_ACCOUNT_INFO
+} from './user-action-types.js'
 
 const DEFAULT_INITIAL_STATE = {
     storedWallets: {},

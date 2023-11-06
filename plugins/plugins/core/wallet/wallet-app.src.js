@@ -1,15 +1,10 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
-import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import FileSaver from 'file-saver'
 import '../components/ButtonIconCopy.js'
 import '../components/QortalQrcodeGenerator.js'
@@ -34,6 +29,10 @@ import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/password-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -866,7 +865,52 @@ class MultiWallet extends LitElement {
                 this.wallets.get('rvn').wallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
                 this.wallets.get('arrr').wallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
             })
+            parentEpml.subscribe('coin_balances', async (payload) => {
+                const coinBalances = JSON.parse(payload)
+                if(coinBalances[this._selectedWallet]){
+                    const res = coinBalances[this._selectedWallet].fullValue
+                    let value = Number(res).toFixed(8)
+                    if(this._selectedWallet !== 'qort'){
+                        value = (Number(res) / 1e8).toFixed(8)
+                    }
+                    this.wallets.get(this._selectedWallet).balance = value
+                            this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+                            this.balance = this.wallets.get(this._selectedWallet).balance
+                }
+            })
         })
+
+        this.pingCoinBalancesController = this.pingCoinBalancesController.bind(this)
+    }
+
+    refreshWallet(){
+        const coin = this._selectedWallet
+        switch (coin) {
+            case 'qort':
+                this.tabWalletQort();
+                break
+            case 'arrr':
+                this.tabWalletArrr();
+                break
+            case 'btc':
+                this.tabWalletBtc();
+                break;
+            case 'ltc':
+                this.tabWalletLtc();
+                break;
+            case 'doge':
+                this.tabWalletDoge();
+                break
+            case 'dgb':
+                this.tabWalletDgb()
+                break;
+            case 'rvn':
+                this.tabWalletRvn();
+                break
+            default:
+                break
+        }
+
     }
 
     render() {
@@ -906,7 +950,11 @@ class MultiWallet extends LitElement {
 
                 <div class="transactions-wrapper">
                     <h2 class="wallet-header">
+                        <div style="display:flex;align-items:center;gap:20px">
                         ${translate("walletpage.wchange2")}
+
+                        <vaadin-icon @click=${this.refreshWallet} style="cursor:pointer" icon="vaadin:refresh" slot="prefix"></vaadin-icon>
+                        </div>
                         <div class="wallet-address" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                             <span>${this.getSelectedWalletAddress()}</span>
                             <button-icon-copy
@@ -939,6 +987,7 @@ class MultiWallet extends LitElement {
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
                     </div>
                     <div id="transactions">
+
                         ${this.loading ? html`<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>` : ''}
                         <div id="transactionsDOM"></div>
                     </div>
@@ -2821,6 +2870,7 @@ class MultiWallet extends LitElement {
     }
 
     firstUpdated() {
+
         this.changeTheme()
         this.changeLanguage()
         this.paymentFee()
@@ -2935,6 +2985,30 @@ class MultiWallet extends LitElement {
             window.parent.electronAPI.clearCache()
         }
     }
+
+
+    pingCoinBalancesController(){
+        if(!this._selectedWallet) return
+        const customEvent = new CustomEvent('ping-coin-controller-with-coin', {
+            detail: this._selectedWallet
+        });
+        window.parent.dispatchEvent(customEvent);
+    }
+
+	connectedCallback() {
+		super.connectedCallback();
+        this.intervalID = setInterval(this.pingCoinBalancesController, 30000);
+
+	}
+
+	disconnectedCallback() {
+
+		super.disconnectedCallback();
+        if(this.intervalID){
+            clearInterval(this.intervalID);
+
+        }
+	}
 
     renderWalletLockButton() {
         if (this.myWalletLockScreenPass === false && this.myWalletLockScreenSet === false) {

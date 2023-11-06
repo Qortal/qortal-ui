@@ -1,5 +1,4 @@
-import { Epml } from '../../epml.js';
-import { cropAddress } from './cropAddress.js';
+import {Epml} from '../../epml.js';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

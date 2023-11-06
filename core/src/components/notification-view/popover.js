@@ -1,6 +1,6 @@
 // popover-component.js
-import { LitElement, html, css } from 'lit';
-import { createPopper } from '@popperjs/core';
+import {css, html, LitElement} from 'lit';
+import {createPopper} from '@popperjs/core';
 import '@material/mwc-icon'
 
 export class PopoverComponent extends LitElement {
@@ -24,7 +24,7 @@ export class PopoverComponent extends LitElement {
             color: var(--black)
         }
 
-        
+
     `;
 
     static properties = {

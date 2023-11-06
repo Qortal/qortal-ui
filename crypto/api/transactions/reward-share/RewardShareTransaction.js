@@ -3,8 +3,8 @@ import publicKeyToAddress from '../../wallet/publicKeyToAddress.js'
 import TransactionBase from "../TransactionBase.js"
 import nacl from '../../deps/nacl-fast.js'
 import ed2curve from '../../deps/ed2curve.js'
-import { Sha256 } from 'asmcrypto.js'
-import { DYNAMIC_FEE_TIMESTAMP } from '../../constants.js'
+import {Sha256} from 'asmcrypto.js'
+import {DYNAMIC_FEE_TIMESTAMP} from '../../constants.js'
 
 export default class RewardShareTransaction extends TransactionBase {
 	constructor() {
@@ -14,7 +14,7 @@ export default class RewardShareTransaction extends TransactionBase {
 
 	render(html) {
 		return html`
-			${this._rewarddialog1} <strong>${this._percentageShare / 1e8}%</strong> ${this._rewarddialog2} <strong>${this.constructor.Base58.encode(this._recipient)}</strong>? 
+			${this._rewarddialog1} <strong>${this._percentageShare / 1e8}%</strong> ${this._rewarddialog2} <strong>${this.constructor.Base58.encode(this._recipient)}</strong>?
 			${this._rewarddialog3}
 			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
 				<span style="color: #000;">${this._base58RewardShareSeed}</span>

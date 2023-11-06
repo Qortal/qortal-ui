@@ -1,16 +1,15 @@
-import {LitElement, html, css} from 'lit';
-import {render} from 'lit/html.js';
+import {html, LitElement} from 'lit';
 import {Epml} from '../../../../epml.js';
 import * as zip from '@zip.js/zip.js';
 import '@material/mwc-icon';
 import ShortUniqueId from 'short-unique-id';
 import {publishData} from '../../../utils/publish-image.js';
 import {gifExplorerStyles} from './ChatGifs-css.js';
-import { bytesToMegabytes } from '../../../utils/bytesToMegabytes.js';
+import {bytesToMegabytes} from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
 
@@ -429,25 +428,25 @@ setOpenGifModal: { attribute: false }
 				 function validateGifSizes(gifs) {
 					const maxSizeInMB = 0.7;
 					const invalidGifs = [];
-					
+
 					for (let i = 0; i < gifs.length; i++) {
 						const gif = gifs[i];
 						const gifSize = gif.size;
-						
+
 						const gifSizeMB = bytesToMegabytes(gifSize);
-						
+
 						if (gifSizeMB > maxSizeInMB) {
 							invalidGifs.push(gif);
 						}
 					}
-					
+
 					if (invalidGifs.length > 0) {
 						return false;
 					} else {
 						return true;
 					}
 				}
-				
+
 				let validatedSize = validateGifSizes(this.gifsToBeAdded);
 
 				if (!validatedSize) {
@@ -504,7 +503,7 @@ setOpenGifModal: { attribute: false }
     		const zipFileBlob = await zipFileWriter.getData();
 
 				const zipSize = bytesToMegabytes(zipFileBlob.size);
-				
+
 				if (zipSize > 10) {
 					parentEpml.request('showSnackBar', get('gifs.gchange27'));
 					this.isLoading = false;
@@ -552,13 +551,13 @@ setOpenGifModal: { attribute: false }
 								this.gifsToBeAdded = [];
 								this.newCollectionName = '';
 								parentEpml.request('showSnackBar', get('gifs.gchange12'));
-							} 
+							}
     					stop = false;
     				}
     			};
     			interval = setInterval(getAnswer, 5000);
     		});
-    	
+
 				this.isLoading = false;
 				this.setGifsLoading(false);
 				this.mode = 'myCollection';
@@ -608,7 +607,7 @@ setOpenGifModal: { attribute: false }
                 <div class="gif-explorer-container">
                     <vaadin-icon
                         style=${
-    											(this.mode === 'newCollection' || 
+    											(this.mode === 'newCollection' ||
 													(this.mode === 'explore' && this.currentCollection))
     												? 'display: none;'
     												: 'display: block;'
@@ -670,9 +669,9 @@ setOpenGifModal: { attribute: false }
                         text=${get('gifs.gchange2')}>
                     </vaadin-tooltip>
                 </div>
-                <div 
-								class="collections-button-row" 
-								style=${(this.mode === 'newCollection' || this.mode === 'explore') 
+                <div
+								class="collections-button-row"
+								style=${(this.mode === 'newCollection' || this.mode === 'explore')
 								? 'display: none' : 'display: block'}>
 								<div class="collections-button-innerrow">
                 <div

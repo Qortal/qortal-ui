@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const chatStyles = css`
 	html {
@@ -91,7 +91,7 @@ export const chatStyles = css`
 		user-select: none;
 		display: flex;
 		justify-content: space-between;
-		width: 100%;	
+		width: 100%;
 		padding-top: 2px;
 	}
 
@@ -126,7 +126,7 @@ export const chatStyles = css`
 	.message-subcontainer1 {
 		position: relative;
 		display: flex;
-		align-items: flex-end;	
+		align-items: flex-end;
 	}
 
 	.message-subcontainer2 {
@@ -143,7 +143,7 @@ export const chatStyles = css`
     min-width: 150px;
 	}
 
-	
+
 	.message-myBg {
 		background-color: var(--chat-bubble-myBg) !important;
 	}
@@ -234,7 +234,7 @@ export const chatStyles = css`
 		margin: 0;
 		padding: 0;
 	}
-	
+
 	.message {
 		display: flex;
 		flex-direction: column;
@@ -252,7 +252,7 @@ export const chatStyles = css`
 
 	.message-data-avatar {
 		margin: 0px 10px 0px 3px;
-		width: 42px; 
+		width: 42px;
 		height: 42px;
 		float: left;
 	}
@@ -289,7 +289,7 @@ export const chatStyles = css`
 		vertical-align: bottom;
 		object-fit: contain;
 	}
-	
+
 	.align-left {
 		text-align: left;
 	}
@@ -351,12 +351,12 @@ export const chatStyles = css`
 	}
 
 	.tooltip {
-		position: relative; 
+		position: relative;
 	}
 
 	.tooltip:before {
-		content: attr(data-text); 
-		display: none; 
+		content: attr(data-text);
+		display: none;
 		position: absolute;
 		top: -47px;
 		left: 50%;
@@ -430,7 +430,7 @@ export const chatStyles = css`
 		border: 0.5px solid transparent;
 		cursor: pointer;
 	}
-	
+
 	.reactions-bg:hover {
 		border: 0.5px solid var(--reaction-bubble-outline);
 	}
@@ -446,7 +446,7 @@ export const chatStyles = css`
 	}
 
 	.defaultSize {
-		width: 45vh; 
+		width: 45vh;
 		height: 40vh;
 	}
 
@@ -473,7 +473,7 @@ export const chatStyles = css`
 		color: rgb(228, 222, 222);
     padding-left: 7px;
 	}
-	
+
 	.image-delete-icon:hover {
 		opacity: 1;
 	}
@@ -704,7 +704,7 @@ export const chatStyles = css`
 		flex-direction: column;
 		gap: 5px;
 	}
-  
+
   .attachment-name {
     font-family: Work Sans, sans-serif;
     font-size: 16px;
@@ -725,7 +725,7 @@ export const chatStyles = css`
 		letter-spacing: 0.3px;
 		font-weight: 300;
 	}
-	
+
 	.download-icon {
 		position: relative;
 		color: var(--chat-bubble-msg-color);

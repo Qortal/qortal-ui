@@ -1,5 +1,27 @@
 // Core App Actions here...
-import { UPDATE_BLOCK_INFO, UPDATE_NODE_STATUS, UPDATE_NODE_INFO, CHAT_HEADS, ACCOUNT_INFO, ADD_AUTO_LOAD_IMAGES_CHAT, REMOVE_AUTO_LOAD_IMAGES_CHAT, ALLOW_QAPP_AUTO_AUTH, REMOVE_QAPP_AUTO_AUTH, SET_CHAT_LAST_SEEN, ADD_CHAT_LAST_SEEN, ALLOW_QAPP_AUTO_LISTS, REMOVE_QAPP_AUTO_LISTS, SET_NEW_TAB, ADD_TAB_INFO, SET_TAB_NOTIFICATIONS, IS_OPEN_DEV_DIALOG, SET_NEW_NOTIFICATION, SET_SIDE_EFFECT, SET_PROFILE_DATA } from '../app-action-types.js'
+import {
+	ACCOUNT_INFO,
+	ADD_AUTO_LOAD_IMAGES_CHAT,
+	ADD_CHAT_LAST_SEEN,
+	ADD_TAB_INFO,
+	ALLOW_QAPP_AUTO_AUTH,
+	ALLOW_QAPP_AUTO_LISTS,
+	CHAT_HEADS,
+	IS_OPEN_DEV_DIALOG,
+	REMOVE_AUTO_LOAD_IMAGES_CHAT,
+	REMOVE_QAPP_AUTO_AUTH,
+	REMOVE_QAPP_AUTO_LISTS,
+	SET_CHAT_LAST_SEEN,
+	SET_COIN_BALANCES,
+	SET_NEW_NOTIFICATION,
+	SET_NEW_TAB,
+	SET_SIDE_EFFECT,
+	SET_TAB_NOTIFICATIONS,
+	UPDATE_BLOCK_INFO,
+	UPDATE_NODE_INFO,
+	UPDATE_NODE_STATUS,
+    SET_PROFILE_DATA
+} from '../app-action-types.js'
 
 export const doUpdateBlockInfo = (blockObj) => {
     return (dispatch, getState) => {
@@ -161,6 +183,13 @@ export const setSideEffectAction = (payload)=> {
 export const setProfileData = (payload)=> {
     return {
         type: SET_PROFILE_DATA,
+        payload
+    }
+}
+
+export const setCoinBalances = (payload)=> {
+    return {
+        type: SET_COIN_BALANCES,
         payload
     }
 }

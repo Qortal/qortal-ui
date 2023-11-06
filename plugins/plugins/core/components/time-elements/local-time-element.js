@@ -1,5 +1,6 @@
-import { strftime, makeFormatter, isDayFirst } from './utils';
+import {isDayFirst, makeFormatter, strftime} from './utils';
 import ExtendedTimeElement from './extended-time-element';
+
 const formatters = new WeakMap();
 export default class LocalTimeElement extends ExtendedTimeElement {
     attributeChangedCallback(attrName, oldValue, newValue) {

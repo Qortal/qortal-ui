@@ -1,21 +1,20 @@
-import { LitElement, html } from 'lit'
-import { Epml } from '../../../epml.js'
+import {html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 import '../components/ButtonIconCopy.js'
-import { use, translate, registerTranslateConfig } from 'lit-translate'
-import { blocksNeed } from '../../utils/blocks-needed.js'
+import {registerTranslateConfig, translate, use} from 'lit-translate'
+import {blocksNeed} from '../../utils/blocks-needed.js'
 import isElectron from 'is-electron'
-
-registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
-})
-
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@vaadin/button'
-import { pageStyles } from './become-minter-css.src.js'
+import {pageStyles} from './become-minter-css.src.js'
 import './components/not-sponsored.js'
 import './components/yes-sponsored.js'
+
+registerTranslateConfig({
+	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

@@ -1,10 +1,9 @@
-import { LitElement, html } from 'lit'
-import { render } from 'lit/html.js'
-import { tipUserStyles } from './TipUser-css.js'
-import { Epml } from '../../../epml'
+import {html, LitElement} from 'lit'
+import {tipUserStyles} from './TipUser-css.js'
+import {Epml} from '../../../epml'
 import '@vaadin/button'
 import '@polymer/paper-progress/paper-progress.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, translate} from 'lit-translate'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 
@@ -101,37 +100,37 @@ export class TipUser extends LitElement {
     async sendQort() {
         const amount = this.shadowRoot.getElementById("amountInput").value;
         const recipient = this.userName;
-    
+
         this.sendMoneyLoading = true;
         this.btnDisable = true;
-    
+
         // Helper function to reset loading and button state
         const resetState = () => {
             this.sendMoneyLoading = false;
             this.btnDisable = false;
         }
-    
+
         if (parseFloat(amount) + parseFloat(0.011) > parseFloat(this.walletBalance)) {
             resetState();
             const snack1string = get("chatpage.cchange51");
             parentEpml.request('showSnackBar', `${snack1string}`);
             return false;
         }
-    
+
         if (parseFloat(amount) <= 0) {
             resetState();
             const snack2string = get("chatpage.cchange52");
             parentEpml.request('showSnackBar', `${snack2string}`);
             return false;
         }
-    
+
         if (recipient.length === 0) {
             resetState();
             const snack3string = get("chatpage.cchange53");
             parentEpml.request('showSnackBar', `${snack3string}`);
             return false;
         }
-    
+
         const validateName = async (receiverName) => {
             const myNameRes = await parentEpml.request('apiCall', {
                 type: 'api',
@@ -139,11 +138,11 @@ export class TipUser extends LitElement {
             });
             return myNameRes.error === 401 ? false : myNameRes;
         };
-    
+
         const validateAddress = async (receiverAddress) => {
             return await window.parent.validateAddress(receiverAddress);
         };
-    
+
         const getName = async (recipient) => {
             try {
                 const getNames = await parentEpml.request("apiCall", {
@@ -155,14 +154,14 @@ export class TipUser extends LitElement {
                 return "";
             }
         };
-    
+
         const makeTransactionRequest = async (receiver, lastRef) => {
             const dialogAmount = get("transactions.amount");
             const dialogAddress = get("login.address");
             const dialogName = get("login.name");
             const dialogTo = get("transactions.to");
             const recipientName = await getName(receiver);
-    
+
             return await parentEpml.request('transaction', {
                 type: 2,
                 nonce: this.myAddress.nonce,
@@ -179,7 +178,7 @@ export class TipUser extends LitElement {
                 }
             });
         };
-    
+
         const getTxnRequestResponse = (txnResponse) => {
             if (txnResponse.success === false && txnResponse.message) {
                 this.errorMessage = txnResponse.message;
@@ -200,17 +199,17 @@ export class TipUser extends LitElement {
                 throw new Error(txnResponse);
             }
         };
-    
+
         const validateReceiver = async (recipient) => {
             let lastRef = await this.getLastRef();
             let isAddress;
-    
+
             try {
                 isAddress = await validateAddress(recipient);
             } catch (err) {
                 isAddress = false;
             }
-    
+
             if (isAddress) {
                 const myTransaction = await makeTransactionRequest(recipient, lastRef);
                 getTxnRequestResponse(myTransaction);
@@ -225,14 +224,14 @@ export class TipUser extends LitElement {
                 }
             }
         };
-    
+
         await validateReceiver(recipient);
     }
-    
+
 
   render() {
     return html`
-      <div class="tip-user-header">      
+      <div class="tip-user-header">
         <img src="/img/qort.png" width="32" height="32">
         <p class="tip-user-header-font">${translate("chatpage.cchange43")} ${this.userName}</p>
       </div>
@@ -240,16 +239,16 @@ export class TipUser extends LitElement {
         <p class="tip-available">${translate("chatpage.cchange47")}: ${this.walletBalance} QORT</p>
         <input id="amountInput" class="tip-input" type="number" placeholder="${translate("chatpage.cchange46")}" />
         <p class="tip-available">${translate("chatpage.cchange49")}: ${this.qortPaymentFee} QORT</p>
-        ${this.sendMoneyLoading ? 
-            html` 
+        ${this.sendMoneyLoading ?
+            html`
             <paper-progress indeterminate style="width: 100%; margin: 4px;">
             </paper-progress>`
                 : html`
             <div style=${"text-align: center;"}>
-                <vaadin-button 
+                <vaadin-button
                     ?disabled=${this.btnDisable}
-                    theme="primary medium" 
-                    style="width: 100%; cursor: pointer" 
+                    theme="primary medium"
+                    style="width: 100%; cursor: pointer"
                     @click=${() => this.sendQort()}>
                     <vaadin-icon icon="vaadin:arrow-forward" slot="prefix"></vaadin-icon>
                     ${translate("chatpage.cchange50")} QORT

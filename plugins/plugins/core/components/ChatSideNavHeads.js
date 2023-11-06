@@ -1,7 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -95,7 +93,7 @@ class ChatSideNavHeads extends LitElement {
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
@@ -190,10 +188,10 @@ class ChatSideNavHeads extends LitElement {
         if(changedProperties.has('isImageLoaded')){
             return true
         }
-        
+
         return false
       }
-   
+
     getUrl(chatUrl) {
         this.setActiveChatHeadUrl(chatUrl)
     }

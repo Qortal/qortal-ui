@@ -1,5 +1,5 @@
-import { HmacSha512, AES_CBC } from 'asmcrypto.js'
-import { kdf } from './kdf.js'
+import {AES_CBC, HmacSha512} from 'asmcrypto.js'
+import {kdf} from './kdf.js'
 import Base58 from './deps/Base58.js'
 
 const getRandomValues = window.crypto ? window.crypto.getRandomValues.bind(window.crypto) : window.msCrypto.getRandomValues.bind(window.msCrypto)

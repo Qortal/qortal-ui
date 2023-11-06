@@ -1,9 +1,9 @@
-import { LitElement, html, css } from 'lit'
+import {css, html, LitElement} from 'lit'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
 
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {translate} from 'lit-translate'
 
 class FragFileInput extends LitElement {
     static get properties () {

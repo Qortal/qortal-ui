@@ -23,7 +23,7 @@ if ! which curl; then sudo apt-get --yes install curl; fi
 if ! grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep qortal.list; then
   curl -sS https://update.qortal.online/qortal.gpg | sudo apt-key add -
   sudo rm -rf /usr/share/keyrings/qortal.gpg
-  sudo apt-key export 856A3FF1 | sudo gpg --dearmour -o /usr/share/keyrings/qortal.gpg
+  sudo apt-key export A9036F04 | sudo gpg --dearmour -o /usr/share/keyrings/qortal.gpg
   sudo rm -rf /etc/apt/sources.list.d/qortal.list
   echo 'deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/qortal.gpg] https://update.qortal.online/ ./ ' >  /etc/apt/sources.list.d/qortal.list
 fi

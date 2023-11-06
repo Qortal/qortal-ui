@@ -1,6 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { connect } from 'pwa-helpers';
+import {html, LitElement} from 'lit';
+import {connect} from 'pwa-helpers';
 
 import '@material/mwc-button';
 import '@material/mwc-dialog';
@@ -14,16 +13,10 @@ import './ChatSideNavHeads';
 import '../../../../plugins/plugins/core/components/ChatSearchResults'
 import './add-friends-modal'
 
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
-import { store } from '../../store';
-import { friendsViewStyles } from './friends-view-css';
-import { parentEpml } from '../show-plugin';
+import {translate,} from 'lit-translate';
+import {store} from '../../store';
+import {friendsViewStyles} from './friends-view-css';
+import {parentEpml} from '../show-plugin';
 
 class FriendsView extends connect(store)(LitElement) {
 	static get properties() {
@@ -103,10 +96,10 @@ class FriendsView extends connect(store)(LitElement) {
 		this.elementObserver();
 		this.mySelectedFeeds = JSON.parse(localStorage.getItem('friends-my-selected-feeds') || "[]")
 		this.friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
-		
 
 
-	
+
+
 	}
 
 	_updateFriends(event) {
@@ -114,23 +107,20 @@ class FriendsView extends connect(store)(LitElement) {
         this.friendList = detail
 	}
 	_updateFeed(event) {
-		console.log({event})
 		const detail = event.detail
-		console.log({detail})
         this.mySelectedFeeds = detail
 		this.requestUpdate()
 	}
 
 	connectedCallback() {
 		super.connectedCallback()
-		console.log('callback')
-		window.addEventListener('friends-my-friend-list-event', this._updateFriends)	
-		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)	
+		window.addEventListener('friends-my-friend-list-event', this._updateFriends)
+		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)
 	}
 
 	disconnectedCallback() {
 		window.removeEventListener('friends-my-friend-list-event', this._updateFriends)
-		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)	
+		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)
 		super.disconnectedCallback()
 	}
 
@@ -172,7 +162,7 @@ class FriendsView extends connect(store)(LitElement) {
 			}
 			try {
 				const url = `${this.nodeUrl}/names/${nameValue}`
-				const res = await fetch(url) 
+				const res = await fetch(url)
 				const result = await res.json()
 				if (result.error === 401) {
 					this.userFound = []
@@ -182,7 +172,7 @@ class FriendsView extends connect(store)(LitElement) {
 					  ];
 				}
 				this.userFoundModalOpen = true;
-			} catch (error) {		
+			} catch (error) {
 				// let err4string = get("chatpage.cchange35");
 				// parentEpml.request('showSnackBar', `${err4string}`)
 			}
@@ -199,7 +189,7 @@ class FriendsView extends connect(store)(LitElement) {
 				name
 			]
 			let namesJsonString = JSON.stringify({ "items": items })
-	
+
 			let ret = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 				method: 'POST',
@@ -208,8 +198,8 @@ class FriendsView extends connect(store)(LitElement) {
 				},
 				body: `${namesJsonString}`
 			})
-	
-			
+
+
 			return ret
 		}
 
@@ -218,7 +208,7 @@ class FriendsView extends connect(store)(LitElement) {
 				name
 			]
 			let namesJsonString = JSON.stringify({ "items": items })
-	
+
 			let ret = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 				method: 'DELETE',
@@ -227,8 +217,8 @@ class FriendsView extends connect(store)(LitElement) {
 				},
 				body: `${namesJsonString}`
 			})
-	
-			
+
+
 			return ret
 		}
 	async addToFriendList(val, isRemove){
@@ -242,9 +232,9 @@ class FriendsView extends connect(store)(LitElement) {
 				const copyList = [...this.friendList]
 				copyList[findFriend] = copyVal
 				this.friendList = copyList
-				
+
 			}
-			
+
 		} else {
 			this.friendList = [...this.friendList, copyVal]
 		}
@@ -252,7 +242,7 @@ class FriendsView extends connect(store)(LitElement) {
 			this.unFollowName(copyVal.name)
 		} else if(copyVal.willFollow){
 			this.myFollowName(copyVal.name)
-		} 
+		}
 		this.setMySelectedFeeds(val.mySelectedFeeds)
 		await new Promise((res)=> {
 			setTimeout(()=> {
@@ -317,18 +307,17 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('rendered1')
 		return html`
 			<div class="container">
 				<div id="viewElement" class="container-body" style=${"position: relative"}>
 					<p class="group-name">My Friends</p>
 					<div class="search-field">
-                                <input 
+                                <input
                                     type="text"
-                                    class="name-input" 
-                                    ?disabled=${this.isLoading} 
-                                    id="sendTo" 
-                                    placeholder="${translate("friends.friend1")}" 
+                                    class="name-input"
+                                    ?disabled=${this.isLoading}
+                                    id="sendTo"
+                                    placeholder="${translate("friends.friend1")}"
                                     value=${this.userSelected.name ? this.userSelected.name: ''}
                                     @keypress=${(e) => {
                                         if(e.key === 'Enter'){
@@ -336,21 +325,21 @@ class FriendsView extends connect(store)(LitElement) {
 										}
                                     }}
                                 />
-                                                               
-                                    <vaadin-icon 
+
+                                    <vaadin-icon
                                         @click=${this.userSearch}
-                                        slot="icon" 
+                                        slot="icon"
                                         icon="vaadin:search"
                                         class="search-icon">
                                     </vaadin-icon>
-                                
+
                             </div>
 					<div class="search-results-div">
-                            <chat-search-results 
+                            <chat-search-results
                                 .onClickFunc=${(result) => {
                                     this.userSelected = result;
 									this.isOpenAddFriendsModal = true
-							
+
                                     this.userFound = [];
                                     this.userFoundModalOpen = false;
                                 }}
@@ -363,13 +352,13 @@ class FriendsView extends connect(store)(LitElement) {
                                 ?loading=${this.isLoading}>
                             </chat-search-results>
                         </div>
-					
+
 
 					${this.friendList.map((item) => {
 						return html`<chat-side-nav-heads
 							activeChatHeadUrl=""
 							.setActiveChatHeadUrl=${(val) => {
-							
+
 							}}
 							.chatInfo=${item}
 							.openEditFriend=${(val)=> this.openEditFriend(val)}
@@ -380,7 +369,7 @@ class FriendsView extends connect(store)(LitElement) {
 				</div>
 			</div>
 			<add-friends-modal
-                ?isOpen=${this.isOpenAddFriendsModal} 
+                ?isOpen=${this.isOpenAddFriendsModal}
 				.setIsOpen=${(val)=> {
 					this.isOpenAddFriendsModal = val
 				}}

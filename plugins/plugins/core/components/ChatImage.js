@@ -1,13 +1,11 @@
-import { LitElement, html, css } from 'lit';
-import {
-  get,
-  translate,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {get, translate,} from 'lit-translate';
 import axios from 'axios'
-import { RequestQueueWithPromise } from '../../utils/queue';
+import {RequestQueueWithPromise} from '../../utils/queue';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js'
-import { Epml } from '../../../epml';
+import {Epml} from '../../../epml';
+
 const requestQueue = new RequestQueueWithPromise(5);
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -27,9 +25,9 @@ export class ChatImage extends LitElement {
       --mdc-theme-text-primary-on-background: var(--black);
     }
       img {
-        max-width:45vh; 
-        max-height:40vh; 
-        border-radius: 5px; 
+        max-width:45vh;
+        max-height:40vh;
+        border-radius: 5px;
         cursor: pointer;
         position: relative;
       }
@@ -53,7 +51,7 @@ export class ChatImage extends LitElement {
   }
 
   .defaultSize {
-		width: 45vh; 
+		width: 45vh;
 		height: 40vh;
 	}
 
@@ -152,7 +150,7 @@ getMyNode(){
 
       this.fetchResource()
       this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
-     
+
   }
 
   async fetchStatus(){
@@ -167,7 +165,7 @@ getMyNode(){
     const intervalId = setInterval(async () => {
       if (isCalling) return
       isCalling = true
-   
+
      const data = await requestQueue.enqueue(() => {
         return  axios.get(`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
       });
@@ -191,7 +189,7 @@ getMyNode(){
               ...res,
               status:  'REFETCHING'
             }
-            
+
             setTimeout(() => {
               isCalling = false
               this.fetchResource()
@@ -200,7 +198,7 @@ getMyNode(){
           }
           percentLoaded = res.percentLoaded
         }
-   
+
         this.status = res
         if(this.status.status === 'DOWNLOADED'){
           this.fetchResource()
@@ -240,40 +238,40 @@ getMyNode(){
     return true
   }
 
- 
+
 
   showContextMenu(e) {
     e.preventDefault();
-    e.stopPropagation();  
+    e.stopPropagation();
 
     const contextMenu = this.shadowRoot.getElementById('contextMenu');
     const containerRect = e.currentTarget.getBoundingClientRect();
-  
+
     // Adjusting the positions
     const adjustedX = e.clientX - containerRect.left;
     const adjustedY = e.clientY - containerRect.top;
-  
+
     contextMenu.style.top = `${adjustedY}px`;
     contextMenu.style.left = `${adjustedX}px`;
-  
+
     contextMenu.open = true;
   }
-  
-  
 
 
-  
+
+
+
   async handleCopy(e) {
-    e.stopPropagation(); 
+    e.stopPropagation();
     const image = this.shadowRoot.querySelector('img');
-  
+
     // Create a canvas and draw the image on it.
     const canvas = document.createElement('canvas');
-    canvas.width = image.naturalWidth;  
-    canvas.height = image.naturalHeight;  
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(image, 0, 0);
-  
+
     // Convert canvas image to blob
     canvas.toBlob(blob => {
       try {
@@ -290,10 +288,10 @@ getMyNode(){
       }
     }, 'image/png');
   }
-  
-  
- 
-  
+
+
+
+
   handleMenuBlur() {
     setTimeout(() => {
         if (!this.isMenuItemClicked) {
@@ -319,7 +317,7 @@ getMyNode(){
 														].join(' ')}
 													>
     ${
-										this.status.status !== 'READY' 
+										this.status.status !== 'READY'
 											? html`
 													<div
 														style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center;position:absolute;"
@@ -343,10 +341,10 @@ getMyNode(){
     ` : ''}
 
                 </div>
-               
+
     `
-    
-    
+
+
   }
 }
 

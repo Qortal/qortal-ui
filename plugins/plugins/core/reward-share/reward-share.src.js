@@ -1,13 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
@@ -15,6 +10,10 @@ import '@material/mwc-dialog'
 import '@material/mwc-slider'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -148,7 +147,7 @@ class RewardShare extends LitElement {
                             ${this.message}
                         </span>
                     </div>
-                    
+
                     <mwc-button
                         ?disabled="${this.createRewardShareLoading}"
                         slot="primaryAction"
@@ -186,7 +185,7 @@ class RewardShare extends LitElement {
                             ${this.message}
                         </span>
                     </div>
-                    
+
                     <mwc-button
                         ?disabled="${this.createRewardShareLoading}"
                         slot="primaryAction"

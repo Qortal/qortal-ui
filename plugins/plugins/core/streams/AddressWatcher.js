@@ -1,4 +1,4 @@
-import { parentEpml } from '../connect.js'
+import {parentEpml} from '../connect.js'
 
 // Tests to see if a block or transaction should trigger an address reload...but we're not doing that yet, because of no time for good testing
 const transactionTests = []

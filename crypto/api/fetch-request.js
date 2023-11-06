@@ -1,4 +1,4 @@
-import { watchConfig, waitForConfig } from '../config.js'
+import {waitForConfig, watchConfig} from '../config.js'
 
 let config = {}
 watchConfig((c) => {

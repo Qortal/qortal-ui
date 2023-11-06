@@ -1,4 +1,4 @@
-import { CLAIM_AIRDROP } from '../user-action-types.js'
+import {CLAIM_AIRDROP} from '../user-action-types.js'
 
 export const doClaimAirdrop = (address) => {
     return (dispatch, getState) => {

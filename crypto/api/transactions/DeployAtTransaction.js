@@ -1,7 +1,7 @@
 'use strict'
 import TransactionBase from './TransactionBase.js'
-import { store } from '../../api.js'
-import { QORT_DECIMALS } from '../constants.js'
+import {store} from '../../api.js'
+import {QORT_DECIMALS} from '../constants.js'
 
 export default class DeployAtTransaction extends TransactionBase {
 	constructor() {
@@ -81,7 +81,7 @@ export default class DeployAtTransaction extends TransactionBase {
 	set rAssetId(rAssetId) {
 		this._rAssetId = this.constructor.utils.int64ToBytes(rAssetId)
 	}
-	
+
 
 	get params() {
 		const params = super.params

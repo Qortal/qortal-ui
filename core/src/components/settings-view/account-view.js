@@ -1,13 +1,14 @@
-import { LitElement, html, css } from 'lit';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store.js';
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {translate} from 'lit-translate'
 
 class AccountView extends connect(store)(LitElement) {
     static get properties() {
         return {
             accountInfo: { type: Object },
-            theme: { type: String, reflect: true }
+            theme: { type: String, reflect: true },
+            switchAvatar: { type: String }
         }
     }
 
@@ -66,6 +67,7 @@ class AccountView extends connect(store)(LitElement) {
         super()
         this.accountInfo = { names: [], addressInfo: {} }
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+        this.switchAvatar = ''
     }
 
     render() {
@@ -88,26 +90,46 @@ class AccountView extends connect(store)(LitElement) {
         `
     }
 
-    stateChanged(state) {
-        this.accountInfo = state.app.accountInfo
+    firstUpdated() {
+        this.getSwitchAvatar()
+        setInterval(() => {
+             this.getSwitchAvatar()
+        }, 2000)
     }
 
     getAvatar() {
-        let numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment);
-        if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
-            return html`<img src="/img/noavatar.png" style="width:150px; height:150px; border-radius: 50%;">`
-        } else {
-            const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-            const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-            return html`<img src="${url}" style="width:150px; height:150px; border-radius: 50%;" onerror="this.src='/img/noavatar.png';">`
+        const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+        const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+        const numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment)
+
+        if (this.switchAvatar === 'light') {
+            if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
+               return html`<img src="/img/noavatar_light.png" style="width:150px; height:150px; border-radius: 25%;">`
+            } else {
+                return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='/img/noavatar_light.png';">`
+            }
+        } else if (this.switchAvatar === 'dark') {
+            if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
+               return html`<img src="/img/noavatar_dark.png" style="width:150px; height:150px; border-radius: 25%;">`
+            } else {
+                return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='/img/noavatar_dark.png';">`
+            }
         }
     }
 
+    getSwitchAvatar() {
+        this.switchAvatar = localStorage.getItem('qortalTheme')
+    }
+
     getApiKey() {
-        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
-        let apiKey = apiNode.apiKey;
-        return apiKey;
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
+    }
+
+    stateChanged(state) {
+        this.accountInfo = state.app.accountInfo
     }
 }
 

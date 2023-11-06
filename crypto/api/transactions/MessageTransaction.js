@@ -1,6 +1,5 @@
 'use strict'
 import PaymentTransaction from './PaymentTransaction.js'
-import { QORT_DECIMALS } from '../constants.js'
 
 export default class MessageTransaction extends PaymentTransaction {
 	constructor() {

@@ -3,11 +3,11 @@ Copyright 2017-2018 @ irontiga and vbcs (original developer)
 */
 'use strict'
 import Base58 from './deps/Base58.js'
-import { Sha256, Sha512 } from 'asmcrypto.js'
+import {Sha256, Sha512} from 'asmcrypto.js'
 import nacl from './deps/nacl-fast.js'
 import utils from './deps/utils.js'
 
-import { generateSaveWalletData } from './storeWallet.js'
+import {generateSaveWalletData} from './storeWallet.js'
 
 import publicKeyToAddress from './wallet/publicKeyToAddress.js'
 import AltcoinHDWallet from "./bitcoin/AltcoinHDWallet"
@@ -93,7 +93,7 @@ export default class PhraseWallet {
 		const address = publicKeyToAddress(addrKeyPair.publicKey);
 		const qoraAddress = publicKeyToAddress(addrKeyPair.publicKey, true);
 
-		// Create Bitcoin HD Wallet 
+		// Create Bitcoin HD Wallet
 		const btcSeed = [...addrSeed];
 		const btcWallet = new AltcoinHDWallet({
 			mainnet: {
@@ -108,7 +108,7 @@ export default class PhraseWallet {
 			}
 		}).createWallet(new Uint8Array(btcSeed), false);
 
-		// Create Litecoin HD Wallet 
+		// Create Litecoin HD Wallet
 		const ltcSeed = [...addrSeed];
 		const ltcWallet = new AltcoinHDWallet({
 			mainnet: {
@@ -123,7 +123,7 @@ export default class PhraseWallet {
 			}
 		}).createWallet(new Uint8Array(ltcSeed), false, 'LTC');
 
-		// Create Dogecoin HD Wallet 
+		// Create Dogecoin HD Wallet
 		const dogeSeed = [...addrSeed];
 		const dogeWallet = new AltcoinHDWallet({
 			mainnet: {
@@ -138,7 +138,7 @@ export default class PhraseWallet {
 			}
 		}).createWallet(new Uint8Array(dogeSeed), false, 'DOGE');
 
-		// Create Digibyte HD Wallet 
+		// Create Digibyte HD Wallet
 		const dgbSeed = [...addrSeed];
 		const dgbWallet = new AltcoinHDWallet({
 			mainnet: {
@@ -153,7 +153,7 @@ export default class PhraseWallet {
 			}
 		}).createWallet(new Uint8Array(dgbSeed), false, 'DGB');
 
-		// Create Ravencoin HD Wallet 
+		// Create Ravencoin HD Wallet
 		const rvnSeed = [...addrSeed];
 		const rvnWallet = new AltcoinHDWallet({
 			mainnet: {
@@ -168,7 +168,7 @@ export default class PhraseWallet {
 			}
 		}).createWallet(new Uint8Array(rvnSeed), false, 'RVN');
 
-		// Create Pirate Chain HD Wallet 
+		// Create Pirate Chain HD Wallet
 		const arrrSeed = [...addrSeed];
 		const arrrWallet = new AltcoinHDWallet({
 			mainnet: {

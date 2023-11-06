@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { Epml } from '../../../epml';
+import {css, html, LitElement} from 'lit';
+import {Epml} from '../../../epml';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
@@ -11,9 +11,7 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {
-	get
-} from 'lit-translate';
+import {get} from 'lit-translate';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -240,10 +238,10 @@ class ChatGroupsManager extends LitElement {
 
 	async getGroups() {
 		try {
-           
+
             let endpoint = `/groups`
-           
-           
+
+
 			const groups = await parentEpml.request('apiCall', {
 				type: 'api',
 				url: endpoint,
@@ -265,7 +263,7 @@ class ChatGroupsManager extends LitElement {
 		this.getGroups()
 	}
 
-	
+
 	elementObserver() {
 		const options = {
 			root: this.viewElement,
@@ -314,7 +312,7 @@ class ChatGroupsManager extends LitElement {
 	render() {
 		console.log('this.groups', this.groups)
 		return html`
-     
+
         <div class="container">
             <div class="close-row" style="margin-top: 15px">
             <mwc-icon @click=${()=> {
@@ -334,8 +332,8 @@ class ChatGroupsManager extends LitElement {
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.selectMyImages(e)} ?checked=${this.onlyMyImages}></mwc-checkbox>
                     </div>
             <div id="viewElement" class="container-body">
-              
-             
+
+
                 <div id='downObserver'></div>
             </div>
         </div>

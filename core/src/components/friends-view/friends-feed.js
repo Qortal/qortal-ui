@@ -1,11 +1,11 @@
-import { LitElement, html, css } from 'lit';
+import {html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-view'
-import { friendsViewStyles } from './friends-view-css';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
+import {friendsViewStyles} from './friends-view-css';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
 import './feed-item'
-import { translate } from 'lit-translate';
+import {translate} from 'lit-translate';
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
@@ -31,7 +31,7 @@ class FriendsFeed extends connect(store)(LitElement) {
 		this.myNode = this.getMyNode();
         this.endpoints = []
         this.endpointOffsets = []  // Initialize offsets for each endpoint to 0
-       
+
         this.loadAndMergeData = this.loadAndMergeData.bind(this)
         this.hasInitialFetch = false
         this.observerHandler = this.observerHandler.bind(this);
@@ -42,12 +42,12 @@ class FriendsFeed extends connect(store)(LitElement) {
         this._updateFeeds = this._updateFeeds.bind(this)
 
 	}
-	
+
 	static get styles() {
 		return [friendsViewStyles];
 	}
 
-   
+
 
 	getNodeUrl() {
 		const myNode =
@@ -109,7 +109,7 @@ class FriendsFeed extends connect(store)(LitElement) {
         let interval = null;
 		let stop = false;
 		const getAnswer = async () => {
-			
+
 			if (!stop) {
 				stop = true;
 				try {
@@ -119,19 +119,19 @@ class FriendsFeed extends connect(store)(LitElement) {
 			}
 		};
 		interval = setInterval(getAnswer, 900000);
-        
+
     }
 
     async getEndpoints(){
         const dynamicVars = {
-			
+
 		}
         const schemas = await this.getSchemas()
         const friendList = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
         const names = friendList.map(friend => `name=${friend.name}`).join('&');
         if(names.length === 0){
             this.endpoints= []
-        this.endpointOffsets = Array(this.endpoints.length).fill(0); 
+        this.endpointOffsets = Array(this.endpoints.length).fill(0);
             return
         }
         const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
@@ -147,11 +147,11 @@ class FriendsFeed extends connect(store)(LitElement) {
                     })
                 }
             }
-          
+
 
         })
         this.endpoints= formEndpoints
-        this.endpointOffsets = Array(this.endpoints.length).fill(0);  
+        this.endpointOffsets = Array(this.endpoints.length).fill(0);
     }
 
 	async firstUpdated(){
@@ -159,8 +159,8 @@ class FriendsFeed extends connect(store)(LitElement) {
 		this.downObserverElement =
 			this.shadowRoot.getElementById('downObserver');
 		this.elementObserver();
-		
-		
+
+
 		try {
             await new Promise((res)=> {
                 setTimeout(() => {
@@ -172,7 +172,7 @@ class FriendsFeed extends connect(store)(LitElement) {
 
 this.loadAndMergeData();
             }
-			
+
 this.getFeedOnInterval()
 
 		} catch (error) {
@@ -192,7 +192,7 @@ this.getFeedOnInterval()
              await this.getEndpoints()
              this.reFetchFeedData()
         } catch (error) {
-            
+
         }
     }
 
@@ -236,17 +236,17 @@ this.getFeedOnInterval()
                 ...i
             }
         })
-       
+
     }
-    
-    
+
+
     async  initialLoad() {
         let results = [];
         let totalFetched = 0;
         let i = 0;
         let madeProgress = true;
         let exhaustedEndpoints = new Set();
-    
+
         while (totalFetched < totalDesiredCount && madeProgress) {
             madeProgress = false;
             this.isLoading = true
@@ -254,32 +254,32 @@ this.getFeedOnInterval()
                 if (exhaustedEndpoints.has(i)) {
                     continue;
                 }
-    
+
                 const remainingCount = totalDesiredCount - totalFetched;
-                
+
                 // If we've already reached the desired count, break
                 if (remainingCount <= 0) {
                     break;
                 }
-    
+
                 let fetchCount = Math.min(perEndpointCount, remainingCount);
                 let data = await this.fetchDataFromEndpoint(i, fetchCount);
-                
+
                 // Increment the offset for this endpoint by the number of items fetched
                 this.endpointOffsets[i] += data.length;
-    
+
                 if (data.length > 0) {
                     madeProgress = true;
                 }
-    
+
                 if (data.length < fetchCount) {
                     exhaustedEndpoints.add(i);
                 }
-    
+
                 results = results.concat(data);
                 totalFetched += data.length;
             }
-    
+
             if (exhaustedEndpoints.size === this.endpoints.length) {
                 break;
             }
@@ -289,15 +289,15 @@ this.getFeedOnInterval()
         // Trim the results if somehow they are over the totalDesiredCount
         return results.slice(0, totalDesiredCount);
     }
-    
-    
-    
-    
-    
+
+
+
+
+
      trimDataToLimit(data, limit) {
         return data.slice(0, limit);
     }
-    
+
      mergeData(newData, existingData) {
         const existingIds = new Set(existingData.map(item => item.identifier));  // Assume each item has a unique 'id'
         const uniqueNewData = newData.filter(item => !existingIds.has(item.identifier));
@@ -325,37 +325,37 @@ this.getFeedOnInterval()
                 const resource = newItem
 
         let clickValue1 = newItem.schema.click;
-        
+
         const resolvedClickValue1 = replacePlaceholders(clickValue1, resource, newItem.schema.customParams);
         newItem.link = resolvedClickValue1
         newData.push(newItem)
             }
         }
       return newData
-  
+
     }
     async reFetchFeedData() {
         // Resetting offsets to start fresh.
-        this.endpointOffsets = Array(this.endpoints.length).fill(0);  
+        this.endpointOffsets = Array(this.endpoints.length).fill(0);
         await this.getEndpoints()
         const oldIdentifiers = new Set(this.feed.map(item => item.identifier));
         const newData = await this.initialLoad();
-    
+
         // Filter out items that are already in the feed
         const trulyNewData = newData.filter(item => !oldIdentifiers.has(item.identifier));
-    
+
         if (trulyNewData.length > 0) {
             // Adding extra data and merging with old data
             const enhancedNewData = await this.addExtraData(trulyNewData);
-            
+
             // Merge new data with old data immutably
             this.feed = [...enhancedNewData, ...this.feed];
-    
+
             this.feed.sort((a, b) => new Date(b.created) - new Date(a.created));  // Sort by timestamp, most recent first
             this.feed = this.trimDataToLimit(this.feed, maxResultsInMemory);  // Trim to the maximum allowed in memory
             this.feedToRender = this.feed.slice(0, 20);
             this.hasInitialFetch = true;
-    
+
             const created = trulyNewData[0].created;
             let value = localStorage.getItem('lastSeenFeed');
             if (((+value || 0) < created)) {
@@ -363,9 +363,9 @@ this.getFeedOnInterval()
             }
         }
     }
-    
 
-    
+
+
     async  loadAndMergeData() {
         let allData = this.feed
         const newData = await this.initialLoad();
@@ -387,7 +387,7 @@ this.getFeedOnInterval()
 
 
 
-   
+
 
 	render() {
 		return html`
@@ -450,7 +450,7 @@ export function constructUrl(base, search, dynamicVars) {
 
 export function replacePlaceholders(template, resource, customParams) {
     const dataSource = { resource, customParams };
-    
+
     return template.replace(/\$\$\{(.*?)\}\$\$/g, (match, p1) => {
         const keys = p1.split('.');
         let value = dataSource;

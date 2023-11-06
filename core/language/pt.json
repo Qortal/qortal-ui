@@ -5,6 +5,7 @@
 		"chinese1": "Chinês Simplificado)",
 		"chinese2": "Chinês (Tradicional)",
 		"croatian": "Croata",
+		"dutch": "Holandês",
 		"english": "Inglês",
 		"estonian": "Estoniano",
 		"french": "Francês",
@@ -727,7 +728,8 @@
 		"bchange45": "Criptografar",
 		"bchange46": "Você concede permissão a este aplicativo para salvar o seguinte arquivo",
 		"bchange47": "Publicação instantânea - requer",
-		"bchange48": "Você dá permissão a este aplicativo para enviar notificações para você?"
+		"bchange48": "Você dá permissão a este aplicativo para enviar notificações para você?",
+		"bchange49": "Você dá permissão a este aplicativo para obter informações da sua carteira?"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

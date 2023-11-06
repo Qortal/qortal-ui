@@ -1,5 +1,5 @@
-import { NEW_MESSAGE, NEW_MESSAGE_NOTIFICATION_QAPP, NEW_MESSAGE_NOTIFICATION_QAPP_LOCAL } from './types'
-import { newMessage, newMessageNotificationQapp, newMessageNotificationQappLocal } from './notification-actions'
+import {NEW_MESSAGE, NEW_MESSAGE_NOTIFICATION_QAPP, NEW_MESSAGE_NOTIFICATION_QAPP_LOCAL} from './types'
+import {newMessage, newMessageNotificationQapp, newMessageNotificationQappLocal} from './notification-actions'
 
 export const dispatcher = function (notificationState) {
 

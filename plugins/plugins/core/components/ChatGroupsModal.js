@@ -1,7 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import {
-	translate,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {translate,} from 'lit-translate';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';
 import '@material/mwc-dialog'
@@ -22,7 +20,7 @@ export class ChatGroupsModal extends LitElement {
 				--mdc-dialog-max-width: 85vw;
 				--mdc-dialog-max-height: 95vh;
 			}
-			
+
 			.imageContainer {
 		display: flex;
 		justify-content: center;
@@ -68,10 +66,10 @@ export class ChatGroupsModal extends LitElement {
 
 	render() {
 		return html`
-		
-			<mwc-dialog 
-                id="showDialogGroupsModal" 
-                ?open=${this.openDialogGroupsModal} 
+
+			<mwc-dialog
+                id="showDialogGroupsModal"
+                ?open=${this.openDialogGroupsModal}
                 @closed=${() => {
 					this.setOpenDialogGroupsModal(false)
 				}}>

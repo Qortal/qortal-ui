@@ -1,6 +1,6 @@
-import { parentEpml } from '../connect.js'
+import {parentEpml} from '../connect.js'
 
-import { startConfigWatcher } from './onNewBlock.js'
+import {startConfigWatcher} from './onNewBlock.js'
 
 const setAccountInfo = async (addr) => {
 

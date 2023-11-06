@@ -1,6 +1,7 @@
 import RelativeTime from './relative-time';
 import RelativeTimeElement from './relative-time-element';
-import { localeFromElement } from './utils';
+import {localeFromElement} from './utils';
+
 export default class TimeAgoElement extends RelativeTimeElement {
     getFormattedDate() {
         const format = this.getAttribute('format');

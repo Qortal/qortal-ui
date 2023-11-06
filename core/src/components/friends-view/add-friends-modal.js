@@ -1,17 +1,10 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import {
-	use,
-	get,
-	translate,
-	translateUnsafeHTML,
-	registerTranslateConfig,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {translate,} from 'lit-translate';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 class AddFriendsModal extends connect(store)(LitElement) {
@@ -235,7 +228,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			notes: this.notes,
 			willFollow: this.willFollow,
 			mySelectedFeeds: this.mySelectedFeeds
-			
+
 		});
 		this.clearFields();
 		this.onClose();
@@ -303,7 +296,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 	render() {
 		return html`
 			<div class="modal-overlay ${this.isOpen ? '' : 'hidden'}">
-				
+
 				<div class="modal-content">
 					<div class="inner-content">
 					<div style="text-align:center">
@@ -321,7 +314,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="willFollowLabel"
 							style="color: var(--black);"
 						>
-							${get('friends.friend5')}
+							${translate('friends.friend5')}
 						</label>
 						<mwc-checkbox
 							style="margin-right: -15px;"
@@ -339,7 +332,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="nameLabel"
 							style="color: var(--black);"
 						>
-							${get('login.name')}
+							${translate('login.name')}
 						</label>
 						<input
 							id="name"
@@ -357,7 +350,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 							id="aliasLabel"
 							style="color: var(--black);"
 						>
-							${get('friends.friend6')}
+							${translate('friends.friend6')}
 						</label>
 						<input
 							id="alias"

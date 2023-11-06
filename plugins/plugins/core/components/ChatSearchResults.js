@@ -1,7 +1,6 @@
-import { LitElement, html } from 'lit'
-import { render } from 'lit/html.js'
-import { chatSearchResultsStyles } from './ChatSearchResults-css.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {html, LitElement} from 'lit'
+import {chatSearchResultsStyles} from './ChatSearchResults-css.js'
+import {translate} from 'lit-translate'
 import '@vaadin/icon'
 import '@vaadin/icons'
 
@@ -25,9 +24,9 @@ export class ChatSearchResults extends LitElement {
   render() {
     return html`
       <div class="chat-results-card" style=${this.isOpen ? "display: block;" : "display: none;"}>
-        <vaadin-icon 
-          @click=${() => this.closeFunc()} 
-          icon="vaadin:close-small" 
+        <vaadin-icon
+          @click=${() => this.closeFunc()}
+          icon="vaadin:close-small"
           slot="icon"
           class="close-icon"
       >

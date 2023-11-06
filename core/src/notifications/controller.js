@@ -1,7 +1,7 @@
 import config from './config'
-import { dispatcher } from './dispatcher'
+import {dispatcher} from './dispatcher'
 import snackbar from '../functional-components/snackbar.js'
-import { NEW_MESSAGE, NEW_MESSAGE_NOTIFICATION_QAPP, NEW_MESSAGE_NOTIFICATION_QAPP_LOCAL } from './types'
+import {NEW_MESSAGE, NEW_MESSAGE_NOTIFICATION_QAPP, NEW_MESSAGE_NOTIFICATION_QAPP_LOCAL} from './types'
 
 let initial = 0
 let _state
@@ -44,7 +44,7 @@ const notificationCheck = function () {
 
 export const doNewMessage = function (req) {
     const newMessage = () => {
-       
+
         let data
         if (req.type && req.type === 'qapp') {
             data = req
@@ -73,7 +73,7 @@ export const doNewMessage = function (req) {
         } else {
             _state = notificationState
         }
-    }    
+    }
     const page = window.top.location.href
     if(req.type && req.type === 'qapp-local-notification'){
         try {

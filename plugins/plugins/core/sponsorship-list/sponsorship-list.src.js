@@ -1,9 +1,9 @@
-import { LitElement, html } from 'lit'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-import { blocksNeed } from '../../utils/blocks-needed.js'
-import { asyncReplace } from 'lit/directives/async-replace.js'
-import { pageStyles } from './sponsorship-list-css.src.js'
+import {html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {blocksNeed} from '../../utils/blocks-needed.js'
+import {asyncReplace} from 'lit/directives/async-replace.js'
+import {pageStyles} from './sponsorship-list-css.src.js'
 import isElectron from 'is-electron'
 
 import '@material/mwc-button'
@@ -137,7 +137,7 @@ class SponsorshipList extends LitElement {
 												class='avatar-img'
 												onerror='this.src="/img/incognito.png"'
 											/>
-										` : ''}		
+										` : ''}
 										${sponsorship.name || sponsorship.address}
 									</div>
 								</li>
@@ -159,7 +159,7 @@ class SponsorshipList extends LitElement {
 										@click=${() => this.removeRewardShare(sponsorship)}
 									>
 									<mwc-icon>delete_forever</mwc-icon>&nbsp;${translate('rewardsharepage.rchange17')}
-									</mwc-button>	
+									</mwc-button>
 								</li>
 							</ul>
 						`)}
@@ -169,7 +169,7 @@ class SponsorshipList extends LitElement {
 								${translate('sponsorshipspage.schange3')}&nbsp;
 								<span class='text text--bold--green'>
 									${this.sponsorships.length}
-								</span>		
+								</span>
 							</p>
 							<p class='text text--bold'>
 								${translate('sponsorshipspage.schange4')}&nbsp;
@@ -240,7 +240,7 @@ class SponsorshipList extends LitElement {
 					</mwc-button>
 				</mwc-dialog>
 
-				<mwc-dialog escapeKeyAction='' scrimClickAction=''  id='showDialogRewardShareCreationStatus' ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>		
+				<mwc-dialog escapeKeyAction='' scrimClickAction=''  id='showDialogRewardShareCreationStatus' ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>
 					<div class='dialog-header' >
 						<div class='row'>
 							<h1>${translate('sponsorshipspage.schange14')}</h1>
@@ -276,7 +276,7 @@ class SponsorshipList extends LitElement {
 								</p>
 							</li>
 							${this.privateRewardShareKey && this.status === 4  ? html`
-								<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>	
+								<li class=${`column word-break  ${this.status < 4 && 'inactiveText' }`}>
 									<p style='work-break: break-word'>
 										${translate('sponsorshipspage.schange16')}
 									</p>
@@ -372,7 +372,7 @@ class SponsorshipList extends LitElement {
 							this.lookupPublicAddressValue = ''
 							this.isOpenDialogPublicKeyLookup = false
 							this.errorLookup = ''
-							
+
 						}}
 					>
 					${translate('general.close')}
@@ -496,7 +496,7 @@ class SponsorshipList extends LitElement {
 			let rewardShares = await this.getRewardShareRelationship(address)
 
 			rewardShares = rewardShares.filter((rs) => rs.recipient !== address)
-			
+
 			const getAccountInfo = rewardShares.map(async (rs) => {
 				const addressInfo = await parentEpml.request('apiCall', {
 					type: 'api',
@@ -514,7 +514,7 @@ class SponsorshipList extends LitElement {
 					const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
 					url = urlPic
 				}
-				
+
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
 				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
 				return {
@@ -567,7 +567,7 @@ class SponsorshipList extends LitElement {
 	}
 
 	async removeRewardShare(rewardShareObject) {
-		
+
 		const selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
 
 		const myPercentageShare = -1
@@ -649,7 +649,7 @@ class SponsorshipList extends LitElement {
 
 		// Check for valid...
 		this.isLoadingCreateSponsorship = true
-		
+
 		// Get Last Ref
 		const getLastRef = async () => {
 			let myRef = await parentEpml.request('apiCall', {
@@ -670,17 +670,17 @@ class SponsorshipList extends LitElement {
 
 		// Validate Reward Share by Level
 		const validateReceiver = async () => {
-			let accountDetails 
+			let accountDetails
 			try {
 				accountDetails = await getAccountDetails()
 			} catch (error) {
 				this.errorMessage = 'Could not fetch account details'
 			}
-			
+
 			let lastRef = await getLastRef()
 				if (accountDetails.level >= 5 || accountDetails.flags === 1) {
 					this.status = 1
-			
+
 					this.errorMessage = ''
 
 					try {
@@ -693,7 +693,7 @@ class SponsorshipList extends LitElement {
 					let err5string = get('rewardsharepage.rchange20')
 					this.errorMessage = `${err5string} ${accountDetails.level}`
 				}
-		
+
 		}
 
 		// Make Transaction Request
@@ -747,12 +747,12 @@ class SponsorshipList extends LitElement {
 		this.status = 2
 		let interval = null
 		let stop = false
-		
+
 		const getAnswer = async () => {
-		
+
 			if (!stop) {
 				stop= true
-	
+
 				try {
 					const recipientAddress = window.parent.base58PublicKeyToAddress(recipientPublicKey)
 					const minterAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -764,10 +764,10 @@ class SponsorshipList extends LitElement {
 						clearInterval(interval)
 						this.status = 3
 						this.timer = countDown(isCopy ? 5 : 180, ()=> this.changeStatus(4))
-					}	
+					}
 				} catch (error) {
 				}
-	
+
 				stop = false
 			}
 		}

@@ -5,6 +5,7 @@
 		"chinese1": "Kinesisk (Forenklet)",
 		"chinese2": "Kinesisk (Tradisjonell)",
 		"croatian": "Kroatisk",
+		"dutch": "Nederlandsk",
 		"english": "Engelsk",
 		"estonian": "Estisk",
 		"french": "Fransk",
@@ -727,7 +728,8 @@
 		"bchange45": "Krypter",
 		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil",
 		"bchange47": "Øyeblikkelig publisering - krever",
-		"bchange48": "Gir du denne applikasjonen tillatelse til å sende deg varsler"
+		"bchange48": "Gir du denne applikasjonen tillatelse til å sende deg varsler",
+		"bchange49": "Gir du dette programmet tillatelse til å få lommebokinformasjonen din?"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

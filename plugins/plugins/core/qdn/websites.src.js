@@ -1,13 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -19,6 +14,10 @@ import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/text-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -86,41 +85,41 @@ class Websites extends LitElement {
 	      }
 
             #pages {
-		    display: flex;
-		    flex-wrap: wrap;
-		    padding: 10px 5px 5px 5px;
-		    margin: 0px 20px 20px 20px;
-	      }
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px 5px 5px 5px;
+                margin: 0px 20px 20px 20px;
+            }
 
-	      #pages > button {
-		    user-select: none;
+            #pages > button {
+                user-select: none;
                 padding: 5px;
-		    margin: 0 5px;
-		    border-radius: 10%;
-		    border: 0;
-		    background: transparent;
-		    font: inherit;
-		    outline: none;
-		    cursor: pointer;
+                margin: 0 5px;
+                border-radius: 10%;
+                border: 0;
+                background: transparent;
+                font: inherit;
+                outline: none;
+                cursor: pointer;
                 color: var(--black);
-	      }
+            }
 
-	      #pages > button:not([disabled]):hover,
-	      #pages > button:focus {
-		    color: #ccc;
-		    background-color: #eee;
-	      }
+            #pages > button:not([disabled]):hover,
+            #pages > button:focus {
+                color: #ccc;
+                background-color: #eee;
+            }
 
-	      #pages > button[selected] {
-		    font-weight: bold;
-		    color: var(--white);
-		    background-color: #ccc;
-	      }
+            #pages > button[selected] {
+                font-weight: bold;
+                color: var(--white);
+                background-color: #ccc;
+            }
 
-	      #pages > button[disabled] {
-		    opacity: 0.5;
-		    cursor: default;
-	      }
+            #pages > button[disabled] {
+                opacity: 0.5;
+                cursor: default;
+            }
 
             #websites-list-page {
                 background: var(--white);
@@ -428,7 +427,7 @@ class Websites extends LitElement {
                 url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
             })
 
-            this.relayMode = relayMode;
+            this.relayMode = relayMode
             setTimeout(getRelayMode, 600000)
         }
 
@@ -494,9 +493,9 @@ class Websites extends LitElement {
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
         if (checkTheme === 'dark') {
-            this.theme = 'dark';
+            this.theme = 'dark'
         } else {
-            this.theme = 'light';
+            this.theme = 'light'
         }
         document.querySelector('html').setAttribute('theme', this.theme)
     }
@@ -619,7 +618,7 @@ class Websites extends LitElement {
                 } else {
                     offset = 0
                 }
-                this.getData(offset);
+                this.getData(offset)
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage - 1)
             })
@@ -628,14 +627,14 @@ class Websites extends LitElement {
             this.pages.forEach((pageNumber) => {
                 const pageBtn = document.createElement('button')
                 pageBtn.textContent = pageNumber
-                let offset = 0;
+                let offset = 0
                 pageBtn.addEventListener('click', (e) => {
                     if (parseInt(e.target.textContent) > 1) {
                         offset = (parseInt(e.target.textContent) - 1) * 20
                     } else {
                         offset = 0
                     }
-                    this.getData(offset);
+                    this.getData(offset)
                     this.updateItemsFromPage(parseInt(e.target.textContent))
                 })
                 if (pageNumber === page) {
@@ -652,7 +651,7 @@ class Websites extends LitElement {
                 } else {
                     offset = 0
                 }
-                this.getData(offset);
+                this.getData(offset)
                 const selectedPage = parseInt(this.pagesControl.querySelector('[selected]').textContent)
                 this.updateItemsFromPage(selectedPage + 1)
             })
@@ -992,7 +991,7 @@ class Websites extends LitElement {
         let title = name
         let description = ""
         let categoryName = this.renderCatText()
-        let tags = "";
+        let tags = ""
         let sizeReadable = ""
 
         if (websiteObj.metadata != null) {
@@ -1005,22 +1004,20 @@ class Websites extends LitElement {
         }
 
         if (websiteObj.size != null) {
-            sizeReadable = this.bytesToSize(websiteObj.size);
+            sizeReadable = this.bytesToSize(websiteObj.size)
         }
 
         return html`
             <div class="resourceTitle">
                 <a class="visitSite" href="browser/index.html?name=${name}&service=${this.service}">${title}</a>
             </div>
-            <div class="resourceDescription">
-                ${description}
-            </div>
+            <div class="resourceDescription">${description}</div>
             <div class="resourceCategoryTags">
                 ${categoryName}&nbsp;
-                ${tags.length > 0 ? " | " : ""}
-                &nbsp;${tags}&nbsp;
-                ${sizeReadable.length > 0 ? " | " : ""}
-                &nbsp;${translate("websitespage.schange27")}: ${sizeReadable}
+                ${tags.length > 0 ? " | " : ""}&nbsp;
+                ${tags}&nbsp;
+                ${sizeReadable.length > 0 ? " | " : ""}&nbsp;
+                ${translate("websitespage.schange27")}: ${sizeReadable}
             </div>
         `
     }

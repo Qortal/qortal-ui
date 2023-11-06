@@ -1,6 +1,6 @@
-import { transactionTypes as transactions } from './transactions/transactions.js'
+import {transactionTypes as transactions} from './transactions/transactions.js'
 import Base58 from './deps/Base58.js'
-import { request } from './fetch-request'
+import {request} from './fetch-request'
 import signChat from './transactions/chat/signChat.js'
 import signArbitrary from './transactions/arbitrary/signArbitrary.js'
 import signArbitraryWithFee from './transactions/arbitrary/signArbitraryWithFee.js'

@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import {css} from 'lit'
 
 export const friendsViewStyles = css`
 * {
@@ -37,9 +37,9 @@ export const friendsViewStyles = css`
 
         .container-body {
             width: 100%;
-            display: flex; 
-            flex-direction: column; 
-            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             margin-top: 5px;
             padding: 0px 6px;
             box-sizing: border-box;
@@ -51,13 +51,13 @@ export const friendsViewStyles = css`
             background-color: whitesmoke;
             border-radius: 7px;
         }
-        
+
         .container-body::-webkit-scrollbar {
             width: 6px;
             border-radius: 7px;
             background-color: whitesmoke;
         }
-        
+
         .container-body::-webkit-scrollbar-thumb {
             background-color: rgb(180, 176, 176);
             border-radius: 7px;
@@ -67,7 +67,7 @@ export const friendsViewStyles = css`
         .container-body::-webkit-scrollbar-thumb:hover {
             background-color: rgb(148, 146, 146);
             cursor: pointer;
-        }   
+        }
 
         p {
             color: var(--black);

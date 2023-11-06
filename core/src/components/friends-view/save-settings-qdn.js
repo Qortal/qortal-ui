@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
 import { connect } from 'pwa-helpers';
@@ -14,11 +14,10 @@ import {
 	
 	encryptDataGroup,
 	objectToBase64,
-	uint8ArrayToBase64,
 	uint8ArrayToObject,
 } from '../../../../plugins/plugins/core/components/qdn-action-encryption.js';
-import { publishData } from '../../../../plugins/plugins/utils/publish-image.js';
-import { parentEpml } from '../show-plugin.js';
+import {publishData} from '../../../../plugins/plugins/utils/publish-image.js';
+import {parentEpml} from '../show-plugin.js';
 import '../notification-view/popover.js';
 import { setNewTab } from '../../redux/app/app-actions.js';
 
@@ -171,14 +170,14 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 	}
 
 	async getMyFollowedNames() {
-		
+
         let myFollowedNames = []
 		try {
 			 myFollowedNames = await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`
 			})
 		} catch (error) {
-			
+
 		}
 
         return myFollowedNames
@@ -197,7 +196,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			body: `${namesJsonString}`
 		})
 
-		
+
 		return ret
 	}
 
@@ -671,20 +670,20 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 							hover-delay=${300}
 							hide-delay=${1}
 							text=${this.error
-								? get('save.saving1')
+								? translate('save.saving1')
 								: Object.values(this.valuesToBeSavedOnQdn)
 										.length > 0 ||
 								  this.resourceExists === false
-								? get('save.saving3')
-								: get('save.saving2')}
+								? translate('save.saving3')
+								: translate('save.saving2')}
 						>
 						</vaadin-tooltip>
 						<popover-component for="save-icon" message="">
 							<div style="margin-bottom:20px">
 								<p style="margin:10px 0px; font-size:16px">
-									${`${get('walletpage.wchange12')}: ${
+									${translate('walletpage.wchange12')}: ${
 										this.fee ? this.fee.feeToShow : ''
-									}`}
+									}
 								</p>
 							</div>
 							<div

@@ -1,10 +1,10 @@
 'use strict';
 import Base58 from '../deps/Base58.js'
-import { Sha256, Sha512 } from 'asmcrypto.js'
+import {Sha256, Sha512} from 'asmcrypto.js'
 import jsSHA from 'jssha'
 import RIPEMD160 from '../deps/ripemd160.js'
 import utils from '../deps/utils.js'
-import { EllipticCurve, BigInteger } from './ecbn.js'
+import {BigInteger, EllipticCurve} from './ecbn.js'
 
 export default class AltcoinHDWallet {
 
@@ -335,7 +335,7 @@ export default class AltcoinHDWallet {
         // Append 1 byte '0x00' (to make the key data 33 bytes, DO THIS ONLY FOR PRIVATE KEYS )
         s.push(0)
 
-        //if the private key length is less than 32 let's add leading zeros 
+        //if the private key length is less than 32 let's add leading zeros
         if(this.privateKey.length<32){
             for(let i=this.privateKey.length;i<32;i++){
                 s.push(0)

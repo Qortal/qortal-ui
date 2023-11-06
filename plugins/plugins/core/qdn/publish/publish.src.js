@@ -1,20 +1,18 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../../epml'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../../epml'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-select'
 import '@material/mwc-dialog'
 import '@material/mwc-list/mwc-list-item.js'
 import '@polymer/paper-progress/paper-progress.js'
-import { modalHelper } from '../../../utils/publish-modal'
+import {modalHelper} from '../../../utils/publish-modal'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -315,7 +313,7 @@ class PublishData extends LitElement {
                  <mwc-button slot="primaryAction" @click="${(e) => this.feeDialogNo(e, false, false)}" class="red">
                      ${translate("general.no")}
                  </mwc-button>
-                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green"> 
+                 <mwc-button slot="secondaryAction" @click="${(e) => this.feeDialogYes(e, false, true)}" class="green">
                      ${translate("general.yes")}
                  </mwc-button>
             </mwc-dialog>
@@ -479,12 +477,12 @@ class PublishData extends LitElement {
                     );
                     if (res.action !== 'accept') throw new Error('User declined publish')
                 }
-               
+
                 this.publishData(registeredName, path, file, service, identifier, preview, fee)
             } catch (error) {
                 this.shadowRoot.querySelector('#publishWithFeeDialog').close()
             }
-         
+
         }
     }
 
@@ -571,7 +569,7 @@ class PublishData extends LitElement {
             if (fee) {
                 let err9string = get("publishpage.pchange26")
                 this.generalMessage = `${err9string}`
-              
+
             } else {
                 let err9string = get("publishpage.pchange22")
                 this.generalMessage = `${err9string}`
@@ -699,7 +697,7 @@ class PublishData extends LitElement {
                 })
             } else {
                 const nonce = window.parent.computePow(hashPtr, workBufferPtr, workBufferLength, difficulty)
-                
+
                 response = await parentEpml.request('sign_arbitrary', {
                     nonce: this.selectedAddress.nonce,
                     arbitraryBytesBase58: transactionBytesBase58,

@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {get, translate} from 'lit-translate'
 import snackbar from '../functional-components/snackbar.js'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'

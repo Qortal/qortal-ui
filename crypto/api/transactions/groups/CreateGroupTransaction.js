@@ -1,6 +1,6 @@
 'use strict'
 import TransactionBase from '../TransactionBase.js'
-import { QORT_DECIMALS } from '../../constants.js'
+import {QORT_DECIMALS} from '../../constants.js'
 
 export default class CreateGroupTransaction extends TransactionBase {
 	constructor() {

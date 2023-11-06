@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { get, translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {translate} from 'lit-translate'
 import isElectron from 'is-electron'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'

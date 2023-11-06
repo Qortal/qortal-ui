@@ -1,8 +1,9 @@
-import { LitElement, html, css } from 'lit';
+import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-view'
 import './friends-feed'
-import { translate } from 'lit-translate';
+import {translate} from 'lit-translate';
+
 class FriendsSidePanel extends LitElement {
     static get properties() {
 		return {
@@ -19,7 +20,7 @@ class FriendsSidePanel extends LitElement {
 		this.selected = 'friends'
 		this.closeSidePanel = this.closeSidePanel.bind(this)
 	}
-	
+
 	static styles = css`
 		:host {
 			display: block;
@@ -98,14 +99,14 @@ class FriendsSidePanel extends LitElement {
 			position: absolute;
     z-index: -50;
 		}
-		
+
 	`;
 
 	refreshFeed(){
-	
+
 			this.shadowRoot.querySelector('friends-feed').refresh()
 
-		
+
 	}
 
 	closeSidePanel(){
@@ -128,7 +129,7 @@ class FriendsSidePanel extends LitElement {
                     this.setIsOpen(false)
                 }}>close</mwc-icon>
 		</div>
-			
+
 			</div>
 			<div class="content">
 				<div class="${this.selected === 'friends' ? 'active-content' : 'default-content'}">
@@ -137,8 +138,8 @@ class FriendsSidePanel extends LitElement {
 				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
 				<friends-feed .setHasNewFeed=${(val)=> this.setHasNewFeed(val)}></friends-feed>
 				</div>
-		
-			
+
+
 
 		</div>
 			</div>

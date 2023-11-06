@@ -1,5 +1,4 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
+import {css, html, LitElement} from 'lit'
 import QRCode from './QRCode.js'
 
 export class QortalQrcodeGenerator extends LitElement {

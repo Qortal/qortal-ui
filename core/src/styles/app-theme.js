@@ -1,6 +1,6 @@
-import { LitElement, html } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
+import {html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
 
 class AppTheme extends connect(store)(LitElement) {
 
@@ -27,7 +27,7 @@ class AppTheme extends connect(store)(LitElement) {
                     --mdc-theme-secondary: ${this.theme.colors.secondary}; /* Sets the text color to the theme secondary color. */
                     --mdc-theme-secondary-bg: ${this.theme.colors.secondaryBg};/* Sets the background color to the theme secondary color. */
                     --mdc-theme-on-secondary: ${this.theme.colors.onSecondary}; /* Sets the text color to the color configured for text on the secondary color. */
-                    
+
                     --mdc-theme-surface: ${this.theme.colors.surface}; /* Sets the background color to the surface background color. */
                     --mdc-theme-on-surface: ${this.theme.colors.onSurface};/* Sets the text color to the color configured for text on the surface color. */
                     --mdc-theme-background: ${this.theme.colors.background};/* Sets the background color to the theme background color. */
@@ -43,7 +43,7 @@ class AppTheme extends connect(store)(LitElement) {
                 paper-spinner-lite, paper-spinner {
                     --paper-spinner-color: var(--mdc-theme-secondary)
                 }
-                
+
             </style>
         `
     }

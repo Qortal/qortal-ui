@@ -1,24 +1,23 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
-
-registerTranslateConfig({
-	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../../epml.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import '@polymer/paper-dialog/paper-dialog.js'
 import * as Highcharts from 'highcharts'
 import Exporting from 'highcharts/modules/exporting'
-Exporting(Highcharts)
 import StockChart from 'highcharts/modules/stock'
-StockChart(Highcharts)
 import 'highcharts/highcharts-more.js'
 import 'highcharts/modules/accessibility.js'
 import 'highcharts/modules/boost.js'
 import 'highcharts/modules/data.js'
 import 'highcharts/modules/export-data.js'
 import 'highcharts/modules/offline-exporting.js'
+
+registerTranslateConfig({
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
+
+Exporting(Highcharts)
+StockChart(Highcharts)
 
 let dgbChartDialog
 

@@ -1,6 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { Epml } from '../../../epml.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -56,7 +55,7 @@ class ToolTip extends LitElement {
             display: none;
             visibility: hidden;
             opacity: 0;
-        } 
+        }
         `
     }
 

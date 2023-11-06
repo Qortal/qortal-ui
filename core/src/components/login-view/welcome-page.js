@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { translate, translateUnsafeHTML } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {translate} from 'lit-translate'
 
 import '@material/mwc-button'
 

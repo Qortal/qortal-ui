@@ -1,22 +1,19 @@
-import { store } from '../store.js'
+import {store} from '../store.js'
 import {
 	doAddPluginUrl,
-	doUpdateBlockInfo,
-	doUpdateNodeStatus,
-	doUpdateNodeInfo,
-	doSetNode,
 	doPageUrl,
 	doSetChatHeads,
+	doSetNode,
 	doUpdateAccountInfo,
+	doUpdateBlockInfo,
+	doUpdateNodeInfo,
+	doUpdateNodeStatus,
 } from '../redux/app/app-actions.js'
 import * as api from 'qortal-ui-crypto'
-import { requestTransactionDialog } from '../functional-components/confirm-transaction-dialog.js'
-import { doNewMessage } from '../notifications/controller.js'
+import {requestTransactionDialog} from '../functional-components/confirm-transaction-dialog.js'
+import {doNewMessage} from '../notifications/controller.js'
 import snackbar from '../functional-components/snackbar.js'
-import {
-	loadStateFromLocalStorage,
-	saveStateToLocalStorage,
-} from '../localStorageHelpers.js'
+import {loadStateFromLocalStorage, saveStateToLocalStorage,} from '../localStorageHelpers.js'
 
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
@@ -128,13 +125,13 @@ export const routes = {
 			if(!req.data.apiVersion){
 				res = await processTransaction(tx.signedBytes)
 			}
-	
+
 			let extraData = {}
 			if(req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey){
 				extraData.rewardSharePrivateKey = Base58.encode(tx._rewardShareKeyPair.secretKey)
 			}
-		
-		
+
+
 			response = {
 				success: true,
 				data: res,
@@ -182,8 +179,8 @@ export const routes = {
 			if(!req.data.apiVersion){
 				res = await processTransaction(tx.signedBytes)
 			}
-	
-		
+
+
 			response = {
 				success: true,
 				data: res,
@@ -234,7 +231,7 @@ export const routes = {
 				req.data.chatNonce,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			)
-			
+
 			let res
 
 			if(req.data.apiVersion && req.data.apiVersion === 2){
@@ -243,7 +240,7 @@ export const routes = {
 			if(!req.data.apiVersion){
 				res = await processTransaction(signedChatBytes)
 			}
-	
+
 			response = res
 		} catch (e) {
 			console.error(e)
@@ -270,7 +267,7 @@ export const routes = {
 			if(!req.data.apiVersion){
 				res = await processTransaction(signedArbitraryBytes)
 			}
-			
+
 			response = res
 		} catch (e) {
 			console.error(e)
@@ -296,7 +293,7 @@ export const routes = {
 			if(!req.data.apiVersion){
 				res = await processTransaction(signedArbitraryBytes)
 			}
-			
+
 			response = res
 		} catch (e) {
 			console.error(e)
@@ -366,7 +363,7 @@ export const routes = {
 				unsignedTxn,
 				store.getState().app.selectedAddress.keyPair
 			)
-			
+
 			let res
 
 			if(req.data.apiVersion && req.data.apiVersion === 2){

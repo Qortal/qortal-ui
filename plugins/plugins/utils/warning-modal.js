@@ -1,4 +1,4 @@
-import { get } from 'lit-translate';
+import {get} from 'lit-translate';
 
 export class WarningModal {
     constructor() {
@@ -24,7 +24,7 @@ export class WarningModal {
 					<div class="modal-body">
 							<div class="modal-subcontainer">
 								<div class="checkbox-row">
-								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${data.message} 
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${data.message}
 								</div>
 							</div>
 					</div>
@@ -84,7 +84,7 @@ export class WarningModal {
             --mdc-checkbox-disabled-color: var(--black);
             --mdc-checkbox-ink-color: var(--black);
         }
-    
+
         .backdrop {
             position: fixed;
             top: 0;
@@ -93,21 +93,21 @@ export class WarningModal {
             height: 100%;
             background: rgb(186 186 186 / 26%);
             overflow: hidden;
-            animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; 
+            animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
             z-index: 1000000;
         }
-    
+
         @keyframes backdrop_blur {
             0% {
                 backdrop-filter: blur(0px);
                 background: transparent;
             }
-            100% { 
+            100% {
                 backdrop-filter: blur(5px);
                 background: rgb(186 186 186 / 26%);
             }
         }
-    
+
         @keyframes modal_transition {
             0% {
                 visibility: hidden;
@@ -118,7 +118,7 @@ export class WarningModal {
                 opacity: 1;
             }
         }
-    
+
         .modal {
             position: relative;
             display: flex;
@@ -129,7 +129,7 @@ export class WarningModal {
             animation: 0.1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;
             z-index: 1000001;
         }
-    
+
         @keyframes modal_transition {
             0% {
                 visibility: hidden;
@@ -140,7 +140,7 @@ export class WarningModal {
                 opacity: 1;
             }
         }
-    
+
         .modal-content {
             background-color: var(--white);
             border-radius: 10px;
@@ -152,11 +152,11 @@ export class WarningModal {
             flex-direction: column;
             justify-content: space-between;
         }
-    
+
         .modal-body {
             padding: 25px;
         }
-    
+
         .modal-subcontainer {
             color: var(--black);
             display: flex;
@@ -164,7 +164,7 @@ export class WarningModal {
             align-items: flex-start;
             gap: 15px;
         }
-    
+
         .modal-subcontainer-error {
             color: var(--black);
             display: flex;
@@ -172,7 +172,7 @@ export class WarningModal {
             align-items: center;
             gap: 15px;
         }
-    
+
         .modal-paragraph-error {
             font-family: Roboto, sans-serif;
             font-size: 20px;
@@ -181,7 +181,7 @@ export class WarningModal {
             color: var(--black);
             margin: 0;
         }
-    
+
         .modal-paragraph {
             font-family: Roboto, sans-serif;
             font-size: 18px;
@@ -189,14 +189,14 @@ export class WarningModal {
             font-weight: 300;
             color: var(--black);
             margin: 0;
-            word-wrap: break-word; 
+            word-wrap: break-word;
               overflow-wrap: break-word;
         }
-    
+
         .capitalize-first {
             text-transform: capitalize;
         }
-    
+
         .checkbox-row {
             display: flex;
             align-items: center;
@@ -204,13 +204,13 @@ export class WarningModal {
             font-weight: 600;
             color: var(--black);
         }
-    
+
         .modal-buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
         }
-    
+
         .modal-buttons button {
             background-color: #4caf50;
             border: none;
@@ -220,15 +220,15 @@ export class WarningModal {
             cursor: pointer;
             transition: background-color 0.2s;
         }
-    
+
         .modal-buttons button:hover {
             background-color: #3e8e41;
         }
-    
+
         #cancel-button {
             background-color: #f44336;
         }
-    
+
         #cancel-button:hover {
             background-color: #d32f2f;
         }
@@ -240,7 +240,7 @@ export class WarningModal {
         document.adoptedStyleSheets = [styleSheet];
     }
 
- 
+
     static getInstance() {
         if (!WarningModal.instance) {
           WarningModal.instance = new WarningModal();

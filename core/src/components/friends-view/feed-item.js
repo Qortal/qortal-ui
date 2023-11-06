@@ -1,16 +1,13 @@
-import { LitElement, html, css } from 'lit';
-import {
-  get,
-  translate,
-} from 'lit-translate';
+import {css, html, LitElement} from 'lit';
+import {translate,} from 'lit-translate';
 import axios from 'axios'
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js'
-import { RequestQueueWithPromise } from '../../../../plugins/plugins/utils/queue';
+import {RequestQueueWithPromise} from '../../../../plugins/plugins/utils/queue';
 import '../../../../plugins/plugins/core/components/TimeAgo'
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
-import { setNewTab } from '../../redux/app/app-actions';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
+import {setNewTab} from '../../redux/app/app-actions';
 import ShortUniqueId from 'short-unique-id';
 
 const requestQueue = new RequestQueueWithPromise(3);
@@ -41,9 +38,9 @@ export class FeedItem extends connect(store)(LitElement) {
       box-sizing: border-box;
     }
       img {
-        width:100%; 
-        max-height:30vh; 
-        border-radius: 5px; 
+        width:100%;
+        max-height:30vh;
+        border-radius: 5px;
         cursor: pointer;
         position: relative;
       }
@@ -67,7 +64,7 @@ export class FeedItem extends connect(store)(LitElement) {
   }
 
   .defaultSize {
-		width: 100%; 
+		width: 100%;
 		height: 160px;
 	}
   .parent-feed-item {
@@ -87,7 +84,7 @@ export class FeedItem extends connect(store)(LitElement) {
     font-size: 16px;
   }
   .avatar {
-		width: 36px; 
+		width: 36px;
 		height: 36px;
     border-radius:50%;
     overflow: hidden;
@@ -95,7 +92,7 @@ export class FeedItem extends connect(store)(LitElement) {
     align-items:center;
 	}
   .avatarApp {
-    width: 30px; 
+    width: 30px;
 		height: 30px;
     border-radius:50%;
     overflow: hidden;
@@ -210,7 +207,7 @@ getMyNode(){
  async fetchVideoUrl() {
 
       this.fetchResource()
-     
+
   }
 
   async getRawData(){
@@ -228,7 +225,7 @@ getMyNode(){
     // const responseData2 = await response2.json()
     // return responseData2
   }
- 
+
    updateDisplayWithPlaceholders(display, resource, rawdata) {
     const pattern = /\$\$\{([a-zA-Z0-9_\.]+)\}\$\$/g;
 
@@ -241,7 +238,7 @@ getMyNode(){
                 if (rawdata[dataKey] === undefined) {
                     console.error("rawdata key not found:", dataKey);
                 }
-                return rawdata[dataKey] || match; 
+                return rawdata[dataKey] || match;
             } else if (p1.startsWith('resource.')) {
                 const resourceKey = p1.split('.')[1];
                 if (resource[resourceKey] === undefined) {
@@ -263,7 +260,7 @@ getMyNode(){
     let timer = 24
     const response =  await requestQueueStatus.enqueue(()=> {
       return axios.get(`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
-    }) 
+    })
     if(response && response.data && response.data.status === 'READY'){
       const rawData = await this.getRawData()
       const object = {
@@ -272,13 +269,13 @@ getMyNode(){
       this.updateDisplayWithPlaceholders(object, {},rawData.data)
       this.feedItem = object
       this.status = response.data
-      
+
       return
     }
     const intervalId = setInterval(async () => {
       if (isCalling) return
       isCalling = true
-   
+
      const data = await requestQueue.enqueue(() => {
         return  axios.get(`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`)
       });
@@ -302,7 +299,7 @@ getMyNode(){
               ...res,
               status:  'REFETCHING'
             }
-            
+
             setTimeout(() => {
               isCalling = false
               this.fetchResource()
@@ -311,7 +308,7 @@ getMyNode(){
           }
           percentLoaded = res.percentLoaded
         }
-   
+
         this.status = res
         if(this.status.status === 'DOWNLOADED'){
           this.fetchResource()
@@ -345,7 +342,7 @@ getMyNode(){
 
   }
 
- 
+
 
   async goToFeedLink(){
     try {
@@ -386,7 +383,7 @@ getMyNode(){
       console.log({error})
     }
   }
-  
+
 
 
   async extractComponents(url) {
@@ -434,11 +431,11 @@ getMyNode(){
 }
 
 
-  
-  
- 
-  
- 
+
+
+
+
+
 
   render() {
     let avatarImg
@@ -469,7 +466,7 @@ getMyNode(){
                             style=" box-sizing: border-box;"
 													>
     ${
-										this.status.status !== 'READY' 
+										this.status.status !== 'READY'
 											? html`
 													<div
 														style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center; box-sizing: border-box;"
@@ -506,10 +503,10 @@ getMyNode(){
     ` : ''}
 
                 </div>
-               
+
     `
-    
-    
+
+
   }
 }
 

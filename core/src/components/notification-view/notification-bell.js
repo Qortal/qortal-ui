@@ -1,13 +1,13 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
 
 import '@vaadin/item'
 import '@vaadin/list-box'
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
-import { store } from '../../store.js'
-import { setNewTab } from '../../redux/app/app-actions.js'
-import { routes } from '../../plugins/routes.js'
+import {store} from '../../store.js'
+import {setNewTab} from '../../redux/app/app-actions.js'
+import {routes} from '../../plugins/routes.js'
 import '@material/mwc-icon';
 
 import config from '../../notifications/config.js'
@@ -61,7 +61,7 @@ class NotificationBell extends connect(store)(LitElement) {
                     0,
                     20
                 )}_${recipientAddress.slice(-6)}_mail_`
-                const url = `${nodeUrl}/arbitrary/resources/search?service=MAIL_PRIVATE&query=${query}&limit=10&includemetadata=true&offset=0&reverse=true&excludeblocked=true`
+                const url = `${nodeUrl}/arbitrary/resources/search?service=MAIL_PRIVATE&query=${query}&limit=10&includemetadata=false&offset=0&reverse=true&excludeblocked=true`
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -150,7 +150,7 @@ class NotificationBell extends connect(store)(LitElement) {
 			  hide-delay=${1}
 			  text="Q-Mail">
 		  </vaadin-tooltip>
-                  
+
                 ` : html`
                 <mwc-icon @click=${() =>  this._openTabQmail()} id="notification-mail-icon" style="color: var(--black); cursor:pointer;user-select:none"
 									>mail</mwc-icon
@@ -162,7 +162,7 @@ class NotificationBell extends connect(store)(LitElement) {
 			  hide-delay=${1}
 			  text="Q-Mail">
 		  </vaadin-tooltip>
-                   
+
                 `}
 
                 ${this.notificationCount ? html`
@@ -195,7 +195,7 @@ class NotificationBell extends connect(store)(LitElement) {
                                     <p>Q-Mail</p>
                                     <message-time timestamp=${notification.created} style="color:red;font-size:12px"></message-time>
                                 </div>
-                                <div> 
+                                <div>
                                     <p>${notification.name}</p>
                                 </div>
                             </div>

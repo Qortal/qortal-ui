@@ -1,8 +1,14 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { allowQAPPAutoAuth, removeQAPPAutoAuth, removeQAPPAutoLists, allowQAPPAutoLists, setIsOpenDevDialog } from '../../redux/app/app-actions.js'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {
+	allowQAPPAutoAuth,
+	allowQAPPAutoLists,
+	removeQAPPAutoAuth,
+	removeQAPPAutoLists,
+	setIsOpenDevDialog
+} from '../../redux/app/app-actions.js'
+import {get, translate} from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
 
@@ -75,7 +81,7 @@ class SecurityView extends connect(store)(LitElement) {
                 text-decoration: none;
                 transition: all .2s;
                 position: relative;
-            }   
+            }
 
             .add-dev-button {
                 margin-top: 4px;
@@ -141,13 +147,13 @@ class SecurityView extends connect(store)(LitElement) {
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
                     </div>
                     <div class="checkbox-row">
-                    <button 
+                    <button
                     class="add-dev-button"
                     title="${translate('tabmenu.tm18')}"
                     @click=${this.openDevDialog}
                 >${translate('tabmenu.tm38')}</button>
                     </div>
-                    
+
                 </div>
         `
     }

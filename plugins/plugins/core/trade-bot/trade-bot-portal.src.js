@@ -1,15 +1,10 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
-import { encryptData, decryptData } from '../../../../core/src/lockScreen.js'
-
-registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
-})
-
+import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-icon'
@@ -27,6 +22,10 @@ import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
 import '@vaadin/password-field'
+
+registerTranslateConfig({
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+})
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -168,7 +167,7 @@ class TradeBotPortal extends LitElement {
                   padding-top: 3px;
 		}
 		#tab-sell[active] {
-			--mdc-theme-primary: rgb(255, 89, 89); 
+			--mdc-theme-primary: rgb(255, 89, 89);
 		}
 		#trade-portal-page {
 			background: var(--white);
@@ -2665,7 +2664,7 @@ class TradeBotPortal extends LitElement {
                 return {
                     timestamp: item.tradeTimestamp,
                     foreignAmount: item.foreignAmount,
-                    qortAmount: item.qortAmount        
+                    qortAmount: item.qortAmount
                 }
             }
         }).filter(item => !!item)
@@ -3113,7 +3112,7 @@ class TradeBotPortal extends LitElement {
                     this._historicTradesGrid.clearCache()
                 }
                 this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1 ? addNewHistoricTrade() : null
-                        
+
             }
         } catch(e) {
             console.log("Error processing redeemed trade offer from "+offer.foreignBlockchain)
@@ -3123,7 +3122,7 @@ class TradeBotPortal extends LitElement {
     processTradingTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
                 if (offer.qortalCreator === this.selectedAddress.address && this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                     this.updateWalletBalance()
                 }
@@ -3143,7 +3142,7 @@ class TradeBotPortal extends LitElement {
     processRefundedTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
             if (offer.qortalCreator === this.selectedAddress.address) {
                 if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                     this.updateWalletBalance()
@@ -3161,7 +3160,7 @@ class TradeBotPortal extends LitElement {
     processCancelledTrade(offer) {
         try {
             if (this.listedCoins.get(offer.foreignBlockchain).name!='') {
-            
+
                 if (offer.qortalCreator === this.selectedAddress.address) {
                     if (this.listedCoins.get(offer.foreignBlockchain).tradeOffersSocketCounter > 1) {
                         this.updateWalletBalance()

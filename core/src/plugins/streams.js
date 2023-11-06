@@ -1,5 +1,5 @@
-import { store } from '../store.js'
-import { EpmlStream } from 'epml'
+import {store} from '../store.js'
+import {EpmlStream} from 'epml'
 
 const LOGIN_STREAM_NAME = 'logged_in'
 const CONFIG_STREAM_NAME = 'config'
@@ -10,6 +10,7 @@ const NODE_CONFIG_STREAM_NAME = 'node_config'
 const CHAT_LAST_SEEN = 'chat_last_seen'
 const SIDE_EFFECT_ACTION = 'side_effect_action'
 const PROFILE_DATA_ACTION = 'profile_data_action'
+const COIN_BALANCES_ACTION = 'coin_balances'
 
 export const loggedInStream = new EpmlStream(LOGIN_STREAM_NAME, () => store.getState().app.loggedIn)
 export const configStream = new EpmlStream(CONFIG_STREAM_NAME, () => store.getState().config)
@@ -20,6 +21,8 @@ export const nodeConfigStream = new EpmlStream(NODE_CONFIG_STREAM_NAME, () => st
 export const chatLastSeenStream = new EpmlStream(CHAT_LAST_SEEN, () => store.getState().app.chatLastSeen)
 export const sideEffectActionStream = new EpmlStream(SIDE_EFFECT_ACTION, () => store.getState().app.sideEffectAction)
 export const profileDataActionStream = new EpmlStream(SIDE_EFFECT_ACTION, () => store.getState().app.profileData)
+export const coinBalancesActionStream = new EpmlStream(COIN_BALANCES_ACTION, () => store.getState().app.coinBalances)
+
 
 
 
@@ -67,6 +70,10 @@ store.subscribe(() => {
     if(oldState.app.profileDataActionStream !== state.app.profileDataActionStream){
         profileDataActionStream.emit(state.app.profileData)
     }
+    if (oldState.app.coinBalances !== state.app.coinBalances) {
+        coinBalancesActionStream.emit(state.app.coinBalances)
+    }
+
 
     oldState = state
 })

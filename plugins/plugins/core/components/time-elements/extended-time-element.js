@@ -1,4 +1,5 @@
-import { makeFormatter } from './utils';
+import {makeFormatter} from './utils';
+
 const datetimes = new WeakMap();
 export default class ExtendedTimeElement extends HTMLElement {
     static get observedAttributes() {

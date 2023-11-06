@@ -1,6 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {Epml} from '../../../epml.js'
 
 import '@material/mwc-icon'
 
@@ -100,14 +99,14 @@ class ChatSelect extends LitElement {
         imageHTMLRes.onload = () => {
             this.isImageLoaded = true;
         }
-        imageHTMLRes.onerror = () => {   
+        imageHTMLRes.onerror = () => {
             if (this.imageFetches < 4) {
                 setTimeout(() => {
                     this.imageFetches = this.imageFetches + 1;
                     imageHTMLRes.src = imageUrl;
                 }, 500);
             } else {
-               
+
 
                 this.isImageLoaded = false
             }
@@ -123,61 +122,61 @@ class ChatSelect extends LitElement {
             const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
             const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true&apiKey=${myNode.apiKey}`;
             avatarImg= this.createImage(avatarUrl)
-          
+
         }
 
         return html`
-            <li 
-            @click=${() => this.getUrl(this.chatInfo.url)} 
+            <li
+            @click=${() => this.getUrl(this.chatInfo.url)}
             class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
                 ${this.isImageLoaded ? html`${avatarImg}` : html``}
-                ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : 
-                html`` 
+                ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` :
+                html``
                 }
-                ${!this.isImageLoaded && this.chatInfo.name ? 
+                ${!this.isImageLoaded && this.chatInfo.name ?
                     html`
-                    <div  
-                    style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 
-                        'var(--chatHeadBgActive)' : 
-                        'var(--chatHeadBg)' }; 
-                        color: ${this.activeChatHeadUrl === this.chatInfo.url ? 
-                        'var(--chatHeadTextActive)' : 
-                        'var(--chatHeadText)'}; 
-                        font-weight:bold; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
+                    <div
+                    style="width:40px; height:40px; float: left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ?
+                        'var(--chatHeadBgActive)' :
+                        'var(--chatHeadBg)' };
+                        color: ${this.activeChatHeadUrl === this.chatInfo.url ?
+                        'var(--chatHeadTextActive)' :
+                        'var(--chatHeadText)'};
+                        font-weight:bold;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
                         text-transform: capitalize">
                         ${this.chatInfo.name.charAt(0)}
-                    </div>`: 
+                    </div>`:
                 ''}
-                ${!this.isImageLoaded && this.chatInfo.groupName ? 
+                ${!this.isImageLoaded && this.chatInfo.groupName ?
                     html`
-                    <div  
-                    style="width:40px; 
-                    height:40px; 
-                    float: left; 
-                    border-radius:50%; 
-                    background: ${this.activeChatHeadUrl === this.chatInfo.url ? 
-                    'var(--chatHeadBgActive)' : 
-                    'var(--chatHeadBg)' }; 
-                    color: ${this.activeChatHeadUrl === this.chatInfo.url ? 
-                    'var(--chatHeadTextActive)' : 
-                    'var(--chatHeadText)' }; 
-                    font-weight:bold; 
-                    display: flex; 
-                    justify-content: center; 
-                    align-items: center; 
+                    <div
+                    style="width:40px;
+                    height:40px;
+                    float: left;
+                    border-radius:50%;
+                    background: ${this.activeChatHeadUrl === this.chatInfo.url ?
+                    'var(--chatHeadBgActive)' :
+                    'var(--chatHeadBg)' };
+                    color: ${this.activeChatHeadUrl === this.chatInfo.url ?
+                    'var(--chatHeadTextActive)' :
+                    'var(--chatHeadText)' };
+                    font-weight:bold;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                     text-transform: capitalize">
                         ${this.chatInfo.groupName.charAt(0)}
-                    </div>`: 
+                    </div>`:
                 ''}
                 <div class="about">
                     <div class="name">
                         <span style="float:left; padding-left: 8px; color: var(--chat-group);">
-                            ${this.chatInfo.groupName ? 
-                            this.chatInfo.groupName : 
-                            this.chatInfo.name !== undefined ? this.chatInfo.name : 
+                            ${this.chatInfo.groupName ?
+                            this.chatInfo.groupName :
+                            this.chatInfo.name !== undefined ? this.chatInfo.name :
                             this.chatInfo.address.substr(0, 15)}
                         </span>
                     </div>
@@ -204,7 +203,7 @@ class ChatSelect extends LitElement {
         })
         parentEpml.imReady()
 
-        
+
     }
 
     shouldUpdate(changedProperties) {
@@ -214,10 +213,10 @@ class ChatSelect extends LitElement {
         if(changedProperties.has('chatInfo')){
             return true
         }
-        
+
         return false
       }
-   
+
     getUrl(chatUrl) {
         this.setActiveChatHeadUrl(chatUrl)
     }

@@ -1,6 +1,5 @@
-import { LitElement, html } from 'lit'
-import { render } from 'lit/html.js'
-import { wrapperModalStyles } from './WrapperModal-css.js'
+import {html, LitElement} from 'lit'
+import {wrapperModalStyles} from './WrapperModal-css.js'
 
 export class WrapperModal extends LitElement {
     static get properties() {
@@ -16,9 +15,9 @@ export class WrapperModal extends LitElement {
     render() {
         return html`
             <div>
-                <div 
-                    style="z-index: ${this.zIndex || 50}" 
-                    class="backdrop" 
+                <div
+                    style="z-index: ${this.zIndex || 50}"
+                    class="backdrop"
                     @click=${() => { this.onClickFunc() }}
                 >
                 </div>

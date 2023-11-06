@@ -5,6 +5,7 @@
 		"chinese1": "Chino (Simplificado)",
 		"chinese2": "Chino (Tradicional)",
 		"croatian": "Croata",
+		"dutch": "Holandés",
 		"english": "Inglés",
 		"estonian": "Estonio",
 		"french": "Francés",
@@ -727,7 +728,8 @@
 		"bchange45": "Cifrar",
 		"bchange46": "¿Le das permiso a esta aplicación para guardar el siguiente archivo?",
 		"bchange47": "Publicación instantánea - requiere",
-		"bchange48": "¿Le das permiso a esta aplicación para enviarte notificaciones?"
+		"bchange48": "¿Le das permiso a esta aplicación para enviarte notificaciones?",
+		"bchange49": "¿Le das permiso a esta aplicación para obtener la información de tu billetera?"
 	},
 	"datapage": {
 		"dchange1": "Gestión de datos",

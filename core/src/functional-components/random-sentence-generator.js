@@ -1,7 +1,7 @@
 // Author: irontiga <irontiga@gmail.com>
 
 'use strict'
-import { LitElement, html, css } from 'lit'
+import {html, LitElement} from 'lit'
 import * as WORDLISTS from './wordlists.js'
 
 class RandomSentenceGenerator extends LitElement {
