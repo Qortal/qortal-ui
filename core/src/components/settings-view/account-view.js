@@ -1,7 +1,7 @@
-import {css, html, LitElement} from 'lit'
-import {connect} from 'pwa-helpers'
-import {store} from '../../store.js'
-import {translate} from 'lit-translate'
+import { LitElement, html, css } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../../store.js'
+import { get, translate } from 'lit-translate'
 
 class AccountView extends connect(store)(LitElement) {
     static get properties() {
@@ -65,7 +65,7 @@ class AccountView extends connect(store)(LitElement) {
 
     constructor() {
         super()
-        this.accountInfo = { names: [], addressInfo: {} }
+        this.accountInfo = store.getState().app.accountInfo
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.switchAvatar = ''
     }
@@ -76,7 +76,7 @@ class AccountView extends connect(store)(LitElement) {
                 <div class="center-box">
                     <div class="img-icon">${this.getAvatar()}</div>
                     <span id="accountName">
-                        ${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : 'No Registered Name'}
+                        ${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : get("chatpage.cchange15")}
                     </span>
                     <div class="content-box">
                         <span class="title">${translate("settings.address")}: </span>
@@ -98,21 +98,24 @@ class AccountView extends connect(store)(LitElement) {
     }
 
     getAvatar() {
-        const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-        const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        const numberBlocks = (this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment)
-
         if (this.switchAvatar === 'light') {
-            if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
+            if (this.accountInfo.names.length === 0) {
                return html`<img src="/img/noavatar_light.png" style="width:150px; height:150px; border-radius: 25%;">`
             } else {
+                const avatarName = this.accountInfo.names[0].name
+                const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+                const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+                const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
                 return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='/img/noavatar_light.png';">`
             }
         } else if (this.switchAvatar === 'dark') {
-            if (Number.isNaN(numberBlocks) || numberBlocks == "" || numberBlocks === null) {
+            if (this.accountInfo.names.length === 0) {
                return html`<img src="/img/noavatar_dark.png" style="width:150px; height:150px; border-radius: 25%;">`
             } else {
+                const avatarName = this.accountInfo.names[0].name
+                const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+                const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+                const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
                 return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='/img/noavatar_dark.png';">`
             }
         }
