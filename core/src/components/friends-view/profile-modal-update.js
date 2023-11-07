@@ -72,8 +72,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			window.parent.reduxStore.getState().app.selectedAddress.dgbWallet;
 		this.walletsUi.get('rvn').wallet =
 			window.parent.reduxStore.getState().app.selectedAddress.rvnWallet;
-		this.walletsUi.get('arrr').wallet =
-			window.parent.reduxStore.getState().app.selectedAddress.arrrWallet;
 		this.hasFetchedArrr = false;
 		this.isOpenCustomDataModal = false;
 		this.customData = {};
@@ -286,24 +284,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			case 'arrr':
 				const arrrWalletName = `${coin}Wallet`;
 
-				const res2 = await parentEpml.request('apiCall', {
-					url: `/crosschain/${coin}/syncstatus?apiKey=${this.myNode.apiKey}`,
-					method: 'POST',
-					body: `${
-						window.parent.reduxStore.getState().app.selectedAddress[
-							arrrWalletName
-						].seed58
-					}`,
-				});
-				if (res2 !== null && res2 !== 'Synchronized') {
-					// Check again shortly after
-					await new Promise((resolve) => setTimeout(resolve, 2000));
-					this.fetchWalletAddress('arrr');
-
-					// No need to make balance or transaction list calls yet
-					return;
-				}
-
 				let res = await parentEpml.request('apiCall', {
 					url: `/crosschain/${coin}/walletaddress?apiKey=${this.myNode.apiKey}`,
 					method: 'POST',
@@ -325,9 +305,16 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		}
 	}
 
-	getSelectedWalletAddress(wallet) {
+	async getSelectedWalletAddress(wallet) {
 		switch (wallet) {
 			case 'arrr':
+				if(!this.arrrWalletAddress){
+					try {
+						await this.fetchWalletAddress('arrr');
+					} catch (error) {
+						console.log({error})
+					}
+				}
 				// Use address returned by core API
 				return this.arrrWalletAddress;
 
