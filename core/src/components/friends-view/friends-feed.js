@@ -134,7 +134,7 @@ class FriendsFeed extends connect(store)(LitElement) {
         this.endpointOffsets = Array(this.endpoints.length).fill(0);
             return
         }
-        const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&exactmatchnames=true&${names}`
+        const baseurl = `${this.nodeUrl}/arbitrary/resources/search?reverse=true&mode=ALL&exactmatchnames=true&${names}`
         let formEndpoints = []
         schemas.forEach((schema)=> {
             const feedData = schema.feed[0]
@@ -350,7 +350,7 @@ this.getFeedOnInterval()
 
             // Merge new data with old data immutably
             this.feed = [...enhancedNewData, ...this.feed];
-
+            this.feed = this.removeDuplicates(this.feed)
             this.feed.sort((a, b) => new Date(b.created) - new Date(a.created));  // Sort by timestamp, most recent first
             this.feed = this.trimDataToLimit(this.feed, maxResultsInMemory);  // Trim to the maximum allowed in memory
             this.feedToRender = this.feed.slice(0, 20);
@@ -365,6 +365,17 @@ this.getFeedOnInterval()
     }
 
 
+    removeDuplicates(array) {
+        const seenIds = new Set();
+        return array.filter(item => {
+          if (!seenIds.has(item.identifier)) {
+            seenIds.add(item.identifier);
+            return true;
+          }
+          return false;
+        });
+      }
+      
 
     async  loadAndMergeData() {
         let allData = this.feed
@@ -373,6 +384,7 @@ this.getFeedOnInterval()
         allData = this.mergeData(newData, allData);
         allData.sort((a, b) => new Date(b.created) - new Date(a.created));  // Sort by timestamp, most recent first
         allData = this.trimDataToLimit(allData, maxResultsInMemory);  // Trim to the maximum allowed in memory
+        allData = this.removeDuplicates(allData)
         this.feed = [...allData]
         this.feedToRender = this.feed.slice(0,20)
         this.hasInitialFetch = true
