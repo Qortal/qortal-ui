@@ -326,6 +326,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		return ret;
 	}
 
+
 	async setValues(response, resource) {
 		if (response) {
 			let data = { ...response };
@@ -336,7 +337,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const decryptedData = decryptGroupData(
 							data.customData[key]
 						);
-
 						if (decryptedData && !decryptedData.error) {
 							const decryptedDataToBase64 =
 								uint8ArrayToObject(decryptedData);
@@ -541,18 +541,31 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const getArbitraryFee = await this.getArbitraryFee();
 			const feeAmount = getArbitraryFee.fee;
 
-			let newObject = { ...data };
+			let newObject = structuredClone(data)
 
 			for (const key of Object.keys(newObject.customData || {})) {
 				if (key.includes('-private')) {
-					const toBase64 = await objectToBase64(
-						newObject.customData[key]
-					);
-					const encryptedData = encryptDataGroup({
-						data64: toBase64,
-						publicKeys: [],
-					});
-					newObject['customData'][key] = encryptedData;
+					const dataKey = newObject.customData[key]
+					let isBase64 = false
+					try {
+						const decodedString = atob(dataKey);
+						isBase64 = decodedString.includes('qortalGroupEncryptedData')
+					  } catch (e) {
+						console.log(e)
+					  }
+					  if(isBase64){
+						newObject['customData'][key] = newObject.customData[key];
+					  } else {
+						const toBase64 = await objectToBase64(
+							newObject.customData[key]
+						);
+						const encryptedData = encryptDataGroup({
+							data64: toBase64,
+							publicKeys: [],
+						});
+						newObject['customData'][key] = encryptedData;
+					  }
+					
 				} else {
 					newObject['customData'][key] = newObject.customData[key];
 				}

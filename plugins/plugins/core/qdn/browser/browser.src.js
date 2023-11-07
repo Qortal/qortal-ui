@@ -2206,11 +2206,12 @@ class WebBrowser extends LitElement {
 							// Set up an event listener to wait for the response
 							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
 						});
+						if(!res.response) throw new Error('Failed to set property')
+							response = JSON.stringify(res.response);
 
-						response = JSON.stringify(res);
 					} catch (error) {
 						const obj = {};
-						const errorMsg = error.message || 'Failed to join the group.';
+						const errorMsg = error.message || 'Failed to set property.';
 						obj['error'] = errorMsg;
 						response = JSON.stringify(obj);
 					} finally {
@@ -3792,7 +3793,7 @@ async function showModalAndWait(type, data) {
 						` : ''}
 						${type === actions.SET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
-								<p class="modal-paragraph">${get("browserpage.bchange50")}: <span style="font-weight: bold"> ${data.property}</span></p>
+								<p class="modal-paragraph">${get("browserpage.bchange50")} <span style="font-weight: bold"> ${data.property}</span></p>
 								<br>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.fee} QORT fee</span></p>
 								<br>
