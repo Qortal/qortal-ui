@@ -27,7 +27,7 @@ import './wallet-profile.js'
 import './app-info.js'
 import './show-plugin.js'
 import './theme-toggle.js'
-import './language-selector.js'
+import './new-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 import './check-for-update.js'
@@ -564,22 +564,17 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
-                            <div style="display:flex;align-items:center;gap:20px">
-                            <friends-side-panel-parent></friends-side-panel-parent>
-                            <notification-bell></notification-bell>
-                            <notification-bell-general></notification-bell-general>
-                            <save-settings-qdn></save-settings-qdn>
+                            <div style="display: flex; align-items: center; gap: 20px">
+                                <friends-side-panel-parent></friends-side-panel-parent>
+                                <notification-bell></notification-bell>
+                                <notification-bell-general></notification-bell-general>
+                                <save-settings-qdn></save-settings-qdn>
                             </div>
-                            <div style="display: inline;">
-                                <span>
-                                    <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
-                                </span>
-                            </div>
-                            <div>&nbsp;&nbsp;</div>
-                            <language-selector></language-selector>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div>&nbsp;</div>
+                            <new-selector></new-selector>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <core-sync-status></core-sync-status>
-                            <div>&nbsp;&nbsp;</div>
+                            <div>&nbsp;&nbsp;&nbsp;</div>
                             <theme-toggle></theme-toggle>
                             <div>&nbsp;&nbsp;</div>
                             ${this.renderLockButton()}
@@ -591,7 +586,7 @@ class AppView extends connect(store)(LitElement) {
                             </div>
                             <div>&nbsp;&nbsp;</div>
                             <check-for-update></check-for-update>
-                            <div>&nbsp;&nbsp;</div>
+                            <div>&nbsp;</div>
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="${translate("logout.logout")}"></paper-icon-button>
                             </div>
