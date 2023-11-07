@@ -51,6 +51,16 @@ export class UserInfo extends LitElement {
         return imageHTMLRes
     }
 
+    openProfile(){
+        try {
+            const customEvent = new CustomEvent('open-visiting-profile', {
+                detail: this.userName
+            });
+            window.parent.dispatchEvent(customEvent);
+
+        } catch (error) { /* empty */ }
+    }
+
 
     render() {
         let avatarImg = ""
@@ -84,7 +94,7 @@ export class UserInfo extends LitElement {
                         <img src="/img/incognito.png" alt="avatar" />
                     </div>`
                 : ""}
-                <div class="user-info-header">
+                  <div class="user-info-header">
                     ${this.selectedHead && this.selectedHead.name ? this.selectedHead.name : this.selectedHead ? cropAddress(this.selectedHead.address) : null}
                 </div>
                 <div class="send-message-button" @click="${() => {
@@ -102,6 +112,19 @@ export class UserInfo extends LitElement {
                 }}>
                     ${translate("chatpage.cchange59")}
                 </div>
+                ${this.userName ? html`
+                <div style="margin-top: 5px;text-transform: uppercase;" class="send-message-button" @click=${() => {
+                    setTimeout(() => {
+                        this.openProfile()
+                    }, 250);
+                    this.setOpenUserInfo(false)
+                   
+                    
+                }}>
+                    ${translate("profile.profile18")}
+                </div>
+                ` : ''}
+               
             </div>
         `
     }

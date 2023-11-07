@@ -1,12 +1,12 @@
-import {css, html, LitElement} from 'lit'
-import {connect} from 'pwa-helpers'
-import {store} from '../store.js'
-import {Epml} from '../epml.js'
-import {addTradeBotRoutes} from '../tradebot/addTradeBotRoutes.js'
-import {get, translate} from 'lit-translate'
+import { css, html, LitElement } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../store.js'
+import { Epml } from '../epml.js'
+import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
+import { get, translate } from 'lit-translate'
 import localForage from 'localforage'
-import {decryptData, encryptData} from '../lockScreen.js'
-import {setChatLastSeen} from '../redux/app/app-actions.js'
+import { decryptData, encryptData } from '../lockScreen.js'
+import { setChatLastSeen } from '../redux/app/app-actions.js'
 import isElectron from 'is-electron'
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -41,6 +41,7 @@ import './notification-view/notification-bell-general.js'
 import './friends-view/friends-side-panel-parent.js'
 import './friends-view/save-settings-qdn.js'
 import './friends-view/core-sync-status.js'
+import './friends-view/profile.js'
 import './controllers/coin-balances-controller.js'
 
 const chatLastSeen = localForage.createInstance({
@@ -564,7 +565,8 @@ class AppView extends connect(store)(LitElement) {
                                     <img src="${this.config.coin.logo}" style="height:32px; padding-left:12px;">
                                 </span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 20px">
+                            <div style="display:flex;align-items:center;gap:20px">
+                                <profile-qdn></profile-qdn>
                                 <friends-side-panel-parent></friends-side-panel-parent>
                                 <notification-bell></notification-bell>
                                 <notification-bell-general></notification-bell-general>
@@ -705,11 +707,11 @@ class AppView extends connect(store)(LitElement) {
         var drawerTog = this.shadowRoot.getElementById("mb")
         var drawerOut = this.shadowRoot.getElementById("appsidebar")
 
-        drawerTog.addEventListener('mouseover', function() {
+        drawerTog.addEventListener('mouseover', function () {
             drawerTog.click()
         })
 
-        drawerOut.addEventListener('mouseleave', function() {
+        drawerOut.addEventListener('mouseleave', function () {
             drawerTog.click()
         })
 

@@ -1,14 +1,17 @@
 import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
-import {connect} from 'pwa-helpers';
-import {store} from '../../store.js';
-import WebWorker from 'web-worker:./computePowWorkerFile.src.js';
+import { connect } from 'pwa-helpers';
+import { store } from '../../store.js';
+import WebWorker from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import {translate} from 'lit-translate';
+import { get, translate } from 'lit-translate';
+import ShortUniqueId from 'short-unique-id';
+
 import {
 	decryptGroupData,
+	
 	encryptDataGroup,
 	objectToBase64,
 	uint8ArrayToObject,
@@ -16,6 +19,7 @@ import {
 import {publishData} from '../../../../plugins/plugins/utils/publish-image.js';
 import {parentEpml} from '../show-plugin.js';
 import '../notification-view/popover.js';
+import { setNewTab } from '../../redux/app/app-actions.js';
 
 class SaveSettingsQdn extends connect(store)(LitElement) {
 	static get properties() {
@@ -27,6 +31,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			resourceExists: { type: Boolean },
 			isSaving: { type: Boolean },
 			fee: { type: Object },
+			hasName: {type: Boolean},
+			error: {type: String},
+			name: {type: String}
 		};
 	}
 
@@ -47,6 +54,11 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		this.valuesToBeSavedOnQdn = {};
 		this.isSaving = false;
 		this.fee = null;
+		this.hasName = false;
+		this.error = "";
+		this.uid = new ShortUniqueId();
+		this.name = undefined;
+
 	}
 	static styles = css`
 		:host {
@@ -309,13 +321,26 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 
 	async getGeneralSettingsQdn() {
 		try {
+			this.error = ""
 			const arbFee = await this.getArbitraryFee();
 			this.fee = arbFee;
 			this.hasAttemptedToFetchResource = true;
 			let resource;
-			const nameObject = store.getState().app.accountInfo.names[0];
-			if (!nameObject) throw new Error('no name');
+			let nameObject
+			try {
+			 nameObject = store.getState().app.accountInfo.names[0];
+
+			} catch (error) {
+				
+			}
+			if (!nameObject) {
+				this.name = null;
+				this.error = 'no name'
+				throw new Error('no name');
+			}
 			const name = nameObject.name;
+			this.name = name;
+			this.hasName = true
 			this.error = '';
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT_PRIVATE&identifier=qortal_general_settings&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
@@ -363,8 +388,6 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 
 	stateChanged(state) {
 		if (
-			state.app.accountInfo &&
-			state.app.accountInfo.names.length &&
 			state.app.nodeStatus &&
 			state.app.nodeStatus.syncPercent !== this.syncPercentage
 		) {
@@ -376,6 +399,15 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			) {
 				this.getGeneralSettingsQdn();
 			}
+		}
+
+		if (
+			state.app.accountInfo &&
+			state.app.accountInfo.names.length &&
+			state.app.nodeStatus &&
+			state.app.nodeStatus.syncPercent === 100 && this.hasName === false && this.hasAttemptedToFetchResource && state.app.accountInfo && state.app.accountInfo.names && state.app.accountInfo.names.length > 0
+		) {
+			this.getGeneralSettingsQdn();
 		}
 	}
 
@@ -529,7 +561,78 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 							style="display: block; margin: 0 auto;"
 						></paper-spinner-lite>
 				  `
-				: html`
+				: !this.name ? html`
+						<mwc-icon
+							id="profile-icon"
+							class=${'notActive'}
+							@click=${() => {
+								const target = this.shadowRoot.getElementById(
+									'popover-notification'
+								);
+								const popover =
+									this.shadowRoot.querySelector(
+										'popover-component'
+									);
+								if (popover) {
+									popover.openPopover(target);
+								}
+							}}
+							style="user-select:none;cursor:pointer"
+							>save</mwc-icon
+						>
+						<vaadin-tooltip
+							for="profile-icon"
+							position="bottom"
+							hover-delay=${300}
+							hide-delay=${1}
+							text=${translate('profile.profile20')}
+						>
+						</vaadin-tooltip>
+						<popover-component for="profile-icon" message="">
+							<div style="margin-bottom:20px">
+								<p style="margin:10px 0px; font-size:16px">
+									${translate('profile.profile1')}
+								</p>
+							</div>
+							<div
+								style="display:flex;justify-content:center;gap:10px"
+							>
+								<div
+									class="accept-button"
+									@click="${() => {
+										store.dispatch(
+											setNewTab({
+												url: `group-management`,
+												id: this.uid.rnd(),
+												myPlugObj: {
+													url: 'name-registration',
+													domain: 'core',
+													page: 'name-registration/index.html',
+													title: 'Name Registration',
+													icon: 'vaadin:user-check',
+													mwcicon: 'manage_accounts',
+													pluginNumber:
+														'plugin-qCmtXAQmtu',
+													menus: [],
+													parent: false,
+												},
+												openExisting: true,
+											})
+										);
+										const popover =
+											this.shadowRoot.querySelector(
+												'popover-component'
+											);
+										if (popover) {
+											popover.closePopover();
+										}
+									}}"
+								>
+									${translate('profile.profile2')}
+								</div>
+							</div>
+						</popover-component>
+				  ` : html`
 						<mwc-icon
 							id="save-icon"
 							class=${Object.values(this.valuesToBeSavedOnQdn)

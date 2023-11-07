@@ -481,11 +481,10 @@ class WebBrowser extends LitElement {
 		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
 		return {
 			timestamp,
-			fee : Number(data),
+			fee: Number(data),
 			feeToShow: arbitraryFee
 		}
 	}
-
 	async sendQortFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -660,9 +659,9 @@ class WebBrowser extends LitElement {
 		}
 
 		const makeTransactionRequest = async (lastRef) => {
-			let votedialog1 =   get("transactions.votedialog1")
-			let votedialog2 =  get("transactions.votedialog2")
-			let feeDialog =  get("walletpage.wchange12")
+			let votedialog1 = get("transactions.votedialog1")
+			let votedialog2 = get("transactions.votedialog2")
+			let feeDialog = get("walletpage.wchange12")
 
 			let myTxnrequest = await parentEpml.request('transaction', {
 				type: 9,
@@ -1622,7 +1621,7 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.SEND_LOCAL_NOTIFICATION: {
-					const {title, url, icon, message} = data
+					const { title, url, icon, message } = data
 					try {
 						const id = `appNotificationList-${this.selectedAddress.address}`
 						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
@@ -1641,7 +1640,7 @@ class WebBrowser extends LitElement {
 						   this.updateLastNotification(id, this.name)
 						   break
 						} else {
-							throw new Error(`duration until another notification can be sent: ${interval - timeDifference}`)
+							throw new Error(`invalid data`)
 						}
 					  } else if(!lastNotification){
 						parentEpml.request('showNotification', {
@@ -2063,6 +2062,199 @@ class WebBrowser extends LitElement {
 					}
 					break
 				}
+
+				case 'GET_PROFILE_DATA': {
+					const defaultProperties = ['tagline', 'bio', 'wallets']
+					const requiredFields = ['property'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						const profileData = window.parent.reduxStore.getState().app.profileData
+						if (!profileData) {
+							throw new Error('User does not have a profile')
+						}
+						const property = data.property
+						const propertyIndex = defaultProperties.indexOf(property)
+						if (propertyIndex !== -1) {
+							const requestedData = profileData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
+						if (property.includes('-private')) {
+							const resPrivateProperty = await showModalAndWait(
+								actions.GET_PROFILE_DATA, {
+								property
+							}
+							);
+
+							if (resPrivateProperty.action === 'accept') {
+
+								const requestedData = profileData.customData[property]
+								if (requestedData) {
+									response = JSON.stringify(requestedData);
+									break
+								} else {
+									throw new Error('Cannot find requested data')
+								}
+							} else {
+								throw new Error('User denied permission for private property')
+							}
+						} else {
+							const requestedData = profileData.customData[property]
+							if (requestedData) {
+								response = JSON.stringify(requestedData);
+								break
+							} else {
+								throw new Error('Cannot find requested data')
+							}
+						}
+
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to join the group.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
+				case 'SET_PROFILE_DATA': {
+					const requiredFields = ['property', 'data'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						const property = data.property
+						const payload = data.data
+						const uniqueId = this.uid.rnd()
+						const fee = await this.getArbitraryFee()
+						const resSetPrivateProperty = await showModalAndWait(
+							actions.SET_PROFILE_DATA, {
+							property,
+							fee: fee.feeToShow
+						}
+						);
+
+
+						if (resSetPrivateProperty.action !== 'accept') throw new Error('User declined permission')
+
+						//dispatch event and wait until I get a response to continue
+
+						// Create and dispatch custom event
+						const customEvent = new CustomEvent('qortal-request-set-profile-data', {
+							detail: {
+								property,
+								payload,
+								uniqueId
+							}
+						});
+						window.parent.dispatchEvent(customEvent);
+
+						// Wait for response event
+						const res = await new Promise((resolve, reject) => {
+							function handleResponseEvent(event) {
+								// Handle the data from the event, if any
+								const responseData = event.detail;
+								if(responseData && responseData.uniqueId !== uniqueId) return
+								// Clean up by removing the event listener once we've received the response
+								window.removeEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
+
+								if (responseData.response === 'saved') {
+									resolve(responseData);
+								} else {
+									reject(new Error('not saved'));
+								}
+							}
+
+							// Set up an event listener to wait for the response
+							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
+						});
+						if(!res.response) throw new Error('Failed to set property')
+							response = JSON.stringify(res.response);
+
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to set property.';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} finally {
+						this.loader.hide();
+					}
+					break;
+				}
+
+				case 'OPEN_PROFILE': {
+					const requiredFields = ['name'];
+					const missingFields = [];
+
+					requiredFields.forEach((field) => {
+						if (!data[field] && data[field] !== 0) {
+							missingFields.push(field);
+						}
+					});
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ');
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {};
+						data['error'] = errorMsg;
+						response = JSON.stringify(data);
+						break
+					}
+
+
+					try {
+						 const customEvent = new CustomEvent('open-visiting-profile', {
+                			detail: data.name
+            		});
+            window.parent.dispatchEvent(customEvent);
+						response = JSON.stringify(true);
+					} catch (error) {
+						const obj = {};
+						const errorMsg = error.message || 'Failed to open profile';
+						obj['error'] = errorMsg;
+						response = JSON.stringify(obj);
+					} 
+					break;
+				}
+
 
 				case actions.GET_USER_WALLET: {
 					const requiredFields = ['coin'];
@@ -3561,7 +3753,7 @@ async function showModalAndWait(type, data) {
 
 						${type === actions.GET_USER_WALLET ? `
 							<div class="modal-subcontainer">
-								<p class="modal-paragraph">${get("browserpage.bchange49")}</p>
+								<p class="modal-paragraph">${get("browserpage.bchange52")}</p>
 							</div>
 						` : ''}
 						${type === actions.GET_WALLET_BALANCE ? `
@@ -3591,6 +3783,21 @@ async function showModalAndWait(type, data) {
 						${type === actions.SAVE_FILE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
+							</div>
+						` : ''}
+						${type === actions.GET_PROFILE_DATA ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
+								
+							</div>
+						` : ''}
+						${type === actions.SET_PROFILE_DATA ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange50")} <span style="font-weight: bold"> ${data.property}</span></p>
+								<br>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.fee} QORT fee</span></p>
+								<br>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange51')} </p>
 							</div>
 						` : ''}
 						${type === actions.NOTIFICATIONS_PERMISSION ? `

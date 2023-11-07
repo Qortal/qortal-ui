@@ -35,7 +35,8 @@ import {
 	SET_TAB_NOTIFICATIONS,
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
-	UPDATE_NODE_STATUS
+	UPDATE_NODE_STATUS,
+    SET_PROFILE_DATA
 } from './app-action-types.js'
 import {initWorkersReducer} from './reducers/init-workers.js'
 import {loginReducer} from './reducers/login-reducer.js'
@@ -90,6 +91,7 @@ const INITIAL_STATE = {
     isOpenDevDialog: false,
     newNotification: null,
     sideEffectAction: null,
+    profileData: null,
     coinBalances: {}
 }
 
@@ -329,6 +331,12 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 sideEffectAction: action.payload
+            }
+        }
+        case SET_PROFILE_DATA: {
+            return {
+                ...state,
+                profileData: action.payload
             }
         }
         case SET_COIN_BALANCES: {

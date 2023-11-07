@@ -19,7 +19,8 @@ import {
 	SET_TAB_NOTIFICATIONS,
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
-	UPDATE_NODE_STATUS
+	UPDATE_NODE_STATUS,
+    SET_PROFILE_DATA
 } from '../app-action-types.js'
 
 export const doUpdateBlockInfo = (blockObj) => {
@@ -176,6 +177,12 @@ export const setTabNotifications = (payload) => {
 export const setSideEffectAction = (payload)=> {
     return {
         type: SET_SIDE_EFFECT,
+        payload
+    }
+}
+export const setProfileData = (payload)=> {
+    return {
+        type: SET_PROFILE_DATA,
         payload
     }
 }
