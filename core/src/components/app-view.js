@@ -1,12 +1,12 @@
-import {css, html, LitElement} from 'lit'
-import {connect} from 'pwa-helpers'
-import {store} from '../store.js'
-import {Epml} from '../epml.js'
-import {addTradeBotRoutes} from '../tradebot/addTradeBotRoutes.js'
-import {get, translate} from 'lit-translate'
+import { css, html, LitElement } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../store.js'
+import { Epml } from '../epml.js'
+import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
+import { get, translate } from 'lit-translate'
 import localForage from 'localforage'
-import {decryptData, encryptData} from '../lockScreen.js'
-import {setChatLastSeen} from '../redux/app/app-actions.js'
+import { decryptData, encryptData } from '../lockScreen.js'
+import { setChatLastSeen } from '../redux/app/app-actions.js'
 import isElectron from 'is-electron'
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -27,7 +27,7 @@ import './wallet-profile.js'
 import './app-info.js'
 import './show-plugin.js'
 import './theme-toggle.js'
-import './language-selector.js'
+import './new-selector.js'
 import './settings-view/user-settings.js'
 import './logout-view/logout-view.js'
 import './check-for-update.js'
@@ -566,22 +566,17 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:20px">
-                            <profile-qdn></profile-qdn>
-                            <friends-side-panel-parent></friends-side-panel-parent>
-                            <notification-bell></notification-bell>
-                            <notification-bell-general></notification-bell-general>
-                            <save-settings-qdn></save-settings-qdn>
+                                <profile-qdn></profile-qdn>
+                                <friends-side-panel-parent></friends-side-panel-parent>
+                                <notification-bell></notification-bell>
+                                <notification-bell-general></notification-bell-general>
+                                <save-settings-qdn></save-settings-qdn>
                             </div>
-                            <div style="display: inline;">
-                                <span>
-                                    <img src="/img/${translate("selectmenu.languageflag")}-flag-round-icon-32.png" style="width: 32px; height: 32px; padding-top: 4px;">
-                                </span>
-                            </div>
-                            <div>&nbsp;&nbsp;</div>
-                            <language-selector></language-selector>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div>&nbsp;</div>
+                            <new-selector></new-selector>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                             <core-sync-status></core-sync-status>
-                            <div>&nbsp;&nbsp;</div>
+                            <div>&nbsp;&nbsp;&nbsp;</div>
                             <theme-toggle></theme-toggle>
                             <div>&nbsp;&nbsp;</div>
                             ${this.renderLockButton()}
@@ -593,7 +588,7 @@ class AppView extends connect(store)(LitElement) {
                             </div>
                             <div>&nbsp;&nbsp;</div>
                             <check-for-update></check-for-update>
-                            <div>&nbsp;&nbsp;</div>
+                            <div>&nbsp;</div>
                             <div style="display: inline;">
                                 <paper-icon-button icon="icons:exit-to-app" @click=${() => this.openLogout()} title="${translate("logout.logout")}"></paper-icon-button>
                             </div>
@@ -712,11 +707,11 @@ class AppView extends connect(store)(LitElement) {
         var drawerTog = this.shadowRoot.getElementById("mb")
         var drawerOut = this.shadowRoot.getElementById("appsidebar")
 
-        drawerTog.addEventListener('mouseover', function() {
+        drawerTog.addEventListener('mouseover', function () {
             drawerTog.click()
         })
 
-        drawerOut.addEventListener('mouseleave', function() {
+        drawerOut.addEventListener('mouseleave', function () {
             drawerTog.click()
         })
 
