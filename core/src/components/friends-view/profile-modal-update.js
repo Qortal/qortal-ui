@@ -348,8 +348,8 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.tagline = '';
 	}
 
-	fillAddress(coin) {
-		const address = this.getSelectedWalletAddress(coin);
+	async fillAddress(coin) {
+		const address = await this.getSelectedWalletAddress(coin);
 		if (address) {
 			this.wallets = {
 				...this.wallets,
