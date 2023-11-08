@@ -32,11 +32,11 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			hasFetchedArrr: { type: Boolean },
 			isOpenCustomDataModal: { type: Boolean },
 			customData: { type: Object },
-			newCustomDataField: { type: Object },
-			newFieldName: { type: String },
-			qortalRequestCustomData: { type: Object },
-			newCustomDataKey: { type: String },
-			isSaving: { type: Boolean },
+			newCustomDataField: {type: Object},
+			newFieldName: {type: String},
+			qortalRequestCustomData: {type: Object},
+			newCustomDataKey: {type: String},
+			isSaving: {type: Boolean}
 		};
 	}
 
@@ -75,10 +75,11 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.hasFetchedArrr = false;
 		this.isOpenCustomDataModal = false;
 		this.customData = {};
-		this.newCustomDataKey = '';
+		this.newCustomDataKey = ""
 		this.newCustomDataField = {};
 		this.newFieldName = '';
-		this.isSaving = false;
+		this.isSaving = false
+		
 	}
 
 	static get styles() {
@@ -239,20 +240,20 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			changedProperties.has('editContent') &&
 			this.editContent
 		) {
-			const { bio, tagline, wallets, customData } = this.editContent;
+			const {bio, tagline, wallets, customData} = this.editContent
 			this.bio = bio ?? '';
 			this.tagline = tagline ?? '';
-			let formWallets = { ...this.wallets };
-			if (wallets && Object.keys(wallets).length) {
-				Object.keys(formWallets).forEach((key) => {
-					if (wallets[key]) {
-						formWallets[key] = wallets[key];
+			let formWallets = {...this.wallets}
+			if(wallets && Object.keys(wallets).length){
+				Object.keys(formWallets).forEach((key)=> {
+					if(wallets[key]){
+						formWallets[key] = wallets[key]
 					}
-				});
+				})
 			}
-			this.wallets = formWallets;
+			this.wallets = formWallets
 
-			this.customData = { ...customData };
+			this.customData = {...customData}
 			this.requestUpdate();
 		}
 		if (
@@ -260,13 +261,13 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			changedProperties.has('qortalRequestCustomData') &&
 			this.qortalRequestCustomData
 		) {
-			this.isOpenCustomDataModal = true;
-			this.newCustomDataField = {
-				...this.qortalRequestCustomData.payload.customData,
-			};
-			this.newCustomDataKey = this.qortalRequestCustomData.property;
+			this.isOpenCustomDataModal = true
+			this.newCustomDataField = {...this.qortalRequestCustomData.payload.customData}
+			this.newCustomDataKey = this.qortalRequestCustomData.property
 			this.requestUpdate();
 		}
+
+		
 	}
 
 	async firstUpdated() {
@@ -307,11 +308,11 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	async getSelectedWalletAddress(wallet) {
 		switch (wallet) {
 			case 'arrr':
-				if (!this.arrrWalletAddress) {
+				if(!this.arrrWalletAddress){
 					try {
 						await this.fetchWalletAddress('arrr');
 					} catch (error) {
-						console.log({ error });
+						console.log({error})
 					}
 				}
 				// Use address returned by core API
@@ -364,51 +365,51 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				tagline: this.tagline,
 				bio: this.bio,
 				wallets: this.wallets,
-				customData: this.customData,
+				customData: this.customData
 			};
-			this.isSaving = true;
+			this.isSaving = true
 			await this.onSubmit(data);
 			this.setIsOpen(false);
 			this.clearFields();
 			this.onClose('success');
-		} catch (error) {
-		} finally {
-			this.isSaving = false;
+		} catch (error) {} finally {
+			this.isSaving = false
 		}
 	}
 
-	removeField(key) {
-		const copyObj = { ...this.newCustomDataField };
-		delete copyObj[key];
-		this.newCustomDataField = copyObj;
+	removeField(key){
+		const copyObj = {...this.newCustomDataField}
+		delete copyObj[key]
+		this.newCustomDataField = copyObj
 	}
 
-	addField() {
-		const copyObj = { ...this.newCustomDataField };
-		copyObj[this.newFieldName] = '';
-		this.newCustomDataField = copyObj;
-		this.newFieldName = '';
+	addField(){
+		const copyObj = {...this.newCustomDataField}
+		copyObj[this.newFieldName] = ''
+		this.newCustomDataField = copyObj
+		this.newFieldName = ""
 	}
 
-	addCustomData() {
-		const copyObj = { ...this.customData };
-		copyObj[this.newCustomDataKey] = this.newCustomDataField;
-		this.customData = copyObj;
-		this.newCustomDataKey = '';
+	addCustomData(){
+		const copyObj = {...this.customData}
+		copyObj[this.newCustomDataKey] = this.newCustomDataField
+		this.customData = copyObj
+		this.newCustomDataKey = ""
 		this.newCustomDataField = {};
-		this.newFieldName = '';
+		this.newFieldName = ''
 		this.isOpenCustomDataModal = false;
 	}
 
-	updateCustomData(key, data) {
-		this.isOpenCustomDataModal = true;
-		this.newCustomDataField = data;
-		this.newCustomDataKey = key;
+	updateCustomData(key, data){
+		this.isOpenCustomDataModal = true
+		this.newCustomDataField = data
+		this.newCustomDataKey = key
+
 	}
-	removeCustomData(key) {
-		const copyObj = { ...this.customData };
-		delete copyObj[key];
-		this.customData = copyObj;
+	removeCustomData(key){
+		const copyObj = {...this.customData}
+		delete copyObj[key]
+		this.customData = copyObj
 	}
 
 	render() {
@@ -478,9 +479,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 										>
 											<input
 												id=${key}
-												placeholder=${key +
-												' ' +
-												get('settings.address')}
+												placeholder=${key + ' ' +  get('settings.address')}
 												class="input"
 												.value=${this.wallets[key]}
 												@change=${(e) => {
@@ -499,15 +498,13 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 												>upload_2</mwc-icon
 											>
 											<vaadin-tooltip
-												for=${`${key}-upload`}
-												position="bottom"
-												hover-delay=${200}
-												hide-delay=${1}
-												text=${translate(
-													'profile.profile21'
-												)}
-											>
-											</vaadin-tooltip>
+							for=${`${key}-upload`}
+							position="bottom"
+							hover-delay=${200}
+							hide-delay=${1}
+							text=${translate('profile.profile21')}
+						>
+						</vaadin-tooltip>
 										</div>
 									</div>
 								`;
@@ -519,21 +516,20 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 									<div
 										style="display:flex;justify-content:center;flex-direction:column;gap:25px"
 									>
+										
 										<div
 											style="display:flex;gap:15px;align-items:center"
 										>
-											<p
-												style="color: var(--black);font-size:16px"
-											>
-												${key}
+										<p
+										
+											style="color: var(--black);font-size:16px"
+										>
+											${key}
 											</p>
 
 											<mwc-icon
 												@click=${() =>
-													this.updateCustomData(
-														key,
-														this.customData[key]
-													)}
+													this.updateCustomData(key,this.customData[key])}
 												style="color:var(--black);cursor:pointer"
 												>edit</mwc-icon
 											>
@@ -563,36 +559,31 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						>
 							${translate('general.close')}
 						</button>
-
+						
 						<div style="display:flex;gap:10px;align-items:center">
-							<button
-								?disabled="${this.isLoading}"
-								class="modal-button"
-								@click=${() => {
-									this.isOpenCustomDataModal = true;
-								}}
-							>
-								${translate('profile.profile8')}
-							</button>
-							<button
-								?disabled="${this.isLoading}"
-								class="modal-button"
-								@click=${() => {
-									if (this.isSaving) return;
-									this.saveProfile();
-								}}
-							>
-								${this.isSaving
-									? html`
-											<paper-spinner-lite
-												active
-											></paper-spinner-lite>
-									  `
-									: ''}
-								${this.isSaving
-									? ''
-									: translate('profile.profile3')}
-							</button>
+						
+						<button
+							?disabled="${this.isLoading}"
+							class="modal-button"
+							@click=${() => {
+								this.isOpenCustomDataModal = true;
+							}}
+						>
+							${translate('profile.profile8')}
+						</button>
+						<button
+							?disabled="${this.isLoading}"
+							class="modal-button"
+							@click=${() => {
+								if(this.isSaving) return
+								this.saveProfile();
+							}}
+						>
+						${this.isSaving ? html`
+							<paper-spinner-lite active></paper-spinner-lite>
+							` : ''}
+							${this.isSaving ? '' : translate('profile.profile3') }
+						</button>
 						</div>
 					</div>
 				</div>
@@ -623,12 +614,14 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							>
 								<input
 									id="key-name"
-									placeholder=${translate('profile.profile9')}
+									placeholder=${translate(
+										'profile.profile9'
+									)}
 									?disabled=${!!this.qortalRequestCustomData}
 									class="input"
 									.value=${this.newCustomDataKey}
 									@change=${(e) => {
-										this.newCustomDataKey = e.target.value;
+										this.newCustomDataKey = e.target.value
 									}}
 								/>
 							</div>
@@ -636,75 +629,66 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						<div style="height:15px"></div>
 						<p>${translate('profile.profile10')}</p>
 						<div style="display: flex;flex-direction: column;">
-							${Object.keys(this.newCustomDataField).map(
-								(key) => {
-									return html`
-										<div
-											style="display:flex;justify-content:center;flex-direction:column"
+							${Object.keys(this.newCustomDataField).map((key) => {
+								return html`
+									<div
+										style="display:flex;justify-content:center;flex-direction:column"
+									>
+										<label
+											for=${key}
+											id="taglineLabel"
+											style="color: var(--black);font-size:16px"
 										>
-											<label
-												for=${key}
-												id="taglineLabel"
-												style="color: var(--black);font-size:16px"
-											>
-												${key}
-											</label>
-											<div
-												style="display:flex;gap:15px;align-items:center"
-											>
-												<input
-													id=${key}
-													placeholder=${translate(
-														'profile.profile13'
-													)}
-													class="input"
-													.value=${this
-														.newCustomDataField[
-														key
-													]}
-													@change=${(e) => {
-														this.newCustomDataField =
-															{
-																...this
-																	.newCustomDataField,
-																[key]: e.target
-																	.value,
-															};
-													}}
-												/>
+											${key}
+										</label>
+										<div
+											style="display:flex;gap:15px;align-items:center"
+										>
+										
+											<input
+												id=${key}
+												placeholder=${translate('profile.profile13')}
+												class="input"
+												.value=${this.newCustomDataField[key]}
+												@change=${(e) => {
+													this.newCustomDataField = {
+														...this.newCustomDataField,
+														[key]: e.target.value,
+													};
+												}}
+											/>
 
-												<mwc-icon
-													@click=${() =>
-														this.removeField(key)}
-													style="color:var(--black);cursor:pointer"
-													>remove</mwc-icon
-												>
-											</div>
+											<mwc-icon
+												@click=${() =>
+													this.removeField(key)}
+												style="color:var(--black);cursor:pointer"
+												>remove</mwc-icon
+											>
 										</div>
-									`;
-								}
-							)}
+									</div>
+								`;
+							})}
 						</div>
 						<div style="height:15px"></div>
-						<div
-							style="width:100%;display:flex;justify-content:center;gap:10px;margin-top:30px"
+						<div style="width:100%;display:flex;justify-content:center;gap:10px;margin-top:30px">
+						<input
+												
+												placeholder=${translate('profile.profile12')}
+												class="input"
+												.value=${this.newFieldName}
+												@change=${(e) => {
+													this.newFieldName = e.target.value
+													
+												}}
+											/>
+						<button
+							class="modal-button"
+							@click=${() => {
+								this.addField();
+							}}
 						>
-							<input
-								placeholder=${translate('profile.profile12')}
-								class="input"
-								.value=${this.newFieldName}
-								@change=${(e) => {
-									this.newFieldName = e.target.value;
-								}}
-							/>
-							<button
-								class="modal-button"
-								@click=${() => {
-									this.addField();
-								}}
-							>
-								${translate('profile.profile11')}
-							</button>
+							${translate('profile.profile11')}
+						</button>
 						</div>
 					</div>
 					<div
@@ -714,8 +698,8 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							class="modal-button-red"
 							?disabled="${this.isLoading}"
 							@click="${() => {
-								this.isOpenCustomDataModal = false;
-								this.newCustomDataKey = '';
+								this.isOpenCustomDataModal = false
+								this.newCustomDataKey = ""
 								this.newCustomDataField = {};
 							}}"
 						>
@@ -729,7 +713,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 								this.addCustomData();
 							}}
 						>
-							${translate('profile.profile8')}
+							 ${translate('profile.profile8')}
 						</button>
 					</div>
 				</div>
