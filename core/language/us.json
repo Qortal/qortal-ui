@@ -209,7 +209,11 @@
 		"exp4": "Please choose a wallet to backup the private master key.",
 		"core": "Start Core Settings",
 		"qappNotification1": "Q-App Notifications",
-		"selectnode": "Please select an option"
+		"selectnode": "Please select an option",
+		"arrr1": "ARRR Wallet Not Initialized !",
+		"arrr2": "Please go to wallet tab and initialize your arrr wallet first.",
+		"arrr3": "Need Core Update !",
+		"arrr4": "To save the private key of your arrr wallet you need a core update first !"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",
@@ -1241,7 +1245,7 @@
 		"profile20": "Register name",
 		"profile21": "Insert address from UI",
 		"profile22": "Success",
-    "profile23": "encrypted",
+		"profile23": "encrypted",
 		"profile24": "You must fill out both field name and field value to add a custom property"
 	}
 }
