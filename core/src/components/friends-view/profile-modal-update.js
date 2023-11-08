@@ -36,6 +36,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			newFieldName: {type: String},
 			qortalRequestCustomData: {type: Object},
 			newCustomDataKey: {type: String},
+			newCustomDataValue: {type: String},
 			isSaving: {type: Boolean}
 		};
 	}
@@ -75,11 +76,13 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.hasFetchedArrr = false;
 		this.isOpenCustomDataModal = false;
 		this.customData = {};
-		this.newCustomDataKey = ""
+		this.newCustomDataKey = "";
+		this.newCustomDataValue = "";
 		this.newCustomDataField = {};
 		this.newFieldName = '';
-		this.isSaving = false
-		
+		this.isSaving = false;
+		this.addPrivate = this.addPrivate.bind(this);
+    this.checkForPrivate = this.checkForPrivate.bind(this);
 	}
 
 	static get styles() {
@@ -178,7 +181,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				transform: translate(-50%, -50%);
 				background-color: var(--mdc-theme-surface);
 				width: 80vw;
-				max-width: 600px;
 				padding: 20px;
 				box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;
 				z-index: 1001;
@@ -190,6 +192,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			.modal-overlay.hidden {
 				display: none;
 			}
+
 			.avatar {
 				width: 36px;
 				height: 36px;
@@ -231,6 +234,16 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 				border-radius: 7px;
 				transition: all 0.3s ease-in-out;
 			}
+
+			.checkbox-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        font-family: Montserrat, sans-serif;
+        font-weight: 600;
+        color: var(--black);
+        }
 		`;
 	}
 
@@ -384,10 +397,16 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 	}
 
 	addField(){
+		if (!this.newFieldName || !this.newCustomDataValue) {
+			let snack5string = get("profile.profile24");
+			parentEpml.request('showSnackBar', `${snack5string}`);
+			return;
+		}
 		const copyObj = {...this.newCustomDataField}
-		copyObj[this.newFieldName] = ''
+		copyObj[this.newFieldName] = this.newCustomDataValue
 		this.newCustomDataField = copyObj
 		this.newFieldName = ""
+		this.newCustomDataValue = ""
 	}
 
 	addCustomData(){
@@ -397,6 +416,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.newCustomDataKey = ""
 		this.newCustomDataField = {};
 		this.newFieldName = ''
+		this.newCustomDataValue = ''
 		this.isOpenCustomDataModal = false;
 	}
 
@@ -406,11 +426,30 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		this.newCustomDataKey = key
 
 	}
+
 	removeCustomData(key){
 		const copyObj = {...this.customData}
 		delete copyObj[key]
 		this.customData = copyObj
 	}
+
+	checkForPrivate(){
+    let isPrivate = false
+    if(this.newCustomDataKey.includes('-private')) isPrivate = true
+    return isPrivate
+  }
+
+  addPrivate(e){
+    if (e.target.checked) {
+      if(this.newCustomDataKey.includes('-private')){
+
+      } else {
+        this.newCustomDataKey = this.newCustomDataKey + '-private'
+      }
+     } else {
+        this.newCustomDataKey = this.newCustomDataKey.replace('-private', '');
+     }
+  }
 
 	render() {
 		return html`
@@ -596,8 +635,17 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 					: 'hidden'}"
 				style="z-index:1001"
 			>
-				<div class="modal-content">
+				<div class="modal-content" style="max-width: 950px">
 					<div class="inner-content">
+					<div style="display:flex; justify-content:flex-end">
+            <div class="checkbox-row" style="font-size:16px">
+							<label for="isPrivate"  style="color: var(--black);">
+									${get('profile.profile23')}
+							</label>
+							<mwc-checkbox id="isPrivate" @change=${(e) => this.addPrivate(e)} ?checked=${this.checkForPrivate()}>
+							</mwc-checkbox>
+						</div>
+					</div>
 						<div style="height:15px"></div>
 						<div
 							style="display:flex;justify-content:center;flex-direction:column"
@@ -626,8 +674,9 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 								/>
 							</div>
 						</div>
-						<div style="height:15px"></div>
-						<p>${translate('profile.profile10')}</p>
+						<p style=${`${Object.keys(this.newCustomDataField).length ? "margin: 10px 0 10px 0;" : "margin: 10px 0 0 0;"}`}>
+						${translate('profile.profile10')}
+					</p>
 						<div style="display: flex;flex-direction: column;">
 							${Object.keys(this.newCustomDataField).map((key) => {
 								return html`
@@ -644,7 +693,6 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 										<div
 											style="display:flex;gap:15px;align-items:center"
 										>
-										
 											<input
 												id=${key}
 												placeholder=${translate('profile.profile13')}
@@ -669,20 +717,29 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 								`;
 							})}
 						</div>
-						<div style="height:15px"></div>
-						<div style="width:100%;display:flex;justify-content:center;gap:10px;margin-top:30px">
+						<div style=${`display: flex; flex-direction: row; align-items: center;justify-content:space-between; ${Object.keys(this.newCustomDataField).length ? "margin-top: 10px" : ""}`}>
+						<div style="width:100%;display:flex; flex-direction: column; align-items: flex-start;justify-content:center;gap:10px;">
 						<input
-												
-												placeholder=${translate('profile.profile12')}
-												class="input"
-												.value=${this.newFieldName}
-												@change=${(e) => {
-													this.newFieldName = e.target.value
-													
-												}}
-											/>
+							placeholder=${translate('profile.profile12')}
+							class="input"
+							.value=${this.newFieldName}
+							@change=${(e) => {
+								this.newFieldName = e.target.value	
+							}}
+						/>
+						<input
+							id="value-name"
+							placeholder=${translate('profile.profile13')}
+							class="input"
+							.value=${this.newCustomDataValue}
+							@change=${(e) => {
+								this.newCustomDataValue = e.target.value;
+							}}
+						/>
+					</div>
 						<button
 							class="modal-button"
+							style="margin-top: 25px; width: 100px; min-height: 80px;"
 							@click=${() => {
 								this.addField();
 							}}
