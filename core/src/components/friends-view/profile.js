@@ -593,7 +593,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 				this.resourceExists = true;
 				this.profileData = data;
 				store.dispatch(setProfileData(data));
-
+				parentEpml.request('showSnackBar', get('profile.profile22'))
 			
 				worker.terminate();
 			} catch (error) {

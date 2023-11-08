@@ -721,23 +721,29 @@ class SponsorshipList extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-			if(txnResponse.extraData.rewardSharePrivateKey && (txnResponse.data.message.includes('multiple') || txnResponse.data.message.includes('SELF_SHARE_EXISTS'))) {
-				this.privateRewardShareKey = txnResponse.extraData.rewardSharePrivateKey
-				this.confirmRelationship(publicKeyValue, isCopy)
-			} else if (txnResponse.success === false && txnResponse?.message) {
-				this.errorMessage = txnResponse?.message
-				this.isLoadingCreateSponsorship = false
-				throw(txnResponse?.message)
-			} else if (
-				txnResponse.success === true &&
-				!txnResponse.data.error
-			) {
-				this.privateRewardShareKey = txnResponse.extraData.rewardSharePrivateKey
-				this.confirmRelationship(publicKeyValue, isCopy)
+			
+			const extraData = txnResponse && txnResponse.extraData;
+			const data = txnResponse && txnResponse.data;
+			const dataMessage = data && data.message;
+			const extraDataPrivateKey = extraData && extraData.rewardSharePrivateKey;
+			const txnSuccess = txnResponse && txnResponse.success;
+		  
+			if (extraDataPrivateKey && typeof dataMessage === 'string' &&
+				(dataMessage.includes('multiple') || dataMessage.includes('SELF_SHARE_EXISTS'))) {
+			  this.privateRewardShareKey = extraDataPrivateKey;
+			  this.confirmRelationship(publicKeyValue, isCopy);
+			} else if (txnSuccess === false && txnResponse.message) {
+			  this.errorMessage = txnResponse.message;
+			  this.isLoadingCreateSponsorship = false;
+			  throw new Error(txnResponse.message);
+			} else if (txnSuccess === true && !(data && data.error)) {
+			  this.privateRewardShareKey = extraDataPrivateKey;
+			  this.confirmRelationship(publicKeyValue, isCopy);
 			} else {
-				this.errorMessage = txnResponse.data.message || txnResponse.message
-				this.isLoadingCreateSponsorship = false
-				throw(txnResponse.data.message || txnResponse.message)
+			  const defaultErrorMessage = 'An unknown error occurred.';
+			  this.errorMessage = dataMessage || txnResponse.message || defaultErrorMessage;
+			  this.isLoadingCreateSponsorship = false;
+			  throw new Error(dataMessage || txnResponse.message || defaultErrorMessage);
 			}
 		}
 		validateReceiver()
