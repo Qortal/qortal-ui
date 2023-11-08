@@ -1229,9 +1229,9 @@
 		"profile8": "Add custom property",
 		"profile9": "Property name",
 		"profile10": "Fields",
-		"profile11": "Add new field",
+		"profile11": "Add field",
 		"profile12": "Field name",
-		"profile13": "Fill out",
+		"profile13": "Field value",
 		"profile14": "Activity",
 		"profile15": "No value",
 		"profile16": "This name has no profile",
@@ -1240,6 +1240,8 @@
 		"profile19": "Cannot fetch profile",
 		"profile20": "Register name",
 		"profile21": "Insert address from UI",
-		"profile22": "Success"
+		"profile22": "Success",
+    "profile23": "encrypted",
+		"profile24": "You must fill out both field name and field value to add a custom property"
 	}
 }
