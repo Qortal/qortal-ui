@@ -256,7 +256,7 @@ class ExportKeys extends connect(store)(LitElement) {
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
         await this.fetchArrrWalletAddress()
-        this.fetchArrrWalletPrivateKey()
+        this.checkArrrWalletPrivateKey()
     }
 
     async fetchArrrWalletAddress() {
@@ -277,7 +277,7 @@ class ExportKeys extends connect(store)(LitElement) {
         }
     }
 
-    async fetchArrrWalletPrivateKey() {
+    async checkArrrWalletPrivateKey() {
         const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const privateKeyUrl = `${nodeUrl}/crosschain/arrr/walletprivatekey?apiKey=${this.getApiKey()}`
@@ -290,16 +290,28 @@ class ExportKeys extends connect(store)(LitElement) {
                 this.arrrPMK = ''
                 this.enableArrr = false
                 this.shadowRoot.querySelector('#needCoreUpdate').show()
-            } else if (res != null && res.error != 1201) {
-                this.arrrPMK = ''
-                this.enableArrr = true
-                this.arrrPMK = res
             } else {
-                this.arrrPMK = ''
-                this.enableArrr = false
-                this.shadowRoot.querySelector('#arrrWalletNotSynced').show()
+                this.fetchArrrWalletPrivateKey()
             }
         })
+    }
+
+    async fetchArrrWalletPrivateKey() {
+        let resPK = await parentEpml.request('apiCall', {
+            url: `/crosschain/arrr/walletprivatekey?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            body: `${store.getState().app.selectedAddress.arrrWallet.seed58}`
+        })
+
+        if (resPK != null && resPK.error != 1201) {
+            this.arrrPMK = ''
+            this.enableArrr = true
+            this.arrrPMK = resPK
+        } else {
+            this.arrrPMK = ''
+            this.enableArrr = false
+            this.shadowRoot.querySelector('#arrrWalletNotSynced').show()
+        }
     }
 
     closeArrrWalletNotSynced() {
@@ -307,6 +319,8 @@ class ExportKeys extends connect(store)(LitElement) {
     }
 
     closeNeedCoreUpdate() {
+        this.arrrPMK = ''
+        this.enableArrr = false
         this.shadowRoot.querySelector('#needCoreUpdate').close()
     }
 
