@@ -740,7 +740,6 @@ class SponsorshipList extends LitElement {
 			  this.privateRewardShareKey = extraDataPrivateKey;
 			  this.confirmRelationship(publicKeyValue, isCopy);
 			} else {
-			  // It's a good practice to provide a default error message
 			  const defaultErrorMessage = 'An unknown error occurred.';
 			  this.errorMessage = dataMessage || txnResponse.message || defaultErrorMessage;
 			  this.isLoadingCreateSponsorship = false;
