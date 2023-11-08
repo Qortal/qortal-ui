@@ -1,6 +1,8 @@
 import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
+import { Epml } from '../../epml.js'
+import { addTradeBotRoutes } from '../../tradebot/addTradeBotRoutes.js'
 import {get, translate} from 'lit-translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
@@ -8,6 +10,8 @@ import FileSaver from 'file-saver'
 import '@material/mwc-dialog'
 import '@material/mwc-button'
 import '@material/mwc-icon'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ExportKeys extends connect(store)(LitElement) {
     static get properties() {
@@ -19,21 +23,26 @@ class ExportKeys extends connect(store)(LitElement) {
             dogePMK: { type: String },
             dgbPMK: { type: String },
             rvnPMK: { type: String },
+            arrrPMK: { type: String },
             btcWALLET: { type: String },
             ltcWALLET: { type: String },
             dogeWALLET: { type: String },
             dgbWALLET: { type: String },
             rvnWALLET: { type: String },
+            arrrWALLET: { type: String },
             btcName: { type: String },
             ltcName: { type: String },
             dogeName: { type: String },
             dgbName: { type: String },
             rvnName: { type: String },
+            arrrName: { type: String },
             btcShort: { type: String },
             ltcShort: { type: String },
             dogeShort: { type: String },
             dgbShort: { type: String },
             rvnShort: { type: String },
+            arrrShort: { type: String },
+            enableArrr: { type: Boolean },
             dWalletAddress: { type: String },
             dPrivateKey: { type: String },
             dCoinName: { type: String },
@@ -48,7 +57,7 @@ class ExportKeys extends connect(store)(LitElement) {
                 --mdc-theme-surface: var(--white);
                 --mdc-dialog-content-ink-color: var(--black);
                 --mdc-dialog-min-width: 500px;
-                --mdc-dialog-max-width: 500px;
+                --mdc-dialog-max-width: 1000px;
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
@@ -60,9 +69,8 @@ class ExportKeys extends connect(store)(LitElement) {
             }
 
             .center-box {
-                position: absolute;
-                width: 100%;
-                top: 50%;
+                position: relative;
+                top: 45%;
                 left: 50%;
                 transform: translate(-50%, 0%);
                 text-align: center;
@@ -71,6 +79,7 @@ class ExportKeys extends connect(store)(LitElement) {
             .sub-main {
                 position: relative;
                 text-align: center;
+                height: auto;
                 width: 100%;
             }
 
@@ -78,9 +87,9 @@ class ExportKeys extends connect(store)(LitElement) {
                 text-align: center;
                 display: inline-block;
                 min-width: 400px;
-	          margin-bottom: 10px;
-	          margin-left: 10px;
-	          margin-top: 20px;
+	        margin-bottom: 10px;
+	        margin-left: 10px;
+	        margin-top: 20px;
             }
 
             .export-button {
@@ -135,6 +144,11 @@ class ExportKeys extends connect(store)(LitElement) {
         this.rvnWALLET = store.getState().app.selectedAddress.rvnWallet.address
         this.rvnName = 'Ravencoin'
         this.rvnShort = 'rvn'
+        this.arrrPMK = ''
+        this.arrrWALLET = ''
+        this.arrrName = 'Pirate Chain'
+        this.arrrShort = 'arrr'
+        this.enableArrr = false
         this.dWalletAddress = ''
         this.dPrivateKey = ''
         this.dCoinName = ''
@@ -143,8 +157,8 @@ class ExportKeys extends connect(store)(LitElement) {
 
     render() {
         return html`
-            <div>
-                <div>
+            <div style="position: relative;">
+                <div class="center-box">
                     <p>
                         ${translate("settings.exp4")}
                     </p>
@@ -181,6 +195,12 @@ class ExportKeys extends connect(store)(LitElement) {
                             </div>
                             <div @click=${() => this.checkForPmkDownload(this.rvnWALLET, this.rvnPMK, this.rvnName, this.rvnShort)} class="export-button"> ${translate("settings.exp2")} </div>
                         </div>
+                        <div class="content-box" style="display:${this.enableArrr ? 'block' : 'none'}">
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <img src="/img/arrr.png" style="width: 32px; height: 32px;">&nbsp;&nbsp;${this.arrrWALLET}<br>
+                            </div>
+                            <div @click=${() => this.checkForPmkDownload(this.arrrWALLET, this.arrrPMK, this.arrrName, this.arrrShort)} class="export-button"> ${translate("settings.exp2")} </div>
+                        </div>
                     </div>
                 </div>
                 <mwc-dialog id="savePkmDialog" scrimClickAction="" escapeKeyAction="">
@@ -202,8 +222,92 @@ class ExportKeys extends connect(store)(LitElement) {
                     ${translate("settings.exp3")}
                     </mwc-button>
                 </mwc-dialog>
+                <mwc-dialog id="arrrWalletNotSynced" scrimClickAction="" escapeKeyAction="">
+                    <img src="/img/arrr.png" style="width: 32px; height: 32px;">
+                    <h3>${translate("settings.arrr1")}</h3>
+                    <hr>
+                    <h4>${translate("settings.arrr2")}</h4>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeArrrWalletNotSynced()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
+                <mwc-dialog id="needCoreUpdate" scrimClickAction="" escapeKeyAction="">
+                    <img src="/img/arrr.png" style="width: 32px; height: 32px;">
+                    <h3>${translate("settings.arrr3")}</h3>
+                    <hr>
+                    <h4>${translate("settings.arrr4")}</h4>
+                    <mwc-button
+                        slot="primaryAction"
+                        @click="${() => this.closeNeedCoreUpdate()}"
+                        class="red"
+                    >
+                    ${translate("general.close")}
+                    </mwc-button>
+                </mwc-dialog>
             </div>
         `
+    }
+
+    async firstUpdated() {
+        addTradeBotRoutes(parentEpml)
+        parentEpml.imReady()
+        await this.fetchArrrWalletAddress()
+        this.fetchArrrWalletPrivateKey()
+    }
+
+    async fetchArrrWalletAddress() {
+        let resAD = await parentEpml.request('apiCall', {
+            url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            body: `${store.getState().app.selectedAddress.arrrWallet.seed58}`
+        })
+
+        if (resAD != null && resAD.error != 1201) {
+            this.arrrWALLET = ''
+            this.enableArrr = true
+            this.arrrWALLET = resAD
+        } else {
+            this.arrrWALLET = ''
+            this.enableArrr = false
+            this.shadowRoot.querySelector('#arrrWalletNotSynced').show()
+        }
+    }
+
+    async fetchArrrWalletPrivateKey() {
+        const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+        const privateKeyUrl = `${nodeUrl}/crosschain/arrr/walletprivatekey?apiKey=${this.getApiKey()}`
+
+        await fetch(privateKeyUrl, {
+            method: 'POST',
+            body: `${store.getState().app.selectedAddress.arrrWallet.seed58}`
+        }).then(res => {
+            if (res.status === 404) {
+                this.arrrPMK = ''
+                this.enableArrr = false
+                this.shadowRoot.querySelector('#needCoreUpdate').show()
+            } else if (res != null && res.error != 1201) {
+                this.arrrPMK = ''
+                this.enableArrr = true
+                this.arrrPMK = res
+            } else {
+                this.arrrPMK = ''
+                this.enableArrr = false
+                this.shadowRoot.querySelector('#arrrWalletNotSynced').show()
+            }
+        })
+    }
+
+    closeArrrWalletNotSynced() {
+        this.shadowRoot.querySelector('#arrrWalletNotSynced').close()
+    }
+
+    closeNeedCoreUpdate() {
+        this.shadowRoot.querySelector('#needCoreUpdate').close()
     }
 
     closeSavePkmDialog() {
@@ -259,7 +363,10 @@ class ExportKeys extends connect(store)(LitElement) {
         }
     }
 
-    stateChanged(state) {
+    getApiKey() {
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+        let apiKey = apiNode.apiKey
+        return apiKey
     }
 }
 
