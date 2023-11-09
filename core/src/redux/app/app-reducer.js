@@ -36,7 +36,9 @@ import {
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
 	UPDATE_NODE_STATUS,
-    SET_PROFILE_DATA
+    SET_PROFILE_DATA,
+    ALLOW_QAPP_FRIENDS_LIST,
+    REMOVE_QAPP_FRIENDS_LIST
 } from './app-action-types.js'
 import {initWorkersReducer} from './reducers/init-workers.js'
 import {loginReducer} from './reducers/login-reducer.js'
@@ -85,6 +87,7 @@ const INITIAL_STATE = {
     autoLoadImageChats: loadStateFromLocalStorage('autoLoadImageChats') || [],
     qAPPAutoAuth: loadStateFromLocalStorage('qAPPAutoAuth') || false,
     qAPPAutoLists: loadStateFromLocalStorage('qAPPAutoLists') || false,
+    qAPPFriendsList: loadStateFromLocalStorage('qAPPFriendsList') || false,
     chatLastSeen: [],
     newTab: null,
     tabInfo: {},
@@ -238,6 +241,22 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 qAPPAutoLists: action.payload
+            }
+        }
+
+        case ALLOW_QAPP_FRIENDS_LIST: {
+            saveStateToLocalStorage("qAPPFriendsList", true)
+            return {
+                ...state,
+                qAPPFriendsList: action.payload
+            }
+        }
+
+        case REMOVE_QAPP_FRIENDS_LIST: {
+            saveStateToLocalStorage("qAPPFriendsList", false)
+            return {
+                ...state,
+                qAPPFriendsList: action.payload
             }
         }
 

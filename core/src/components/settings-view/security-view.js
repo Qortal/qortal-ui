@@ -3,8 +3,10 @@ import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {
 	allowQAPPAutoAuth,
+	allowQAPPAutoFriendsList,
 	allowQAPPAutoLists,
 	removeQAPPAutoAuth,
+	removeQAPPAutoFriendsList,
 	removeQAPPAutoLists,
 	setIsOpenDevDialog
 } from '../../redux/app/app-actions.js'
@@ -147,6 +149,12 @@ class SecurityView extends connect(store)(LitElement) {
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
                     </div>
                     <div class="checkbox-row">
+                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                                ${get('browserpage.bchange53')}
+                            </label>
+                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForFriends(e)} ?checked=${store.getState().app.qAPPFriendsList}></mwc-checkbox>
+                    </div>
+                    <div class="checkbox-row">
                     <button
                     class="add-dev-button"
                     title="${translate('tabmenu.tm18')}"
@@ -173,6 +181,14 @@ class SecurityView extends connect(store)(LitElement) {
             store.dispatch(removeQAPPAutoLists(false))
         } else {
             store.dispatch(allowQAPPAutoLists(true))
+        }
+    }
+
+    checkForFriends(e) {
+        if (e.target.checked) {
+            store.dispatch(removeQAPPAutoFriendsList(false))
+        } else {
+            store.dispatch(allowQAPPAutoFriendsList(true))
         }
     }
 

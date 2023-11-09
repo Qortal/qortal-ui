@@ -1083,6 +1083,44 @@ class WebBrowser extends LitElement {
 					}
 				}
 
+				case actions.GET_FRIENDS_LIST: {
+					let skip = false
+					if (window.parent.reduxStore.getState().app.qAPPFriendsList) {
+						skip = true
+					}
+					let res1
+					if (!skip) {
+						res1 = await showModalAndWait(
+							actions.GET_FRIENDS_LIST
+						)
+					}
+
+
+					if (res1 && res1.action === 'accept' || skip) {
+
+						try {
+							let list = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
+							
+							list = list.map((friend)=> friend.name || "")
+							response = JSON.stringify(list)
+						} catch (error) {
+							const data = {}
+							const errorMsg = "Error in retrieving friends list"
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
+						} 
+
+						break
+
+					} else {
+						const data = {}
+						const errorMsg = "User declined to share friends list"
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+				}
+
 				case actions.LINK_TO_QDN_RESOURCE:
 				case actions.QDN_RESOURCE_DISPLAYED:
 					// Links are handled by the core, but the UI also listens for these actions in order to update the address bar.
@@ -3773,6 +3811,17 @@ async function showModalAndWait(type, data) {
 								</div>
 							</div>
 						` : ''}
+						${type === actions.GET_FRIENDS_LIST ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${get("browserpage.bchange54")}</p>
+								<div class="checkbox-row">
+									<label for="friendsListCheckbox" id="friendsListLabel" style="color: var(--black);">
+										${get('browserpage.bchange53')}
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="friendsListCheckbox" ?checked=${window.parent.reduxStore.getState().app.qAPPFriendsList}></mwc-checkbox>
+								</div>
+							</div>
+						` : ''}
 						${type === actions.ADD_LIST_ITEMS ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange43")}</p>
@@ -3889,6 +3938,23 @@ async function showModalAndWait(type, data) {
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoLists(true))
+			})
+		}
+
+		const labelButtonFriendsList = modal.querySelector('#friendsListLabel')
+		if (labelButtonFriendsList) {
+			labelButtonFriendsList.addEventListener('click', () => {
+				this.shadowRoot.getElementById('listsButton').click()
+			})
+		}
+		const labelButtonFriendsList2 = modal.querySelector('#friendsListCheckbox')
+		if (labelButtonFriendsList2) {
+			labelButtonFriendsList2.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoFriendsList(false))
+					return
+				}
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoFriendsList(true))
 			})
 		}
 	})

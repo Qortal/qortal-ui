@@ -20,7 +20,9 @@ import {
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
 	UPDATE_NODE_STATUS,
-    SET_PROFILE_DATA
+    SET_PROFILE_DATA,
+    ALLOW_QAPP_FRIENDS_LIST,
+    REMOVE_QAPP_FRIENDS_LIST
 } from '../app-action-types.js'
 
 export const doUpdateBlockInfo = (blockObj) => {
@@ -125,6 +127,20 @@ export const allowQAPPAutoLists = (payload) => {
 export const removeQAPPAutoLists = (payload) => {
     return {
         type: REMOVE_QAPP_AUTO_LISTS,
+        payload
+    }
+}
+
+export const allowQAPPAutoFriendsList = (payload) => {
+    return {
+        type: ALLOW_QAPP_FRIENDS_LIST,
+        payload
+    }
+}
+
+export const removeQAPPAutoFriendsList = (payload) => {
+    return {
+        type: REMOVE_QAPP_FRIENDS_LIST,
         payload
     }
 }
