@@ -950,8 +950,6 @@ class QApps extends LitElement {
 
             const status = await response.json()
 
-            console.log("status:", status.id)
-
             if (status.id === "UNSUPPORTED") {
                 this.btnDisabled = false
                 this.textProgress = ''

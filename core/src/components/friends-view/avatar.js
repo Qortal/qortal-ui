@@ -276,7 +276,6 @@ export class AvatarComponent extends connect(store)(LitElement) {
 	}
 
 	render() {
-		console.log('hello', this.name, this.resource, this.status);
 		return html`
 			<div>
 				${this.status.status !== 'READY'

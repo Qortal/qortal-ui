@@ -47,9 +47,11 @@ export default class CreatePollTransaction extends TransactionBase {
 	set votedialog4(votedialog4) {
 		this._votedialog4 = votedialog4
 	}
+
 	set votedialog5(votedialog5) {
 		this._votedialog5 = votedialog5
 	}
+
 	set votedialog6(votedialog6) {
 		this._votedialog6 = votedialog6
 	}
@@ -99,7 +101,6 @@ export default class CreatePollTransaction extends TransactionBase {
 			this._rNumberOfOptionsBytes
 		)
 		// Push the dynamic options
-		console.log('this._options', this._options)
 		for (let i = 0; i < this._options.length; i++) {
 			params.push(this._options[i].length, this._options[i].bytes);
 		}
