@@ -20,9 +20,11 @@ import {
 	addChatLastSeen,
 	addTabInfo,
 	allowQAPPAutoAuth,
+	allowQAPPAutoFriendsList,
 	allowQAPPAutoLists,
 	removeAutoLoadImageChat,
 	removeQAPPAutoAuth,
+	removeQAPPAutoFriendsList,
 	removeQAPPAutoLists,
 	setNewNotification,
 	setNewTab,
@@ -43,7 +45,9 @@ window.reduxAction = {
     setTabNotifications: setTabNotifications,
     setNewTab: setNewTab,
     setNewNotification: setNewNotification,
-    setSideEffectAction: setSideEffectAction
+    setSideEffectAction: setSideEffectAction,
+    allowQAPPAutoFriendsList: allowQAPPAutoFriendsList,
+    removeQAPPAutoFriendsList: removeQAPPAutoFriendsList
 }
 
 const animationDuration = 0.7 // Seconds
