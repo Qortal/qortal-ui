@@ -209,7 +209,11 @@
 		"exp4": "Selecteer een portefeuille om de PRIVÉ hoofdsleutel te bewaren.",
 		"core": "Core-instellingen starten",
 		"qappNotification1": "Q-App waarschuwingen",
-		"selectnode": "Gelieve een optie te selecteren"
+		"selectnode": "Gelieve een optie te selecteren",
+		"arrr1": "ARRR portefeuille is niet geïnitialiseerd!",
+		"arrr2": "Ga naar de portefeuille-tab en initialiseer eerst jouw ARRR portefeuille.",
+		"arrr3": "De 'core' heeft een update nodig!",
+		"arrr4": "Om de privé-sleutel van jouw ARRR portefeuille te kunnen bewaren, moet je voor de 'core' eerst een update installeren!"
 	},
 	"appinfo": {
 		"blockheight": "Blokhoogte",
@@ -729,7 +733,12 @@
 		"bchange46": "Geeft U deze applicatie toelating om volgend bestand op te slaan?",
 		"bchange47": "Onmiddellijk publiceren - Kost",
 		"bchange48": "Geeft U deze applicatie toelating om U verwittigingen te sturen?",
-		"bchange49": "Geeft U deze applicatie toelating om uw portemonnee-informatie te consulteren?"
+		"bchange49": "Geeft U deze applicatie toegang tot de volgende privé-informatie uit jouw profiel?",
+		"bchange50": "Deze app wenst iets te wijzigen in jouw publieke profiel. Eigenschap: ",
+		"bchange51": "Vergeet niet te klikken op 'Profiel bijwerken' om de wijziging door te voeren.",
+		"bchange52": "Geeft U deze applicatie toelating om uw portefeuille-info op te vragen?",
+		"bchange53": "Maak de vriendenlijst automatisch opvraagbaar voor alle apps",
+		"bchange54": "Geeft U deze applicatie toegang tot uw vriendenlijst?"
 	},
 	"datapage": {
 		"dchange1": "Data-beheer",
@@ -1214,5 +1223,33 @@
 		"saving2": "Er is niets om op te slaan",
 		"saving3": "Opslaan van wijzigingen",
 		"saving4": "Wijzigingen ongedaan maken"
+	},
+	"profile": {
+		"profile1": "U heeft nog geen naam",
+		"profile2": "Ga naar naam-registratie",
+		"profile3": "Profiel bijwerken",
+		"profile4": "Tagline",
+		"profile5": "Bio",
+		"profile6": "Portefeuille-adressen",
+		"profile7": "Invulling uit UI",
+		"profile8": "Toevoegen van extra eigenschap",
+		"profile9": "Naam van eigenschap",
+		"profile10": "Velden",
+		"profile11": "Voeg veld toe",
+		"profile12": "Veld-naam",
+		"profile13": "Veld-waarde",
+		"profile14": "Activiteit",
+		"profile15": "Geen waarde",
+		"profile16": "Deze naam heeft geen profiel",
+		"profile17": "Ophalen van profiel is mislukt",
+		"profile18": "Open profiel",
+		"profile19": "Profiel kan niet opgehaald worden",
+		"profile20": "Registreer een naam",
+		"profile21": "Vul adres in vanuit UI",
+		"profile22": "Gelukt",
+		"profile23": "versleuteld",
+		"profile24": "Vul zowel een naam als een waarde in om een extra eigenschap toe teovoegen",
+		"profile25": "Is jouw vriend",
+		"profile26": "Voeg toe als vriend"
 	}
 }
