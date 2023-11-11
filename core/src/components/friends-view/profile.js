@@ -21,7 +21,7 @@ import { publishData } from '../../../../plugins/plugins/utils/publish-image.js'
 import { parentEpml } from '../show-plugin.js';
 import '../notification-view/popover.js';
 import './avatar.js';
-import { setNewTab, setProfileData } from '../../redux/app/app-actions.js';
+import { setNewTab, setProfileData, setSideEffectAction } from '../../redux/app/app-actions.js';
 import './profile-modal-update.js';
 import { modalHelper } from '../../../../plugins/plugins/utils/publish-modal.js';
 
@@ -77,10 +77,11 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.imageUrl = '';
 		this.dialogOpenedProfile = false
 		this.profileDataVisiting = null;
-		this.nameVisiting = ""
-		this.hasName = false
-		this.resourceExistsVisiting = undefined
-		this.error = ""
+		this.nameVisiting = "";
+		this.hasName = false;
+		this.resourceExistsVisiting = undefined;
+		this.error = "";
+		this.getUserAddress = this.getUserAddress.bind(this)
 	}
 	static styles = css`
 	
@@ -270,6 +271,13 @@ class ProfileQdn extends connect(store)(LitElement) {
     			overflow: hidden;
     			word-break: break-word;
             }
+		.send-message-button {
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+		.send-message-button:hover {
+			transform: scale(1.1)
+		}
 	`;
 
 	getNodeUrl() {
@@ -778,6 +786,20 @@ class ProfileQdn extends connect(store)(LitElement) {
 		}
 		
 	}
+	async getUserAddress() {
+		try {
+			const url = `${this.nodeUrl}/names/${this.nameVisiting}`;
+			const res = await fetch(url);
+			const result = await res.json();
+			if (result.error === 401) {
+				return '';
+			} else {
+				return result.owner;
+			}
+		} catch (error) {
+			return '';
+		}
+	}
 	render() {
 		return html`
 			${this.isSaving ||
@@ -941,7 +963,92 @@ class ProfileQdn extends connect(store)(LitElement) {
 			>
 				<div class="full-info-logo">${this.avatarFullImage()}</div>
 				<h3>${this.nameVisiting}</h3>
-				
+				<div style="display:flex;gap:15px;justify-content:center;margin-top:10px">
+				<div
+						class="send-message-button"
+						@click="${async () => {
+							const address = await this.getUserAddress();
+							if (!address) return;
+							store.dispatch(
+								setNewTab({
+									url: `q-chat`,
+									id: this.uid.rnd(),
+									myPlugObj: {
+										url: 'q-chat',
+										domain: 'core',
+										page: 'messaging/q-chat/index.html',
+										title: 'Q-Chat',
+										icon: 'vaadin:chat',
+										mwcicon: 'forum',
+										pluginNumber: 'plugin-qhsyOnpRhT',
+										menus: [],
+										parent: false,
+									},
+
+									openExisting: true,
+								})
+							);
+							store.dispatch(
+								setSideEffectAction({
+									type: 'openPrivateChat',
+									data: {
+                                        address,
+                                        name: this.nameVisiting
+                                    },
+								})
+							);
+							this.dialogOpenedProfile = false
+						}}"
+					>
+					<mwc-icon id="send-chat-icon" style="color: var(--black)"
+						>send</mwc-icon
+					>
+					<vaadin-tooltip
+							for="send-chat-icon"
+							position="bottom"
+							hover-delay=${200}
+							hide-delay=${1}
+							text=${translate('friends.friend8')}
+						>
+						</vaadin-tooltip>
+					</div>
+					<div
+						class="send-message-button"
+						@click="${() => {
+							const query = `?service=APP&name=Q-Mail/to/${this.nameVisiting}`;
+							store.dispatch(
+								setNewTab({
+									url: `qdn/browser/index.html${query}`,
+									id: this.uid.rnd(),
+									myPlugObj: {
+										url: 'myapp',
+										domain: 'core',
+										page: `qdn/browser/index.html${query}`,
+										title: 'Q-Mail',
+										icon: 'vaadin:mailbox',
+										mwcicon: 'mail_outline',
+										menus: [],
+										parent: false,
+									},
+									openExisting: true,
+								})
+							);
+							this.dialogOpenedProfile = false
+						}}"
+					>
+					<mwc-icon id="send-mail-icon" style="color: var(--black)"
+						>mail</mwc-icon
+					>
+					<vaadin-tooltip
+							for="send-mail-icon"
+							position="bottom"
+							hover-delay=${200}
+							hide-delay=${1}
+							text=${translate('friends.friend9')}
+						>
+						</vaadin-tooltip>
+					</div>
+				</div>
 				
 				<div
 					class="data-info"
