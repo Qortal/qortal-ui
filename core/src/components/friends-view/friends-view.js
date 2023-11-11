@@ -36,7 +36,8 @@ class FriendsView extends connect(store)(LitElement) {
 			editContent: {type: Object},
 			mySelectedFeeds: {type: Array},
 			refreshFeed: {attribute: false},
-			closeSidePanel: {attribute: false, type: Object}
+			closeSidePanel: {attribute: false, type: Object},
+			openSidePanel: {attribute:false, type: Object}
 		};
 	}
 	static get styles() {
@@ -65,6 +66,7 @@ class FriendsView extends connect(store)(LitElement) {
 		this.addToFriendList = this.addToFriendList.bind(this)
 		this._updateFriends = this._updateFriends.bind(this)
 		this._updateFeed = this._updateFeed.bind(this)
+		this._addFriend = this._addFriend.bind(this)
 
 	}
 
@@ -111,16 +113,35 @@ class FriendsView extends connect(store)(LitElement) {
         this.mySelectedFeeds = detail
 		this.requestUpdate()
 	}
+	_addFriend(event){
+		const name = event.detail;
+		const findFriend = this.friendList.find((friend)=> friend.name === name)
+		if(findFriend){
+			this.editContent = {...findFriend, mySelectedFeeds: this.mySelectedFeeds}
+			this.userSelected = findFriend;
+
+		} else {
+			this.userSelected = {
+				name
+			};
+		}
+		
+		this.isOpenAddFriendsModal = true
+		this.openSidePanel()
+	}
 
 	connectedCallback() {
 		super.connectedCallback()
 		window.addEventListener('friends-my-friend-list-event', this._updateFriends)
 		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)
+		window.addEventListener('add-friend', this._addFriend)
 	}
 
 	disconnectedCallback() {
 		window.removeEventListener('friends-my-friend-list-event', this._updateFriends)
 		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)
+		window.addEventListener('add-friend', this._addFriend)
+
 		super.disconnectedCallback()
 	}
 
