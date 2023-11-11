@@ -11,7 +11,8 @@ class FriendsSidePanel extends LitElement {
 			isOpen: {type: Boolean},
 			selected: {type: String},
 			setHasNewFeed: {attribute: false},
-			closeSidePanel: {attribute: false, type: Object}
+			closeSidePanel: {attribute: false, type: Object},
+			openSidePanel: {attribute: false, type: Object}
 		};
 	}
 
@@ -19,6 +20,8 @@ class FriendsSidePanel extends LitElement {
 		super()
 		this.selected = 'friends'
 		this.closeSidePanel = this.closeSidePanel.bind(this)
+		this.openSidePanel = this.openSidePanel.bind(this)
+
 	}
 
 	static styles = css`
@@ -112,6 +115,9 @@ class FriendsSidePanel extends LitElement {
 	closeSidePanel(){
 		this.setIsOpen(false)
 	}
+	openSidePanel(){
+		this.setIsOpen(true)
+	}
 
 	render() {
 		return html`
@@ -133,7 +139,7 @@ class FriendsSidePanel extends LitElement {
 			</div>
 			<div class="content">
 				<div class="${this.selected === 'friends' ? 'active-content' : 'default-content'}">
-				<friends-view .closeSidePanel=${this.closeSidePanel} .refreshFeed=${()=>this.refreshFeed()}></friends-view>
+				<friends-view .openSidePanel=${this.openSidePanel} .closeSidePanel=${this.closeSidePanel} .refreshFeed=${()=>this.refreshFeed()}></friends-view>
 				</div>
 				<div class="${this.selected === 'feed' ? 'active-content' : 'default-content'}">
 				<friends-feed .setHasNewFeed=${(val)=> this.setHasNewFeed(val)}></friends-feed>

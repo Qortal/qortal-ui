@@ -1,11 +1,11 @@
 // popover-component.js
-import {css, html, LitElement} from 'lit';
-import {createPopper} from '@popperjs/core';
+import { css, html, LitElement } from 'lit';
+import { createPopper } from '@popperjs/core';
 import '@material/mwc-icon';
-import {translate} from 'lit-translate';
-import {store} from '../../store';
-import {connect} from 'pwa-helpers';
-import {setNewTab, setSideEffectAction} from '../../redux/app/app-actions';
+import { translate } from 'lit-translate';
+import { store } from '../../store';
+import { connect } from 'pwa-helpers';
+import { setNewTab, setSideEffectAction } from '../../redux/app/app-actions';
 import ShortUniqueId from 'short-unique-id';
 
 export class FriendItemActions extends connect(store)(LitElement) {
@@ -40,7 +40,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 			transition: all 0.3s ease-in-out;
 			display: flex;
 			align-items: center;
-			gap: 10px
+			gap: 10px;
 		}
 
 		.send-message-button:hover {
@@ -64,7 +64,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 			message: { type: String },
 			openEditFriend: { attribute: false },
 			name: { type: String },
-			closeSidePanel: {attribute: false, type: Object}
+			closeSidePanel: { attribute: false, type: Object },
 		};
 	}
 
@@ -73,7 +73,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 		this.message = '';
 		this.nodeUrl = this.getNodeUrl();
 		this.uid = new ShortUniqueId();
-        this.getUserAddress = this.getUserAddress.bind(this)
+		this.getUserAddress = this.getUserAddress.bind(this);
 	}
 	getNodeUrl() {
 		const myNode =
@@ -93,7 +93,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 	attachToTarget(target) {
 		if (!this.popperInstance && target) {
 			this.popperInstance = createPopper(target, this, {
-				placement: 'bottom'
+				placement: 'bottom',
 			});
 		}
 	}
@@ -151,9 +151,7 @@ export class FriendItemActions extends connect(store)(LitElement) {
 							this.closePopover();
 						}}"
 					>
-					<mwc-icon style="color: var(--black)"
-						>edit</mwc-icon
-					>
+						<mwc-icon style="color: var(--black)">edit</mwc-icon>
 						${translate('friends.friend10')}
 					</div>
 					<div
@@ -184,18 +182,16 @@ export class FriendItemActions extends connect(store)(LitElement) {
 								setSideEffectAction({
 									type: 'openPrivateChat',
 									data: {
-                                        address,
-                                        name: this.name
-                                    },
+										address,
+										name: this.name,
+									},
 								})
 							);
 							this.closePopover();
-							this.closeSidePanel()
+							this.closeSidePanel();
 						}}"
 					>
-					<mwc-icon style="color: var(--black)"
-						>send</mwc-icon
-					>
+						<mwc-icon style="color: var(--black)">send</mwc-icon>
 						${translate('friends.friend8')}
 					</div>
 					<div
@@ -220,13 +216,30 @@ export class FriendItemActions extends connect(store)(LitElement) {
 								})
 							);
 							this.closePopover();
-							this.closeSidePanel()
+							this.closeSidePanel();
 						}}"
 					>
-					<mwc-icon style="color: var(--black)"
-						>mail</mwc-icon
-					>
+						<mwc-icon style="color: var(--black)">mail</mwc-icon>
 						${translate('friends.friend9')}
+					</div>
+					<div
+						class="send-message-button"
+						@click="${() => {
+							const customEvent = new CustomEvent(
+								'open-visiting-profile',
+								{
+									detail: this.name,
+								}
+							);
+							window.dispatchEvent(customEvent);
+							this.closePopover();
+							this.closeSidePanel();
+						}}"
+					>
+						<mwc-icon style="color: var(--black)"
+							>person</mwc-icon
+						>
+						${translate('profile.profile18')}
 					</div>
 				</div>
 			</div>

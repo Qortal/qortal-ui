@@ -21,7 +21,11 @@ import { publishData } from '../../../../plugins/plugins/utils/publish-image.js'
 import { parentEpml } from '../show-plugin.js';
 import '../notification-view/popover.js';
 import './avatar.js';
-import { setNewTab, setProfileData, setSideEffectAction } from '../../redux/app/app-actions.js';
+import {
+	setNewTab,
+	setProfileData,
+	setSideEffectAction,
+} from '../../redux/app/app-actions.js';
 import './profile-modal-update.js';
 import { modalHelper } from '../../../../plugins/plugins/utils/publish-modal.js';
 
@@ -40,12 +44,13 @@ class ProfileQdn extends connect(store)(LitElement) {
 			editContent: { type: Object },
 			profileData: { type: Object },
 			imageUrl: { type: String },
-			dialogOpenedProfile: {type: Boolean},
-			profileDataVisiting: {type: Object},
-			nameVisiting: {type: String},
-			hasName: {type: Boolean},
-			resourceExistsVisiting: {type:Boolean},
-			error: {type: String}
+			dialogOpenedProfile: { type: Boolean },
+			profileDataVisiting: { type: Object },
+			nameVisiting: { type: String },
+			hasName: { type: Boolean },
+			resourceExistsVisiting: { type: Boolean },
+			error: { type: String },
+			isFriend: { type: Boolean },
 		};
 	}
 
@@ -55,7 +60,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.getProfile = this.getProfile.bind(this);
 		this._handleQortalRequestSetData =
 			this._handleQortalRequestSetData.bind(this);
-		this._handleOpenVisiting = this._handleOpenVisiting.bind(this)
+		this._handleOpenVisiting = this._handleOpenVisiting.bind(this);
 		this.setValues = this.setValues.bind(this);
 		this.saveToQdn = this.saveToQdn.bind(this);
 		this.syncPercentage = 0;
@@ -75,26 +80,25 @@ class ProfileQdn extends connect(store)(LitElement) {
 		this.profileData = null;
 		this.qortalRequestCustomData = null;
 		this.imageUrl = '';
-		this.dialogOpenedProfile = false
+		this.dialogOpenedProfile = false;
 		this.profileDataVisiting = null;
-		this.nameVisiting = "";
+		this.nameVisiting = '';
 		this.hasName = false;
 		this.resourceExistsVisiting = undefined;
-		this.error = "";
-		this.getUserAddress = this.getUserAddress.bind(this)
+		this.error = '';
+		this.getUserAddress = this.getUserAddress.bind(this);
+		this.checkIfInFriendsList = this.checkIfInFriendsList.bind(this);
+		this.isFriend = undefined;
 	}
 	static styles = css`
-	
 		* {
-		
-                --mdc-theme-primary: rgb(3, 169, 244);
-                --mdc-theme-secondary: var(--mdc-theme-primary);
-                --mdc-theme-surface: var(--white);
-                --mdc-dialog-content-ink-color: var(--black);
-                box-sizing: border-box;
-            }
+			--mdc-theme-primary: rgb(3, 169, 244);
+			--mdc-theme-secondary: var(--mdc-theme-primary);
+			--mdc-theme-surface: var(--white);
+			--mdc-dialog-content-ink-color: var(--black);
+			box-sizing: border-box;
+		}
 
-			
 		.header {
 			display: flex;
 			align-items: center;
@@ -193,53 +197,53 @@ class ProfileQdn extends connect(store)(LitElement) {
 			left: 210px;
 		}
 
-		.data-info{
-		    margin-top: 10px;
-		    margin-right: 25px;
-			display:flex;
+		.data-info {
+			margin-top: 10px;
+			margin-right: 25px;
+			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
 			min-height: 55vh;
 			max-height: 55vh;
-    overflow: auto;
+			overflow: auto;
 		}
-	
+
 		.data-info::-webkit-scrollbar-track {
-		background: #a1a1a1;
-	}
+			background: #a1a1a1;
+		}
 
-	.data-info::-webkit-scrollbar-thumb {
-		background-color: #6a6c75;
-		border-radius: 6px;
-		border: 3px solid #a1a1a1;
-	}
+		.data-info::-webkit-scrollbar-thumb {
+			background-color: #6a6c75;
+			border-radius: 6px;
+			border: 3px solid #a1a1a1;
+		}
 		.data-info > * {
-    flex-shrink: 0;
-}
+			flex-shrink: 0;
+		}
 		.decline {
-                --mdc-theme-primary: var(--mdc-theme-error)
-            }
+			--mdc-theme-primary: var(--mdc-theme-error);
+		}
 
-            .warning {
-                --mdc-theme-primary: #f0ad4e;
-            }
+		.warning {
+			--mdc-theme-primary: #f0ad4e;
+		}
 
-            .green {
-                --mdc-theme-primary: #198754;
-            }
+		.green {
+			--mdc-theme-primary: #198754;
+		}
 
-            .buttons {
-                display: inline;
-                float: right;
-                margin-bottom: 5px;
-            }
+		.buttons {
+			display: inline;
+			float: right;
+			margin-bottom: 5px;
+		}
 
-            .paybutton {
-                display: inline;
-                float: left;
-                margin-bottom: 5px;
-            }
-			.round-fullinfo {
+		.paybutton {
+			display: inline;
+			float: left;
+			margin-bottom: 5px;
+		}
+		.round-fullinfo {
 			position: relative;
 			width: 120px;
 			height: 120px;
@@ -249,34 +253,34 @@ class ProfileQdn extends connect(store)(LitElement) {
 		}
 
 		h2 {
-                margin: 10px 0;
-            }
+			margin: 10px 0;
+		}
 
 		h3 {
 			margin-top: -80px;
-		    color: #03a9f4;
-		    font-size: 18px;
+			color: #03a9f4;
+			font-size: 18px;
 		}
 
-            h4 {
-                margin: 5px 0;
-            }
+		h4 {
+			margin: 5px 0;
+		}
 
-            p {
-		   		 margin-top: 5px;
-                line-height: 1.2;
-				font-size: 16px;
-    			color: var(--black);
-    			text-align: start;
-    			overflow: hidden;
-    			word-break: break-word;
-            }
+		p {
+			margin-top: 5px;
+			line-height: 1.2;
+			font-size: 16px;
+			color: var(--black);
+			text-align: start;
+			overflow: hidden;
+			word-break: break-word;
+		}
 		.send-message-button {
 			cursor: pointer;
 			transition: all 0.2s;
 		}
 		.send-message-button:hover {
-			transform: scale(1.1)
+			transform: scale(1.1);
 		}
 	`;
 
@@ -334,7 +338,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 		return ret;
 	}
 
-
 	async setValues(response, resource) {
 		if (response) {
 			let data = { ...response };
@@ -373,8 +376,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 
 	async getVisitingProfile(name) {
 		try {
-			this.isLoadingVisitingProfile = true
-			this.nameVisiting = name
+			this.isLoadingVisitingProfile = true;
+			this.nameVisiting = name;
+			this.checkIfInFriendsList(this.nameVisiting);
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
@@ -391,7 +395,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 						try {
 							const response = await this.getRawData(dataItem);
 							if (response.wallets) {
-								this.profileDataVisiting = response
+								this.profileDataVisiting = response;
 								// this.setValues(response, dataItem);
 							} else {
 								// this.error = 'Cannot get saved user settings';
@@ -412,36 +416,31 @@ class ProfileQdn extends connect(store)(LitElement) {
 					error: 'No resource found',
 				};
 			}
-
 		} catch (error) {
 			console.log({ error });
 		} finally {
-			this.isLoadingVisitingProfile = false
-
+			this.isLoadingVisitingProfile = false;
 		}
 	}
 
 	async getProfile() {
 		try {
-			this.error = ''
+			this.error = '';
 			const arbFee = await this.getArbitraryFee();
 			this.fee = arbFee;
 			this.hasAttemptedToFetchResource = true;
 			let resource;
 
-			let nameObject
+			let nameObject;
 			try {
-			 nameObject = store.getState().app.accountInfo.names[0];
-
-			} catch (error) {
-				
-			}
+				nameObject = store.getState().app.accountInfo.names[0];
+			} catch (error) {}
 			if (!nameObject) {
 				this.name = null;
-				this.error = 'no name'
+				this.error = 'no name';
 				throw new Error('no name');
 			}
-			this.hasName = true
+			this.hasName = true;
 			const name = nameObject.name;
 			this.name = name;
 			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
@@ -505,7 +504,12 @@ class ProfileQdn extends connect(store)(LitElement) {
 			state.app.accountInfo &&
 			state.app.accountInfo.names.length &&
 			state.app.nodeStatus &&
-			state.app.nodeStatus.syncPercent === 100 && this.hasName === false && this.hasAttemptedToFetchResource && state.app.accountInfo && state.app.accountInfo.names && state.app.accountInfo.names.length > 0
+			state.app.nodeStatus.syncPercent === 100 &&
+			this.hasName === false &&
+			this.hasAttemptedToFetchResource &&
+			state.app.accountInfo &&
+			state.app.accountInfo.names &&
+			state.app.accountInfo.names.length > 0
 		) {
 			this.getProfile();
 		}
@@ -549,21 +553,24 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const getArbitraryFee = await this.getArbitraryFee();
 			const feeAmount = getArbitraryFee.fee;
 
-			let newObject = structuredClone(data)
+			let newObject = structuredClone(data);
 
 			for (const key of Object.keys(newObject.customData || {})) {
 				if (key.includes('-private')) {
-					const dataKey = newObject.customData[key]
-					let isBase64 = false
+					const dataKey = newObject.customData[key];
+					let isBase64 = false;
 					try {
 						const decodedString = atob(dataKey);
-						isBase64 = decodedString.includes('qortalGroupEncryptedData')
-					  } catch (e) {
-						console.log(e)
-					  }
-					  if(isBase64){
-						newObject['customData'][key] = newObject.customData[key];
-					  } else {
+						isBase64 = decodedString.includes(
+							'qortalGroupEncryptedData'
+						);
+					} catch (e) {
+						console.log(e);
+					}
+					if (isBase64) {
+						newObject['customData'][key] =
+							newObject.customData[key];
+					} else {
 						const toBase64 = await objectToBase64(
 							newObject.customData[key]
 						);
@@ -572,14 +579,13 @@ class ProfileQdn extends connect(store)(LitElement) {
 							publicKeys: [],
 						});
 						newObject['customData'][key] = encryptedData;
-					  }
-					
+					}
 				} else {
 					newObject['customData'][key] = newObject.customData[key];
 				}
 			}
 			const newObjectToBase64 = await objectToBase64(newObject);
-		
+
 			const worker = new WebWorker2();
 			try {
 				const resPublish = await publishData({
@@ -601,8 +607,8 @@ class ProfileQdn extends connect(store)(LitElement) {
 				this.resourceExists = true;
 				this.profileData = data;
 				store.dispatch(setProfileData(data));
-				parentEpml.request('showSnackBar', get('profile.profile22'))
-			
+				parentEpml.request('showSnackBar', get('profile.profile22'));
+
 				worker.terminate();
 			} catch (error) {
 				worker.terminate();
@@ -638,7 +644,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 					detail: detail,
 				}
 			);
-			
+
 			iframeWindow.dispatchEvent(customEvent);
 		});
 	}
@@ -696,14 +702,12 @@ class ProfileQdn extends connect(store)(LitElement) {
 		}
 	}
 
-	_handleOpenVisiting(event){
+	_handleOpenVisiting(event) {
 		try {
 			const name = event.detail;
-			this.getVisitingProfile(name)
-			this.dialogOpenedProfile = true
-		} catch (error) {
-			
-		}
+			this.getVisitingProfile(name);
+			this.dialogOpenedProfile = true;
+		} catch (error) {}
 	}
 
 	connectedCallback() {
@@ -757,34 +761,34 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	openUserInfo() {
-		
-			const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')
-			infoDialog.openUserInfo(this.nameVisiting)
-		
+		const infoDialog = document
+			.getElementById('main-app')
+			.shadowRoot.querySelector('app-view')
+			.shadowRoot.querySelector('user-info-view');
+		infoDialog.openUserInfo(this.nameVisiting);
 	}
 
-	openEdit(){
+	openEdit() {
 		this.isOpenProfileModalUpdate = !this.isOpenProfileModalUpdate;
 	}
 
-	onCloseVisitingProfile(){
+	onCloseVisitingProfile() {
 		this.profileDataVisiting = null;
-		this.nameVisiting = ""
+		this.nameVisiting = '';
 		this.imageUrl = '';
-		this.resourceExistsVisiting = undefined
+		this.resourceExistsVisiting = undefined;
+		this.isFriend = undefined;
 	}
 
-	updated(changedProperties){
+	updated(changedProperties) {
 		if (
 			changedProperties &&
 			changedProperties.has('dialogOpenedProfile') &&
 			this.dialogOpenedProfile === false
-		) {  
-
-			const prevVal = changedProperties.get('dialogOpenedProfile')
-			if(prevVal === true) this.onCloseVisitingProfile()
+		) {
+			const prevVal = changedProperties.get('dialogOpenedProfile');
+			if (prevVal === true) this.onCloseVisitingProfile();
 		}
-		
 	}
 	async getUserAddress() {
 		try {
@@ -800,7 +804,25 @@ class ProfileQdn extends connect(store)(LitElement) {
 			return '';
 		}
 	}
+
+	checkIfInFriendsList(name) {
+		try {
+			this.isFriend = undefined;
+			const friendList = JSON.parse(
+				localStorage.getItem('friends-my-friend-list') || '[]'
+			);
+			const findIndex = friendList.findIndex(
+				(friend) => friend.name === name
+			);
+			if (findIndex !== -1) {
+				this.isFriend = true;
+			} else {
+				this.isFriend = false;
+			}
+		} catch (error) {}
+	}
 	render() {
+
 		return html`
 			${this.isSaving ||
 			(!this.error && this.resourceExists === undefined)
@@ -919,15 +941,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 								) {
 									return;
 								}
-								if(this.profileData){
-									this.profileDataVisiting = this.profileData
-									this.nameVisiting = this.name
-									this.dialogOpenedProfile = true
+								if (this.profileData) {
+									this.profileDataVisiting = this.profileData;
+									this.nameVisiting = this.name;
+									this.dialogOpenedProfile = true;
 								} else {
 									this.isOpenProfileModalUpdate =
-									!this.isOpenProfileModalUpdate;
+										!this.isOpenProfileModalUpdate;
 								}
-								
 							}}
 						>
 							<avatar-component
@@ -952,177 +973,325 @@ class ProfileQdn extends connect(store)(LitElement) {
 				.qortalRequestCustomData=${this.qortalRequestCustomData}
 			></profile-modal-update>
 
-		
-
 			<!-- Profile read-view -->
-			${this.dialogOpenedProfile ? html`
-			<paper-dialog
-				class="full-info-wrapper"
-				?opened="${this.dialogOpenedProfile}"
-								
-			>
-				<div class="full-info-logo">${this.avatarFullImage()}</div>
-				<h3>${this.nameVisiting}</h3>
-				<div style="display:flex;gap:15px;justify-content:center;margin-top:10px">
-				<div
-						class="send-message-button"
-						@click="${async () => {
-							const address = await this.getUserAddress();
-							if (!address) return;
-							store.dispatch(
-								setNewTab({
-									url: `q-chat`,
-									id: this.uid.rnd(),
-									myPlugObj: {
-										url: 'q-chat',
-										domain: 'core',
-										page: 'messaging/q-chat/index.html',
-										title: 'Q-Chat',
-										icon: 'vaadin:chat',
-										mwcicon: 'forum',
-										pluginNumber: 'plugin-qhsyOnpRhT',
-										menus: [],
-										parent: false,
-									},
-
-									openExisting: true,
-								})
-							);
-							store.dispatch(
-								setSideEffectAction({
-									type: 'openPrivateChat',
-									data: {
-                                        address,
-                                        name: this.nameVisiting
-                                    },
-								})
-							);
-							this.dialogOpenedProfile = false
-						}}"
-					>
-					<mwc-icon id="send-chat-icon" style="color: var(--black)"
-						>send</mwc-icon
-					>
-					<vaadin-tooltip
-							for="send-chat-icon"
-							position="bottom"
-							hover-delay=${200}
-							hide-delay=${1}
-							text=${translate('friends.friend8')}
+			${this.dialogOpenedProfile
+				? html`
+						<paper-dialog
+							class="full-info-wrapper"
+							?opened="${this.dialogOpenedProfile}"
 						>
-						</vaadin-tooltip>
-					</div>
-					<div
-						class="send-message-button"
-						@click="${() => {
-							const query = `?service=APP&name=Q-Mail/to/${this.nameVisiting}`;
-							store.dispatch(
-								setNewTab({
-									url: `qdn/browser/index.html${query}`,
-									id: this.uid.rnd(),
-									myPlugObj: {
-										url: 'myapp',
-										domain: 'core',
-										page: `qdn/browser/index.html${query}`,
-										title: 'Q-Mail',
-										icon: 'vaadin:mailbox',
-										mwcicon: 'mail_outline',
-										menus: [],
-										parent: false,
-									},
-									openExisting: true,
-								})
-							);
-							this.dialogOpenedProfile = false
-						}}"
-					>
-					<mwc-icon id="send-mail-icon" style="color: var(--black)"
-						>mail</mwc-icon
-					>
-					<vaadin-tooltip
-							for="send-mail-icon"
-							position="bottom"
-							hover-delay=${200}
-							hide-delay=${1}
-							text=${translate('friends.friend9')}
-						>
-						</vaadin-tooltip>
-					</div>
-				</div>
-				
-				<div
-					class="data-info"
-				>
-					${this.isLoadingVisitingProfile ? html`
-						<div style="width:100%;display:flex;justify-content:center">
-						<paper-spinner-lite
-							active
-							style="display: block; margin: 0 auto;"
-						></paper-spinner-lite>
-						</div>
-					` : this.resourceExistsVisiting === false ? html`
-					<div style="width:100%;display:flex;justify-content:center">
-					<p>${translate('profile.profile16')}</p>
-						</div>
-					`  : this.profileDataVisiting === null ? html`
-					<div style="width:100%;display:flex;justify-content:center">
-					<p>${translate('profile.profile17')}</p>
-						</div>
-					` :  html`
-					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile4')}</p>
-					<p style="font-size:15px">${this.profileDataVisiting.tagline || translate('profile.profile15')}</p>
-					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile5')}</p>
-					<p>${this.profileDataVisiting.bio || translate('profile.profile15')}</p>
-					<p style="font-weight:bold;color:#03a9f4;font-size:17px">${translate('profile.profile6')}</p>
-					${Object.keys(this.profileDataVisiting.wallets).map((key, i)=> {
-						return html `
-						<p>
-						<span style="font-weight:bold">${key}</span>: <span>${this.profileDataVisiting.wallets[key] || translate('profile.profile15')}</span>
-						</p>
-						`
-					})}
-					`}
-				
-				</div>
-				
-			
-				<div>
-					<span class="paybutton">
-						<mwc-button
-							class="green"
-							@click=${() => this.openUserInfo()}
-							>${translate('profile.profile14')}</mwc-button
-						>
-					</span>
-					<span class="buttons">
-						${this.nameVisiting === this.name ? html`
-						<mwc-button @click=${() => this.openEdit()}>${translate("profile.profile3")}</mwc-button>
-						` : ''}
-					
-						<mwc-button
-							class="decline"
-							@click=${() => {
-								this.dialogOpenedProfile = false
-							}}
-							>${translate('general.close')}</mwc-button
-						>
-					</span>
-				</div>
-			</paper-dialog>
+							<div class="full-info-logo">
+								${this.avatarFullImage()}
+							</div>
+							<h3>${this.nameVisiting}</h3>
+							<div
+								style="display:flex;gap:15px;justify-content:center;margin-top:10px"
+							>
+								${this.nameVisiting !== this.name
+									? html`
+											<div
+												class="send-message-button"
+												@click="${async () => {
+													const address =
+														await this.getUserAddress();
+													if (!address) return;
+													store.dispatch(
+														setNewTab({
+															url: `q-chat`,
+															id: this.uid.rnd(),
+															myPlugObj: {
+																url: 'q-chat',
+																domain: 'core',
+																page: 'messaging/q-chat/index.html',
+																title: 'Q-Chat',
+																icon: 'vaadin:chat',
+																mwcicon:
+																	'forum',
+																pluginNumber:
+																	'plugin-qhsyOnpRhT',
+																menus: [],
+																parent: false,
+															},
 
-			
-			` : ''}
-			
+															openExisting: true,
+														})
+													);
+													store.dispatch(
+														setSideEffectAction({
+															type: 'openPrivateChat',
+															data: {
+																address,
+																name: this
+																	.nameVisiting,
+															},
+														})
+													);
+													this.dialogOpenedProfile = false;
+												}}"
+											>
+												<mwc-icon
+													id="send-chat-icon"
+													style="color: var(--black)"
+													>send</mwc-icon
+												>
+												<vaadin-tooltip
+													for="send-chat-icon"
+													position="bottom"
+													hover-delay=${200}
+													hide-delay=${1}
+													text=${translate(
+														'friends.friend8'
+													)}
+												>
+												</vaadin-tooltip>
+											</div>
+									  `
+									: ''}
+								${this.nameVisiting !== this.name
+									? html`
+											<div
+												class="send-message-button"
+												@click="${() => {
+													const query = `?service=APP&name=Q-Mail/to/${this.nameVisiting}`;
+													store.dispatch(
+														setNewTab({
+															url: `qdn/browser/index.html${query}`,
+															id: this.uid.rnd(),
+															myPlugObj: {
+																url: 'myapp',
+																domain: 'core',
+																page: `qdn/browser/index.html${query}`,
+																title: 'Q-Mail',
+																icon: 'vaadin:mailbox',
+																mwcicon:
+																	'mail_outline',
+																menus: [],
+																parent: false,
+															},
+															openExisting: true,
+														})
+													);
+													this.dialogOpenedProfile = false;
+												}}"
+											>
+												<mwc-icon
+													id="send-mail-icon"
+													style="color: var(--black)"
+													>mail</mwc-icon
+												>
+												<vaadin-tooltip
+													for="send-mail-icon"
+													position="bottom"
+													hover-delay=${200}
+													hide-delay=${1}
+													text=${translate(
+														'friends.friend9'
+													)}
+												>
+												</vaadin-tooltip>
+											</div>
+									  `
+									: ''}
+								${this.nameVisiting !== this.name &&
+								this.isFriend === false
+									? html`
+											<div
+												class="send-message-button"
+												@click="${() => {
+													this.dispatchEvent(
+														new CustomEvent(
+															'add-friend',
+															{
+																bubbles: true,
+																composed: true,
+																detail: this
+																	.nameVisiting,
+															}
+														)
+													);
+													this.dialogOpenedProfile = false;
+												}}"
+											>
+												<mwc-icon
+													id="add-friend-icon"
+													style="color: var(--black)"
+													>person_add</mwc-icon
+												>
+												<vaadin-tooltip
+													for="add-friend-icon"
+													position="bottom"
+													hover-delay=${200}
+													hide-delay=${1}
+													text=${translate(
+														'profile.profile26'
+													)}
+												>
+												</vaadin-tooltip>
+											</div>
+									  `
+									: ''}
+								${this.nameVisiting !== this.name &&
+								this.isFriend === true
+									? html`
+											<div
+												class="send-message-button"
+												@click="${() => {
+													this.dispatchEvent(
+														new CustomEvent(
+															'add-friend',
+															{
+																bubbles: true,
+																composed: true,
+																detail: this
+																	.nameVisiting,
+															}
+														)
+													);
+													this.dialogOpenedProfile = false;
+												}}"
+											>
+												<mwc-icon
+													id="add-friend-icon"
+													style="color: green"
+													>person</mwc-icon
+												>
+												<vaadin-tooltip
+													for="add-friend-icon"
+													position="bottom"
+													hover-delay=${200}
+													hide-delay=${1}
+													text=${translate(
+														'profile.profile25'
+													)}
+												>
+												</vaadin-tooltip>
+											</div>
+									  `
+									: ''}
+							</div>
 
+							<div class="data-info">
+								${this.isLoadingVisitingProfile
+									? html`
+											<div
+												style="width:100%;display:flex;justify-content:center"
+											>
+												<paper-spinner-lite
+													active
+													style="display: block; margin: 0 auto;"
+												></paper-spinner-lite>
+											</div>
+									  `
+									: this.resourceExistsVisiting === false
+									? html`
+											<div
+												style="width:100%;display:flex;justify-content:center"
+											>
+												<p>
+													${translate(
+														'profile.profile16'
+													)}
+												</p>
+											</div>
+									  `
+									: this.profileDataVisiting === null
+									? html`
+											<div
+												style="width:100%;display:flex;justify-content:center"
+											>
+												<p>
+													${translate(
+														'profile.profile17'
+													)}
+												</p>
+											</div>
+									  `
+									: html`
+											<p
+												style="font-weight:bold;color:#03a9f4;font-size:17px"
+											>
+												${translate('profile.profile4')}
+											</p>
+											<p style="font-size:15px">
+												${this.profileDataVisiting
+													.tagline ||
+												translate('profile.profile15')}
+											</p>
+											<p
+												style="font-weight:bold;color:#03a9f4;font-size:17px"
+											>
+												${translate('profile.profile5')}
+											</p>
+											<p>
+												${this.profileDataVisiting
+													.bio ||
+												translate('profile.profile15')}
+											</p>
+											<p
+												style="font-weight:bold;color:#03a9f4;font-size:17px"
+											>
+												${translate('profile.profile6')}
+											</p>
+											${Object.keys(
+												this.profileDataVisiting.wallets
+											).map((key, i) => {
+												return html`
+													<p>
+														<span
+															style="font-weight:bold;text-transform: uppercase"
+															>${key}</span
+														>:
+														<span
+															>${this
+																.profileDataVisiting
+																.wallets[key] ||
+															translate(
+																'profile.profile15'
+															)}</span
+														>
+													</p>
+												`;
+											})}
+									  `}
+							</div>
 
-		
+							<div>
+								<span class="paybutton">
+									<mwc-button
+										class="green"
+										@click=${() => this.openUserInfo()}
+										>${translate(
+											'profile.profile14'
+										)}</mwc-button
+									>
+								</span>
+								<span class="buttons">
+									${this.nameVisiting === this.name
+										? html`
+												<mwc-button
+													@click=${() =>
+														this.openEdit()}
+													>${translate(
+														'profile.profile3'
+													)}</mwc-button
+												>
+										  `
+										: ''}
 
-		
-
-			
-
-		
-		
+									<mwc-button
+										class="decline"
+										@click=${() => {
+											this.dialogOpenedProfile = false;
+										}}
+										>${translate(
+											'general.close'
+										)}</mwc-button
+									>
+								</span>
+							</div>
+						</paper-dialog>
+				  `
+				: ''}
 		`;
 	}
 }
