@@ -1249,6 +1249,8 @@
 		"profile21": "Insert address from UI",
 		"profile22": "Success",
 		"profile23": "encrypted",
-		"profile24": "You must fill out both field name and field value to add a custom property"
+		"profile24": "You must fill out both field name and field value to add a custom property",
+		"profile25": "Is your friend",
+		"profile26": "Add as friend"
 	}
 }
