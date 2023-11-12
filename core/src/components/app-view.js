@@ -73,6 +73,7 @@ class AppView extends connect(store)(LitElement) {
             dgbWalletBalance: { type: Number },
             rvnWalletBalance: { type: Number },
             arrrWalletBalance: { type: Number },
+            failedTradesList: { type: Array },
             tradesOpenBtcQortal: { type: Array },
             tradesFailedBtcQortal: { type: Array },
             tradesOpenBtcQortalCleaned: { type: Array },
@@ -462,6 +463,7 @@ class AppView extends connect(store)(LitElement) {
         this.dgbWalletBalance = 0
         this.rvnWalletBalance = 0
         this.arrrWalletBalance = 0
+        this.failedTradesList = []
         this.tradesOpenBtcQortal = []
         this.tradesFailedBtcQortal = []
         this.tradesOpenBtcQortalCleaned = []
@@ -747,6 +749,62 @@ class AppView extends connect(store)(LitElement) {
             this.tradeBotArrrBook = JSON.parse(localStorage.getItem(this.botArrrWallet) || "[]")
         })
 
+        if (localStorage.getItem("failedTrades") === null) {
+            localStorage.setItem("failedTrades", "")
+
+            var oldFailedTrades = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+
+            const addFixedFail = {
+                timestamp: 1699792400000,
+                recipient: 'QSMfgUCXahYHg38RidZ4FuWbVV8KGngDjP'
+            }
+
+            oldFailedTrades.push(addFixedFail)
+
+            localStorage.setItem("failedTrades", JSON.stringify(oldFailedTrades))
+
+            this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+        } else {
+            this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+        }
+
+        const unconfirmedTransactions = async () => {
+            const unconfirmedTransactionslUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+            var addFailedTrades = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+            await fetch(unconfirmedTransactionslUrl).then(response => {
+                return response.json()
+            }).then(data => {
+                data.map(item => {
+                    const unconfirmedNessageTimeDiff = Date.now() - item.timestamp
+                    const timeOneHour = 60 * 60 * 1000
+                    if (Number(unconfirmedNessageTimeDiff) > Number(timeOneHour)) {
+                        const addIt = {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                        addFailedTrades.push(addIt)
+                    }
+                })
+                localStorage.setItem("failedTrades", JSON.stringify(addFailedTrades))
+                this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+            })
+        }
+
+        await unconfirmedTransactions()
+
+        const filterUnconfirmedTransactions = async () => {
+            let cleanFailedTrades = this.failedTradesList.reduce((newArray, cut) => {
+                if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                    newArray.push(cut)
+                }
+                return newArray
+            },[])
+            localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTrades))
+            this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+        }
+
+        await filterUnconfirmedTransactions()
+
         const getOpenTradesBTC = async () => {
             let timerBTC
 
@@ -777,24 +835,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedBtcQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsBTC = async () => {
+                    const unconfirmedTransactionsUrlBTC = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesBTC = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlBTC).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffBTC = Date.now() - item.timestamp
+                            const timeOneHourBTC = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffBTC) > Number(timeOneHourBTC)) {
+                                const addItBTC = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesBTC.push(addItBTC)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesBTC))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedBtcQortal = await fetch(tradesFailedBtcQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsBTC()
 
-                this.tradesFailedBtcQortal = tradesFailedBtcQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsBTC = async () => {
+                    let cleanFailedTradesBTC = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesBTC))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedBtcQortal.map(item => {
+                await filterUnconfirmedTransactionsBTC()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenBtcQortalCleaned = this.tradesOpenBtcQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
@@ -944,24 +1022,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedLtcQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsLTC = async () => {
+                    const unconfirmedTransactionsUrlLTC = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesLTC = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlLTC).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffLTC = Date.now() - item.timestamp
+                            const timeOneHourLTC = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffLTC) > Number(timeOneHourLTC)) {
+                                const addItLTC = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesLTC.push(addItLTC)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesLTC))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedLtcQortal = await fetch(tradesFailedLtcQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsLTC()
 
-                this.tradesFailedLtcQortal = tradesFailedLtcQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsLTC = async () => {
+                    let cleanFailedTradesLTC = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesLTC))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedLtcQortal.map(item => {
+                await filterUnconfirmedTransactionsLTC()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenLtcQortalCleaned = this.tradesOpenLtcQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
@@ -1111,24 +1209,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedDogeQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsDOGE = async () => {
+                    const unconfirmedTransactionsUrlDOGE = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesDOGE = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlDOGE).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffDOGE = Date.now() - item.timestamp
+                            const timeOneHourDOGE = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffDOGE) > Number(timeOneHourDOGE)) {
+                                const addItDOGE = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesDOGE.push(addItDOGE)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesDOGE))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedDogeQortal = await fetch(tradesFailedDogeQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsDOGE()
 
-                this.tradesFailedDogeQortal = tradesFailedDogeQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsDOGE = async () => {
+                    let cleanFailedTradesDOGE = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesDOGE))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedDogeQortal.map(item => {
+                await filterUnconfirmedTransactionsDOGE()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenDogeQortalCleaned = this.tradesOpenDogeQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
@@ -1278,24 +1396,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedDgbQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsDGB = async () => {
+                    const unconfirmedTransactionsUrlDGB = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesDGB = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlDGB).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffDGB = Date.now() - item.timestamp
+                            const timeOneHourDGB = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffDGB) > Number(timeOneHourDGB)) {
+                                const addItDGB = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesDGB.push(addItDGB)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesDGB))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedDgbQortal = await fetch(tradesFailedDgbQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsDGB()
 
-                this.tradesFailedDgbQortal = tradesFailedDgbQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsDGB = async () => {
+                    let cleanFailedTradesDGB = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesDGB))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedDgbQortal.map(item => {
+                await filterUnconfirmedTransactionsDGB()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenDgbQortalCleaned = this.tradesOpenDgbQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
@@ -1445,24 +1583,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedRvnQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsRVN = async () => {
+                    const unconfirmedTransactionsUrlRVN = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesRVN = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlRVN).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffRVN = Date.now() - item.timestamp
+                            const timeOneHourRVN = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffRVN) > Number(timeOneHourRVN)) {
+                                const addItRVN = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesRVN.push(addItRVN)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesRVN))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedRvnQortal = await fetch(tradesFailedRvnQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsRVN()
 
-                this.tradesFailedRvnQortal = tradesFailedRvnQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsRVN = async () => {
+                    let cleanFailedTradesRVN = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesRVN))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedRvnQortal.map(item => {
+                await filterUnconfirmedTransactionsRVN()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenRvnQortalCleaned = this.tradesOpenRvnQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
@@ -1612,24 +1770,44 @@ class AppView extends connect(store)(LitElement) {
                     }
                 }).filter(item => !!item)
 
-                const tradesFailedArrrQortalUrl = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                const unconfirmedTransactionsARRR = async () => {
+                    const unconfirmedTransactionsUrlARRR = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+                    var addFailedTradesARRR = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    await fetch(unconfirmedTransactionsUrlARRR).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        data.map(item => {
+                            const unconfirmedNessageTimeDiffARRR = Date.now() - item.timestamp
+                            const timeOneHourARRR = 60 * 60 * 1000
+                            if (Number(unconfirmedNessageTimeDiffARRR) > Number(timeOneHourARRR)) {
+                                const addItARRR = {
+                                    timestamp: item.timestamp,
+                                    recipient: item.recipient
+                                }
+                                addFailedTradesARRR.push(addItARRR)
+                           }
+                        })
+                        localStorage.setItem("failedTrades", JSON.stringify(addFailedTradesARRR))
+                        this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                    })
+                }
 
-                const tradesFailedArrrQortal = await fetch(tradesFailedArrrQortalUrl).then(response => {
-                    return response.json()
-                })
+                await unconfirmedTransactionsARRR()
 
-                this.tradesFailedArrrQortal = tradesFailedArrrQortal.map(item => {
-                    const messageTimeDiff = Date.now() - item.timestamp
-                    const oneHour = 60 * 60 * 1000
-                    if (Number(messageTimeDiff) > Number(oneHour)) {
-                        return {
-                            timestamp: item.timestamp,
-                            recipient: item.recipient
+                const filterUnconfirmedTransactionsARRR = async () => {
+                    let cleanFailedTradesARRR = this.failedTradesList.reduce((newArray, cut) => {
+                        if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                             newArray.push(cut)
                         }
-                    }
-                }).filter(item => !!item)
+                        return newArray
+                    },[])
+                    localStorage.setItem("failedTrades", JSON.stringify(cleanFailedTradesARRR))
+                    this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+                }
 
-                this.tradesFailedArrrQortal.map(item => {
+                await filterUnconfirmedTransactionsARRR()
+
+                this.failedTradesList.map(item => {
                     const recipientToRemove = item.recipient
                     this.tradesOpenArrrQortalCleaned = this.tradesOpenArrrQortal.filter(obj => {
                         return obj.qortalCreatorTradeAddress !== recipientToRemove
