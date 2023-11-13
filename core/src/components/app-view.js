@@ -75,6 +75,7 @@ class AppView extends connect(store)(LitElement) {
             arrrWalletBalance: { type: Number },
             failedTradesList: { type: Array },
             tradesOpenBtcQortal: { type: Array },
+            myTradesOpenLtcQortal: { type: Array },
             tradesFailedBtcQortal: { type: Array },
             tradesOpenBtcQortalCleaned: { type: Array },
             tradesOpenLtcQortal: { type: Array },
@@ -465,6 +466,7 @@ class AppView extends connect(store)(LitElement) {
         this.arrrWalletBalance = 0
         this.failedTradesList = []
         this.tradesOpenBtcQortal = []
+        this.myTradesOpenLtcQortal = []
         this.tradesFailedBtcQortal = []
         this.tradesOpenBtcQortalCleaned = []
         this.tradesOpenLtcQortal = []
@@ -741,6 +743,7 @@ class AppView extends connect(store)(LitElement) {
         await this.botArrrTradebook()
 
         window.addEventListener('storage', async () => {
+            this.failedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
             this.tradeBotBtcBook = JSON.parse(localStorage.getItem(this.botBtcWallet) || "[]")
             this.tradeBotLtcBook = JSON.parse(localStorage.getItem(this.botLtcWallet) || "[]")
             this.tradeBotDogeBook = JSON.parse(localStorage.getItem(this.botDogeWallet) || "[]")
@@ -872,13 +875,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsBTC()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenBtcQortalCleaned = this.tradesOpenBtcQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenBtcQortalCleaned = this.tradesOpenBtcQortal
 
+                const filterOpenOfferBTC = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenBtcQortalCleaned = this.tradesOpenBtcQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferBTC()
                 await appDelay(1000)
                 filterMyBotPriceTradesBTC()
                 setTimeout(getOpenTradesBTC, 150000)
@@ -925,8 +933,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotBtcAt.some(item => item.atAddress === this.checkBtcAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableBtcQortal = this.tradeBotAvailableBtcQortal
             }
 
             await appDelay(1000)
@@ -972,8 +978,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotBTCTradebook()
-                    } else {
-                        this.tradeBotBtcBook = this.tradeBotBtcBook
                     }
                 }
 
@@ -985,8 +989,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotBtcFunds) < Number(checkBotBtcFunds)) {
                         this.removeBotBTCTradebook()
-                    } else {
-                        this.tradeBotBtcBook = this.tradeBotBtcBook
                     }
                 }
             }
@@ -1000,27 +1002,38 @@ class AppView extends connect(store)(LitElement) {
                 timerLTC = setTimeout(getOpenTradesLTC, 150000)
             } else {
                 await this.updateLtcWalletBalance()
-                const tradesOpenLtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=LITECOIN&limit=0`
 
-                const tradesOpenLtcQortal = await fetch(tradesOpenLtcQortalUrl).then(response => {
-                    return response.json()
-                })
+                const getTradesOpenLtcQortal = async () => {
+                    const tradesOpenLtcQortalUrl = `${nodeAppUrl}/crosschain/tradeoffers?foreignBlockchain=LITECOIN&limit=0`
 
-                this.tradesOpenLtcQortal = tradesOpenLtcQortal.map(item => {
-                    const expiryTime = item.creatorPresenceExpiry
-                    if (Number(expiryTime) > Date.now()) {
-                        const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
-                        const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
-                        return {
-                            qortAmount: item.qortAmount,
-                            price: roundedPrice,
-                            foreignAmount: item.expectedForeignAmount,
-                            qortalCreator: item.qortalCreator,
-                            qortalAtAddress: item.qortalAtAddress,
-                            qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
+                    await fetch(tradesOpenLtcQortalUrl).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        this.myTradesOpenLtcQortal = data
+                    })
+                }
+
+                await getTradesOpenLtcQortal()
+
+                const filterTradesOpenLtcQortal = async () => {
+                    this.tradesOpenLtcQortal = this.myTradesOpenLtcQortal.map(item => {
+                        const expiryTime = item.creatorPresenceExpiry
+                        if (Number(expiryTime) > Date.now()) {
+                            const calcedPrice = parseFloat(item.expectedForeignAmount) / parseFloat(item.qortAmount)
+                            const roundedPrice = (Math.round(parseFloat(calcedPrice) * 1e8) / 1e8).toFixed(8)
+                            return {
+                                qortAmount: item.qortAmount,
+                                price: roundedPrice,
+                                foreignAmount: item.expectedForeignAmount,
+                                qortalCreator: item.qortalCreator,
+                                qortalAtAddress: item.qortalAtAddress,
+                                qortalCreatorTradeAddress: item.qortalCreatorTradeAddress
+                            }
                         }
-                    }
-                }).filter(item => !!item)
+                    }).filter(item => !!item)
+                }
+
+                await filterTradesOpenLtcQortal()
 
                 const unconfirmedTransactionsLTC = async () => {
                     const unconfirmedTransactionsUrlLTC = `${nodeAppUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
@@ -1059,13 +1072,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsLTC()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenLtcQortalCleaned = this.tradesOpenLtcQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenLtcQortalCleaned = this.tradesOpenLtcQortal
 
+                const filterOpenOfferLTC = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenLtcQortalCleaned = this.tradesOpenLtcQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferLTC()
                 await appDelay(1000)
                 filterMyBotPriceTradesLTC()
                 setTimeout(getOpenTradesLTC, 150000)
@@ -1112,8 +1130,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotLtcAt.some(item => item.atAddress === this.checkLtcAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableLtcQortal = this.tradeBotAvailableLtcQortal
             }
 
             await appDelay(1000)
@@ -1159,8 +1175,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotLTCTradebook()
-                    } else {
-                        this.tradeBotLtcBook = this.tradeBotLtcBook
                     }
                 }
 
@@ -1172,8 +1186,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotLtcFunds) < Number(checkBotLtcFunds)) {
                         this.removeBotLTCTradebook()
-                    } else {
-                        this.tradeBotLtcBook = this.tradeBotLtcBook
                     }
                 }
             }
@@ -1246,13 +1258,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsDOGE()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenDogeQortalCleaned = this.tradesOpenDogeQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenDogeQortalCleaned = this.tradesOpenDogeQortal
 
+                const filterOpenOfferDOGE = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenDogeQortalCleaned = this.tradesOpenDogeQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferDOGE()
                 await appDelay(1000)
                 filterMyBotPriceTradesDOGE()
                 setTimeout(getOpenTradesDOGE, 150000)
@@ -1299,8 +1316,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotDogeAt.some(item => item.atAddress === this.checkDogeAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableDogeQortal = this.tradeBotAvailableDogeQortal
             }
 
             await appDelay(1000)
@@ -1346,8 +1361,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotDOGETradebook()
-                    } else {
-                        this.tradeBotDogeBook = this.tradeBotDogeBook
                     }
                 }
 
@@ -1359,8 +1372,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotDogeFunds) < Number(checkBotDogeFunds)) {
                         this.removeBotDOGETradebook()
-                    } else {
-                        this.tradeBotDogeBook = this.tradeBotDogeBook
                     }
                 }
             }
@@ -1433,13 +1444,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsDGB()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenDgbQortalCleaned = this.tradesOpenDgbQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenDgbQortalCleaned = this.tradesOpenDgbQortal
 
+                const filterOpenOfferDGB = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenDgbQortalCleaned = this.tradesOpenDgbQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferDGB()
                 await appDelay(1000)
                 filterMyBotPriceTradesDGB()
                 setTimeout(getOpenTradesDGB, 150000)
@@ -1486,8 +1502,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotDgbAt.some(item => item.atAddress === this.checkDgbAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableDgbQortal = this.tradeBotAvailableDgbQortal
             }
 
             await appDelay(1000)
@@ -1533,8 +1547,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotDGBTradebook()
-                    } else {
-                        this.tradeBotDgbBook = this.tradeBotDgbBook
                     }
                 }
 
@@ -1546,8 +1558,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotDgbFunds) < Number(checkBotDgbFunds)) {
                         this.removeBotDGBTradebook()
-                    } else {
-                        this.tradeBotDgbBook = this.tradeBotDgbBook
                     }
                 }
             }
@@ -1620,13 +1630,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsRVN()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenRvnQortalCleaned = this.tradesOpenRvnQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenRvnQortalCleaned = this.tradesOpenRvnQortal
 
+                const filterOpenOfferRVN = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenRvnQortalCleaned = this.tradesOpenRvnQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferRVN()
                 await appDelay(1000)
                 filterMyBotPriceTradesRVN()
                 setTimeout(getOpenTradesRVN, 150000)
@@ -1673,8 +1688,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotRvnAt.some(item => item.atAddress === this.checkRvnAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableRvnQortal = this.tradeBotAvailableRvnQortal
             }
 
             await appDelay(1000)
@@ -1720,8 +1733,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotRVNTradebook()
-                    } else {
-                        this.tradeBotRvnBook = this.tradeBotRvnBook
                     }
                 }
 
@@ -1733,8 +1744,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotRvnFunds) < Number(checkBotRvnFunds)) {
                         this.removeBotRVNTradebook()
-                    } else {
-                        this.tradeBotRvnBook = this.tradeBotRvnBook
                     }
                 }
             }
@@ -1807,13 +1816,18 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterUnconfirmedTransactionsARRR()
 
-                this.failedTradesList.map(item => {
-                    const recipientToRemove = item.recipient
-                    this.tradesOpenArrrQortalCleaned = this.tradesOpenArrrQortal.filter(obj => {
-                        return obj.qortalCreatorTradeAddress !== recipientToRemove
-                    })
-                })
+                this.tradesOpenArrrQortalCleaned = this.tradesOpenArrrQortal
 
+                const filterOpenOfferARRR = async () => {
+                    this.failedTradesList.forEach(item => {
+                        const recipientToRemove = item.recipient
+                        this.tradesOpenArrrQortalCleaned = this.tradesOpenArrrQortalCleaned.filter(obj => {
+                            return obj.qortalCreatorTradeAddress !== recipientToRemove
+                        })
+                    })
+                }
+
+                await filterOpenOfferARRR()
                 await appDelay(1000)
                 filterMyBotPriceTradesARRR()
                 setTimeout(getOpenTradesARRR, 150000)
@@ -1860,8 +1874,6 @@ class AppView extends connect(store)(LitElement) {
 
             if (this.tradeBotArrrAt.some(item => item.atAddress === this.checkArrrAlice)) {
                 return
-            } else {
-                this.tradeBotAvailableArrrQortal = this.tradeBotAvailableArrrQortal
             }
 
             await appDelay(1000)
@@ -1907,8 +1919,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(botamount) === 0) {
                         this.removeBotARRRTradebook()
-                    } else {
-                        this.tradeBotArrrBook = this.tradeBotArrrBook
                     }
                 }
 
@@ -1920,8 +1930,6 @@ class AppView extends connect(store)(LitElement) {
 
                     if (Number(myBotArrrFunds) < Number(checkBotArrrFunds)) {
                         this.removeBotARRRTradebook()
-                    } else {
-                        this.tradeBotArrrBook = this.tradeBotArrrBook
                     }
                 }
             }
@@ -3334,4 +3342,3 @@ class AppView extends connect(store)(LitElement) {
 }
 
 window.customElements.define('app-view', AppView)
-

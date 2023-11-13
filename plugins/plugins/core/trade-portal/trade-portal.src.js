@@ -45,6 +45,9 @@ class TradePortal extends LitElement {
             config: { type: Object },
             listedCoins: { type: Map },
             nodeInfo: { type: Array },
+            blockedTradesList: { type: Array },
+            preparedPresence: { type: Array },
+            tradesPresenceCleaned: { type: Array },
             sellBtnDisable: { type: Boolean },
             isSellLoading: { type: Boolean },
             isBuyLoading: { type: Boolean },
@@ -853,6 +856,9 @@ class TradePortal extends LitElement {
         this.selectedCoin = "LITECOIN"
         this.selectedAddress = {}
         this.nodeInfo = []
+        this.blockedTradesList = []
+        this.preparedPresence = []
+        this.tradesPresenceCleaned = []
         this.config = {}
         this.sellBtnDisable = false
         this.isSellLoading = false
@@ -1462,12 +1468,13 @@ class TradePortal extends LitElement {
         }
 	}
 
-    firstUpdated() {
+    async firstUpdated() {
         let _this = this
 
         this.changeTheme()
         this.changeLanguage()
         this.tradeFee()
+        await this.getNewBlockedTrades()
 
         this.tradeHelperMessage = this.renderTradeHelperPass()
 
@@ -1509,6 +1516,7 @@ class TradePortal extends LitElement {
 
         this.updateWalletBalance()
         this.fetchWalletAddress(this.selectedCoin)
+        this.blockedTradesList = JSON.parse(localStorage.getItem('failedTrades') || '[]')
 
         setTimeout(() => {
             this.displayTabContent('buy')
@@ -1592,6 +1600,7 @@ class TradePortal extends LitElement {
         }
 
         window.addEventListener('storage', () => {
+            this.blockedTradesList = JSON.parse(localStorage.getItem('failedTrades') || '[]')
             const checkLanguage = localStorage.getItem('qortalLanguage')
             const checkTheme = localStorage.getItem('qortalTheme')
 
@@ -1694,10 +1703,15 @@ class TradePortal extends LitElement {
         parentEpml.imReady()
 
         setTimeout(() => this.shadowRoot.querySelector('[slot="vaadin-grid-cell-content-3"]').setAttribute('title', 'Last Seen'), 3000)
+
         this.clearConsole()
         setInterval(() => {
             this.clearConsole()
         }, 60000)
+
+        setInterval(() => {
+            this.getNewBlockedTrades()
+        }, 150000)
     }
 
     clearConsole() {
@@ -3208,8 +3222,8 @@ class TradePortal extends LitElement {
                     return null
                 case 'PRESENCE':
                     this.listedCoins.get(message.data.relatedCoin).openOrders = message.data.offers
-                    this.listedCoins.get(message.data.relatedCoin).openFilteredOrders = message.data.filteredOffers
-                    this.reRenderOpenFilteredOrders()
+                    this.preparedPresence = message.data.filteredOffers
+                    this.filterPresenceTrades()
                     return null
                 default:
                     break
@@ -3230,6 +3244,67 @@ class TradePortal extends LitElement {
 
         workers.get(this.selectedCoin).tradesConnectedWorker.postMessage({ type: "set_coin", content: this.selectedCoin })
 
+    }
+
+    async getNewBlockedTrades() {
+        const unconfirmedTransactionsList = async () => {
+            const myNodeInf = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            const myNodeUrl = myNodeInf.protocol + '://' + myNodeInf.domain + ':' + myNodeInf.port
+            const unconfirmedTransactionslUrl = `${myNodeUrl}/transactions/unconfirmed?txType=MESSAGE&limit=0&reverse=true`
+
+            var addBlockedTrades = JSON.parse(localStorage.getItem('failedTrades') || '[]')
+
+            await fetch(unconfirmedTransactionslUrl).then(response => {
+                return response.json()
+            }).then(data => {
+                data.map(item => {
+                    const unconfirmedNessageTimeDiff = Date.now() - item.timestamp
+                    const timeOneHour = 60 * 60 * 1000
+                    if (Number(unconfirmedNessageTimeDiff) > Number(timeOneHour)) {
+                        const addBlocked = {
+                            timestamp: item.timestamp,
+                            recipient: item.recipient
+                        }
+                        addBlockedTrades.push(addBlocked)
+                    }
+                })
+                localStorage.setItem("failedTrades", JSON.stringify(addBlockedTrades))
+                this.blockedTradesList = JSON.parse(localStorage.getItem('failedTrades') || '[]')
+            })
+        }
+
+        await unconfirmedTransactionsList()
+
+        const filterUnconfirmedTransactionsList = async () => {
+            let cleanBlockedTrades = this.blockedTradesList.reduce((newArray, cut) => {
+                if(!newArray.some(obj => obj.recipient === cut.recipient)) {
+                    newArray.push(cut)
+                }
+                return newArray
+            },[])
+            localStorage.setItem("failedTrades", JSON.stringify(cleanBlockedTrades))
+            this.blockedTradesList = JSON.parse(localStorage.getItem("failedTrades") || "[]")
+        }
+
+        await filterUnconfirmedTransactionsList()
+    }
+
+    async filterPresenceTrades() {
+        this.tradesPresenceCleaned = this.preparedPresence
+
+        const filterPresenceList = async () => {
+            this.blockedTradesList.forEach(item => {
+                const toDelete = item.recipient
+                this.tradesPresenceCleaned = this.tradesPresenceCleaned.filter(el => {
+                    return el.qortalCreatorTradeAddress !== toDelete
+                })
+            })
+        }
+
+        await filterPresenceList()
+
+        this.listedCoins.get(this.selectedCoin).openFilteredOrders = this.tradesPresenceCleaned
+        this.reRenderOpenFilteredOrders()
     }
 
     handleStuckTrades() {
