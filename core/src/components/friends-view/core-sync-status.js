@@ -176,6 +176,20 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 					</div>
 				</div>
 			`
+		} else {
+			return html`
+				<div class="tooltip" style="display: inline;">
+					<span><img src="/img/syncing.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
+					<div class="bottom">
+						<h3>${translate("walletprofile.wp3")}</h3>
+						<h4 class="lineHeight">${translate("appinfo.coreversion")}: <span style="color: #03a9f4">${this.coreInfos.buildVersion ? (this.coreInfos.buildVersion).substring(0,12) : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.synchronizing")}... <span style="color: #03a9f4">${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.blockheight")}: <span style="color: #03a9f4">${this.nodeStatus.height ? this.nodeStatus.height : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.peers")}: <span style="color: #03a9f4">${this.nodeStatus.numberOfConnections ? this.nodeStatus.numberOfConnections : ''}</span></h4>
+						<i></i>
+					</div>
+				</div>
+			`
 		}
 	}
 
