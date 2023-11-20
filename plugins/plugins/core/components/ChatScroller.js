@@ -50,19 +50,20 @@ const extractComponents = async (url) => {
 	}
 
 	url = url.replace(/^(qortal:\/\/)/, '');
+
 	if (url.startsWith('use-')) {
-        // Handle the new 'use' format
-        let parts = url.split('/');
-        const type = parts[0].split('-')[1]; // e.g., 'group' from 'use-group'
-        parts.shift();
-        const action = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., 'invite' from 'action-invite'
-        parts.shift();
-        const idPrefix = parts.length > 0 ? parts[0].split('-')[0] : null; // e.g., 'groupid' from 'groupid-321'
-        const id = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., '321' from 'groupid-321'
-        return {
-            type: type,
-            action: action,
-            [idPrefix]: id
+        	// Handle the new 'use' format
+        	let parts = url.split('/');
+        	const type = parts[0].split('-')[1]; // e.g., 'group' from 'use-group'
+        	parts.shift();
+        	const action = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., 'invite' from 'action-invite'
+        	parts.shift();
+        	const idPrefix = parts.length > 0 ? parts[0].split('-')[0] : null; // e.g., 'groupid' from 'groupid-321'
+        	const id = parts.length > 0 ? parts[0].split('-')[1] : null; // e.g., '321' from 'groupid-321'
+        	return {
+           		type: type,
+            		action: action,
+            		[idPrefix]: id
 		}
         } else if (url.includes('/')) {
 		let parts = url.split('/');
@@ -101,15 +102,13 @@ const extractComponents = async (url) => {
 };
 
 function processText(input) {
-	const linkRegex = /(qortal:\/\/\S+)/g;
+	const linkRegex = /(qortal:\/\/S+)/g;
 
 	function processNode(node) {
 		if (node.nodeType === Node.TEXT_NODE) {
 			const parts = node.textContent.split(linkRegex);
-
-			if (parts.length > 1) {
+			if (parts.length > 0) {
 				const fragment = document.createDocumentFragment();
-
 				parts.forEach((part) => {
 					if (part.startsWith('qortal://')) {
 						const link = document.createElement('span');
