@@ -1515,7 +1515,7 @@ class WebBrowser extends LitElement {
 					const missingFields = []
 
 					requiredFields.forEach((field) => {
-						if (!data[field]) {
+						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
 						}
 					})
