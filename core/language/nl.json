@@ -609,7 +609,8 @@
 		"schange39": "Openen",
 		"schange40": "Voorbeeld",
 		"schange41": "Download bezig; Even geduld...",
-		"schange42": "Bestanden die werden gedownload"
+		"schange42": "Bestanden die werden gedownload",
+		"schange43": "Elke downloadpoging gaat door op de achtergrond, probeer het na een tijdje opnieuw."
 	},
 	"tubespage": {
 		"schange1": "Overzicht Q-Tubes",

@@ -209,7 +209,11 @@
 		"exp4": "Vă rugăm să alegeți un portofel pentru a face backup cheii master private.",
 		"core": "Porniți setările de bază",
 		"qappNotification1": "Notificări Q-App",
-		"selectnode": "Vă rugăm să selectați o opțiune"
+		"selectnode": "Vă rugăm să selectați o opțiune",
+		"arrr1": "Portoletul ARRR nu este inițializat !",
+		"arrr2": "Vă rugăm să accesați fila Portofel și să inițializați mai întâi portofelul arrr.",
+		"arrr3": "Am nevoie de actualizare de bază !",
+		"arrr4": "Pentru a salva cheia privată a portofelului dvs. arrr, aveți nevoie mai întâi de o actualizare de bază !"
 	},
 	"appinfo": {
 		"blockheight": "Dimensiunea blocului",
@@ -605,7 +609,8 @@
 		"schange39": "Deschide",
 		"schange40": "Previzualizare",
 		"schange41": "Se descarcă, așteptați...",
-		"schange42": "Fișiere descărcate"
+		"schange42": "Fișiere descărcate",
+		"schange43": "Orice încercare de descărcare va continua în fundal, vă rugăm să încercați din nou după un timp."
 	},
 	"tubespage": {
 		"schange1": "Răsfoiți Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Dați această aplicație permisiunea de a salva următorul fișier",
 		"bchange47": "Publicare instantanee - necesită",
 		"bchange48": "Acordați acestei aplicații permisiunea de a vă trimite notificări",
-		"bchange49": "Oferiți acestei aplicații permisiunea de a obține informațiile despre portofel?"
+		"bchange49": "Oferiți acestei aplicații permisiunea de a obține informațiile despre portofel?",
+		"bchange50": "Această aplicație a solicitat o modificare a profilului dvs. public. Proprietate: ",
+		"bchange51": "Pentru a trimite modificările nu uitați să faceți clic pe Actualizați profilul",
+		"bchange52": "Dați această aplicație permisiunea de a obține informațiile despre portofel?",
+		"bchange53": "Permiteți întotdeauna ca lista de prieteni să fie preluată automat de toate aplicațiile",
+		"bchange54": "Acordați acestei aplicații permisiunea de a vă accesa lista de prieteni?"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nimic de salvat",
 		"saving3": "Salvați modificările nesalvate",
 		"saving4": "Anulează modificările"
+	},
+	"profile": {
+		"profile1": "Nu aveți un nume",
+		"profile2": "Mergeți la înregistrarea numelui",
+		"profile3": "Actualizează profilul",
+		"profile4": "Slogan",
+		"profile5": "Biografie",
+		"profile6": "Adrese portofel",
+		"profile7": "Umpleți din UI",
+		"profile8": "Adăugați o proprietate personalizată",
+		"profile9": "Numele proprietății",
+		"profile10": "Câmpuri",
+		"profile11": "Adăugați câmp",
+		"profile12": "Numele câmpului",
+		"profile13": "Valoarea câmpului",
+		"profile14": "Activitate",
+		"profile15": "Fără valoare",
+		"profile16": "Acest nume nu are profil",
+		"profile17": "Nu se poate prelua profilul",
+		"profile18": "Deschide profilul",
+		"profile19": "Nu se poate prelua profilul",
+		"profile20": "Înregistrați numele",
+		"profile21": "Inserați adresa din interfața de utilizare",
+		"profile22": "Succes",
+		"profile23": "criptat",
+		"profile24": "Trebuie să completați atât numele câmpului, cât și valoarea câmpului pentru a adăuga o proprietate personalizată",
+		"profile25": "Este prietenul tău",
+		"profile26": "Adaugă ca prieten"
 	}
 }

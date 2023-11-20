@@ -209,7 +209,11 @@
 		"exp4": "Veuillez choisir un portefeuille pour sauvegarder la clé principale privée.",
 		"core": "Démarrer les paramètres du noyau",
 		"qappNotification1": "Notifications Q-App",
-		"selectnode": "Veuillez sélectionner une option"
+		"selectnode": "Veuillez sélectionner une option",
+		"arrr1": "Portefeuille ARRR non initialisé !",
+		"arrr2": "Veuillez aller dans l'onglet Portefeuille et initialiser d'abord votre portefeuille arrr.",
+		"arrr3": "Besoin d'une mise à jour principale !",
+		"arrr4": "Pour sauvegarder la clé privée de votre portefeuille arrr, vous avez d'abord besoin d'une mise à jour principale !"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",
@@ -605,7 +609,8 @@
 		"schange39": "Ouvrir",
 		"schange40": "Aperçu",
 		"schange41": "Téléchargement, veuillez patienter...",
-		"schange42": "Fichiers téléchargés"
+		"schange42": "Fichiers téléchargés",
+		"schange43": "Toutes les tentatives de téléchargement continueront en arrière-plan, veuillez réessayer après un certain temps."
 	},
 	"tubespage": {
 		"schange1": "Parcourir Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Autorisez-vous cette application à enregistrer le fichier suivant",
 		"bchange47": "Publication instantanée - nécessite",
 		"bchange48": "Autorisez-vous cette application à vous envoyer des notifications",
-		"bchange49": "Autorisez-vous cette application à récupérer les informations de votre portefeuille ?"
+		"bchange49": "Autorisez-vous cette application à récupérer les informations de votre portefeuille ?",
+		"bchange50": "Cette application a demandé une modification de votre profil public. Propriété : ",
+		"bchange51": "Pour soumettre les modifications n'oubliez pas de cliquer sur 'Mettre à jour le profil'",
+		"bchange52": "Autorisez-vous cette application à obtenir les informations de votre portefeuille ?",
+		"bchange53": "Toujours autoriser la récupération automatique de votre liste d'amis par toutes les applications",
+		"bchange54": "Autorisez-vous cette application à accéder à votre liste d'amis ?"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",
@@ -1214,5 +1224,33 @@
 		"saving2": "Rien à sauver",
 		"saving3": "Enregistrer les modifications non enregistrées",
 		"saving4": "Annuler les changements"
+	},
+	"profile": {
+		"profile1": "Vous n'avez pas de nom",
+		"profile2": "Aller à l'enregistrement du nom",
+		"profile3": "Mettre à jour le profil",
+		"profile4": "Slogan",
+		"profile5": "Biographie",
+		"profile6": "Adresses du portefeuille",
+		"profile7": "Remplir depuis l'interface utilisateur",
+		"profile8": "Ajouter une propriété personnalisée",
+		"profile9": "Nom de la propriété",
+		"profile10": "Champs",
+		"profile11": "Ajouter un champ",
+		"profile12": "Nom du champ",
+		"profile13": "Valeur du champ",
+		"profile14": "Activité",
+		"profile15": "Aucune valeur",
+		"profile16": "Ce nom n'a pas de profil",
+		"profile17": "Impossible de récupérer le profil",
+		"profile18": "Ouvrir le profil",
+		"profile19": "Impossible de récupérer le profil",
+		"profile20": "Nom du registre",
+		"profile21": "Insérer l'adresse depuis l'interface utilisateur",
+		"profile22": "Succès",
+		"profile23": "crypté",
+		"profile24": "Vous devez remplir à la fois le nom et la valeur du champ pour ajouter une propriété personnalisée",
+		"profile25": "Est-ce que ton ami",
+		"profile26": "Ajouter comme ami"
 	}
 }

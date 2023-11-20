@@ -609,7 +609,8 @@
 		"schange39": "Open",
 		"schange40": "Preview",
 		"schange41": "Downloading please wait...",
-		"schange42": "Files downloaded"
+		"schange42": "Files downloaded",
+		"schange43": "Any attempted downloads will continue in the background, please try again after a while."
 	},
 	"tubespage": {
 		"schange1": "Browse Q-Tubes",
@@ -739,7 +740,6 @@
 		"bchange52": "Do you give this application permission to get your wallet information?",
 		"bchange53": "Always allow your friends list to be retrieved automatically by all apps",
 		"bchange54": "Do you give this application permission to access your friends list?"
-
 	},
 	"datapage": {
 		"dchange1": "Data Management",

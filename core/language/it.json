@@ -209,7 +209,11 @@
 		"exp4": "Scegli un portafoglio per il backup della chiave master privata.",
 		"core": "Avvia impostazioni principali",
 		"qappNotification1": "Notifiche Q-App",
-		"selectnode": "Seleziona un'opzione"
+		"selectnode": "Seleziona un'opzione",
+		"arrr1": "Portafoglio ARRR non inizializzato!",
+		"arrr2": "Vai alla scheda Portafoglio e inizializza prima il tuo portafoglio arrr.",
+		"arrr3": "È necessario l'aggiornamento del core!",
+		"arrr4": "Per salvare la chiave privata del tuo portafoglio arrr devi prima aggiornare il core!"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",
@@ -605,7 +609,8 @@
 		"schange39": "Apri",
 		"schange40": "Anteprima",
 		"schange41": "Download in corso, attendere...",
-		"schange42": "File scaricati"
+		"schange42": "File scaricati",
+		"schange43": "Qualsiasi tentativo di download continuerà in background, riprova dopo un po."
 	},
 	"tubespage": {
 		"schange1": "Sfoglia Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Concedi a questa applicazione il permesso di salvare il seguente file",
 		"bchange47": "Pubblicazione istantanea - richiede",
 		"bchange48": "Concedi a questa applicazione il permesso di inviarti notifiche",
-		"bchange49": "Concedi a questa applicazione il permesso di ottenere informazioni sul tuo portafoglio?"
+		"bchange49": "Concedi a questa applicazione il permesso di ottenere informazioni sul tuo portafoglio?",
+		"bchange50": "Questa app ha richiesto una modifica al tuo profilo pubblico. Proprietà: ",
+		"bchange51": "Per inviare le modifiche non dimenticare di fare clic su 'Aggiorna profilo'",
+		"bchange52": "Concedi a questa applicazione il permesso di ottenere informazioni sul tuo portafoglio?",
+		"bchange53": "Consenti sempre che la tua lista amici venga recuperata automaticamente da tutte le app",
+		"bchange54": "Concedi a questa applicazione il permesso di accedere alla tua lista di amici?"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",
@@ -1214,5 +1224,33 @@
 		"saving2": "Niente da salvare",
 		"saving3": "Salva le modifiche non salvate",
 		"saving4": "Cancella i cambiamenti"
+	},
+	"profile": {
+		"profile1": "Non hai un nome",
+		"profile2": "Vai alla registrazione del nome",
+		"profile3": "Aggiorna profilo",
+		"profile4": "Slogan",
+		"profile5": "Biografia",
+		"profile6": "Indirizzi del portafoglio",
+		"profile7": "Compila dall'interfaccia utente",
+		"profile8": "Aggiungi proprietà personalizzata",
+		"profile9": "Nome della struttura",
+		"profile10": "Campi",
+		"profile11": "Aggiungi campo",
+		"profile12": "Nome campo",
+		"profile13": "Valore del campo",
+		"profile14": "Attività",
+		"profile15": "Nessun valore",
+		"profile16": "Questo nome non ha profilo",
+		"profile17": "Impossibile recuperare il profilo",
+		"profile18": "Apri profilo",
+		"profile19": "Impossibile recuperare il profilo",
+		"profile20": "Nome registrato",
+		"profile21": "Inserisci indirizzo dall'interfaccia utente",
+		"profile22": "Successo",
+		"profile23": "crittografato",
+		"profile24": "Devi compilare sia il nome del campo che il valore del campo per aggiungere una proprietà personalizzata",
+		"profile25": "È tuo amico",
+		"profile26": "Aggiungi come amico"
 	}
 }

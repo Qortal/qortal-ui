@@ -209,7 +209,11 @@
 		"exp4": "Palun vali rahakott privaatse üldvõtme varundamiseks.",
 		"core": "Tuuma käivitamise seaded",
 		"qappNotification1": "Q-App märguanded",
-		"selectnode": "Palun tehke valik"
+		"selectnode": "Palun tehke valik",
+		"arrr1": "ARRR rahakott pole initsialiseeritud!",
+		"arrr2": "Minge rahakoti vahekaardile ja lähtestage esmalt oma arrr rahakott.",
+		"arrr3": "Vaja põhivärskendust!",
+		"arrr4": "Oma arrr rahakoti privaatvõtme salvestamiseks vajate esmalt põhivärskendust!"
 	},
 	"appinfo": {
 		"blockheight": "Ploki kõrgus",
@@ -605,7 +609,8 @@
 		"schange39": "Ava",
 		"schange40": "Kuva",
 		"schange41": "Allalaadimine, palun oodake...",
-		"schange42": "Alla laetud failid"
+		"schange42": "Alla laetud failid",
+		"schange43": "Kõik allalaadimiskatsed jätkuvad taustal, proovige mõne aja pärast uuesti."
 	},
 	"tubespage": {
 		"schange1": "Sirvi Q-Tube",
@@ -729,7 +734,12 @@
 		"bchange46": "Kas annad sellele rakendusele loa salvestada järgnev fail",
 		"bchange47": "Kiire avaldamine - nõuab",
 		"bchange48": "Kas annate sellele rakendusele loa teile teateid saata",
-		"bchange49": "Kas annad sellele rakendusele loa näha oma rahakoti teabe?"
+		"bchange49": "Kas annad sellele rakendusele loa näha oma rahakoti teabe?",
+		"bchange50": "See rakendus taotles teie avaliku profiili muutmist. Atribuut: ",
+		"bchange51": "Muudatuste esitamiseks ärge unustage klõpsata Uuenda profiili",
+		"bchange52": "Kas annate sellele rakendusele loa oma rahakoti teabe hankimiseks?",
+		"bchange53": "Luba alati oma sõprade loendit kõikidel rakendustel automaatselt laadida",
+		"bchange54": "Kas annate sellele rakendusele loa juurdepääsuks oma sõbraloendile?"
 	},
 	"datapage": {
 		"dchange1": "Andmete haldamine",
@@ -1214,5 +1224,33 @@
 		"saving2": "Pole midagi päästa",
 		"saving3": "Salvestage salvestamata muudatused",
 		"saving4": "Võta muudatused tagasi"
+	},
+	"profile": {
+		"profile1": "Teil pole nime",
+		"profile2": "Ava nime registreerimine",
+		"profile3": "Värskenda profiili",
+		"profile4": "Tutvustustekst",
+		"profile5": "Bio",
+		"profile6": "Rahakoti aadressid",
+		"profile7": "Täida kasutajaliidesest",
+		"profile8": "Lisa kohandatud atribuut",
+		"profile9": "Atribuudi nimi",
+		"profile10": "Väljad",
+		"profile11": "Lisa väli",
+		"profile12": "Välja nimi",
+		"profile13": "Välja väärtus",
+		"profile14": "Tegevus",
+		"profile15": "Väärtust pole",
+		"profile16": "Sellel nimel pole profiili",
+		"profile17": "Profiili ei saa tuua",
+		"profile18": "Ava profiil",
+		"profile19": "Profiili ei saa tuua",
+		"profile20": "Registreeri nimi",
+		"profile21": "Sisesta kasutajaliidese aadress",
+		"profile22": "Edu",
+		"profile23": "krüpteeritud",
+		"profile24": "Kohandatud atribuudi lisamiseks peate täitma nii välja nime kui ka väärtuse",
+		"profile25": "Kas su sõber",
+		"profile26": "Lisa sõbraks"
 	}
 }

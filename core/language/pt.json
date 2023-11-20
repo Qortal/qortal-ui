@@ -209,7 +209,11 @@
 		"exp4": "Por favor, escolha uma carteira para fazer backup da chave mestra privada.",
 		"core": "Iniciar configurações do núcleo",
 		"qappNotification1": "Notificações de Q-App",
-		"selectnode": "Por favor selecione uma opção"
+		"selectnode": "Por favor selecione uma opção",
+		"arrr1": "Carteira ARRR não inicializada!",
+		"arrr2": "Por favor, vá para a aba carteira e inicialize sua carteira arrr primeiro.",
+		"arrr3": "Precisa de atualização principal!",
+		"arrr4": "Para salvar a chave privada da sua carteira arrr você precisa primeiro de uma atualização principal!"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",
@@ -605,7 +609,8 @@
 		"schange39": "Abrir",
 		"schange40": "Pré-visualização",
 		"schange41": "Baixando, por favor, aguarde...",
-		"schange42": "Arquivos baixados"
+		"schange42": "Arquivos baixados",
+		"schange43": "Qualquer tentativa de download continuará em segundo plano, tente novamente depois de um tempo."
 	},
 	"tubespage": {
 		"schange1": "Navegar Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Você concede permissão a este aplicativo para salvar o seguinte arquivo",
 		"bchange47": "Publicação instantânea - requer",
 		"bchange48": "Você dá permissão a este aplicativo para enviar notificações para você?",
-		"bchange49": "Você dá permissão a este aplicativo para obter informações da sua carteira?"
+		"bchange49": "Você dá permissão a este aplicativo para obter informações da sua carteira?",
+		"bchange50": "Este aplicativo solicitou uma alteração em seu perfil público. Propriedade: ",
+		"bchange51": "Para enviar as alterações não esqueça de clicar em 'Atualizar perfil'",
+		"bchange52": "Você dá permissão a este aplicativo para obter informações da sua carteira?",
+		"bchange53": "Sempre permita que sua lista de amigos seja recuperada automaticamente por todos os aplicativos",
+		"bchange54": "Você dá permissão a este aplicativo para acessar sua lista de amigos?"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nada para salvar",
 		"saving3": "Salvar alterações não salvas",
 		"saving4": "Desfazer mudanças"
+	},
+	"profile": {
+		"profile1": "Você não tem nome",
+		"profile2": "Ir para registro de nome",
+		"profile3": "Atualizar perfil",
+		"profile4": "Slogan",
+		"perfile5": "Bio",
+		"profile6": "Endereços da carteira",
+		"profile7": "Preencher a partir da UI",
+		"profile8": "Adicionar propriedade personalizada",
+		"profile9": "Nome da propriedade",
+		"perfile10": "Campos",
+		"profile11": "Adicionar campo",
+		"profile12": "Nome do campo",
+		"profile13": "Valor do campo",
+		"profile14": "Atividade",
+		"profile15": "Sem valor",
+		"profile16": "Este nome não tem perfil",
+		"profile17": "Não foi possível buscar o perfil",
+		"profile18": "Abrir perfil",
+		"profile19": "Não foi possível buscar o perfil",
+		"profile20": "Registrar nome",
+		"profile21": "Inserir endereço da UI",
+		"profile22": "Sucesso",
+		"profile23": "criptografado",
+		"profile24": "Você deve preencher o nome e o valor do campo para adicionar uma propriedade personalizada",
+		"profile25": "É seu amigo",
+		"profile26": "Adicionar como amigo"
 	}
 }

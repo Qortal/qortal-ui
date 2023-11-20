@@ -209,7 +209,11 @@
 		"exp4": "Elija una billetera para hacer una copia de seguridad de la clave maestra privada.",
 		"core": "Iniciar configuración básica",
 		"qappNotification1": "Notificaciones de Q-App",
-		"selectnode": "Por favor seleccione una opción"
+		"selectnode": "Por favor seleccione una opción",
+		"arrr1": "¡Cartera ARRR no inicializada!",
+		"arrr2": "Por favor, vaya a la pestaña de billetera e inicialice su billetera arrr primero.",
+		"arrr3": "¡Necesita actualización principal!",
+		"arrr4": "¡Para guardar la clave privada de tu billetera arrr, primero necesitas una actualización básica!"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",
@@ -605,7 +609,8 @@
 		"schange39": "Abrir",
 		"schange40": "Vista previa",
 		"schange41": "Descargando por favor espere...",
-		"schange42": "Archivos descargados"
+		"schange42": "Archivos descargados",
+		"schange43": "Cualquier intento de descarga continuará en segundo plano; inténtelo de nuevo después de un tiempo."
 	},
 	"tubespage": {
 		"schange1": "Explorar Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "¿Le das permiso a esta aplicación para guardar el siguiente archivo?",
 		"bchange47": "Publicación instantánea - requiere",
 		"bchange48": "¿Le das permiso a esta aplicación para enviarte notificaciones?",
-		"bchange49": "¿Le das permiso a esta aplicación para obtener la información de tu billetera?"
+		"bchange49": "¿Le das permiso a esta aplicación para obtener la información de tu billetera?",
+		"bchange50": "Esta aplicación ha solicitado un cambio en tu perfil público. Propiedad: ",
+		"bchange51": "Para enviar los cambios no olvides hacer clic en 'Actualizar perfil'",
+		"bchange52": "¿Le das permiso a esta aplicación para obtener la información de tu billetera?",
+		"bchange53": "Permitir siempre que todas las aplicaciones recuperen automáticamente tu lista de amigos",
+		"bchange54": "¿Le das permiso a esta aplicación para acceder a tu lista de amigos?"
 	},
 	"datapage": {
 		"dchange1": "Gestión de datos",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nada que salvar",
 		"saving3": "Guardar cambios no guardados",
 		"saving4": "Deshacer cambios"
+	},
+	"profile": {
+		"profile1": "No tienes nombre",
+		"profile2": "Ir al registro de nombre",
+		"profile3": "Actualizar perfil",
+		"profile4": "Lema",
+		"perfil5": "Biografía",
+		"profile6": "Direcciones de billetera",
+		"profile7": "Rellenar desde la interfaz de usuario",
+		"profile8": "Agregar propiedad personalizada",
+		"profile9": "Nombre de propiedad",
+		"profile10": "Campos",
+		"profile11": "Agregar campo",
+		"profile12": "Nombre de campo",
+		"profile13": "Valor de campo",
+		"profile14": "Actividad",
+		"profile15": "Sin valor",
+		"profile16": "Este nombre no tiene perfil",
+		"profile17": "No se puede recuperar el perfil",
+		"profile18": "Abrir perfil",
+		"profile19": "No se puede recuperar el perfil",
+		"profile20": "Nombre del registro",
+		"profile21": "Insertar dirección desde la UI",
+		"profile22": "Éxito",
+		"profile23": "cifrado",
+		"profile24": "Debes completar tanto el nombre del campo como el valor del campo para agregar una propiedad personalizada",
+		"profile25": "Es tu amigo",
+		"profile26": "Agregar como amigo"
 	}
 }

@@ -209,7 +209,11 @@
 		"exp4": "Velg en lommebok for å sikkerhetskopiere den private hovednøkkelen.",
 		"core": "Start kjerneinnstillinger",
 		"qappNotification1": "Q-App varsler",
-		"selectnode": "Vennligst velg et alternativ"
+		"selectnode": "Vennligst velg et alternativ",
+		"arrr1": "ARRR-lommebok ikke initialisert !",
+		"arrr2": "Vennligst gå til lommebok-fanen og initialiser arrr-lommeboken først.",
+		"arrr3": "Trenger kjerneoppdatering!",
+		"arrr4": "For å lagre den private nøkkelen til arrr-lommeboken din trenger du en kjerneoppdatering først!"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",
@@ -605,7 +609,8 @@
 		"schange39": "Åpne",
 		"schange40": "Forhåndsvisning",
 		"schange41": "Laster ned, vennligst vent...",
-		"schange42": "Filer lastet ned"
+		"schange42": "Filer lastet ned",
+		"schange43": "Alle forsøk på nedlasting vil fortsette i bakgrunnen, prøv igjen etter en stund."
 	},
 	"tubespage": {
 		"schange1": "Bla gjennom Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Gir du dette programmet tillatelse til å lagre følgende fil",
 		"bchange47": "Øyeblikkelig publisering - krever",
 		"bchange48": "Gir du denne applikasjonen tillatelse til å sende deg varsler",
-		"bchange49": "Gir du dette programmet tillatelse til å få lommebokinformasjonen din?"
+		"bchange49": "Gir du dette programmet tillatelse til å få lommebokinformasjonen din?",
+		"bchange50": "Denne appen har bedt om en endring av din offentlige profil. Eiendom: ",
+		"bchange51": "For å sende inn endringene, ikke glem å klikke på 'Oppdater profil'",
+		"bchange52": "Gir du dette programmet tillatelse til å få lommebokinformasjon?",
+		"bchange53": "La alltid vennelisten din hentes automatisk av alle apper",
+		"bchange54": "Gir du dette programmet tillatelse til å få tilgang til vennelisten din?"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",
@@ -1214,5 +1224,33 @@
 		"saving2": "Ingenting å spare",
 		"saving3": "Lagre ulagrede endringer",
 		"saving4": "Angre endringer"
+	},
+	"profile": {
+		"profile1": "Du har ikke noe navn",
+		"profile2": "Gå til navneregistrering",
+		"profile3": "Oppdater profil",
+		"profile4": "Tagline",
+		"profile5": "Bio",
+		"profile6": "Lommebokadresser",
+		"profile7": "Fyll fra brukergrensesnitt",
+		"profile8": "Legg til egendefinert egenskap",
+		"profile9": "Eiendomsnavn",
+		"profile10": "Felter",
+		"profile11": "Legg til felt",
+		"profile12": "Feltnavn",
+		"profile13": "Feltverdi",
+		"profile14": "Aktivitet",
+		"profile15": "Ingen verdi",
+		"profile16": "Dette navnet har ingen profil",
+		"profile17": "Kan ikke hente profil",
+		"profile18": "Åpne profil",
+		"profile19": "Kan ikke hente profil",
+		"profile20": "Registrer navn",
+		"profile21": "Sett inn adresse fra brukergrensesnittet",
+		"profile22": "Suksess",
+		"profile23": "kryptert",
+		"profile24": "Du må fylle ut både feltnavn og feltverdi for å legge til en egendefinert egenskap",
+		"profile25": "Er din venn",
+		"profile26": "Legg til som venn"
 	}
 }
