@@ -166,7 +166,23 @@ class QApps extends LitElement {
                 text-align:center;
                 padding: 15px;
                 line-height: 1.6;
-                overflow-y: auto;
+                overflow: hidden;
+            }
+
+            paper-dialog.close-progress {
+                min-width: 550px;
+                max-width: 550px;
+                height: auto;
+                background-color: var(--white);
+                color: var(--black);
+                border: 1px solid var(--black);
+                border-radius: 15px;
+                text-align:center;
+                padding: 15px;
+                font-size: 17px;
+                font-weight: 500;
+                line-height: 20px;
+                overflow: hidden;
             }
 
             paper-dialog.search {
@@ -537,6 +553,19 @@ class QApps extends LitElement {
                 margin: 0 7px 7px 0;
                 padding: 7px;
             }
+
+            .close-download {
+                color: var(--black);
+                font-size: 14px;
+                font-weight: bold;
+                position: absolute;
+                top: -15px;
+                right: -15px;
+            }
+
+            .close-download:hover {
+                color: #df3636;
+            }
         `
     }
 
@@ -641,9 +670,13 @@ class QApps extends LitElement {
 	        <div id="search-container" class="grid-container-search"></div>
             </paper-dialog>
             <paper-dialog id="downloadProgressDialog" class="progress" modal>
+                <span class="close-download"><paper-icon-button icon="icons:close" @click="${() => this.closeDownloadProgressDialog()}" title="${translate("general.close")}"></paper-icon-button></span>
                 <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 <h2>${translate("appspage.schange41")}</h2>
                 <h3>${this.textProgress}</h3>
+            </paper-dialog>
+            <paper-dialog id="closeProgressDialog" class="close-progress" modal>
+                ${translate("appspage.schange43")}
             </paper-dialog>
             <paper-dialog id="appInfoDialog" class="appinfo" modal>
                 <div class="card-container">
@@ -1087,6 +1120,8 @@ class QApps extends LitElement {
             this.appStatus = html`<button class="primary" @click=${() => this.downloadApp(name)}>${translate("appspage.schange36")}</button>`
         } else if (status1 === "Ready" || status2 === "DOWNLOADED") {
             this.appStatus = html`<button class="secondary" @click=${() => window.location.href = `../qdn/browser/index.html?name=${name}&service=APP`}>${translate("appspage.schange39")}</button>`
+        } else {
+            this.appStatus = html`<button class="primary" @click=${() => this.downloadApp(name)}>${translate("appspage.schange36")}</button>`
         }
         if (this.followedNames.indexOf(name) === -1) {
            this.appFollow = html`<button class="primary" @click=${() => this.followName(name)}>${translate("appspage.schange29")}</button>`
@@ -1288,6 +1323,7 @@ class QApps extends LitElement {
     }
 
     showChunks(appname) {
+        this.shadowRoot.getElementById('downloadProgressDialog').open()
         const checkStatus = async () => {
             const service = this.service
             const name = appname
@@ -1299,8 +1335,6 @@ class QApps extends LitElement {
             this.textStatus = 'Loading...'
 
             this.btnDisabled = true
-
-            this.shadowRoot.getElementById('downloadProgressDialog').open()
 
             let timerDownload
 
@@ -1365,6 +1399,15 @@ class QApps extends LitElement {
             }
         }
         checkStatus()
+    }
+
+    async closeDownloadProgressDialog() {
+            const closeDelay = ms => new Promise(res => setTimeout(res, ms))
+            this.shadowRoot.getElementById('downloadProgressDialog').close()
+            this.shadowRoot.getElementById('closeProgressDialog').open()
+            await closeDelay(3000)
+            this.shadowRoot.getElementById('closeProgressDialog').close()
+            this.closeAppInfoDialog()
     }
 
     async followName(appName) {
