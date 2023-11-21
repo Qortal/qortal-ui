@@ -271,7 +271,7 @@ class WebBrowser extends LitElement {
 			const name = parts[0]
 			parts.shift()
 			let identifier
-
+			let path
 			if (parts.length > 0) {
 				identifier = parts[0] // Do not shift yet
 				// Check if a resource exists with this service, name and identifier combination
@@ -2314,12 +2314,19 @@ class WebBrowser extends LitElement {
 					}
 					const res3 = await showModalAndWait(
 						actions.GET_USER_WALLET
-					);
-
-					if (res3.action === 'accept') {
-						let coin = data.coin;
-						let userWallet = {};
-
+						);
+						
+						if (res3.action === 'accept') {
+							let coin = data.coin;
+							let userWallet = {};
+							let arrrAddress = "";
+							if (coin === "ARRR") {
+								 arrrAddress = await parentEpml.request('apiCall', {
+									url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
+									method: 'POST',
+									body: `${window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58}`
+							})
+							}
 						switch (coin) {
 							case 'QORT':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -2346,6 +2353,7 @@ class WebBrowser extends LitElement {
 								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
 								break
 							case 'ARRR':
+								userWallet['address'] = arrrAddress
 								break
 							default:
 								break
