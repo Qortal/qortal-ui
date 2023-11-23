@@ -209,7 +209,11 @@
 		"exp4": "Kérjük, válasszon egy tárcát a privát főkulcs biztonsági mentéséhez.",
 		"core": "Alapbeállítások indítása",
 		"qappNotification1": "Q-App értesítések",
-		"selectnode": "Kérjük, válasszon egy lehetőséget"
+		"selectnode": "Kérjük, válasszon egy lehetőséget",
+		"arrr1": "ARRR Wallet nincs inicializálva!",
+		"arrr2": "Kérjük, lépjen a Wallet fülre, és először inicializálja arrr pénztárcáját.",
+		"arrr3": "Alapfrissítésre van szükség!",
+		"arrr4": "Az arrr pénztárca privát kulcsának mentéséhez először egy alapvető frissítésre van szükség!"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",
@@ -605,7 +609,8 @@
 		"schange39": "Nyitva",
 		"schange40": "Előnézet",
 		"schange41": "Letöltés, kérem várjon...",
-		"schange42": "Fájlok letöltve"
+		"schange42": "Fájlok letöltve",
+		"schange43": "Minden letöltési kísérlet a háttérben folytatódik. Kérjük, próbálja újra egy idő után."
 	},
 	"tubespage": {
 		"schange1": "Tallózás a Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Engedélyezi ennek az alkalmazásnak a következő fájl mentését",
 		"bchange47": "Azonnali közzététel – szükséges",
 		"bchange48": "Engedélyezi ennek az alkalmazásnak, hogy értesítéseket küldjön Önnek",
-		"bchange49": "Engedélyt ad ennek az alkalmazásnak, hogy megszerezze a pénztárca adatait?"
+		"bchange49": "Engedélyt ad ennek az alkalmazásnak, hogy megszerezze a pénztárca adatait?",
+		"bchange50": "Ez az alkalmazás módosítást kért nyilvános profiljában. Tulajdonság: ",
+		"bchange51": "A módosítások elküldéséhez ne felejtsen el a 'Profil frissítése' gombra kattintani",
+		"bchange52": "Engedélyt ad ennek az alkalmazásnak a pénztárca adatainak lekérésére?",
+		"bchange53": "Mindig engedélyezze, hogy az összes alkalmazás automatikusan lekérje a barátlistáját",
+		"bchange54": "Engedélyt ad ennek az alkalmazásnak, hogy hozzáférjen a barátlistájához?"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nincs mit menteni",
 		"saving3": "Mentse a nem mentett változtatásokat",
 		"saving4": "Változtatások visszavonása"
+	},
+	"profile": {
+		"profile1": "Nincs neved",
+		"profile2": "Ugrás a névregisztrációhoz",
+		"profile3": "Profil frissítése",
+		"profile4": "Tagline",
+		"profile5": "Életrajz",
+		"profile6": "pénztárca címei",
+		"profile7": "Kitöltés a felhasználói felületről",
+		"profile8": "Egyéni tulajdonság hozzáadása",
+		"profile9": "Tulajdon neve",
+		"profile10": "Mezők",
+		"profile11": "Mező hozzáadása",
+		"profile12": "Mező neve",
+		"profile13": "Mező értéke",
+		"profile14": "Tevékenység",
+		"profile15": "Nincs érték",
+		"profile16": "Ennek a névnek nincs profilja",
+		"profile17": "Nem sikerült lekérni a profilt",
+		"profile18": "Profil megnyitása",
+		"profile19": "Nem sikerült lekérni a profilt",
+		"profile20": "Regisztrációs név",
+		"profile21": "Cím beszúrása a felhasználói felületről",
+		"profile22": "Siker",
+		"profile23": "titkosított",
+		"profile24": "Egyéni tulajdonság hozzáadásához ki kell töltenie a mező nevét és értékét egyaránt",
+		"profile25": "A barátod",
+		"profile26": "Hozzáadás ismerősként"
 	}
 }

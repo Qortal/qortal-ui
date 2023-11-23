@@ -93,6 +93,7 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 		}, 60000)
 	}
 
+
 	async getCoreInfos() {
 		const corInfo = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
 		const coreInfoUrl = corInfo.protocol + '://' + corInfo.domain + ':' + corInfo.port
@@ -101,12 +102,11 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 			return response.json()
 		}).then(data => {
 			this.coreInfos = data
-		}).catch(err => {
 		})
 	}
 
 	renderSyncStatusIcon() {
-		if (this.nodeStatus.isSynchronizing === true) {
+		if (this.nodeStatus.isSynchronizing === true && this.nodeStatus.syncPercent === 99) {
 			return html`
 				<div class="tooltip" style="display: inline;">
 					<span><img src="/img/syncing.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
@@ -120,7 +120,7 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 					</div>
 				</div>
 			`
-		} else if (this.nodeStatus.isSynchronizing === false && this.nodeStatus.isMintingPossible === false) {
+		} else if (this.nodeStatus.isSynchronizing === true && this.nodeStatus.isMintingPossible === false && this.nodeStatus.syncPercent === 100) {
 			return html`
 				<div class="tooltip" style="display: inline;">
 					<span><img src="/img/synced.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
@@ -134,7 +134,21 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 					</div>
 				</div>
 			`
-		} else if (this.nodeStatus.isSynchronizing === false && this.nodeStatus.isMintingPossible === true) {
+		} else if (this.nodeStatus.isSynchronizing === false && this.nodeStatus.isMintingPossible === false && this.nodeStatus.syncPercent === 100) {
+			return html`
+				<div class="tooltip" style="display: inline;">
+					<span><img src="/img/synced.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
+					<div class="bottom">
+						<h3>${translate("walletprofile.wp3")}</h3>
+						<h4 class="lineHeight">${translate("appinfo.coreversion")}: <span style="color: #03a9f4">${this.coreInfos.buildVersion ? (this.coreInfos.buildVersion).substring(0,12) : ''}</span></h4>
+						<h4 class="lineHeight">${translate("walletprofile.wp4")} ${translate("walletprofile.wp2")}</h4>
+						<h4 class="lineHeight">${translate("appinfo.blockheight")}: <span style="color: #03a9f4">${this.nodeStatus.height ? this.nodeStatus.height : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.peers")}: <span style="color: #03a9f4">${this.nodeStatus.numberOfConnections ? this.nodeStatus.numberOfConnections : ''}</span></h4>
+						<i></i>
+					</div>
+				</div>
+			`
+		} else if (this.nodeStatus.isSynchronizing === true && this.nodeStatus.isMintingPossible === true && this.nodeStatus.syncPercent === 100) {
 			return html`
 				<div class="tooltip" style="display: inline;">
 					<span><img src="/img/synced_minting.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
@@ -142,6 +156,34 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 						<h3>${translate("walletprofile.wp3")}</h3>
 						<h4 class="lineHeight">${translate("appinfo.coreversion")}: <span style="color: #03a9f4">${this.coreInfos.buildVersion ? (this.coreInfos.buildVersion).substring(0,12) : ''}</span></h4>
 						<h4 class="lineHeight">${translate("walletprofile.wp4")} <span style="color: #03a9f4">( ${translate("walletprofile.wp1")} )</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.blockheight")}: <span style="color: #03a9f4">${this.nodeStatus.height ? this.nodeStatus.height : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.peers")}: <span style="color: #03a9f4">${this.nodeStatus.numberOfConnections ? this.nodeStatus.numberOfConnections : ''}</span></h4>
+						<i></i>
+					</div>
+				</div>
+			`
+		} else if (this.nodeStatus.isSynchronizing === false && this.nodeStatus.isMintingPossible === true && this.nodeStatus.syncPercent === 100) {
+			return html`
+				<div class="tooltip" style="display: inline;">
+					<span><img src="/img/synced_minting.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
+					<div class="bottom">
+						<h3>${translate("walletprofile.wp3")}</h3>
+						<h4 class="lineHeight">${translate("appinfo.coreversion")}: <span style="color: #03a9f4">${this.coreInfos.buildVersion ? (this.coreInfos.buildVersion).substring(0,12) : ''}</span></h4>
+						<h4 class="lineHeight">${translate("walletprofile.wp4")} <span style="color: #03a9f4">( ${translate("walletprofile.wp1")} )</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.blockheight")}: <span style="color: #03a9f4">${this.nodeStatus.height ? this.nodeStatus.height : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.peers")}: <span style="color: #03a9f4">${this.nodeStatus.numberOfConnections ? this.nodeStatus.numberOfConnections : ''}</span></h4>
+						<i></i>
+					</div>
+				</div>
+			`
+		} else {
+			return html`
+				<div class="tooltip" style="display: inline;">
+					<span><img src="/img/syncing.png" style="height: 24px; width: 24px; padding-top: 4px;"></span>
+					<div class="bottom">
+						<h3>${translate("walletprofile.wp3")}</h3>
+						<h4 class="lineHeight">${translate("appinfo.coreversion")}: <span style="color: #03a9f4">${this.coreInfos.buildVersion ? (this.coreInfos.buildVersion).substring(0,12) : ''}</span></h4>
+						<h4 class="lineHeight">${translate("appinfo.synchronizing")}... <span style="color: #03a9f4">${this.nodeStatus.syncPercent !== undefined ? this.nodeStatus.syncPercent + '%' : ''}</span></h4>
 						<h4 class="lineHeight">${translate("appinfo.blockheight")}: <span style="color: #03a9f4">${this.nodeStatus.height ? this.nodeStatus.height : ''}</span></h4>
 						<h4 class="lineHeight">${translate("appinfo.peers")}: <span style="color: #03a9f4">${this.nodeStatus.numberOfConnections ? this.nodeStatus.numberOfConnections : ''}</span></h4>
 						<i></i>

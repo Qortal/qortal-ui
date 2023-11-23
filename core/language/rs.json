@@ -209,7 +209,11 @@
 		"exp4": "Molimo izaberite novčanik za rezervnu kopiju privatnog glavnog ključa.",
 		"core": "Pokreni podešavanja jezgra",
 		"qappNotification1": "Obaveštenja o Q-App",
-		"selectnode": "Izaberite opciju"
+		"selectnode": "Izaberite opciju",
+		"arrr1": "ARRR novčanik nije inicijalizovan!",
+		"arrr2": "Molim vas idite na karticu Novčanik i prvo inicijalizujte svoj arrr novčanik.",
+		"arrr3": "Potrebno je ažuriranje jezgra!",
+		"arrr4": "Da biste sačuvali privatni ključ vašeg arrr novčanika, prvo vam je potrebno ažuriranje jezgra!"
 	},
 	"appinfo": {
 		"blockheight": "Visina Bloka",
@@ -605,7 +609,8 @@
 		"schange39": "Otvori",
 		"schange40": "Pregled",
 		"schange41": "Preuzimanje molim sačekajte...",
-		"schange42": "Preuzete datoteke"
+		"schange42": "Preuzete datoteke",
+		"schange43": "Svaki pokušaj preuzimanja će se nastaviti u pozadini, pokušajte ponovo nakon nekog vremena."
 	},
 	"tubespage": {
 		"schange1": "Pregledaj Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Da li ovoj aplikaciji dajete dozvolu da sačuva sledeću datoteku",
 		"bchange47": "Trenutno objavljivanje - zahteva",
 		"bchange48": "Da li ovoj aplikaciji dajete dozvolu da vam šalje obaveštenja",
-		"bchange49": "Da li ovoj aplikaciji dajete dozvolu da dobije informacije o vašem novčaniku?"
+		"bchange49": "Da li ovoj aplikaciji dajete dozvolu da dobije informacije o vašem novčaniku?",
+		"bchange50": "Ova aplikacija je zahtevala promenu vašeg javnog profila. Svojstvo: ",
+		"bchange51": "Da biste podneli promene, ne zaboravite da kliknete na 'Ažuriraj profil'",
+		"bchange52": "Da li ovoj aplikaciji dajete dozvolu da dobije informacije o vašem novčaniku?",
+		"bchange53": "Uvek dozvoli da sve aplikacije automatski preuzimaju listu prijatelja",
+		"bchange54": "Da li ovoj aplikaciji dajete dozvolu da pristupi vašoj listi prijatelja?"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nema šta da se spase",
 		"saving3": "Sačuvajte nesačuvane promene",
 		"saving4": "Poništi promene"
+	},
+	"profile": {
+		"profile1": "Nemate ime",
+		"profile2": "Idi na registraciju imena",
+		"profile3": "Ažuriraj profil",
+		"profile4": "Tagline",
+		"profile5": "Bio",
+		"profile6": "Adrese novčanika",
+		"profile7": "Popuni iz korisničkog interfejsa",
+		"profile8": "Dodaj prilagođeno svojstvo",
+		"profile9": "Naziv svojstva",
+		"profile10": "Polja",
+		"profile11": "Dodaj polje",
+		"profile12": "Naziv polja",
+		"profile13": "Vrednost polja",
+		"profile14": "Aktivnost",
+		"profile15": "Nema vrednosti",
+		"profile16": "Ovo ime nema profil",
+		"profile17": "Nije moguće preuzeti profil",
+		"profile18": "Otvori profil",
+		"profile19": "Ne mogu da preuzmem profil",
+		"profile20": "Ime registra",
+		"profile21": "Ubaci adresu iz korisničkog interfejsa",
+		"profile22": "Uspeh",
+		"profile23": "šifrovano",
+		"profile24": "Morate da popunite i ime polja i vrednost polja da biste dodali prilagođeno svojstvo",
+		"profile25": "Da li je tvoj prijatelj",
+		"profile26": "Dodaj kao prijatelja"
 	}
 }

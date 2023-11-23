@@ -209,7 +209,11 @@
 		"exp4": "Wybierz portfel do wykonania kopii zapasowej prywatnego klucza głównego.",
 		"core": "Uruchom podstawowe ustawienia",
 		"qappNotification1": "Powiadomienia Q-App",
-		"selectnode": "Proszę wybrać opcję"
+		"selectnode": "Proszę wybrać opcję",
+		"arrr1": "Portfel ARRR nie został zainicjowany!",
+		"arrr2": "Przejdź do zakładki portfela i najpierw zainicjalizuj swój portfel arrr.",
+		"arrr3": "Potrzebujesz aktualizacji rdzenia!",
+		"arrr4": "Aby zapisać klucz prywatny swojego portfela arrr, potrzebujesz najpierw aktualizacji rdzenia!"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",
@@ -605,7 +609,8 @@
 		"schange39": "Otwórz",
 		"schange40": "Podgląd",
 		"schange41": "Pobieranie, proszę czekać...",
-		"schange42": "Pliki pobrane"
+		"schange42": "Pliki pobrane",
+		"schange43": "Wszelkie próby pobierania będą kontynuowane w tle. Spróbuj ponownie za chwilę."
 	},
 	"tubespage": {
 		"schange1": "Przeglądaj Q-Tubes",
@@ -729,7 +734,12 @@
 		"bchange46": "Czy zezwalasz tej aplikacji na zapisanie następującego pliku",
 		"bchange47": "Błyskawiczna publikacja - wymaga",
 		"bchange48": "Czy dajesz tej aplikacji pozwolenie na wysyłanie Ci powiadomień",
-		"bchange49": "Czy dajesz tej aplikacji pozwolenie na uzyskanie informacji o Twoim portfelu?"
+		"bchange49": "Czy dajesz tej aplikacji pozwolenie na uzyskanie informacji o Twoim portfelu?",
+		"bchange50": "Ta aplikacja zażądała zmiany w Twoim profilu publicznym. Właściwość: ",
+		"bchange51": "Aby przesłać zmiany, nie zapomnij kliknąć 'Aktualizuj profil'",
+		"bchange52": "Czy dajesz tej aplikacji pozwolenie na uzyskanie informacji o Twoim portfelu?",
+		"bchange53": "Zawsze zezwalaj na automatyczne pobieranie listy znajomych przez wszystkie aplikacje",
+		"bchange54": "Czy dajesz tej aplikacji uprawnienia dostępu do listy znajomych?"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nic do uratowania",
 		"saving3": "Zapisz niezapisane zmiany",
 		"saving4": "Cofnij zmiany"
+	},
+	"profile": {
+		"profile1": "Nie masz imienia",
+		"profile2": "Przejdź do rejestracji nazwy",
+		"profile3": "Aktualizuj profil",
+		"profile4": "Slogan",
+		"profil5": "Bio",
+		"profile6": "Adresy portfeli",
+		"profile7": "Wypełnij z interfejsu użytkownika",
+		"profile8": "Dodaj niestandardową właściwość",
+		"profile9": "Nazwa właściwości",
+		"profile10": "Pola",
+		"profile11": "Dodaj pole",
+		"profile12": "Nazwa pola",
+		"profile13": "Wartość pola",
+		"profile14": "Aktywność",
+		"profile15": "Brak wartości",
+		"profile16": "Ta nazwa nie ma profilu",
+		"profile17": "Nie można pobrać profilu",
+		"profile18": "Otwórz profil",
+		"profile19": "Nie można pobrać profilu",
+		"profile20": "Zarejestruj nazwę",
+		"profile21": "Wstaw adres z interfejsu użytkownika",
+		"profile22": "Sukces",
+		"profile23": "zaszyfrowane",
+		"profile24": "Musisz wypełnić zarówno nazwę pola, jak i wartość pola, aby dodać niestandardową właściwość",
+		"profile25": "Jest Twoim przyjacielem",
+		"profile26": "Dodaj jako znajomego"
 	}
 }

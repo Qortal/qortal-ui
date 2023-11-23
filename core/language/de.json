@@ -209,7 +209,11 @@
 		"exp4": "Bitte wählen Sie eine Brieftasche aus, um den privaten Hauptschlüssel zu sichern.",
 		"core": "Core-Einstellungen starten",
 		"qappNotification1": "Q-App Benachrichtigungen",
-		"selectnode": "Bitte wählen Sie eine Option"
+		"selectnode": "Bitte wählen Sie eine Option",
+		"arrr1": "ARRR-Wallet nicht initialisiert!",
+		"arrr2": "Bitte gehen Sie zur Registerkarte „Wallet“ und initialisieren Sie zuerst Ihre arrr-Wallet.",
+		"arrr3": "Core-Update erforderlich!",
+		"arrr4": "Um den privaten Schlüssel Ihrer arrr-Wallet zu speichern, benötigen Sie zuerst ein Core-Update!"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",
@@ -605,7 +609,8 @@
 		"schange39": "Öffnen",
 		"schange40": "Vorschau",
 		"schange41": "Wird heruntergeladen, bitte warten...",
-		"schange42": "Heruntergeladene Dateien"
+		"schange42": "Heruntergeladene Dateien",
+		"schange43": "Alle versuchten Downloads werden im Hintergrund fortgesetzt. Bitte versuchen Sie es nach einer Weile erneut."
 	},
 	"tubespage": {
 		"schange1": "Q-Tubes durchsuchen",
@@ -729,7 +734,12 @@
 		"bchange46": "Geben Sie dieser Anwendung die Erlaubnis, die folgende Datei zu speichern?",
 		"bchange47": "Sofortige Veröffentlichung – erforderlich",
 		"bchange48": "Erteilen Sie dieser Anwendung die Berechtigung, Ihnen Benachrichtigungen zu senden?",
-		"bchange49": "Erteilen Sie dieser Anwendung die Erlaubnis, Ihr Wallet-Informationen abzurufen?"
+		"bchange49": "Erteilen Sie dieser Anwendung die Erlaubnis, Ihr Wallet-Informationen abzurufen?",
+		"bchange50": "Diese App hat eine Änderung Ihres öffentlichen Profils angefordert. Eigenschaft:",
+		"bchange51": "Um die Änderungen zu übermitteln, vergessen Sie nicht, auf ‚Profil aktualisieren‘ zu klicken",
+		"bchange52": "Erteilen Sie dieser Anwendung die Berechtigung, Ihre Wallet-Informationen abzurufen?",
+		"bchange53": "Erlaube immer, dass deine Freundesliste automatisch von allen Apps abgerufen wird",
+		"bchange54": "Erteilen Sie dieser Anwendung die Berechtigung, auf Ihre Freundesliste zuzugreifen?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",
@@ -1214,5 +1224,33 @@
 		"saving2": "Nichts zu speichern",
 		"saving3": "Speichern Sie nicht gespeicherte Änderungen",
 		"saving4": "Veränderungen rückgängig machen"
+	},
+	"profile": {
+		"profile1": "Sie haben keinen Namen",
+		"profile2": "Gehe zur Namensregistrierung",
+		"profile3": "Profil aktualisieren",
+		"profile4": "Slogan",
+		"profile5": "Bio",
+		"profile6": "Wallet-Adressen",
+		"profile7": "Von der Benutzeroberfläche ausfüllen",
+		"profile8": "Benutzerdefinierte Eigenschaft hinzufügen",
+		"profile9": "Eigenschaftsname",
+		"profile10": "Felder",
+		"profile11": "Feld hinzufügen",
+		"profile12": "Feldname",
+		"profile13": "Feldwert",
+		"profile14": "Aktivität",
+		"profile15": "Kein Wert",
+		"profile16": "Dieser Name hat kein Profil",
+		"profile17": "Profil konnte nicht abgerufen werden",
+		"profile18": "Profil öffnen",
+		"profile19": "Profil kann nicht abgerufen werden",
+		"profile20": "Name registrieren",
+		"profile21": "Adresse aus der Benutzeroberfläche einfügen",
+		"profile22": "Erfolg",
+		"profile23": "verschlüsselt",
+		"profile24": "Sie müssen sowohl den Feldnamen als auch den Feldwert ausfüllen, um eine benutzerdefinierte Eigenschaft hinzuzufügen",
+		"profile25": "Ist dein Freund",
+		"profile26": "Als Freund hinzufügen"
 	}
 }
