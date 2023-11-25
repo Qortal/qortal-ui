@@ -9,7 +9,7 @@ import {bytesToMegabytes} from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../../core/translate/index.js'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
 

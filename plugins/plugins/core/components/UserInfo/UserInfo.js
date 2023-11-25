@@ -1,5 +1,5 @@
 import {html, LitElement} from 'lit'
-import {translate} from 'lit-translate'
+import {translate} from '../../../../../core/translate/index.js'
 import {userInfoStyles} from './UserInfo-css.js'
 import {cropAddress} from '../../../utils/cropAddress.js'
 

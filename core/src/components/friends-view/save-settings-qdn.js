@@ -6,7 +6,7 @@ import { store } from '../../store.js';
 import WebWorker from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from 'lit-translate';
+import { get, translate } from '../../../translate/index.js'
 import ShortUniqueId from 'short-unique-id';
 
 import {

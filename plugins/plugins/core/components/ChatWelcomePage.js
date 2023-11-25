@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
 import isElectron from 'is-electron'
 
 import '@material/mwc-icon'

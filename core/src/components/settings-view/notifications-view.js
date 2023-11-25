@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {doSetQChatNotificationConfig} from '../../redux/user/user-actions.js'
-import {translate} from 'lit-translate'
+import {translate} from '../../../translate/index.js'
 import isElectron from 'is-electron'
 
 import '@material/mwc-checkbox'

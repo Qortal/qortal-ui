@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../core/translate/index.js'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -434,7 +434,6 @@ class QortalInfoView extends LitElement {
 			right: 25px;
 			top: -1px;
 		}
-
         `
     }
 

@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
 import '../../components/ButtonIconCopy.js'
-import {translate} from 'lit-translate'
+import {translate} from '../../../../../core/translate/index.js'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'

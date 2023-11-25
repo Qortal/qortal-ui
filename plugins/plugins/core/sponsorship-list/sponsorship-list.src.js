@@ -1,6 +1,6 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
 import {blocksNeed} from '../../utils/blocks-needed.js'
 import {asyncReplace} from 'lit/directives/async-replace.js'
 import {pageStyles} from './sponsorship-list-css.src.js'

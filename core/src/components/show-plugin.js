@@ -8,7 +8,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import {setIsOpenDevDialog, setNewTab} from '../redux/app/app-actions.js'
 import FileSaver from 'file-saver'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../translate/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'

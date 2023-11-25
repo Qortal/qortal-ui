@@ -1,7 +1,6 @@
 import nacl from '../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../crypto/api/deps/ed2curve.js'
 
-
 class Semaphore {
     constructor(count) {
         this.count = count;
@@ -60,8 +59,6 @@ export const fileToBase64 = (file) =>
         };
     });
 
-
-
 export function uint8ArrayToBase64(uint8Array) {
     const length = uint8Array.length;
     let binaryString = '';
@@ -75,7 +72,6 @@ export function uint8ArrayToBase64(uint8Array) {
 
     return btoa(binaryString);
 }
-
 
 export function base64ToUint8Array(base64) {
     const binaryString = atob(base64)
@@ -128,8 +124,6 @@ export function uint8ArrayToObject(uint8Array) {
       reader.readAsDataURL(blob);
     });
   }
-  
-
 
 export const encryptData = ({ data64, recipientPublicKey }) => {
 
@@ -277,7 +271,6 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
         throw new Error("Error in encrypting data")
     }
 }
-
 
 export function uint8ArrayStartsWith(uint8Array, string) {
     const stringEncoder = new TextEncoder();

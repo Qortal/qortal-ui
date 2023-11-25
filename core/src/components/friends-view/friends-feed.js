@@ -5,7 +5,7 @@ import {friendsViewStyles} from './friends-view-css';
 import {connect} from 'pwa-helpers';
 import {store} from '../../store';
 import './feed-item'
-import {translate} from 'lit-translate';
+import {translate} from '../../../translate/index.js'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
