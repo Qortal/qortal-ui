@@ -3,7 +3,7 @@ import {EmojiPicker} from 'emoji-picker-js'
 import {Epml} from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../core/translate/index.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

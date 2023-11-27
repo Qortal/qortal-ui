@@ -1,6 +1,6 @@
 import {html, LitElement,} from 'lit';
 import {repeat} from 'lit/directives/repeat.js';
-import {get, translate,} from 'lit-translate';
+import {get, translate,} from '../../../../core/translate/index.js'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {chatStyles} from './ChatScroller-css.js';
 import {Epml} from '../../../epml';

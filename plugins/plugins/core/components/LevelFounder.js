@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {translate} from 'lit-translate'
+import {translate} from '../../../../core/translate/index.js'
 import '@polymer/paper-tooltip/paper-tooltip.js'
 import {RequestQueue} from '../../utils/queue.js'
 

@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit';
 import {connect} from 'pwa-helpers';
 import {store} from '../store.js';
-import {get, translate} from 'lit-translate';
+import {get, translate} from '../../translate/index.js'
 import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import '../functional-components/my-button.js';

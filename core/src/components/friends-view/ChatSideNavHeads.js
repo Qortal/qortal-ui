@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {get} from 'lit-translate'
+import {get} from '../../../translate/index.js'
 import '@material/mwc-icon'
 import '@vaadin/tooltip';
 

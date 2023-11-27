@@ -3,7 +3,7 @@ import {escape, unescape} from 'html-escaper'
 import {EmojiPicker} from 'emoji-picker-js'
 import {inputKeyCodes} from '../../utils/keyCodes.js'
 import {Epml} from '../../../epml.js'
-import {get} from 'lit-translate'
+import {get} from '../../../../core/translate/index.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
 import localForage from "localforage"
-import {translate} from 'lit-translate'
+import {translate} from '../../../../core/translate/index.js'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })

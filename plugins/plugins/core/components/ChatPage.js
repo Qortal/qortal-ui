@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {animate} from '@lit-labs/motion'
 import {Epml} from '../../../epml.js'
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../core/translate/index.js'
 import {Editor, Extension, generateHTML} from '@tiptap/core'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import {escape} from 'html-escaper'

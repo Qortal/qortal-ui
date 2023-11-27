@@ -1,7 +1,7 @@
 import Base58 from './deps/Base58.js'
 import {kdf} from './kdf.js'
 import {AES_CBC, HmacSha512} from 'asmcrypto.js'
-import {get, registerTranslateConfig} from 'lit-translate'
+import {get, registerTranslateConfig} from '../../core/translate/index.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())

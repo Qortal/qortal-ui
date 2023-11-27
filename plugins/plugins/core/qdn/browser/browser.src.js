@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../../epml'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate/index.js'
 import ShortUniqueId from 'short-unique-id';
 import FileSaver from 'file-saver'
 import * as actions from '../../components/qdn-action-types'

@@ -11,7 +11,7 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {get} from 'lit-translate';
+import {get} from '../../../../core/translate/index.js'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -41,8 +41,8 @@ class ChatGroupsManager extends LitElement {
 			isReceipient: { type: Boolean },
 			groups: { type: Array },
 			viewImage: { type: Boolean },
-            autoView: {type: Boolean},
-            onlyMyImages: {type: Boolean},
+			autoView: {type: Boolean},
+			onlyMyImages: {type: Boolean},
 			repost: {attribute: false}
 		};
 	}

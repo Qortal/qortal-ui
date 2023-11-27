@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
 import {overviewStyle} from './overview-page-css.js'
 import {asyncReplace} from 'lit/directives/async-replace.js'
 import isElectron from 'is-electron'

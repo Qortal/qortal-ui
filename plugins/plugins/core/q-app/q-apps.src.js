@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from 'lit-translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
 import isElectron from 'is-electron'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-dialog/paper-dialog.js'

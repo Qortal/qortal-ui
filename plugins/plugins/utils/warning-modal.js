@@ -1,4 +1,4 @@
-import {get} from 'lit-translate';
+import {get} from '../../../core/translate/index.js'
 
 export class WarningModal {
     constructor() {

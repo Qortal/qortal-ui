@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { connect } from 'pwa-helpers'
 import { store } from '../../store.js'
-import { get, translate } from 'lit-translate'
+import { get, translate } from '../../../translate/index.js'
 
 class AccountView extends connect(store)(LitElement) {
     static get properties() {

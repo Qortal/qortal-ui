@@ -11,7 +11,7 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {get, translate,} from 'lit-translate';
+import {get, translate,} from '../../../../core/translate/index.js'
 import {generateIdFromAddresses} from '../../utils/id-generation';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -42,8 +42,8 @@ class ChatRightPanelResources extends LitElement {
 			isReceipient: { type: Boolean },
 			images: { type: Array },
 			viewImage: { type: Boolean },
-            autoView: {type: Boolean},
-            onlyMyImages: {type: Boolean},
+			autoView: {type: Boolean},
+			onlyMyImages: {type: Boolean},
 			repost: {attribute: false}
 		};
 	}

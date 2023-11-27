@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { get, translate } from 'lit-translate';
+import { get, translate } from '../../../translate/index.js'
 import axios from 'axios';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';

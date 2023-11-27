@@ -1,9 +1,9 @@
-import {css, html, LitElement} from 'lit';
-import {translate,} from 'lit-translate';
-import axios from 'axios';
-import {RequestQueueWithPromise} from '../../utils/queue';
-import '@material/mwc-menu';
-import '@material/mwc-list/mwc-list-item.js';
+import {css, html, LitElement} from 'lit'
+import {translate,} from '../../../../core/translate/index.js'
+import axios from 'axios'
+import {RequestQueueWithPromise} from '../../utils/queue'
+import '@material/mwc-menu'
+import '@material/mwc-list/mwc-list-item.js'
 import '@material/mwc-dialog'
 
 const requestQueue = new RequestQueueWithPromise(5);
@@ -16,10 +16,10 @@ export class ResuableImage extends LitElement {
 			resource: { type: Object },
 			isReady: { type: Boolean },
 			status: { type: Object },
-      missingData: {type: Boolean},
-	  openDialogImage: { type: Boolean },
+			missingData: {type: Boolean},
+			openDialogImage: { type: Boolean },
 			onLoad: {attribute: false}
-		};
+		}
 	}
 
 	static get styles() {
@@ -56,11 +56,11 @@ export class ResuableImage extends LitElement {
 					loadingAnimation;
 			}
 			.imageContainer {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100%;
-	}
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100%;
+			}
 
 			@-webkit-keyframes loadingAnimation {
 				0% {
@@ -83,27 +83,27 @@ export class ResuableImage extends LitElement {
 					transform: rotate(360deg);
 				}
 			}
-		`;
+		`
 	}
 
 	constructor() {
-		super();
+		super()
 		this.resource = {
 			identifier: '',
 			name: '',
 			service: '',
-		};
+		}
 		this.status = {
 			status: '',
-		};
-		this.url = '';
-		this.isReady = false;
-		this.nodeUrl = this.getNodeUrl();
-		this.myNode = this.getMyNode();
-		this.hasCalledWhenDownloaded = false;
-		this.isFetching = false;
-    this.missingData = false
-	this.openDialogImage = false
+		}
+		this.url = ''
+		this.isReady = false
+		this.nodeUrl = this.getNodeUrl()
+		this.myNode = this.getMyNode()
+		this.hasCalledWhenDownloaded = false
+		this.isFetching = false
+		this.missingData = false
+		this.openDialogImage = false
 
 		this.observer = new IntersectionObserver((entries) => {
 			for (const entry of entries) {
@@ -113,25 +113,25 @@ export class ResuableImage extends LitElement {
 					this.observer.unobserve(this);
 				}
 			}
-		});
+		})
 	}
 	getNodeUrl() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
 		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+			myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		return nodeUrl
 	}
 	getMyNode() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		return myNode;
+		return myNode
 	}
 
 	getApiKey() {
@@ -139,8 +139,8 @@ export class ResuableImage extends LitElement {
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-		let apiKey = myNode.apiKey;
-		return apiKey;
+		let apiKey = myNode.apiKey
+		return apiKey
 	}
 
 	async fetchResource() {
@@ -148,55 +148,55 @@ export class ResuableImage extends LitElement {
 			if (this.isFetching) return;
 			this.isFetching = true;
 
-      await requestQueue2.enqueue(() => {
+			await requestQueue2.enqueue(() => {
 				return  axios.get(
-          `${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
-        );
-			});
-			this.isFetching = false;
+					`${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
+				)
+			})
+			this.isFetching = false
 		} catch (error) {
-			this.isFetching = false;
+			this.isFetching = false
 		}
 	}
 
 	async fetchVideoUrl() {
 		this.fetchResource();
-		this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`;
+		this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
 	}
 
 	async fetchStatus() {
-		let isCalling = false;
-		let percentLoaded = 0;
-		let timer = 24;
+		let isCalling = false
+		let percentLoaded = 0
+		let timer = 24
 		const response = await axios.get(
 			`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
-		);
+		)
 		if (response && response.data && response.data.status === 'READY') {
-			this.status = response.data;
+			this.status = response.data
 			this.onLoad()
-			return;
+			return
 		}
 		const intervalId = setInterval(async () => {
-			if (isCalling) return;
-			isCalling = true;
+			if (isCalling) return
+			isCalling = true
 
 			const data = await requestQueue.enqueue(() => {
 				return axios.get(
 					`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
-				);
-			});
-			const res = data.data;
+				)
+			})
+			const res = data.data
 
-			isCalling = false;
+			isCalling = false
 			if (res.localChunkCount) {
 				if (res.percentLoaded) {
 					if (
 						res.percentLoaded === percentLoaded &&
 						res.percentLoaded !== 100
 					) {
-						timer = timer - 5;
+						timer = timer - 5
 					} else {
-						timer = 24;
+						timer = 24
 					}
 					if (timer < 0) {
 						timer = 24;
@@ -207,34 +207,34 @@ export class ResuableImage extends LitElement {
 						};
 
 						setTimeout(() => {
-							isCalling = false;
-							this.fetchResource();
-						}, 25000);
-						return;
+							isCalling = false
+							this.fetchResource()
+						}, 25000)
+						return
 					}
-					percentLoaded = res.percentLoaded;
+					percentLoaded = res.percentLoaded
 				}
 
-				this.status = res;
+				this.status = res
 				if (this.status.status === 'DOWNLOADED') {
-					this.fetchResource();
+					this.fetchResource()
 				}
 			}
 
 			// check if progress is 100% and clear interval if true
 			if (res.status === 'READY') {
 				this.onLoad()
-				clearInterval(intervalId);
-				this.status = res;
-				this.isReady = true;
+				clearInterval(intervalId)
+				this.status = res
+				this.isReady = true
 			}
 
-      if(res.status === 'MISSING_DATA'){
-        this.status = res
-        this.missingData = true
-        clearInterval(intervalId)
-      }
-		}, 5000); // 1 second interval
+			if (res.status === 'MISSING_DATA') {
+				this.status = res
+				this.missingData = true
+				clearInterval(intervalId)
+			}
+		}, 5000) // 5 second interval
 	}
 
 	async _fetchImage() {
@@ -244,29 +244,29 @@ export class ResuableImage extends LitElement {
 				service: this.resource.service,
 				identifier: this.resource.identifier,
 			});
-			this.fetchStatus();
+			this.fetchStatus()
 		} catch (error) { /* empty */ }
 	}
 
 	firstUpdated() {
-		this.observer.observe(this);
+		this.observer.observe(this)
 	}
 
 	showContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+		e.preventDefault()
+		e.stopPropagation()
 
-		const contextMenu = this.shadowRoot.getElementById('contextMenu');
-		const containerRect = e.currentTarget.getBoundingClientRect();
+		const contextMenu = this.shadowRoot.getElementById('contextMenu')
+		const containerRect = e.currentTarget.getBoundingClientRect()
 
 		// Adjusting the positions
-		const adjustedX = e.clientX - containerRect.left;
-		const adjustedY = e.clientY - containerRect.top;
+		const adjustedX = e.clientX - containerRect.left
+		const adjustedY = e.clientY - containerRect.top
 
-		contextMenu.style.top = `${adjustedY}px`;
-		contextMenu.style.left = `${adjustedX}px`;
+		contextMenu.style.top = `${adjustedY}px`
+		contextMenu.style.left = `${adjustedX}px`
 
-		contextMenu.open = true;
+		contextMenu.open = true
 	}
 
 	render() {
@@ -300,31 +300,31 @@ export class ResuableImage extends LitElement {
 			</div>
 
 			<mwc-dialog
-                id="showDialogPublicKey"
-                ?open=${this.openDialogImage}
-                @closed=${() => {
+				id="showDialogPublicKey"
+				?open=${this.openDialogImage}
+				@closed=${() => {
 					this.openDialogImage = false;
-				}}>
-					<div class="dialog-header"></div>
-					<div class="dialog-container imageContainer">
-                        ${this.openDialogImage ? html`
-                        <img src=${this.url} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
-                        ` : ''}
-
-					</div>
-					<mwc-button
-						slot="primaryAction"
-						dialogAction="cancel"
-						class="red"
-						@click=${() => {
-							this.openDialogImage = false;
-						}}
-					>
-					    ${translate('general.close')}
-					</mwc-button>
-				</mwc-dialog>
-		`;
+				}}
+			>
+				<div class="dialog-header"></div>
+				<div class="dialog-container imageContainer">
+					${this.openDialogImage ? html`
+						<img src=${this.url} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
+					` : ''}
+				</div>
+				<mwc-button
+					slot="primaryAction"
+					dialogAction="cancel"
+					class="red"
+					@click=${() => {
+						this.openDialogImage = false;
+					}}
+				>
+					${translate('general.close')}
+				</mwc-button>
+			</mwc-dialog>
+		`
 	}
 }
 
-customElements.define('reusable-image', ResuableImage);
+customElements.define('reusable-image', ResuableImage)

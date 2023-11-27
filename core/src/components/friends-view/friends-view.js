@@ -13,7 +13,7 @@ import './ChatSideNavHeads';
 import '../../../../plugins/plugins/core/components/ChatSearchResults'
 import './add-friends-modal'
 
-import {translate,} from 'lit-translate';
+import {translate,} from '../../../translate/index.js'
 import {store} from '../../store';
 import {friendsViewStyles} from './friends-view-css';
 import {parentEpml} from '../show-plugin';

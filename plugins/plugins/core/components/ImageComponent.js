@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {translate,} from 'lit-translate';
+import {translate,} from '../../../../core/translate/index.js'
 
 export class ImageComponent extends LitElement {
   static get properties() {

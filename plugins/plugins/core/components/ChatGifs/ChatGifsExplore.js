@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
 import {chatGifsExploreStyles} from './ChatGifsExplore-css.js'
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../../core/translate/index.js'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });

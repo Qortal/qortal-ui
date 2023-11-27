@@ -3,7 +3,7 @@ import {tipUserStyles} from './TipUser-css.js'
 import {Epml} from '../../../epml'
 import '@vaadin/button'
 import '@polymer/paper-progress/paper-progress.js'
-import {get, translate} from 'lit-translate'
+import {get, translate} from '../../../../core/translate/index.js'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 

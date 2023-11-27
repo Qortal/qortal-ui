@@ -5,7 +5,7 @@ import "@material/mwc-dialog"
 import "@polymer/paper-spinner/paper-spinner-lite.js"
 import "@material/mwc-icon"
 import "./WrapperModal"
-import {translate} from 'lit-translate'
+import {translate} from '../../../../core/translate/index.js'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
 

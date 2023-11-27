@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {store} from '../../store'
 import {connect} from 'pwa-helpers'
-import {translate} from 'lit-translate'
+import {translate} from '../../../translate/index.js'
 
 class CoreSyncStatus extends connect(store)(LitElement) {
 	static get properties() {

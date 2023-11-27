@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
-import {translate} from 'lit-translate'
+import {translate} from '../../../translate/index.js'
 
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
