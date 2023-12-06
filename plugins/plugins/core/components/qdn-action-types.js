@@ -22,6 +22,9 @@ export const DEPLOY_AT = 'DEPLOY_AT';
 // GET_USER_WALLET action
 export const GET_USER_WALLET = 'GET_USER_WALLET';
 
+// GET_USER_WALLET_INFO action
+export const GET_USER_WALLET_INFO = 'GET_USER_WALLET_INFO';
+
 // GET_WALLET_BALANCE action
 export const GET_WALLET_BALANCE = 'GET_WALLET_BALANCE';
 

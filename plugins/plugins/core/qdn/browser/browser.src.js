@@ -1100,7 +1100,7 @@ class WebBrowser extends LitElement {
 
 						try {
 							let list = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
-							
+
 							list = list.map((friend)=> friend.name || "")
 							response = JSON.stringify(list)
 						} catch (error) {
@@ -1108,7 +1108,7 @@ class WebBrowser extends LitElement {
 							const errorMsg = "Error in retrieving friends list"
 							data['error'] = errorMsg
 							response = JSON.stringify(data)
-						} 
+						}
 
 						break
 
@@ -2289,7 +2289,7 @@ class WebBrowser extends LitElement {
 						const errorMsg = error.message || 'Failed to open profile';
 						obj['error'] = errorMsg;
 						response = JSON.stringify(obj);
-					} 
+					}
 					break;
 				}
 
@@ -2315,7 +2315,7 @@ class WebBrowser extends LitElement {
 					const res3 = await showModalAndWait(
 						actions.GET_USER_WALLET
 						);
-						
+
 						if (res3.action === 'accept') {
 							let coin = data.coin;
 							let userWallet = {};
@@ -2474,6 +2474,67 @@ class WebBrowser extends LitElement {
 							}
 						}
 					} else if (res3.action === 'reject') {
+						response = '{"error": "User declined request"}'
+					}
+
+					break
+				}
+				case actions.GET_USER_WALLET_INFO: {
+					const requiredFields = ['coin']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					const userWallet = await showModalAndWait(
+						actions.GET_USER_WALLET
+					)
+
+					if (userWallet.action === 'accept') {
+						let coin = data.coin;
+						let walletKeys = this.getUserWallet(coin);
+
+						let _url = `/crosschain/` + data.coin.toLowerCase() + `/addressinfos?apiKey=${this.getApiKey()}`
+						let _body = {
+							xpub58: walletKeys['publickey']
+						}
+
+						try {
+							this.loader.show()
+							const bodyToString = JSON.stringify(_body);
+							const res = await parentEpml.request('apiCall', {
+								url: _url,
+								method: 'POST',
+								headers: {
+									'Accept': '*/*',
+									'Content-Type': 'application/json'
+								},
+								body: bodyToString,
+							})
+							response = JSON.stringify(res);
+						} catch (error) {
+							console.error(error)
+							const data = {}
+							const errorMsg = error.message || get("browserpage.bchange21")
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
+							return
+						} finally {
+							this.loader.hide()
+						}
+					} else if (userWallet.action === 'reject') {
 						response = '{"error": "User declined request"}'
 					}
 
@@ -3406,6 +3467,42 @@ class WebBrowser extends LitElement {
 		}, 60000)
 	}
 
+	getUserWallet(coin) {
+		let userWallet = {};
+
+		switch (coin) {
+			case 'QORT':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
+				break
+			case 'BTC':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+				break
+			case 'LTC':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+				break
+			case 'DOGE':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+				break
+			case 'DGB':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+				break
+			case 'RVN':
+				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
+				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+				break
+			case 'ARRR':
+				break
+			default:
+				break
+		}
+		return userWallet;
+	}
+
 	clearConsole() {
 		if (!isElectron()) {
 		} else {
@@ -3845,7 +3942,7 @@ async function showModalAndWait(type, data) {
 						${type === actions.GET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
-								
+
 							</div>
 						` : ''}
 						${type === actions.SET_PROFILE_DATA ? `
