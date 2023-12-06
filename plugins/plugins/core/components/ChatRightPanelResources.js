@@ -247,7 +247,7 @@ class ChatRightPanelResources extends LitElement {
 				: `group_${this._chatId}`;
 
 			let offset = reset ? 0 : this.images.length;
-            let endpoint = `/arbitrary/resources/search?service=QCHAT_IMAGE&identifier=qchat_${groupPart}&reverse=true&limit=20&reverse=true&offset=${offset}`
+            let endpoint = `/arbitrary/resources/search?service=QCHAT_IMAGE&identifier=qchat_${groupPart}&mode=ALL&limit=20&reverse=true&offset=${offset}`
             if(this.onlyMyImages){
                 endpoint = endpoint + `&name=${this.myName}`
             }
