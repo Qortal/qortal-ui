@@ -4930,18 +4930,20 @@ class MultiWallet extends LitElement {
                     method: 'POST',
                     body: `${window.parent.reduxStore.getState().app.selectedAddress[arrrWalletName].seed58}`,
                 })
+
                 if (coin != this._selectedWallet) {
                     // We've switched away from this coin
                 }
-                if (res !== null && res !== "Synchronized") {
-                    // Not synchronized yet - display sync status instead of balance
-                    this.balanceString = res;
 
-                    // Check again shortly after
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                if (res.indexOf('<') > -1) {
+                    this.balanceString = this.renderFetchText()
+                    await new Promise(resolve => setTimeout(resolve, 2000))
                     this.showWallet()
-
-                    // No need to make balance or transaction list calls yet
+                    return
+                } else if (res !== null && res !== "Synchronized") {
+                    this.balanceString = res
+                    await new Promise(resolve => setTimeout(resolve, 2000))
+                    this.showWallet()
                     return
                 }
 
