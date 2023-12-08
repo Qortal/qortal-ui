@@ -379,7 +379,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 			this.isLoadingVisitingProfile = true;
 			this.nameVisiting = name;
 			this.checkIfInFriendsList(this.nameVisiting);
-			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
+			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&mode=ALL&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
@@ -443,7 +443,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 			this.hasName = true;
 			const name = nameObject.name;
 			this.name = name;
-			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
+			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT&mode=ALL&identifier=qortal_profile&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
