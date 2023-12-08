@@ -342,7 +342,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			this.name = name;
 			this.hasName = true
 			this.error = '';
-			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT_PRIVATE&identifier=qortal_general_settings&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
+			const url = `${this.nodeUrl}/arbitrary/resources/search?service=DOCUMENT_PRIVATE&mode=ALL&identifier=qortal_general_settings&name=${name}&prefix=true&exactmatchnames=true&excludeblocked=true&limit=20`;
 			const res = await fetch(url);
 			let data = '';
 			try {
