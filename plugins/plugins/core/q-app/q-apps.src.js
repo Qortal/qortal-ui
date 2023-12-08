@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from 'lit-translate'
 import isElectron from 'is-electron'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-dialog/paper-dialog.js'
@@ -874,8 +874,18 @@ class QApps extends LitElement {
 
         this.appsArray.forEach(item => {
             const name = item.name
-            const title = item.metadata.title
-            const description = item.metadata.description
+            let title
+            if (item.metadata.title != null) {
+                title = item.metadata.title
+            } else {
+                title = item.name
+            }
+            let description
+            if (item.metadata.description != null) {
+                description = item.metadata.description
+            } else {
+                description = item.name
+            }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
             if (item.metadata.tags != null && item.metadata.tags.length > 0) {
@@ -959,8 +969,18 @@ class QApps extends LitElement {
 
         this.followedResources.forEach(item => {
             const name = item.name
-            const title = item.metadata.title
-            const description = item.metadata.description
+            let title
+            if (item.metadata.title != null) {
+                title = item.metadata.title
+            } else {
+                title = item.name
+            }
+            let description
+            if (item.metadata.description != null) {
+                description = item.metadata.description
+            } else {
+                description = item.name
+            }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
             if (item.metadata.tags != null && item.metadata.tags.length > 0) {
@@ -1045,8 +1065,18 @@ class QApps extends LitElement {
 
         this.blockedResources.forEach(item => {
             const name = item.name
-            const title = item.metadata.title
-            const description = item.metadata.description
+            let title
+            if (item.metadata.title != null) {
+                title = item.metadata.title
+            } else {
+                title = item.name
+            }
+            let description
+            if (item.metadata.description != null) {
+                description = item.metadata.description
+            } else {
+                description = item.name
+            }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
             if (item.metadata.tags != null && item.metadata.tags.length > 0) {
