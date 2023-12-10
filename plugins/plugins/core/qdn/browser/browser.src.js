@@ -2873,6 +2873,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -2885,6 +2886,7 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -2981,6 +2983,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -2993,6 +2996,7 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -3089,6 +3093,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -3101,6 +3106,7 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -3197,6 +3203,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -3209,6 +3216,7 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -3305,6 +3313,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -3317,6 +3326,7 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -3413,6 +3423,7 @@ class WebBrowser extends LitElement {
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
 								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
@@ -3425,6 +3436,8 @@ class WebBrowser extends LitElement {
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
+							response = res
+							break
 						} catch (error) {
 							console.error(error)
 							response = '{"error": "Request could not be fulfilled"}'
@@ -3434,7 +3447,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
-
+				break;
 				default:
 					console.log('Unhandled message: ' + JSON.stringify(data))
 					return
