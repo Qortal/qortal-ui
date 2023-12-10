@@ -1174,7 +1174,9 @@
 		"inf15": "Commandes d'achat automatique actives",
 		"inf16": "Achat automatique",
 		"inf17": "Passer au thème clair",
-		"inf18": "Passer au thème sombre"
+		"inf18": "Passer au thème sombre",
+		"inf19": "Informations commerciales",
+		"inf20": "Acheteur"
 	},
 	"lotterypage": {
 		"lot1": "Loteries Qortal ouvertes",

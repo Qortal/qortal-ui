@@ -1174,7 +1174,9 @@
 		"inf15": "Aktivne porudžbine za automatsku kupovinu",
 		"inf16": "Automatska kupovina",
 		"inf17": "Prebaci na svetlu temu",
-		"inf18": "Prebaci na tamnu temu"
+		"inf18": "Prebaci na tamnu temu",
+		"inf19": "Informacije o trgovini",
+		"inf20": "Kupac"
 	},
 	"lotterypage": {
 		"lot1": "Otvorene Kortal lutrije",

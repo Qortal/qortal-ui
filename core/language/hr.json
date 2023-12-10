@@ -1174,7 +1174,9 @@
 		"inf15": "Aktivne automatske narudžbe za kupnju",
 		"inf16": "Automatska kupnja",
 		"inf17": "Prebaci na svijetlu temu",
-		"inf18": "Prebaci na tamnu temu"
+		"inf18": "Prebaci na tamnu temu",
+		"inf19": "Informacije o trgovini",
+		"inf20": "Kupac"
 	},
 	"lotterypage": {
 		"lot1": "Otvorene Qortal lutrije",

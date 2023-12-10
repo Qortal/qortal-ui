@@ -1174,7 +1174,9 @@
 		"inf15": "Active Auto Buy Orders",
 		"inf16": "Auto Buy",
 		"inf17": "Switch to light theme",
-		"inf18": "Switch to dark theme"
+		"inf18": "Switch to dark theme",
+		"inf19": "Trade Information",
+		"inf20": "Buyer"
 	},
 	"lotterypage": {
 		"lot1": "Open Qortal Lotteries",

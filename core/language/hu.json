@@ -1174,7 +1174,9 @@
 		"inf15": "Aktív automatikus vásárlási megbízások",
 		"inf16": "Automatikus vásárlás",
 		"inf17": "Váltás világos témára",
-		"inf18": "Váltás sötét témára"
+		"inf18": "Váltás sötét témára",
+		"inf19": "Kereskedelmi információ",
+		"inf20": "Vevő"
 	},
 	"lotterypage": {
 		"lot1": "Open Qortal lottó",

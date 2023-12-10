@@ -1174,7 +1174,9 @@
 		"inf15": "Actieve auto-aankoop-orders",
 		"inf16": "Automatische aankoop",
 		"inf17": "Schakel 'lichte modus' in",
-		"inf18": "Schakel 'donkere modus' in"
+		"inf18": "Schakel 'donkere modus' in",
+		"inf19": "Handelsinformatie",
+		"inf20": "Koper"
 	},
 	"lotterypage": {
 		"lot1": "Openbare Qortal-loterij",

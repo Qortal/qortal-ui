@@ -1174,7 +1174,9 @@
 		"inf15": "Aktive automatiske kjøpsordrer",
 		"inf16": "Autokjøp",
 		"inf17": "Bytt til lystema",
-		"inf18": "Bytt til mørkt tema"
+		"inf18": "Bytt til mørkt tema",
+		"inf19": "Handelsinformasjon",
+		"inf20": "Kjøper"
 	},
 	"lotterypage": {
 		"lot1": "Åpne Qortal-lotterier",

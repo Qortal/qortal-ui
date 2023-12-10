@@ -1174,7 +1174,9 @@
 		"inf15": "Aktiivsed automaatostu tellimused",
 		"inf16": "Automaatost",
 		"inf17": "Lülita heledale teemale",
-		"inf18": "Lülita tumedale teemale"
+		"inf18": "Lülita tumedale teemale",
+		"inf19": "Kaubandusteave",
+		"inf20": "Ostja"
 	},
 	"lotterypage": {
 		"lot1": "Avatud loteriid",
