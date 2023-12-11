@@ -3,10 +3,8 @@ import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import {get, translate} from '../../../../core/translate/index.js'
 import {tradeInfoViewStyle} from './TradeInfoView-css.js'
-
+import './TraderInfoView.js'
 import '@polymer/paper-dialog/paper-dialog.js'
-import '@material/mwc-button'
-import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -32,7 +30,9 @@ class TradeInfoView extends LitElement {
         }
     }
 
-    static styles = [tradeInfoViewStyle]
+    static get styles() {
+        return [tradeInfoViewStyle]
+    }
 
     constructor() {
         super()
@@ -56,7 +56,7 @@ class TradeInfoView extends LitElement {
 
     render() {
         return html`
-            <paper-dialog style="background: var(--white); border: 1px solid var(--black); border-radius: 5px;" id="tradeInfoDialog" modal>
+            <paper-dialog class="pds" id="tradeInfoDialog" modal>
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">${translate("info.inf19")}</h4>
@@ -68,15 +68,15 @@ class TradeInfoView extends LitElement {
                                 <div class="ms-3">
                                     <p class="fw-bold cfs-18 red">${translate("tradepage.tchange13")}</p>
                                     <p class="fw-bold cfs-18">${this.infoSellerName}</p>
-                                    <p class="cfs-12">${this.sellerAddress}&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p class="cfs-12">${translate("explorerpage.exp6")}:&nbsp;${this.founderSellerStatus()}</p>
+                                    <span class="get-user-info cfs-14" @click="${() => this.requestUserInfo(this.sellerAddress)}">${this.sellerAddress}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <p class="cfs-14">${translate("explorerpage.exp6")}:&nbsp;${this.founderSellerStatus()}</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-3">
                                 <div class="me-sm-3 ms-3 ms-sm-0 text-sm-end order-1 order-sm-0">
                                     <p class="fw-bold cfs-18 green">${translate("info.inf20")}</p>
                                     <p class="fw-bold cfs-18">${this.infoBuyerName}</p>
-                                    <p class="cfs-14">&nbsp;&nbsp;&nbsp;&nbsp;${this.buyerAddress}</p>
+                                    <span class="get-user-info cfs-14" @click="${() => this.requestUserInfo(this.buyerAddress)}">&nbsp;&nbsp;&nbsp;&nbsp;${this.buyerAddress}</span>
                                     <p class="cfs-14">${translate("explorerpage.exp6")}:&nbsp;${this.founderBuyerStatus()}</p>
                                 </div>
                                 ${this.avatarBuyerImage()}
@@ -111,9 +111,10 @@ class TradeInfoView extends LitElement {
                     </div>
                 </div>
                 <div class="buttons">
-                    <mwc-button class='decline' @click=${() => this.closeTradeInfo()} dialog-dismiss>${translate("general.close")}</mwc-button>
+                    <span class="btn btn-sm btn-danger mt-2 px-3 border-0" @click="${() => this.closeTradeInfo()}" dialog-dismiss>${translate("general.close")}</span>
                 </div>
             </paper-dialog>
+            <trader-info-view></trader-info-view>
         `
     }
 
@@ -145,6 +146,13 @@ class TradeInfoView extends LitElement {
 
     closeTradeInfo() {
         this.shadowRoot.getElementById('tradeInfoDialog').close()
+    }
+
+    requestUserInfo(infoAddress) {
+        let requestAddress = ''
+        requestAddress = infoAddress
+        const theUserInfoView = this.shadowRoot.querySelector('trader-info-view')
+        theUserInfoView.openTraderInfo(requestAddress)
     }
 
     async getAddressSellerInfo(seller) {
@@ -229,22 +237,6 @@ class TradeInfoView extends LitElement {
 
     avatarBuyerImage() {
        return html`<img class="cwh-80 rounded order-0 order-sm-1" src="${this.buyerImage}" onerror="this.src='/img/incognito.png';" />`
-    }
-
-    founderSellerBadge() {
-       if (this.addressSellerResult.flags === 1) {
-           return html`<span class="founder">${translate("explorerpage.exp6")}</span>`
-       } else {
-           return html``
-       }
-    }
-
-    founderBuyerBadge() {
-       if (this.addressBuyerResult.flags === 1) {
-           return html`<span class="founder">${translate("explorerpage.exp6")}</span>`
-       } else {
-           return html``
-       }
     }
 
     founderSellerStatus() {

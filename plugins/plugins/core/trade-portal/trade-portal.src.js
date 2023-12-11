@@ -1264,13 +1264,20 @@ class TradePortal extends LitElement {
     }
 
     requestTradeInfo(tradeObj) {
-        let seller = tradeObj.item.sellerAddress
-        let buyer = tradeObj.item.buyerReceivingAddress
-        let qortAmount = tradeObj.item.qortAmount
-        let foreignAmount = tradeObj.item.foreignAmount
-        let ata = tradeObj.item.atAddress
-        let time = tradeObj.item.tradeTimestamp
-        let coin = this.listedCoins.get(this.selectedCoin).coinCode
+        let seller = ''
+        let buyer = ''
+        let qortAmount = 0
+        let foreignAmount = 0
+        let ata = ''
+        let time = 0
+        let coin = ''
+        seller = tradeObj.item.sellerAddress
+        buyer = tradeObj.item.buyerReceivingAddress
+        qortAmount = tradeObj.item.qortAmount
+        foreignAmount = tradeObj.item.foreignAmount
+        ata = tradeObj.item.atAddress
+        time = tradeObj.item.tradeTimestamp
+        coin = this.listedCoins.get(this.selectedCoin).coinCode
         const theTradeInfoView = this.shadowRoot.querySelector('trade-info-view')
         theTradeInfoView.openTradeInfo(seller, buyer, qortAmount, foreignAmount, ata, time, coin)
     }
