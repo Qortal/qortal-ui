@@ -4,6 +4,8 @@ package-lock.json
 # Derived js files
 plugins/plugins/core/**/*.js
 !*.src.js
+!plugins/plugins/core/**/*charts.js
+!plugins/plugins/core/**/*css.js
 core/src/redux/app/version.js
 !plugins/plugins/core/components/**/*.js
 
