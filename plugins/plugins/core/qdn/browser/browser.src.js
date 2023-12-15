@@ -51,8 +51,7 @@ class WebBrowser extends LitElement {
 			dogeFeePerByte: { type: Number },
 			dgbFeePerByte: { type: Number },
 			rvnFeePerByte: { type: Number },
-			arrrWalletAddress: { type: String },
-			theme: { type: String, reflect: true }
+			arrrWalletAddress: { type: String }		
 		}
 	}
 
@@ -1383,131 +1382,163 @@ class WebBrowser extends LitElement {
 						break
 
 					}
-					const resourcesMap = resources.map(async (resource) => {
-						const requiredFields = ['service', 'name']
-						const missingFields = []
-
-						requiredFields.forEach((field) => {
-							if (!resource[field]) {
-								missingFields.push(field)
-							}
-						})
-
-						if (missingFields.length > 0) {
-							const missingFieldsString = missingFields.join(', ')
-							const errorMsg = `Missing fields: ${missingFieldsString}`
-							throw new Error(errorMsg)
-						}
-
-						if (!resource.file && !resource.data64) {
-
-							throw new Error('No data or file was submitted')
-						}
-
-						const service = resource.service
-						const name = resource.name
-						let identifier = resource.identifier
-						let data64 = resource.data64
-						const filename = resource.filename
-						const title = resource.title
-						const description = resource.description
-						const category = resource.category
-						const tag1 = resource.tag1
-						const tag2 = resource.tag2
-						const tag3 = resource.tag3
-						const tag4 = resource.tag4
-						const tag5 = resource.tag5
-						if (resource.identifier == null) {
-							identifier = 'default'
-						}
-
-						if (!data.encrypt && service.endsWith("_PRIVATE")) {
-							throw new Error("Only encrypted data can go into private services")
-						}
-						if (data.file) {
-							data64 = await fileToBase64(data.file)
-						}
-
-
-						if (data.encrypt) {
-							try {
-
-								const encryptDataResponse = encryptDataGroup({
-									data64, publicKeys: data.publicKeys
-								})
-								if (encryptDataResponse) {
-									data64 = encryptDataResponse
-								}
-
-							} catch (error) {
-								const errorMsg = error.message || 'Upload failed due to failed encryption'
-								throw new Error(errorMsg)
-							}
-
-						}
-						if (resource.file && !data.encrypt) {
-							data64 = await fileToBase64(resource.file)
-						}
-
-						const worker = new WebWorker()
+					let failedPublishesIdentifiers = []
+					this.loader.show()
+					for (const resource of resources) {
 						try {
-
-							const resPublish = await publishData({
-								registeredName: encodeURIComponent(name),
-								file: data64,
-								service: service,
-								identifier: encodeURIComponent(identifier),
-								parentEpml,
-								uploadType: 'file',
-								selectedAddress: this.selectedAddress,
-								worker: worker,
-								isBase64: true,
-								filename: filename,
-								title,
-								description,
-								category,
-								tag1,
-								tag2,
-								tag3,
-								tag4,
-								tag5,
-								apiVersion: 2,
-								withFee: res2.userData.isWithFee === true ? true : false,
-								feeAmount: feeAmount
+							const requiredFields = ['service', 'name']
+							const missingFields = []
+	
+							requiredFields.forEach((field) => {
+								if (!resource[field]) {
+									missingFields.push(field)
+								}
 							})
-
-							worker.terminate()
-							return resPublish
+	
+							if (missingFields.length > 0) {
+								const missingFieldsString = missingFields.join(', ')
+								const errorMsg = `Missing fields: ${missingFieldsString}`
+								failedPublishesIdentifiers.push({
+									reason: errorMsg,
+									identifier: resource.identifier
+								})
+								continue
+							}
+	
+							if (!resource.file && !resource.data64) {
+								const errorMsg = 'No data or file was submitted'
+								failedPublishesIdentifiers.push({
+									reason: errorMsg,
+									identifier: resource.identifier
+								})
+								continue
+							}
+	
+							const service = resource.service
+							const name = resource.name
+							let identifier = resource.identifier
+							let data64 = resource.data64
+							const filename = resource.filename
+							const title = resource.title
+							const description = resource.description
+							const category = resource.category
+							const tag1 = resource.tag1
+							const tag2 = resource.tag2
+							const tag3 = resource.tag3
+							const tag4 = resource.tag4
+							const tag5 = resource.tag5
+							if (resource.identifier == null) {
+								identifier = 'default'
+							}
+	
+							if (!data.encrypt && service.endsWith("_PRIVATE")) {
+								const errorMsg = "Only encrypted data can go into private services"
+								failedPublishesIdentifiers.push({
+									reason: errorMsg,
+									identifier: resource.identifier
+								})
+								continue
+							}
+							if (data.file) {
+								data64 = await fileToBase64(data.file)
+							}
+	
+	
+							if (data.encrypt) {
+								try {
+	
+									const encryptDataResponse = encryptDataGroup({
+										data64, publicKeys: data.publicKeys
+									})
+									if (encryptDataResponse) {
+										data64 = encryptDataResponse
+									}
+	
+								} catch (error) {
+									const errorMsg = error.message || 'Upload failed due to failed encryption'
+								failedPublishesIdentifiers.push({
+									reason: errorMsg,
+									identifier: resource.identifier
+								})
+								continue
+								}
+	
+							}
+							if (resource.file && !data.encrypt) {
+								data64 = await fileToBase64(resource.file)
+							}
+	
+							const worker = new WebWorker()
+							try {
+	
+								 await publishData({
+									registeredName: encodeURIComponent(name),
+									file: data64,
+									service: service,
+									identifier: encodeURIComponent(identifier),
+									parentEpml,
+									uploadType: 'file',
+									selectedAddress: this.selectedAddress,
+									worker: worker,
+									isBase64: true,
+									filename: filename,
+									title,
+									description,
+									category,
+									tag1,
+									tag2,
+									tag3,
+									tag4,
+									tag5,
+									apiVersion: 2,
+									withFee: res2.userData.isWithFee === true ? true : false,
+									feeAmount: feeAmount
+								})
+	
+								worker.terminate()
+								await new Promise((res)=> {
+									setTimeout(() => {
+										res()
+									}, 1000);
+								})
+							} catch (error) {
+								worker.terminate()
+								const errorMsg = error.message || 'Upload failed'
+								failedPublishesIdentifiers.push({
+									reason: errorMsg,
+									identifier: resource.identifier
+								})
+								continue
+							}
+	
 						} catch (error) {
-							worker.terminate()
-							const errorMsg = error.message || 'Upload failed'
-							throw new Error(errorMsg)
+							failedPublishesIdentifiers.push({
+								reason: "Unknown error",
+								identifier: resource.identifier
+							})
+							continue
 						}
+					
 
-
-					})
-
-					try {
-						this.loader.show()
-						const results = await Promise.all(resourcesMap)
-						response = JSON.stringify(results)
-						this.loader.hide()
-						break
-						// handle successful results
-					} catch (error) {
-						const obj = {}
-						const errorMsg = error.message || 'Upload failed'
-						obj['error'] = errorMsg
-						response = JSON.stringify(obj)
-						this.loader.hide()
-						break
+						
 					}
+					this.loader.hide()
+					if(failedPublishesIdentifiers.length > 0){
+						response = failedPublishesIdentifiers
+						const obj = {}
+							const errorMsg = {
+								unsuccessfulPublishes: failedPublishesIdentifiers
+							}
+							obj['error'] = errorMsg
+							response = JSON.stringify(obj)
+							this.loader.hide()
+						break
+					} 
 
-					// Params: data.service, data.name, data.identifier, data.data64,
-					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
-					// then set the response string from the core to the `response` variable (defined above)
-					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break
+						response = true
+						break
+					
+					
 				}
 
 				case actions.VOTE_ON_POLL: {
@@ -2455,7 +2486,7 @@ class WebBrowser extends LitElement {
 								})
 								if (isNaN(Number(res))) {
 									const data = {}
-									const errorMsg = error.message || get("browserpage.bchange21")
+									const errorMsg =  get("browserpage.bchange21")
 									data['error'] = errorMsg
 									response = JSON.stringify(data)
 									return
