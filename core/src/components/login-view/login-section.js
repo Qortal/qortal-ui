@@ -336,7 +336,7 @@ class LoginSection extends connect(store)(LitElement) {
                             <div style="padding:0;">
                                 <div style="display:flex;">
                                     <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">short_text</mwc-icon>
-                                    <vaadin-password-field style="width:100%;" label="${translate("login.seed")}" id="existingSeedPhraseInput" autofocus></vaadin-password-field>
+                                    <vaadin-password-field style="width:100%;" label="${translate("login.seed")}" id="existingSeedPhraseInput" @keydown="${e => this.seedListener(e)}" autofocus></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
@@ -345,7 +345,7 @@ class LoginSection extends connect(store)(LitElement) {
                             <div>
                                 <div style="display: flex;">
                                     <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">clear_all</mwc-icon>
-                                    <vaadin-password-field style="width: 100%;" label="${translate("login.qora")}" id="v1SeedInput" autofocus></vaadin-password-field>
+                                    <vaadin-password-field style="width: 100%;" label="${translate("login.qora")}" id="v1SeedInput" @keydown="${e => this.seedListener(e)}" autofocus></vaadin-password-field>
                                 </div>
                             </div>
                         </div>
@@ -378,6 +378,7 @@ class LoginSection extends connect(store)(LitElement) {
                             <vaadin-text-field style="width:100%;" label="${translate("login.name")}" id="nameInput"></vaadin-text-field>
                         </div>
                     </iron-collapse>
+
                     <iron-collapse style="" ?opened=${this.showPassword(this.selectedPage)} id="passwordCollapse">
                         <div style="display:flex;">
                             <mwc-icon style="padding: 10px; padding-left: 0; padding-top: 42px; color: var(--black);">password</mwc-icon>
@@ -485,6 +486,12 @@ class LoginSection extends connect(store)(LitElement) {
         this.wallets = state.user.storedWallets
         this.hasStoredWallets = this.wallets.length > 0
         this.nodeConfig = state.app.nodeConfig
+    }
+
+    seedListener(e) {
+        if (e.key === 'Enter') {
+            this.emitNext(e)
+        }
     }
 
     keyupEnter(e, action) {

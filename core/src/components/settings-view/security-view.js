@@ -53,15 +53,15 @@ class SecurityView extends connect(store)(LitElement) {
                 text-align: center;
             }
 
-	      .checkbox-row {
+            .checkbox-row {
                 position: relative;
-		    display: flex;
-		    align-items: center;
-		    align-content: center;
-		    font-family: Montserrat, sans-serif;
-		    font-weight: 600;
-		    color: var(--black);
-	      }
+                display: flex;
+                align-items: center;
+                align-content: center;
+                font-family: Montserrat, sans-serif;
+                font-weight: 600;
+                color: var(--black);
+            }
 
             .q-button {
                 display: inline-flex;
@@ -128,6 +128,15 @@ class SecurityView extends connect(store)(LitElement) {
                             >
                             </vaadin-password-field>
                         </div>
+                        <div style="max-width: 500px; display: flex; justify-content: center; margin: auto;">
+                            <mwc-icon style="padding: 10px; padding-left:0; padding-top: 42px;">password</mwc-icon>
+                            <vaadin-password-field
+                                style="width: 100%; color: var(--black);"
+                                label="${translate("login.confirmpass")}"
+                                id="rePassword"
+                            >
+                            </vaadin-password-field>
+                        </div>
                         <div style="text-align: center; color: var(--mdc-theme-error); text-transform: uppercase; font-size: 15px;">
                             ${this.backupErrorMessage}
                         </div>
@@ -176,6 +185,7 @@ class SecurityView extends connect(store)(LitElement) {
            store.dispatch(allowQAPPAutoAuth(true))
         }
     }
+
     checkForLists(e) {
         if (e.target.checked) {
             store.dispatch(removeQAPPAutoLists(false))
@@ -194,10 +204,14 @@ class SecurityView extends connect(store)(LitElement) {
 
     checkForDownload() {
         const checkPass = this.shadowRoot.getElementById('downloadBackupPassword').value
+        const rePass = this.shadowRoot.getElementById('rePassword').value
+
         if (checkPass === '') {
            this.backupErrorMessage = get("login.pleaseenter")
-        } else if (checkPass.length < 8) {
+        } else if (checkPass.length < 5) {
            this.backupErrorMessage = get("login.lessthen8-2")
+        } else if (checkPass != rePass) {
+           this.backupErrorMessage = get("login.notmatch")
         } else {
             this.downloadBackup()
         }
@@ -239,11 +253,15 @@ class SecurityView extends connect(store)(LitElement) {
                 labelText: `${snack4string} ${fileName} ✅`,
                 dismiss: true
             })
+            this.shadowRoot.getElementById('downloadBackupPassword').value = ''
+            this.shadowRoot.getElementById('rePassword').value = ''
         } catch (error) {
             if (error.name === 'AbortError') {
                 return
             }
             FileSaver.saveAs(blob, fileName)
+            this.shadowRoot.getElementById('downloadBackupPassword').value = ''
+            this.shadowRoot.getElementById('rePassword').value = ''
         }
     }
 }
