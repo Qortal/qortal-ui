@@ -48,7 +48,6 @@ class TradePortal extends LitElement {
             listedCoins: { type: Map },
             nodeInfo: { type: Array },
             blockedTradesList: { type: Array },
-            preparedPresence: { type: Array },
             tradesPresenceCleaned: { type: Array },
             sellBtnDisable: { type: Boolean },
             isSellLoading: { type: Boolean },
@@ -2644,9 +2643,22 @@ class TradePortal extends LitElement {
                     if (!message.isRestarted) this.processTradeBotStates(JSON.parse(message.data))
                     return null
                 case 'PRESENCE':
+                    this.tradesPresenceCleaned = []
                     this.listedCoins.get(message.data.relatedCoin).openOrders = message.data.offers
-                    this.preparedPresence = message.data.filteredOffers
-                    this.filterPresenceTrades()
+                    this.tradesPresenceCleaned = message.data.filteredOffers
+
+                    const filterPresenceList = () => {
+                        this.blockedTradesList.forEach(item => {
+                            const toDelete = item.recipient
+                            this.tradesPresenceCleaned = this.tradesPresenceCleaned.filter(el => {
+                                return el.qortalCreatorTradeAddress !== toDelete
+                            })
+                        })
+                    }
+
+                    filterPresenceList()
+                    this.listedCoins.get(message.data.relatedCoin).openFilteredOrders = this.tradesPresenceCleaned
+                    this.reRenderOpenFilteredOrders()
                     return null
                 default:
                     break
@@ -2710,24 +2722,6 @@ class TradePortal extends LitElement {
         }
 
         await filterUnconfirmedTransactionsList()
-    }
-
-    async filterPresenceTrades() {
-        this.tradesPresenceCleaned = this.preparedPresence
-
-        const filterPresenceList = async () => {
-            this.blockedTradesList.forEach(item => {
-                const toDelete = item.recipient
-                this.tradesPresenceCleaned = this.tradesPresenceCleaned.filter(el => {
-                    return el.qortalCreatorTradeAddress !== toDelete
-                })
-            })
-        }
-
-        await filterPresenceList()
-
-        this.listedCoins.get(this.selectedCoin).openFilteredOrders = this.tradesPresenceCleaned
-        this.reRenderOpenFilteredOrders()
     }
 
     handleStuckTrades() {
