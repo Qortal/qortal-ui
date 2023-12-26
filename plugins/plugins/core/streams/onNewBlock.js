@@ -1,8 +1,9 @@
 import {parentEpml} from '../connect.js'
+const MIN_RECONNECT_INTERVAL = 1000; // 1 second
+const MAX_RECONNECT_INTERVAL = 300000; // 5 minutes
 
 let socketObject
 let activeBlockSocketTimeout
-let initial = 0
 let closeGracefully = false
 let isCalled = false
 let retryOnClose = false
@@ -10,11 +11,12 @@ let blockFirstCall = true
 let nodeStatusSocketObject
 let nodeStatusSocketTimeout
 let nodeStatusSocketcloseGracefully = false
-let nodeStatusCount = 0
 let nodeStatusRetryOnClose = false
 let nodeStateCall = false
 let isLoggedIn = false
 let oldAccountInfo
+let blockSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
+let nodeStatusSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
 
 parentEpml.subscribe('logged_in', loggedIn => {
     if (loggedIn === 'true') {
@@ -23,6 +25,7 @@ parentEpml.subscribe('logged_in', loggedIn => {
         isLoggedIn = false
     }
 })
+
 
 const setAccountInfo = async (addr) => {
     const names = await parentEpml.request('apiCall', {
@@ -115,6 +118,21 @@ const initNodeStatusCall = (nodeConfig) => {
     }
 }
 
+function attemptReconnectBlockSocket() {
+    setTimeout(() => {
+        initBlockSocket();
+        blockSocketReconnectInterval = Math.min(blockSocketReconnectInterval * 2, MAX_RECONNECT_INTERVAL);
+    }, blockSocketReconnectInterval);
+}
+
+function attemptReconnectNodeStatusSocket() {
+    setTimeout(() => {
+        initNodeStatusSocket();
+        nodeStatusSocketReconnectInterval = Math.min(nodeStatusSocketReconnectInterval * 2, MAX_RECONNECT_INTERVAL);
+    }, nodeStatusSocketReconnectInterval);
+}
+
+
 const initBlockSocket = () => {
     let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
     let nodeUrl = myNode.domain + ":" + myNode.port
@@ -127,9 +145,9 @@ const initBlockSocket = () => {
     const activeBlockSocket = new WebSocket(activeBlockSocketLink)
     // Open Connection
     activeBlockSocket.onopen = (e) => {
+        blockSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
         closeGracefully = false
         socketObject = activeBlockSocket
-        initial = initial + 1
     }
     // Message Event
     activeBlockSocket.onmessage = (e) => {
@@ -141,21 +159,10 @@ const initBlockSocket = () => {
     }
     // Closed Event
     activeBlockSocket.onclose = () => {
-        processBlock({})
-        blockFirstCall = true
-        clearInterval(activeBlockSocketTimeout)
-
-        if (closeGracefully === false && initial <= 52) {
-            if (initial <= 52) {
-                retryOnClose = true
-                setTimeout(pingactiveBlockSocket, 10000)
-                initial = initial + 1
-            } else {
-                // ... Stop retrying...
-                retryOnClose = false
-            }
-        }
-    }
+        processBlock({});
+        blockFirstCall = true;
+        attemptReconnectBlockSocket();
+    };
     // Error Event
     activeBlockSocket.onerror = (e) => {
         blockFirstCall = true
@@ -200,31 +207,26 @@ const initNodeStatusSocket = () => {
     const activeNodeStatusSocket = new WebSocket(activeNodeStatusSocketLink)
     // Open Connection
     activeNodeStatusSocket.onopen = (e) => {
+        console.log('onopen')
+        nodeStatusSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
+
         nodeStatusSocketcloseGracefully = false
         nodeStatusSocketObject = activeNodeStatusSocket
-        nodeStatusCount = nodeStatusCount + 1
     }
     // Message Event
     activeNodeStatusSocket.onmessage = (e) => {
+        console.log('onmessage')
         doNodeStatus(JSON.parse(e.data))
     }
     // Closed Event
     activeNodeStatusSocket.onclose = () => {
-        doNodeStatus({})
-        clearInterval(nodeStatusSocketTimeout)
-        if (nodeStatusSocketcloseGracefully === false && nodeStatusCount <= 52) {
-            if (nodeStatusCount <= 52) {
-                nodeStatusRetryOnClose = true
-                setTimeout(pingNodeStatusSocket, 10000)
-                nodeStatusCount = nodeStatusCount + 1
-            } else {
-                // ... Stop retrying...
-                nodeStatusRetryOnClose = false
-            }
-        }
-    }
+        console.log('onclose')
+        doNodeStatus({});
+        attemptReconnectNodeStatusSocket();
+    };
     // Error Event
     activeNodeStatusSocket.onerror = (e) => {
+        console.log('onerror')
         doNodeStatus({})
     }
 }

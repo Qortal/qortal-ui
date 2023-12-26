@@ -1,0 +1,77 @@
+.driver-popover.driverjs-theme {
+    background-color: var(--white);
+    color: var(--black);
+    max-width: 500px;
+    width: auto;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-title {
+    font-size: 20px;
+    text-align: center;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-title,
+  .driver-popover.driverjs-theme .driver-popover-description,
+  .driver-popover.driverjs-theme .driver-popover-progress-text {
+    color: var(--black);
+    font-family: Roboto, sans-serif;
+  }
+  .driver-popover.driverjs-theme .driver-popover-description {
+    font-size: 16px;
+  }
+  
+  .driver-popover.driverjs-theme button {
+    flex: 1;
+    text-align: center;
+    background-color: #000;
+    color: #ffffff;
+    border: 2px solid #000;
+    text-shadow: none;
+    font-size: 14px;
+    padding: 5px 8px;
+    border-radius: 6px;
+  }
+  
+  .driver-popover.driverjs-theme .test-span {
+    color: green;
+  }
+  
+  .driver-popover.driverjs-theme button:hover {
+    background-color: #000;
+    color: #ffffff;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-navigation-btns {
+    justify-content: space-between;
+    gap: 3px;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-close-btn {
+    color: #9b9b9b;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-close-btn:hover {
+    color: #000;
+  }
+  .driver-popover.driverjs-theme .driver-popover-footer {
+    gap: 20px;
+  }
+  .driver-popover.driverjs-theme .driver-popover-footer button {
+    background-color: #000 !important;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-arrow-side-left.driver-popover-arrow {
+    border-left-color: #fde047;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-arrow-side-right.driver-popover-arrow {
+    border-right-color: #fde047;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-arrow-side-top.driver-popover-arrow {
+    border-top-color: #fde047;
+  }
+  
+  .driver-popover.driverjs-theme .driver-popover-arrow-side-bottom.driver-popover-arrow {
+    border-bottom-color: #fde047;
+  }

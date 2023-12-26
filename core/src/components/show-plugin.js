@@ -19,6 +19,7 @@ import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
+import { defaultQappsTabs } from '../data/defaultQapps.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -322,6 +323,7 @@ class ShowPlugin extends connect(store)(LitElement) {
     constructor() {
         super()
         this.registeredUrls = []
+        this.initialRegisteredUrls = []
         this.currentTab = 0
         this.tabs = []
         this.uid = new ShortUniqueId()
@@ -339,6 +341,7 @@ class ShowPlugin extends connect(store)(LitElement) {
         }
 
         return html`
+             <div id="showPluginId" style="width:0px"></div>
             <div class="tabs">
                 ${this.tabs.map((tab, index) => {
                     let title = ''
@@ -1725,7 +1728,9 @@ class NavBar extends connect(store)(LitElement) {
 
         if (localStorage.getItem("myMenuPlugs") === null) {
             await appDelay(1000)
-            const myObj = JSON.stringify(this.menuList)
+            const listOfPlugins = this.menuList.filter(plugin=> plugin.url !== "puzzles")
+            const addQapps = [...listOfPlugins, ...defaultQappsTabs]
+            const myObj = JSON.stringify(addQapps)
             localStorage.setItem("myMenuPlugs", myObj)
             this.myMenuPlugins = JSON.parse(localStorage.getItem("myMenuPlugs") || "[]")
         } else {

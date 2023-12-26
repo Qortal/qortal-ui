@@ -1254,5 +1254,29 @@
 		"profile24": "You must fill out both field name and field value to add a custom property",
 		"profile25": "Is your friend",
 		"profile26": "Add as friend"
+	},
+	"tour": {
+		"tour1": "In order to use Qortal, the Core must be synced. This icon will be in blue when it's synced.",
+		"tour2": "Synced",
+		"tour3": "Synced and minting",
+		"tour4": "Syncing",
+		"tour5": "Sync your core",
+		"tour6": "The Unstoppable Force of Qortal",
+		"tour7": "Only you control your data on Qortal",
+		"tour8": "Qortal cannot be taken down",
+		"tour9": "Completely peer-to-peer with no centralized intermediaries",
+		"tour10": "This is the default tab view where you can access important Qortal settings and Q-apps such as Q-Tube.",
+		"tour11": "Get the full experience",
+		"tour12": "To get the full Qortal experience, we recommend following this checklist.",
+		"tour13": "You are fully synced! You can now experience the power of the Qortal blockchain.",
+		"tour14":"Let's try visiting Q-Tube!",
+		"tour15":"Visit Q-Tube",
+		"tour16": "Checklist",
+		"tour17": "Please start the Core to access the Qortal blockchain.",
+		"tour18": "Bootstrap",
+		"tour19":"Currently syncing... please wait to use Qortal to its full potential.",
+		"tour20": "blocks behind. Would you like to bootstrap to speed up the syncing process?",
+		"tour21": "blocks remaining.",
+		"tour22": "Bootstrap requested. Please wait."
 	}
 }

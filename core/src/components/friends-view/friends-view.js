@@ -139,8 +139,8 @@ class FriendsView extends connect(store)(LitElement) {
 
 	disconnectedCallback() {
 		window.removeEventListener('friends-my-friend-list-event', this._updateFriends)
-		window.addEventListener('friends-my-selected-feeds-event', this._updateFeed)
-		window.addEventListener('add-friend', this._addFriend)
+		window.removeEventListener('friends-my-selected-feeds-event', this._updateFeed)
+		window.removeEventListener('add-friend', this._addFriend)
 
 		super.disconnectedCallback()
 	}

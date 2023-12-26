@@ -42,6 +42,9 @@ import './friends-view/friends-side-panel-parent.js'
 import './friends-view/save-settings-qdn.js'
 import './friends-view/core-sync-status.js'
 import './friends-view/profile.js'
+import './beginner-tour/tour-component.js'
+import './beginner-tour/sync-indicator.js'
+import './friends-view/beginner-checklist.js'
 import './controllers/coin-balances-controller.js'
 
 const chatLastSeen = localForage.createInstance({
@@ -540,6 +543,26 @@ class AppView extends connect(store)(LitElement) {
         this.myLockScreenPass = ''
         this.myLockScreenSet = ''
         this.helperMessage = ''
+        this.getTourElements = this.getTourElements.bind(this)
+    }
+
+    getTourElements(){
+        let els = {}
+        console.log('this.shadowRoot.querySelector("core-sync-status")', this.shadowRoot.querySelector("core-sync-status"))
+        const el1 = this.shadowRoot.querySelector("core-sync-status").shadowRoot.getElementById("core-sync-status-id")
+        const el2 = this.shadowRoot.querySelector("show-plugin").shadowRoot.getElementById("showPluginId")
+        const el3 = this.shadowRoot.querySelector("beginner-checklist").shadowRoot.getElementById("popover-notification")
+        if(el1) {
+            els['core-sync-status-id'] = el1
+        }
+        if(el2) {
+            els['tab'] = el2
+        }
+        if(el3) {
+            els['checklist'] = el3
+        }
+       
+        return els
     }
 
     render() {
@@ -570,6 +593,7 @@ class AppView extends connect(store)(LitElement) {
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:20px">
+                            <beginner-checklist></beginner-checklist>
                                 <profile-qdn></profile-qdn>
                                 <friends-side-panel-parent></friends-side-panel-parent>
                                 <notification-bell></notification-bell>
@@ -600,6 +624,8 @@ class AppView extends connect(store)(LitElement) {
                         </app-toolbar>
                     </app-header>
                     <show-plugin></show-plugin>
+                    <tour-component .getElements=${this.getTourElements}></tour-component>
+                    <sync-indicator ></sync-indicator>
                 </app-header-layout>
             </app-drawer-layout>
             <user-info-view></user-info-view>
