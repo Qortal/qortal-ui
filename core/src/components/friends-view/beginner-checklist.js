@@ -35,7 +35,9 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 		this.hasName = null;
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
-		this.hasTourFinished = false;
+		this.hasTourFinished = JSON.parse(
+			localStorage.getItem('hasViewedTour') || 'false'
+		)
 		this._controlTourFinished = this._controlTourFinished.bind(this);
 		this.uid = new ShortUniqueId();
 	}
@@ -82,6 +84,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 
 	async getName(recipient) {
 		try {
+			if(!recipient) return ''
 			const endpoint = `${this.nodeUrl}/names/address/${recipient}`;
 			const res = await fetch(endpoint);
 			const getNames = await res.json();
@@ -104,11 +107,11 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			this.syncPercentage = state.app.nodeStatus.syncPercent;
 
 			if (
-				!this.hasAttempted &&
+				!this.hasAttempted && state.app.selectedAddress &&
 				state.app.nodeStatus.syncPercent === 100
 			) {
 				this.hasAttempted = true;
-				this.getName();
+				this.getName(state.app.selectedAddress.address);
 			}
 		}
 		if (
@@ -137,7 +140,6 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 
 
 	render() {
-
 		return this.hasName === false || !this.hasTourFinished
 			? html`
 					<div class="layout">
