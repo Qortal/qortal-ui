@@ -207,7 +207,6 @@ const initNodeStatusSocket = () => {
     const activeNodeStatusSocket = new WebSocket(activeNodeStatusSocketLink)
     // Open Connection
     activeNodeStatusSocket.onopen = (e) => {
-        console.log('onopen')
         nodeStatusSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
 
         nodeStatusSocketcloseGracefully = false
@@ -215,18 +214,15 @@ const initNodeStatusSocket = () => {
     }
     // Message Event
     activeNodeStatusSocket.onmessage = (e) => {
-        console.log('onmessage')
         doNodeStatus(JSON.parse(e.data))
     }
     // Closed Event
     activeNodeStatusSocket.onclose = () => {
-        console.log('onclose')
         doNodeStatus({});
         attemptReconnectNodeStatusSocket();
     };
     // Error Event
     activeNodeStatusSocket.onerror = (e) => {
-        console.log('onerror')
         doNodeStatus({})
     }
 }

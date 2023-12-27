@@ -35,15 +35,20 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 		this.hasName = null;
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
-		this.hasTourFinished = JSON.parse(
-			localStorage.getItem('hasViewedTour') || 'false'
-		)
+		this.hasTourFinished = null;
 		this._controlTourFinished = this._controlTourFinished.bind(this);
 		this.uid = new ShortUniqueId();
 	}
 
 	_controlTourFinished() {
 		this.hasTourFinished = true;
+	}
+
+	firstUpdated() {
+		this.address = store.getState().app.selectedAddress.address;
+		this.hasTourFinished = JSON.parse(
+			localStorage.getItem(`hasViewedTour-${this.address}`) || 'null'
+		);
 	}
 
 	connectedCallback() {
@@ -84,7 +89,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 
 	async getName(recipient) {
 		try {
-			if(!recipient) return ''
+			if (!recipient) return '';
 			const endpoint = `${this.nodeUrl}/names/address/${recipient}`;
 			const res = await fetch(endpoint);
 			const getNames = await res.json();
@@ -107,7 +112,8 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			this.syncPercentage = state.app.nodeStatus.syncPercent;
 
 			if (
-				!this.hasAttempted && state.app.selectedAddress &&
+				!this.hasAttempted &&
+				state.app.selectedAddress &&
 				state.app.nodeStatus.syncPercent === 100
 			) {
 				this.hasAttempted = true;
@@ -126,7 +132,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			state.app.accountInfo.names.length > 0
 		) {
 			this.hasName = true;
-		}
+		} 
 	}
 
 	handleBlur() {
@@ -137,10 +143,8 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 		}, 0);
 	}
 
-
-
 	render() {
-		return this.hasName === false || !this.hasTourFinished
+		return this.hasName === false || this.hasTourFinished === false
 			? html`
 					<div class="layout">
 						<popover-component
@@ -153,7 +157,9 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 						>
 							<mwc-icon
 								id="checklist-general-icon"
-								style=${`color: ${!this.hasName ? 'red' : 'var(--black)'}; cursor:pointer;user-select:none`}
+								style=${`color: ${
+									!this.hasName ? 'red' : 'var(--black)'
+								}; cursor:pointer;user-select:none`}
 								>checklist</mwc-icon
 							>
 							<vaadin-tooltip
@@ -165,7 +171,6 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 							>
 							</vaadin-tooltip>
 						</div>
-					
 
 						<div
 							id="checklist-panel"
@@ -196,8 +201,11 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 										  `}
 								</div>
 
-								<div class="task-list-item" style="cursor:pointer" @click=${()=> {
-									store.dispatch(
+								<div
+									class="task-list-item"
+									style="cursor:pointer"
+									@click=${() => {
+										store.dispatch(
 											setNewTab({
 												url: `group-management`,
 												id: this.uid.rnd(),
@@ -216,8 +224,9 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 												openExisting: true,
 											})
 										);
-										this.handleBlur()
-								}}>
+										this.handleBlur();
+									}}
+								>
 									<p>Do you have a name registered?</p>
 									${this.hasName
 										? html`

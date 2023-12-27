@@ -80,8 +80,10 @@ class SyncIndicator extends connect(store)(LitElement) {
 		`;
 	}
 	async firstUpdated() {
+		this.address = store.getState().app.selectedAddress.address
+
 		const seenWelcomeSync = JSON.parse(
-			localStorage.getItem('welcome-sync') || 'false'
+			localStorage.getItem(`welcome-sync-${this.address}`) || 'false'
 		);
 		this.seenWelcomeSync = seenWelcomeSync;
 	}
@@ -152,7 +154,6 @@ class SyncIndicator extends connect(store)(LitElement) {
 	}
 
 	stateChanged(state) {
-		console.log({state})
 		if (
 			state.app.nodeStatus &&
 			Object.keys(state.app.nodeStatus).length === 0

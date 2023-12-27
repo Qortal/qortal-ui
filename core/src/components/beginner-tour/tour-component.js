@@ -191,11 +191,11 @@ class TourComponent extends connect(store)(LitElement) {
 		}
 	}
 	async firstUpdated() {
+		this.address = store.getState().app.selectedAddress.address
 		const hasViewedTour = JSON.parse(
-			localStorage.getItem('hasViewedTour') || 'false'
+			localStorage.getItem(`hasViewedTour-${this.address}`) || 'false'
 		);
-		const selectedAddress = store.getState().app.selectedAddress || '';
-		const name = await this.getName(selectedAddress.address);
+		const name = await this.getName(this.address);
 		if (name) {
 			this.hasName = true;
 		}
@@ -205,7 +205,7 @@ class TourComponent extends connect(store)(LitElement) {
 				if (name) {
 					this.hasViewedTour = true;
 					this.hasName = true;
-					localStorage.setItem("hasViewedTour", JSON.stringify(true))
+					localStorage.setItem(`hasViewedTour-${this.address}`, JSON.stringify(true))
 				}
 			} catch (error) {
 				console.log({ error });
@@ -309,7 +309,7 @@ class TourComponent extends connect(store)(LitElement) {
 				steps: steps,
 				allowClose: false,
 				onDestroyed: () => {
-					localStorage.setItem("hasViewedTour", JSON.stringify(true))
+					localStorage.setItem(`hasViewedTour-${this.address}`, JSON.stringify(true))
 					this.hasViewedTour = true;
 					this.openWelcomeModal();
 				}
@@ -346,7 +346,7 @@ class TourComponent extends connect(store)(LitElement) {
 	}
 
 	onClose() {
-		localStorage.setItem("welcome-sync", JSON.stringify(true))
+		localStorage.setItem(`welcome-sync-${this.address}`, JSON.stringify(true))
 		this.dialogOpenedCongrats = false;
 	}
 
