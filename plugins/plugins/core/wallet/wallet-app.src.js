@@ -606,12 +606,6 @@ class MultiWallet extends LitElement {
                 width: 185px;
             }
 
-            .unused-pos {
-                margin-top: -44px;
-                margin-left: 410px;
-                width: 185px;
-            }
-
             @media (max-width: 863px) {
                 .wallet {
                     width: 100%;
@@ -979,9 +973,6 @@ class MultiWallet extends LitElement {
                     </div>
                     <div class="book-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         ${this.renderAddressbookButton()}
-                    </div>
-                    <div class="unused-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
-                        ${this.renderUnusedAddressButton()}
                     </div>
                     <div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
                         <qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
@@ -2155,171 +2146,6 @@ class MultiWallet extends LitElement {
                          @click=${() => this.openAddToArrrAddressbook()}
                     >
                     ${translate("rewardsharepage.rchange14")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="btcUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="unused-address-dialog">
-                        <div style="text-align: center;">
-                            <img src="/img/btc.png" width="32" height="32">
-                            <h2>BTC</h2>
-                            <hr />
-                        </div>
-                        <p>
-                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
-                            <button-icon-copy
-                                title="${translate("walletpage.wchange3")}"
-                                onSuccessMessage="${translate("walletpage.wchange4")}"
-                                onErrorMessage="${translate("walletpage.wchange39")}"
-                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
-                                buttonSize="24px"
-                                iconSize="16px"
-                                color="var(--copybutton)"
-                                offsetLeft="4px"
-                            >
-                            </button-icon-copy>
-                            <br />
-                            <span>${translate("walletpage.wchange38")}</span>
-                        </p>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="ltcUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="unused-address-dialog">
-                        <div style="text-align: center;">
-                            <img src="/img/ltc.png" width="32" height="32">
-                            <h2>LTC</h2>
-                            <hr />
-                        </div>
-                        <p>
-                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
-                            <button-icon-copy
-                                title="${translate("walletpage.wchange3")}"
-                                onSuccessMessage="${translate("walletpage.wchange4")}"
-                                onErrorMessage="${translate("walletpage.wchange39")}"
-                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
-                                buttonSize="24px"
-                                iconSize="16px"
-                                color="var(--copybutton)"
-                                offsetLeft="4px"
-                            >
-                            </button-icon-copy>
-                            <br />
-                            <span>${translate("walletpage.wchange38")}</span>
-                        </p>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="dogeUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="unused-address-dialog">
-                        <div style="text-align: center;">
-                            <img src="/img/doge.png" width="32" height="32">
-                            <h2>DOGE</h2>
-                            <hr />
-                        </div>
-                        <p>
-                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
-                            <button-icon-copy
-                                title="${translate("walletpage.wchange3")}"
-                                onSuccessMessage="${translate("walletpage.wchange4")}"
-                                onErrorMessage="${translate("walletpage.wchange39")}"
-                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
-                                buttonSize="24px"
-                                iconSize="16px"
-                                color="var(--copybutton)"
-                                offsetLeft="4px"
-                            >
-                            </button-icon-copy>
-                            <br />
-                            <span>${translate("walletpage.wchange38")}</span>
-                        </p>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="dgbUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="unused-address-dialog">
-                        <div style="text-align: center;">
-                            <img src="/img/dgb.png" width="32" height="32">
-                            <h2>DGB</h2>
-                            <hr />
-                        </div>
-                        <p>
-                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
-                            <button-icon-copy
-                                title="${translate("walletpage.wchange3")}"
-                                onSuccessMessage="${translate("walletpage.wchange4")}"
-                                onErrorMessage="${translate("walletpage.wchange39")}"
-                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
-                                buttonSize="24px"
-                                iconSize="16px"
-                                color="var(--copybutton)"
-                                offsetLeft="4px"
-                            >
-                            </button-icon-copy>
-                            <br />
-                            <span>${translate("walletpage.wchange38")}</span>
-                        </p>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-
-                <mwc-dialog id="rvnUnusedAddressDialog" scrimClickAction="" escapeKeyAction="">
-                    <div class="unused-address-dialog">
-                        <div style="text-align: center;">
-                            <img src="/img/rvn.png" width="32" height="32">
-                            <h2>RVN</h2>
-                            <hr />
-                        </div>
-                        <p>
-                            <span style="font-weight: bold;">${this.wallets.get(this._selectedWallet).unusedWalletAddress}</span>
-                            <button-icon-copy
-                                title="${translate("walletpage.wchange3")}"
-                                onSuccessMessage="${translate("walletpage.wchange4")}"
-                                onErrorMessage="${translate("walletpage.wchange39")}"
-                                textToCopy=${this.wallets.get(this._selectedWallet).unusedWalletAddress}
-                                buttonSize="24px"
-                                iconSize="16px"
-                                color="var(--copybutton)"
-                                offsetLeft="4px"
-                            >
-                            </button-icon-copy>
-                            <br />
-                            <span>${translate("walletpage.wchange38")}</span>
-                        </p>
-                    </div>
-                    <mwc-button
-                        slot="primaryAction"
-                        dialogAction="cancel"
-                        class="red"
-                    >
-                    ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
 
@@ -5009,70 +4835,6 @@ class MultiWallet extends LitElement {
         }
     }
 
-    async getUnusedAddress(coin) {
-        this.wallets.get(this._selectedWallet).unusedWalletAddress = ''
-        let _url = ``
-        let _body = null
-
-        switch (coin) {
-            case 'qort':
-            case 'arrr':
-                _url = ``
-                _body = null
-                break
-            case 'btc':
-            case 'ltc':
-            case 'doge':
-            case 'dgb':
-            case 'rvn':
-                const walletName = `${coin}Wallet`
-                _url = `/crosschain/${coin}/unusedaddress?apiKey=${this.getApiKey()}`
-                _body = `${window.parent.reduxStore.getState().app.selectedAddress[walletName].derivedMasterPublicKey}`
-                break
-            default:
-                break
-        }
-
-        if (_body === null) {
-            this.unusedAddressString = ""
-        } else {
-            await parentEpml.request('apiCall', {
-                url: _url,
-                method: 'POST',
-                body: _body,
-            }).then((res) => {
-                this.wallets.get(this._selectedWallet).unusedWalletAddress = res
-                this.unusedAddressString = this.wallets.get(this._selectedWallet).unusedWalletAddress
-                this.openUnusedAddressDialog(coin)
-            })
-        }
-    }
-
-    openUnusedAddressDialog(coin) {
-        switch (coin) {
-            case 'qort':
-            case 'arrr':
-                break
-            case 'btc':
-                this.shadowRoot.querySelector("#btcUnusedAddressDialog").show();
-                break
-            case 'ltc':
-                this.shadowRoot.querySelector("#ltcUnusedAddressDialog").show();
-                break
-            case 'doge':
-                this.shadowRoot.querySelector("#dogeUnusedAddressDialog").show();
-                break
-            case 'dgb':
-                this.shadowRoot.querySelector("#dgbUnusedAddressDialog").show();
-                break
-            case 'rvn':
-                this.shadowRoot.querySelector("#rvnUnusedAddressDialog").show();
-                break
-            default:
-                break
-        }
-    }
-
     renderSendButton() {
         if ( this._selectedWallet === "qort" ) {
             return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
@@ -5109,22 +4871,6 @@ class MultiWallet extends LitElement {
         } else if ( this._selectedWallet === "arrr" ) {
             return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openArrrAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
         } else {
-            return html``
-        }
-    }
-
-    renderUnusedAddressButton() {
-        switch (this._selectedWallet) {
-        case "qort":
-        case "arrr":
-            return html`<vaadin-button disabled theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange58")}</vaadin-button>`
-        case "btc":
-        case "ltc":
-        case "doge":
-        case "dgb":
-        case "rvn":
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.getUnusedAddress(this._selectedWallet)}><vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange58")}</vaadin-button>`
-        default:
             return html``
         }
     }
