@@ -81,7 +81,9 @@ class CoreSyncStatus extends connect(store)(LitElement) {
 
 	render() {
 		return html`
+			<div id="core-sync-status-id">
 			${this.renderSyncStatusIcon()}
+			</div>
 		`
 	}
 
