@@ -33,6 +33,9 @@ export const newMessage = (data) => {
                 store.dispatch(doPageUrl(pageUrl))
             }
         }
+    // If sounds are enabled, but notifications are not
+    } else if (store.getState().user.notifications.q_chat.playSound) {
+        alert.play()
     }
 
 }
@@ -102,6 +105,9 @@ export const newMessageNotificationQapp = (data) => {
                 }
             }
         }
+    // If sounds are enabled, but notifications are not
+    } else if (store.getState().user.notifications.q_chat.playSound) {
+        alert.play()
     }
 
 }
@@ -253,6 +259,9 @@ export const newMessageNotificationQappLocal  = (data) => {
 
             }
         }
+    // If sounds are enabled, but notifications are not
+    } else if (store.getState().user.notifications.q_chat.playSound) {
+        alert.play()
     }
 
 }
