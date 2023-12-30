@@ -1273,10 +1273,10 @@
 		"tour15":"Visit Q-Tube",
 		"tour16": "Checklist",
 		"tour17": "Please start the Core to access the Qortal blockchain.",
-		"tour18": "Bootstrap",
+		"tour18": "Refresh (bootstrap)",
 		"tour19":"Currently syncing... please wait to use Qortal to its full potential.",
-		"tour20": "blocks behind. Would you like to bootstrap to speed up the syncing process?",
+		"tour20": "blocks behind. Would you like to refresh (bootstrap) to speed up the syncing process?",
 		"tour21": "blocks remaining.",
-		"tour22": "Bootstrap requested. Please wait."
+		"tour22": "Refresh (bootstrap) requested. Please wait."
 	}
 }
