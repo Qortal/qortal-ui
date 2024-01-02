@@ -610,7 +610,7 @@
 		"schange40": "Voorbeeld",
 		"schange41": "Download bezig; Even geduld...",
 		"schange42": "Bestanden die werden gedownload",
-		"schange43": "Elke downloadpoging gaat door op de achtergrond, probeer het na een tijdje opnieuw."
+		"schange43": "Elke downloadpoging gaat door op de achtergrond. Wacht even, en probeer dan opnieuw."
 	},
 	"tubespage": {
 		"schange1": "Overzicht Q-Tubes",
@@ -1175,7 +1175,7 @@
 		"inf16": "Automatische aankoop",
 		"inf17": "Schakel 'lichte modus' in",
 		"inf18": "Schakel 'donkere modus' in",
-		"inf19": "Handelsinformatie",
+		"inf19": "Handelsgeschiedenis",
 		"inf20": "Koper"
 	},
 	"lotterypage": {
@@ -1254,5 +1254,29 @@
 		"profile24": "Vul zowel een naam als een waarde in om een extra eigenschap toe teovoegen",
 		"profile25": "Is jouw vriend",
 		"profile26": "Voeg toe als vriend"
+	},
+	"tour": {
+		"tour1": "Om Qortal te kunnen gebruiken, moet de 'core' in sync zijn. Dit icoontje kleurt blauw als de synchronisatie voltooid is.",
+		"tour2": "Volledig gesynchroniseerd",
+		"tour3": "Gesynchroniseerd en bezig met minten",
+		"tour4": "Bezig met synchronisatie",
+		"tour5": "Core-synchronisatie nodig",
+		"tour6": "De Onstopbare Kracht van Qortal",
+		"tour7": "Enkel jij hebt controle over youw data op Qortal",
+		"tour8": "Qortal kan niet vernietigd worden",
+		"tour9": "Volledig 'peer-to-peer' zonder gecentraliseerde schakels",
+		"tour10": "Dit is het standaard tab overzicht dat jou toegang geeft tot belangrijke Qortal instellingen and Q-Apps zoals bijvoorbeeld Q-Tube.",
+		"tour11": "Ga voor de volledige belevenis",
+		"tour12": "Om tot een volledige Qortal belevenis te komen, raden wij je aan om volgende controlelijst te overlopen.",
+		"tour13": "Jouw 'core' is volledig gesynchroniseerd! Nu kan je de kracht van de Qortal blockchain ervaren.",
+		"tour14": "Laat ons proberen om Q-Tube te starten!",
+		"tour15": "Bezoek Q-Tube",
+		"tour16": "Controlelijst",
+		"tour17": "Gelieve de 'core' te starten om de Qortal blockchain te kunnen gebruiken.",
+		"tour18": "Herladen ('bootstrap')",
+		"tour19": "Bezig met synchronisatie... De 'core' in sync zijn om Qortal te kunnen gebruiken.",
+		"tour20": "blokken achterstand. Wenst U te herladen ('bootstrap') om het synchronisatie-proces te versnellen?",
+		"tour21": "blokken te gaan.",
+		"tour22": "Herladen ('bootstrap') werd aangevraagd. Gelive te wachten."
 	}
 }
