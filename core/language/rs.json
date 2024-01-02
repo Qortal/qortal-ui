@@ -1254,5 +1254,29 @@
 		"profile24": "Morate da popunite i ime polja i vrednost polja da biste dodali prilagođeno svojstvo",
 		"profile25": "Da li je tvoj prijatelj",
 		"profile26": "Dodaj kao prijatelja"
+	},
+	"tour": {
+		"tour1": "Da biste koristili Kortal, Core mora biti sinhronizovan. Ova ikona će biti plava kada se sinhronizuje.",
+		"tour2": "Sinhronizovano",
+		"tour3": "Sinhronizovano i kovanje",
+		"tour4": "Sinhronizovanje",
+		"tour5": "Sinhronizujte svoje jezgro",
+		"tour6": "Nezaustavljiva sila Kortal",
+		"tour7": "Samo vi kontrolišete svoje podatke na Kortalu",
+		"tour8": "Kortal se ne može skinuti",
+		"tour9": "Potpuno peer-to-peer bez centralizovanih posrednika",
+		"tour10": "Ovo je podrazumevani prikaz kartice gde možete pristupiti važnim Kortal podešavanjima i K-aplikacijama kao što je K-Tube.",
+		"tour11": "Dobijte potpuno iskustvo",
+		"tour12": "Da biste dobili potpuno Kortal iskustvo, preporučujemo da pratite ovu kontrolnu listu.",
+		"tour13": "Potpuno ste sinhronizovani! Sada možete da iskusite moć Kortal blockchaina.",
+		"tour14": "Probajmo da posetimo K-Tube!",
+		"tour15": "Posetite K-Tube",
+		"tour16": "Kontrolna lista",
+		"tour17": "Molim vas pokrenite jezgro da biste pristupili Kortal blockchainu.",
+		"tour18": "Osveži (bootstrap)",
+		"tour19": "Trenutno se sinhronizuje... morate biti potpuno sinhronizovani da biste koristili Kortal",
+		"tour20": "blokovi iza. Da li želite da osvežite (bootstrap) da biste ubrzali proces sinhronizacije?",
+		"tour21": "preostali blokovi.",
+		"tour22": "Zatraženo je osvežavanje (bootstrap). Molimo sačekajte."
 	}
 }

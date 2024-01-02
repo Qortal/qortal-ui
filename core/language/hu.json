@@ -1254,5 +1254,29 @@
 		"profile24": "Egyéni tulajdonság hozzáadásához ki kell töltenie a mező nevét és értékét egyaránt",
 		"profile25": "A barátod",
 		"profile26": "Hozzáadás ismerősként"
+	},
+	"tour": {
+		"tour1": "A Qortal használatához a Core-t szinkronizálni kell. Szinkronizáláskor ez az ikon kék színű lesz.",
+		"tour2": "Szinkronizálva",
+		"tour3": "Szinkronizálás és pénzverés",
+		"tour4": "Szinkronizálás",
+		"tour5": "A mag szinkronizálása",
+		"tour6": "Qortal megállíthatatlan ereje",
+		"tour7": "Csak Ön kezeli adatait a Qortalon",
+		"tour8": "A Qortal nem szedhető le",
+		"tour9": "Teljesen peer-to-peer központosított közvetítők nélkül",
+		"tour10": "Ez az alapértelmezett lapnézet, ahol elérheti a fontos Qortal-beállításokat és Q-alkalmazásokat, például a Q-Tube.",
+		"tour11": "Szerezze meg a teljes élményt",
+		"tour12": "A teljes Qortal-élmény megszerzéséhez javasoljuk, hogy kövesse ezt az ellenőrző listát.",
+		"tour13": "Teljesen szinkronizálva vagy! Most megtapasztalhatod a Qortal blokklánc erejét.",
+		"tour14": "Próbáljuk meg felkeresni a Q-Tube-t!",
+		"tour15": "Látogassa meg a Q-Tube-t",
+		"tour16": "Ellenőrző lista",
+		"tour17": "Kérjük, indítsa el a Core-t a Qortal blokklánc eléréséhez.",
+		"tour18": "Frissítés (bootstrap)",
+		"tour19": "Jelenleg szinkronizálás folyamatban... a Qortal használatához teljesen szinkronizáltnak kell lennie",
+		"tour20": "blokkok mögött. Szeretne frissíteni (bootstrap) a szinkronizálási folyamat felgyorsítása érdekében?",
+		"tour21": "még blokkok.",
+		"tour22": "Frissítés (bootstrap) kérve. Kérjük, várjon."
 	}
 }

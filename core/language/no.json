@@ -1254,5 +1254,29 @@
 		"profile24": "Du må fylle ut både feltnavn og feltverdi for å legge til en egendefinert egenskap",
 		"profile25": "Er din venn",
 		"profile26": "Legg til som venn"
+	},
+	"tour": {
+		"tour1": "For å bruke Qortal må kjernen være synkronisert. Dette ikonet vil være i blått når det synkroniseres.",
+		"tour2": "Synkronisert",
+		"tour3": "Synkronisert og preget",
+		"tour4": "Synkroniserer",
+		"tour5": "Synkroniser kjernen din",
+		"tour6": "Den ustoppelige kraften til Qortal",
+		"tour7": "Bare du kontrollerer dataene dine på Qortal",
+		"tour8": "Kortal kan ikke tas ned",
+		"tour9": "Fullstendig peer-to-peer uten sentraliserte mellomledd",
+		"tour10": "Dette er standard fanevisning der du kan få tilgang til viktige Qortal-innstillinger og Q-apper som Q-Tube.",
+		"tour11": "Få hele opplevelsen",
+		"tour12": "For å få den fulle Qortal-opplevelsen anbefaler vi å følge denne sjekklisten.",
+		"tour13": "Du er fullstendig synkronisert! Du kan nå oppleve kraften til Qortal-blokkjeden.",
+		"tour14": "La oss prøve å besøke Q-Tube!",
+		"tour15": "Besøk Q-Tube",
+		"tour16": "Sjekkliste",
+		"tour17": "Vennligst start Core for å få tilgang til Qortal-blokkjeden.",
+		"tour18": "Oppdater (bootstrap)",
+		"tour19": "Synkroniserer for øyeblikket... du må være fullstendig synkronisert for å bruke Qortal",
+		"tour20": "blokker bak. Vil du oppdatere (bootstrap) for å fremskynde synkroniseringsprosessen?",
+		"tour21": "blokker igjen.",
+		"tour22": "Oppdater (bootstrap) forespurt. Vennligst vent."
 	}
 }

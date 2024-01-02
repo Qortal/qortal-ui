@@ -1254,5 +1254,29 @@
 		"profile24": "Morate ispuniti i naziv polja i vrijednost polja da biste dodali prilagođeno svojstvo",
 		"profile25": "Je li vaš prijatelj",
 		"profile26": "Dodaj kao prijatelja"
+	},
+	"tour": {
+		"tour1": "Da biste koristili Qortal, Core mora biti sinkroniziran. Ova ikona će biti plava kada se sinkronizira.",
+		"tour2": "Sinkronizirano",
+		"tour3": "Sinkronizirano i kovano",
+		"tour4": "Sinkronizacija",
+		"tour5": "Sinkroniziraj svoju jezgru",
+		"tour6": "Nezaustavljiva sila Qortala",
+		"tour7": "Samo vi kontrolirate svoje podatke na Qortalu",
+		"tour8": "Qortal se ne može skinuti",
+		"tour9": "Potpuno peer-to-peer bez centraliziranih posrednika",
+		"tour10": "Ovo je zadani prikaz kartice gdje možete pristupiti važnim Qortal postavkama i Q-aplikacijama kao što je Q-Tube.",
+		"tour11": "Doživite potpuno iskustvo",
+		"tour12": "Da biste dobili potpuno Qortal iskustvo, preporučujemo da slijedite ovaj kontrolni popis.",
+		"tour13": "Potpuno ste sinkronizirani! Sada možete iskusiti snagu Qortal blockchaina.",
+		"tour14": "Pokušajmo posjetiti Q-Tube!",
+		"tour15": "Posjetite Q-Tube",
+		"tour16": "Kontrolni popis",
+		"tour17": "Molimo pokrenite Core za pristup Qortal blockchainu.",
+		"tour18": "Osvježi (bootstrap)",
+		"tour19": "Trenutno se sinkronizira... morate biti potpuno sinkronizirani da biste koristili Qortal",
+		"tour20": "blokovi iza. Želite li osvježiti (bootstrap) da ubrzate proces sinkronizacije?",
+		"tour21": "preostali blokovi.",
+		"tour22": "Zatraženo je osvježavanje (bootstrap). Molimo pričekajte."
 	}
 }

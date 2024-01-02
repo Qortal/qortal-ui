@@ -1254,5 +1254,29 @@
 		"profile24": "Trebuie să completați atât numele câmpului, cât și valoarea câmpului pentru a adăuga o proprietate personalizată",
 		"profile25": "Este prietenul tău",
 		"profile26": "Adaugă ca prieten"
+	},
+	"tour": {
+		"tour1": "Pentru a utiliza Qortal, Core trebuie să fie sincronizat. Această pictogramă va fi albastră când este sincronizată.",
+		"tour2": "Sincronizat",
+		"tour3": "Sincronizat și batut",
+		"tour4": "Se sincronizează",
+		"tour5": "Sincronizează-ți nucleul",
+		"tour6": "Forța de neoprit a lui Qortal",
+		"tour7": "Numai dvs. controlați datele pe Qortal",
+		"tour8": "Qortal nu poate fi eliminat",
+		"tour9": "Complet peer-to-peer, fără intermediari centralizați",
+		"tour10": "Aceasta este vizualizarea implicită a filei unde puteți accesa setări Qortal importante și aplicații Q, cum ar fi Q-Tube.",
+		"tour11": "Obțineți experiența completă",
+		"tour12": "Pentru a obține experiența completă Qortal, vă recomandăm să urmați această listă de verificare.",
+		"tour13": "Sunteți complet sincronizat! Acum puteți experimenta puterea blockchain-ului Qortal.",
+		"tour14": "Hai să încercăm să vizităm Q-Tube!",
+		"tour15": "Vizitați Q-Tube",
+		"tour16": "Lista de verificare",
+		"tour17": "Vă rugăm să porniți Core pentru a accesa blockchain-ul Qortal.",
+		"tour18": "Actualizează (bootstrap)",
+		"tour19": "În prezent se sincronizează... trebuie să fii complet sincronizat pentru a utiliza Qortal",
+		"tour20": "se blochează în urmă. Doriți să reîmprospătați (bootstrap) pentru a accelera procesul de sincronizare?",
+		"tour21": "blocuri rămase.",
+		"tour22": "Reîmprospătare (bootstrap) solicitată. Vă rugăm să așteptați."
 	}
 }

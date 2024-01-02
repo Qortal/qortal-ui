@@ -1254,5 +1254,29 @@
 		"profile24": "Você deve preencher o nome e o valor do campo para adicionar uma propriedade personalizada",
 		"profile25": "É seu amigo",
 		"profile26": "Adicionar como amigo"
+	},
+	"tour": {
+		"tour1": "Para usar o Qortal, o Core deve estar sincronizado. Este ícone ficará em azul quando estiver sincronizado.",
+		"tour2": "Sincronizado",
+		"tour3": "Sincronizado e cunhado",
+		"tour4": "Sincronizando",
+		"tour5": "Sincronize seu núcleo",
+		"tour6": "A Força Imparável de Qortal",
+		"tour7": "Somente você controla seus dados no Qortal",
+		"tour8": "Qortal não pode ser removido",
+		"tour9": "Completamente peer-to-peer sem intermediários centralizados",
+		"tour10": "Esta é a aba padrão onde você pode acessar configurações importantes do Qortal e Q-apps como o Q-Tube.",
+		"tour11": "Obtenha a experiência completa",
+		"tour12": "Para obter a experiência completa do Qortal, recomendamos seguir esta lista de verificação.",
+		"tour13": "Você está totalmente sincronizado! Agora você pode experimentar o poder do blockchain Qortal.",
+		"tour14": "Vamos tentar visitar o Q-Tube!",
+		"tour15": "Visite o Q-Tube",
+		"tour16": "Lista de verificação",
+		"tour17": "Por favor, inicie o Core para acessar a blockchain Qortal.",
+		"tour18": "Atualizar (bootstrap)",
+		"tour19": "Sincronizando atualmente... você deve estar totalmente sincronizado para usar o Qortal",
+		"tour20": "blocos atrás. Gostaria de atualizar (inicializar) para acelerar o processo de sincronização?",
+		"tour21": "blocos restantes.",
+		"tour22": "Atualização (bootstrap) solicitada. Aguarde."
 	}
 }

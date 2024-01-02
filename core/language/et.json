@@ -1254,5 +1254,29 @@
 		"profile24": "Kohandatud atribuudi lisamiseks peate täitma nii välja nime kui ka väärtuse",
 		"profile25": "Kas su sõber",
 		"profile26": "Lisa sõbraks"
+	},
+	"tour": {
+		"tour1": "Qortali kasutamiseks peab Core olema sünkroonitud. See ikoon on sünkroonimisel sinine.",
+		"tour2": "Sünkroonitud",
+		"tour3": "Sünkroonimine ja vermimine",
+		"tour4": "Sünkroonimine",
+		"tour5": "Sünkrooni oma tuum",
+		"tour6": "Qortali peatamatu jõud",
+		"tour7": "Ainult teie juhite oma andmeid Qortalis",
+		"tour8": "Kvartali ei saa maha võtta",
+		"tour9": "Täielikult peer-to-peer ilma tsentraliseeritud vahendajateta",
+		"tour10": "See on vahekaardi vaikevaade, kus pääsete juurde olulistele Qortali sätetele ja Q-rakendustele, nagu Q-Tube.",
+		"tour11": "Saage täielik kogemus",
+		"tour12": "Qortali täieliku kogemuse saamiseks soovitame järgida seda kontroll-loendit.",
+		"tour13": "Olete täielikult sünkroonitud! Nüüd saate kogeda Qortali plokiahela võimsust.",
+		"tour14": "Proovime külastada Q-Tube'i!",
+		"tour15": "Külastage Q-Tube'i",
+		"tour16": "Kontrollnimekiri",
+		"tour17": "Qortali plokiahelale juurdepääsuks käivitage Core.",
+		"tour18": "Värskenda (bootstrap)",
+		"tour19": "Praegu sünkroonimine... Qortali kasutamiseks peate olema täielikult sünkroonitud",
+		"tour20": "blokeerib taga. Kas soovite sünkroonimisprotsessi kiirendamiseks värskendada (bootstrap)?",
+		"tour21": "jäänud plokke.",
+		"tour22": "Taotleb värskendamist (bootstrap). Palun oodake."
 	}
 }

@@ -1254,5 +1254,29 @@
 		"profile24": "Musisz wypełnić zarówno nazwę pola, jak i wartość pola, aby dodać niestandardową właściwość",
 		"profile25": "Jest Twoim przyjacielem",
 		"profile26": "Dodaj jako znajomego"
+	},
+	"tour": {
+		"tour1": "Aby móc korzystać z Qortal, rdzeń musi być zsynchronizowany. Ta ikona będzie niebieska podczas synchronizacji.",
+		"tour2": "Zsynchronizowane",
+		"tour3": "Synchronizacja i bicie",
+		"tour4": "Synchronizacja",
+		"tour5": "Zsynchronizuj swój rdzeń",
+		"tour6": "Niepowstrzymana siła Qortalu",
+		"tour7": "Tylko Ty masz kontrolę nad swoimi danymi w Qortal",
+		"tour8": "Qortal nie może zostać zdemontowany",
+		"tour9": "Całkowicie peer-to-peer, bez scentralizowanych pośredników",
+		"tour10": "To jest domyślny widok karty, w którym możesz uzyskać dostęp do ważnych ustawień Qortal i aplikacji Q, takich jak Q-Tube.",
+		"tour11": "Zdobądź pełne doświadczenie",
+		"tour12": "Aby uzyskać pełne doświadczenie Qortal, zalecamy skorzystanie z tej listy kontrolnej.",
+		"tour13": "Jesteś w pełni zsynchronizowany! Możesz teraz doświadczyć mocy blockchainu Qortal.",
+		"tour14": "Spróbujmy odwiedzić Q-Tube!",
+		"tour15": "Odwiedź Q-Tube",
+		"tour16": "Lista kontrolna",
+		"tour17": "Uruchom Core, aby uzyskać dostęp do blockchainu Qortal.",
+		"tour18": "Odśwież (bootstrap)",
+		"tour19": "Aktualnie synchronizuję... musisz być w pełni zsynchronizowany, aby móc korzystać z Qortal",
+		"tour20": "bloki za sobą. Czy chcesz odświeżyć (bootstrap), aby przyspieszyć proces synchronizacji?",
+		"tour21": "pozostałe bloki.",
+		"tour22": "Zażądano odświeżenia (bootstrap). Proszę czekać."
 	}
 }
