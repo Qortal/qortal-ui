@@ -1,8 +1,8 @@
-import { css, html, LitElement } from 'lit'
-import { render } from 'lit/html.js'
-import { Epml } from '../../../epml.js'
+import {css, html, LitElement} from 'lit'
+import {render} from 'lit/html.js'
+import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import { get, registerTranslateConfig, translate, use } from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
 import '@material/mwc-textfield'
@@ -11,7 +11,7 @@ import '@material/mwc-dialog'
 import '@vaadin/grid'
 
 registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
@@ -75,6 +75,10 @@ class NodeManagement extends LitElement {
 
             .red {
                 --mdc-theme-primary: #F44336;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
             }
 
             .red-button {
@@ -146,13 +150,13 @@ class NodeManagement extends LitElement {
     }
 
     render() {
-        return html`
+	return html`
             <div id="node-management-page">
                 <div class="node-card">
                     <h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
                     <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.bootstrap()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
-                    <mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
                     <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>
+                    ${this.renderStartStopButton()}
                     <span class="sblack"><br>${translate("nodepage.nchange2")} ${this.upTime}</span>
                     <br><br>
                     <div id="minting">
@@ -167,12 +171,12 @@ class NodeManagement extends LitElement {
                             <vaadin-grid-column auto-width header="${translate("nodepage.nchange9")}" path="mintingAccount"></vaadin-grid-column>
                             <vaadin-grid-column auto-width header="${translate("nodepage.nchange10")}" path="recipientAccount"></vaadin-grid-column>
                             <vaadin-grid-column width="12em" header="${translate("nodepage.nchange11")}" .renderer=${(root, column, data) => {
-                render(html`
+                                render(html`
                                     <mwc-button class="red" ?disabled=${this.removeMintingAccountLoading} @click=${() => this.removeMintingAccount(data.item.publicKey)}>
                                         <mwc-icon>create</mwc-icon>&nbsp;${translate("nodepage.nchange12")}
                                     </mwc-button>
                                 `, root)
-            }}></vaadin-grid-column>
+                            }}></vaadin-grid-column>
                         </vaadin-grid>
                         ${this.isEmptyArray(this.mintingAccounts) ? html`<span style="color: var(--black);">${translate("nodepage.nchange13")}</span>` : ""}
                     </div><br>
@@ -190,7 +194,7 @@ class NodeManagement extends LitElement {
                             <vaadin-grid-column header="${translate("nodepage.nchange20")}" path="version"></vaadin-grid-column>
                             <vaadin-grid-column header="${translate("nodepage.nchange21")}" path="age"></vaadin-grid-column>
                             <vaadin-grid-column width="12em" header="${translate("nodepage.nchange22")}" .renderer=${(root, column, data) => {
-                render(html`
+                                render(html`
                                     <mwc-button class="red" @click=${() => this.removePeer(data.item.address, data.index)}>
                                         <mwc-icon>delete</mwc-icon>&nbsp;${translate("nodepage.nchange12")}
                                     </mwc-button>
@@ -198,7 +202,7 @@ class NodeManagement extends LitElement {
                                         &nbsp;${translate("nodepage.nchange23")}
                                     </mwc-button>
                                 `, root)
-            }}></vaadin-grid-column>
+                            }}></vaadin-grid-column>
                         </vaadin-grid>
                         ${this.isEmptyArray(this.peers) ? html`<span style="color: var(--black);">${translate("nodepage.nchange24")}</span>` : ""}
                     </div><br>
@@ -402,6 +406,27 @@ class NodeManagement extends LitElement {
             })
     }
 
+    renderStartStopButton() {
+        if (!isElectron()) {
+            return html`<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>`
+        } else {
+            if (this.upTime === "offline") {
+                 return html`<mwc-button style="float:right;" class="green" @click=${() => this.startNode()}><mwc-icon>play_circle</mwc-icon>&nbsp;${translate("nodepage.nchange35")}</mwc-button>`
+            } else {
+                 return html`<mwc-button style="float:right;" class="red" @click=${() => this.stopNode()}><mwc-icon>stop_circle</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>`
+            }
+        }
+    }
+
+    startNode() {
+        if (!isElectron()) {
+        } else {
+            window.parent.electronAPI.startCore()
+		let startString = get("nodepage.nchange36")
+                parentEpml.request('showSnackBar', `${startString}`)
+        }
+    }
+
     stopNode() {
         parentEpml
             .request("apiCall", {
@@ -409,7 +434,7 @@ class NodeManagement extends LitElement {
                 method: "GET"
             })
             .then((res) => {
-                let snackString = get("nodepage.nchange32")
+		let snackString = get("nodepage.nchange32")
                 parentEpml.request('showSnackBar', `${snackString}`)
             })
     }
@@ -421,24 +446,21 @@ class NodeManagement extends LitElement {
                 method: "GET"
             })
             .then((res) => {
-                let snackString = get("nodepage.nchange34")
+		let snackString = get("nodepage.nchange34")
                 parentEpml.request('showSnackBar', `${snackString}`)
             })
     }
 
     bootstrap() {
-        parentEpml
-            .request("apiCall", {
-                url: `/admin/bootstrap/?apiKey=${this.getApiKey()}`,
-                method: "GET"
-            })
-            .then((res) => {
-                if (res === true) {
-                    let snackString = get("tour.tour22")
-                    parentEpml.request('showSnackBar', `${snackString}`)
-                }
-
-            })
+        parentEpml.request("apiCall", {
+            url: `/admin/bootstrap/?apiKey=${this.getApiKey()}`,
+            method: "GET"
+        }).then((res) => {
+            if (res === true) {
+                let snackString = get("tour.tour22")
+                parentEpml.request('showSnackBar', `${snackString}`)
+            }
+        })
     }
 
     async addPeer() {

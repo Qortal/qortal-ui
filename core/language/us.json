@@ -999,7 +999,9 @@
 		"nchange31": "Stop Node",
 		"nchange32": "Successfully Sent Stop Request!",
 		"nchange33": "Restart Node",
-		"nchange34": "Successfully Sent Restart Request!"
+		"nchange34": "Successfully Sent Restart Request!",
+		"nchange35": "Start Node",
+		"nchange36": "Successfully Started Node!"
 	},
 	"transpage": {
 		"tchange1": "Transaction request",

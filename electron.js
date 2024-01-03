@@ -207,6 +207,70 @@ async function checkWin() {
 	}
 }
 
+async function checkOsPlatform() {
+	if (process.platform === 'win32') {
+		startElectronWin()
+	} else if (process.platform === 'linux' || process.platform === 'darwin') {
+		startElectronUnix()
+	} else {
+		return
+	}
+}
+
+async function startElectronWin() {
+	if (fs.existsSync(winjar)) {
+		isRunning('qortal.exe', (status) => {
+			if (status == true) {
+				log.info("Core is running, perfect !")
+			} else {
+				spawn(startWinCore, { detached: true })
+			}
+		})
+	} else {
+		const dialogOpts = {
+			type: 'info',
+			buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
+			title: i18n.__("electron_translate_20"),
+			message: i18n.__("electron_translate_21"),
+			detail: i18n.__("electron_translate_22")
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				downloadWindows()
+			} else {
+				return
+			}
+		})
+	}
+}
+
+function startElectronUnix() {
+	if (fs.existsSync(qortaljar)) {
+		isRunning('qortal.jar', (status) => {
+			if (status == true) {
+				log.info("Core is running, perfect !")
+			} else {
+				startQortal()
+			}
+		})
+	} else {
+		const dialogOpts = {
+			type: 'info',
+			buttons: [i18n.__("electron_translate_18"), i18n.__("electron_translate_19")],
+			title: i18n.__("electron_translate_20"),
+			message: i18n.__("electron_translate_21"),
+			detail: i18n.__("electron_translate_22")
+		}
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) {
+				downloadQortal()
+			} else {
+				return
+			}
+		})
+	}
+}
+
 async function downloadWindows() {
 	let winLoader = new BrowserWindow({
 		width: 500,
@@ -1084,6 +1148,9 @@ if (!isLock) {
 		})
 		check.show()
 		autoUpdater.checkForUpdatesAndNotify()
+	})
+	ipcMain.on('start-core-electron', (event) => {
+		checkOsPlatform()
 	})
 	ipcMain.on('show-my-menu', (event) => {
 		let homePageOptions = Menu.buildFromTemplate([
