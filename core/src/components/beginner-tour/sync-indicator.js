@@ -167,6 +167,8 @@ class SyncIndicator extends connect(store)(LitElement) {
 			state.app.nodeStatus &&
 			state.app.nodeStatus.syncPercent !== this.syncPercentage
 		) {
+			this.hasCoreRunning = true
+			this.numberOfTries = 0
 			this.syncPercentage = state.app.nodeStatus.syncPercent;
 
 			if (state.app.nodeStatus.syncPercent !== 100) {
