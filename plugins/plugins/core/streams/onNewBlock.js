@@ -1,6 +1,6 @@
 import {parentEpml} from '../connect.js'
 const MIN_RECONNECT_INTERVAL = 1000; // 1 second
-const MAX_RECONNECT_INTERVAL = 300000; // 5 minutes
+const MAX_RECONNECT_INTERVAL = 60000; // 1 minute
 
 let socketObject
 let activeBlockSocketTimeout
