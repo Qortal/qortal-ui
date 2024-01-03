@@ -1274,7 +1274,7 @@
 		"tour16": "Checklist",
 		"tour17": "Please start the Core to access the Qortal blockchain.",
 		"tour18": "Refresh (bootstrap)",
-		"tour19": "Currently syncing... you must be fully synchronized to use Qortal",
+		"tour19": "Currently syncing... you must be fully synchronized to use Qortal.",
 		"tour20": "blocks behind. Would you like to refresh (bootstrap) to speed up the syncing process?",
 		"tour21": "blocks remaining.",
 		"tour22": "Refresh (bootstrap) requested. Please wait."
