@@ -1001,7 +1001,8 @@
 		"nchange33": "Restart Node",
 		"nchange34": "Successfully Sent Restart Request!",
 		"nchange35": "Start Node",
-		"nchange36": "Successfully Started Node!"
+		"nchange36": "Successfully Started Node!",
+		"nchange37": "Clicking on continue will refresh your Qortal Core, your db will be removed, and you will downoad a new copy of the db, called “bootstrapping“."
 	},
 	"transpage": {
 		"tchange1": "Transaction request",

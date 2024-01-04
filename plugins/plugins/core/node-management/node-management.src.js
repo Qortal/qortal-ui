@@ -154,7 +154,7 @@ class NodeManagement extends LitElement {
             <div id="node-management-page">
                 <div class="node-card">
                     <h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
-                    <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.bootstrap()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
+                    <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.openBootstrapDialog()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
                     <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>
                     ${this.renderStartStopButton()}
                     <span class="sblack"><br>${translate("nodepage.nchange2")} ${this.upTime}</span>
@@ -242,6 +242,17 @@ class NodeManagement extends LitElement {
                 </mwc-button>
                 <mwc-button ?disabled="${this.addMintingAccountLoading}" slot="secondaryAction" dialogAction="cancel" class="red">
                     ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+
+            <mwc-dialog id="bootstrapDialog" scrimClickAction="" escapeKeyAction="">
+                <div style="text-align: center;">${translate("tour.tour18")}</div><br>
+                <div style="text-align: center;">${translate("nodepage.nchange37")}</div>
+                <mwc-button @click="${() => this.bootstrapNode()}" slot="primaryAction">
+                    ${translate("general.continue")}
+                </mwc-button>
+                <mwc-button slot="secondaryAction" @click="${() => this.closeBootstrapDialog()}" class="red">
+                    ${translate("login.lp4")}
                 </mwc-button>
             </mwc-dialog>
         `
@@ -422,45 +433,66 @@ class NodeManagement extends LitElement {
         if (!isElectron()) {
         } else {
             window.parent.electronAPI.startCore()
-		let startString = get("nodepage.nchange36")
-                parentEpml.request('showSnackBar', `${startString}`)
+            let startString = get("nodepage.nchange36")
+            parentEpml.request('showSnackBar', `${startString}`)
+            this.upTime = "starting node"
         }
     }
 
     stopNode() {
-        parentEpml
-            .request("apiCall", {
-                url: `/admin/stop?apiKey=${this.getApiKey()}`,
-                method: "GET"
-            })
-            .then((res) => {
-		let snackString = get("nodepage.nchange32")
+        parentEpml.request("apiCall", {
+            url: `/admin/stop?apiKey=${this.getApiKey()}`,
+            method: "GET"
+        }).then((res) => {
+            if (res === true) {
+                let snackString = get("nodepage.nchange32")
                 parentEpml.request('showSnackBar', `${snackString}`)
-            })
+                this.upTime = "offline"
+            } else {
+                let snackString = get("walletpage.wchange44")
+                parentEpml.request('showSnackBar', `${snackString}`)
+            }
+        })
     }
 
     restartNode() {
-        parentEpml
-            .request("apiCall", {
-                url: `/admin/restart?apiKey=${this.getApiKey()}`,
-                method: "GET"
-            })
-            .then((res) => {
-		let snackString = get("nodepage.nchange34")
+        parentEpml.request("apiCall", {
+            url: `/admin/restart?apiKey=${this.getApiKey()}`,
+            method: "GET"
+        }).then((res) => {
+            if (res === true) {
+                let snackString = get("nodepage.nchange34")
                 parentEpml.request('showSnackBar', `${snackString}`)
-            })
+                this.upTime = "restarting node"
+            } else {
+                let snackString = get("walletpage.wchange44")
+                parentEpml.request('showSnackBar', `${snackString}`)
+            }
+        })
     }
 
-    bootstrap() {
+    bootstrapNode() {
         parentEpml.request("apiCall", {
             url: `/admin/bootstrap/?apiKey=${this.getApiKey()}`,
             method: "GET"
         }).then((res) => {
             if (res === true) {
+                this.shadowRoot.getElementById('bootstrapDialog').close()
                 let snackString = get("tour.tour22")
+                parentEpml.request('showSnackBar', `${snackString}`)
+            } else {
+                let snackString = get("walletpage.wchange44")
                 parentEpml.request('showSnackBar', `${snackString}`)
             }
         })
+    }
+
+    openBootstrapDialog() {
+        this.shadowRoot.getElementById('bootstrapDialog').show()
+    }
+
+    closeBootstrapDialog() {
+        this.shadowRoot.getElementById('bootstrapDialog').close()
     }
 
     async addPeer() {
