@@ -57,7 +57,7 @@ class ExportKeys extends connect(store)(LitElement) {
                 --mdc-theme-surface: var(--white);
                 --mdc-dialog-content-ink-color: var(--black);
                 --mdc-dialog-min-width: 500px;
-                --mdc-dialog-max-width: 1000px;
+                --mdc-dialog-max-width: 750px;
                 --lumo-primary-text-color: rgb(0, 167, 245);
                 --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
                 --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
@@ -115,7 +115,145 @@ class ExportKeys extends connect(store)(LitElement) {
             }
 
             .red {
-                --mdc-theme-primary: red;
+                --mdc-theme-primary: #F44336;
+            }
+
+            .green {
+                --mdc-theme-primary: #198754;
+            }
+
+            .button-row {
+                position: relative;
+                display: flex;
+                align-items: center;
+                align-content: center;
+                font-family: Montserrat, sans-serif;
+                font-weight: 600;
+                color: var(--black);
+                margin-top: 20px;
+            }
+
+            .repair-button {
+                height: 40px;
+                padding: 10px 10px;
+                font-size: 16px;
+                font-weight: 500;
+                background-color: #03a9f4;
+                color: white;
+                border: 1px solid transparent;
+                border-radius: 20px;
+                text-decoration: none;
+                text-transform: uppercase;
+                cursor: pointer;
+            }
+
+            .repair-button:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
+
+            .lds-roller {
+                display: inline-block;
+                position: relative;
+                width: 80px;
+                height: 80px;
+            }
+
+            .lds-roller div {
+                animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                transform-origin: 40px 40px;
+            }
+
+            .lds-roller div:after {
+                content: " ";
+                display: block;
+                position: absolute;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--black);
+                margin: -4px 0 0 -4px;
+            }
+
+            .lds-roller div:nth-child(1) {
+                animation-delay: -0.036s;
+            }
+
+            .lds-roller div:nth-child(1):after {
+                top: 63px;
+                left: 63px;
+            }
+
+            .lds-roller div:nth-child(2) {
+                animation-delay: -0.072s;
+            }
+
+            .lds-roller div:nth-child(2):after {
+                top: 68px;
+                left: 56px;
+            }
+
+            .lds-roller div:nth-child(3) {
+                animation-delay: -0.108s;
+            }
+
+            .lds-roller div:nth-child(3):after {
+                top: 71px;
+                left: 48px;
+            }
+
+            .lds-roller div:nth-child(4) {
+                animation-delay: -0.144s;
+            }
+
+            .lds-roller div:nth-child(4):after {
+                top: 72px;
+                left: 40px;
+            }
+
+            .lds-roller div:nth-child(5) {
+                animation-delay: -0.18s;
+            }
+
+            .lds-roller div:nth-child(5):after {
+                top: 71px;
+                left: 32px;
+            }
+
+            .lds-roller div:nth-child(6) {
+                animation-delay: -0.216s;
+            }
+
+            .lds-roller div:nth-child(6):after {
+                top: 68px;
+                left: 24px;
+            }
+
+            .lds-roller div:nth-child(7) {
+                animation-delay: -0.252s;
+            }
+
+            .lds-roller div:nth-child(7):after {
+                top: 63px;
+                left: 17px;
+            }
+
+            .lds-roller div:nth-child(8) {
+                animation-delay: -0.288s;
+            }
+
+            .lds-roller div:nth-child(8):after {
+                top: 56px;
+                left: 12px;
+            }
+
+            @keyframes lds-roller {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
             }
         `
     }
@@ -203,52 +341,85 @@ class ExportKeys extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </div>
-                <mwc-dialog id="savePkmDialog" scrimClickAction="" escapeKeyAction="">
-                    <img src="/img/${this.dCoinShort}.png" style="width: 32px; height: 32px;">
-                    <h3>${this.dCoinName} ${translate("settings.exp2")}</h3>
-                    <hr>
-                    <h4>${translate("settings.address")}: ${this.dWalletAddress}</h4>
-                    <mwc-button
-                        slot="primaryAction"
-                        @click="${() => this.closeSavePkmDialog()}"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                    <mwc-button
-                        slot="secondaryAction"
-                        @click="${() => this.exportKey(this.dPrivateKey, this.dCoinName, this.dWalletAddress)}"
-                    >
-                    ${translate("settings.exp3")}
-                    </mwc-button>
-                </mwc-dialog>
-                <mwc-dialog id="arrrWalletNotSynced" scrimClickAction="" escapeKeyAction="">
-                    <img src="/img/arrr.png" style="width: 32px; height: 32px;">
-                    <h3>${translate("settings.arrr1")}</h3>
-                    <hr>
-                    <h4>${translate("settings.arrr2")}</h4>
-                    <mwc-button
-                        slot="primaryAction"
-                        @click="${() => this.closeArrrWalletNotSynced()}"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
-                <mwc-dialog id="needCoreUpdate" scrimClickAction="" escapeKeyAction="">
-                    <img src="/img/arrr.png" style="width: 32px; height: 32px;">
-                    <h3>${translate("settings.arrr3")}</h3>
-                    <hr>
-                    <h4>${translate("settings.arrr4")}</h4>
-                    <mwc-button
-                        slot="primaryAction"
-                        @click="${() => this.closeNeedCoreUpdate()}"
-                        class="red"
-                    >
-                    ${translate("general.close")}
-                    </mwc-button>
-                </mwc-dialog>
+                <hr style="margin-top: 20px;">
+                <div class="button-row">
+                   <button class="repair-button" title="${translate('nodepage.nchange38')}" @click="${() => this.openRepairLTCDialog()}">${translate("nodepage.nchange38")}</button>
+                </div>
             </div>
+            <mwc-dialog id="savePkmDialog" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/${this.dCoinShort}.png" style="width: 32px; height: 32px;">
+                <h3>${this.dCoinName} ${translate("settings.exp2")}</h3>
+                <hr>
+                <h4>${translate("settings.address")}: ${this.dWalletAddress}</h4>
+                <mwc-button
+                    slot="primaryAction"
+                    @click="${() => this.closeSavePkmDialog()}"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+                <mwc-button
+                    slot="secondaryAction"
+                    @click="${() => this.exportKey(this.dPrivateKey, this.dCoinName, this.dWalletAddress)}"
+                >
+                ${translate("settings.exp3")}
+                </mwc-button>
+            </mwc-dialog>
+            <mwc-dialog id="arrrWalletNotSynced" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/arrr.png" style="width: 32px; height: 32px;">
+                <h3>${translate("settings.arrr1")}</h3>
+                <hr>
+                <h4>${translate("settings.arrr2")}</h4>
+                <mwc-button
+                    slot="primaryAction"
+                    @click="${() => this.closeArrrWalletNotSynced()}"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+            <mwc-dialog id="needCoreUpdate" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/arrr.png" style="width: 32px; height: 32px;">
+                <h3>${translate("settings.arrr3")}</h3>
+                <hr>
+                <h4>${translate("settings.arrr4")}</h4>
+                <mwc-button
+                    slot="primaryAction"
+                    @click="${() => this.closeNeedCoreUpdate()}"
+                    class="red"
+                >
+                ${translate("general.close")}
+                </mwc-button>
+            </mwc-dialog>
+            <mwc-dialog id="repairLTCDialog" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/ltc.png" style="width: 32px; height: 32px;">
+                <h3>${translate("nodepage.nchange38")}</h3>
+                <hr>
+                <h4>${translate("nodepage.nchange39")}</h4>
+                <h4>${translate("nodepage.nchange40")}</h4>
+                <mwc-button slot="primaryAction" @click="${() => this.repairLtcWallet()}" class="green">
+                    ${translate("general.continue")}
+                </mwc-button>
+                <mwc-button slot="secondaryAction" @click="${() => this.closeRepairLTCDialog()}" class="red">
+                    ${translate("login.lp4")}
+                </mwc-button>
+            </mwc-dialog>
+            <mwc-dialog id="pleaseWaitDialog" scrimClickAction="" escapeKeyAction="">
+                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <h2>${translate("nodepage.nchange41")}</h2>
+            </mwc-dialog>
+            <mwc-dialog id="okDialog" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/ltc.png" style="width: 32px; height: 32px;">
+                <h3>${translate("nodepage.nchange38")}</h3>
+                <hr>
+                <h3>${translate("nodepage.nchange42")}</h3>
+            </mwc-dialog>
+            <mwc-dialog id="errorDialog" scrimClickAction="" escapeKeyAction="">
+                <img src="/img/ltc.png" style="width: 32px; height: 32px;">
+                <h3>${translate("nodepage.nchange38")}</h3>
+                <hr>
+                <h3>${translate("nodepage.nchange43")}</h3>
+            </mwc-dialog>
         `
     }
 
@@ -328,6 +499,46 @@ class ExportKeys extends connect(store)(LitElement) {
         this.shadowRoot.querySelector('#savePkmDialog').close()
     }
 
+    openRepairLTCDialog() {
+        this.shadowRoot.querySelector('#repairLTCDialog').show()
+    }
+
+    closeRepairLTCDialog() {
+        this.shadowRoot.querySelector('#repairLTCDialog').close()
+    }
+
+    async repairLtcWallet() {
+        this.shadowRoot.querySelector('#repairLTCDialog').close()
+        this.shadowRoot.querySelector('#pleaseWaitDialog').show()
+        let resRepair = await parentEpml.request('apiCall', {
+            url: `/crosschain/ltc/repair?apiKey=${this.getApiKey()}`,
+            method: 'POST',
+            body: `${store.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey}`
+        })
+
+        if (resRepair != null && resRepair.error != 128) {
+            this.shadowRoot.querySelector('#pleaseWaitDialog').close()
+            this.openOkDialog()
+        } else {
+            this.shadowRoot.querySelector('#pleaseWaitDialog').close()
+            this.openErrorDialog()
+        }
+    }
+
+    async openOkDialog() {
+        const okDelay = ms => new Promise(res => setTimeout(res, ms))
+        this.shadowRoot.querySelector('#okDialog').show()
+        await okDelay(3000)
+        this.shadowRoot.querySelector('#okDialog').close()
+    }
+
+    async openErrorDialog() {
+        const errorDelay = ms => new Promise(res => setTimeout(res, ms))
+        this.shadowRoot.querySelector('#errorDialog').show()
+        await errorDelay(3000)
+        this.shadowRoot.querySelector('#errorDialog').close()
+    }
+
     checkForPmkDownload(wAddress, wPkm, wName, wShort) {
         this.dWalletAddress = ''
         this.dPrivateKey = ''
@@ -355,7 +566,7 @@ class ExportKeys extends connect(store)(LitElement) {
             const fileHandle = await self.showSaveFilePicker({
                 suggestedName: fileName,
                 types: [{
-                        description: "File",
+                    description: "File",
                 }]
             })
             const writeFile = async (fileHandle, contents) => {

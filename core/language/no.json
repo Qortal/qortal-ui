@@ -999,7 +999,16 @@
 		"nchange31": "Stopp noden",
 		"nchange32": "Stoppforespørsel sendt!",
 		"nchange33": "Omstart noden",
-		"nchange34": "Omstartsforespørsel sendt!"
+		"nchange34": "Omstartsforespørsel sendt!",
+		"nchange35": "Start node",
+		"nchange36": "Node startet med suksess!",
+		"nchange37": "Hvis du klikker på fortsett, oppdateres Qortal Core, din db vil bli fjernet, og du vil laste ned en ny kopi av db, kalt bootstrapping.",
+		"nchange38": "Reparer LTC-lommebok",
+		"nchange39": "Dette vil reparere LTC-lommebøker som viser en saldo som ikke kan brukes. Det krever at en enkelt transaksjon utføres på Litecoin-nettverket, etter bekreftelse vil lommeboksaldoen være funksjonell og problemet vil ikke skje igjen.",
+		"nchange40": "Denne transaksjonen vil kreve en liten LTC-avgift. Fortsette?",
+		"nchange41": "Prøver å reparere. Vennligst vent...",
+		"nchange42": "Vellykket reparert LTC-lommebok!",
+		"nchange43": "Det oppsto en feil under forsøk på å reparere LTC-lommeboken. Prøv igjen!"
 	},
 	"transpage": {
 		"tchange1": "Transaksjonsforespørsel",

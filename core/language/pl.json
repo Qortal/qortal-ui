@@ -999,7 +999,16 @@
 		"nchange31": "Zatrzymaj węzeł",
 		"nchange32": "Pomyślnie wysłane żądanie zatrzymania!",
 		"nchange33": "Uruchom ponownie węzeł",
-		"nchange34": "Pomyślnie wysłane żądanie ponownego uruchomienia!"
+		"nchange34": "Pomyślnie wysłane żądanie ponownego uruchomienia!",
+		"nchange35": "Węzeł startowy",
+		"nchange36": "Węzeł został pomyślnie uruchomiony!",
+		"nchange37": "Kliknięcie Kontynuuj spowoduje odświeżenie rdzenia Qortal, Twoja baza danych zostanie usunięta i pobierzesz nową kopię bazy danych, co nazywa się ładowaniem.",
+		"nchange38": "Napraw portfel LTC",
+		"nchange39": "To naprawi portfele LTC, które pokazują saldo, którego nie można wydać. Wymaga wykonania jednej transakcji w sieci Litecoin, po potwierdzeniu saldo portfela będzie działać i problem się nie powtórzy.",
+		"nchange40": "Ta transakcja będzie wymagała niewielkiej opłaty LTC. Kontynuować?",
+		"nchange41": "Próbuję naprawić. Proszę czekać...",
+		"nchange42": "Pomyślnie naprawiono portfel LTC!",
+		"nchange43": "Wystąpił błąd podczas próby naprawy portfela LTC. Spróbuj ponownie!"
 	},
 	"transpage": {
 		"tchange1": "Żądanie transakcji",

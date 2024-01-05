@@ -999,7 +999,16 @@
 		"nchange31": "Peata sõlm",
 		"nchange32": "Peatamise taotlus edukalt saadetud!",
 		"nchange33": "Taaskäivita sõlm",
-		"nchange34": "Taaskäivitamise taotlus edukalt saadetud!"
+		"nchange34": "Taaskäivitamise taotlus edukalt saadetud!",
+		"nchange35": "Start Node",
+		"nchange36": "Sõlm on edukalt käivitatud!",
+		"nchange37": "Nuul Jätka klõpsamine värskendab teie Qortal Core'i, teie db eemaldatakse ja laadite alla andmebaasi uue koopia nimega “bootstrapping“.",
+		"nchange38": "Paranda LTC rahakott",
+		"nchange39": "See parandab LTC rahakotid, mis näitavad saldot, mida ei saa kulutada. See nõuab ühe tehingu sooritamist Litecoini võrgus, pärast kinnitamist on rahakoti saldo toimiv ja probleem ei kordu.",
+		"nchange40": "Sellele tehingule kulub väike LTC tasu. Kas jätkata?",
+		"nchange41": "Püüame parandada. Palun oodake...",
+		"nchange42": "LTC rahakott on edukalt parandatud!",
+		"nchange43": "LTC rahakoti parandamisel ilmnes viga. Proovige uuesti!"
 	},
 	"transpage": {
 		"tchange1": "Tehingu taotlus",

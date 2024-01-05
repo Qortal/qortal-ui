@@ -1002,7 +1002,13 @@
 		"nchange34": "Successfully Sent Restart Request!",
 		"nchange35": "Start Node",
 		"nchange36": "Successfully Started Node!",
-		"nchange37": "Clicking on continue will refresh your Qortal Core, your db will be removed, and you will downoad a new copy of the db, called “bootstrapping“."
+		"nchange37": "Clicking on continue will refresh your Qortal Core, your db will be removed, and you will downoad a new copy of the db, called “bootstrapping“.",
+		"nchange38": "Repair LTC Wallet",
+		"nchange39": "This will repair LTC wallets that show a balance that cannot be spent. It requires a single transaction to be made on the Litecoin network, after confirmation the wallet balance will be functional and the issue will not happen again.",
+		"nchange40": "This transaction will consume a small LTC fee. Continue?",
+		"nchange41": "Trying to repair. Please wait...",
+		"nchange42": "Successfully Repaired LTC Wallet!",
+		"nchange43": "Error occurred when trying to repair LTC wallet. Please try again!"
 	},
 	"transpage": {
 		"tchange1": "Transaction request",

@@ -999,7 +999,16 @@
 		"nchange31": "Arresta nodo",
 		"nchange32": "Richiesta di arresto inviata con successo!",
 		"nchange33": "Riavvia nodo",
-		"nchange34": "Richiesta di riavvio inviata con successo!"
+		"nchange34": "Richiesta di riavvio inviata con successo!",
+		"nchange35": "Nodo iniziale",
+		"nchange36": "Nodo avviato con successo!",
+		"nchange37": "Cliccando su continua si aggiornerà il tuo Qortal Core, il tuo db verrà rimosso e scaricherai una nuova copia del db, chiamata bootstrap.",
+		"nchange38": "Ripara il portafoglio LTC",
+		"nchange39": "Questo riparerà i portafogli LTC che mostrano un saldo che non può essere speso. Richiede che venga effettuata una singola transazione sulla rete Litecoin, dopo la conferma il saldo del portafoglio sarà funzionante e il problema non si ripeterà.",
+		"nchange40": "Questa transazione consumerà una piccola commissione LTC. Continuare?",
+		"nchange41": "Tentativo di riparazione. Attendi prego...",
+		"nchange42": "Portafoglio LTC riparato con successo!",
+		"nchange43": "Si è verificato un errore durante il tentativo di riparare il portafoglio LTC. Riprova!"
 	},
 	"transpage": {
 		"tchange1": "Richiesta di transazione",

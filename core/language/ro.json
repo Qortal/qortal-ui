@@ -999,7 +999,16 @@
 		"nchange31": "Opreste Nodul",
 		"nchange32": "Cerere de Oprire Trimisa cu Succes!",
 		"nchange33": "Reporniți Nodul",
-		"nchange34": "Cerere de Repornire a Fost Trimisă cu Succes!"
+		"nchange34": "Cerere de Repornire a Fost Trimisă cu Succes!",
+		"nchange35": "Porniți nodul",
+		"nchange36": "Nodul pornit cu succes!",
+		"nchange37": "Făcând clic pe continuare, se va reîmprospăta Qortal Core, db-ul va fi eliminat și veți descărca o nouă copie a db, numită bootstrapping.",
+		"nchange38": "Reparați portofelul LTC",
+		"nchange39": "Acest lucru va repara portofelele LTC care arată un sold care nu poate fi cheltuit. Este nevoie de o singură tranzacție pentru a fi efectuată în rețeaua Litecoin, după confirmare soldul portofelului va fi funcțional și problema nu se va mai repeta.",
+		"nchange40": "Această tranzacție va consuma o mică taxă LTC. Continuați?",
+		"nchange41": "Se încearcă repararea. Vă rugăm să așteptați...",
+		"nchange42": "Portofel LTC a fost reparat cu succes!",
+		"nchange43": "A apărut o eroare la încercarea de a repara portofelul LTC. Vă rugăm să încercați din nou!"
 	},
 	"transpage": {
 		"tchange1": "Cerere de tranzactionare",

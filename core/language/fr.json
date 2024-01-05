@@ -999,7 +999,16 @@
 		"nchange31": "Arreter le noeud",
 		"nchange32": "Demande d’arrêt envoyée avec succès!",
 		"nchange33": "Redémarrer le noeud",
-		"nchange34": "Demande de redémarrage envoyée avec succès!"
+		"nchange34": "Demande de redémarrage envoyée avec succès!",
+		"nchange35": "Démarrer le nœud",
+		"nchange36": "Nœud démarré avec succès !",
+		"nchange37": "Cliquer sur continuer actualisera votre Qortal Core, votre base de données sera supprimée et vous téléchargerez une nouvelle copie de la base de données, appelée “bootstrapping“.",
+		"nchange38": "Réparer le portefeuille LTC",
+		"nchange39": "Cela réparera les portefeuilles LTC qui affichent un solde qui ne peut pas être dépensé. Cela nécessite qu'une seule transaction soit effectuée sur le réseau Litecoin, après confirmation, le solde du portefeuille sera fonctionnel et le problème ne se reproduira plus.",
+		"nchange40": "Cette transaction entraînera de petits frais LTC. Continuer ?",
+		"nchange41": "Essayer de réparer. Veuillez patienter...",
+		"nchange42": "Portefeuille LTC réparé avec succès !",
+		"nchange43": "Une erreur s'est produite lors de la tentative de réparation du portefeuille LTC. Veuillez réessayer !"
 	},
 	"transpage": {
 		"tchange1": "Demande de transaction",

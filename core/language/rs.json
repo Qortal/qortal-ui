@@ -999,7 +999,16 @@
 		"nchange31": "Zaustavite čvor",
 		"nchange32": "Zahtev za zaustavljanje uspešno poslat!",
 		"nchange33": "Ponovo pokreni čvor",
-		"nchange34": "Zahtev za ponovno pokretanje uspešno poslat!"
+		"nchange34": "Zahtev za ponovno pokretanje uspešno poslat!",
+		"nchange35": "Početni čvor",
+		"nchange36": "Uspešno pokrenut čvor!",
+		"nchange37": "Klik na nastavak će osvežiti vaše Kortal Core, vaš db će biti uklonjen, a vi ćete preuzeti novu kopiju db-a, koja se zove bootstrapping.",
+		"nchange38": "Popravi LTC novčanik",
+		"nchange39": "Ovo će popraviti LTC novčanike koji pokazuju stanje koje se ne može potrošiti. Zahteva da se izvrši jedna transakcija na Litecoin mreži, nakon potvrde stanje novčanika će biti funkcionalno i problem se neće ponoviti.",
+		"nchange40": "Ova transakcija će potrošiti malu dugotrajnu naknadu. Nastaviti?",
+		"nchange41": "Pokušavam da popravim. Molimo sačekajte...",
+		"nchange42": "Uspešno popravljen LTC novčanik!",
+		"nchange43": "Došlo je do greške pri pokušaju popravke LTC novčanika. Pokušajte ponovo!"
 	},
 	"transpage": {
 		"tchange1": "Zahtev za transakcijom",

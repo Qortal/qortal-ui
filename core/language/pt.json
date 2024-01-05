@@ -999,7 +999,16 @@
 		"nchange31": "Parar Nódulo",
 		"nchange32": "Pedido de parada enviado com sucesso!",
 		"nchange33": "Reiniciar Nódulo",
-		"nchange34": "Pedido de reinicialização enviado com sucesso!"
+		"nchange34": "Pedido de reinicialização enviado com sucesso!",
+		"nchange35": "Nó inicial",
+		"nchange36": "Nó iniciado com sucesso!",
+		"nchange37": "Clicar em continuar atualizará seu Qortal Core, seu banco de dados será removido e você baixará uma nova cópia do banco de dados, chamada bootstrapping.",
+		"nchange38": "Reparar carteira LTC",
+		"nchange39": "Isto irá reparar carteiras LTC que apresentam um saldo que não pode ser gasto. Requer que uma única transação seja feita na rede Litecoin, após a confirmação o saldo da carteira estará funcional e o problema não acontecerá novamente.",
+		"nchange40": "Esta transação consumirá uma pequena taxa LTC. Continuar?",
+		"nchange41": "Tentando reparar. Aguarde...",
+		"nchange42": "Carteira LTC reparada com sucesso!",
+		"nchange43": "Ocorreu um erro ao tentar reparar a carteira LTC. Tente novamente!"
 	},
 	"transpage": {
 		"tchange1": "Pedido de transação",

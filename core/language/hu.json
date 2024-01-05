@@ -999,7 +999,16 @@
 		"nchange31": "Csomópont Leállítás",
 		"nchange32": "Sikeresen Elküldött Stop Kérés!",
 		"nchange33": "Csomópont Újraindítása",
-		"nchange34": "Sikeresen Elküldött Újraindítási Kérés!"
+		"nchange34": "Sikeresen Elküldött Újraindítási Kérés!",
+		"nchange35": "Csomópont indítása",
+		"nchange36": "A csomópont sikeresen elindítva!",
+		"nchange37": "A tovább gombra kattintva frissíti a Qortal Core-t, a DB-je eltávolítva lesz, és letölti a db új példányát, az úgynevezett bootstrappinget.",
+		"nchange38": "LTC pénztárca javítása",
+		"nchange39": "Ez javítja azokat az LTC pénztárcákat, amelyek nem költhető egyenleget mutatnak. Egyetlen tranzakciót kell végrehajtani a Litecoin hálózaton, a megerősítést követően a pénztárca egyenlege működőképes lesz, és a probléma nem fog megismétlődni.",
+		"nchange40": "Ez a tranzakció egy kis LTC-díjat fog felemelni. Folytatja?",
+		"nchange41": "Javítani próbál. Kérjük, várjon...",
+		"nchange42": "Az LTC Wallet sikeresen megjavítva!",
+		"nchange43": "Hiba történt az LTC pénztárca javítása közben. Kérjük, próbálja újra!"
 	},
 	"transpage": {
 		"tchange1": "Tranzakciós Kérelem",

@@ -999,7 +999,16 @@
 		"nchange31": "Node stoppen",
 		"nchange32": "Stop-aanvraag werd verzonden!",
 		"nchange33": "Node herstarten",
-		"nchange34": "Herstart-aanvraag werd verzonden!"
+		"nchange34": "Herstart-aanvraag werd verzonden!",
+		"nchange35": "Startknooppunt",
+		"nchange36": "Succesvol gestart knooppunt!",
+		"nchange37": "Als u op Doorgaan klikt, wordt uw Qortal Core vernieuwd, wordt uw database verwijderd en downloadt u een nieuwe kopie van de database, genaamd bootstrapping.",
+		"nchange38": "LTC-portemonnee repareren",
+		"nchange39": "Hiermee worden LTC-portefeuilles gerepareerd die een saldo vertonen dat niet kan worden uitgegeven. Er moet een enkele transactie worden uitgevoerd op het Litecoin-netwerk, na bevestiging zal het portemonnee-saldo functioneel zijn en zal het probleem zich niet opnieuw voordoen.",
+		"nchange40": "Voor deze transactie worden kleine LTC-kosten in rekening gebracht. Doorgaan?",
+		"nchange41": "Probeert te repareren. Even geduld a.u.b....",
+		"nchange42": "LTC-portemonnee succesvol gerepareerd!",
+		"nchange43": "Er is een fout opgetreden bij het repareren van de LTC-portemonnee. Probeer het opnieuw!"
 	},
 	"transpage": {
 		"tchange1": "Transactie-aanvraag",

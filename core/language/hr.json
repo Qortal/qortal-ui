@@ -999,7 +999,16 @@
 		"nchange31": "Zaustavi čvor",
 		"nchange32": "Uspješno poslan zahtjev za zaustavljenje!",
 		"nchange33": "Ponovo pokreni čvor",
-		"nchange34": "Uspješno poslan zahtjev za ponovnim pokretanjem!"
+		"nchange34": "Uspješno poslan zahtjev za ponovnim pokretanjem!",
+		"nchange35": "Početni čvor",
+		"nchange36": "Uspješno pokrenut čvor!",
+		"nchange37": "Klikom na nastavak osvježit će se vaša Qortal Core, vaša baza podataka bit će uklonjena, a vi ćete preuzeti novu kopiju baze podataka, koja se zove bootstrapping.",
+		"nchange38": "Popravi LTC novčanik",
+		"nchange39": "Ovo će popraviti LTC novčanike koji pokazuju saldo koji se ne može potrošiti. Zahtijeva jednu transakciju da se izvrši na mreži Litecoin, nakon potvrde saldo novčanika će biti funkcionalan i problem se neće ponoviti.",
+		"nchange40": "Ova transakcija će potrošiti malu LTC naknadu. Nastaviti?",
+		"nchange41": "Pokušavam popraviti. Molimo pričekajte...",
+		"nchange42": "Uspješno popravljen LTC novčanik!",
+		"nchange43": "Došlo je do pogreške prilikom pokušaja popravka LTC novčanika. Pokušajte ponovo!"
 	},
 	"transpage": {
 		"tchange1": "Zahtjev za transakciju",

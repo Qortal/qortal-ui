@@ -328,7 +328,7 @@
 		"mchange33": "Einführung",
 		"mchange34": "Um in Qortal ein Minter zu werden und QORT-Belohnungen mit Ihrer Erhöhung des Minter-Levels zu verdienen, müssen Sie zuerst „gesponsert“ werden. Ein Sponsor in Qortal ist jeder andere Minter der Stufe 5 oder höher oder ein Qortal-Gründer. Sie erhalten einen Sponsoring-Schlüssel vom Sponsor und verwenden diesen Schlüssel, um auf Level 1 zu gelangen. Sobald Sie Level 1 erreicht haben, können Sie Ihren eigenen Prägeschlüssel erstellen und beginnen, Belohnungen für die Unterstützung bei der Sicherung der Qortal-Blockkette zu verdienen.",
 		"mchange35": "Sponsoring",
-		"mchange36": "Ihr Sponsor stellt Ihnen einen „Sponsorship Key“ aus, den Sie zum Hinzufügen zu Ihrem Knoten verwenden und mit dem Prägen beginnen (keine Belohnungen bis zum Erreichen von Level 1). Sobald Sie Level 1 erreicht haben, erstellen/weisen Sie Ihren eigenen „Minting Key“ und Beginnen Sie mit dem Verdienen von Belohnungen.",
+		"mchange36": "Ihr Sponsor stellt Ihnen einen „Sponsorship Key“ aus, den Sie zum Hinzufügen zu Ihrem Knoten verwenden und mit dem Prägen beginnen (keine Belohnungen bis zum Erreichen von Level 1). Sobald Sie Level 1 erreicht haben, erstellen/weisen Sie Ihren eigenen „Minting Key und Beginnen Sie mit dem Verdienen von Belohnungen.",
 		"mchange37": "Wenden Sie sich einfach an einen Minter in Qortal, der hoch genug ist, um einen Sponsoring-Schlüssel auszustellen, erhalten Sie diesen Schlüssel, kommen Sie dann hierher zurück und geben Sie den Schlüssel ein, um Ihre Minting-Reise zu beginnen!",
 		"mchange38": "in"
 	},
@@ -999,7 +999,16 @@
 		"nchange31": "Knoten stoppen",
 		"nchange32": "Stoppanforderung erfolgreich gesendet!",
 		"nchange33": "Knoten neu starten",
-		"nchange34": "Neustartanforderung erfolgreich gesendet!"
+		"nchange34": "Neustartanforderung erfolgreich gesendet!",
+		"nchange35": "Startknoten",
+		"nchange36": "Knoten erfolgreich gestartet!",
+		"nchange37": "Wenn Sie auf Weiter klicken, wird Ihr Qortal Core aktualisiert, Ihre Datenbank wird entfernt und Sie laden eine neue Kopie der Datenbank herunter, genannt „Bootstrapping“.",
+		"nchange38": "LTC-Wallet reparieren",
+		"nchange39": "Dadurch werden LTC-Geldbörsen repariert, deren Guthaben nicht ausgegeben werden kann. Dazu muss eine einzige Transaktion im Litecoin-Netzwerk durchgeführt werden. Nach der Bestätigung ist das Guthaben der Geldbörse funktionsfähig und das Problem wird nicht erneut auftreten.",
+		"nchange40": "Für diese Transaktion fällt eine geringe LTC-Gebühr an. Fortfahren?",
+		"nchange41": "Reparaturversuch. Bitte warten…",
+		"nchange42": "LTC-Wallet erfolgreich repariert!",
+		"nchange43": "Beim Versuch, die LTC-Wallet zu reparieren, ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut!"
 	},
 	"transpage": {
 		"tchange1": "Transaktionsanfrage",
@@ -1011,7 +1020,7 @@
 	"apipage": {
 		"achange1": "Füge API-Schlüssel hinzu",
 		"achange2": "API-Schlüssel",
-		"achange3": "Bitte geben Sie den API-Schlüssel für diesen Knoten ein. Es kann in einer Datei namens “apikey.txt“ in dem Verzeichnis gefunden werden, in dem der Kern installiert ist. Klicken Sie alternativ auf Abbrechen, um den Kern mit eingeschränkter Funktionalität zu verwenden.",
+		"achange3": "Bitte geben Sie den API-Schlüssel für diesen Knoten ein. Es kann in einer Datei namens „apikey.txt“ in dem Verzeichnis gefunden werden, in dem der Kern installiert ist. Klicken Sie alternativ auf Abbrechen, um den Kern mit eingeschränkter Funktionalität zu verwenden.",
 		"achange4": "Abbrechen",
 		"achange5": "Hinzufügen",
 		"achange6": "API-Schlüssel erfolgreich hinzugefügt",
@@ -1162,7 +1171,7 @@
 		"inf3": "Dies ist ein Markt zum KAUFEN von QORT",
 		"inf4": "- 'Offenmarktverkäufe' sind QORT-VERKAUFSAUFTRÄGE.",
 		"inf5": "Sie können jeweils nur EINE Bestellung kaufen, klicken Sie einfach auf eine Bestellung, mit der Sie kaufen möchten",
-		"inf6": "und es wird das Kästchen „QORT KAUFEN' mit den Details ausfüllen, dann klicke auf KAUFEN.",
+		"inf6": "und es wird das Kästchen „QORT KAUFEN“ mit den Details ausfüllen, dann klicke auf KAUFEN.",
 		"inf7": "Informationen zum automatischen Kauf",
 		"inf8": "Automatische Kaufinfo schließen",
 		"inf9": "'Automatischer' Kauf ist eine Funktion, die es ermöglicht, 'Kaufaufträge' auf dem Handelsportal zu platzieren. Diese 'Kaufaufträge' sind nur für die Person sichtbar, die sie aufgegeben hat. Es sind keine 'öffentlichen' Kaufaufträge wie die 'Offenmarktverkäufe' sind und werden NICHT in der Qortal-Blockchain gespeichert. Auto Buy ist eine UI-Funktion und erfordert als solche, dass die UI LÄUFT.",
