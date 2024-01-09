@@ -124,7 +124,7 @@
 		"@vaadin/tooltip": "24.2.5",
 		"@zip.js/zip.js": "2.7.32",
 		"axios": "1.6.5",
-		"electron": "28.1.1",
+		"electron": "28.1.2",
 		"electron-builder": "24.9.1",
 		"electron-packager": "17.1.2",
 		"epml": "0.3.3",
