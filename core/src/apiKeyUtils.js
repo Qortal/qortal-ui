@@ -35,6 +35,12 @@ export const checkApiKey = async (nodeConfig) => {
     else {
         console.log("API key test failed");
         mykey.show();
+        this.dispatchEvent(
+			new CustomEvent('disable-tour', {
+			  bubbles: true,
+			  composed: true
+			}),
+		  );
     }
 }
 
