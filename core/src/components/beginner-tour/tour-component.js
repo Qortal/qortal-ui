@@ -17,6 +17,7 @@ class TourComponent extends connect(store)(LitElement) {
 			getElements: { attribute: false },
 			dialogOpenedCongrats: { type: Boolean },
 			hasViewedTour: { type: Boolean },
+			disableTour: {type: Boolean}
 		};
 	}
 
@@ -28,6 +29,8 @@ class TourComponent extends connect(store)(LitElement) {
 		this.hasName = false;
 		this.nodeUrl = this.getNodeUrl();
 		this.myNode = this.getMyNode();
+		this._disableTour = this._disableTour.bind(this)
+		this.disableTour = false
 	}
 
 	static get styles() {
@@ -139,11 +142,20 @@ class TourComponent extends connect(store)(LitElement) {
 		this.dialogOpenedCongrats = true;
 	}
 
+	_disableTour(){
+		this.disableTour = true
+		driver.reset()
+	}
+
 	connectedCallback() {
 		super.connectedCallback();
 		window.addEventListener(
 			'open-welcome-modal-sync',
 			this._controlOpenWelcomeModal
+		);
+		window.addEventListener(
+			'disable-tour',
+			this._disableTour
 		);
 	}
 
@@ -152,7 +164,10 @@ class TourComponent extends connect(store)(LitElement) {
 			'open-welcome-modal-sync',
 			this._controlOpenWelcomeModal
 		);
-
+		window.addEventListener(
+			'disable-tour',
+			this._disableTour
+		);
 		super.disconnectedCallback();
 	}
 
@@ -216,7 +231,7 @@ class TourComponent extends connect(store)(LitElement) {
 				res();
 			}, 1000);
 		});
-		if (!this.hasViewedTour) {
+		if (!this.hasViewedTour && this.disableTour !== true) {
 			const elements = this.getElements();
 			let steps = [
 				{
