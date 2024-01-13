@@ -875,21 +875,27 @@ class QApps extends LitElement {
         this.appsArray.forEach(item => {
             const name = item.name
             let title
-            if (item.metadata.title != null) {
-                title = item.metadata.title
+            if (item.metadata != null) {
+                if (item.metadata.title != null) {
+                    title = item.metadata.title
+                }
             } else {
                 title = item.name
             }
             let description
-            if (item.metadata.description != null) {
-                description = item.metadata.description
+            if (item.metadata != null) {
+                if (item.metadata.description != null) {
+                    description = item.metadata.description
+                }
             } else {
                 description = item.name
             }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
-            if (item.metadata.tags != null && item.metadata.tags.length > 0) {
-                tags = item.metadata.tags.join(", ")
+            if (item.metadata != null) {
+                if (item.metadata.tags != null && item.metadata.tags.length > 0) {
+                    tags = item.metadata.tags.join(", ")
+                }
             }
             const status1 = item.status.description
             const status2 = item.status.status
@@ -933,7 +939,7 @@ class QApps extends LitElement {
 
             const myAppTitle = document.createElement('div')
             myAppTitle.classList.add('myapptitle')
-            myAppTitle.textContent = item.metadata.title
+            myAppTitle.textContent = title
 
             widgetElement.appendChild(myContainer)
             widgetElement.appendChild(myAppTitle)
@@ -970,21 +976,27 @@ class QApps extends LitElement {
         this.followedResources.forEach(item => {
             const name = item.name
             let title
-            if (item.metadata.title != null) {
-                title = item.metadata.title
+            if (item.metadata != null) {
+                if (item.metadata.title != null) {
+                    title = item.metadata.title
+                }
             } else {
                 title = item.name
             }
             let description
-            if (item.metadata.description != null) {
-                description = item.metadata.description
+            if (item.metadata != null) {
+                if (item.metadata.description != null) {
+                    description = item.metadata.description
+                }
             } else {
                 description = item.name
             }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
-            if (item.metadata.tags != null && item.metadata.tags.length > 0) {
-                tags = item.metadata.tags.join(", ")
+            if (item.metadata != null) {
+                if (item.metadata.tags != null && item.metadata.tags.length > 0) {
+                    tags = item.metadata.tags.join(", ")
+                }
             }
             const status1 = item.status.description
             const status2 = item.status.status
@@ -1028,7 +1040,7 @@ class QApps extends LitElement {
 
             const myAppTitle = document.createElement('div')
             myAppTitle.classList.add('myapptitle')
-            myAppTitle.textContent = item.metadata.title
+            myAppTitle.textContent = title
 
             widgetElement.appendChild(myContainer)
             widgetElement.appendChild(myAppTitle)
@@ -1066,21 +1078,27 @@ class QApps extends LitElement {
         this.blockedResources.forEach(item => {
             const name = item.name
             let title
-            if (item.metadata.title != null) {
-                title = item.metadata.title
+            if (item.metadata != null) {
+                if (item.metadata.title != null) {
+                    title = item.metadata.title
+                }
             } else {
                 title = item.name
             }
             let description
-            if (item.metadata.description != null) {
-                description = item.metadata.description
+            if (item.metadata != null) {
+                if (item.metadata.description != null) {
+                    description = item.metadata.description
+                }
             } else {
                 description = item.name
             }
             const url = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
             let tags = 'No Tags'
-            if (item.metadata.tags != null && item.metadata.tags.length > 0) {
-                tags = item.metadata.tags.join(", ")
+            if (item.metadata != null) {
+                if (item.metadata.tags != null && item.metadata.tags.length > 0) {
+                    tags = item.metadata.tags.join(", ")
+                }
             }
             const status1 = item.status.description
             const status2 = item.status.status
@@ -1123,7 +1141,7 @@ class QApps extends LitElement {
 
             const myAppTitle = document.createElement('div')
             myAppTitle.classList.add('myapptitle')
-            myAppTitle.textContent = item.metadata.title
+            myAppTitle.textContent = title
 
             widgetElement.appendChild(myContainer)
             widgetElement.appendChild(myAppTitle)
