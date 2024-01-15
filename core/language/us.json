@@ -182,7 +182,6 @@
 		"password": "Password",
 		"download": "Download Backup File",
 		"choose": "Please choose a password to encrypt your backup with. (This can be the same as the one you logged in with, or different)",
-		"block": "Block Notifications (Coming Soon...)",
 		"playsound": "Play Sound",
 		"shownotifications": "Show Notifications",
 		"nodeurl": "Node Url",

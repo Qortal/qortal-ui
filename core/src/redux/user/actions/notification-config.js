@@ -13,11 +13,9 @@ export const doLoadNotificationConfig = () => {
             .then(data => {
 
                 const notifications = {
-                    q_chat: {},
-                    block: {}
+                    q_chat: {}
                 }
                 notifications.q_chat = data.config.user.notifications.q_chat
-                notifications.block = data.config.user.notifications.block
                 return dispatch(loadNotificationConfig(notifications))
             })
             .catch(err => {

@@ -182,7 +182,6 @@
 		"password": "密码",
 		"download": "下载备份文件",
 		"choose": "请输入一组密码加密你的备份文件。(可使用你刚才登入时的相同密码或者不同的密码)",
-		"block": "区块通知（即将推出...）",
 		"playsound": "开启音效",
 		"shownotifications": "显示通知",
 		"nodeurl": "节点地址",

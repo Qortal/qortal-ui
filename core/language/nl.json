@@ -182,7 +182,6 @@
 		"password": "Wachtwoord",
 		"download": "Download backup-bestand",
 		"choose": "Kies een wachtwoord om het backup-bestand te versleutelen. (Dit kan hetzelfde zijn als bij aanmelding, of een ander)",
-		"block": "Blokkeer waarschuwingen (Komt binnenkort...)",
 		"playsound": "Geluid afspelen",
 		"shownotifications": "Toon waarschuwingen",
 		"nodeurl": "Adres van de node",

@@ -182,7 +182,6 @@
 		"password": "Passord",
 		"download": "Last ned backup-fil",
 		"choose": "Velg et passord for å kryptere din backup med. (Dette kan være det samme som du logget på med, eller et annet)",
-		"block": "Blokkvarsler (Kommer snart...)",
 		"playsound": "Spill av lyd",
 		"shownotifications": "Vis varsler",
 		"nodeurl": "Node-URL",

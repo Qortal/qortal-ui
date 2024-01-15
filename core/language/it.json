@@ -182,7 +182,6 @@
 		"password": "Password",
 		"download": "Scarica il file di backup",
 		"choose": "Scegli una password con cui crittare il tuo backup. (Può essere uguale a quella con cui hai effettuato l'accesso o diversa)",
-		"block": "Notifiche di blocco (in arrivo...)",
 		"playsound": "Riproduci suono",
 		"shownotifications": "Mostra notifiche",
 		"nodeurl": "URL nodo",
