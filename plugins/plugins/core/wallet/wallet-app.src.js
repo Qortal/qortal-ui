@@ -5089,7 +5089,7 @@ class MultiWallet extends LitElement {
 				const unconfirmed = data.item.confirmations == 0
                         if (confirmed) {
                             render(html`<mwc-icon title="${data.item.confirmations} ${translate("walletpage.wchange42")}" style="color: #00C851">check</mwc-icon>`, root)
-						} else if (unconfirmed) {
+			} else if (unconfirmed) {
                             render(html`<mwc-icon title="${data.item.confirmations || 0}/${requiredConfirmations} ${translate("walletpage.wchange42")}" style="color: #F44336">schedule</mwc-icon>`, root)
                         } else {
                             render(html`<mwc-icon title="${data.item.confirmations}/${requiredConfirmations} ${translate("walletpage.wchange42")}" style="color: #B47D00">schedule</mwc-icon>`, root)
@@ -5108,7 +5108,9 @@ class MultiWallet extends LitElement {
                 <vaadin-grid-column
                     auto-width
                     header="${translate("walletpage.wchange9")}"
-                    path="creatorAddress"
+                    .renderer=${(root, column, data) => {
+                        render(html`${data.item.type === 'AT' ? html`${data.item.atAddress}` : html`${data.item.creatorAddress}`}`, root)
+                    }}
                 >
                 </vaadin-grid-column>
                 <vaadin-grid-column auto-width header="${translate("walletpage.wchange10")}"
