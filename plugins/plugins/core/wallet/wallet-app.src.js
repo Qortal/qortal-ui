@@ -998,7 +998,7 @@ class MultiWallet extends LitElement {
                         </div>
                         <span class="title"> ${translate("walletpage.wchange9")} </span>
                         <br />
-                        <div><span>${this.selectedTransaction.creatorAddress}</span></div>
+                        <div><span>${this.selectedTransaction.type === 'AT' ? html`${this.selectedTransaction.atAddress}` : html`${this.selectedTransaction.creatorAddress}`}</span></div>
                         <span class="title"> ${translate("walletpage.wchange10")} </span>
                         <br />
                         <div style="display: inline;">
