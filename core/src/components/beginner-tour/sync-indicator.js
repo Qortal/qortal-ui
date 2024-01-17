@@ -175,20 +175,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 		} else if(state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && state.app.nodeStatus.syncPercent !== this.syncPercentage){
 			this.syncPercentage = state.app.nodeStatus.syncPercent;
 			this.isSynchronizing = false;
-			// if (
-			// 	this.isBehind === null
-			// ) {
-			// 	this.isBehind = false;
-			// 	this.blocksBehind = 0;
-			// 	if (!this.seenWelcomeSync) {
-			// 		this.dispatchEvent(
-			// 			new CustomEvent('open-welcome-modal-sync', {
-			// 				bubbles: true,
-			// 				composed: true,
-			// 			})
-			// 		);
-			// 	}
-			// }
+			
 		} else if (
 			state.app.nodeStatus
 		) {
@@ -199,24 +186,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 			if (state.app.nodeStatus.syncPercent !== 100) {
 				this.isSynchronizing = true;
 			} 
-			// else {
-			// 	this.isSynchronizing = false;
-			// }
-			// if (
-			// 	this.isBehind === null &&
-			// 	state.app.nodeStatus.syncPercent === 100
-			// ) {
-			// 	this.isBehind = false;
-			// 	this.blocksBehind = 0;
-			// 	if (!this.seenWelcomeSync) {
-			// 		this.dispatchEvent(
-			// 			new CustomEvent('open-welcome-modal-sync', {
-			// 				bubbles: true,
-			// 				composed: true,
-			// 			})
-			// 		);
-			// 	}
-			// } else 
+			
 			if (
 				!this.interval &&
 				this.isBehind === null &&
