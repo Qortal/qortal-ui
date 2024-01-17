@@ -25,6 +25,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 		this.hasCoreRunning = true;
 		this.seenWelcomeSync = false;
 		this.numberOfTries = 0;
+		this.hasOpened = false
 	}
 
 	static get styles() {
@@ -109,51 +110,59 @@ class SyncIndicator extends connect(store)(LitElement) {
 
 	async getDaySummary() {
 		try {
-			const endpoint = `${this.nodeUrl}/admin/summary/?apiKey=${this.myNode.apiKey}`;
-			const res = await fetch(endpoint);
-			const data = await res.json();
-			let blockTimeInSeconds = null;
-			if (data.blockCount) {
-				const blockTime = 1440 / data.blockCount;
-				blockTimeInSeconds = blockTime * 60;
-			}
+			this.fetchingSummary = true
+	
 
 			const endpointLastBlock = `${this.nodeUrl}/blocks/last`;
 			const resLastBlock = await fetch(endpointLastBlock);
 			const dataLastBlock = await resLastBlock.json();
 			const timestampNow = Date.now();
 			const currentBlockTimestamp = dataLastBlock.timestamp;
-			if (blockTimeInSeconds && currentBlockTimestamp < timestampNow) {
+			if (currentBlockTimestamp < timestampNow) {
 				const diff = timestampNow - currentBlockTimestamp;
 				const inSeconds = diff / 1000; // millisecs to secs
-				const inBlocks = inSeconds / blockTimeInSeconds;
+				const inBlocks = inSeconds / 70;
 				this.blocksBehind = parseInt(inBlocks);
-				if (inBlocks >= 1000) {
+				if (inBlocks >= 100) {
 					this.isBehind = true;
 				} else {
 					this.isBehind = false;
+					this.blocksBehind = 0;
 				}
 			} else {
 				this.blocksBehind = 0;
 				this.isBehind = false;
 			}
-		} catch (error) {}
+		} catch (error) {} finally {
+			this.fetchingSummary = false
+		}
 	}
 
 	async checkHowManyBlocksBehind() {
 		try {
 			this.getDaySummary();
 			this.interval = setInterval(() => {
+				if(this.fetchingSummary) return
 				if (this.isBehind === false) {
 					this.isBehind = null;
 					clearInterval(this.interval);
 				}
 				this.getDaySummary();
-			}, 60000);
+			}, 20000);
 		} catch (error) {}
 	}
 
 	stateChanged(state) {
+
+		if(!this.seenWelcomeSync && state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && this.hasOpened === false){
+			this.hasOpened = true
+			this.dispatchEvent(
+				new CustomEvent('open-welcome-modal-sync', {
+					bubbles: true,
+					composed: true,
+				})
+			);
+		}
 		if (
 			state.app.nodeStatus &&
 			Object.keys(state.app.nodeStatus).length === 0
@@ -163,9 +172,25 @@ class SyncIndicator extends connect(store)(LitElement) {
 			} else {
 				this.numberOfTries = this.numberOfTries + 1;
 			}
+		} else if(state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && state.app.nodeStatus.syncPercent !== this.syncPercentage){
+			this.syncPercentage = state.app.nodeStatus.syncPercent;
+			this.isSynchronizing = false;
+			// if (
+			// 	this.isBehind === null
+			// ) {
+			// 	this.isBehind = false;
+			// 	this.blocksBehind = 0;
+			// 	if (!this.seenWelcomeSync) {
+			// 		this.dispatchEvent(
+			// 			new CustomEvent('open-welcome-modal-sync', {
+			// 				bubbles: true,
+			// 				composed: true,
+			// 			})
+			// 		);
+			// 	}
+			// }
 		} else if (
-			state.app.nodeStatus &&
-			state.app.nodeStatus.syncPercent !== this.syncPercentage
+			state.app.nodeStatus
 		) {
 			this.hasCoreRunning = true
 			this.numberOfTries = 0
@@ -173,24 +198,26 @@ class SyncIndicator extends connect(store)(LitElement) {
 
 			if (state.app.nodeStatus.syncPercent !== 100) {
 				this.isSynchronizing = true;
-			} else {
-				this.isSynchronizing = false;
-			}
+			} 
+			// else {
+			// 	this.isSynchronizing = false;
+			// }
+			// if (
+			// 	this.isBehind === null &&
+			// 	state.app.nodeStatus.syncPercent === 100
+			// ) {
+			// 	this.isBehind = false;
+			// 	this.blocksBehind = 0;
+			// 	if (!this.seenWelcomeSync) {
+			// 		this.dispatchEvent(
+			// 			new CustomEvent('open-welcome-modal-sync', {
+			// 				bubbles: true,
+			// 				composed: true,
+			// 			})
+			// 		);
+			// 	}
+			// } else 
 			if (
-				this.isBehind === null &&
-				state.app.nodeStatus.syncPercent === 100
-			) {
-				this.isBehind = false;
-				this.blocksBehind = 0;
-				if (!this.seenWelcomeSync) {
-					this.dispatchEvent(
-						new CustomEvent('open-welcome-modal-sync', {
-							bubbles: true,
-							composed: true,
-						})
-					);
-				}
-			} else if (
 				!this.interval &&
 				this.isBehind === null &&
 				state.app.nodeStatus.isSynchronizing &&
@@ -211,7 +238,6 @@ class SyncIndicator extends connect(store)(LitElement) {
 			if(data === true){
 				parentEpml.request('showSnackBar', get('tour.tour22'));
 			}
-			console.log({data})
 		} catch (error) {
 			
 		}
@@ -234,7 +260,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 							</p>
 						</div>
 				  `
-				: (this.isBehind && this.isSynchronizing)
+				: (this.blocksBehind > 1050 && this.isSynchronizing)
 				? html`
 						<div class="parent">
 							<div class="column">
