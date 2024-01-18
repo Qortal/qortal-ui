@@ -182,7 +182,6 @@
 		"password": "Passwort",
 		"download": "Sicherungsdatei herunterladen",
 		"choose": "Bitte wählen Sie ein Passwort, um Ihr Backup zu verschlüsseln. (Dies kann dasselbe sein wie das, mit dem Sie sich angemeldet haben, oder ein anderes)",
-		"block": "Block Benachrichtigungen (Kommt bald...)",
 		"playsound": "Ton abspielen",
 		"shownotifications": "Zeige Benachrichtigungen",
 		"nodeurl": "Knotenverbindung",

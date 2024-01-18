@@ -182,7 +182,6 @@
 		"password": "Mot de passe",
 		"download": "Télécharger le fichier de sauvegarde",
 		"choose": "Veuillez choisir un mot de passe pour chiffrer votre sauvegarde. (Il peut s’agir du même mot de passe que celui avec lequel vous vous êtes connecté, ou différent)",
-		"block": "Notification de bloc (Pour bientôt...)",
 		"playsound": "Lire le son",
 		"shownotifications": "Afficher les notifications",
 		"nodeurl": "Url du noeud",

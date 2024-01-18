@@ -182,7 +182,6 @@
 		"password": "비밀번호",
 		"download": "백업 파일 다운로드",
 		"choose": "백업을 암호화할 암호를 선택하십시오. 암호는 로그인한 암호와 같거나 다를 수 있습니다.",
-		"block": "블록 알림",
 		"playsound": "소리 재생",
 		"shownotifications": "알림 표시",
 		"nodeurl": "노드 url",

@@ -37,10 +37,6 @@ const user = {
             playSound: true,
             showNotification: true,
         },
-        block: {
-            playSound: true,
-            showNotification: true,
-        },
     },
 }
 module.exports = user

@@ -182,7 +182,6 @@
 		"password": "Senha",
 		"download": "Baixar Arquivo BackUp",
 		"choose": "Por favor, escolha uma senha para criptografar seu backup. (Essa pode ser a mesma que você fez login, ou outra diferente)",
-		"block": "Notificações de bloco (em breve...)",
 		"playsound": "Reproduzir som",
 		"shownotifications": "Mostrar notificações",
 		"nodeurl": "Url do nódulo",

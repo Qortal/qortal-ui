@@ -182,7 +182,6 @@
 		"password": "Contraseña",
 		"download": "Descargar copia de seguridad",
 		"choose": "Por favor, elija una contraseña para cifrar su copia de seguridad. (Puede ser la misma con la que ha iniciado la sesión, o diferente)",
-		"block": "Bloquear Notificaciones (próximamente...)",
 		"playsound": "Reproducir Sonido",
 		"shownotifications": "Mostrar Notificaciones",
 		"nodeurl": "URL del Nodo",

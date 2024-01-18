@@ -13,7 +13,6 @@ class NotificationsView extends connect(store)(LitElement) {
         return {
             notificationConfig: { type: Object },
             q_chatConfig: { type: Object },
-            blockConfig: { type: Object },
             theme: { type: String, reflect: true },
             appNotificationList: {type: Array}
         }
@@ -23,7 +22,6 @@ class NotificationsView extends connect(store)(LitElement) {
         super()
         this.notificationConfig = {}
         this.q_chatConfig = {}
-        this.blockConfig = {}
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
         this.appNotificationList = [] // Fetch the list of apps from local storage
     }
@@ -151,19 +149,6 @@ class NotificationsView extends connect(store)(LitElement) {
                             </div>
                         </div>
                         <div class="content-box">
-                            <h4> ${translate("settings.block")} </h4>
-
-                            <div style="line-height: 3rem;">
-                                <mwc-checkbox indeterminate disabled id="blockPlaySound"></mwc-checkbox>
-                                <label for="blockPlaySound">${translate("settings.playsound")}</label>
-                            </div>
-
-                            <div style="line-height: 3rem;">
-                                <mwc-checkbox indeterminate disabled id="blockShowNotification"></mwc-checkbox>
-                                <label for="blockShowNotification">${translate("settings.shownotifications")}</label>
-                            </div>
-                        </div>
-                        <div class="content-box">
         <h4>${translate("settings.qappNotification1")}</h4>
         ${this.appNotificationList.map((app)=> html`
         <div style="display: flex; justify-content: space-between; margin-top: 10px;">
@@ -223,7 +208,6 @@ class NotificationsView extends connect(store)(LitElement) {
     stateChanged(state) {
         this.notificationConfig = state.user.notifications
         this.q_chatConfig = this.notificationConfig.q_chat
-        this.blockConfig = this.notificationConfig.block
     }
 
     setQChatNotificationConfig(valueObject) {

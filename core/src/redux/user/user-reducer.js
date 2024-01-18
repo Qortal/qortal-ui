@@ -15,8 +15,7 @@ const DEFAULT_INITIAL_STATE = {
         // nameStatus: ''
     },
     notifications: {
-        q_chat: {},
-        block: {}
+        q_chat: {}
     },
     loaded: false
 }

@@ -182,7 +182,6 @@
 		"password": "Jelszó",
 		"download": "Biztonságimásolat-fájl letöltése",
 		"choose": "Válasszon egy jelszót a biztonsági mentés titkosításához. (Ez lehet ugyanaz, mint az, amelyikbe bejelentkezett, vagy más)",
-		"block": "Értesítések blokkolása (hamarosan...)",
 		"playsound": "Hang lejátszása",
 		"shownotifications": "Értesítések megjelenítése",
 		"nodeurl": "Csomópont URL-címe",
