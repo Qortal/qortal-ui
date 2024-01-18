@@ -396,7 +396,8 @@ class TourComponent extends connect(store)(LitElement) {
 							<div
 								class="close-button"
 								@click=${()=> {
-                  this.dialogOpenedCongrats = false
+                  this.onClose()
+				  
                 }}
 							>
 								${translate("general.close")}
