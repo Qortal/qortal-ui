@@ -27,6 +27,7 @@ const extract = require('extract-zip')
 const execFile = require('child_process').execFile
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
+const XMLHttpRequest = require('xhr2')
 const homePath = app.getPath('home')
 const downloadPath = app.getPath('downloads')
 const logPath = app.getPath('logs')
@@ -121,26 +122,31 @@ const qortalsettings = homePath + "/qortal/settings.json"
 const javadir = homePath + "/jdk-17.0.2/"
 
 const linjavax64url = "https://download.qortal.online/openjdk-17.0.2_linux-x64_bin.zip"
+const linjavax64urlbackup = "https://cloud.qortal.org/s/aSxDWTskG8kBR5T/download/openjdk-17.0.2_linux-x64_bin.zip"
 const linjavax64file = homePath + "/openjdk-17.0.2_linux-x64_bin.zip"
 const linjavax64bindir = homePath + "/jdk-17.0.2/bin"
 const linjavax64binfile = homePath + "/jdk-17.0.2/bin/java"
 
 const linjavaarmurl = "https://download.qortal.online/openjdk-17.0.2_linux-arm_bin.zip"
+const linjavaarmurlbackup = "https://cloud.qortal.org/s/DAMFBEri469R3dj/download/openjdk-17.0.2_linux-arm_bin.zip"
 const linjavaarmfile = homePath + "/openjdk-17.0.2_linux-arm_bin.zip"
 const linjavaarmbindir = homePath + "/jdk-17.0.2/bin"
 const linjavaarmbinfile = homePath + "/jdk-17.0.2/bin/java"
 
 const linjavaarm64url = "https://download.qortal.online/openjdk-17.0.2_linux-arm64_bin.zip"
+const linjavaarm64urlbackup = "https://cloud.qortal.org/s/t7Kk9ZpEAroFmg2/download/openjdk-17.0.2_linux-arm64_bin.zip"
 const linjavaarm64file = homePath + "/openjdk-17.0.2_linux-arm64_bin.zip"
 const linjavaarm64bindir = homePath + "/jdk-17.0.2/bin"
 const linjavaarm64binfile = homePath + "/jdk-17.0.2/bin/java"
 
 const macjavax64url = "https://download.qortal.online/openjdk-17.0.2_macos-x64_bin.zip"
+const macjavax64urlbackup = "https://cloud.qortal.org/s/7t9d6xPfk8tsDxB/download/openjdk-17.0.2_macos-x64_bin.zip"
 const macjavax64file = homePath + "/openjdk-17.0.2_macos-x64_bin.zip"
 const macjavax64bindir = homePath + "/jdk-17.0.2/Contents/Home/bin"
 const macjavax64binfile = homePath + "/jdk-17.0.2/Contents/Home/bin/java"
 
 const macjavaaarch64url = "https://download.qortal.online/openjdk-17.0.2_macos-aarch64_bin.zip"
+const macjavaaarch64urlbackup = "https://cloud.qortal.org/s/GRE3CGqMospwtZP/download/openjdk-17.0.2_macos-aarch64_bin.zip"
 const macjavaaarch64file = homePath + "/openjdk-17.0.2_macos-aarch64_bin.zip"
 const macjavaaarch64bindir = homePath + "/jdk-17.0.2/Contents/Home/bin"
 const macjavaaarch64binfile = homePath + "/jdk-17.0.2/Contents/Home/bin/java"
@@ -159,6 +165,18 @@ const isRunning = (query, cb) => {
 	exec(cmd, (err, stdout, stderr) => {
 		cb(stdout.toLowerCase().indexOf(query.toLowerCase()) > -1)
 	})
+}
+
+function doesFileExist(urlToJavaFile) {
+	var xhr = new XMLHttpRequest()
+	xhr.open('HEAD', urlToJavaFile, true)
+	xhr.send()
+     
+	if (xhr.status == "404") {
+		return false
+	} else {
+		return true
+	}
 }
 
 async function checkWin() {
@@ -405,72 +423,147 @@ async function installJava() {
 
 	if (process.platform === 'linux') {
 		if (process.arch === 'x64') {
-			try {
-				splashLoader.show()
-				await electronDl.download(myWindow, linjavax64url, {
-					directory: homePath,
-					onProgress: function () { log.info("Starting Download JAVA") }
-				})
-			} catch (err) {
+			if (doesFileExist(linjavax64url) == true) {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavax64url, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
 				splashLoader.destroy()
-				log.info('Download JAVA error', err)
+				unzipJavaX64Linux()
+			} else {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavax64urlbackup, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
+				splashLoader.destroy()
+				unzipJavaX64Linux()
 			}
-			splashLoader.destroy()
-			unzipJavaX64Linux()
 		} else if (process.arch === 'arm64') {
-			try {
-				splashLoader.show()
-				await electronDl.download(myWindow, linjavaarm64url, {
-					directory: homePath,
-					onProgress: function () { log.info("Starting Download JAVA") }
-				})
-			} catch (err) {
+			if (doesFileExist(linjavaarm64url) == true) {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavaarm64url, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
 				splashLoader.destroy()
-				log.info('Download JAVA error', err)
+				unzipJavaArm64Linux()
+			} else {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavaarm64urlbackup, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
+				splashLoader.destroy()
+				unzipJavaArm64Linux()
 			}
-			splashLoader.destroy()
-			unzipJavaArm64Linux()
 		} else if (process.arch === 'arm') {
-			try {
-				splashLoader.show()
-				await electronDl.download(myWindow, linjavaarmurl, {
-					directory: homePath,
-					onProgress: function () { log.info("Starting Download JAVA") }
-				})
-			} catch (err) {
+			if (doesFileExist(linjavaarmurl) == true) {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavaarmurl, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
 				splashLoader.destroy()
-				log.info('Download JAVA error', err)
+				unzipJavaArmLinux()
+			} else {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, linjavaarmurlbackup, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
+				splashLoader.destroy()
+				unzipJavaArmLinux()
 			}
-			splashLoader.destroy()
-			unzipJavaArmLinux()
 		}
 	} else if (process.platform === 'darwin') {
 		if (process.arch === 'x64') {
-			try {
-				splashLoader.show()
-				await electronDl.download(myWindow, macjavax64url, {
-					directory: homePath,
-					onProgress: function () { log.info("Starting Download JAVA") }
-				})
-			} catch (err) {
+			if (doesFileExist(macjavax64url) == true) {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, macjavax64url, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
 				splashLoader.destroy()
-				log.info('Download JAVA error', err)
+				unzipJavaX64Mac()
+			} else {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, macjavax64urlbackup, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
+				splashLoader.destroy()
+				unzipJavaX64Mac()
 			}
-			splashLoader.destroy()
-			unzipJavaX64Mac()
 		} else {
-			try {
-				splashLoader.show()
-				await electronDl.download(myWindow, macjavaaarch64url, {
-					directory: homePath,
-					onProgress: function () { log.info("Starting Download JAVA") }
-				})
-			} catch (err) {
+			if (doesFileExist(macjavaaarch64url) == true) {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, macjavaaarch64url, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
 				splashLoader.destroy()
-				log.info('Download JAVA error', err)
+				unzipJavaAarch64Mac()
+			} else {
+				try {
+					splashLoader.show()
+					await electronDl.download(myWindow, macjavaaarch64urlbackup, {
+						directory: homePath,
+						onProgress: function () { log.info("Starting Download JAVA") }
+					})
+				} catch (err) {
+					splashLoader.destroy()
+					log.info('Download JAVA error', err)
+				}
+				splashLoader.destroy()
+				unzipJavaAarch64Mac()
 			}
-			splashLoader.destroy()
-			unzipJavaAarch64Mac()
 		}
 	}
 }
@@ -1260,5 +1353,4 @@ if (!isLock) {
 	process.on('uncaughtException', function (err) {
 		log.info("*** WHOOPS TIME ***" + err)
 	})
-
 }
