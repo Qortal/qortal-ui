@@ -69,8 +69,9 @@
 		"prosemirror-state": "1.4.3",
 		"prosemirror-transform": "1.8.0",
 		"prosemirror-view": "1.32.7",
-		"sass": "1.69.7",
-		"short-unique-id": "5.0.3"
+		"sass": "1.70.0",
+		"short-unique-id": "5.0.3",
+		"xhr2": "0.2.1"
 	},
 	"devDependencies": {
 		"@babel/core": "7.23.7",
@@ -124,7 +125,7 @@
 		"@vaadin/tooltip": "24.2.5",
 		"@zip.js/zip.js": "2.7.32",
 		"axios": "1.6.5",
-		"electron": "28.1.3",
+		"electron": "28.1.4",
 		"electron-builder": "24.9.1",
 		"electron-packager": "17.1.2",
 		"epml": "0.3.3",
