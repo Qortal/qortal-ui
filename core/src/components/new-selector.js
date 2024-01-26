@@ -74,6 +74,7 @@ class NewSelector extends LitElement {
                     <option value="de">DE - ${translate("selectmenu.german")}</option>
                     <option value="es">ES - ${translate("selectmenu.spanish")}</option>
                     <option value="et">ET - ${translate("selectmenu.estonian")}</option>
+                    <option value="fi">FI - ${translate("selectmenu.finnish")}</option>
                     <option value="fr">FR - ${translate("selectmenu.french")}</option>
                     <option value="hr">HR - ${translate("selectmenu.croatian")}</option>
                     <option value="hu">HU - ${translate("selectmenu.hungarian")}</option>
