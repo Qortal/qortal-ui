@@ -4330,6 +4330,8 @@ const styles = `
 		flex-direction: column;
 		align-items: center;
 		gap: 15px;
+		overflow: auto;
+    	max-height: calc(95vh - 250px);
 	}
 
 	.modal-paragraph-error {
