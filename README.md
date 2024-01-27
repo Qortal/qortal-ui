@@ -4,7 +4,6 @@
 [![GitHub Releases](https://img.shields.io/github/downloads/Qortal/qortal-ui/latest/total)](https://github.com/Qortal/qortal-ui/releases/latest)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](https://opensource.org/licenses/GPL-3.0)
 [![Qortal Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=Chat&logo=discord&logoColor=white)](https://discord.com/invite/54UyhB7)
-[![Qortal Apps Discord Invite](https://img.shields.io/discord/745037351163527189?color=%237289DA&label=Q-Apps&logo=discord&logoColor=white)](https://discord.com/invite/tqnpDMfuR2)
 
 Decentralizing The World
 
@@ -28,7 +27,7 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
 ``` nvm install v18.18.2 ```  (LTS: Hydrogen supported by Electron) <br/>
-``` npm --location=global install npm@10.3.0 ``` <br/>
+``` npm --location=global install npm@10.4.0 ``` <br/>
 
 Adding via binary package mirror will only work if you have set the package path. You can do a node or java build via ports instead by downloading ports with portsnap fetch method.
 

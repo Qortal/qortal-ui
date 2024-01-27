@@ -35,7 +35,7 @@ class NewSelector extends LitElement {
                     border-radius: 3px;
                     color: var(--black);
                     background: var(--white);
-                    overflow: hidden;
+                    overflow: auto;
                 }
 
                 *:focus {

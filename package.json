@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui",
-	"version": "4.4.4",
+	"version": "4.5.0",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -50,7 +50,7 @@
 		"crypto-js": "4.2.0",
 		"driver.js": "1.3.1",
 		"electron-dl": "3.5.1",
-		"electron-log": "5.0.3",
+		"electron-log": "5.1.0",
 		"electron-store": "8.1.0",
 		"electron-updater": "6.1.7",
 		"emoji-picker-js": "https://github.com/Qortal/emoji-picker-js",
@@ -74,7 +74,7 @@
 		"xhr2": "0.2.1"
 	},
 	"devDependencies": {
-		"@babel/core": "7.23.7",
+		"@babel/core": "7.23.9",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
 		"@material/mwc-dialog": "0.27.0",
@@ -123,9 +123,9 @@
 		"@vaadin/icons": "24.2.5",
 		"@vaadin/password-field": "24.2.5",
 		"@vaadin/tooltip": "24.2.5",
-		"@zip.js/zip.js": "2.7.32",
-		"axios": "1.6.5",
-		"electron": "28.1.4",
+		"@zip.js/zip.js": "2.7.33",
+		"axios": "1.6.7",
+		"electron": "28.2.0",
 		"electron-builder": "24.9.1",
 		"electron-packager": "17.1.2",
 		"epml": "0.3.3",
@@ -141,7 +141,7 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "5.0.1",
 		"redux-thunk": "3.1.0",
-		"rollup": "4.9.5",
+		"rollup": "4.9.6",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
