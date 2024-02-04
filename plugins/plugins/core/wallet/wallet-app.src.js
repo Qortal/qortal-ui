@@ -4688,6 +4688,7 @@ class MultiWallet extends LitElement {
         await this.fetchWalletAddress(this._selectedWallet)
         await this.fetchWalletServer(this._selectedWallet)
         await this.fetchWalletDetails(this._selectedWallet)
+        await this.fetchWalletServer(this._selectedWallet)
         if (this._selectedWallet == coin) {
             await this.renderTransactions()
             await this.getTransactionGrid(this._selectedWallet)
