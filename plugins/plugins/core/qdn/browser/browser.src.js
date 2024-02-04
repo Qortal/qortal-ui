@@ -270,7 +270,6 @@ class WebBrowser extends LitElement {
 			const name = parts[0]
 			parts.shift()
 			let identifier
-			let path
 			if (parts.length > 0) {
 				identifier = parts[0] // Do not shift yet
 				// Check if a resource exists with this service, name and identifier combination
@@ -286,6 +285,7 @@ class WebBrowser extends LitElement {
 					identifier = null
 				}
 			}
+			const path = parts.join("/")
 			const components = {}
 			components["service"] = service
 			components["name"] = name
