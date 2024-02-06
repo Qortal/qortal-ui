@@ -87,6 +87,23 @@ class Puzzles extends LitElement {
 			box-shadow: 0 .3px 1px 0 rgba(0,0,0,0.14), 0 1px 1px -1px rgba(0,0,0,0.12), 0 1px 2px 0 rgba(0,0,0,0.20);
 			margin-bottom: 2em;
 		}
+
+        paper-spinner-lite {
+            height: 30px;
+            width: 30px;
+            --paper-spinner-color: var(--mdc-theme-primary);
+            --paper-spinner-stroke-width: 3px;
+        }
+
+        .spinner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 	`
     }
 
@@ -132,6 +149,11 @@ class Puzzles extends LitElement {
                         			}
                     			}}></vaadin-grid-column>
 				    </vaadin-grid>
+                    ${this.loading ? html`
+                        <div class="spinner">
+                            <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                    ` : ''}
 
 				    <mwc-dialog id="puzzleGuessDialog" scrimClickAction="${this.loading ? '' : 'close'}">
 					<div>${translate("puzzlepage.pchange9")} ${this.selectedPuzzle.reward} QORT:</div>
@@ -252,6 +274,7 @@ class Puzzles extends LitElement {
         }
 
         const updatePuzzles = async () => {
+            this.loading = true;
             let _puzzleGroupMembers = await getPuzzleGroupMembers()
 
             let _puzzles = []
@@ -305,6 +328,7 @@ class Puzzles extends LitElement {
                 }))
 
             this.puzzles = _puzzles;
+            this.loading = false;
 
             setTimeout(updatePuzzles, 60000)
         }
