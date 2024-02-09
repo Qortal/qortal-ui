@@ -527,8 +527,8 @@ class MintingInfo extends LitElement {
     _levelUpDays() {
         let nextBatch = 1000 - (this.nodeInfo.height % 1000)
         let countBlocks = this._blocksNeed() - (this.addressInfo.blocksMinted + this.addressInfo.blocksMintedAdjustment)
-        let countBlocksActual = countBlocks + 1000 + nextBatch - (countBlocks % 1000)
-        countBlocksActual += +countBlocksActual < 0 ? 1000 : 0
+        countBlocks = +countBlocks + 1000
+        let countBlocksActual = countBlocks + nextBatch - (countBlocks % 1000)
         let countDays = (countBlocksActual / this._timeCalc()).toFixed(2)
         let countString = countDays.toString()
         return "" + countString
@@ -537,8 +537,8 @@ class MintingInfo extends LitElement {
     _levelUpBlocks() {
         let nextBatch = 1000 - (this.nodeInfo.height % 1000)
         let countBlocks = this._blocksNeed() - (this.addressInfo.blocksMinted + this.addressInfo.blocksMintedAdjustment)
-        let countBlocksActual = countBlocks + 1000 + nextBatch - (countBlocks % 1000)
-        countBlocksActual += +countBlocksActual < 0 ? 1000 : 0
+        countBlocks = +countBlocks + 1000
+        let countBlocksActual = countBlocks + nextBatch - (countBlocks % 1000)
         let countBlocksString = countBlocksActual.toString()
         return "" + countBlocksString
     }
