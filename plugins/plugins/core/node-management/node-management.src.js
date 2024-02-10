@@ -154,9 +154,7 @@ class NodeManagement extends LitElement {
             <div id="node-management-page">
                 <div class="node-card">
                     <h2>${translate("nodepage.nchange1")} ${this.nodeDomain}</h2>
-                    <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.openBootstrapDialog()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
-                    <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>
-                    ${this.renderStartStopButton()}
+                    ${this.renderButtons()}
                     <span class="sblack"><br>${translate("nodepage.nchange2")} ${this.upTime}</span>
                     <br><br>
                     <div id="minting">
@@ -417,14 +415,18 @@ class NodeManagement extends LitElement {
             })
     }
 
-    renderStartStopButton() {
+    renderButtons() {
         if (!isElectron()) {
-            return html`<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>`
+            return html`<mwc-button style="float:right;" class="red" ?hidden="${(this.upTime === "offline")}" @click=${() => this.stopNode()}><mwc-icon>dangerous</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
+            <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.openBootstrapDialog()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
+            <mwc-button style="float:right;" ?hidden="${(this.upTime === "offline")}" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>`
         } else {
             if (this.upTime === "offline") {
                  return html`<mwc-button style="float:right;" class="green" @click=${() => this.startNode()}><mwc-icon>play_circle</mwc-icon>&nbsp;${translate("nodepage.nchange35")}</mwc-button>`
             } else {
-                 return html`<mwc-button style="float:right;" class="red" @click=${() => this.stopNode()}><mwc-icon>stop_circle</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>`
+                 return html`<mwc-button style="float:right;" class="red" @click=${() => this.stopNode()}><mwc-icon>stop_circle</mwc-icon>&nbsp;${translate("nodepage.nchange31")}</mwc-button>
+                 <mwc-button style="float:right;" @click=${() => this.openBootstrapDialog()}><mwc-icon>restart_alt</mwc-icon>&nbsp;${translate("tour.tour18")}</mwc-button>
+                 <mwc-button style="float:right;" @click=${() => this.restartNode()}><mwc-icon>360</mwc-icon>&nbsp;${translate("nodepage.nchange33")}</mwc-button>`
             }
         }
     }
