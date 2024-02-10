@@ -144,9 +144,11 @@ const ERROR_CODES = {
 	97: "Name Blocked",
 	98: "Group approval required",
 	99: "Account not transferable",
+	100: "Transfer privs disabled",
 
 	999: "Ivalid but ok",
-	1000: "Not yet released."
+	1000: "Not yet released.",
+	1001: "Not supported."
 }
 
 // Qortal 8 decimals
