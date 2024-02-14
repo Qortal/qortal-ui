@@ -30,7 +30,6 @@ class NamesMarket extends LitElement {
         return {
             theme: { type: String, reflect: true },
             qortWalletBalance: { type: Number },
-            loading: { type: Boolean },
             marketSellNames: { type: Array },
             marketSoldNames: { type: Array },
             filteredItems: { type: Array },
@@ -163,6 +162,23 @@ class NamesMarket extends LitElement {
 
             .buttons {
                 text-align: right;
+            }
+
+            paper-spinner-lite {
+                height: 30px;
+                width: 30px;
+                --paper-spinner-color: var(--mdc-theme-primary);
+                --paper-spinner-stroke-width: 3px;
+            }
+
+            .spinner {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
 
             #pages {
@@ -362,9 +378,14 @@ class NamesMarket extends LitElement {
                                 }}></vaadin-grid-column>
                             </vaadin-grid>
                             <div id="pages"></div>
-                            ${this.isEmptyArray(this.marketSellNames) ? html`
+                            ${(this.isEmptyArray(this.marketSellNames) && !this.isLoading) ? html`
                                 <span style="color: var(--black);">${translate("registernamepage.nchange24")}</span>
                             `: ''}
+                            ${this.isLoading ? html`
+                                <div class="spinner">
+                                    <paper-spinner-lite active></paper-spinner-lite>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                     <div id="tab-sold-content">
@@ -383,9 +404,14 @@ class NamesMarket extends LitElement {
                                 }}></vaadin-grid-column>
                             </vaadin-grid>
                             <div id="pagesSold"></div>
-                            ${this.isEmptyArray(this.marketSoldNames) ? html`
+                            ${(this.isEmptyArray(this.marketSoldNames) && !this.isLoading) ? html`
                                 <span style="color: var(--black);">${translate("registernamepage.nchange24")}</span>
                             `: ''}
+                            ${this.isLoading ? html`
+                                <div class="spinner">
+                                    <paper-spinner-lite active></paper-spinner-lite>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -548,22 +574,26 @@ class NamesMarket extends LitElement {
         }, 0)
 
         const fetchMarketSellNames = async () => {
+            this.isLoading = true
             await parentEpml.request('apiCall', {
                 url: `/names/forsale?limit=0&reverse=true`
             }).then(res => {
                 this.marketSellNames = res
             })
             this.updatePageSize()
+            this.isLoading = false
             setTimeout(fetchMarketSellNames, 180000)
         }
 
         const fetchMarketSoldNames = async () => {
+            this.isLoading = true
             await parentEpml.request('apiCall', {
                 url: `/transactions/search?txType=BUY_NAME&confirmationStatus=BOTH&limit=0&reverse=true`
             }).then(res => {
                 this.marketSoldNames = res
             })
             this.updatePageSoldSize()
+            this.isLoading = false
             setTimeout(fetchMarketSoldNames, 300000)
         }
 

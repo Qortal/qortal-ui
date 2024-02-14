@@ -20,7 +20,7 @@ const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 class RewardShare extends LitElement {
     static get properties() {
         return {
-            loading: { type: Boolean },
+            isLoading: { type: Boolean },
             rewardShares: { type: Array },
             recipientPublicKey: { type: String },
             selectedAddress: { type: Object },
@@ -80,6 +80,23 @@ class RewardShare extends LitElement {
             .red {
                 --mdc-theme-primary: #F44336;
             }
+
+            paper-spinner-lite {
+                height: 30px;
+                width: 30px;
+                --paper-spinner-color: var(--mdc-theme-primary);
+                --paper-spinner-stroke-width: 3px;
+            }
+
+            .spinner {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
         `
     }
 
@@ -92,6 +109,7 @@ class RewardShare extends LitElement {
         this.btnDisable = false
         this.createRewardShareLoading = false
         this.removeRewardShareLoading = false
+        this.isLoading = false
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
@@ -115,6 +133,14 @@ class RewardShare extends LitElement {
                         }}>
                         </vaadin-grid-column>
                     </vaadin-grid>
+                    ${(this.isEmptyArray(this.rewardShares) && !this.isLoading) ? html`
+                        <span style="color: var(--black);">${translate("rewardsharepage.rchange15")}</span>
+                    `: ''}
+                    ${this.isLoading ? html`
+                        <div class="spinner">
+                            <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                    ` : ''}
                 </div>
 
                 <mwc-dialog id="createRewardShareDialog" scrimClickAction="${this.createRewardShareLoading ? '' : 'close'}">
@@ -202,9 +228,6 @@ class RewardShare extends LitElement {
                      ${translate("general.close")}
                     </mwc-button>
                 </mwc-dialog>
-                ${this.isEmptyArray(this.rewardShares) ? html`
-                    <span style="color: var(--black);">${translate("rewardsharepage.rchange15")}</span>
-                `: ''}
             </div>
         `
     }
@@ -236,11 +259,13 @@ class RewardShare extends LitElement {
         }
 
         const updateRewardshares = () => {
+            this.isLoading = true
             this.rewardShares = []
             parentEpml.request('apiCall', {
                 url: `/addresses/rewardshares?involving=${this.selectedAddress.address}`
             }).then(res => {
                 this.rewardShares = res
+                this.isLoading = false
             })
             setTimeout(updateRewardshares, 60000)
         }

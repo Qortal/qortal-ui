@@ -29,7 +29,6 @@ class NameRegistration extends LitElement {
         return {
             theme: { type: String, reflect: true },
             qortWalletBalance: { type: Number },
-            loading: { type: Boolean },
             names: { type: Array },
             marketSellNames: { type: Array },
             recipientPublicKey: { type: String },
@@ -129,6 +128,23 @@ class NameRegistration extends LitElement {
 
             .buttons {
                 text-align: right;
+            }
+
+            paper-spinner-lite {
+                height: 30px;
+                width: 30px;
+                --paper-spinner-color: var(--mdc-theme-primary);
+                --paper-spinner-stroke-width: 3px;
+            }
+
+            .spinner {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
 
             #pages {
@@ -276,9 +292,14 @@ class NameRegistration extends LitElement {
                             }
                         }}></vaadin-grid-column>
                     </vaadin-grid>
-                    ${this.isEmptyArray(this.names) ? html`
+                    ${(this.isEmptyArray(this.names) && !this.isLoading) ? html`
                         <span style="color: var(--black);">${translate("registernamepage.nchange8")}</span>
                     `: ''}
+                    ${this.isLoading ? html`
+                        <div class="spinner">
+                            <paper-spinner-lite active></paper-spinner-lite>
+                        </div>
+                    ` : ''}
                 </div>
 
                 <mwc-dialog id="registerNameDialog" scrimClickAction="${this.registerNameLoading ? '' : 'close'}">
@@ -545,10 +566,12 @@ class NameRegistration extends LitElement {
         this.unitCancelSellFee()
 
         const fetchNames = () => {
+            this.isLoading = true
             parentEpml.request('apiCall', {
                 url: `/names/address/${this.selectedAddress.address}?limit=0&reverse=true`
             }).then(res => {
                 setTimeout(() => { this.names = res }, 1)
+                this.isLoading = false
             })
             setTimeout(fetchNames, this.config.user.nodeSettings.pingInterval)
         }
