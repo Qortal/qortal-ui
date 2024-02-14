@@ -1018,10 +1018,13 @@ Menu.setApplicationMenu(editMenu)
 let myWindow = null
 
 function createWindow() {
+	// Get saved window config, or default to empty object
+	let windowConfig = store.get('winBounds', {})
 	myWindow = new BrowserWindow({
 		backgroundColor: '#eee',
-		width: 1280,
-		height: 720,
+		// Use saved size, or default values if config is empty
+		width: windowConfig.width || 1280,
+		height: windowConfig.height || 720,
 		minWidth: 700,
 		minHeight: 640,
 		icon: path.join(__dirname + '/img/icons/png/256x256.png'),
@@ -1038,9 +1041,27 @@ function createWindow() {
 		},
 		show: false
 	})
-	myWindow.maximize()
-	myWindow.show()
+	// Maximize window if saved config was maximized
+	if (store.get('isMaximized', false)) {
+		myWindow.maximize()
+	// Apply saved window position if config is not empty
+	} else if (windowConfig.x !== undefined && windowConfig.y !== undefined) {
+		myWindow.setPosition(windowConfig.x, windowConfig.y)
+		// Electron centers windows by default if position is not set
+	}
+	// Wait until window is ready before showing
+	myWindow.once('ready-to-show', myWindow.show)
 	myWindow.loadURL('http://localhost:12388/app')
+	// Save current window config when closing
+	myWindow.on('close', () => {
+		// Save current maximized state
+		const isMaximized = myWindow.isMaximized()
+		store.set('isMaximized', isMaximized)
+		// Save current size and position if not maximized
+		if (!isMaximized) {
+			store.set('winBounds', myWindow.getBounds())
+		}
+	})
 	myWindow.on('closed', function () {
 		myWindow = null
 	})
