@@ -50,7 +50,7 @@ const ERROR_CODES = {
 	1: "Valid OK",
 	2: "Invalid address",
 	3: "Negative amount",
-	4: "Nagative fee",
+	4: "Negative fee",
 	5: "No balance",
 	6: "Invalid reference",
 	7: "Invalid time length",
@@ -97,7 +97,7 @@ const ERROR_CODES = {
 	48: "Group already exists",
 	49: "Group does not exist",
 	50: "Invalid group owner",
-	51: "Already group memeber",
+	51: "Already group member",
 	52: "Group owner can not leave",
 	53: "Not group member",
 	54: "Already group admin",
@@ -139,17 +139,17 @@ const ERROR_CODES = {
 	92: "Account already exists",
 	93: "Invalid group block delay",
 	94: "Incorrect nonce",
-	95: "Ivalid timestamp signature",
+	95: "Invalid timestamp signature",
 	96: "Address blocked",
-	97: "Name Blocked",
+	97: "Name blocked",
 	98: "Group approval required",
 	99: "Account not transferable",
 	100: "Transfer privs disabled",
 	101: "Name registration temporary disabled",
 
-	999: "Ivalid but ok",
-	1000: "Not yet released.",
-	1001: "Not supported."
+	999: "Invalid but OK",
+	1000: "Not yet released",
+	1001: "Not supported"
 }
 
 // Qortal 8 decimals
