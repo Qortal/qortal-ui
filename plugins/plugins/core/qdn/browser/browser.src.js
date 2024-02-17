@@ -845,12 +845,12 @@ class WebBrowser extends LitElement {
 							data64 = await fileToBase64(data.file)
 						}
 						if (!data64) {
-							
+
 							dataSentBack['error'] = "Please include data to encrypt"
 							response = JSON.stringify(dataSentBack)
 							break
 						}
-				
+
 						const encryptDataResponse = encryptDataGroup({
 							data64, publicKeys: publicKeys
 						})
@@ -859,7 +859,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(encryptDataResponse)
 							break;
 						} else {
-						
+
 							dataSentBack['error'] = "Unable to encrypt"
 							response = JSON.stringify(dataSentBack)
 							break
@@ -2607,6 +2607,50 @@ class WebBrowser extends LitElement {
 					} else if (userWallet.action === 'reject') {
 						response = '{"error": "User declined request"}'
 					}
+
+					break
+				}
+
+				case actions.GET_CROSSCHAIN_SERVER_INFO: {
+					const requiredFields = ['coin']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					let _url = `/crosschain/` + data.coin.toLowerCase() + `/serverinfos`
+					try {
+						this.loader.show()
+						const res = await parentEpml.request('apiCall', {
+							url: _url,
+							method: 'GET',
+							headers: {
+								'Accept': '*/*'
+							}
+						})
+						response = JSON.stringify(res.servers);
+					} catch (error) {
+							console.error(error)
+							const data = {}
+							const errorMsg = error.message || 'Error in retrieving server info'
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
+							return
+						} finally {
+							this.loader.hide()
+						}
 
 					break
 				}
