@@ -57,15 +57,15 @@ class CreateAccountSection extends connect(store)(LitElement) {
         return [
             css`
 	        * {
-		    --mdc-theme-primary: rgb(3, 169, 244);
+		    --mdc-theme-primary: var(--login-button);
                     --mdc-theme-secondary: var(--mdc-theme-primary);
                     --paper-input-container-focus-color: var(--mdc-theme-primary);
                     --mdc-theme-surface: var(--white);
                     --mdc-dialog-content-ink-color: var(--black);
                     --mdc-checkbox-unchecked-color: var(--black);
-                    --lumo-primary-text-color: rgb(0, 167, 245);
-                    --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
-                    --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
+                    --lumo-primary-text-color: var(--login-border);
+                    --lumo-primary-color-50pct: var(--login-border-50pct);
+                    --lumo-primary-color-10pct: var(--login-border-10pct);
                     --lumo-primary-color: hsl(199, 100%, 48%);
                     --lumo-base-color: var(--white);
                     --lumo-body-text-color: var(--black);

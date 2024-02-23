@@ -44,7 +44,7 @@ class SettingsPage extends connect(store)(LitElement) {
 	static get styles() {
 		return css`
 			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
+				--mdc-theme-primary: var(--login-button);
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--mdc-dialog-content-ink-color: var(--black);
 				--mdc-theme-surface: var(--white);
@@ -70,7 +70,7 @@ class SettingsPage extends connect(store)(LitElement) {
 				display: inline-block;
 				width: 150px;
 				font-weight: 600;
-				color: #03a9f4;
+				color: var(--accent-color);
 				border: 1px solid transparent;
 			}
 
@@ -87,7 +87,7 @@ class SettingsPage extends connect(store)(LitElement) {
 			}
 
 			.buttonBlue {
-				color: #03a9f4;
+				color: var(--accent-color);
 			}
 
 			.floatleft {

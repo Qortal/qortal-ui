@@ -21,9 +21,9 @@ class WelcomePage extends LitElement {
         return [
             css`
                 * {
-                    --mdc-theme-primary: rgb(3, 169, 244);
+                    --mdc-theme-primary: var(--login-button);
                     --mdc-theme-secondary: var(--mdc-theme-primary);
-                    --mdc-button-outline-color: #03a9f4;
+                    --mdc-button-outline-color: var(--accent-color);
                 }
 
                 mwc-button {
