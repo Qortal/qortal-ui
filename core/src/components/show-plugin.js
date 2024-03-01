@@ -211,7 +211,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 font-weight: bold;
                 background: none;
                 border: none;
-                color: #03a9f4;
+                color: var(--accent-color);
                 font-size: 2em;
                 cursor: pointer;
                 transition: color 0.3s;
@@ -229,7 +229,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 max-height: 28px;
                 padding: 5px 5px;
                 font-size: 14px;
-                background-color: #03a9f4;
+                background-color: var(--accent-color);
                 color: white;
                 border: 1px solid transparent;
                 border-radius: 3px;
@@ -248,7 +248,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             .iconActive {
                 position: absolute;
                 top: 5px;
-                color: #03a9f4;
+                color: var(--accent-color);
                 --mdc-icon-size: 24px;
             }
 
@@ -260,7 +260,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tab:hover .iconInactive {
-                color: #03a9f4;
+                color: var(--accent-color);
             }
 
             .count {
@@ -1078,7 +1078,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .resetIcon:hover {
-            color: #03a9f4;
+            color: var(--accent-color);
             font-weight: bold;
         }
 
@@ -1092,7 +1092,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .searchIcon:hover {
-            color: #03a9f4;
+            color: var(--accent-color);
             font-weight: bold;
         }
 
@@ -1106,7 +1106,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .importIcon:hover {
-            color: #03a9f4;
+            color: var(--accent-color);
             font-weight: bold;
         }
 
@@ -1120,7 +1120,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .exportIcon:hover {
-            color: #03a9f4;
+            color: var(--accent-color);
             font-weight: bold;
         }
 
@@ -1141,7 +1141,7 @@ class NavBar extends connect(store)(LitElement) {
         paper-dialog button {
             padding: 5px 10px;
             font-size: 18px;
-            background-color: #03a9f4;
+            background-color: var(--accent-color);
             color: white;
             border: 1px solid transparent;
             border-radius: 5px;
@@ -1175,7 +1175,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         vaadin-text-field[focused]::part(input-field) {
-            border-color: #03a9f4;
+            border-color: var(--accent-color);
         }
     `
 

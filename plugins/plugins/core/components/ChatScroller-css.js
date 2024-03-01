@@ -63,13 +63,13 @@ export const chatStyles = css`
 
 	.message-data-name {
 		user-select: none;
-		color: #03a9f4;
+		color: var(--qchat-name);
 		margin-bottom: 5px;
 	}
 
 	.forwarded-text {
 		user-select: none;
-		color: #03a9f4;
+		color: var(--accent-color);
 		margin-bottom: 5px;
 	}
 
@@ -81,7 +81,7 @@ export const chatStyles = css`
 	}
 
 	.message-data-my-name {
-		color: #05be0e;
+		color: var(--qchat-my-name);
 		font-weight: bold;
 	}
 

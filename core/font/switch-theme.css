@@ -66,6 +66,13 @@ html {
   --app-hr: rgba(0, 0, 0, .3);
   --code-block-text-color: #008fd5;
   --noavatar: url("/img/noavatar_light.png");
+  --login-border: rgba(0, 167, 245);
+  --login-border-50pct: rgba(0, 167, 245, 0.5);
+  --login-border-10pct: rgba(0, 167, 245, 0.1);
+  --login-button: rgb(3, 169, 244);
+  --accent-color: #03a9f4;
+  --qchat-name: #03a9f4;
+  --qchat-my-name: #05be0e;
 }
 
 html[theme="dark"] {
@@ -136,4 +143,11 @@ html[theme="dark"] {
   --app-hr: rgba(255, 255, 255, .3);
   --code-block-text-color: #008fd5;
   --noavatar: url("/img/noavatar_dark.png");
+  --login-border: rgba(0, 167, 245);
+  --login-border-50pct: rgba(0, 167, 245, 0.5);
+  --login-border-10pct: rgba(0, 167, 245, 0.1);
+  --login-button: rgb(3, 169, 244);
+  --accent-color: #03a9f4;
+  --qchat-name: #03a9f4;
+  --qchat-my-name: #05be0e;
 }
