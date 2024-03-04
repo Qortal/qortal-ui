@@ -40,19 +40,6 @@ class QortThemeToggle extends LitElement {
         height: 100%;
       }
 
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        width: 100%;
-        height: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: var(--switchbackground);
-        border: 2px solid var(--switchborder);
-        border-radius: 1rem;
-        transition: all .4s ease;
-      }
-
       .icon {
         width: 32px;
         height: 32px;
@@ -65,13 +52,16 @@ class QortThemeToggle extends LitElement {
         transition: transform 300ms ease;
       }
 
-      :host([theme="light"]) .icon {
+      .icon {
         transform: translate(0, -50%);
       }
 
-      input:checked ~ .icon,
-      :host([theme="dark"]) .icon {
-        transform: translate(calc(100% - 12px), -50%);
+      .sun {
+        display: none;
+      }
+
+      :host([theme="light"]) .sun {
+        display: inline-block;
       }
 
       .moon {
@@ -82,10 +72,6 @@ class QortThemeToggle extends LitElement {
         transform: scale(0.6);
       }
 
-      :host([theme="dark"]) .sun {
-        display: none;
-      }
-
       :host([theme="dark"]) .moon {
         display: inline-block;
       }
@@ -94,8 +80,7 @@ class QortThemeToggle extends LitElement {
 
   render() {
     return html`
-      <input type="checkbox" @change=${() => this.toggleTheme()}/>
-      <div class="slider"></div>
+      <input type="button" @click=${() => this.toggleTheme()}/>
       <div class="icon">
         <span class="sun">${svgSun}</span>
         <span class="moon">${svgMoon}</span>
@@ -109,11 +94,16 @@ class QortThemeToggle extends LitElement {
 
 
   toggleTheme() {
-    if (this.theme === 'light') {
-      this.theme = 'dark';
-    } else {
-      this.theme = 'light';
-    }
+		switch (this.theme) {
+			case 'light':
+				this.theme = 'dark';
+        break;
+			case 'dark':
+				this.theme = 'light';
+        break;
+			default:
+				this.theme = 'light';
+		}
     this.dispatchEvent(
       new CustomEvent('qort-theme-change', {
         bubbles: true,
