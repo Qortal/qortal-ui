@@ -301,13 +301,7 @@ class ChatTextEditor extends LitElement {
         window.addEventListener('storage', () => {
             const checkTheme = localStorage.getItem('qortalTheme')
             const chatbar = this.shadowRoot.getElementById(this.iframeId).contentWindow.document.getElementById('chatbarId')
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
-                chatbar.style.cssText = "color:#ffffff;"
-            } else {
-                this.theme = 'light'
-                chatbar.style.cssText = "color:#080808;"
-            }
+            chatbar.style.cssText = "color: var(--chat-bubble-msg-color);"
         })
 
         this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button');
@@ -785,7 +779,7 @@ class ChatTextEditor extends LitElement {
                 elemDiv.setAttribute('contenteditable', 'true');
                 elemDiv.setAttribute('spellcheck', 'false');
                 elemDiv.setAttribute('data-placeholder', editorConfig.placeholder);
-                elemDiv.style.cssText = `width:100%; ${editorConfig.theme === "dark" ? "color:#ffffff;" : "color: #080808"}`;
+                elemDiv.style.cssText = `width:100%; color:var(--chat-bubble-msg-color);`;
                 elemDiv.id = 'chatbarId';
                 editor.content.body.appendChild(elemDiv);
                 editor.contentDiv =  editor.frame.contentDocument.body.firstChild;

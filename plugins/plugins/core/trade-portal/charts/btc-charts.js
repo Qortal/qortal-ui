@@ -105,7 +105,7 @@ class BtcCharts extends LitElement {
 
 			use(checkLanguage)
 
-			this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
+			this.theme = (checkTheme) ? checkTheme : 'light'
 			document.querySelector('html').setAttribute('theme', this.theme)
 		})
 	}
@@ -185,7 +185,7 @@ class BtcCharts extends LitElement {
 
 	changeTheme() {
 		const checkTheme = localStorage.getItem('qortalTheme')
-		this.theme = (checkTheme === 'dark') ? 'dark' : 'light'
+		this.theme = (checkTheme) ? checkTheme : 'light'
 		document.querySelector('html').setAttribute('theme', this.theme);
 	}
 

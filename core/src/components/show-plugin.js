@@ -549,8 +549,8 @@ class ShowPlugin extends connect(store)(LitElement) {
 
             use(checkLanguage)
 
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
+            if (checkTheme) {
+                this.theme = checkTheme
             } else {
                 this.theme = 'light'
             }

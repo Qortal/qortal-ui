@@ -1422,8 +1422,8 @@ class ChatPage extends LitElement {
 
             this.userLanguage = checkLanguage
 
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
+            if (checkTheme) {
+                this.theme = checkTheme
             } else {
                 this.theme = 'light'
             }
@@ -1445,8 +1445,8 @@ class ChatPage extends LitElement {
 
     changeTheme() {
         const checkTheme = localStorage.getItem('qortalTheme')
-        if (checkTheme === 'dark') {
-            this.theme = 'dark'
+        if (checkTheme) {
+            this.theme = checkTheme
         } else {
             this.theme = 'light'
         }
