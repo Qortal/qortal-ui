@@ -4643,43 +4643,12 @@ class MultiWallet extends LitElement {
     }
 
     renderSendButton() {
-        if ( this._selectedWallet === "qort" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('qort')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
-        } else if ( this._selectedWallet === "btc" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('btc')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} BTC</vaadin-button>`
-        } else if ( this._selectedWallet === "ltc" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('ltc')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} LTC</vaadin-button>`
-        } else if ( this._selectedWallet === "doge" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('doge')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DOGE</vaadin-button>`
-        } else if ( this._selectedWallet === "dgb" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('dgb')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DGB</vaadin-button>`
-        } else if ( this._selectedWallet === "rvn" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('rvn')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} RVN</vaadin-button>`
-        } else if ( this._selectedWallet === "arrr" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend('arrr')}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} ARRR</vaadin-button>`
-        } else {
-            return html``
-        }
+        const capsCoin = this._selectedWallet.toUpperCase()
+        return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend(this._selectedWallet)}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} ${capsCoin}</vaadin-button>`
     }
 
     renderAddressbookButton() {
-        if ( this._selectedWallet === "qort" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('qort')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "btc" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('btc')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "ltc" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('ltc')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "doge" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('doge')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "dgb" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('dgb')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "rvn" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('rvn')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else if ( this._selectedWallet === "arrr" ) {
-            return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook('arrr')}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-        } else {
-            return html``
-        }
+        return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook(this._selectedWallet)}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
     }
 
     renderExportAddressbookButton() {
