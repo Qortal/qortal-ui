@@ -37,7 +37,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 			:host {
 				box-sizing: border-box;
 				position: fixed;
-				bottom: 25px;
+				bottom: 50px;
 				right: 25px;
 				z-index: 50000;
 			}
