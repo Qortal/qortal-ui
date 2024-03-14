@@ -213,7 +213,8 @@
 		"arrr1": "ARRR Wallet Not Initialized !",
 		"arrr2": "Please go to wallet tab and initialize your arrr wallet first.",
 		"arrr3": "Need Core Update !",
-		"arrr4": "To save the private key of your arrr wallet you need a core update first !"
+		"arrr4": "To save the private key of your arrr wallet you need a core update first !",
+		"sync_indicator": "Disable sync indicator popup"
 	},
 	"appinfo": {
 		"blockheight": "Block Height",

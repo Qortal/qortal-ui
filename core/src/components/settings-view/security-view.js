@@ -145,11 +145,11 @@ class SecurityView extends connect(store)(LitElement) {
                         </div>
                     </div>
                     <hr style="margin-top: 20px;">
-                        <div class="checkbox-row">
-                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
-                                ${get('browserpage.bchange26')}
-                            </label>
-                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForAuth(e)} ?checked=${store.getState().app.qAPPAutoAuth}></mwc-checkbox>
+                    <div class="checkbox-row">
+                        <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                            ${get('browserpage.bchange26')}
+                        </label>
+                        <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForAuth(e)} ?checked=${store.getState().app.qAPPAutoAuth}></mwc-checkbox>
                     </div>
                     <div class="checkbox-row">
                             <label for="authButton" id="authButtonLabel" style="color: var(--black);">
@@ -158,19 +158,20 @@ class SecurityView extends connect(store)(LitElement) {
                             <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForLists(e)} ?checked=${store.getState().app.qAPPAutoLists}></mwc-checkbox>
                     </div>
                     <div class="checkbox-row">
-                            <label for="authButton" id="authButtonLabel" style="color: var(--black);">
-                                ${get('browserpage.bchange53')}
-                            </label>
-                            <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForFriends(e)} ?checked=${store.getState().app.qAPPFriendsList}></mwc-checkbox>
+                        <label for="authButton" id="authButtonLabel" style="color: var(--black);">
+                            ${get('browserpage.bchange53')}
+                        </label>
+                        <mwc-checkbox style="margin-right: -15px;" id="authButton" @click=${(e) => this.checkForFriends(e)} ?checked=${store.getState().app.qAPPFriendsList}></mwc-checkbox>
                     </div>
                     <div class="checkbox-row">
-                    <button
-                    class="add-dev-button"
-                    title="${translate('tabmenu.tm18')}"
-                    @click=${this.openDevDialog}
-                >${translate('tabmenu.tm38')}</button>
+                        <button
+                            class="add-dev-button"
+                            title="${translate('tabmenu.tm18')}"
+                            @click=${this.openDevDialog}
+                        >
+                            ${translate('tabmenu.tm38')}
+                        </button>
                     </div>
-
                 </div>
         `
     }

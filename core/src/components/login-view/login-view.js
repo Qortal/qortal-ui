@@ -22,10 +22,12 @@ import {
 	allowQAPPAutoAuth,
 	allowQAPPAutoFriendsList,
 	allowQAPPAutoLists,
+	allowShowSyncIndicator,
 	removeAutoLoadImageChat,
 	removeQAPPAutoAuth,
 	removeQAPPAutoFriendsList,
 	removeQAPPAutoLists,
+	removeShowSyncIndicator,
 	setNewNotification,
 	setNewTab,
 	setSideEffectAction,
@@ -47,7 +49,9 @@ window.reduxAction = {
     setNewNotification: setNewNotification,
     setSideEffectAction: setSideEffectAction,
     allowQAPPAutoFriendsList: allowQAPPAutoFriendsList,
-    removeQAPPAutoFriendsList: removeQAPPAutoFriendsList
+    removeQAPPAutoFriendsList: removeQAPPAutoFriendsList,
+    allowShowSyncIndicator: allowShowSyncIndicator,
+    removeShowSyncIndicator: removeShowSyncIndicator
 }
 
 const animationDuration = 0.7 // Seconds

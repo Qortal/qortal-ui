@@ -213,7 +213,8 @@
 		"arrr1": "Portafoglio ARRR non inizializzato!",
 		"arrr2": "Vai alla scheda Portafoglio e inizializza prima il tuo portafoglio arrr.",
 		"arrr3": "È necessario l'aggiornamento del core!",
-		"arrr4": "Per salvare la chiave privata del tuo portafoglio arrr devi prima aggiornare il core!"
+		"arrr4": "Per salvare la chiave privata del tuo portafoglio arrr devi prima aggiornare il core!",
+		"sync_indicator": "Disabilita il popup dell'indicatore di sincronizzazione"
 	},
 	"appinfo": {
 		"blockheight": "Altezza blocco",

@@ -213,7 +213,8 @@
 		"arrr1": "Carteira ARRR não inicializada!",
 		"arrr2": "Por favor, vá para a aba carteira e inicialize sua carteira arrr primeiro.",
 		"arrr3": "Precisa de atualização principal!",
-		"arrr4": "Para salvar a chave privada da sua carteira arrr você precisa primeiro de uma atualização principal!"
+		"arrr4": "Para salvar a chave privada da sua carteira arrr você precisa primeiro de uma atualização principal!",
+		"sync_indicator": "Desativar pop-up do indicador de sincronização"
 	},
 	"appinfo": {
 		"blockheight": "Altura do Bloco",

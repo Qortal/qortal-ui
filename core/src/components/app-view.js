@@ -35,7 +35,6 @@ import './search-modal.js'
 import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
-import './start-minting.js'
 import './notification-view/notification-bell.js'
 import './notification-view/notification-bell-general.js'
 import './friends-view/friends-side-panel-parent.js'
@@ -147,7 +146,8 @@ class AppView extends connect(store)(LitElement) {
             lockSet: { type: String },
             myLockScreenPass: { type: String },
             myLockScreenSet: { type: String },
-            helperMessage: { type: String }
+            helperMessage: { type: String },
+            showSyncMessages: { type: Boolean }
         }
     }
 
@@ -548,7 +548,6 @@ class AppView extends connect(store)(LitElement) {
 
     getTourElements(){
         let els = {}
-        console.log('this.shadowRoot.querySelector("core-sync-status")', this.shadowRoot.querySelector("core-sync-status"))
         const el1 = this.shadowRoot.querySelector("core-sync-status").shadowRoot.getElementById("core-sync-status-id")
         const el2 = this.shadowRoot.querySelector("show-plugin").shadowRoot.getElementById("showPluginId")
         const el3 = this.shadowRoot.querySelector("beginner-checklist").shadowRoot.getElementById("popover-notification")
@@ -625,7 +624,7 @@ class AppView extends connect(store)(LitElement) {
                     </app-header>
                     <show-plugin></show-plugin>
                     <tour-component .getElements=${this.getTourElements}></tour-component>
-                    <sync-indicator ></sync-indicator>
+                    ${!this.showSyncMessages ? html`<sync-indicator></sync-indicator>` : html``}
                 </app-header-layout>
             </app-drawer-layout>
             <user-info-view></user-info-view>
@@ -697,6 +696,8 @@ class AppView extends connect(store)(LitElement) {
         this.clearTheCache()
 
         this.helperMessage = this.renderHelperPass()
+
+        this.showSyncMessages = store.getState().app.showSyncIndicator
 
         this.salt = ''
         this.salt = Base58.encode(store.getState().app.wallet._addresses[0].keyPair.privateKey)
@@ -2117,10 +2118,6 @@ class AppView extends connect(store)(LitElement) {
 
                     ${this.renderNodeManagement()}
                 </side-menu-item>
-
-                <div>
-                    <start-minting></start-minting>
-                </div>
             `
         }
     }
@@ -2806,6 +2803,7 @@ class AppView extends connect(store)(LitElement) {
         this.config = state.config
         this.urls = state.app.registeredUrls
         this.addressInfo = state.app.accountInfo.addressInfo
+        this.showSyncMessages = state.app.showSyncIndicator
 
         if (sideurl === "minting") {
             this.shadowRoot.getElementById('qminter').setAttribute('selected', 'selected')

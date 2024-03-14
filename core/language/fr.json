@@ -213,7 +213,8 @@
 		"arrr1": "Portefeuille ARRR non initialisé !",
 		"arrr2": "Veuillez aller dans l'onglet Portefeuille et initialiser d'abord votre portefeuille arrr.",
 		"arrr3": "Besoin d'une mise à jour principale !",
-		"arrr4": "Pour sauvegarder la clé privée de votre portefeuille arrr, vous avez d'abord besoin d'une mise à jour principale !"
+		"arrr4": "Pour sauvegarder la clé privée de votre portefeuille arrr, vous avez d'abord besoin d'une mise à jour principale !",
+		"sync_indicator": "Désactiver la fenêtre contextuelle de l'indicateur de synchronisation"
 	},
 	"appinfo": {
 		"blockheight": "Hauteur de bloc",

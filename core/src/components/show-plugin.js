@@ -25,7 +25,6 @@ registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-
 export const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ShowPlugin extends connect(store)(LitElement) {
@@ -43,7 +42,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             chatLastSeen: { type: Array },
             chatHeads: { type: Array },
             proxyPort: { type: Number },
-            isOpenDevDialog: {type: Boolean}
+            isOpenDevDialog: { type: Boolean }
         }
     }
 
@@ -211,7 +210,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 font-weight: bold;
                 background: none;
                 border: none;
-                color: var(--accent-color);
+                color: var(--general-color-blue);
                 font-size: 2em;
                 cursor: pointer;
                 transition: color 0.3s;
@@ -229,7 +228,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 max-height: 28px;
                 padding: 5px 5px;
                 font-size: 14px;
-                background-color: var(--accent-color);
+                background-color: var(--general-color-blue);
                 color: white;
                 border: 1px solid transparent;
                 border-radius: 3px;
@@ -248,7 +247,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             .iconActive {
                 position: absolute;
                 top: 5px;
-                color: var(--accent-color);
+                color: var(--general-color-blue);
                 --mdc-icon-size: 24px;
             }
 
@@ -260,7 +259,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tab:hover .iconInactive {
-                color: var(--accent-color);
+                color: var(--general-color-blue);
             }
 
             .count {
@@ -1078,7 +1077,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .resetIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1092,7 +1091,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .searchIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1106,7 +1105,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .importIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1120,7 +1119,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .exportIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1141,7 +1140,7 @@ class NavBar extends connect(store)(LitElement) {
         paper-dialog button {
             padding: 5px 10px;
             font-size: 18px;
-            background-color: var(--accent-color);
+            background-color: var(--general-color-blue);
             color: white;
             border: 1px solid transparent;
             border-radius: 5px;
@@ -1175,7 +1174,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         vaadin-text-field[focused]::part(input-field) {
-            border-color: var(--accent-color);
+            border-color: var(--general-color-blue);
         }
     `
 

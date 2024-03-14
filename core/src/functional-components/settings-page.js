@@ -70,7 +70,7 @@ class SettingsPage extends connect(store)(LitElement) {
 				display: inline-block;
 				width: 150px;
 				font-weight: 600;
-				color: var(--accent-color);
+				color: var(--general-color-blue);
 				border: 1px solid transparent;
 			}
 
@@ -87,7 +87,7 @@ class SettingsPage extends connect(store)(LitElement) {
 			}
 
 			.buttonBlue {
-				color: var(--accent-color);
+				color: var(--general-color-blue);
 			}
 
 			.floatleft {
