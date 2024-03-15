@@ -2655,6 +2655,46 @@ class WebBrowser extends LitElement {
 					break
 				}
 
+				case actions.GET_TX_ACTIVITY_SUMMARY: {
+					const requiredFields = ['coin']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					try {
+						let coin = data.coin;
+						response = await parentEpml.request('apiCall', {
+							type: 'api',
+							method: 'POST',
+							url: `/crosschain/txactivity?apiKey=${this.getApiKey()}&foreignBlockchain=${coin}`,
+							headers: {
+								'Accept': '*/*',
+								'Content-Type': 'application/json'
+							},
+						})
+					} catch (error) {
+						const data = {}
+						const errorMsg = "Error in tx activity summary"
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
+
 				case actions.GET_DAY_SUMMARY: {
 					try {
 						const summary = await parentEpml.request('apiCall', {
