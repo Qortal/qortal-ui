@@ -1405,7 +1405,7 @@ class MessageTemplate extends LitElement {
 
 		edited = html`
 			<span class="edited-message-style">
-				${translate('chatpage.cchange68')}
+				${translate('chatpage.cchange68')} <message-time timestamp=${this.messageObj.editedTimestamp}></message-time>
 			</span>
 		`;
 
