@@ -254,7 +254,7 @@ class PublishData extends LitElement {
                     <paper-card style="width:100%; max-width:740px;">
                         <div style="margin:0; margin-top:20px;">
                             <h3 style="margin:0; padding:8px 0; text-transform: capitalize; color: var(--black);">${translate("publishpage.pchange1")} / ${translate("publishpage.pchange2")} ${this.category}</h3>
-                            <p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">${translate("publishpage.pchange3")}</p>
+                            <p style="font-style: italic; font-size: 14px; color: var(--black);" ?hidden="${this.portForwardingEnabled}">${translate("publishpage.pchange3")}</p><p style="font-style: italic; font-size: 14px; color: var(--black);">(500 KB max.)</p>
                         </div>
                     </paper-card>
                     <!-- TODO: adapt this dropdown to list all names on the account. Right now it's hardcoded to a single name -->
