@@ -1769,14 +1769,16 @@ class GroupManagement extends LitElement {
                 clearTimeout(timerGroupInvites)
                 timerGroupInvites = setTimeout(getGroupInvites, 300000)
             } else {
-                this.myGroupInvites.map(a => {
+                const currentTime = Date.now()
+                this.myGroupInvites.forEach(a => {
+                if (a.expiry > currentTime) {
                     let callTheNewInviteUrl = `${nodeUrl}/groups/${a.groupId}`
                     fetch(callTheNewInviteUrl).then(res => {
                         return res.json()
                     }).then(jsonRes => {
                         myArrObj.push(jsonRes)
                         if (myArrObj.length) {
-                            myArrObj.map(b => {
+                            myArrObj.forEach(b => {
                                 const infoObjToAdd = {
                                     invitee: a.invitee,
                                     groupId: b.groupId,
@@ -1793,6 +1795,7 @@ class GroupManagement extends LitElement {
                         }
                         this.groupInvites = myInvitesObj
                     })
+                }
                 })
             }
             setTimeout(getGroupInvites, 300000)
