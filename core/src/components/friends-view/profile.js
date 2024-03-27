@@ -6,7 +6,7 @@ import { store } from '../../store.js';
 import WebWorker2 from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from '../../../translate/index.js'
+import { get, translate } from '../../../translate'
 import ShortUniqueId from 'short-unique-id';
 import '@polymer/paper-dialog/paper-dialog.js';
 
@@ -814,11 +814,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 			const findIndex = friendList.findIndex(
 				(friend) => friend.name === name
 			);
-			if (findIndex !== -1) {
-				this.isFriend = true;
-			} else {
-				this.isFriend = false;
-			}
+			this.isFriend = findIndex !== -1;
 		} catch (error) {}
 	}
 	render() {

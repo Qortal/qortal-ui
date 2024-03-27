@@ -2,7 +2,7 @@
 import { css, html, LitElement } from 'lit';
 import { createPopper } from '@popperjs/core';
 import '@material/mwc-icon';
-import { translate } from '../../../translate/index.js'
+import { translate } from '../../../translate'
 import { store } from '../../store';
 import { connect } from 'pwa-helpers';
 import { setNewTab, setSideEffectAction } from '../../redux/app/app-actions';

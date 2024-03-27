@@ -217,7 +217,7 @@ class ChatRightPanel extends LitElement {
 
     observerHandler(entries) {
         if (!entries[0].isIntersecting) {
-            return
+
         } else {
             if(this.groupMembers.length < 20){
                 return

@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {animate} from '@lit-labs/motion'
 import {Epml} from '../../../epml.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 import {Editor, Extension, generateHTML} from '@tiptap/core'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import {escape} from 'html-escaper'
@@ -263,11 +263,11 @@ class ChatPage extends LitElement {
     }
 
     _toggle(value) {
-        this.shifted = value === (false || true) ? value : !this.shifted
+        this.shifted = value === true ? value : !this.shifted
         this.requestUpdate()
     }
     _toggleResources(value) {
-        this.shiftedResources = value === (false || true) ? value : !this.shiftedResources
+        this.shiftedResources = value === true ? value : !this.shiftedResources
         this.requestUpdate()
     }
 
@@ -1114,7 +1114,7 @@ class ChatPage extends LitElement {
             if (blobFound) {
                 this.insertFile(blobFound)
                 e.preventDefault();
-                return
+
             } else {
                 const item_list = await navigator.clipboard.read()
                 let image_type
@@ -1140,7 +1140,7 @@ class ChatPage extends LitElement {
                         parentEpml.request('showSnackBar', `${errorMsg}`)
                     }
                 } else {
-                    return
+
                 }
             }
         }
@@ -1279,16 +1279,16 @@ class ChatPage extends LitElement {
         if(file.identifier){
             this.imageFile = file
             this.currentEditor = 'newChat'
-            return
+
         }else
         if (file.type.includes('image')) {
             this.imageFile = file
             this.currentEditor = 'newChat'
-            return
+
         } else {
             this.attachment = file
             this.currentEditor = "newAttachmentChat"
-            return
+
         }
     }
 
@@ -1494,11 +1494,9 @@ class ChatPage extends LitElement {
         if (changedProperties.has('setActiveChatHeadUrl')) {
             return false
         }
-        if (changedProperties.has('setOpenPrivateMessage')) {
-            return false
-        }
+        return !changedProperties.has('setOpenPrivateMessage');
 
-        return true
+
 
     }
 
@@ -3125,7 +3123,7 @@ class ChatPage extends LitElement {
         } catch (error) {
             this.isLoading = false
             this.isUploadingImage = false
-            return
+
         }
 
     }

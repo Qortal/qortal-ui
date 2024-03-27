@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import {overviewStyle} from './overview-page-css.js'
 import {asyncReplace} from 'lit/directives/async-replace.js'
 import isElectron from 'is-electron'
@@ -247,17 +247,9 @@ class OverviewPage extends LitElement {
             const findMyMintingRecipient = this.listAccounts.find((myKey) => myKey.recipientAccount === address)
             const findRemovedSponsorsKey = this.listAccounts.filter((my) => my.address)
 
-            if (findMyMintingAccount === undefined) {
-                this.check1 = false
-            } else {
-                this.check1 = true
-            }
+            this.check1 = findMyMintingAccount !== undefined;
 
-            if (findMyMintingRecipient === undefined) {
-                this.check2 = false
-            } else {
-                this.check2 = true
-            }
+            this.check2 = findMyMintingRecipient !== undefined;
 
             if (findRemovedSponsorsKey.length > 0) {
                 this.removeBlankKey(findRemovedSponsorsKey.publicKey)
@@ -611,7 +603,7 @@ class StartMintingNow extends LitElement {
 			this.getMintingAcccounts()
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg3()
-			return
+
 		}
 	}
 
@@ -732,7 +724,7 @@ class StartMintingNow extends LitElement {
 				this.confirmRelationship(publicAddress)
 			} catch (error) {
 				this.errorMsg = error.data.message || this.renderErrorMsg4()
-				return
+
 			}
 		}
 

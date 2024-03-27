@@ -3,7 +3,7 @@ import {tipUserStyles} from './TipUser-css.js'
 import {Epml} from '../../../epml'
 import '@vaadin/button'
 import '@polymer/paper-progress/paper-progress.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 
@@ -140,7 +140,7 @@ export class TipUser extends LitElement {
         };
 
         const validateAddress = async (receiverAddress) => {
-            return await window.parent.validateAddress(receiverAddress);
+            return window.parent.validateAddress(receiverAddress);
         };
 
         const getName = async (recipient) => {

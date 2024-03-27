@@ -3,7 +3,7 @@ import { connect } from 'pwa-helpers'
 import { store } from '../store.js'
 import { Epml } from '../epml.js'
 import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
-import { get, translate } from '../../translate/index.js'
+import { get, translate } from '../../translate'
 import localForage from 'localforage'
 import { decryptData, encryptData } from '../lockScreen.js'
 import { setChatLastSeen } from '../redux/app/app-actions.js'
@@ -560,7 +560,7 @@ class AppView extends connect(store)(LitElement) {
         if(el3) {
             els['checklist'] = el3
         }
-       
+
         return els
     }
 
@@ -965,7 +965,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableBtcQortal) === true) {
-                return
+
             } else {
                 const botbtcprice = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
                 const changebtcamount = parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount)
@@ -1009,7 +1009,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
-                    return
+
                 } else {
                     const checkBotBtcFunds = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount) * parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
                     const myBotBtcFunds = this.round(parseFloat(this.btcWalletBalance))
@@ -1162,7 +1162,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableLtcQortal) === true) {
-                return
+
             } else {
                 const botltcprice = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
                 const changeltcamount = parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount)
@@ -1206,7 +1206,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
-                    return
+
                 } else {
                     const checkBotLtcFunds = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount) * parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
                     const myBotLtcFunds = this.round(parseFloat(this.ltcWalletBalance))
@@ -1348,7 +1348,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableDogeQortal) === true) {
-                return
+
             } else {
                 const botdogeprice = this.round(parseFloat(this.tradeBotDogeBook[0].botDogePrice))
                 const changedogeamount = parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount)
@@ -1392,7 +1392,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
-                    return
+
                 } else {
                     const checkBotDogeFunds = this.round(parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount) * parseFloat(this.tradeBotDogeBook[0].botDogePrice))
                     const myBotDogeFunds = this.round(parseFloat(this.dogeWalletBalance))
@@ -1534,7 +1534,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableDgbQortal) === true) {
-                return
+
             } else {
                 const botdgbprice = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
                 const changedgbamount = parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount)
@@ -1578,7 +1578,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
-                    return
+
                 } else {
                     const checkBotDgbFunds = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount) * parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
                     const myBotDgbFunds = this.round(parseFloat(this.dgbWalletBalance))
@@ -1720,7 +1720,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableRvnQortal) === true) {
-                return
+
             } else {
                 const botrvnprice = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
                 const changervnamount = parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount)
@@ -1764,7 +1764,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
-                    return
+
                 } else {
                     const checkBotRvnFunds = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount) * parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
                     const myBotRvnFunds = this.round(parseFloat(this.rvnWalletBalance))
@@ -1906,7 +1906,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableArrrQortal) === true) {
-                return
+
             } else {
                 const botarrrprice = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
                 const changearrramount = parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount)
@@ -1950,7 +1950,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
-                    return
+
                 } else {
                     const checkBotArrrFunds = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount) * parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
                     const myBotArrrFunds = this.round(parseFloat(this.arrrWalletBalance))
@@ -2243,7 +2243,7 @@ class AppView extends connect(store)(LitElement) {
             this.helperMessage = this.renderHelperErr()
             await errDelay(3000)
             this.helperMessage = this.renderHelperPass()
-            return
+
         }
     }
 

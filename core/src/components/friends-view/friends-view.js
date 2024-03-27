@@ -13,7 +13,7 @@ import './ChatSideNavHeads';
 import '../../../../plugins/plugins/core/components/ChatSearchResults'
 import './add-friends-modal'
 
-import {translate,} from '../../../translate/index.js'
+import {translate,} from '../../../translate'
 import {store} from '../../store';
 import {friendsViewStyles} from './friends-view-css';
 import {parentEpml} from '../show-plugin';
@@ -125,7 +125,7 @@ class FriendsView extends connect(store)(LitElement) {
 				name
 			};
 		}
-		
+
 		this.isOpenAddFriendsModal = true
 		this.openSidePanel()
 	}
@@ -165,7 +165,7 @@ class FriendsView extends connect(store)(LitElement) {
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.friendList.length < 20) {
 				return;

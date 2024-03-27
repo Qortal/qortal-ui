@@ -74,20 +74,20 @@ export const publishData = async ({
 		let nonce = null
 		const computPath =window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 			await new Promise((res, rej) => {
-       
+
                 worker.postMessage({convertedBytes, path: computPath});
-            
+
                 worker.onmessage = e => {
-                    
+
                   worker.terminate()
-              
+
                     nonce = e.data.nonce
                     res()
-                 
+
                 }
               })
-     
-  
+
+
         let response = await parentEpml.request("sign_arbitrary", {
             nonce: selectedAddress.nonce,
             arbitraryBytesBase58: transactionBytesBase58,
@@ -113,9 +113,9 @@ export const publishData = async ({
             throw new Error('Error when signing');
         }
 
-	
-     
-  
+
+
+
         let response = await parentEpml.request("sign_arbitrary_with_fee", {
             nonce: selectedAddress.nonce,
             arbitraryBytesBase58: transactionBytesBase58,
@@ -194,11 +194,11 @@ export const publishData = async ({
 				let fileBuffer = new Uint8Array(await file.arrayBuffer())
 				postBody = Buffer.from(fileBuffer).toString("base64")
 				}
-				
+
 			}
-		
+
 			let uploadDataUrl = `/arbitrary/${service}/${registeredName}${urlSuffix}?apiKey=${getApiKey()}`
-			if (identifier != null && identifier.trim().length > 0) {
+			if (identifier.trim().length > 0) {
 				uploadDataUrl = `/arbitrary/${service}/${registeredName}/${identifier}${urlSuffix}?apiKey=${getApiKey()}`
 
 			}
@@ -234,7 +234,7 @@ export const publishData = async ({
 			if(tag5 != null && tag5 != "undefined"){
 				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag5)
 			}
-			
+
 			let uploadDataRes = await parentEpml.request("apiCall", {
 				type: "api",
 				method: "POST",
@@ -250,5 +250,5 @@ export const publishData = async ({
 	} catch (error) {
 		throw new Error(error.message)
 	}
-   
+
 }

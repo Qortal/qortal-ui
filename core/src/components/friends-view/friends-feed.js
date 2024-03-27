@@ -5,7 +5,7 @@ import {friendsViewStyles} from './friends-view-css';
 import {connect} from 'pwa-helpers';
 import {store} from '../../store';
 import './feed-item'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
@@ -216,7 +216,7 @@ this.getFeedOnInterval()
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.feedToRender.length < 20) {
 				return;
@@ -375,7 +375,7 @@ this.getFeedOnInterval()
           return false;
         });
       }
-      
+
 
     async  loadAndMergeData() {
         let allData = this.feed

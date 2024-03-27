@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
 import {chatGifsExploreStyles} from './ChatGifsExplore-css.js'
-import {get, translate} from '../../../../../core/translate/index.js'
+import {get, translate} from '../../../../../core/translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -52,7 +52,7 @@ class ChatGifsExplore extends LitElement {
 
     observerHandler(entries) {
     	if (!entries[0].isIntersecting) {
-    		return;
+
     	} else {
     		if (this.exploreCollections.length < 20) {
     			return;

@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit'
 import { Epml } from '../../../../epml'
 import isElectron from 'is-electron'
-import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate/index.js'
+import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate'
 import ShortUniqueId from 'short-unique-id';
 import FileSaver from 'file-saver'
 import * as actions from '../../components/qdn-action-types'
@@ -1547,7 +1547,6 @@ class WebBrowser extends LitElement {
 									reason: errorMsg,
 									identifier: resource.identifier
 								})
-								continue
 							}
 
 						} catch (error) {
@@ -1555,7 +1554,6 @@ class WebBrowser extends LitElement {
 								reason: "Unknown error",
 								identifier: resource.identifier
 							})
-							continue
 						}
 
 
@@ -4164,7 +4162,7 @@ async function showModalAndWait(type, data) {
 		const modalContent = modal.querySelector('.modal-content')
 		modalContent.addEventListener('click', (e) => {
 			e.stopPropagation()
-			return
+
 		})
 		const backdropClick = document.getElementById('backdrop')
 		backdropClick.addEventListener('click', () => {

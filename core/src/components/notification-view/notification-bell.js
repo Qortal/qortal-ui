@@ -111,11 +111,7 @@ class NotificationBell extends connect(store)(LitElement) {
                     }
                     this.notifications = notificationsToShow
 
-                    if (this.notifications.length === 0) {
-                        this.notificationCount = false
-                    } else {
-                        this.notificationCount = true
-                    }
+                    this.notificationCount = this.notifications.length !== 0;
 
                     if (!this.initialFetch) this.initialFetch = true
                 } catch (error) {

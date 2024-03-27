@@ -1,6 +1,6 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import {blocksNeed} from '../../utils/blocks-needed.js'
 import {asyncReplace} from 'lit/directives/async-replace.js'
 import {pageStyles} from './sponsorship-list-css.src.js'
@@ -721,13 +721,13 @@ class SponsorshipList extends LitElement {
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-			
+
 			const extraData = txnResponse && txnResponse.extraData;
 			const data = txnResponse && txnResponse.data;
 			const dataMessage = data && data.message;
 			const extraDataPrivateKey = extraData && extraData.rewardSharePrivateKey;
 			const txnSuccess = txnResponse && txnResponse.success;
-		  
+
 			if (extraDataPrivateKey && typeof dataMessage === 'string' &&
 				(dataMessage.includes('multiple') || dataMessage.includes('SELF_SHARE_EXISTS'))) {
 			  this.privateRewardShareKey = extraDataPrivateKey;

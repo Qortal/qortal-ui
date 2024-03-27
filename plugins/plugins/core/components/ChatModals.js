@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml'
 import snackbar from './snackbar.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 

@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {stateAwait} from '../../stateAwait.js'
-import {get} from '../../../translate/index.js'
+import {get} from '../../../translate'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'

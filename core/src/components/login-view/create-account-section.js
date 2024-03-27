@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
-import {get, translate} from '../../../translate/index.js'
+import {get, translate} from '../../../translate'
 
 import {createWallet} from '../../../../crypto/api/createWallet.js'
 import {doLogin, doLogout, doSelectAddress} from '../../redux/app/app-actions.js'

@@ -3,7 +3,7 @@ import {css, html, LitElement} from 'lit'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 
-import {translate} from '../../../../core/translate/index.js'
+import {translate} from '../../../../core/translate'
 
 class FragFileInput extends LitElement {
     static get properties () {

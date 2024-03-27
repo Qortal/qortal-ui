@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit';
 import {connect} from 'pwa-helpers';
 import {store} from '../store.js';
-import {get, translate} from '../../translate/index.js'
+import {get, translate} from '../../translate'
 import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import '../functional-components/my-button.js';
@@ -293,7 +293,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 			this.getMintingAcccounts();
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg3();
-			return;
+
 		}
 	}
 
@@ -426,7 +426,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 			} catch (error) {
 				console.log({ error })
 				this.errorMsg = (error && error.data && error.data.message) ? error.data.message : this.renderErrorMsg4();
-				return;
+
 			}
 		};
 

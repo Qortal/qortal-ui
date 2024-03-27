@@ -10,7 +10,7 @@ import '@vaadin/tabs/theme/material/vaadin-tabs.js'
 import '@vaadin/avatar'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 

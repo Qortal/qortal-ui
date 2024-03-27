@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import isElectron from 'is-electron'
 import '../components/qortal-info-view.js'
 import '@material/mwc-button'

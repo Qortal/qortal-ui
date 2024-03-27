@@ -3,7 +3,7 @@ import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import { Epml } from '../../epml.js'
 import { addTradeBotRoutes } from '../../tradebot/addTradeBotRoutes.js'
-import {get, translate} from '../../../translate/index.js'
+import {get, translate} from '../../../translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
 

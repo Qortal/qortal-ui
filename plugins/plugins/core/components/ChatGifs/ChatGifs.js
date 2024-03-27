@@ -9,7 +9,7 @@ import {bytesToMegabytes} from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
-import {get, translate} from '../../../../../core/translate/index.js'
+import {get, translate} from '../../../../../core/translate'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
 
@@ -150,11 +150,7 @@ setOpenGifModal: { attribute: false }
 			if (changedProperties && changedProperties.has('currentCollection')) {
 				if (this.mode === 'explore') {
 					const subbedCollection = this.mySubscribedCollections.find((collection) => ((collection.name === this.currentCollection.name) && (collection.identifier === this.currentCollection.identifier)));
-					if (subbedCollection) {
-						this.isSubscribed = true;
-					} else {
-						this.isSubscribed = false;
-					}
+					this.isSubscribed = !!subbedCollection;
 				}
 			}
 		}
@@ -440,11 +436,7 @@ setOpenGifModal: { attribute: false }
 						}
 					}
 
-					if (invalidGifs.length > 0) {
-						return false;
-					} else {
-						return true;
-					}
+					return invalidGifs.length <= 0;
 				}
 
 				let validatedSize = validateGifSizes(this.gifsToBeAdded);

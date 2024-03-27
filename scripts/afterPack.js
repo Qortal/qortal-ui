@@ -37,7 +37,7 @@ async function afterPack(context) {
 
     if (electronPlatformName.includes("linux")) {
         await doLinux(context);
-        return;
+
     }
 
 }

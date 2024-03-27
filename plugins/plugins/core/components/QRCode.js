@@ -207,7 +207,7 @@ var encode = function(ver, mode, data, maxbuflen) {
 			pack(data[i], 8);
 		}
 		break;
-	};
+	}
 
 	pack(MODE_TERMINATOR, 4);
 	if (remaining < 8) buf.push(bits);

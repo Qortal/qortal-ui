@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import '../components/time-elements/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -2491,7 +2491,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.bannedMembers.length === 0) {
-            return
+
         } else {
             this.bannedMembers.map(a => {
                 let callTheBannedMember = a.offender
@@ -2542,7 +2542,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.groupInviteMembers.length === 0) {
-            return
+
         } else {
             this.groupInviteMembers.map(a => {
                 let callTheInviteMember = a.invitee
@@ -2589,7 +2589,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.groupJoinMembers.length === 0) {
-            return
+
         } else {
             this.groupJoinMembers.map(a => {
                 let callTheJoinMember = a.joiner

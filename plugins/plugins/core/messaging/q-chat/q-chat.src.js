@@ -938,7 +938,7 @@ class Chat extends LitElement {
 
 	getChatHeadFromState(chatObj) {
 		if (chatObj === undefined) {
-			return
+
 		} else {
 			this.chatHeadsObj = chatObj
 			this.setChatHeads(chatObj)

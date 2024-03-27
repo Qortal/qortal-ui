@@ -36,7 +36,7 @@ const sortActiveChat = (activeChatObject, localChatHeads) => {
     let oldChatHeads = JSON.parse(localChatHeads)
 
     if (window.parent._.isEqual(oldChatHeads, activeChatObject) === true) {
-        return
+
     } else {
 
         let oldActiveChats = objectToArray(oldChatHeads)

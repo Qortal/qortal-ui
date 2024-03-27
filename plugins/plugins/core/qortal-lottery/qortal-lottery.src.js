@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import isElectron from 'is-electron'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -480,20 +480,20 @@ class QortalLottery extends LitElement {
             })
         })
 
-        await this.openLotteries.map(item => {
-            const aTT = item.ATAddress
-            const endHeight = item.sleepUntilHeight
-            const newObj = {
-                ATAddress: aTT,
-                sleepUntilHeight: endHeight
-            }
-            this.openLotteriesAtArray.push(newObj)
-        })
+        this.openLotteries.map(item => {
+			const aTT = item.ATAddress
+			const endHeight = item.sleepUntilHeight
+			const newObj = {
+				ATAddress: aTT,
+				sleepUntilHeight: endHeight
+			}
+			this.openLotteriesAtArray.push(newObj)
+		})
 
-        await this.closedLotteries.map(item => {
-            const myAT = item.ATAddress
-            this.closedLotteriesAtArray.push(myAT)
-        })
+        this.closedLotteries.map(item => {
+			const myAT = item.ATAddress
+			this.closedLotteriesAtArray.push(myAT)
+		})
 
         const appDelay = ms => new Promise(res => setTimeout(res, ms))
         await appDelay(1000)
@@ -502,37 +502,37 @@ class QortalLottery extends LitElement {
     async getOpenLotteries() {
         let prepareOpenLotteriesArray = []
 
-        await this.openLotteriesAtArray.map(item => {
-            parentEpml.request('apiCall', {
-                url: `/transactions/address/${item.ATAddress}?limit=0&reverse=true`
-            }).then(res => {
-                this.openLotteriesFilterTx1 = []
-                this.openLotteriesFilterTx2 = []
-                this.openLotteriesFilterTx = res.filter(function (da) {
-                    return da.type === "DEPLOY_AT"
-                })
-                this.openLotteriesFilterTx2 = res.filter(function (pm) {
-                    return pm.type === "PAYMENT"
-                })
-                this.openLotteriesFilterTx.map(item2 => {
-                    const sleep = item.sleepUntilHeight
-                    const desc = item2.description
-                    const start = item2.blockHeight
-                    const ata = item2.aTAddress
-                    const amount = item2.tags
-                    const players = this.openLotteriesFilterTx2.length
-                    const obj = {
-                        description: desc,
-                        startBlock: start,
-                        endBlock: sleep,
-                        aTAddress: ata,
-                        joined: players,
-                        enter: amount
-                    }
-                    prepareOpenLotteriesArray.push(obj)
-                })
-            })
-        })
+        this.openLotteriesAtArray.map(item => {
+			parentEpml.request('apiCall', {
+				url: `/transactions/address/${item.ATAddress}?limit=0&reverse=true`
+			}).then(res => {
+				this.openLotteriesFilterTx1 = []
+				this.openLotteriesFilterTx2 = []
+				this.openLotteriesFilterTx = res.filter(function (da) {
+					return da.type === "DEPLOY_AT"
+				})
+				this.openLotteriesFilterTx2 = res.filter(function (pm) {
+					return pm.type === "PAYMENT"
+				})
+				this.openLotteriesFilterTx.map(item2 => {
+					const sleep = item.sleepUntilHeight
+					const desc = item2.description
+					const start = item2.blockHeight
+					const ata = item2.aTAddress
+					const amount = item2.tags
+					const players = this.openLotteriesFilterTx2.length
+					const obj = {
+						description: desc,
+						startBlock: start,
+						endBlock: sleep,
+						aTAddress: ata,
+						joined: players,
+						enter: amount
+					}
+					prepareOpenLotteriesArray.push(obj)
+				})
+			})
+		})
         const appDelay = ms => new Promise(res => setTimeout(res, ms))
         await appDelay(2000)
         this.openLotteriesArray = prepareOpenLotteriesArray
@@ -543,55 +543,55 @@ class QortalLottery extends LitElement {
     async getFinishedLotteries() {
         let prepareClosedLotteriesArray = []
 
-        await this.closedLotteriesAtArray.map(item => {
-            parentEpml.request('apiCall', {
-                url: `/transactions/address/${item}?limit=0&reverse=true`
-            }).then(res => {
-                this.closedLotteriesFilterTx1 = []
-                this.closedLotteriesFilterTx2 = []
-                this.closedLotteriesFilterTx1 = res.filter(function (el) {
-                    return el.type === "DEPLOY_AT"
-                })
-                this.closedLotteriesFilterTx2 = res.filter(function (el) {
-                    return el.type === "AT"
-                })
+        this.closedLotteriesAtArray.map(item => {
+			parentEpml.request('apiCall', {
+				url: `/transactions/address/${item}?limit=0&reverse=true`
+			}).then(res => {
+				this.closedLotteriesFilterTx1 = []
+				this.closedLotteriesFilterTx2 = []
+				this.closedLotteriesFilterTx1 = res.filter(function (el) {
+					return el.type === "DEPLOY_AT"
+				})
+				this.closedLotteriesFilterTx2 = res.filter(function (el) {
+					return el.type === "AT"
+				})
 
-                this.closedLotteriesFilterTx2.map(item1 => {
-                    const twinner = item1.recipient
-                    const tjackpot = item1.amount
-                    const tendblock = item1.blockHeight
-                    this.closedLotteriesFilterTx1.map(item2 => {
-                        const tstartblock = item2.blockHeight
-                        const tdescription = item2.description
-                        parentEpml.request('apiCall', {
-                            url: `/names/address/${twinner}?limit=0&reverse=true`
-                        }).then(res => {
-                            if (res.length) {
-                                const winName = res[0].name
-                                const obj = {
-                                    description: tdescription,
-                                    startblock: tstartblock,
-                                    endblock: tendblock,
-                                    winner:  winName,
-                                    jackpot: tjackpot
-                                }
-                                prepareClosedLotteriesArray.push(obj)
-                            } else {
-                                const winName = twinner
-                                const obj = {
-                                    description: tdescription,
-                                    startblock: tstartblock,
-                                    endblock: tendblock,
-                                    winner:  winName,
-                                    jackpot: tjackpot
-                                }
-                                prepareClosedLotteriesArray.push(obj)
-                            }
-                        })
-                    })
-                })
-            })
-        })
+				this.closedLotteriesFilterTx2.map(item1 => {
+					const twinner = item1.recipient
+					const tjackpot = item1.amount
+					const tendblock = item1.blockHeight
+					this.closedLotteriesFilterTx1.map(item2 => {
+						const tstartblock = item2.blockHeight
+						const tdescription = item2.description
+						parentEpml.request('apiCall', {
+							url: `/names/address/${twinner}?limit=0&reverse=true`
+						}).then(res => {
+							if (res.length) {
+								const winName = res[0].name
+								const obj = {
+									description: tdescription,
+									startblock: tstartblock,
+									endblock: tendblock,
+									winner: winName,
+									jackpot: tjackpot
+								}
+								prepareClosedLotteriesArray.push(obj)
+							} else {
+								const winName = twinner
+								const obj = {
+									description: tdescription,
+									startblock: tstartblock,
+									endblock: tendblock,
+									winner: winName,
+									jackpot: tjackpot
+								}
+								prepareClosedLotteriesArray.push(obj)
+							}
+						})
+					})
+				})
+			})
+		})
         const appDelay = ms => new Promise(res => setTimeout(res, ms))
         await appDelay(5000)
         this.closedLotteriesArray = prepareClosedLotteriesArray

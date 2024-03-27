@@ -6,12 +6,12 @@ import { store } from '../../store.js';
 import WebWorker from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from '../../../translate/index.js'
+import { get, translate } from '../../../translate'
 import ShortUniqueId from 'short-unique-id';
 
 import {
 	decryptGroupData,
-	
+
 	encryptDataGroup,
 	objectToBase64,
 	uint8ArrayToObject,
@@ -331,7 +331,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			 nameObject = store.getState().app.accountInfo.names[0];
 
 			} catch (error) {
-				
+
 			}
 			if (!nameObject) {
 				this.name = null;

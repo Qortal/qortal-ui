@@ -168,11 +168,7 @@ function doesFileExist(urlToJavaFile) {
 	xhr.open('HEAD', urlToJavaFile, true)
 	xhr.send()
 
-	if (xhr.status == "404") {
-		return false
-	} else {
-		return true
-	}
+	return xhr.status != "404";
 }
 
 async function checkWin() {
@@ -197,7 +193,7 @@ async function checkWin() {
 							store.set('askingCore', returnValue.checkboxChecked)
 						} else {
 							store.set('askingCore', returnValue.checkboxChecked)
-							return
+
 						}
 					})
 				}
@@ -215,7 +211,7 @@ async function checkWin() {
 			if (returnValue.response === 0) {
 				downloadWindows()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -227,7 +223,7 @@ async function checkOsPlatform() {
 	} else if (process.platform === 'linux' || process.platform === 'darwin') {
 		startElectronUnix()
 	} else {
-		return
+
 	}
 }
 
@@ -252,7 +248,7 @@ async function startElectronWin() {
 			if (returnValue.response === 0) {
 				downloadWindows()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -279,7 +275,7 @@ function startElectronUnix() {
 			if (returnValue.response === 0) {
 				downloadQortal()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -340,7 +336,7 @@ async function checkPort() {
 
 async function checkResponseStatus(res) {
 	if (res.ok) {
-		return
+
 	} else if (process.platform === 'win32') {
 		await checkWin()
 	} else {
@@ -382,7 +378,7 @@ async function javaversion() {
 	})
 
 	checkJava.stderr.on('end', () => {
-		datres = Buffer.concat(stderrChunks).toString().split('\n')[0]
+		let datres = Buffer.concat(stderrChunks).toString().split('\n')[0]
 		const javaVersion = new RegExp('(java|openjdk) version').test(datres) ? datres.split(' ')[2].replace(/"/g, '') : false;
 		log.info("Java Version", javaVersion)
 		if (javaVersion != false) {
@@ -399,7 +395,7 @@ async function javaversion() {
 				if (returnValue.response === 0) {
 					installJava()
 				} else {
-					return
+
 				}
 			})
 		}
@@ -706,7 +702,7 @@ function checkQortal() {
 							store.set('askingCore', returnValue.checkboxChecked)
 						} else {
 							store.set('askingCore', returnValue.checkboxChecked)
-							return
+
 						}
 					})
 				}
@@ -724,7 +720,7 @@ function checkQortal() {
 			if (returnValue.response === 0) {
 				downloadQortal()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -807,7 +803,7 @@ async function checkAndStart() {
 					store.set('askingCore', returnValue.checkboxChecked)
 				} else {
 					store.set('askingCore', returnValue.checkboxChecked)
-					return
+
 				}
 			})
 		}
@@ -986,7 +982,7 @@ const editMenu = Menu.buildFromTemplate([
 						store.set('askingCore', returnValue.checkboxChecked)
 					} else {
 						store.set('askingCore', returnValue.checkboxChecked)
-						return
+
 					}
 				})
 			}
@@ -1143,7 +1139,7 @@ const createTray = () => {
 						store.set('askingCore', returnValue.checkboxChecked)
 					} else {
 						store.set('askingCore', returnValue.checkboxChecked)
-						return
+
 					}
 				})
 			},
@@ -1243,7 +1239,7 @@ if (!isLock) {
 				store.set('askingCore', returnValue.checkboxChecked)
 			} else {
 				store.set('askingCore', returnValue.checkboxChecked)
-				return
+
 			}
 		})
 	})
@@ -1329,7 +1325,7 @@ if (!isLock) {
 				})
 				dl.show()
 			} else {
-				return
+
 			}
 		})
 	})
@@ -1351,7 +1347,7 @@ if (!isLock) {
 			if (returnValue.response === 0) {
 				autoUpdater.quitAndInstall()
 			} else {
-				return
+
 			}
 		})
 	})

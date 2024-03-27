@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {translate,} from '../../../../core/translate/index.js'
+import {translate,} from '../../../../core/translate'
 
 export class ImageComponent extends LitElement {
   static get properties() {
@@ -78,11 +78,7 @@ export class ImageComponent extends LitElement {
           url: data.src,
         };
         this.requestUpdate();
-      } else if (!data.ok || data.error) {
-        this.error = true;
-      } else {
-        this.error = false;
-      }
+      } else this.error = !data.ok || data.error;
     } catch (error) {
       this.error = true;
       console.error(error);

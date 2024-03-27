@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../../epml'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-select'

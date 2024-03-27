@@ -10,7 +10,7 @@ import {
 	removeQAPPAutoLists,
 	setIsOpenDevDialog
 } from '../../redux/app/app-actions.js'
-import {get, translate} from '../../../translate/index.js'
+import {get, translate} from '../../../translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
 

@@ -5,7 +5,7 @@ import '@material/mwc-icon';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
 import '@material/mwc-button';
-import { get, translate } from '../../../translate/index.js';
+import { get, translate } from '../../../translate';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { setNewTab } from '../../redux/app/app-actions.js';
 import { store } from '../../store.js';
@@ -116,7 +116,7 @@ class TourComponent extends connect(store)(LitElement) {
 
 	_controlOpenWelcomeModal() {
     this.isSynced = true
-		
+
 		const seenWelcomeSync = JSON.parse(
 			localStorage.getItem('welcome-sync') || 'false'
 		);
@@ -280,7 +280,7 @@ class TourComponent extends connect(store)(LitElement) {
         <span><img src="/img/syncing.png" style="height: 24px; width: 24px; padding-top: 4px;" /></span>
           <p style="margin:0px;padding:0px">${get("tour.tour4")}</p>
           </div>
-           
+
                 `,
 					},
 				});
@@ -397,7 +397,7 @@ class TourComponent extends connect(store)(LitElement) {
 								class="close-button"
 								@click=${()=> {
                   this.onClose()
-				  
+
                 }}
 							>
 								${translate("general.close")}

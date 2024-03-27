@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
 import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import {tradebotStyles} from './trade-bot-portal-css.js'
@@ -1830,7 +1830,7 @@ class TradeBotPortal extends LitElement {
             this.autoHelperMessage = this.renderAutoHelperErr()
             await errDelay(3000)
             this.autoHelperMessage = this.renderAutoHelperPass()
-            return
+
         }
     }
 

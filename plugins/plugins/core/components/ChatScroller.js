@@ -1,6 +1,6 @@
 import {html, LitElement,} from 'lit';
 import {repeat} from 'lit/directives/repeat.js';
-import {get, translate,} from '../../../../core/translate/index.js'
+import {get, translate,} from '../../../../core/translate'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {chatStyles} from './ChatScroller-css.js';
 import {Epml} from '../../../epml';
@@ -676,13 +676,9 @@ class ChatScroller extends LitElement {
 
 	isLastMessageBeforeUnread(message, formattedMessages) {
 		// if the message is the last one in the older messages list and its timestamp is before the user's last seen timestamp
-		if (
-			message.timestamp < this.lastReadMessageTimestamp &&
-			formattedMessages.indexOf(message) === formattedMessages.length - 21
-		) {
-			return true;
-		}
-		return false;
+		return message.timestamp < this.lastReadMessageTimestamp &&
+			formattedMessages.indexOf(message) === formattedMessages.length - 21;
+
 	}
 
 	render() {
@@ -1097,11 +1093,7 @@ class MessageTemplate extends LitElement {
 	}
 
 	showBlockIconFunc(bool) {
-		if (bool) {
-			this.showBlockAddressIcon = true;
-		} else {
-			this.showBlockAddressIcon = false;
-		}
+		this.showBlockAddressIcon = !!bool;
 	}
 
 	async downloadAttachment(attachment) {
@@ -1206,10 +1198,8 @@ class MessageTemplate extends LitElement {
 		if (changedProperties.has('openDialogGif')) {
 			return true;
 		}
-		if (changedProperties.has('isGifLoaded')) {
-			return true;
-		}
-		return false;
+		return !!changedProperties.has('isGifLoaded');
+
 	}
 
 	clearConsole() {

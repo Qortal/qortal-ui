@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {get, translate,} from '../../../../core/translate/index.js'
+import {get, translate,} from '../../../../core/translate'
 import axios from 'axios'
 import {RequestQueueWithPromise} from '../../utils/queue';
 import '@material/mwc-menu';
@@ -231,11 +231,9 @@ getMyNode(){
   }
 
   shouldUpdate(changedProperties) {
-		if (changedProperties.has('setOpenDialogImage') && changedProperties.size === 1) {
-			return false;
-		}
+		return !(changedProperties.has('setOpenDialogImage') && changedProperties.size === 1);
 
-    return true
+
   }
 
 

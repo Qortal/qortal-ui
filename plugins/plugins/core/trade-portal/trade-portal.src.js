@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
 import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import {tradeStyles} from './trade-portal-css.js'
@@ -953,11 +953,7 @@ class TradePortal extends LitElement {
         const getSellButtonStatus = () => {
             if (this.nodeInfo.isSynchronizing === true) {
                 this.sellBtnDisable = true
-            } else if (this.nodeInfo.isSynchronizing === false) {
-                this.sellBtnDisable = false
-            } else {
-                this.sellBtnDisable = true
-            }
+            } else this.sellBtnDisable = this.nodeInfo.isSynchronizing !== false;
         }
 
         const getQortBtcPrice = () => {
@@ -1244,7 +1240,7 @@ class TradePortal extends LitElement {
             this.tradeHelperMessage = this.renderTradeHelperErr()
             await errDelay(3000)
             this.tradeHelperMessage = this.renderTradeHelperPass()
-            return
+
         }
     }
 

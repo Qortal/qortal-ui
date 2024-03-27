@@ -8,7 +8,7 @@ import '@polymer/iron-icons/iron-icons.js';
 import {store} from '../../store.js';
 import {setNewNotification} from '../../redux/app/app-actions.js';
 import '@material/mwc-icon';
-import {get, translate} from '../../../translate/index.js'
+import {get, translate} from '../../../translate'
 import {repeat} from 'lit/directives/repeat.js';
 import '../../../../plugins/plugins/core/components/TimeAgo.js';
 import './popover.js';
@@ -20,7 +20,6 @@ class NotificationBellGeneral extends connect(store)(LitElement) {
 		showNotifications: { type: Boolean },
 		notificationCount: { type: Boolean },
 		theme: { type: String, reflect: true },
-		notifications: { type: Array },
 		currentNotification: { type: Object },
 	};
 

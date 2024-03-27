@@ -8,7 +8,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import {setIsOpenDevDialog, setNewTab} from '../redux/app/app-actions.js'
 import FileSaver from 'file-saver'
-import {get, registerTranslateConfig, translate, use} from '../../translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../translate'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -1995,11 +1995,7 @@ class NavBar extends connect(store)(LitElement) {
                     this.myPluginNameRes = res
                 })
 
-                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0) {
-                    myPluginName = false
-                } else {
-                    myPluginName = true
-                }
+                myPluginName = !(this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0);
                 return myPluginName
             }
 
@@ -2060,11 +2056,7 @@ class NavBar extends connect(store)(LitElement) {
                     this.myPluginNameRes = res
                 })
 
-                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0 ) {
-                    myPluginName = false
-                } else {
-                    myPluginName = true
-                }
+                myPluginName = !(this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0);
                 return myPluginName
             }
 

@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { render } from 'lit/html.js';
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from '../../../translate/index.js'
+import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from '../../../translate'
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@vaadin/tooltip';
@@ -274,7 +274,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 			this.requestUpdate();
 		}
 
-		
+
 	}
 
 	async firstUpdated() {
@@ -549,12 +549,12 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 									<div
 										style="display:flex;justify-content:center;flex-direction:column;gap:25px"
 									>
-										
+
 										<div
 											style="display:flex;gap:15px;align-items:center"
 										>
 										<p
-										
+
 											style="color: var(--black);font-size:16px"
 										>
 											${key}
@@ -592,9 +592,9 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 						>
 							${translate('general.close')}
 						</button>
-						
+
 						<div style="display:flex;gap:10px;align-items:center">
-						
+
 						<button
 							?disabled="${this.isLoading}"
 							class="modal-button"
@@ -718,7 +718,7 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 							class="input"
 							.value=${this.newFieldName}
 							@change=${(e) => {
-								this.newFieldName = e.target.value	
+								this.newFieldName = e.target.value
 							}}
 						/>
 						<input

@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {translate,} from '../../../../core/translate/index.js'
+import {translate,} from '../../../../core/translate'
 import axios from 'axios'
 import {RequestQueueWithPromise} from '../../utils/queue'
 import '@material/mwc-menu'

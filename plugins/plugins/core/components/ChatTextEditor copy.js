@@ -3,7 +3,7 @@ import {escape, unescape} from 'html-escaper'
 import {EmojiPicker} from 'emoji-picker-js'
 import {inputKeyCodes} from '../../utils/keyCodes.js'
 import {Epml} from '../../../epml.js'
-import {get} from '../../../../core/translate/index.js'
+import {get} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -268,7 +268,7 @@ class ChatTextEditor extends LitElement {
             if (!this.userName) {
                 e.preventDefault();
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
-           };
+           }
 	}
 
     initialChat(e) {
@@ -360,15 +360,15 @@ class ChatTextEditor extends LitElement {
 
     shouldUpdate(changedProperties) {
         // Only update element if prop1 changed.
-       if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
-        return true
+       return !(changedProperties.has('setChatEditor') && changedProperties.size === 1);
+
       }
 
     sendMessageFunc(props) {
         if (this.chatMessageSize > 1000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"))
             return
-        };
+        }
         this.chatMessageSize = 0
         this.chatEditor.updateMirror()
         this._sendMessage(props)

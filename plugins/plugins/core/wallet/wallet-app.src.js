@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
 import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import FileSaver from 'file-saver'
@@ -2955,7 +2955,7 @@ class MultiWallet extends LitElement {
             this.walletHelperMessage = this.renderWalletHelperErr()
             await errDelay(3000)
             this.walletHelperMessage = this.renderWalletHelperPass()
-            return
+
         }
     }
 
@@ -4766,7 +4766,7 @@ class MultiWallet extends LitElement {
                     await new Promise(resolve => setTimeout(resolve, 2000))
                     this.showWallet()
                     return
-                } else if (res !== null && res !== "Synchronized") {
+                } else if (res !== "Synchronized") {
                     this.balanceString = res
                     await new Promise(resolve => setTimeout(resolve, 2000))
                     this.showWallet()

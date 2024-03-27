@@ -3,7 +3,7 @@ import {EmojiPicker} from 'emoji-picker-js'
 import {Epml} from '../../../epml.js'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -358,10 +358,9 @@ class ChatTextEditor extends LitElement {
 .hide-styling {
     display: none;
 }
-mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::before {
-                background-color:var(--mdc-theme-primary)
+mwc-checkbox::shadow, mdc-checkbox::after, mwc-checkbox::shadow, mdc-checkbox::before {
+                background-color: var(--mdc-theme-primary)
             }
-            --mdc-checkbox-unchecked-color
 		`
 	}
 
@@ -665,8 +664,8 @@ mwc-checkbox::shadow .mdc-checkbox::after, mwc-checkbox::shadow .mdc-checkbox::b
 
     shouldUpdate(changedProperties) {
         // Only update element if prop1 changed.
-       if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
-        return true
+       return !(changedProperties.has('setChatEditor') && changedProperties.size === 1);
+
       }
 
     sendMessageFunc(props) {

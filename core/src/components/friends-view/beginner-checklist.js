@@ -8,7 +8,7 @@ import '@polymer/iron-icons/iron-icons.js';
 import { store } from '../../store.js';
 import { setNewTab } from '../../redux/app/app-actions.js';
 import '@material/mwc-icon';
-import { get, translate } from '../../../translate/index.js';
+import { get, translate } from '../../../translate';
 import { repeat } from 'lit/directives/repeat.js';
 import '../../../../plugins/plugins/core/components/TimeAgo.js';
 import '../notification-view/popover.js';
@@ -94,11 +94,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			const res = await fetch(endpoint);
 			const getNames = await res.json();
 
-			if (Array.isArray(getNames) && getNames.length > 0) {
-				this.hasName = true;
-			} else {
-				this.hasName = false;
-			}
+			this.hasName = Array.isArray(getNames) && getNames.length > 0;
 		} catch (error) {
 			return '';
 		}
@@ -132,7 +128,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			state.app.accountInfo.names.length > 0
 		) {
 			this.hasName = true;
-		} 
+		}
 	}
 
 	handleBlur() {

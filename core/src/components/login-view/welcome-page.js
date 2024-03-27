@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 
 import '@material/mwc-button'
 

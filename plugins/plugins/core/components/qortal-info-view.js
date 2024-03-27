@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@material/mwc-button'
 import '@material/mwc-icon'
