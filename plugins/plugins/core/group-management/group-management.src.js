@@ -2713,7 +2713,8 @@ class GroupManagement extends LitElement {
         if (groupObj.owner === this.selectedAddress.address) {
             return html`<mwc-button class="warning" @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else if (groupObj.isAdmin === true) {
-            return html`<mwc-button class="warning" @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
+            return html`<mwc-button class="warning" @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>
+            <br><mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
         } else {
             return html`<mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
         }
