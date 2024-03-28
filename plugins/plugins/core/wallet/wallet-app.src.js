@@ -48,6 +48,8 @@ class MultiWallet extends LitElement {
             isTextMenuOpen: { type: Boolean },
             wallets: { type: Map },
             _selectedWallet: 'qort',
+            nodeConfig: { type: Object },
+            nodeDomain: { type: String },
             theme: { type: String, reflect: true },
             amount: { type: Number },
             recipient: { type: String },
@@ -74,6 +76,12 @@ class MultiWallet extends LitElement {
             isValidAmount: { type: Boolean },
             balance: { type: Number },
             balanceString: { type: String },
+            btcServer: { type: Number },
+            ltcServer: { type: Number },
+            dogeServer: { type: Number },
+            dgbServer: { type: Number },
+            rvnServer: { type: Number },
+            arrrServer: { type: Number },
             qortPaymentFee: { type: Number },
             btcFeePerByte: { type: Number },
             ltcFeePerByte: { type: Number },
@@ -741,6 +749,8 @@ class MultiWallet extends LitElement {
         this.isTextMenuOpen = false
         this.loading = true
 
+        this.nodeConfig = {}
+        this.nodeDomain = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light';
 
         this.qortBook = []
@@ -774,6 +784,12 @@ class MultiWallet extends LitElement {
         this.arrrMemo = ''
         this.arrrWalletAddress = ''
         this.unusedWalletAddress = ''
+        this.btcServer = ''
+        this.ltcServer = ''
+        this.dogeServer = ''
+        this.dgbServer = ''
+        this.rvnServer = ''
+        this.arrrServer = ''
         this.errorMessage = ''
         this.successMessage = ''
         this.myElementId = ''
@@ -966,6 +982,8 @@ class MultiWallet extends LitElement {
                         <span class="wallet-balance">
                             ${this.balanceString}
                         </span>
+                        <br>
+                        <span class="server-address">${this.getSelectedWalletServer()}</span>
                         <br>
                     </h2>
                     <div class="send-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
@@ -4668,7 +4686,9 @@ class MultiWallet extends LitElement {
         }
         const coin = this._selectedWallet
         await this.fetchWalletAddress(this._selectedWallet)
+        await this.fetchWalletServer(this._selectedWallet)
         await this.fetchWalletDetails(this._selectedWallet)
+        await this.fetchWalletServer(this._selectedWallet)
         if (this._selectedWallet == coin) {
             await this.renderTransactions()
             await this.getTransactionGrid(this._selectedWallet)
@@ -4974,6 +4994,106 @@ class MultiWallet extends LitElement {
                 // Use locally derived address
                 return this.wallets.get(this._selectedWallet).wallet.address
         }
+    }
+
+    getSelectedWalletServer() {
+        switch (this._selectedWallet) {
+            case "qort":
+                return this.nodeDomain
+
+            case "btc":
+                return this.btcServer
+
+            case "ltc":
+                return this.ltcServer
+
+            case "doge":
+                return this.dogeServer
+
+            case "dgb":
+                return this.dgbServer
+
+            case "rvn":
+                return this.rvnServer
+
+            case "arrr":
+                return this.arrrServer
+
+            default:
+                return
+        }
+    }
+
+    async fetchWalletServer(coin) {
+        if (coin == 'qort') {
+            this.getNodeConfig()
+            return
+        }
+        let walletServer = ''
+        try {
+            const serverInfo = await parentEpml.request('apiCall', {
+                type: 'api',
+                /* TODO */
+                url: `/crosschain/${coin}/serverinfos`,
+                // TODO when 'current' parameter is added to 'serverinfos' API call, change above line to:
+                // url: `/crosschain/${coin}/serverinfos?current=true`,
+            })
+            /* TODO */
+            let currentServerFound = false
+            for (const server of serverInfo.servers) {
+                if (server.isCurrent === true) {
+                    walletServer = `${server.hostName}:${server.port}`
+                    currentServerFound = true
+                    break
+                }
+            }
+            if (!currentServerFound) {
+                walletServer = 'Not Connected'
+            }
+            // TODO when 'current' parameter is added to 'serverinfos' API call, change above 'let,for,if' sections to:
+            /*if (serverInfo.servers[0]) {
+                const currentServerInfo = `${serverInfo.servers[0].hostName}:${serverInfo.servers[0].port}`
+                walletServer = currentServerInfo
+            } else {
+                walletServer = 'Not Connected'
+            }*/
+        } catch (error) {
+            console.error('Failed to fetch server info:', error)
+            walletServer = `Error fetching server: ${error}`
+        }
+        switch (coin) {
+            case "btc":
+                this.btcServer = walletServer
+                break
+            case "ltc":
+                this.ltcServer = walletServer
+                break
+            case "doge":
+                this.dogeServer = walletServer
+                break
+            case "dgb":
+                this.dgbServer = walletServer
+                break
+            case "rvn":
+                this.rvnServer = walletServer
+                break
+            case "arrr":
+                this.arrrServer = walletServer
+                break
+            default:
+                break
+        }
+    }
+
+    getNodeConfig() {
+        this.nodeConfig = {}
+        this.nodeDomain = ""
+        parentEpml.request("getNodeConfig").then((res) => {
+            this.nodeConfig = res
+            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+            this.nodeDomain = myNode.domain + ":" + myNode.port
+        })
+        setTimeout(getNodeConfig, 60000)
     }
 
     async getTransactionGrid(coin) {
