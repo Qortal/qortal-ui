@@ -26,9 +26,7 @@ const objectToArray = (object) => {
     let directList = object.direct.map(dc => {
         return { ...dc, url: `direct/${dc.address}` }
     })
-    let chatHeadMasterList = [...groupList, ...directList]
-
-    return chatHeadMasterList
+	return [...groupList, ...directList]
 }
 
 const sortActiveChat = (activeChatObject, localChatHeads) => {
@@ -213,7 +211,7 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
     if (isLoggedIn === 'true') {
 
         // Call Set Account Info...
-        setAccountInfo(window.parent.reduxStore.getState().app.selectedAddress.address)
+        await setAccountInfo(window.parent.reduxStore.getState().app.selectedAddress.address)
 
         // Start Chat Watcher Socket
         pingActiveChatSocket()

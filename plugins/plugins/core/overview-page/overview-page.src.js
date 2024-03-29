@@ -146,9 +146,9 @@ class OverviewPage extends LitElement {
         this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
         this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
 
-        this.getNodeInfo()
-        this.getCoreInfo()
-        this.getBalanceInfo()
+        await this.getNodeInfo()
+        await this.getCoreInfo()
+        await this.getBalanceInfo()
         await this.getMintingKeysList()
 
         window.addEventListener('storage', () => {
@@ -223,9 +223,9 @@ class OverviewPage extends LitElement {
     async refreshItems() {
         this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
         this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
-        this.getNodeInfo()
-        this.getCoreInfo()
-        this.getBalanceInfo()
+        await this.getNodeInfo()
+        await this.getCoreInfo()
+        await this.getBalanceInfo()
         await this.getMintingKeysList()
     }
 
@@ -238,8 +238,7 @@ class OverviewPage extends LitElement {
 
         try {
             const res = await fetch(statusUrl)
-            const listAccounts = await res.json()
-            this.listAccounts = listAccounts
+			this.listAccounts = await res.json()
 
             const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
             const address = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -359,8 +358,7 @@ class OverviewPage extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 }
 window.customElements.define('overview-page', OverviewPage)
@@ -550,8 +548,7 @@ class StartMintingNow extends LitElement {
 		const url = `${nodeUrl}/admin/mintingaccounts`
 		try {
 			const res = await fetch(url)
-			const mintingAccountData = await res.json()
-			this.mintingAccountData = mintingAccountData
+			this.mintingAccountData = await res.json()
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg1()
 		}
@@ -600,7 +597,7 @@ class StartMintingNow extends LitElement {
 			let snack1 = get('becomeMinterPage.bchange19')
 			parentEpml.request('showSnackBar', `${snack1}`)
 			this.status = 5
-			this.getMintingAcccounts()
+			await this.getMintingAcccounts()
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg3()
 
@@ -618,8 +615,7 @@ class StartMintingNow extends LitElement {
 			const rewardShares = async (minterAddr) => {
 				const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`
 				const res = await fetch(url)
-				const data = await res.json()
-				return data
+				return await res.json()
 			}
 
 			if (!stop) {
@@ -659,7 +655,7 @@ class StartMintingNow extends LitElement {
 			let rewarddialog3 = get('transactions.rewarddialog3')
 			let rewarddialog4 = get('transactions.rewarddialog4')
 
-			let myTxnrequest = await parentEpml.request('transaction', {
+			return await parentEpml.request('transaction', {
 				type: 38,
 				nonce: nonce,
 				params: {
@@ -673,7 +669,6 @@ class StartMintingNow extends LitElement {
 				},
 				disableModal: true
 			})
-			return myTxnrequest
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
@@ -701,11 +696,10 @@ class StartMintingNow extends LitElement {
 		}
 
 		const getLastRef = async () => {
-			let myRef = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				type: 'api',
 				url: `/addresses/lastreference/${address}`
 			})
-			return myRef
 		}
 
 		const startMinting = async () => {
@@ -721,7 +715,7 @@ class StartMintingNow extends LitElement {
 
 			try {
 				this.privateRewardShareKey = await createSponsorshipKey()
-				this.confirmRelationship(publicAddress)
+				await this.confirmRelationship(publicAddress)
 			} catch (error) {
 				this.errorMsg = error.data.message || this.renderErrorMsg4()
 

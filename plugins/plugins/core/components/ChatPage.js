@@ -245,17 +245,12 @@ class ChatPage extends LitElement {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-
-		return myNode;
 	}
 
     setOpenGifModal(value) {
@@ -362,7 +357,7 @@ class ChatPage extends LitElement {
             })
 
         }
-        this.processMessages(getInitialMessages, true, false)
+        await this.processMessages(getInitialMessages, true, false)
         } catch (error) { /* empty */ }
     }
 
@@ -1105,8 +1100,7 @@ class ChatPage extends LitElement {
         const handleTransferIntoURL = (dataTransfer) => {
             try {
                 const [firstItem] = dataTransfer.items
-                const blob = firstItem.getAsFile()
-                return blob
+				return firstItem.getAsFile()
             } catch (error) { /* empty */ }
         }
         if (event.clipboardData) {
@@ -1267,7 +1261,7 @@ class ChatPage extends LitElement {
             }
             delete message.reactions
             const stringifyMessageObject = JSON.stringify(message)
-            this.sendMessage({messageText: stringifyMessageObject, chatReference: undefined, isForward: true})
+            await this.sendMessage({messageText: stringifyMessageObject, chatReference: undefined, isForward: true})
         } catch (error) { /* empty */ }
     }
 
@@ -1343,13 +1337,12 @@ class ChatPage extends LitElement {
 
 
         setTimeout(() => {
-            const isRecipient = this.chatId.includes('direct') === true ? true : false
+            const isRecipient = this.chatId.includes('direct') === true
             this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false
             this._chatId = this.chatId.split('/')[1]
 
             const mstring = get("chatpage.cchange8")
-            const placeholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`
-            this.chatEditorPlaceholder = placeholder
+			this.chatEditorPlaceholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`
 
             isRecipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId)
 
@@ -1358,7 +1351,7 @@ class ChatPage extends LitElement {
         }, 100)
 
 
-        const isRecipient = this.chatId.includes('direct') === true ? true : false
+        const isRecipient = this.chatId.includes('direct') === true
         const groupId = this.chatId.split('/')[1]
         if (!isRecipient && groupId.toString() !== '0') {
 
@@ -1438,7 +1431,7 @@ class ChatPage extends LitElement {
         const isEnabledChatEnter = localStorage.getItem('isEnabledChatEnter')
 
         if (isEnabledChatEnter) {
-            this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true
+            this.isEnabledChatEnter = isEnabledChatEnter !== 'false'
         }
 
     }
@@ -1474,7 +1467,7 @@ class ChatPage extends LitElement {
             const previousChatId = changedProperties.get('chatId');
 
             this.isLoadingMessages = true
-            this.initUpdate()
+            await this.initUpdate()
 
 
             if (previousChatId) {
@@ -1541,8 +1534,7 @@ class ChatPage extends LitElement {
             userName = await getName(this._chatId)
         }
         const mstring = get("chatpage.cchange8")
-        const placeholder = this.isReceipient === true ? `Message ${userName ? userName : this._chatId}` : `${mstring}`
-        return placeholder
+		return this.isReceipient === true ? `Message ${userName ? userName : this._chatId}` : `${mstring}`
     }
 
     renderChatScroller() {
@@ -1649,14 +1641,14 @@ class ChatPage extends LitElement {
               })
 
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
 
             let list = [...decodeMsgs]
@@ -1715,14 +1707,14 @@ class ChatPage extends LitElement {
                 }
               })
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
 
             let list = [...decodeMsgs]
@@ -1789,14 +1781,14 @@ class ChatPage extends LitElement {
                 }
               })
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
             let list = [...decodeMsgs]
 
@@ -1841,14 +1833,14 @@ class ChatPage extends LitElement {
                   })
 
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
             let list = [...decodeMsgs]
 
 
@@ -1900,14 +1892,14 @@ class ChatPage extends LitElement {
               })
 
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
             let list = [ ...decodeMsgs]
 
@@ -1959,14 +1951,14 @@ class ChatPage extends LitElement {
               })
 
 
-            queue.push(() =>  replaceMessagesEdited({
-                decodedMessages: decodeMsgs,
-                parentEpml,
-                isReceipient: this.isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodeMsgs,
+				parentEpml,
+				isReceipient: this.isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
 
 
@@ -2072,14 +2064,14 @@ class ChatPage extends LitElement {
 
 
             try {
-                queue.push(() => replaceMessagesEdited({
-                    decodedMessages: decodedMessages,
-                    parentEpml,
-                    isReceipient: isReceipient,
-                    decodeMessageFunc: this.decodeMessage,
-                    _publicKey: this._publicKey,
-                    addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-                }));
+                await queue.push(() => replaceMessagesEdited({
+					decodedMessages: decodedMessages,
+					parentEpml,
+					isReceipient: isReceipient,
+					decodeMessageFunc: this.decodeMessage,
+					_publicKey: this._publicKey,
+					addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+				}));
             } catch (error) {
                 console.log({error})
             }
@@ -2133,15 +2125,15 @@ class ChatPage extends LitElement {
             setTimeout(() => this.downElementObserver(), 500)
         } else {
 
-            queue.push(() => replaceMessagesEdited({
-                decodedMessages: decodedMessages,
-                parentEpml,
-                isReceipient: isReceipient,
-                decodeMessageFunc: this.decodeMessage,
-                _publicKey: this._publicKey,
-                isNotInitial: true,
-                addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
-            }));
+            await queue.push(() => replaceMessagesEdited({
+				decodedMessages: decodedMessages,
+				parentEpml,
+				isReceipient: isReceipient,
+				decodeMessageFunc: this.decodeMessage,
+				_publicKey: this._publicKey,
+				isNotInitial: true,
+				addToUpdateMessageHashmap: this.addToUpdateMessageHashmap
+			}));
 
             const renderEachMessage = decodedMessages.map(async (msg) => {
                 await this.renderNewMessage(msg)
@@ -2364,14 +2356,14 @@ class ChatPage extends LitElement {
 
 
 
-                    this.processMessages(getInitialMessages, true, isUnread, count)
+                    await this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
 
                 } else {
                     try {
                         if (e.data) {
-                            this.processMessages(JSON.parse(e.data), false)
+                            await this.processMessages(JSON.parse(e.data), false)
                         }
                     } catch (error) { /* empty */ }
                 }
@@ -2492,13 +2484,13 @@ class ChatPage extends LitElement {
 
 
 
-                    this.processMessages(getInitialMessages, true, isUnread, count)
+                    await this.processMessages(getInitialMessages, true, isUnread, count)
 
                     initial = initial + 1
                 } else {
                     try {
                         if (e.data) {
-                            this.processMessages(JSON.parse(e.data), false)
+                            await this.processMessages(JSON.parse(e.data), false)
                         }
                     } catch (error) { /* empty */ }
                 }
@@ -2528,7 +2520,7 @@ class ChatPage extends LitElement {
 
         if (chatId !== undefined) {
             if (this.isReceipient) {
-                initDirect(chatId)
+                await initDirect(chatId)
             } else {
                 let groupChatId = Number(chatId)
                 initGroup(groupChatId)
@@ -2646,8 +2638,7 @@ class ChatPage extends LitElement {
                         byteArrays.push(byteArray)
                     }
 
-                    const blob = new Blob(byteArrays, { type: contentType })
-                    return blob
+					return new Blob(byteArrays, {type: contentType})
                 }
                 const blob = b64toBlob(str, 'image/png')
                 await new Promise(resolve => {
@@ -2655,11 +2646,9 @@ class ChatPage extends LitElement {
                         quality: 0.6,
                         maxWidth: 500,
                         success(result) {
-                            const file = new File([result], "name", {
-                                type: 'image/png'
-                            })
-
-                            compressedFile = file
+							compressedFile = new File([result], "name", {
+								type: 'image/png'
+							})
                             resolve()
                         },
                         error() {
@@ -2701,8 +2690,7 @@ class ChatPage extends LitElement {
 
                 let message = ""
                 try {
-                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                    message = parsedMessageObj
+					message = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
                 } catch (error) {
                     message = outSideMsg.editedMessageObj.decodedMessage
                 }
@@ -2742,8 +2730,7 @@ class ChatPage extends LitElement {
                         byteArrays.push(byteArray)
                     }
 
-                    const blob = new Blob(byteArrays, { type: contentType })
-                    return blob
+					return new Blob(byteArrays, {type: contentType})
                 }
 
                 const blob = b64toBlob(str, 'image/png')
@@ -2752,11 +2739,9 @@ class ChatPage extends LitElement {
                         quality: 0.6,
                         maxWidth: 500,
                         success(result) {
-                            const file = new File([result], "name", {
-                                type: 'image/png'
-                            })
-
-                            compressedFile = file
+							compressedFile = new File([result], "name", {
+								type: 'image/png'
+							})
                             resolve()
                         },
                         error() {
@@ -2798,8 +2783,7 @@ class ChatPage extends LitElement {
 
                 let message = ""
                 try {
-                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                    message = parsedMessageObj
+					message = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
 
                 } catch (error) {
                     message = outSideMsg.editedMessageObj.decodedMessage
@@ -2862,10 +2846,9 @@ class ChatPage extends LitElement {
                             maxWidth: 1200,
                             mimeType: 'image/webp',
                             success(result) {
-                                const file = new File([result], "name", {
-                                    type: 'image/webp'
-                                })
-                                compressedFile = file
+								compressedFile = new File([result], "name", {
+									type: 'image/webp'
+								})
                                 resolve()
                             },
                             error() {
@@ -3021,8 +3004,7 @@ class ChatPage extends LitElement {
                 let message = ""
 
                 try {
-                    const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
-                    message = parsedMessageObj
+					message = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
                 } catch (error) {
                     message = outSideMsg.editedMessageObj.decodedMessage
                 }
@@ -3090,8 +3072,7 @@ class ChatPage extends LitElement {
 
                 let message = ""
                 try {
-                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
-                    message = parsedMessageObj
+					message = JSON.parse(this.editedMessageObj.decodedMessage)
 
                 } catch (error) {
                     message = this.editedMessageObj.decodedMessage
@@ -3286,7 +3267,7 @@ class ChatPage extends LitElement {
                 } catch (error) { /* empty */ }
             }
 
-            const isRecipient = this.forwardActiveChatHeadUrl.url.includes('direct') === true ? true : false
+            const isRecipient = this.forwardActiveChatHeadUrl.url.includes('direct') === true
 
             const recipientAddress = this.forwardActiveChatHeadUrl.url.split('/')[1]
             this.openForwardOpen = false
@@ -3313,7 +3294,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(chatResponse, true)
+                await _computePow(chatResponse, true)
             } else {
                 let groupResponse = await parentEpml.request('chat', {
                     type: 181,
@@ -3331,7 +3312,7 @@ class ChatPage extends LitElement {
                         isText: 1
                     }
                 })
-                _computePow(groupResponse, true)
+                await _computePow(groupResponse, true)
             }
         }
 
@@ -3411,7 +3392,7 @@ class ChatPage extends LitElement {
         }
 
         if (isForward) {
-            sendForwardRequest()
+            await sendForwardRequest()
             return
         }
       return  sendMessageRequest()

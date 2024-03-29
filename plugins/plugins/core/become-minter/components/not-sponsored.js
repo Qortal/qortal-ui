@@ -41,9 +41,8 @@ class NotSponsored extends LitElement {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-		let apiKey = myNode.apiKey
-		return apiKey
+			]
+		return myNode.apiKey
 	}
 
 	addMintingAccount(e) {

@@ -898,8 +898,7 @@ class NameRegistration extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     async registerName(e) {
@@ -914,20 +913,18 @@ class NameRegistration extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         // Get Account Details
         const validateName = async () => {
-            let isValid = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${nameInput}`
-            })
-            return isValid
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/names/${nameInput}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -949,19 +946,18 @@ class NameRegistration extends LitElement {
         const makeTransactionRequest = async (lastRef) => {
             let dialogyou = get("transactions.namedialog1")
             let dialogonpress = get("transactions.namedialog2")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 3,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: feeInput,
-                    name: nameInput,
-                    value: descInput,
-                    lastReference: lastRef,
-                    dialogyou: dialogyou,
-                    dialogonpress: dialogonpress,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 3,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: feeInput,
+					name: nameInput,
+					value: descInput,
+					lastReference: lastRef,
+					dialogyou: dialogyou,
+					dialogonpress: dialogonpress,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -979,7 +975,7 @@ class NameRegistration extends LitElement {
             }
         }
 
-        validateReceiver()
+        await validateReceiver()
 
         this.registerNameLoading = false
     }
@@ -994,20 +990,18 @@ class NameRegistration extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         // Get Account Details
         const validateName = async () => {
-            let isValid = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${newNameInput}`
-            })
-            return isValid
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/names/${newNameInput}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -1035,21 +1029,20 @@ class NameRegistration extends LitElement {
             let dialogUpdateName1 = get("registernamepage.nchange43")
             let dialogUpdateName2 = get("registernamepage.nchange44")
             let dialogUpdateName3 = get("registernamepage.nchange45")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 4,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myOldName,
-                    newName: myNewName,
-                    newData: myNewDesc,
-                    lastReference: myLastRef,
-                    dialogUpdateName1: dialogUpdateName1,
-                    dialogUpdateName2: dialogUpdateName2,
-                    dialogUpdateName3: dialogUpdateName3
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 4,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					name: myOldName,
+					newName: myNewName,
+					newData: myNewDesc,
+					lastReference: myLastRef,
+					dialogUpdateName1: dialogUpdateName1,
+					dialogUpdateName2: dialogUpdateName2,
+					dialogUpdateName3: dialogUpdateName3
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -1067,7 +1060,7 @@ class NameRegistration extends LitElement {
             }
         }
 
-        validateReceiver()
+        await validateReceiver()
     }
 
     async createSellName() {
@@ -1078,11 +1071,10 @@ class NameRegistration extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -1100,20 +1092,19 @@ class NameRegistration extends LitElement {
             const mySellNameDialog2 = get("registernamepage.nchange27")
             const mySellNameDialog3 = get("registernamepage.nchange28")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 5,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myName,
-                    sellPrice: myPrice,
-                    lastReference: myLastRef,
-                    sellNameDialog1: mySellNameDialog1,
-                    sellNameDialog2: mySellNameDialog2,
-                    sellNameDialog3: mySellNameDialog3
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 5,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					name: myName,
+					sellPrice: myPrice,
+					lastReference: myLastRef,
+					sellNameDialog1: mySellNameDialog1,
+					sellNameDialog2: mySellNameDialog2,
+					sellNameDialog3: mySellNameDialog3
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -1138,7 +1129,7 @@ class NameRegistration extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async createCancelSellName() {
@@ -1148,11 +1139,10 @@ class NameRegistration extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -1168,18 +1158,17 @@ class NameRegistration extends LitElement {
             const myCancelSellNameDialog1 = get("registernamepage.nchange30")
             const myCancelSellNameDialog2 = get("registernamepage.nchange31")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 6,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myName,
-                    lastReference: myLastRef,
-                    cancelSellNameDialog1: myCancelSellNameDialog1,
-                    cancelSellNameDialog2: myCancelSellNameDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 6,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					name: myName,
+					lastReference: myLastRef,
+					cancelSellNameDialog1: myCancelSellNameDialog1,
+					cancelSellNameDialog2: myCancelSellNameDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -1202,12 +1191,11 @@ class NameRegistration extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     isEmptyArray(arr) {

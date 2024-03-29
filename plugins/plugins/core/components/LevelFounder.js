@@ -107,10 +107,9 @@ class LevelFounder extends LitElement {
     async checkAddressInfo() {
         try {
             let toCheck = this.checkleveladdress
-            const memberInfo = await parentEpml.request('apiCall', {
-                url: `/addresses/${toCheck}`
-            })
-            this.memberInfo = memberInfo
+			this.memberInfo = await parentEpml.request('apiCall', {
+				url: `/addresses/${toCheck}`
+			})
         } catch (error) {
             console.error(error)
         }
@@ -146,8 +145,7 @@ class LevelFounder extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 }
 

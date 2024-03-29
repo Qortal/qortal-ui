@@ -346,8 +346,7 @@ var pJS = function (tag_id, params) {
         var shape_type = pJS.particles.shape.type
         if (typeof (shape_type) === 'object') {
             if (shape_type instanceof Array) {
-                var shape_selected = shape_type[Math.floor(Math.random() * shape_type.length)]
-                this.shape = shape_selected
+				this.shape = shape_type[Math.floor(Math.random() * shape_type.length)]
             }
         } else {
             this.shape = shape_type

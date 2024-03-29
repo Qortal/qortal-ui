@@ -55,9 +55,8 @@ export class ImageComponent extends LitElement {
     const myNode =
       window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
       window.parent.reduxStore.getState().app.nodeConfig.node
-      ];
-    let apiKey = myNode.apiKey;
-    return apiKey;
+      ]
+	  return myNode.apiKey
   }
 
   async _fetchImage() {
@@ -82,7 +81,7 @@ export class ImageComponent extends LitElement {
     } catch (error) {
       this.error = true;
       console.error(error);
-      this._fetchImage();
+      await this._fetchImage();
     }
   }
 

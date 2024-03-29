@@ -1298,13 +1298,11 @@ class QortalInfoView extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const fromNameUrl = `${nodeUrl}/names/${fromName}`
 
-        const qortalNameInfo = await fetch(fromNameUrl).then(response => {
-            return response.json()
-        })
-
-        this.nameAddressResult = qortalNameInfo
+		this.nameAddressResult = await fetch(fromNameUrl).then(response => {
+			return response.json()
+		})
         const nameAddress = this.nameAddressResult.owner
-        this.getAllWithAddress(nameAddress)
+        await this.getAllWithAddress(nameAddress)
     }
 
     async getAllWithAddress(myAddress) {
@@ -1325,11 +1323,9 @@ class QortalInfoView extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const infoAddressUrl = `${nodeUrl}/addresses/${infoAddress}`
 
-        const qortalAddressInfo = await fetch(infoAddressUrl).then(response => {
-            return response.json()
-        })
-
-        this.addressResult = qortalAddressInfo
+		this.addressResult = await fetch(infoAddressUrl).then(response => {
+			return response.json()
+		})
     }
 
     async getAddressUserAvatar(avatarAddress) {
@@ -1351,8 +1347,7 @@ class QortalInfoView extends LitElement {
             }
         })
 
-        const myImageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.imageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        this.imageUrl = myImageUrl
+		this.imageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.imageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
     }
 
     async getAddressUserBalance(balanceAddress) {
@@ -1378,28 +1373,22 @@ class QortalInfoView extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
         if (checkBlocks === 0) {
-            let noMinterString = get("explorerpage.exp16")
-            this.startMintTime = noMinterString
+			this.startMintTime = get("explorerpage.exp16")
         } else {
             const blockheightUrl = `${nodeUrl}/blocks/height`
 
-            const currentBlockheight = await fetch(blockheightUrl).then(response => {
-                return response.json()
-            })
-
-            this.actualBlockheight = currentBlockheight
+			this.actualBlockheight = await fetch(blockheightUrl).then(response => {
+				return response.json()
+			})
             this.reduceBlockheight = this.addressResult.blocksMinted + this.addressResult.blocksMintedAdjustment
             this.startMintBlockheight = (this.actualBlockheight - this.reduceBlockheight)
             const startMintUrl = `${nodeUrl}/blocks/byheight/${this.startMintBlockheight}?includeOnlineSignatures=false`
 
-            const startMintBlock = await fetch(startMintUrl).then(response => {
-                return response.json()
-            })
+			this.startMintBlock = await fetch(startMintUrl).then(response => {
+				return response.json()
+			})
 
-            this.startMintBlock = startMintBlock
-
-            const mintString = new Date(this.startMintBlock.timestamp).toLocaleDateString()
-            this.startMintTime = mintString
+			this.startMintTime = new Date(this.startMintBlock.timestamp).toLocaleDateString()
         }
     }
 
@@ -1854,8 +1843,7 @@ class QortalInfoView extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     isEmptyArray(arr) {
@@ -1866,8 +1854,7 @@ class QortalInfoView extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 }
 

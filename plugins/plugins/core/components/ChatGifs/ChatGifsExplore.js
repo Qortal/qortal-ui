@@ -70,8 +70,7 @@ class ChatGifsExplore extends LitElement {
     }
 	getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
 		async searchCollections() {
@@ -120,8 +119,7 @@ class ChatGifsExplore extends LitElement {
 							class='clear-search-icon'
 							@click=${async () => {
 								if (this.isLoading) return;
-								const latestCollections = await this.getAllCollections();
-								this.exploreCollections = latestCollections;
+								this.exploreCollections = await this.getAllCollections();
 								this.searchCollectionName = '';
 								this.isSearched = false;
 								}}

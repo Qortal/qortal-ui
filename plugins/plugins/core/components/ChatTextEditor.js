@@ -699,8 +699,7 @@ mwc-checkbox::shadow, mdc-checkbox::after, mwc-checkbox::shadow, mdc-checkbox::b
             } else if (this.editedMessageObj) {
                 let message = "";
                 try {
-                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage);
-                    message = parsedMessageObj;
+					message = JSON.parse(this.editedMessageObj.decodedMessage);
                  } catch (error) {
                     message = this.messageObj.decodedMessage
                 }
@@ -742,8 +741,7 @@ mwc-checkbox::shadow, mdc-checkbox::after, mwc-checkbox::shadow, mdc-checkbox::b
               }
 
             const stringified = JSON.stringify(messageObject);
-            const size =  new Blob([stringified]).size;
-            this.chatMessageSize = size;
+			this.chatMessageSize = new Blob([stringified]).size;
         } catch (error) {
             console.error(error)
         }

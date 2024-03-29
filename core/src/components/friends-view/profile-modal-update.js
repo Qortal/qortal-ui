@@ -1,15 +1,14 @@
-import { LitElement, html, css } from 'lit';
-import { render } from 'lit/html.js';
-import { use, get, translate, translateUnsafeHTML, registerTranslateConfig } from '../../../translate'
+import {css, html, LitElement} from 'lit';
+import {get, translate} from '../../../translate'
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@vaadin/tooltip';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
-import { parentEpml } from '../show-plugin';
+import {parentEpml} from '../show-plugin';
 
 class ProfileModalUpdate extends connect(store)(LitElement) {
 	static get properties() {
@@ -335,19 +334,14 @@ class ProfileModalUpdate extends connect(store)(LitElement) {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return store.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	clearFields() {

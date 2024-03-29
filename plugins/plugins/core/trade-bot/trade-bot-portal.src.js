@@ -1,4 +1,4 @@
-import {css, html, LitElement} from 'lit'
+import {html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
@@ -1515,7 +1515,7 @@ class TradeBotPortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
-        this.tradeFee()
+        await this.tradeFee()
         await this.getNewBlockedTrades()
 
         this.autoHelperMessage = this.renderAutoHelperPass()
@@ -1556,8 +1556,8 @@ class TradeBotPortal extends LitElement {
             this.shadowRoot.getElementById('autoLockScreenActive').open()
         }
 
-        this.updateWalletBalance()
-        this.fetchWalletAddress(this.selectedCoin)
+        await this.updateWalletBalance()
+        await this.fetchWalletAddress(this.selectedCoin)
         this.blockedTradesList = JSON.parse(localStorage.getItem('failedTrades') || '[]')
         this._openOrdersGrid = this.shadowRoot.getElementById('openOrdersGrid')
 
@@ -2408,7 +2408,7 @@ class TradeBotPortal extends LitElement {
         await this.getDoneTrades()
         this.updateDoneTradesTimeout = setTimeout(() => this.getDoneTrades(), 180000)
         await this.updateWalletBalance()
-        this.fetchWalletAddress(coin)
+        await this.fetchWalletAddress(coin)
 
     }
 
@@ -3168,9 +3168,8 @@ class TradeBotPortal extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 
     clearTradeBotForm() {
@@ -3188,8 +3187,7 @@ class TradeBotPortal extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     inlineWorker(passedFunction, modifiers) {

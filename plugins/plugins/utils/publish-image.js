@@ -3,8 +3,7 @@ const getApiKey = () => {
 		window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 			window.parent.reduxStore.getState().app.nodeConfig.node
 		]
-	let apiKey = myNode.apiKey
-	return apiKey
+	return myNode.apiKey
 }
 
 export const publishData = async ({
@@ -32,22 +31,19 @@ export const publishData = async ({
 	feeAmount
 }) => {
 	const validateName = async (receiverName) => {
-		let nameRes = await parentEpml.request("apiCall", {
+		return await parentEpml.request("apiCall", {
 			type: "api",
 			url: `/names/${receiverName}`,
 		})
-
-		return nameRes
 	}
 
     const convertBytesForSigning = async (transactionBytesBase58) => {
-        let convertedBytes = await parentEpml.request("apiCall", {
-            type: "api",
-            method: "POST",
-            url: `/transactions/convert`,
-            body: `${transactionBytesBase58}`,
-        })
-        return convertedBytes
+		return await parentEpml.request("apiCall", {
+			type: "api",
+			method: "POST",
+			url: `/transactions/convert`,
+			body: `${transactionBytesBase58}`,
+		})
     }
 	const getArbitraryFee = async () => {
 		const timestamp = Date.now()
@@ -235,18 +231,16 @@ export const publishData = async ({
 				uploadDataUrl = uploadDataUrl + '&tags=' + encodeURIComponent(tag5)
 			}
 
-			let uploadDataRes = await parentEpml.request("apiCall", {
+			return await parentEpml.request("apiCall", {
 				type: "api",
 				method: "POST",
 				url: `${uploadDataUrl}`,
 				body: `${postBody}`,
 			})
-			return uploadDataRes
 		}
 	}
 	try {
-		const validateRes = await validate()
-		return validateRes
+		return await validate()
 	} catch (error) {
 		throw new Error(error.message)
 	}

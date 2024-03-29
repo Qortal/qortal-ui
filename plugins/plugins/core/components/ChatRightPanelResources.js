@@ -279,11 +279,11 @@ class ChatRightPanelResources extends LitElement {
 	async updated(changedProperties) {
 		if (changedProperties && changedProperties.has('_chatId')) {
 			this.images = [];
-			this.getMoreImages(true);
+			await this.getMoreImages(true);
 		}
 
 		if (changedProperties && changedProperties.has('onlyMyImages')) {
-			this.getMoreImages(true)
+			await this.getMoreImages(true)
 		}
 	}
 

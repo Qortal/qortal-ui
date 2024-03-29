@@ -1,8 +1,8 @@
-import { LitElement, html, css } from 'lit'
-import { store } from '../../store'
-import { connect } from 'pwa-helpers'
-import { translate } from '../../../translate'
-import { parentEpml } from '../show-plugin'
+import {css, html, LitElement} from 'lit'
+import {store} from '../../store'
+import {connect} from 'pwa-helpers'
+import {translate} from '../../../translate'
+import {parentEpml} from '../show-plugin'
 
 import '@material/mwc-icon'
 
@@ -89,11 +89,9 @@ class SyncIndicator extends connect(store)(LitElement) {
 	async firstUpdated() {
 		this.address = store.getState().app.selectedAddress.address
 
-		const seenWelcomeSync = JSON.parse(
+		this.seenWelcomeSync = JSON.parse(
 			localStorage.getItem(`welcome-sync-${this.address}`) || 'false'
 		)
-
-		this.seenWelcomeSync = seenWelcomeSync
 	}
 
 	getNodeUrl() {
@@ -102,23 +100,19 @@ class SyncIndicator extends connect(store)(LitElement) {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			]
 
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		return nodeUrl
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			]
-
-		return myNode
 	}
 
 	async getDaySummary() {
 		try {
 			this.fetchingSummary = true
-	
+
 
 			const endpointLastBlock = `${this.nodeUrl}/blocks/last`
 			const resLastBlock = await fetch(endpointLastBlock)
@@ -147,7 +141,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 
 	async checkHowManyBlocksBehind() {
 		try {
-			this.getDaySummary();
+			await this.getDaySummary();
 			this.interval = setInterval(() => {
 				if(this.fetchingSummary) return
 				if (this.isBehind === false) {
@@ -182,7 +176,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 		} else if(state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && state.app.nodeStatus.syncPercent !== this.syncPercentage){
 			this.syncPercentage = state.app.nodeStatus.syncPercent
 			this.isSynchronizing = false
-			
+
 		} else if (
 			state.app.nodeStatus
 		) {
@@ -192,8 +186,8 @@ class SyncIndicator extends connect(store)(LitElement) {
 
 			if (state.app.nodeStatus.syncPercent !== 100) {
 				this.isSynchronizing = true
-			} 
-			
+			}
+
 			if (
 				!this.interval &&
 				this.isBehind === null &&
@@ -216,7 +210,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 				parentEpml.request('showSnackBar', get('tour.tour22'))
 			}
 		} catch (error) {
-			
+
 		}
 	}
 
@@ -276,7 +270,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 									style="height: 24px; width: 24px;"
 							/></span>
 							<p>
-								${translate("tour.tour19")} ${this.blocksBehind ? this.blocksBehind : ""} ${this.blocksBehind ? translate("tour.tour21"): ""} 
+								${translate("tour.tour19")} ${this.blocksBehind ? this.blocksBehind : ""} ${this.blocksBehind ? translate("tour.tour21"): ""}
 							</p>
 						</div>
 				  `

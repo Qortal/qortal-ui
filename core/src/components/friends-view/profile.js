@@ -1,12 +1,12 @@
-import { LitElement, html, css } from 'lit';
+import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store.js';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store.js';
 import WebWorker2 from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from '../../../translate'
+import {get, translate} from '../../../translate'
 import ShortUniqueId from 'short-unique-id';
 import '@polymer/paper-dialog/paper-dialog.js';
 
@@ -14,20 +14,15 @@ import {
 	decryptGroupData,
 	encryptDataGroup,
 	objectToBase64,
-	uint8ArrayToBase64,
 	uint8ArrayToObject,
 } from '../../../../plugins/plugins/core/components/qdn-action-encryption.js';
-import { publishData } from '../../../../plugins/plugins/utils/publish-image.js';
-import { parentEpml } from '../show-plugin.js';
+import {publishData} from '../../../../plugins/plugins/utils/publish-image.js';
+import {parentEpml} from '../show-plugin.js';
 import '../notification-view/popover.js';
 import './avatar.js';
-import {
-	setNewTab,
-	setProfileData,
-	setSideEffectAction,
-} from '../../redux/app/app-actions.js';
+import {setNewTab, setProfileData, setSideEffectAction,} from '../../redux/app/app-actions.js';
 import './profile-modal-update.js';
-import { modalHelper } from '../../../../plugins/plugins/utils/publish-modal.js';
+import {modalHelper} from '../../../../plugins/plugins/utils/publish-modal.js';
 
 class ProfileQdn extends connect(store)(LitElement) {
 	static get properties() {
@@ -288,19 +283,14 @@ class ProfileQdn extends connect(store)(LitElement) {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	async getRawData(dataItem) {
@@ -323,10 +313,9 @@ class ProfileQdn extends connect(store)(LitElement) {
 	}
 
 	async followNames(names) {
-		let items = names;
-		let namesJsonString = JSON.stringify({ items: items });
+		let namesJsonString = JSON.stringify({ items: names });
 
-		let ret = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`,
 			method: 'POST',
 			headers: {
@@ -334,8 +323,6 @@ class ProfileQdn extends connect(store)(LitElement) {
 			},
 			body: `${namesJsonString}`,
 		});
-
-		return ret;
 	}
 
 	async setValues(response, resource) {
@@ -426,8 +413,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 	async getProfile() {
 		try {
 			this.error = '';
-			const arbFee = await this.getArbitraryFee();
-			this.fee = arbFee;
+			this.fee = await this.getArbitraryFee();
 			this.hasAttemptedToFetchResource = true;
 			let resource;
 
@@ -459,7 +445,7 @@ class ProfileQdn extends connect(store)(LitElement) {
 						try {
 							const response = await this.getRawData(dataItem);
 							if (response.wallets) {
-								this.setValues(response, dataItem);
+								await this.setValues(response, dataItem);
 							} else {
 								this.error = 'Cannot get saved user settings';
 							}
@@ -574,11 +560,10 @@ class ProfileQdn extends connect(store)(LitElement) {
 						const toBase64 = await objectToBase64(
 							newObject.customData[key]
 						);
-						const encryptedData = encryptDataGroup({
+						newObject['customData'][key] = encryptDataGroup({
 							data64: toBase64,
 							publicKeys: [],
 						});
-						newObject['customData'][key] = encryptedData;
 					}
 				} else {
 					newObject['customData'][key] = newObject.customData[key];

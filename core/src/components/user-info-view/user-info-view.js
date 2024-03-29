@@ -1374,13 +1374,11 @@ class UserInfoView extends connect(store)(LitElement) {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const fromNameUrl = `${nodeUrl}/names/${fromName}`
 
-        const qortalNameInfo = await fetch(fromNameUrl).then(response => {
-            return response.json()
-        })
-
-        this.nameAddressResult = qortalNameInfo
+		this.nameAddressResult = await fetch(fromNameUrl).then(response => {
+			return response.json()
+		})
         const nameAddress = this.nameAddressResult.owner
-        this.getAllWithAddress(nameAddress)
+        await this.getAllWithAddress(nameAddress)
     }
 
     async getAllWithAddress(myAddress) {
@@ -1401,11 +1399,9 @@ class UserInfoView extends connect(store)(LitElement) {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const infoAddressUrl = `${nodeUrl}/addresses/${infoAddress}`
 
-        const qortalAddressInfo = await fetch(infoAddressUrl).then(response => {
-            return response.json()
-        })
-
-        this.addressResult = qortalAddressInfo
+		this.addressResult = await fetch(infoAddressUrl).then(response => {
+			return response.json()
+		})
     }
 
     async getAddressUserAvatar(avatarAddress) {
@@ -1427,8 +1423,7 @@ class UserInfoView extends connect(store)(LitElement) {
             }
         })
 
-        const myImageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.imageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        this.imageUrl = myImageUrl
+		this.imageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.imageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
     }
 
     async getAddressUserBalance(balanceAddress) {
@@ -1451,19 +1446,15 @@ class UserInfoView extends connect(store)(LitElement) {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
         if (checkBlocks === 0) {
-            let noMinterString = get("explorerpage.exp16")
-            this.startMintTime = noMinterString
+			this.startMintTime = get("explorerpage.exp16")
         } else {
             const rewardshareUrl = `${nodeUrl}/transactions/search?txType=REWARD_SHARE&address=${mintAddress}&confirmationStatus=CONFIRMED&limit=1&reverse=false`
 
-            const startMinting = await fetch(rewardshareUrl).then(response => {
-                return response.json()
-            })
+			this.startMinting = await fetch(rewardshareUrl).then(response => {
+				return response.json()
+			})
 
-            this.startMinting = startMinting
-
-            const mintString = new Date(this.startMinting[0].timestamp).toLocaleDateString()
-            this.startMintTime = mintString
+			this.startMintTime = new Date(this.startMinting[0].timestamp).toLocaleDateString()
         }
     }
 
@@ -1928,9 +1919,8 @@ class UserInfoView extends connect(store)(LitElement) {
     }
 
     getApiKey() {
-        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
-        let apiKey = apiNode.apiKey;
-        return apiKey;
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		return apiNode.apiKey
     }
 
     isEmptyArray(arr) {
@@ -1941,8 +1931,7 @@ class UserInfoView extends connect(store)(LitElement) {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 }
 

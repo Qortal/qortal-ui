@@ -19,7 +19,7 @@ import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
-import { defaultQappsTabs } from '../data/defaultQapps.js'
+import {defaultQappsTabs} from '../data/defaultQapps.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -842,7 +842,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
                 store.dispatch(setNewTab(null))
             } else if (!this.tabs.find((tab) => tab.id === newTab.id)) {
-                this.addTab(newTab)
+                await this.addTab(newTab)
                 this.currentTab = this.tabs.length - 1
                 store.dispatch(setNewTab(null))
                 //clear newTab
@@ -1473,8 +1473,7 @@ class NavBar extends connect(store)(LitElement) {
                 res()
             }, 1000);
         })
-		const detail = event.detail
-        this.myMenuPlugins = detail
+		this.myMenuPlugins = event.detail
         const addressInfo = this.addressInfo
         const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
         const isSponsor = +addressInfo?.level >= 5
@@ -1588,11 +1587,9 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     async getMyFollowedNames() {
-        let myFollowedNames = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-
-        this.myFollowedNames = myFollowedNames
+		this.myFollowedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     searchNameKeyListener(e) {
@@ -1692,7 +1689,7 @@ class NavBar extends connect(store)(LitElement) {
             let err3string = get("appspage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
         }
-        this.getMyFollowedNamesList()
+        await this.getMyFollowedNamesList()
         return ret
     }
 
@@ -1718,7 +1715,7 @@ class NavBar extends connect(store)(LitElement) {
             let err4string = get("appspage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
         }
-        this.getMyFollowedNamesList()
+        await this.getMyFollowedNamesList()
         return ret
     }
 
@@ -2398,7 +2395,7 @@ class NavBar extends connect(store)(LitElement) {
     async handlePasteLink(e) {
         try {
             const value = this.shadowRoot.getElementById('linkInput').value
-            this.getQuery(value)
+            await this.getQuery(value)
         } catch (error) {
         }
     }
@@ -2407,7 +2404,7 @@ class NavBar extends connect(store)(LitElement) {
         if (e.key === 'Enter') {
             try {
                 const value = this.shadowRoot.getElementById('linkInput').value
-                this.getQuery(value)
+                await this.getQuery(value)
             } catch (error) {
             }
         }
@@ -2415,8 +2412,7 @@ class NavBar extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     isEmptyArray(arr) {

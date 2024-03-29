@@ -441,10 +441,9 @@ class MintingInfo extends LitElement {
     }
 
     async getAddressLevel() {
-        const callLevels = await parentEpml.request('apiCall', {
-            url: `/addresses/online/levels`
-        })
-        this.addressLevel = callLevels
+		this.addressLevel = await parentEpml.request('apiCall', {
+			url: `/addresses/online/levels`
+		})
         this.tier4Online = parseFloat(this.addressLevel[7].count) + parseFloat(this.addressLevel[8].count)
     }
 

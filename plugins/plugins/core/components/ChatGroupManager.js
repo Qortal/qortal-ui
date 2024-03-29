@@ -242,14 +242,10 @@ class ChatGroupsManager extends LitElement {
             let endpoint = `/groups`
 
 
-			const groups = await parentEpml.request('apiCall', {
+			this.groups = await parentEpml.request('apiCall', {
 				type: 'api',
 				url: endpoint,
-			});
-
-            let list = groups
-
-			this.groups = list
+			})
 		} catch (error) {
 			console.log(error);
 		}

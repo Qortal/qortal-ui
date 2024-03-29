@@ -406,28 +406,23 @@ class Websites extends LitElement {
         }, 0)
 
         const getFollowedNames = async () => {
-            let followedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.followedNames = followedNames
+			this.followedNames = await parentEpml.request('apiCall', {
+				url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getFollowedNames, 60000)
         }
 
         const getBlockedNames = async () => {
-            let blockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-            this.blockedNames = blockedNames
+			this.blockedNames = await parentEpml.request('apiCall', {
+				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getBlockedNames, 60000)
         }
 
         const getRelayMode = async () => {
-            let relayMode = await parentEpml.request('apiCall', {
-                url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
-            })
-
-            this.relayMode = relayMode
+			this.relayMode = await parentEpml.request('apiCall', {
+				url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getRelayMode, 600000)
         }
 
@@ -553,38 +548,33 @@ class Websites extends LitElement {
     }
 
     getArbitraryResources = async () => {
-        const resources = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false&excludeblocked=true`
-        })
-        this.resources = resources
+		this.resources = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=false&includemetadata=false&excludeblocked=true`
+		})
     }
 
     getFollowedNamesResource = async () => {
-        const followedRes = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=followedNames`
-        })
-        this.followedResources = followedRes
+		this.followedResources = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=followedNames`
+		})
     }
 
     getFollowedNamesRefresh = async () => {
-        let followedNames = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-        this.followedNames = followedNames
+		this.followedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     getBlockedNamesResource = async () => {
-        const blockedRes = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=blockedNames`
-        })
-        this.blockedResources = blockedRes
+		this.blockedResources = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=blockedNames`
+		})
     }
 
     getBlockedNamesRefresh = async () => {
-        let blockedNames = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-        })
-        this.blockedNames = blockedNames
+		this.blockedNames = await parentEpml.request('apiCall', {
+			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     async getData(offset) {
@@ -593,9 +583,7 @@ class Websites extends LitElement {
       let jsonOffsetUrl = `${nodeUrl}/arbitrary/resources?service=WEBSITE&default=true&limit=20&offset=${offset}&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
 
       const jsonOffsetRes = await fetch(jsonOffsetUrl)
-      const jsonOffsetData = await jsonOffsetRes.json()
-
-      this.pageRes = jsonOffsetData
+		this.pageRes = await jsonOffsetRes.json()
     }
 
     async updateItemsFromPage(page) {
@@ -809,8 +797,8 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.followedNames = this.followedNames.filter(item => item != name)
             this.followedNames.push(name)
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
+            await this.getFollowedNamesRefresh()
+            await this.getFollowedNamesResource()
         } else {
             let err3string = get("websitespage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
@@ -863,8 +851,8 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unfollowed - remove from local list
             this.followedNames = this.followedNames.filter(item => item != name)
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
+            await this.getFollowedNamesRefresh()
+            await this.getFollowedNamesResource()
         } else {
             let err4string = get("websitespage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
@@ -923,8 +911,8 @@ class Websites extends LitElement {
             // immediately, as apposed to only adding if it doesn't already exist
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
+            await this.getBlockedNamesRefresh()
+            await this.getBlockedNamesResource()
         } else {
             let err5string = get("websitespage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
@@ -977,8 +965,8 @@ class Websites extends LitElement {
         if (ret === true) {
             // Successfully unblocked - remove from local list
             this.blockedNames = this.blockedNames.filter(item => item != name)
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
+            await this.getBlockedNamesRefresh()
+            await this.getBlockedNamesResource()
         } else {
             let err6string = get("websitespage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
@@ -1116,8 +1104,7 @@ class Websites extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     isEmptyArray(arr) {

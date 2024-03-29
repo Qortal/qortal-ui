@@ -63,7 +63,7 @@ const generateRollupConfig = (inputFile, outputFile) => {
 };
 
 const generateForPlugins = () => {
-	const configs = [
+	return [
 		{
 			in: 'plugins/core/main.src.js',
 			out: 'plugins/core/main.js',
@@ -162,7 +162,6 @@ const generateForPlugins = () => {
 			path.join(__dirname, file.out)
 		);
 	});
-	return configs;
 };
 
 module.exports = generateForPlugins;

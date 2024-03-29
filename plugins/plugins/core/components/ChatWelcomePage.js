@@ -406,11 +406,11 @@ class ChatWelcomePage extends LitElement {
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1;
                 _publicKey = addressPublicKey;
-                sendMessageRequest(isEncrypted, _publicKey);
+                await sendMessageRequest(isEncrypted, _publicKey);
             } else {
                 isEncrypted = 0;
                 _publicKey = this.selectedAddress.address;
-                sendMessageRequest(isEncrypted, _publicKey);
+                await sendMessageRequest(isEncrypted, _publicKey);
             }
         };
 
@@ -437,7 +437,7 @@ class ChatWelcomePage extends LitElement {
                     isText: 1
                 }
             })
-            _computePow(chatResponse)
+            await _computePow(chatResponse)
         }
 
         const _computePow = async (chatBytes) => {
@@ -482,7 +482,7 @@ class ChatWelcomePage extends LitElement {
             }
 
         }
-        getAddressPublicKey()
+        await getAddressPublicKey()
     }
 
     _textArea(e) {
@@ -495,9 +495,8 @@ class ChatWelcomePage extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 }
 

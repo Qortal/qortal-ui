@@ -426,10 +426,9 @@ class Puzzles extends LitElement {
 
         // Get Last Ref
         const getLastRef = async (address) => {
-            let myRef = await parentEpml.request('apiCall', {
-                url: `/addresses/lastreference/${address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				url: `/addresses/lastreference/${address}`
+			})
         }
 
         let lastRef = await getLastRef(_guessAddress)

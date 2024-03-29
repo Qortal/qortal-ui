@@ -293,19 +293,14 @@ class NotificationItemTx extends connect(store)(LitElement) {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return store.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	async getStatus() {
@@ -313,11 +308,10 @@ class NotificationItemTx extends connect(store)(LitElement) {
 		let stop = false;
 		const getAnswer = async () => {
 			const getTx = async (minterAddr) => {
-				const url = `${this.nodeUrl}/transactions/signature/${this.signature}`;
-				const res = await fetch(url);
-				const data = await res.json();
-				return data;
-			};
+				const url = `${this.nodeUrl}/transactions/signature/${this.signature}`
+				const res = await fetch(url)
+				return await res.json()
+			}
 
 			if (!stop) {
 				stop = true;

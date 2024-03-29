@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../../store.js'
-import { get, translate } from '../../../translate'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../../store.js'
+import {get, translate} from '../../../translate'
 
 class AccountView extends connect(store)(LitElement) {
     static get properties() {
@@ -127,8 +127,7 @@ class AccountView extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     stateChanged(state) {

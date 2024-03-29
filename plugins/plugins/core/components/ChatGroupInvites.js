@@ -105,11 +105,10 @@ class ChatGroupInvites extends LitElement {
 	}
 
 	async getLastRef() {
-		let myRef = await parentEpml.request("apiCall", {
+		return await parentEpml.request("apiCall", {
 			type: "api",
 			url: `/addresses/lastreference/${this.selectedAddress.address}`,
 		})
-		return myRef
 	}
 
 	getTxnRequestResponse(txnResponse, reference) {
@@ -125,13 +124,12 @@ class ChatGroupInvites extends LitElement {
 	}
 
 	async convertBytesForSigning(transactionBytesBase58) {
-		let convertedBytes = await parentEpml.request("apiCall", {
+		return await parentEpml.request("apiCall", {
 			type: "api",
 			method: "POST",
 			url: `/transactions/convert`,
 			body: `${transactionBytesBase58}`,
 		})
-		return convertedBytes
 	}
 
     async signTx(body){
@@ -204,11 +202,10 @@ class ChatGroupInvites extends LitElement {
 			}
 			const bodyToString2 = JSON.stringify(body2)
 			let signTransaction = await this.signTx(bodyToString2)
-			let processTransaction = await this.process(signTransaction)
-			return processTransaction
+			return await this.process(signTransaction)
 		}
 
-		validateReceiver()
+		await validateReceiver()
 	}
 
     async _removeAdmin(groupId) {
@@ -261,11 +258,10 @@ class ChatGroupInvites extends LitElement {
 			}
 			const bodyToString2 = JSON.stringify(body2)
 			let signTransaction = await this.signTx(bodyToString2)
-			let processTransaction = await this.process(signTransaction)
-			return processTransaction
+			return await this.process(signTransaction)
 		}
 
-		validateReceiver()
+		await validateReceiver()
 	}
 
 	render() {

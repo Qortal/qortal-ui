@@ -200,8 +200,7 @@ class DgbCharts extends LitElement {
 	}
 
 	round(number) {
-		let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-		return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 

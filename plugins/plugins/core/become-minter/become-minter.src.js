@@ -80,18 +80,15 @@ class BecomeMinter extends LitElement {
 	}
 
 	async getNodeInfo() {
-		const nodeInfo = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/admin/status`,
 		})
-
-		return nodeInfo
 	}
 
 	async getMintingAcccounts() {
-		const mintingAccountData = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/admin/mintingaccounts`,
 		})
-		return mintingAccountData
 	}
 
 	async atMount() {
@@ -148,21 +145,18 @@ class BecomeMinter extends LitElement {
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
-		const myRewardShareArray = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			type: 'api',
 			url: `/addresses/rewardshares?recipients=${recipientAddress}`,
 		})
-
-		return myRewardShareArray
 	}
 
 	_levelUpBlocks() {
-		let countBlocksString = (
+		return (
 			blocksNeed(0) -
 			(this.addressInfo?.blocksMinted +
 				this.addressInfo?.blocksMintedAdjustment)
 		).toString()
-		return countBlocksString
 	}
 
 	render() {

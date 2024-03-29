@@ -577,12 +577,11 @@ class QortalLottery extends LitElement {
 								}
 								prepareClosedLotteriesArray.push(obj)
 							} else {
-								const winName = twinner
 								const obj = {
 									description: tdescription,
 									startblock: tstartblock,
 									endblock: tendblock,
-									winner: winName,
+									winner: twinner,
 									jackpot: tjackpot
 								}
 								prepareClosedLotteriesArray.push(obj)
@@ -844,11 +843,10 @@ class QortalLottery extends LitElement {
         }
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${window.parent.reduxStore.getState().app.selectedAddress.address}`,
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${window.parent.reduxStore.getState().app.selectedAddress.address}`,
+			})
         }
 
         const validateName = async (receiverName) => {
@@ -867,8 +865,7 @@ class QortalLottery extends LitElement {
         }
 
         const validateAddress = async (receiverAddress) => {
-            let myAddress = await window.parent.validateAddress(receiverAddress)
-            return myAddress
+			return await window.parent.validateAddress(receiverAddress)
         }
 
         const validateReceiver = async (recipient) => {
@@ -923,22 +920,21 @@ class QortalLottery extends LitElement {
             let dialogName = get("login.name")
             let dialogto = get("transactions.to")
             let recipientName = await getName(myReceiver)
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 2,
-                nonce: window.parent.reduxStore.getState().app.selectedAddress.nonce,
-                params: {
-                    recipient: myReceiver,
-                    recipientName: recipientName,
-                    amount: amount,
-                    lastReference: mylastRef,
-                    fee: sendFee,
-                    dialogamount: dialogamount,
-                    dialogto: dialogto,
-                    dialogAddress,
-                    dialogName
-                },
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 2,
+				nonce: window.parent.reduxStore.getState().app.selectedAddress.nonce,
+				params: {
+					recipient: myReceiver,
+					recipientName: recipientName,
+					amount: amount,
+					lastReference: mylastRef,
+					fee: sendFee,
+					dialogamount: dialogamount,
+					dialogto: dialogto,
+					dialogAddress,
+					dialogName
+				},
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -963,7 +959,7 @@ class QortalLottery extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver(recipient)
+        await validateReceiver(recipient)
     }
 
     clearConsole() {
@@ -982,13 +978,11 @@ class QortalLottery extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     isEmptyArray(arr) {

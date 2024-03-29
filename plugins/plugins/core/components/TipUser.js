@@ -36,7 +36,7 @@ export class TipUser extends LitElement {
 
     async firstUpdated() {
         await this.fetchWalletDetails()
-        this.paymentFee()
+        await this.paymentFee()
     }
 
     updated(changedProperties) {
@@ -50,11 +50,10 @@ export class TipUser extends LitElement {
     }
 
     async getLastRef() {
-        let myRef = await parentEpml.request("apiCall", {
-            type: "api",
-            url: `/addresses/lastreference/${this.myAddress.address}`,
-        })
-        return myRef
+		return await parentEpml.request("apiCall", {
+			type: "api",
+			url: `/addresses/lastreference/${this.myAddress.address}`,
+		})
     }
 
     async getSendQortFee() {
@@ -89,8 +88,7 @@ export class TipUser extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     async fetchWalletDetails() {

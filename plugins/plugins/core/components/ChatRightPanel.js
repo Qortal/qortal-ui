@@ -194,8 +194,7 @@ class ChatRightPanel extends LitElement {
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('selectedHead')) {
             if (this.selectedHead !== {}) {
-                const userName = await getUserNameFromAddress(this.selectedHead.address);
-                this.userName = userName;
+				this.userName = await getUserNameFromAddress(this.selectedHead.address);
             }
         }
     }

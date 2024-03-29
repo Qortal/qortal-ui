@@ -211,8 +211,7 @@ class SettingsPage extends connect(store)(LitElement) {
 
 														// Set the selected value for mwc-select
 														const protocolList = dialog.querySelector('#protocolList')
-														const desiredProtocol = currentValues.protocol
-														protocolList.value = desiredProtocol
+														protocolList.value = currentValues.protocol
 														this.isBeingEdited = true
 														this.isBeingEditedIndex = index
 														this.shadowRoot.querySelector('#addNodeDialog').show()

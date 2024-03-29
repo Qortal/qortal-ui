@@ -593,7 +593,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
         backupname = "qortal_backup_" + wallet.addresses[0].address + ".json"
-        this.saveFileToDisk(blob, backupname)
+        await this.saveFileToDisk(blob, backupname)
     }
 
     async downloadSeedphrase() {
@@ -601,7 +601,7 @@ class CreateAccountSection extends connect(store)(LitElement) {
         const seed = this.shadowRoot.getElementById('randSentence').parsedString
         const blob = new Blob([seed], { type: 'text/plain;charset=utf-8' })
         seedname = "qortal_seedphrase.txt"
-        this.saveFileToDisk(blob, seedname)
+        await this.saveFileToDisk(blob, seedname)
     }
 
     async saveFileToDisk(blob, fileName) {

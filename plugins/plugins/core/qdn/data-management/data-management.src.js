@@ -663,8 +663,7 @@ class DataManagement extends LitElement {
         let filepath = gifViewObj.filepath
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const gifUrl = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?filepath=${filepath}&rebuild=true&async=true&apiKey=${this.getApiKey()}`
-        this.dataImageUrl = gifUrl
+		this.dataImageUrl = `${nodeUrl}/arbitrary/${service}/${name}/${identifier}?filepath=${filepath}&rebuild=true&async=true&apiKey=${this.getApiKey()}`
         this.shadowRoot.querySelector('#showGifImage').show()
     }
 
@@ -984,10 +983,9 @@ class DataManagement extends LitElement {
     }
 
     getManagementDetails = async () => {
-        const myDat = await parentEpml.request('apiCall', {
-            url: `/arbitrary/hosted/resources?apiKey=${this.getApiKey()}`
-        })
-        this.datres = myDat;
+		this.datres = await parentEpml.request('apiCall', {
+			url: `/arbitrary/hosted/resources?apiKey=${this.getApiKey()}`
+		});
     }
 
     async updateItemsFromPage(page) {
@@ -1064,37 +1062,32 @@ class DataManagement extends LitElement {
     }
 
     getSearchBlockedNames = async () => {
-        let searchBlockedNames = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-        })
-        this.searchBlockedNames = searchBlockedNames
+		this.searchBlockedNames = await parentEpml.request('apiCall', {
+			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     getSearchFollowedNames = async () => {
-        let searchFollowedNames = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-        this.searchFollowedNames = searchFollowedNames
+		this.searchFollowedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     getBlockedNames = async () => {
-        let blockedNames = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-        })
-        this.blockedNames = blockedNames
+		this.blockedNames = await parentEpml.request('apiCall', {
+			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     getFollowedNames = async () => {
-        let followedNames = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-        this.followedNames = followedNames
+		this.followedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+		return myNode.apiKey;
     }
 
     isEmptyArray(arr) {

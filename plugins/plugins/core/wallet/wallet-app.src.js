@@ -3566,50 +3566,43 @@ class MultiWallet extends LitElement {
     }
 
     sendFromQortAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.recipient = address
+		this.recipient = websiteObj.address
         this.openSendQort()
         this.shadowRoot.querySelector('#qortBookDialog').close()
     }
 
     sendFromBtcAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.btcRecipient = address
+		this.btcRecipient = websiteObj.address
         this.openSendBtc()
         this.shadowRoot.querySelector('#btcBookDialog').close()
     }
 
     sendFromLtcAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.ltcRecipient = address
+		this.ltcRecipient = websiteObj.address
         this.openSendLtc()
         this.shadowRoot.querySelector('#ltcBookDialog').close()
     }
 
     sendFromDogeAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.dogeRecipient = address
+		this.dogeRecipient = websiteObj.address
         this.openSendDoge()
         this.shadowRoot.querySelector('#dogeBookDialog').close()
     }
 
     sendFromDgbAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.dgbRecipient = address
+		this.dgbRecipient = websiteObj.address
         this.openSendDgb()
         this.shadowRoot.querySelector('#dgbBookDialog').close()
     }
 
     sendFromRvnAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.rvnRecipient = address
+		this.rvnRecipient = websiteObj.address
         this.openSendRvn()
         this.shadowRoot.querySelector('#rvnBookDialog').close()
     }
 
     sendFromArrrAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.arrrRecipient = address
+		this.arrrRecipient = websiteObj.address
         this.openSendArrr()
         this.shadowRoot.querySelector('#arrrBookDialog').close()
     }
@@ -4254,11 +4247,10 @@ class MultiWallet extends LitElement {
         }
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
+			})
         }
 
         const validateName = async (receiverName) => {
@@ -4277,8 +4269,7 @@ class MultiWallet extends LitElement {
         }
 
         const validateAddress = async (receiverAddress) => {
-            let myAddress = await window.parent.validateAddress(receiverAddress)
-            return myAddress
+			return await window.parent.validateAddress(receiverAddress)
         }
 
         const validateReceiver = async (recipient) => {
@@ -4333,22 +4324,21 @@ class MultiWallet extends LitElement {
             let dialogName = get("login.name")
             let dialogto = get("transactions.to")
             let recipientName = await getName(myReceiver)
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 2,
-                nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
-                params: {
-                    recipient: myReceiver,
-                    recipientName: recipientName,
-                    amount: amount,
-                    lastReference: mylastRef,
-                    fee: sendFee,
-                    dialogamount: dialogamount,
-                    dialogto: dialogto,
-                    dialogAddress,
-                    dialogName
-                },
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 2,
+				nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
+				params: {
+					recipient: myReceiver,
+					recipientName: recipientName,
+					amount: amount,
+					lastReference: mylastRef,
+					fee: sendFee,
+					dialogamount: dialogamount,
+					dialogto: dialogto,
+					dialogAddress,
+					dialogName
+				},
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -4373,8 +4363,8 @@ class MultiWallet extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver(recipient)
-        this.showWallet()
+        await validateReceiver(recipient)
+        await this.showWallet()
     }
 
     async sendBtc() {
@@ -4392,8 +4382,7 @@ class MultiWallet extends LitElement {
                 bitcoinAmount: btcAmount,
                 feePerByte: (this.btcFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendBtc', opts)
-            return response
+			return await parentEpml.request('sendBtc', opts)
         }
 
         const manageResponse = (response) => {
@@ -4420,7 +4409,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendLtc() {
@@ -4438,8 +4427,7 @@ class MultiWallet extends LitElement {
                 litecoinAmount: ltcAmount,
                 feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendLtc', opts)
-            return response
+			return await parentEpml.request('sendLtc', opts)
         }
 
         const manageResponse = (response) => {
@@ -4466,7 +4454,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendDoge() {
@@ -4484,8 +4472,7 @@ class MultiWallet extends LitElement {
                 dogecoinAmount: dogeAmount,
                 feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendDoge', opts)
-            return response
+			return await parentEpml.request('sendDoge', opts)
         }
 
         const manageResponse = (response) => {
@@ -4512,7 +4499,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendDgb() {
@@ -4530,8 +4517,7 @@ class MultiWallet extends LitElement {
                 digibyteAmount: dgbAmount,
                 feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendDgb', opts)
-            return response
+			return await parentEpml.request('sendDgb', opts)
         }
 
         const manageResponse = (response) => {
@@ -4558,7 +4544,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendRvn() {
@@ -4576,8 +4562,7 @@ class MultiWallet extends LitElement {
                 ravencoinAmount: rvnAmount,
                 feePerByte: (this.rvnFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendRvn', opts)
-            return response
+			return await parentEpml.request('sendRvn', opts)
         }
 
         const manageResponse = (response) => {
@@ -4604,7 +4589,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendArrr() {
@@ -4623,8 +4608,7 @@ class MultiWallet extends LitElement {
                 arrrAmount: arrrAmount,
                 memo: arrrMemo
             }
-            const response = await parentEpml.request('sendArrr', opts)
-            return response
+			return await parentEpml.request('sendArrr', opts)
         }
 
         const manageResponse = (response) => {
@@ -4653,7 +4637,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async showWallet() {
@@ -4764,12 +4748,12 @@ class MultiWallet extends LitElement {
                 if (res.indexOf('<') > -1) {
                     this.balanceString = this.renderFetchText()
                     await new Promise(resolve => setTimeout(resolve, 2000))
-                    this.showWallet()
+                    await this.showWallet()
                     return
                 } else if (res !== "Synchronized") {
                     this.balanceString = res
                     await new Promise(resolve => setTimeout(resolve, 2000))
-                    this.showWallet()
+                    await this.showWallet()
                     return
                 }
 
@@ -5572,9 +5556,8 @@ class MultiWallet extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 
     transactionItem(transactionObject) {
@@ -5729,8 +5712,7 @@ class MultiWallet extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     subtract(num1, num2) {

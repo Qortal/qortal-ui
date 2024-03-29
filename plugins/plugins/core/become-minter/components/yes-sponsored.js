@@ -28,12 +28,11 @@ class YesSponsored extends LitElement {
 	static styles = [pageStyles]
 
 	_levelUpBlocks() {
-		let countBlocksString = (
+		return (
 			blocksNeed(0) -
 			(this.addressInfo?.blocksMinted +
 				this.addressInfo?.blocksMintedAdjustment)
-		).toString();
-		return countBlocksString
+		).toString()
 	}
 
 	render() {

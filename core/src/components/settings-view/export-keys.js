@@ -1,8 +1,8 @@
 import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
-import { Epml } from '../../epml.js'
-import { addTradeBotRoutes } from '../../tradebot/addTradeBotRoutes.js'
+import {Epml} from '../../epml.js'
+import {addTradeBotRoutes} from '../../tradebot/addTradeBotRoutes.js'
 import {get, translate} from '../../../translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
@@ -427,7 +427,7 @@ class ExportKeys extends connect(store)(LitElement) {
         addTradeBotRoutes(parentEpml)
         parentEpml.imReady()
         await this.fetchArrrWalletAddress()
-        this.checkArrrWalletPrivateKey()
+        await this.checkArrrWalletPrivateKey()
     }
 
     async fetchArrrWalletAddress() {
@@ -518,10 +518,10 @@ class ExportKeys extends connect(store)(LitElement) {
 
         if (resRepair != null && resRepair.error != 128) {
             this.shadowRoot.querySelector('#pleaseWaitDialog').close()
-            this.openOkDialog()
+            await this.openOkDialog()
         } else {
             this.shadowRoot.querySelector('#pleaseWaitDialog').close()
-            this.openErrorDialog()
+            await this.openErrorDialog()
         }
     }
 
@@ -558,7 +558,7 @@ class ExportKeys extends connect(store)(LitElement) {
         const myCoinAddress = cAddress
         const blob = new Blob([`${myPrivateMasterKey}`], { type: 'text/plain;charset=utf-8' })
         exportname = "Private_Master_Key_" + myCoinName + "_" + myCoinAddress + ".txt"
-        this.saveFileToDisk(blob, exportname)
+        await this.saveFileToDisk(blob, exportname)
     }
 
     async saveFileToDisk(blob, fileName) {
@@ -590,8 +590,7 @@ class ExportKeys extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 }
 

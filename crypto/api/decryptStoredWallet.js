@@ -27,6 +27,5 @@ export const decryptStoredWallet = async (password, wallet, statusFn = () => { }
 	}
 	const sfn5 = get("login.lp16")
 	statusFn(sfn5)
-	const decryptedBytes = AES_CBC.decrypt(encryptedSeedBytes, encryptionKey, false, iv)
-	return decryptedBytes
+	return AES_CBC.decrypt(encryptedSeedBytes, encryptionKey, false, iv)
 }

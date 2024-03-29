@@ -1,11 +1,11 @@
 // popover-component.js
-import { css, html, LitElement } from 'lit';
-import { createPopper } from '@popperjs/core';
+import {css, html, LitElement} from 'lit';
+import {createPopper} from '@popperjs/core';
 import '@material/mwc-icon';
-import { translate } from '../../../translate'
-import { store } from '../../store';
-import { connect } from 'pwa-helpers';
-import { setNewTab, setSideEffectAction } from '../../redux/app/app-actions';
+import {translate} from '../../../translate'
+import {store} from '../../store';
+import {connect} from 'pwa-helpers';
+import {setNewTab, setSideEffectAction} from '../../redux/app/app-actions';
 import ShortUniqueId from 'short-unique-id';
 
 export class FriendItemActions extends connect(store)(LitElement) {
@@ -79,11 +79,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 
 	firstUpdated() {

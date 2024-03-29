@@ -111,8 +111,7 @@ class WalletProfile extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     stateChanged(state) {
