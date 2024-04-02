@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit';
 import {connect} from 'pwa-helpers';
 import {store} from '../store.js';
-import {get, translate} from '../../translate/index.js'
+import {get, translate} from '../../translate'
 import {asyncReplace} from 'lit/directives/async-replace.js';
 
 import '../functional-components/my-button.js';
@@ -235,9 +235,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 		const url = `${nodeUrl}/admin/mintingaccounts`;
 		try {
 			const res = await fetch(url);
-			const mintingAccountData = await res.json();
-
-			this.mintingAccountData = mintingAccountData;
+			this.mintingAccountData = await res.json();
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg1();
 		}
@@ -286,14 +284,14 @@ const nonce = selectedAddress && selectedAddress.nonce;
 
 		try {
 			await addMintingAccount(this.privateRewardShareKey);
-			routes.showSnackBar({
+			await routes.showSnackBar({
 				data: translate('becomeMinterPage.bchange19'),
 			});
 			this.status = 5;
-			this.getMintingAcccounts();
+			await this.getMintingAcccounts();
 		} catch (error) {
 			this.errorMsg = this.renderErrorMsg3();
-			return;
+
 		}
 	}
 
@@ -311,8 +309,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 			const rewardShares = async (minterAddr) => {
 				const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`;
 				const res = await fetch(url);
-				const data = await res.json();
-				return data;
+				return await res.json();
 			};
 
 			if (!stop) {
@@ -352,7 +349,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 			let rewarddialog3 = get('transactions.rewarddialog3');
 			let rewarddialog4 = get('transactions.rewarddialog4');
 
-			let myTxnrequest = await routes.transaction({
+			return await routes.transaction({
 				data: {
 					type: 38,
 					nonce: nonce,
@@ -368,7 +365,6 @@ const nonce = selectedAddress && selectedAddress.nonce;
 				},
 				disableModal: true,
 			});
-			return myTxnrequest;
 		};
 
 		const getTxnRequestResponse = (txnResponse) => {
@@ -404,8 +400,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 		const getLastRef = async () => {
 			const url = `${nodeUrl}/addresses/lastreference/${address}`;
 			const res = await fetch(url);
-			const data = await res.text();
-			return data;
+			return await res.text();
 		};
 
 		const startMinting = async () => {
@@ -422,11 +417,11 @@ const nonce = selectedAddress && selectedAddress.nonce;
 
 			try {
 				this.privateRewardShareKey = await createSponsorshipKey();
-				this.confirmRelationship(publicAddress)
+				await this.confirmRelationship(publicAddress)
 			} catch (error) {
 				console.log({ error })
 				this.errorMsg = (error && error.data && error.data.message) ? error.data.message : this.renderErrorMsg4();
-				return;
+
 			}
 		};
 
@@ -438,7 +433,7 @@ const nonce = selectedAddress && selectedAddress.nonce;
 						.onClick=${async () => {
 							await startMinting();
 							if (this.errorMsg) {
-								routes.showSnackBar({
+								await routes.showSnackBar({
 									data: this.errorMsg,
 								});
 							}

@@ -1,5 +1,5 @@
 import {html, LitElement} from 'lit'
-import {translate} from '../../../../../core/translate/index.js'
+import {translate} from '../../../../../core/translate'
 import {userInfoStyles} from './UserInfo-css.js'
 import {cropAddress} from '../../../utils/cropAddress.js'
 
@@ -118,13 +118,13 @@ export class UserInfo extends LitElement {
                         this.openProfile()
                     }, 250);
                     this.setOpenUserInfo(false)
-                   
-                    
+
+
                 }}>
                     ${translate("profile.profile18")}
                 </div>
                 ` : ''}
-               
+
             </div>
         `
     }

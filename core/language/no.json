@@ -213,7 +213,8 @@
 		"arrr1": "ARRR-lommebok ikke initialisert !",
 		"arrr2": "Vennligst gå til lommebok-fanen og initialiser arrr-lommeboken først.",
 		"arrr3": "Trenger kjerneoppdatering!",
-		"arrr4": "For å lagre den private nøkkelen til arrr-lommeboken din trenger du en kjerneoppdatering først!"
+		"arrr4": "For å lagre den private nøkkelen til arrr-lommeboken din trenger du en kjerneoppdatering først!",
+		"sync_indicator": "Deaktiver popup for synkroniseringsindikator"
 	},
 	"appinfo": {
 		"blockheight": "Blokkhøyde",

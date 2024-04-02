@@ -3,7 +3,7 @@ import {escape, unescape} from 'html-escaper'
 import {EmojiPicker} from 'emoji-picker-js'
 import {inputKeyCodes} from '../../utils/keyCodes.js'
 import {Epml} from '../../../epml.js'
-import {get} from '../../../../core/translate/index.js'
+import {get} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -268,7 +268,7 @@ class ChatTextEditor extends LitElement {
             if (!this.userName) {
                 e.preventDefault();
                 parentEpml.request('showSnackBar', get("chatpage.cchange27"));
-           };
+           }
 	}
 
     initialChat(e) {
@@ -360,15 +360,15 @@ class ChatTextEditor extends LitElement {
 
     shouldUpdate(changedProperties) {
         // Only update element if prop1 changed.
-       if(changedProperties.has('setChatEditor') && changedProperties.size === 1) return false
-        return true
+       return !(changedProperties.has('setChatEditor') && changedProperties.size === 1);
+
       }
 
     sendMessageFunc(props) {
         if (this.chatMessageSize > 1000 ) {
             parentEpml.request('showSnackBar', get("chatpage.cchange29"))
             return
-        };
+        }
         this.chatMessageSize = 0
         this.chatEditor.updateMirror()
         this._sendMessage(props)
@@ -376,9 +376,8 @@ class ChatTextEditor extends LitElement {
 
     getMessageSize(message){
         try {
-         const messageText = message;
-        // Format and Sanitize Message
-        const sanitizedMessage = messageText.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
+			// Format and Sanitize Message
+        const sanitizedMessage = message.replace(/&nbsp;/gi, ' ').replace(/<br\s*[\/]?>/gi, '\n');
         const trimmedMessage = sanitizedMessage.trim();
             let messageObject = {};
 
@@ -396,8 +395,7 @@ class ChatTextEditor extends LitElement {
             } else if (this.editedMessageObj) {
                 let message = "";
                 try {
-                    const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage);
-                    message = parsedMessageObj;
+					message = JSON.parse(this.editedMessageObj.decodedMessage);
                  } catch (error) {
                     message = this.messageObj.decodedMessage
                 }
@@ -426,8 +424,7 @@ class ChatTextEditor extends LitElement {
               }
 
             const stringified = JSON.stringify(messageObject);
-            const size =  new Blob([stringified]).size;
-            this.chatMessageSize = size;
+			this.chatMessageSize = new Blob([stringified]).size;
         } catch (error) {
             console.error(error)
         }
@@ -626,8 +623,7 @@ class ChatTextEditor extends LitElement {
                 const chatInputValue = editor.getValue();
                 const filteredValue = chatInputValue.replace(/<img.*?alt=".*?/g, '').replace(/".?src=.*?>/g, '');
 
-                let unescapedValue = editorConfig.unescape(filteredValue);
-                editor.mirror.value = unescapedValue;
+				editor.mirror.value = editorConfig.unescape(filteredValue);
             };
 
             ChatEditor.prototype.listenChanges =  function () {

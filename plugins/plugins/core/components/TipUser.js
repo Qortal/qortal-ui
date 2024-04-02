@@ -3,7 +3,7 @@ import {tipUserStyles} from './TipUser-css.js'
 import {Epml} from '../../../epml'
 import '@vaadin/button'
 import '@polymer/paper-progress/paper-progress.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: "WINDOW", source: window.parent });
 
@@ -36,7 +36,7 @@ export class TipUser extends LitElement {
 
     async firstUpdated() {
         await this.fetchWalletDetails()
-        this.paymentFee()
+        await this.paymentFee()
     }
 
     updated(changedProperties) {
@@ -50,11 +50,10 @@ export class TipUser extends LitElement {
     }
 
     async getLastRef() {
-        let myRef = await parentEpml.request("apiCall", {
-            type: "api",
-            url: `/addresses/lastreference/${this.myAddress.address}`,
-        })
-        return myRef
+		return await parentEpml.request("apiCall", {
+			type: "api",
+			url: `/addresses/lastreference/${this.myAddress.address}`,
+		})
     }
 
     async getSendQortFee() {
@@ -89,8 +88,7 @@ export class TipUser extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     async fetchWalletDetails() {
@@ -140,7 +138,7 @@ export class TipUser extends LitElement {
         };
 
         const validateAddress = async (receiverAddress) => {
-            return await window.parent.validateAddress(receiverAddress);
+            return window.parent.validateAddress(receiverAddress);
         };
 
         const getName = async (recipient) => {

@@ -309,8 +309,7 @@ export default class AltcoinHDWallet {
 
         // PublicKey Hash
         const publicKeySHA256 = new Sha256().process(new Uint8Array(this.publicKey)).finish().result
-        const _publicKeyHash = new RIPEMD160().update(Buffer.from(publicKeySHA256)).digest('hex')
-        this.publicKeyHash = _publicKeyHash
+		this.publicKeyHash = new RIPEMD160().update(Buffer.from(publicKeySHA256)).digest('hex')
     }
 
     generateMainnetMasterPrivateKey() {
@@ -505,8 +504,7 @@ export default class AltcoinHDWallet {
 
             // PublicKey Hash
             const childPublicKeySHA256 = new Sha256().process(new Uint8Array(this.childPublicKey)).finish().result
-            const _childPublicKeyHash = new RIPEMD160().update(Buffer.from(childPublicKeySHA256)).digest('hex')
-            this.childPublicKeyHash = _childPublicKeyHash
+			this.childPublicKeyHash = new RIPEMD160().update(Buffer.from(childPublicKeySHA256)).digest('hex')
 
 
             // Call deriveExtendedPublicChildKey // WIll be hardcoding the values...
@@ -658,8 +656,7 @@ export default class AltcoinHDWallet {
 
             // PublicKey Hash
             const grandChildPublicKeySHA256 = new Sha256().process(new Uint8Array(this.grandChildPublicKey)).finish().result
-            const _grandChildPublicKeyHash = new RIPEMD160().update(Buffer.from(grandChildPublicKeySHA256)).digest('hex')
-            this.grandChildPublicKeyHash = _grandChildPublicKeyHash
+			this.grandChildPublicKeyHash = new RIPEMD160().update(Buffer.from(grandChildPublicKeySHA256)).digest('hex')
 
 
             // Call deriveExtendedPublicChildKey // WIll be hardcoding the values...

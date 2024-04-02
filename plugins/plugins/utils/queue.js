@@ -38,7 +38,7 @@ export class RequestQueueWithPromise {
       this.maxConcurrent = maxConcurrent;
       this.currentlyProcessing = 0;
     }
-  
+
     // Add a request to the queue and return a promise
     enqueue(request) {
       return new Promise((resolve, reject) => {
@@ -47,7 +47,7 @@ export class RequestQueueWithPromise {
         this.process();
       });
     }
-  
+
     // Process requests in the queue
     async process() {
       while (this.queue.length > 0 && this.currentlyProcessing < this.maxConcurrent) {
@@ -60,12 +60,12 @@ export class RequestQueueWithPromise {
           reject(error);
         } finally {
           this.currentlyProcessing--;
-          this.process();
+          await this.process();
         }
       }
     }
   }
-  
 
-  
+
+
 

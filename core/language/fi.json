@@ -213,7 +213,8 @@
 		"arrr1": "ARRR-lompakkoa ei ole alustettu!",
 		"arrr2": "Siirry lompakko-välilehdelle ja nollaa ensin ARRR-lompakkosi.",
 		"arrr3": "Tarvitaan iso päivitys!",
-		"arrr4": "Jotta voit tallentaa ARRR-lompakkosi yksityisen avaimesi, tarvitset ensin pääpäivityksen!"
+		"arrr4": "Jotta voit tallentaa ARRR-lompakkosi yksityisen avaimesi, tarvitset ensin pääpäivityksen!",
+		"sync_indicator": "Poista synkronoinnin ilmaisimen ponnahdusikkuna"
 	},
 	"appinfo": {
 		"blockheight": "Lohkon korkeus",

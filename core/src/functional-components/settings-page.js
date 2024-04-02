@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../store.js'
 import {doAddNode, doEditNode, doLoadNodeConfig, doRemoveNode, doSetNode} from '../redux/app/app-actions.js'
-import {get, registerTranslateConfig, translate, use} from '../../translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../translate'
 import snackbar from './snackbar.js'
 import '../components/language-selector.js'
 import '../custom-elements/frag-file-input.js'
@@ -70,7 +70,7 @@ class SettingsPage extends connect(store)(LitElement) {
 				display: inline-block;
 				width: 150px;
 				font-weight: 600;
-				color: var(--accent-color);
+				color: var(--general-color-blue);
 				border: 1px solid transparent;
 			}
 
@@ -87,7 +87,7 @@ class SettingsPage extends connect(store)(LitElement) {
 			}
 
 			.buttonBlue {
-				color: var(--accent-color);
+				color: var(--general-color-blue);
 			}
 
 			.floatleft {
@@ -211,8 +211,7 @@ class SettingsPage extends connect(store)(LitElement) {
 
 														// Set the selected value for mwc-select
 														const protocolList = dialog.querySelector('#protocolList')
-														const desiredProtocol = currentValues.protocol
-														protocolList.value = desiredProtocol
+														protocolList.value = currentValues.protocol
 														this.isBeingEdited = true
 														this.isBeingEditedIndex = index
 														this.shadowRoot.querySelector('#addNodeDialog').show()

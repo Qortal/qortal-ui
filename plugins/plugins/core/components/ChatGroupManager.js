@@ -11,7 +11,7 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {get} from '../../../../core/translate/index.js'
+import {get} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
 
@@ -242,14 +242,10 @@ class ChatGroupsManager extends LitElement {
             let endpoint = `/groups`
 
 
-			const groups = await parentEpml.request('apiCall', {
+			this.groups = await parentEpml.request('apiCall', {
 				type: 'api',
 				url: endpoint,
-			});
-
-            let list = groups
-
-			this.groups = list
+			})
 		} catch (error) {
 			console.log(error);
 		}
@@ -284,7 +280,7 @@ class ChatGroupsManager extends LitElement {
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.images.length < 20) {
 				return;
@@ -294,19 +290,11 @@ class ChatGroupsManager extends LitElement {
 	}
 
     selectAuto(e) {
-        if (e.target.checked) {
-          this.autoView = false
-        } else {
-            this.autoView = true
-        }
+        this.autoView = !e.target.checked;
     }
 
     selectMyImages(e) {
-        if (e.target.checked) {
-          this.onlyMyImages = false
-        } else {
-            this.onlyMyImages = true
-        }
+        this.onlyMyImages = !e.target.checked;
     }
 
 	render() {

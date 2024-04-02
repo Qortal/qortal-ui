@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
 import '../../components/ButtonIconCopy.js'
-import {translate} from '../../../../../core/translate/index.js'
+import {translate} from '../../../../../core/translate'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
@@ -41,9 +41,8 @@ class NotSponsored extends LitElement {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-		let apiKey = myNode.apiKey
-		return apiKey
+			]
+		return myNode.apiKey
 	}
 
 	addMintingAccount(e) {

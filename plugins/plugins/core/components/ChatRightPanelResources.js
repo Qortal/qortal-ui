@@ -11,7 +11,7 @@ import './TipUser';
 import './UserInfo/UserInfo';
 import './ChatImage';
 import './ReusableImage';
-import {get, translate,} from '../../../../core/translate/index.js'
+import {get, translate,} from '../../../../core/translate'
 import {generateIdFromAddresses} from '../../utils/id-generation';
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -279,11 +279,11 @@ class ChatRightPanelResources extends LitElement {
 	async updated(changedProperties) {
 		if (changedProperties && changedProperties.has('_chatId')) {
 			this.images = [];
-			this.getMoreImages(true);
+			await this.getMoreImages(true);
 		}
 
 		if (changedProperties && changedProperties.has('onlyMyImages')) {
-			this.getMoreImages(true)
+			await this.getMoreImages(true)
 		}
 	}
 
@@ -307,7 +307,7 @@ class ChatRightPanelResources extends LitElement {
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.images.length < 20) {
 				return;
@@ -317,19 +317,11 @@ class ChatRightPanelResources extends LitElement {
 	}
 
     selectAuto(e) {
-        if (e.target.checked) {
-          this.autoView = false
-        } else {
-            this.autoView = true
-        }
+        this.autoView = !e.target.checked;
     }
 
     selectMyImages(e) {
-        if (e.target.checked) {
-          this.onlyMyImages = false
-        } else {
-            this.onlyMyImages = true
-        }
+        this.onlyMyImages = !e.target.checked;
     }
 
 	render() {

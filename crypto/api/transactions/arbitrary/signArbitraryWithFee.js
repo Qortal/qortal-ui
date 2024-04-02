@@ -21,13 +21,11 @@ const signArbitraryWithFee = (arbitraryBytesBase58, arbitraryBytesForSigningBase
 	const _arbitraryBytesForSigningBuffer = Object.keys(arbitraryBytesForSigning).map(function (key) { return arbitraryBytesForSigning[key]; })
 	const arbitraryBytesForSigningBuffer = new Uint8Array(_arbitraryBytesForSigningBuffer)
 
-	
+
 
 	const signature = nacl.sign.detached(arbitraryBytesForSigningBuffer, keyPair.privateKey)
 
-	const signedBytes = utils.appendBuffer(arbitraryBytesBuffer, signature)
-
-	return signedBytes
+	return utils.appendBuffer(arbitraryBytesBuffer, signature)
 }
 
 export default signArbitraryWithFee

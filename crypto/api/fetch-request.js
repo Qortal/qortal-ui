@@ -21,8 +21,7 @@ export async function request(url, options) {
 		body,
 	}).then(async (response) => {
 		try {
-			const json = await response.clone().json()
-			return json
+			return await response.clone().json()
 		} catch (e) {
 			return await response.text()
 		}

@@ -213,7 +213,8 @@
 		"arrr1": "ARRR novčanik nije inicijalizovan!",
 		"arrr2": "Molim vas idite na karticu Novčanik i prvo inicijalizujte svoj arrr novčanik.",
 		"arrr3": "Potrebno je ažuriranje jezgra!",
-		"arrr4": "Da biste sačuvali privatni ključ vašeg arrr novčanika, prvo vam je potrebno ažuriranje jezgra!"
+		"arrr4": "Da biste sačuvali privatni ključ vašeg arrr novčanika, prvo vam je potrebno ažuriranje jezgra!",
+		"sync_indicator": "Onemogući iskačući prozor indikatora sinhronizacije"
 	},
 	"appinfo": {
 		"blockheight": "Visina Bloka",

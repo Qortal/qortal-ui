@@ -14,8 +14,7 @@ Base64.decode = function (string) {
     }
 
     const decoder = new TextDecoder();
-    const decodedString = decoder.decode(bytes);
-    return decodedString;
+	return decoder.decode(bytes);
 };
 
 

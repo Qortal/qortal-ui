@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {stateAwait} from '../../stateAwait.js'
-import {get} from '../../../translate/index.js'
+import {get} from '../../../translate'
 
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -22,10 +22,12 @@ import {
 	allowQAPPAutoAuth,
 	allowQAPPAutoFriendsList,
 	allowQAPPAutoLists,
+	allowShowSyncIndicator,
 	removeAutoLoadImageChat,
 	removeQAPPAutoAuth,
 	removeQAPPAutoFriendsList,
 	removeQAPPAutoLists,
+	removeShowSyncIndicator,
 	setNewNotification,
 	setNewTab,
 	setSideEffectAction,
@@ -47,7 +49,9 @@ window.reduxAction = {
     setNewNotification: setNewNotification,
     setSideEffectAction: setSideEffectAction,
     allowQAPPAutoFriendsList: allowQAPPAutoFriendsList,
-    removeQAPPAutoFriendsList: removeQAPPAutoFriendsList
+    removeQAPPAutoFriendsList: removeQAPPAutoFriendsList,
+    allowShowSyncIndicator: allowShowSyncIndicator,
+    removeShowSyncIndicator: removeShowSyncIndicator
 }
 
 const animationDuration = 0.7 // Seconds

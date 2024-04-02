@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import '../components/time-elements/index.js'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -1374,8 +1374,7 @@ class GroupManagement extends LitElement {
                             this.filteredItems = []
                             const searchTerm = (e.target.value || '').trim()
                             const keys = ['groupName', 'description', 'owner']
-                            const filtered = this.publicGroups.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
-                            this.filteredItems = filtered
+							this.filteredItems = this.publicGroups.filter((search) => keys.some((key) => search[key].toLowerCase().includes(searchTerm.toLowerCase())))
                         }}"
                     >
                     <vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
@@ -1724,29 +1723,25 @@ class GroupManagement extends LitElement {
             let openG = await parentEpml.request('apiCall', {
                 url: `/groups?limit=0&reverse=true`
             })
-            let myGs = openG.filter(myG => myG.isOpen === true)
-            return myGs
+			return openG.filter(myG => myG.isOpen === true)
         }
 
         const getPrivateGroups = async () => {
             let privateG = await parentEpml.request('apiCall', {
                 url: `/groups?limit=0&reverse=true`
             })
-            let myPgs = privateG.filter(myP => myP.isOpen === false)
-            return myPgs
+			return privateG.filter(myP => myP.isOpen === false)
         }
 
         const getJoinedGroups = async () => {
-            let joinedG = await parentEpml.request('apiCall', {
-                url: `/groups/member/${this.selectedAddress.address}`
-            })
-            return joinedG
+			return await parentEpml.request('apiCall', {
+				url: `/groups/member/${this.selectedAddress.address}`
+			})
         }
         const getGroupInfo = async (groupId) => {
-            let joinedG = await parentEpml.request('apiCall', {
-                url: `/groups/${groupId}`
-            })
-            return joinedG
+			return await parentEpml.request('apiCall', {
+				url: `/groups/${groupId}`
+			})
         }
 
         const getGroupInvites = async () => {
@@ -1769,14 +1764,16 @@ class GroupManagement extends LitElement {
                 clearTimeout(timerGroupInvites)
                 timerGroupInvites = setTimeout(getGroupInvites, 300000)
             } else {
-                this.myGroupInvites.map(a => {
+                const currentTime = Date.now()
+                this.myGroupInvites.forEach(a => {
+                if (a.expiry > currentTime) {
                     let callTheNewInviteUrl = `${nodeUrl}/groups/${a.groupId}`
                     fetch(callTheNewInviteUrl).then(res => {
                         return res.json()
                     }).then(jsonRes => {
                         myArrObj.push(jsonRes)
                         if (myArrObj.length) {
-                            myArrObj.map(b => {
+                            myArrObj.forEach(b => {
                                 const infoObjToAdd = {
                                     invitee: a.invitee,
                                     groupId: b.groupId,
@@ -1793,6 +1790,7 @@ class GroupManagement extends LitElement {
                         }
                         this.groupInvites = myInvitesObj
                     })
+                }
                 })
             }
             setTimeout(getGroupInvites, 300000)
@@ -1802,11 +1800,10 @@ class GroupManagement extends LitElement {
             let _joinedGroups = await getJoinedGroups()
             let _publicGroups = await getOpenPublicGroups()
             let _privateGroups = await getPrivateGroups()
-            let results = _publicGroups.filter(myOpenGroup => {
-                let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
-                return !value
-            });
-            this.publicGroups = results
+			this.publicGroups = _publicGroups.filter(myOpenGroup => {
+				let value = _joinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
+				return !value
+			})
             this.privateGroups = _privateGroups
             this.joinedGroups = _joinedGroups
             this.filteredItems = this.publicGroups
@@ -2245,13 +2242,11 @@ class GroupManagement extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const fromNameUrl = `${nodeUrl}/names/${_inviteMemberInfo}`
 
-        const qortalNameInfo = await fetch(fromNameUrl).then(response => {
-            return response.json()
-        })
-
-        this.nameAddressResult = qortalNameInfo
+		this.nameAddressResult = await fetch(fromNameUrl).then(response => {
+			return response.json()
+		})
         const _inviteMemberNameInfo = this.nameAddressResult.owner
-        this.createInviteGroupMember(_inviteMemberNameInfo, _nviteMemberTime, _inviteGroupId)
+        await this.createInviteGroupMember(_inviteMemberNameInfo, _nviteMemberTime, _inviteGroupId)
     }
 
     closeErrorDialog() {
@@ -2414,8 +2409,7 @@ class GroupManagement extends LitElement {
         await fetch(callMembersUrl).then(res => {
             return res.json()
         }).then(data => {
-            let groupMemberToParse = data
-            groupMemberToParse.members.map(a => {
+			data.members.map(a => {
                 if (a.isAdmin === undefined) {
                     let callTheNewMember = a.member
                     let callSingleMemberUrl = `${nodeUrl}/names/address/${callTheNewMember}`
@@ -2488,7 +2482,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.bannedMembers.length === 0) {
-            return
+
         } else {
             this.bannedMembers.map(a => {
                 let callTheBannedMember = a.offender
@@ -2539,7 +2533,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.groupInviteMembers.length === 0) {
-            return
+
         } else {
             this.groupInviteMembers.map(a => {
                 let callTheInviteMember = a.invitee
@@ -2586,7 +2580,7 @@ class GroupManagement extends LitElement {
         })
 
         if (this.groupJoinMembers.length === 0) {
-            return
+
         } else {
             this.groupJoinMembers.map(a => {
                 let callTheJoinMember = a.joiner
@@ -2695,14 +2689,11 @@ class GroupManagement extends LitElement {
 
     renderRole(groupObj) {
         if (groupObj.owner === this.selectedAddress.address) {
-            let ownerstring = get("grouppage.gchange10")
-            return ownerstring
+			return get("grouppage.gchange10")
         } else if (groupObj.isAdmin === true) {
-            let adminstring = get("grouppage.gchange52")
-            return adminstring
+			return get("grouppage.gchange52")
         } else {
-            let memberstring = get("grouppage.gchange53")
-            return memberstring
+			return get("grouppage.gchange53")
         }
     }
 
@@ -2710,7 +2701,8 @@ class GroupManagement extends LitElement {
         if (groupObj.owner === this.selectedAddress.address) {
             return html`<mwc-button class="warning" @click=${() => this.manageGroupOwner(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
         } else if (groupObj.isAdmin === true) {
-            return html`<mwc-button class="warning" @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>`
+            return html`<mwc-button class="warning" @click=${() => this.manageGroupAdmin(groupObj)}><mwc-icon>create</mwc-icon>&nbsp;${translate("grouppage.gchange40")}</mwc-button>
+            <br><mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
         } else {
             return html`<mwc-button @click=${() => this.leaveGroup(groupObj)}><mwc-icon>exit_to_app</mwc-icon>&nbsp;${translate("grouppage.gchange50")}</mwc-button>`
         }
@@ -2779,11 +2771,10 @@ class GroupManagement extends LitElement {
         this.isLoading = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -2805,27 +2796,26 @@ class GroupManagement extends LitElement {
             let groupdialog7 = get("grouppage.gchange4")
             let groupdialog8 = get("grouppage.gchange5")
             let groupdialog9 = get("grouppage.gchange13")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 22,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: createFeeInput,
-                    registrantAddress: this.selectedAddress.address,
-                    rGroupName: groupNameInput,
-                    rGroupDesc: groupDescInput,
-                    rGroupType: _groupTypeInput,
-                    rGroupApprovalThreshold: _groupApprovalInput,
-                    rGroupMinimumBlockDelay: _groupMinDelayInput,
-                    rGroupMaximumBlockDelay: _groupMaxDelayInput,
-                    lastReference: lastRef,
-                    groupdialog5: groupdialog5,
-                    groupdialog6: groupdialog6,
-                    groupdialog7: groupdialog7,
-                    groupdialog8: groupdialog8,
-                    groupdialog9: groupdialog9,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 22,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: createFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupNameInput,
+					rGroupDesc: groupDescInput,
+					rGroupType: _groupTypeInput,
+					rGroupApprovalThreshold: _groupApprovalInput,
+					rGroupMinimumBlockDelay: _groupMinDelayInput,
+					rGroupMaximumBlockDelay: _groupMaxDelayInput,
+					lastReference: lastRef,
+					groupdialog5: groupdialog5,
+					groupdialog6: groupdialog6,
+					groupdialog7: groupdialog7,
+					groupdialog8: groupdialog8,
+					groupdialog9: groupdialog9,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -2869,7 +2859,7 @@ class GroupManagement extends LitElement {
             this.isLoading = false
         } else {
             this.error = false
-            validateReceiver()
+            await validateReceiver()
         }
     }
 
@@ -2891,11 +2881,10 @@ class GroupManagement extends LitElement {
         this.isLoading = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -2909,21 +2898,20 @@ class GroupManagement extends LitElement {
         const makeTransactionRequest = async (lastRef) => {
             let groupdialog1 = get("transactions.groupdialog1")
             let groupdialog2 = get("transactions.groupdialog2")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 31,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: joinFeeInput,
-                    registrantAddress: this.selectedAddress.address,
-                    rGroupName: groupName,
-                    rGroupId: groupId,
-                    lastReference: lastRef,
-                    groupdialog1: groupdialog1,
-                    groupdialog2: groupdialog2
-                },
-                apiVersion: 2
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 31,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: joinFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog1: groupdialog1,
+					groupdialog2: groupdialog2
+				},
+				apiVersion: 2
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -2946,7 +2934,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
         this.resetDefaultSettings()
     }
 
@@ -2957,11 +2945,10 @@ class GroupManagement extends LitElement {
         this.isLoading = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -2975,20 +2962,19 @@ class GroupManagement extends LitElement {
         const makeTransactionRequest = async (lastRef) => {
             let groupdialog3 = get("transactions.groupdialog3")
             let groupdialog4 = get("transactions.groupdialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 32,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: leaveFeeInput,
-                    registrantAddress: this.selectedAddress.address,
-                    rGroupName: groupName,
-                    rGroupId: groupId,
-                    lastReference: lastRef,
-                    groupdialog3: groupdialog3,
-                    groupdialog4: groupdialog4
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 32,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: leaveFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog3: groupdialog3,
+					groupdialog4: groupdialog4
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3006,7 +2992,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
         this.resetDefaultSettings()
     }
 
@@ -3020,11 +3006,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3045,21 +3030,20 @@ class GroupManagement extends LitElement {
             const myBanMemberDialog1 = get("managegroup.mg22")
             const myBanMemberDialog2 = get("managegroup.mg23")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 26,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    rBanReason: myReason,
-                    rBanTime: myBanTime,
-                    lastReference: myLastRef,
-                    banMemberDialog1: myBanMemberDialog1,
-                    banMemberDialog2: myBanMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 26,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					rBanReason: myReason,
+					rBanTime: myBanTime,
+					lastReference: myLastRef,
+					banMemberDialog1: myBanMemberDialog1,
+					banMemberDialog2: myBanMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3099,7 +3083,7 @@ class GroupManagement extends LitElement {
             this.isLoading = false
         } else {
             this.error = false
-            validateReceiver()
+            await validateReceiver()
         }
     }
 
@@ -3111,11 +3095,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3133,19 +3116,18 @@ class GroupManagement extends LitElement {
             const myCancelBanMemberDialog1 = get("managegroup.mg29")
             const myCancelBanMemberDialog2 = get("managegroup.mg30")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 27,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    lastReference: myLastRef,
-                    cancelBanMemberDialog1: myCancelBanMemberDialog1,
-                    cancelBanMemberDialog2: myCancelBanMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 27,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					lastReference: myLastRef,
+					cancelBanMemberDialog1: myCancelBanMemberDialog1,
+					cancelBanMemberDialog2: myCancelBanMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3168,7 +3150,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async createInviteGroupMember(_inviteMemberNameInfo, _nviteMemberTime, _inviteGroupId) {
@@ -3180,11 +3162,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3202,20 +3183,19 @@ class GroupManagement extends LitElement {
             const myInviteMemberDialog1 = get("managegroup.mg40")
             const myInviteMemberDialog2 = get("managegroup.mg41")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 29,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    rInviteTime: myInviteTime,
-                    lastReference: myLastRef,
-                    inviteMemberDialog1: myInviteMemberDialog1,
-                    inviteMemberDialog2: myInviteMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 29,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					rInviteTime: myInviteTime,
+					lastReference: myLastRef,
+					inviteMemberDialog1: myInviteMemberDialog1,
+					inviteMemberDialog2: myInviteMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3240,7 +3220,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async cancelInviteGroupMember(groupId) {
@@ -3252,11 +3232,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3274,20 +3253,19 @@ class GroupManagement extends LitElement {
             const myCancelInviteDialog1 = get("managegroup.mg48")
             const myCancelInviteDialog2 = get("managegroup.mg49")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 30,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    memberName: myName,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    lastReference: myLastRef,
-                    cancelInviteDialog1: myCancelInviteDialog1,
-                    cancelInviteDialog2: myCancelInviteDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 30,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					memberName: myName,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					lastReference: myLastRef,
+					cancelInviteDialog1: myCancelInviteDialog1,
+					cancelInviteDialog2: myCancelInviteDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3312,7 +3290,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async createAcceptJoinGroupMember(joinObj) {
@@ -3324,11 +3302,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3346,20 +3323,19 @@ class GroupManagement extends LitElement {
             const myInviteMemberDialog1 = get("managegroup.mg55")
             const myInviteMemberDialog2 = get("managegroup.mg56")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 29,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    rInviteTime: myInviteTime,
-                    lastReference: myLastRef,
-                    inviteMemberDialog1: myInviteMemberDialog1,
-                    inviteMemberDialog2: myInviteMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 29,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					rInviteTime: myInviteTime,
+					lastReference: myLastRef,
+					inviteMemberDialog1: myInviteMemberDialog1,
+					inviteMemberDialog2: myInviteMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3383,7 +3359,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async kickJoinGroupMember(joinObj) {
@@ -3395,11 +3371,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3417,20 +3392,19 @@ class GroupManagement extends LitElement {
             const myKickMemberDialog1 = get("managegroup.mg60")
             const myKickMemberDialog2 = get("managegroup.mg61")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 28,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    rBanReason: myReason,
-                    lastReference: myLastRef,
-                    kickMemberDialog1: myKickMemberDialog1,
-                    kickMemberDialog2: myKickMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 28,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					rBanReason: myReason,
+					lastReference: myLastRef,
+					kickMemberDialog1: myKickMemberDialog1,
+					kickMemberDialog2: myKickMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3454,7 +3428,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async addGroupAdmin(groupId) {
@@ -3465,11 +3439,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3486,19 +3459,18 @@ class GroupManagement extends LitElement {
             const myAddAdminDialog1 = get("managegroup.mg11")
             const myAddAdminDialog2 = get("managegroup.mg12")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 24,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    lastReference: myLastRef,
-                    addAdminDialog1: myAddAdminDialog1,
-                    addAdminDialog2: myAddAdminDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 24,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					lastReference: myLastRef,
+					addAdminDialog1: myAddAdminDialog1,
+					addAdminDialog2: myAddAdminDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3521,7 +3493,7 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     async kickGroupMember(groupId) {
@@ -3533,11 +3505,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3555,20 +3526,19 @@ class GroupManagement extends LitElement {
             const myKickMemberDialog1 = get("managegroup.mg33")
             const myKickMemberDialog2 = get("managegroup.mg34")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 28,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myMember,
-                    rGroupId: myGroupId,
-                    rBanReason: myReason,
-                    lastReference: myLastRef,
-                    kickMemberDialog1: myKickMemberDialog1,
-                    kickMemberDialog2: myKickMemberDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 28,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myMember,
+					rGroupId: myGroupId,
+					rBanReason: myReason,
+					lastReference: myLastRef,
+					kickMemberDialog1: myKickMemberDialog1,
+					kickMemberDialog2: myKickMemberDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3602,7 +3572,7 @@ class GroupManagement extends LitElement {
             this.isLoading = false
         } else {
             this.error = false
-            validateReceiver()
+            await validateReceiver()
         }
     }
 
@@ -3614,11 +3584,10 @@ class GroupManagement extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -3636,19 +3605,18 @@ class GroupManagement extends LitElement {
             const myKickAdminDialog1 = get("managegroup.mg15")
             const myKickAdminDialog2 = get("managegroup.mg16")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 25,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    recipient: myKickAdmin,
-                    rGroupId: myGroupId,
-                    lastReference: myLastRef,
-                    kickAdminDialog1: myKickAdminDialog1,
-                    kickAdminDialog2: myKickAdminDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 25,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					recipient: myKickAdmin,
+					rGroupId: myGroupId,
+					lastReference: myLastRef,
+					kickAdminDialog1: myKickAdminDialog1,
+					kickAdminDialog2: myKickAdminDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -3671,13 +3639,12 @@ class GroupManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     isEmptyArray(arr) {

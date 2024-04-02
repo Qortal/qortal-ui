@@ -213,7 +213,8 @@
 		"arrr1": "¡Cartera ARRR no inicializada!",
 		"arrr2": "Por favor, vaya a la pestaña de billetera e inicialice su billetera arrr primero.",
 		"arrr3": "¡Necesita actualización principal!",
-		"arrr4": "¡Para guardar la clave privada de tu billetera arrr, primero necesitas una actualización básica!"
+		"arrr4": "¡Para guardar la clave privada de tu billetera arrr, primero necesitas una actualización básica!",
+		"sync_indicator": "Desactivar la ventana emergente del indicador de sincronización"
 	},
 	"appinfo": {
 		"blockheight": "Altura del Bloque",

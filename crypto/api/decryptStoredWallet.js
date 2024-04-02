@@ -1,7 +1,7 @@
 import Base58 from './deps/Base58.js'
 import {kdf} from './kdf.js'
 import {AES_CBC, HmacSha512} from 'asmcrypto.js'
-import {get, registerTranslateConfig} from '../../core/translate/index.js'
+import {get, registerTranslateConfig} from '../../core/translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
@@ -27,6 +27,5 @@ export const decryptStoredWallet = async (password, wallet, statusFn = () => { }
 	}
 	const sfn5 = get("login.lp16")
 	statusFn(sfn5)
-	const decryptedBytes = AES_CBC.decrypt(encryptedSeedBytes, encryptionKey, false, iv)
-	return decryptedBytes
+	return AES_CBC.decrypt(encryptedSeedBytes, encryptionKey, false, iv)
 }

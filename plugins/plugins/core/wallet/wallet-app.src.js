@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
 import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import FileSaver from 'file-saver'
@@ -2930,7 +2930,7 @@ class MultiWallet extends LitElement {
             this.walletHelperMessage = this.renderWalletHelperErr()
             await errDelay(3000)
             this.walletHelperMessage = this.renderWalletHelperPass()
-            return
+
         }
     }
 
@@ -3432,50 +3432,43 @@ class MultiWallet extends LitElement {
     }
 
     sendFromQortAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.qortRecipient = address
+        this.qortRecipient = websiteObj.address
         this.openSend('qort')
         this.shadowRoot.querySelector('#qortBookDialog').close()
     }
 
     sendFromBtcAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.btcRecipient = address
+        this.btcRecipient = websiteObj.address
         this.openSend('btc')
         this.shadowRoot.querySelector('#btcBookDialog').close()
     }
 
     sendFromLtcAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.ltcRecipient = address
+        this.ltcRecipient = websiteObj.address
         this.openSend('ltc')
         this.shadowRoot.querySelector('#ltcBookDialog').close()
     }
 
     sendFromDogeAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.dogeRecipient = address
+        this.dogeRecipient = websiteObj.address
         this.openSend('doge')
         this.shadowRoot.querySelector('#dogeBookDialog').close()
     }
 
     sendFromDgbAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.dgbRecipient = address
+        this.dgbRecipient = websiteObj.address
         this.openSend('dgb')
         this.shadowRoot.querySelector('#dgbBookDialog').close()
     }
 
     sendFromRvnAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.rvnRecipient = address
+        this.rvnRecipient = websiteObj.address
         this.openSend('rvn')
         this.shadowRoot.querySelector('#rvnBookDialog').close()
     }
 
     sendFromArrrAddressbook(websiteObj) {
-        let address = websiteObj.address
-        this.arrrRecipient = address
+        this.arrrRecipient = websiteObj.address
         this.openSend('arrr')
         this.shadowRoot.querySelector('#arrrBookDialog').close()
     }
@@ -4061,11 +4054,10 @@ class MultiWallet extends LitElement {
         }
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
+			})
         }
 
         const validateName = async (receiverName) => {
@@ -4084,8 +4076,7 @@ class MultiWallet extends LitElement {
         }
 
         const validateAddress = async (receiverAddress) => {
-            let myAddress = await window.parent.validateAddress(receiverAddress)
-            return myAddress
+			return await window.parent.validateAddress(receiverAddress)
         }
 
         const validateReceiver = async (recipient) => {
@@ -4140,22 +4131,21 @@ class MultiWallet extends LitElement {
             let dialogName = get("login.name")
             let dialogto = get("transactions.to")
             let recipientName = await getName(myReceiver)
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 2,
-                nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
-                params: {
-                    recipient: myReceiver,
-                    recipientName: recipientName,
-                    amount: amount,
-                    lastReference: mylastRef,
-                    fee: sendFee,
-                    dialogamount: dialogamount,
-                    dialogto: dialogto,
-                    dialogAddress,
-                    dialogName
-                },
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 2,
+				nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
+				params: {
+					recipient: myReceiver,
+					recipientName: recipientName,
+					amount: amount,
+					lastReference: mylastRef,
+					fee: sendFee,
+					dialogamount: dialogamount,
+					dialogto: dialogto,
+					dialogAddress,
+					dialogName
+				},
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -4180,8 +4170,8 @@ class MultiWallet extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver(recipient)
-        this.showWallet()
+        await validateReceiver(recipient)
+        await this.showWallet()
     }
 
     async sendBtc() {
@@ -4199,8 +4189,7 @@ class MultiWallet extends LitElement {
                 bitcoinAmount: btcAmount,
                 feePerByte: (this.btcFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendBtc', opts)
-            return response
+			return await parentEpml.request('sendBtc', opts)
         }
 
         const manageResponse = (response) => {
@@ -4227,7 +4216,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendLtc() {
@@ -4245,8 +4234,7 @@ class MultiWallet extends LitElement {
                 litecoinAmount: ltcAmount,
                 feePerByte: (this.ltcFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendLtc', opts)
-            return response
+			return await parentEpml.request('sendLtc', opts)
         }
 
         const manageResponse = (response) => {
@@ -4273,7 +4261,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendDoge() {
@@ -4291,8 +4279,7 @@ class MultiWallet extends LitElement {
                 dogecoinAmount: dogeAmount,
                 feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendDoge', opts)
-            return response
+			return await parentEpml.request('sendDoge', opts)
         }
 
         const manageResponse = (response) => {
@@ -4319,7 +4306,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendDgb() {
@@ -4337,8 +4324,7 @@ class MultiWallet extends LitElement {
                 digibyteAmount: dgbAmount,
                 feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendDgb', opts)
-            return response
+			return await parentEpml.request('sendDgb', opts)
         }
 
         const manageResponse = (response) => {
@@ -4365,7 +4351,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendRvn() {
@@ -4383,8 +4369,7 @@ class MultiWallet extends LitElement {
                 ravencoinAmount: rvnAmount,
                 feePerByte: (this.rvnFeePerByte / 1e8).toFixed(8),
             }
-            const response = await parentEpml.request('sendRvn', opts)
-            return response
+			return await parentEpml.request('sendRvn', opts)
         }
 
         const manageResponse = (response) => {
@@ -4411,7 +4396,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async sendArrr() {
@@ -4430,8 +4415,7 @@ class MultiWallet extends LitElement {
                 arrrAmount: arrrAmount,
                 memo: arrrMemo
             }
-            const response = await parentEpml.request('sendArrr', opts)
-            return response
+			return await parentEpml.request('sendArrr', opts)
         }
 
         const manageResponse = (response) => {
@@ -4460,7 +4444,7 @@ class MultiWallet extends LitElement {
         }
         const res = await makeRequest()
         manageResponse(res)
-        this.showWallet()
+        await this.showWallet()
     }
 
     async showWallet() {
@@ -4505,10 +4489,10 @@ class MultiWallet extends LitElement {
                     }
                 })
                 const txsQort = await parentEpml.request('apiCall', {
-                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
+                    url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
                 })
                 const pendingTxsQort = await parentEpml.request('apiCall', {
-                    url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
+                    url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
                 })
                 if (this._selectedWallet == coin) {
                     this.wallets.get(coin).transactions = pendingTxsQort.concat(txsQort)
@@ -4571,12 +4555,12 @@ class MultiWallet extends LitElement {
                 if (res.indexOf('<') > -1) {
                     this.balanceString = this.renderFetchText()
                     await new Promise(resolve => setTimeout(resolve, 2000))
-                    this.showWallet()
+                    await this.showWallet()
                     return
-                } else if (res !== null && res !== "Synchronized") {
+                } else if (res !== "Synchronized") {
                     this.balanceString = res
                     await new Promise(resolve => setTimeout(resolve, 2000))
-                    this.showWallet()
+                    await this.showWallet()
                     return
                 }
 
@@ -5309,9 +5293,8 @@ class MultiWallet extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 
     transactionItem(transactionObject) {
@@ -5466,8 +5449,7 @@ class MultiWallet extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     subtract(num1, num2) {
