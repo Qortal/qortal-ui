@@ -91,18 +91,16 @@ export function uint8ArrayToObject(uint8Array) {
     const jsonString = decoder.decode(uint8Array)
 
     // Convert the JSON string back into an object
-    const obj = JSON.parse(jsonString)
-
-    return obj
+	return JSON.parse(jsonString)
   }
 
   export function objectToBase64(obj) {
     // Step 1: Convert the object to a JSON string
     const jsonString = JSON.stringify(obj);
-  
+
     // Step 2: Create a Blob from the JSON string
     const blob = new Blob([jsonString], { type: 'application/json' });
-  
+
     // Step 3: Create a FileReader to read the Blob as a base64-encoded string
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -128,8 +126,7 @@ export function uint8ArrayToObject(uint8Array) {
 export const encryptData = ({ data64, recipientPublicKey }) => {
 
 
-    const Uint8ArrayData = base64ToUint8Array(data64)
-    const uint8Array = Uint8ArrayData
+	const uint8Array = base64ToUint8Array(data64)
 
     if (!(uint8Array instanceof Uint8Array)) {
 
@@ -220,7 +217,7 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
             const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
 
             const sharedSecret = new Uint8Array(32)
-            // the length of the sharedSecret will be 32 + 16 
+            // the length of the sharedSecret will be 32 + 16
             // When you're encrypting data using nacl.secretbox, it's adding an authentication tag to the result, which is 16 bytes long. This tag is used for verifying the integrity and authenticity of the data when it is decrypted
 
             nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
@@ -264,8 +261,7 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
         });
         const countArray = new Uint8Array(new Uint32Array([publicKeysDuplicateFree.length]).buffer);
         combinedData.set(countArray, combinedData.length - 4);
-        const uint8arrayToData64 = uint8ArrayToBase64(combinedData)
-        return uint8arrayToData64;
+		return uint8ArrayToBase64(combinedData);
 
     } catch (error) {
         throw new Error("Error in encrypting data")
@@ -317,8 +313,7 @@ export function decryptDeprecatedSingle(uint8Array, publicKey) {
     if (!_decryptedData) {
         throw new Error("Unable to decrypt")
     }
-    const decryptedDataToBase64 = uint8ArrayToBase64(_decryptedData)
-    return decryptedDataToBase64
+	return uint8ArrayToBase64(_decryptedData)
 }
 
 export function decryptGroupData(data64EncryptedData) {

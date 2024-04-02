@@ -522,7 +522,7 @@ button.bg-default:focus {
     page-break-after: avoid;
   }
 
-  @ page {
+  @page {
     size: a3;
   }
 }
@@ -664,7 +664,7 @@ button.bg-default:focus {
 }
 
 @media (min-width: 768px) {
-  @ keyframes show-navbar-dropdown {
+  @keyframes show-navbar-dropdown {
     0% {
       transition: visibility .25s, opacity .25s, transform .25s;
       transform: translate(0, 10px) perspective(200px) rotateX(-2deg);

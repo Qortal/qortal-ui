@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
@@ -346,20 +346,18 @@ class RewardShare extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         // Get Account Details
         const getAccountDetails = async () => {
-            let myAccountDetails = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/${this.selectedAddress.address}`
-            })
-            return myAccountDetails
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/${this.selectedAddress.address}`
+			})
         };
 
         // Get Reward Relationship if it already exists
@@ -369,7 +367,7 @@ class RewardShare extends LitElement {
                 type: 'api',
                 url: `/addresses/rewardshares?minters=${minterAddr}&recipients=${recipientAddress}`
             })
-            isRewardShareExisting = myRewardShareArray.length !== 0 ? true : false
+            isRewardShareExisting = myRewardShareArray.length !== 0
             return isRewardShareExisting
         }
 
@@ -459,20 +457,19 @@ class RewardShare extends LitElement {
             let rewarddialog2 = get("transactions.rewarddialog2")
             let rewarddialog3 = get("transactions.rewarddialog3")
             let rewarddialog4 = get("transactions.rewarddialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 38,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    recipientPublicKey,
-                    percentageShare,
-                    lastReference: mylastRef,
-                    rewarddialog1: rewarddialog1,
-                    rewarddialog2: rewarddialog2,
-                    rewarddialog3: rewarddialog3,
-                    rewarddialog4: rewarddialog4,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 38,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					recipientPublicKey,
+					percentageShare,
+					lastReference: mylastRef,
+					rewarddialog1: rewarddialog1,
+					rewarddialog2: rewarddialog2,
+					rewarddialog3: rewarddialog3,
+					rewarddialog4: rewarddialog4,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -481,8 +478,7 @@ class RewardShare extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                let err6string = get("rewardsharepage.rchange21")
-                this.message = err6string
+				this.message = get("rewardsharepage.rchange21")
                 this.error = false
             } else {
                 this.error = true
@@ -490,7 +486,7 @@ class RewardShare extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
         this.createRewardShareLoading = false
     }
 
@@ -507,20 +503,18 @@ class RewardShare extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         // Get Account Details
         const getAccountDetails = async () => {
-            let myAccountDetails = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/${this.selectedAddress.address}`
-            })
-            return myAccountDetails
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/${this.selectedAddress.address}`
+			})
         };
 
         // Get Reward Relationship if it already exists
@@ -530,7 +524,7 @@ class RewardShare extends LitElement {
                 type: 'api',
                 url: `/addresses/rewardshares?minters=${minterAddr}&recipients=${recipientAddress}`
             })
-            isRewardShareExisting = myRewardShareArray.length !== 0 ? true : false
+            isRewardShareExisting = myRewardShareArray.length !== 0
             return isRewardShareExisting
         }
 
@@ -620,20 +614,19 @@ class RewardShare extends LitElement {
             let rewarddialog2 = get("transactions.rewarddialog2")
             let rewarddialog3 = get("transactions.rewarddialog3")
             let rewarddialog4 = get("transactions.rewarddialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 38,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    recipientPublicKey,
-                    percentageShare,
-                    lastReference: mylastRef,
-                    rewarddialog1: rewarddialog1,
-                    rewarddialog2: rewarddialog2,
-                    rewarddialog3: rewarddialog3,
-                    rewarddialog4: rewarddialog4,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 38,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					recipientPublicKey,
+					percentageShare,
+					lastReference: mylastRef,
+					rewarddialog1: rewarddialog1,
+					rewarddialog2: rewarddialog2,
+					rewarddialog3: rewarddialog3,
+					rewarddialog4: rewarddialog4,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -642,8 +635,7 @@ class RewardShare extends LitElement {
                 this.message = txnResponse.message
                 throw new Error(txnResponse)
             } else if (txnResponse.success === true && !txnResponse.data.error) {
-                let err6string = get("rewardsharepage.rchange21")
-                this.message = err6string
+				this.message = get("rewardsharepage.rchange21")
                 this.error = false
             } else {
                 this.error = true
@@ -651,7 +643,7 @@ class RewardShare extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
         this.createRewardShareLoading = false
     }
 
@@ -664,11 +656,10 @@ class RewardShare extends LitElement {
         // Get Last Ref
         const getLastRef = async () => {
 
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         // Remove Reward Share
@@ -686,19 +677,18 @@ class RewardShare extends LitElement {
             let mylastRef = lastRef
             let rewarddialog5 = get("transactions.rewarddialog5")
             let rewarddialog6 = get("transactions.rewarddialog6")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 381,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    rewardShareKeyPairPublicKey: rewardShareObject.rewardSharePublicKey,
-                    recipient: rewardShareObject.recipient,
-                    percentageShare: myPercentageShare,
-                    lastReference: mylastRef,
-                    rewarddialog5: rewarddialog5,
-                    rewarddialog6: rewarddialog6,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 381,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					rewardShareKeyPairPublicKey: rewardShareObject.rewardSharePublicKey,
+					recipient: rewardShareObject.recipient,
+					percentageShare: myPercentageShare,
+					lastReference: mylastRef,
+					rewarddialog5: rewarddialog5,
+					rewarddialog6: rewarddialog6,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -716,7 +706,7 @@ class RewardShare extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        removeReceiver()
+        await removeReceiver()
     }
 
     isEmptyArray(arr) {

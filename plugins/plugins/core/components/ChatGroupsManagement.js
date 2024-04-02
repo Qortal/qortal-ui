@@ -10,7 +10,7 @@ import '@vaadin/tabs/theme/material/vaadin-tabs.js'
 import '@vaadin/avatar'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-filter-column.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -68,17 +68,15 @@ class ChatGroupsManagement extends LitElement {
   }
 
   async getJoinedGroups(){
-    let joinedG = await parentEpml.request('apiCall', {
-        url: `/groups/member/${this.selectedAddress.address}`
-    })
-    return joinedG
+	  return await parentEpml.request('apiCall', {
+		url: `/groups/member/${this.selectedAddress.address}`
+	})
 }
 
  async firstUpdated() {
 
     try {
-        let _joinedGroups = await this.getJoinedGroups()
-        this.joinedGroups = _joinedGroups
+		this.joinedGroups = await this.getJoinedGroups()
     } catch (error) {
 
     }
@@ -161,11 +159,10 @@ class ChatGroupsManagement extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -179,20 +176,19 @@ class ChatGroupsManagement extends LitElement {
         const makeTransactionRequest = async (lastRef) => {
             let groupdialog3 = get("transactions.groupdialog3")
             let groupdialog4 = get("transactions.groupdialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 32,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: leaveFeeInput,
-                    registrantAddress: this.selectedAddress.address,
-                    rGroupName: groupName,
-                    rGroupId: groupId,
-                    lastReference: lastRef,
-                    groupdialog3: groupdialog3,
-                    groupdialog4: groupdialog4,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 32,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: leaveFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog3: groupdialog3,
+					groupdialog4: groupdialog4,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -211,7 +207,7 @@ class ChatGroupsManagement extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     nameRenderer(person){

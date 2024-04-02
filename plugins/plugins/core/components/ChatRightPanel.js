@@ -194,8 +194,7 @@ class ChatRightPanel extends LitElement {
     async updated(changedProperties) {
         if (changedProperties && changedProperties.has('selectedHead')) {
             if (this.selectedHead !== {}) {
-                const userName = await getUserNameFromAddress(this.selectedHead.address);
-                this.userName = userName;
+				this.userName = await getUserNameFromAddress(this.selectedHead.address);
             }
         }
     }
@@ -217,7 +216,7 @@ class ChatRightPanel extends LitElement {
 
     observerHandler(entries) {
         if (!entries[0].isIntersecting) {
-            return
+
         } else {
             if(this.groupMembers.length < 20){
                 return

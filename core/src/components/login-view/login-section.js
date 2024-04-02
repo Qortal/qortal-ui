@@ -2,14 +2,21 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {checkApiKey} from '../../apiKeyUtils.js'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
+import {doLogin, doSelectAddress} from '../../redux/app/app-actions.js'
+import {doRemoveWallet, doStoreWallet} from '../../redux/user/user-actions.js'
+import {createWallet} from '../../../../crypto/api/createWallet.js'
+import snackbar from '../../functional-components/snackbar.js'
+import '../../custom-elements/frag-file-input.js'
+import ripple from '../../functional-components/loading-ripple.js'
 
 import '@material/mwc-button'
 import '@material/mwc-checkbox'
-import '@material/mwc-textfield'
-import '@material/mwc-icon'
 import '@material/mwc-dialog'
 import '@material/mwc-formfield'
+import '@material/mwc-icon'
+import '@material/mwc-icon-button'
+import '@material/mwc-textfield'
 import '@polymer/iron-pages'
 import '@polymer/paper-input/paper-input-container.js'
 import '@polymer/paper-input/paper-input.js'
@@ -18,12 +25,6 @@ import '@polymer/iron-collapse'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/text-field/vaadin-text-field.js'
 import '@vaadin/password-field/vaadin-password-field.js'
-import {doLogin, doSelectAddress} from '../../redux/app/app-actions.js'
-import {doRemoveWallet, doStoreWallet} from '../../redux/user/user-actions.js'
-import {createWallet} from '../../../../crypto/api/createWallet.js'
-import snackbar from '../../functional-components/snackbar.js'
-import '../../custom-elements/frag-file-input.js'
-import ripple from '../../functional-components/loading-ripple.js'
 
 class LoginSection extends connect(store)(LitElement) {
     static get properties() {
@@ -124,15 +125,15 @@ class LoginSection extends connect(store)(LitElement) {
         return html`
             <style>
                 #loginSection {
-                    padding:0;
-                    text-align:left;
+                    padding: 0;
+                    text-align: left;
                     padding-top: 12px;
                     --paper-spinner-color: var(--mdc-theme-primary);
                     --paper-spinner-stroke-width: 2px;
                 }
 
                 #loginPages{
-                    overflow:visible;
+                    overflow: visible;
                 }
 
                 #walletsPage {
@@ -167,7 +168,7 @@ class LoginSection extends connect(store)(LitElement) {
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    margin:0;
+                    margin: 0;
                     height: 20px;
                     font-size: 15px;
                     line-height: 20px;
@@ -213,21 +214,21 @@ class LoginSection extends connect(store)(LitElement) {
                 }
 
                 *[hidden] {
-                    display:none !important;
+                    display: none !important;
                     visibility: hidden;
                 }
 
                 h1 {
                     padding: 24px;
-                    padding-top:0;
-                    margin:0;
-                    font-size:24px;
-                    font-weight:100;
+                    padding-top: 0;
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: 100;
                 }
 
                 .accountIcon {
-                    font-size:42px;
-                    padding-top:8px;
+                    font-size: 42px;
+                    padding-top: 8px;
                 }
 
                 #unlockStoredPage {
@@ -241,9 +242,9 @@ class LoginSection extends connect(store)(LitElement) {
                 @media only screen and (max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
                     /* Mobile */
                     #wallets {
-                        height:100%;
-                        overflow-y:auto;
-                        overflow-x:hidden;
+                        height: 100%;
+                        overflow-y: auto;
+                        overflow-x: hidden;
                     }
 
                     #loginSection {
@@ -256,15 +257,15 @@ class LoginSection extends connect(store)(LitElement) {
                 }
 
                 .backButton {
-                    padding:14px;
-                    text-align:left;
+                    padding: 14px;
+                    text-align: left;
                 }
 
                 #pagesContainer {
                     max-height: calc(var(--window-height) - 184px);
                 }
 
-                .checkboxLabel:hover{
+                .checkboxLabel:hover {
                     cursor: pointer;
                 }
             </style>

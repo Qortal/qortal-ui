@@ -70,7 +70,7 @@ html {
   --login-border-50pct: rgba(0, 167, 245, 0.5);
   --login-border-10pct: rgba(0, 167, 245, 0.1);
   --login-button: rgb(3, 169, 244);
-  --accent-color: #03a9f4;
+  --general-color-blue: #03a9f4;
   --qchat-name: #03a9f4;
   --qchat-my-name: #05be0e;
 }
@@ -147,7 +147,7 @@ html[theme="dark"] {
   --login-border-50pct: rgba(0, 167, 245, 0.5);
   --login-border-10pct: rgba(0, 167, 245, 0.1);
   --login-button: rgb(3, 169, 244);
-  --accent-color: #03a9f4;
+  --general-color-blue: #03a9f4;
   --qchat-name: #03a9f4;
   --qchat-my-name: #05be0e;
 }

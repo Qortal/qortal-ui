@@ -1,6 +1,6 @@
 import {html, LitElement} from 'lit'
 import {chatSearchResultsStyles} from './ChatSearchResults-css.js'
-import {translate} from '../../../../core/translate/index.js'
+import {translate} from '../../../../core/translate'
 import '@vaadin/icon'
 import '@vaadin/icons'
 

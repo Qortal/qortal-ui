@@ -30,9 +30,7 @@ const signArbitrary = (arbitraryBytesBase58, arbitraryBytesForSigningBase58, non
 
 	const signature = nacl.sign.detached(arbitraryBytesForSigningBuffer, keyPair.privateKey)
 
-	const signedBytes = utils.appendBuffer(arbitraryBytesBuffer, signature)
-
-	return signedBytes
+	return utils.appendBuffer(arbitraryBytesBuffer, signature)
 }
 
 export default signArbitrary

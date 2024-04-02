@@ -14,8 +14,7 @@ const sendCoin = async (coin, req) => {
 	try {
 		const sendFn = api[`send${coin}`]
 		if (sendFn) {
-			const res = await sendFn(req.data)
-			response = res
+			response = await sendFn(req.data)
 		} else {
 			response = `Unsupported blockchain: ${coin}`
 		}
@@ -125,8 +124,7 @@ export const routes = {
 				store.getState().app.selectedAddress.keyPair
 			)
 
-			const res = await processTransaction(signedTxnBytes)
-			response = res
+			response = await processTransaction(signedTxnBytes)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
@@ -138,8 +136,7 @@ export const routes = {
 	tradeBotRespondRequest: async (req) => {
 		let response
 		try {
-			const res = await tradeBotRespondRequest(req.data)
-			response = res
+			response = await tradeBotRespondRequest(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
@@ -158,9 +155,7 @@ export const routes = {
 				store.getState().app.selectedAddress.keyPair
 			)
 
-			const res = await processTransaction(signedTxnBytes)
-
-			response = res
+			response = await processTransaction(signedTxnBytes)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
@@ -172,10 +167,9 @@ export const routes = {
 	cancelAllOffers: async (req) => {
 		let response
 		try {
-			const res = await cancelAllOffers(
+			response = await cancelAllOffers(
 				store.getState().app.selectedAddress
 			)
-			response = res
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)

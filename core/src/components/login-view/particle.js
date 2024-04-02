@@ -346,8 +346,7 @@ var pJS = function (tag_id, params) {
         var shape_type = pJS.particles.shape.type
         if (typeof (shape_type) === 'object') {
             if (shape_type instanceof Array) {
-                var shape_selected = shape_type[Math.floor(Math.random() * shape_type.length)]
-                this.shape = shape_selected
+				this.shape = shape_type[Math.floor(Math.random() * shape_type.length)]
             }
         } else {
             this.shape = shape_type
@@ -1255,11 +1254,11 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } : null
-};
+}
 
 function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max)
-};
+}
 
 function isInArray(value, array) {
     return array.indexOf(value) > -1

@@ -5,7 +5,7 @@ import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
 import './WrapperModal'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -115,11 +115,10 @@ class ChatGroupSettings extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -129,13 +128,12 @@ class ChatGroupSettings extends LitElement {
 
         }
         const convertBytesForSigning = async (transactionBytesBase58) => {
-            let convertedBytes = await parentEpml.request("apiCall", {
-                type: "api",
-                method: "POST",
-                url: `/transactions/convert`,
-                body: `${transactionBytesBase58}`,
-            })
-            return convertedBytes
+			return await parentEpml.request("apiCall", {
+				type: "api",
+				method: "POST",
+				url: `/transactions/convert`,
+				body: `${transactionBytesBase58}`,
+			})
         }
 
 
@@ -193,22 +191,21 @@ class ChatGroupSettings extends LitElement {
 			// })
             // return processTransaction
             console.log('this.selectedAddress.nonce', this.selectedAddress.nonce)
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 23,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    _groupId: groupId,
-                    lastReference: lastRef,
-                    fee: leaveFeeInput,
-                    "newOwner": "QdR4bQ1fJFnSZgswtW27eE8ToXwHqUQyaU",
-                    "newIsOpen": false,
-                    "newDescription": "my group for accounts I like",
-                    "newApprovalThreshold": "NONE",
-                    "newMinimumBlockDelay": 5,
-                "newMaximumBlockDelay": 60
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 23,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					_groupId: groupId,
+					lastReference: lastRef,
+					fee: leaveFeeInput,
+					"newOwner": "QdR4bQ1fJFnSZgswtW27eE8ToXwHqUQyaU",
+					"newIsOpen": false,
+					"newDescription": "my group for accounts I like",
+					"newApprovalThreshold": "NONE",
+					"newMinimumBlockDelay": 5,
+					"newMaximumBlockDelay": 60
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -223,7 +220,7 @@ class ChatGroupSettings extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
   render() {

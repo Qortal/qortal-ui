@@ -8,7 +8,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import ShortUniqueId from 'short-unique-id';
 import {setIsOpenDevDialog, setNewTab} from '../redux/app/app-actions.js'
 import FileSaver from 'file-saver'
-import {get, registerTranslateConfig, translate, use} from '../../translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../translate'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -19,12 +19,11 @@ import '@polymer/paper-dialog/paper-dialog.js'
 import '@vaadin/grid'
 import '@vaadin/text-field'
 import '../custom-elements/frag-file-input.js'
-import { defaultQappsTabs } from '../data/defaultQapps.js'
+import {defaultQappsTabs} from '../data/defaultQapps.js'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
-
 
 export const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -43,7 +42,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             chatLastSeen: { type: Array },
             chatHeads: { type: Array },
             proxyPort: { type: Number },
-            isOpenDevDialog: {type: Boolean}
+            isOpenDevDialog: { type: Boolean }
         }
     }
 
@@ -211,7 +210,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 font-weight: bold;
                 background: none;
                 border: none;
-                color: var(--accent-color);
+                color: var(--general-color-blue);
                 font-size: 2em;
                 cursor: pointer;
                 transition: color 0.3s;
@@ -229,7 +228,7 @@ class ShowPlugin extends connect(store)(LitElement) {
                 max-height: 28px;
                 padding: 5px 5px;
                 font-size: 14px;
-                background-color: var(--accent-color);
+                background-color: var(--general-color-blue);
                 color: white;
                 border: 1px solid transparent;
                 border-radius: 3px;
@@ -248,7 +247,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             .iconActive {
                 position: absolute;
                 top: 5px;
-                color: var(--accent-color);
+                color: var(--general-color-blue);
                 --mdc-icon-size: 24px;
             }
 
@@ -260,7 +259,7 @@ class ShowPlugin extends connect(store)(LitElement) {
             }
 
             .tab:hover .iconInactive {
-                color: var(--accent-color);
+                color: var(--general-color-blue);
             }
 
             .count {
@@ -843,7 +842,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
                 store.dispatch(setNewTab(null))
             } else if (!this.tabs.find((tab) => tab.id === newTab.id)) {
-                this.addTab(newTab)
+                await this.addTab(newTab)
                 this.currentTab = this.tabs.length - 1
                 store.dispatch(setNewTab(null))
                 //clear newTab
@@ -1078,7 +1077,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .resetIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1092,7 +1091,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .searchIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1106,7 +1105,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .importIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1120,7 +1119,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         .exportIcon:hover {
-            color: var(--accent-color);
+            color: var(--general-color-blue);
             font-weight: bold;
         }
 
@@ -1141,7 +1140,7 @@ class NavBar extends connect(store)(LitElement) {
         paper-dialog button {
             padding: 5px 10px;
             font-size: 18px;
-            background-color: var(--accent-color);
+            background-color: var(--general-color-blue);
             color: white;
             border: 1px solid transparent;
             border-radius: 5px;
@@ -1175,7 +1174,7 @@ class NavBar extends connect(store)(LitElement) {
         }
 
         vaadin-text-field[focused]::part(input-field) {
-            border-color: var(--accent-color);
+            border-color: var(--general-color-blue);
         }
     `
 
@@ -1474,8 +1473,7 @@ class NavBar extends connect(store)(LitElement) {
                 res()
             }, 1000);
         })
-		const detail = event.detail
-        this.myMenuPlugins = detail
+		this.myMenuPlugins = event.detail
         const addressInfo = this.addressInfo
         const isMinter = addressInfo?.error !== 124 && +addressInfo?.level > 0
         const isSponsor = +addressInfo?.level >= 5
@@ -1589,11 +1587,9 @@ class NavBar extends connect(store)(LitElement) {
     }
 
     async getMyFollowedNames() {
-        let myFollowedNames = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-
-        this.myFollowedNames = myFollowedNames
+		this.myFollowedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
     }
 
     searchNameKeyListener(e) {
@@ -1693,7 +1689,7 @@ class NavBar extends connect(store)(LitElement) {
             let err3string = get("appspage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
         }
-        this.getMyFollowedNamesList()
+        await this.getMyFollowedNamesList()
         return ret
     }
 
@@ -1719,7 +1715,7 @@ class NavBar extends connect(store)(LitElement) {
             let err4string = get("appspage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
         }
-        this.getMyFollowedNamesList()
+        await this.getMyFollowedNamesList()
         return ret
     }
 
@@ -1996,11 +1992,7 @@ class NavBar extends connect(store)(LitElement) {
                     this.myPluginNameRes = res
                 })
 
-                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0) {
-                    myPluginName = false
-                } else {
-                    myPluginName = true
-                }
+                myPluginName = !(this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0);
                 return myPluginName
             }
 
@@ -2061,11 +2053,7 @@ class NavBar extends connect(store)(LitElement) {
                     this.myPluginNameRes = res
                 })
 
-                if (this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0 ) {
-                    myPluginName = false
-                } else {
-                    myPluginName = true
-                }
+                myPluginName = !(this.myPluginNameRes === undefined || this.myPluginNameRes.length == 0);
                 return myPluginName
             }
 
@@ -2407,7 +2395,7 @@ class NavBar extends connect(store)(LitElement) {
     async handlePasteLink(e) {
         try {
             const value = this.shadowRoot.getElementById('linkInput').value
-            this.getQuery(value)
+            await this.getQuery(value)
         } catch (error) {
         }
     }
@@ -2416,7 +2404,7 @@ class NavBar extends connect(store)(LitElement) {
         if (e.key === 'Enter') {
             try {
                 const value = this.shadowRoot.getElementById('linkInput').value
-                this.getQuery(value)
+                await this.getQuery(value)
             } catch (error) {
             }
         }
@@ -2424,8 +2412,7 @@ class NavBar extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     isEmptyArray(arr) {

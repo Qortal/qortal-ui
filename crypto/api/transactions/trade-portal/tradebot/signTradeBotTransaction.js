@@ -17,14 +17,10 @@ const signTradeBotTransaction = (unsignedTxn, keyPair) => {
 		const _privateKey = Object.keys(keyPair.privateKey).map(function (key) { return keyPair.privateKey[key]; })
 		const privateKey = new Uint8Array(_privateKey)
 		const signature = nacl.sign.detached(txnBuffer, privateKey)
-		const signedBytes = utils.appendBuffer(txnBuffer, signature)
-
-		return signedBytes
+		return utils.appendBuffer(txnBuffer, signature)
 	} else {
 		const signature = nacl.sign.detached(txnBuffer, keyPair.privateKey)
-		const signedBytes = utils.appendBuffer(txnBuffer, signature)
-
-		return signedBytes
+		return utils.appendBuffer(txnBuffer, signature)
 	}
 }
 

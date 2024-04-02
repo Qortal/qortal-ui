@@ -25,18 +25,14 @@ const signChat = (chatBytes, nonce, keyPair) => {
 
 		const signature = nacl.sign.detached(chatBytesBuffer, keyPair.privateKey)
 
-		const signedBytes = utils.appendBuffer(chatBytesBuffer, signature)
-
-		return signedBytes
+		return utils.appendBuffer(chatBytesBuffer, signature)
 	} else {
 		const chatBytesBuffer = new Uint8Array(chatBytes)
 		chatBytesBuffer.set(_nonce, 112)
 
 		const signature = nacl.sign.detached(chatBytesBuffer, keyPair.privateKey)
 
-		const signedBytes = utils.appendBuffer(chatBytesBuffer, signature)
-
-		return signedBytes
+		return utils.appendBuffer(chatBytesBuffer, signature)
 	}
 }
 

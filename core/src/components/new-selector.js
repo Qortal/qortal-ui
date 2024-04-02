@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {registerTranslateConfig, translate, use} from '../../translate/index.js'
+import {registerTranslateConfig, translate, use} from '../../translate'
 
 registerTranslateConfig({
   loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())

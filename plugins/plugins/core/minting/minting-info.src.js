@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {registerTranslateConfig, translate, use} from '../../../../core/translate'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -441,10 +441,9 @@ class MintingInfo extends LitElement {
     }
 
     async getAddressLevel() {
-        const callLevels = await parentEpml.request('apiCall', {
-            url: `/addresses/online/levels`
-        })
-        this.addressLevel = callLevels
+		this.addressLevel = await parentEpml.request('apiCall', {
+			url: `/addresses/online/levels`
+		})
         this.tier4Online = parseFloat(this.addressLevel[7].count) + parseFloat(this.addressLevel[8].count)
     }
 

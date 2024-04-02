@@ -31,8 +31,7 @@ const sendCoin = async (coin, req) => {
 	try {
 		const sendFn = api[`send${coin}`]
 		if (sendFn) {
-			const res = await sendFn(req.data)
-			response = res
+			response = await sendFn(req.data)
 		} else {
 			response = `Unsupported blockchain: ${coin}`
 		}
@@ -209,11 +208,8 @@ export const routes = {
 
 	username: async (req) => {
 		const state = store.getState()
-		const username =
-			state.user.storedWallets[state.app.wallet.addresses[0].address]
-				.name
-
-		return username
+		return state.user.storedWallets[state.app.wallet.addresses[0].address]
+			.name
 	},
 
 	chat: async (req) => {
@@ -354,9 +350,7 @@ export const routes = {
 	tradeBotRespondRequest: async (req) => {
 		let response
 		try {
-			const res = await tradeBotRespondRequest(req.data)
-
-			response = res
+			response = await tradeBotRespondRequest(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
@@ -396,10 +390,9 @@ export const routes = {
 	cancelAllOffers: async (req) => {
 		let response
 		try {
-			const res = await cancelAllOffers(
+			response = await cancelAllOffers(
 				store.getState().app.selectedAddress
 			)
-			response = res
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)

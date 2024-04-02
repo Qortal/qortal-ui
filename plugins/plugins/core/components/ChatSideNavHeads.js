@@ -185,11 +185,9 @@ class ChatSideNavHeads extends LitElement {
         if(changedProperties.has('chatInfo')){
             return true
         }
-        if(changedProperties.has('isImageLoaded')){
-            return true
-        }
+        return !!changedProperties.has('isImageLoaded');
 
-        return false
+
       }
 
     getUrl(chatUrl) {

@@ -213,7 +213,8 @@
 		"arrr1": "ARRR portefeuille is niet geïnitialiseerd!",
 		"arrr2": "Ga naar de portefeuille-tab en initialiseer eerst jouw ARRR portefeuille.",
 		"arrr3": "De 'core' heeft een update nodig!",
-		"arrr4": "Om de privé-sleutel van jouw ARRR portefeuille te kunnen bewaren, moet je voor de 'core' eerst een update installeren!"
+		"arrr4": "Om de privé-sleutel van jouw ARRR portefeuille te kunnen bewaren, moet je voor de 'core' eerst een update installeren!",
+		"sync_indicator": "Synchronisatie-indicator pop-up uitschakelen"
 	},
 	"appinfo": {
 		"blockheight": "Blokhoogte",

@@ -20,9 +20,11 @@ import {
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
 	UPDATE_NODE_STATUS,
-    SET_PROFILE_DATA,
-    ALLOW_QAPP_FRIENDS_LIST,
-    REMOVE_QAPP_FRIENDS_LIST
+	SET_PROFILE_DATA,
+	ALLOW_QAPP_FRIENDS_LIST,
+	REMOVE_QAPP_FRIENDS_LIST,
+	ALLOW_SHOW_SYNC_INDICATOR,
+	REMOVE_SHOW_SYNC_INDICATOR
 } from '../app-action-types.js'
 
 export const doUpdateBlockInfo = (blockObj) => {
@@ -164,18 +166,21 @@ export const setNewTab = (payload) => {
         payload
     }
 }
+
 export const setNewNotification = (payload) => {
     return {
         type: SET_NEW_NOTIFICATION,
         payload
     }
 }
-export const setIsOpenDevDialog = (payload)=> {
+
+export const setIsOpenDevDialog = (payload) => {
     return {
         type: IS_OPEN_DEV_DIALOG,
         payload
     }
 }
+
 export const addTabInfo = (payload) => {
     return {
         type: ADD_TAB_INFO,
@@ -196,16 +201,31 @@ export const setSideEffectAction = (payload)=> {
         payload
     }
 }
-export const setProfileData = (payload)=> {
+
+export const setProfileData = (payload) => {
     return {
         type: SET_PROFILE_DATA,
         payload
     }
 }
 
-export const setCoinBalances = (payload)=> {
+export const setCoinBalances = (payload) => {
     return {
         type: SET_COIN_BALANCES,
+        payload
+    }
+}
+
+export const allowShowSyncIndicator = (payload) => {
+    return {
+        type: ALLOW_SHOW_SYNC_INDICATOR,
+        payload
+    }
+}
+
+export const removeShowSyncIndicator = (payload) => {
+    return {
+        type: REMOVE_SHOW_SYNC_INDICATOR,
         payload
     }
 }
