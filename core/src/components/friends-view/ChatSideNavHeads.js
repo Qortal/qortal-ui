@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {get} from '../../../translate/index.js'
+import {get} from '../../../translate'
 import '@material/mwc-icon'
 import '@vaadin/tooltip';
 
@@ -206,11 +206,9 @@ class ChatSideNavHeads extends LitElement {
         if(changedProperties.has('chatInfo')){
             return true
         }
-        if(changedProperties.has('isImageLoaded')){
-            return true
-        }
+        return !!changedProperties.has('isImageLoaded');
 
-        return false
+
       }
 
     getUrl(chatUrl) {

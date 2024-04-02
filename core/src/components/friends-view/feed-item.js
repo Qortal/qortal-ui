@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {translate,} from '../../../translate/index.js'
+import {translate,} from '../../../translate'
 import axios from 'axios'
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js'
@@ -174,13 +174,10 @@ export class FeedItem extends connect(store)(LitElement) {
   getNodeUrl(){
     const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
-    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-    return nodeUrl
+  return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 }
 getMyNode(){
-  const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-  return myNode
+	return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 }
 
   getApiKey() {
@@ -188,8 +185,7 @@ getMyNode(){
       window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
       window.parent.reduxStore.getState().app.nodeConfig.node
       ];
-    let apiKey = myNode.apiKey;
-    return apiKey;
+	  return myNode.apiKey;
   }
 
    async fetchResource() {
@@ -206,7 +202,7 @@ getMyNode(){
 
  async fetchVideoUrl() {
 
-      this.fetchResource()
+      await this.fetchResource()
 
   }
 
@@ -311,7 +307,7 @@ getMyNode(){
 
         this.status = res
         if(this.status.status === 'DOWNLOADED'){
-          this.fetchResource()
+          await this.fetchResource()
         }
       }
 
@@ -332,8 +328,8 @@ getMyNode(){
 
   async _fetchImage() {
     try {
-      this.fetchVideoUrl()
-      this.fetchStatus()
+      await this.fetchVideoUrl()
+      await this.fetchStatus()
     } catch (error) { /* empty */ }
   }
 

@@ -1,16 +1,17 @@
-import { LitElement, html, css } from 'lit';
-import { driver } from 'driver.js';
+import {css, html, LitElement} from 'lit';
+import {driver} from 'driver.js';
 import 'driver.js/dist/driver.css';
 import '@material/mwc-icon';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
 import '@material/mwc-button';
-import { get, translate } from '../../../translate/index.js';
+import {get, translate} from '../../../translate';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { setNewTab } from '../../redux/app/app-actions.js';
-import { store } from '../../store.js';
-import { connect } from 'pwa-helpers';
+import {setNewTab} from '../../redux/app/app-actions.js';
+import {store} from '../../store.js';
+import {connect} from 'pwa-helpers';
 import './tour.css';
+
 class TourComponent extends connect(store)(LitElement) {
 	static get properties() {
 		return {
@@ -116,7 +117,7 @@ class TourComponent extends connect(store)(LitElement) {
 
 	_controlOpenWelcomeModal() {
     this.isSynced = true
-		
+
 		const seenWelcomeSync = JSON.parse(
 			localStorage.getItem('welcome-sync') || 'false'
 		);
@@ -175,19 +176,14 @@ class TourComponent extends connect(store)(LitElement) {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	async getName(recipient) {
@@ -280,7 +276,7 @@ class TourComponent extends connect(store)(LitElement) {
         <span><img src="/img/syncing.png" style="height: 24px; width: 24px; padding-top: 4px;" /></span>
           <p style="margin:0px;padding:0px">${get("tour.tour4")}</p>
           </div>
-           
+
                 `,
 					},
 				});
@@ -397,7 +393,7 @@ class TourComponent extends connect(store)(LitElement) {
 								class="close-button"
 								@click=${()=> {
                   this.onClose()
-				  
+
                 }}
 							>
 								${translate("general.close")}

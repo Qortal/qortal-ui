@@ -1,4 +1,4 @@
-import {get} from '../../../core/translate/index.js'
+import {get} from '../../../core/translate'
 
 export class WarningModal {
     constructor() {

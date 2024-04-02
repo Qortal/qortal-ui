@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {translate,} from '../../../../core/translate/index.js'
+import {translate,} from '../../../../core/translate'
 import axios from 'axios'
 import {RequestQueueWithPromise} from '../../utils/queue'
 import '@material/mwc-menu'
@@ -121,26 +121,20 @@ export class ResuableImage extends LitElement {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		return nodeUrl
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			]
-
-		return myNode
 	}
 
 	getApiKey() {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-		let apiKey = myNode.apiKey
-		return apiKey
+			]
+		return myNode.apiKey
 	}
 
 	async fetchResource() {
@@ -160,7 +154,7 @@ export class ResuableImage extends LitElement {
 	}
 
 	async fetchVideoUrl() {
-		this.fetchResource();
+		await this.fetchResource();
 		this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
 	}
 
@@ -217,7 +211,7 @@ export class ResuableImage extends LitElement {
 
 				this.status = res
 				if (this.status.status === 'DOWNLOADED') {
-					this.fetchResource()
+					await this.fetchResource()
 				}
 			}
 
@@ -239,12 +233,12 @@ export class ResuableImage extends LitElement {
 
 	async _fetchImage() {
 		try {
-			this.fetchVideoUrl({
+			await this.fetchVideoUrl({
 				name: this.resource.name,
 				service: this.resource.service,
 				identifier: this.resource.identifier,
 			});
-			this.fetchStatus()
+			await this.fetchStatus()
 		} catch (error) { /* empty */ }
 	}
 

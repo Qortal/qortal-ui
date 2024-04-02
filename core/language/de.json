@@ -213,7 +213,8 @@
 		"arrr1": "ARRR-Wallet nicht initialisiert!",
 		"arrr2": "Bitte gehen Sie zur Registerkarte „Wallet“ und initialisieren Sie zuerst Ihre arrr-Wallet.",
 		"arrr3": "Core-Update erforderlich!",
-		"arrr4": "Um den privaten Schlüssel Ihrer arrr-Wallet zu speichern, benötigen Sie zuerst ein Core-Update!"
+		"arrr4": "Um den privaten Schlüssel Ihrer arrr-Wallet zu speichern, benötigen Sie zuerst ein Core-Update!",
+		"sync_indicator": "Synchronisierungsanzeige-Popup deaktivieren"
 	},
 	"appinfo": {
 		"blockheight": "Blockhöhe",

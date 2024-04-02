@@ -17,20 +17,15 @@ const uiCoreController = (type) => {
             const { createServer } = require('./server/server.js')
             return createServer
         case BUILD:
-            const build = require('./tooling/build.js')
-            return build
+			return require('./tooling/build.js')
         case WATCH:
-            const watch = require('./tooling/watch.js')
-            return watch
+			return require('./tooling/watch.js')
         case WATCH_INLINE:
-            const watchInlines = require('./tooling/watch-inlines.js')
-            return watchInlines
+			return require('./tooling/watch-inlines.js')
         case DEFAULT_CONFIG:
-            const defaultConfig = require('./config/config.js')
-            return defaultConfig
+			return require('./config/config.js')
         case GENERATE_BUILD_CONFIG:
-            const generateBuildConfig = require('./tooling/generateBuildConfig.js')
-            return generateBuildConfig
+			return require('./tooling/generateBuildConfig.js')
         default:
             return
     }

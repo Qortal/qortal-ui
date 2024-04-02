@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import '@material/mwc-icon'
 import './friends-side-panel.js'
 import '@vaadin/tooltip'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 
 class FriendsSidePanelParent extends LitElement {
 	static get properties() {

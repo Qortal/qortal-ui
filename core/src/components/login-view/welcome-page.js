@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 
 import '@material/mwc-button'
 
@@ -13,68 +13,56 @@ class WelcomePage extends LitElement {
             backDisabled: { type: Boolean, notify: true },
             backText: { type: String, notify: true },
             hideNav: { type: Boolean, notify: true },
+            welcomeMessage: { type: String },
             theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
-        return [
-            css`
-                * {
-                    --mdc-theme-primary: var(--login-button);
-                    --mdc-theme-secondary: var(--mdc-theme-primary);
-                    --mdc-button-outline-color: var(--accent-color);
-                }
+        return css`
+            * {
+                --mdc-theme-primary: var(--login-button);
+                --mdc-theme-secondary: var(--mdc-theme-primary);
+                --mdc-button-outline-color: var(--general-color-blue);
+            }
 
-                mwc-button {
-                    margin: 6px;
-                    width: 90%;
-                    max-width:90vw;
-                    margin: 4px;
-                }
+            .button-outline {
+                margin: 6px;
+                width: 90%;
+                max-width:90vw;
+                border-top: 0;
+                border-bottom: 0;
+            }
 
-                .welcome-page {
-                    padding: 12px 0;
-                }
-            `
-        ]
+            .welcome-page {
+                padding: 12px 0;
+                overflow: hidden;
+            }
+        `
     }
 
     constructor() {
         super()
         this.hideNav = true
         this.nextText = ''
-        const welcomeMessage = 'Welcome to Qortal';
-        this.welcomeMessage = welcomeMessage
+        this.welcomeMessage = 'Welcome to Qortal'
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
-    firstUpdated() {
-        // ...
-    }
+    firstUpdated() {}
 
     render() {
         return html`
-            <style>
-              #mobile-logo {}
-              @media only screen and (min-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')}) {
-                #mobile-logo {
-                  display:hidden;
-                  visibility:none;
-                }
-              }
-            </style>
-            <div class='welcome-page' style="overflow:hidden;">
-              <div id="mobile-logo"></div>
-              <mwc-button @click=${() => this.navigate('login')} outlined style="border-top:0; border-bottom:0;">${translate("login.login")}</mwc-button>
-              <mwc-button @click=${() => this.navigate('create-account')} outlined style="border-top:0; border-bottom:0;">${translate("login.createaccount")}</mwc-button>
+            <div class="welcome-page">
+                <mwc-button class="button-outline" @click=${() => this.navigate('login')} outlined>${translate("login.login")}</mwc-button>
+                <mwc-button class="button-outline" @click=${() => this.navigate('create-account')} outlined>${translate("login.createaccount")}</mwc-button>
             </div>
         `
     }
 
-    back() { }
+    back() {}
 
-    next() { }
+    next() {}
 
     navigate(page) {
         this.dispatchEvent(new CustomEvent('navigate', {

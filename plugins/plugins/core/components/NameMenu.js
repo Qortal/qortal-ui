@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
 import snackbar from './snackbar.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 import '@material/mwc-snackbar'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -90,7 +90,7 @@ class NameMenu extends LitElement {
             }
 
             h2, h3, h4, h5 {
-                color:# var(--black);
+                color: var(--black);
                 font-weight: 400;
             }
 
@@ -333,10 +333,9 @@ class NameMenu extends LitElement {
     }
 
     async getChatBlockedAdresses() {
-        const chatBlockedAdresses = await parentEpml.request('apiCall', {
-            url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
-        })
-        this.chatBlockedAdresses = chatBlockedAdresses
+		this.chatBlockedAdresses = await parentEpml.request('apiCall', {
+			url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
+		})
     }
 
     async chatBlockAddress() {
@@ -490,11 +489,11 @@ class NameMenu extends LitElement {
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1
                 _publicKey = addressPublicKey
-                sendMessageRequest(isEncrypted, _publicKey)
+                await sendMessageRequest(isEncrypted, _publicKey)
             } else {
                 isEncrypted = 0
                 _publicKey = this.selectedAddress.address
-                sendMessageRequest(isEncrypted, _publicKey)
+                await sendMessageRequest(isEncrypted, _publicKey)
             }
         };
 
@@ -521,7 +520,7 @@ class NameMenu extends LitElement {
                     isText: 1
                 }
             })
-            _computePow(chatResponse)
+            await _computePow(chatResponse)
         }
 
         const _computePow = async (chatBytes) => {
@@ -568,7 +567,7 @@ class NameMenu extends LitElement {
             }
 
         }
-        getAddressPublicKey()
+        await getAddressPublicKey()
     }
 
     _textMenu(event) {
@@ -603,9 +602,8 @@ class NameMenu extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 }
 

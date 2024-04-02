@@ -1,12 +1,12 @@
-import { css, html, LitElement } from 'lit'
-import { connect } from 'pwa-helpers'
-import { store } from '../store.js'
-import { Epml } from '../epml.js'
-import { addTradeBotRoutes } from '../tradebot/addTradeBotRoutes.js'
-import { get, translate } from '../../translate/index.js'
+import {css, html, LitElement} from 'lit'
+import {connect} from 'pwa-helpers'
+import {store} from '../store.js'
+import {Epml} from '../epml.js'
+import {addTradeBotRoutes} from '../tradebot/addTradeBotRoutes.js'
+import {get, translate} from '../../translate'
 import localForage from 'localforage'
-import { decryptData, encryptData } from '../lockScreen.js'
-import { setChatLastSeen } from '../redux/app/app-actions.js'
+import {decryptData, encryptData} from '../lockScreen.js'
+import {setChatLastSeen} from '../redux/app/app-actions.js'
 import isElectron from 'is-electron'
 import '@material/mwc-button'
 import '@material/mwc-icon'
@@ -35,7 +35,6 @@ import './search-modal.js'
 import './user-info-view/user-info-view.js'
 import '../functional-components/side-menu.js'
 import '../functional-components/side-menu-item.js'
-import './start-minting.js'
 import './notification-view/notification-bell.js'
 import './notification-view/notification-bell-general.js'
 import './friends-view/friends-side-panel-parent.js'
@@ -147,7 +146,8 @@ class AppView extends connect(store)(LitElement) {
             lockSet: { type: String },
             myLockScreenPass: { type: String },
             myLockScreenSet: { type: String },
-            helperMessage: { type: String }
+            helperMessage: { type: String },
+            showSyncMessages: { type: Boolean }
         }
     }
 
@@ -548,7 +548,6 @@ class AppView extends connect(store)(LitElement) {
 
     getTourElements(){
         let els = {}
-        console.log('this.shadowRoot.querySelector("core-sync-status")', this.shadowRoot.querySelector("core-sync-status"))
         const el1 = this.shadowRoot.querySelector("core-sync-status").shadowRoot.getElementById("core-sync-status-id")
         const el2 = this.shadowRoot.querySelector("show-plugin").shadowRoot.getElementById("showPluginId")
         const el3 = this.shadowRoot.querySelector("beginner-checklist").shadowRoot.getElementById("popover-notification")
@@ -561,7 +560,7 @@ class AppView extends connect(store)(LitElement) {
         if(el3) {
             els['checklist'] = el3
         }
-       
+
         return els
     }
 
@@ -625,7 +624,7 @@ class AppView extends connect(store)(LitElement) {
                     </app-header>
                     <show-plugin></show-plugin>
                     <tour-component .getElements=${this.getTourElements}></tour-component>
-                    <sync-indicator ></sync-indicator>
+                    ${!this.showSyncMessages ? html`<sync-indicator></sync-indicator>` : html``}
                 </app-header-layout>
             </app-drawer-layout>
             <user-info-view></user-info-view>
@@ -698,6 +697,8 @@ class AppView extends connect(store)(LitElement) {
 
         this.helperMessage = this.renderHelperPass()
 
+        this.showSyncMessages = store.getState().app.showSyncIndicator
+
         this.salt = ''
         this.salt = Base58.encode(store.getState().app.wallet._addresses[0].keyPair.privateKey)
 
@@ -745,7 +746,7 @@ class AppView extends connect(store)(LitElement) {
             drawerTog.click()
         })
 
-        this.getNodeType()
+        await this.getNodeType()
 
         const myAppNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
         const nodeAppUrl = myAppNode.protocol + '://' + myAppNode.domain + ':' + myAppNode.port
@@ -914,7 +915,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferBTC()
                 await appDelay(1000)
-                filterMyBotPriceTradesBTC()
+                await filterMyBotPriceTradesBTC()
                 setTimeout(getOpenTradesBTC, 150000)
             }
         }
@@ -922,11 +923,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesBTC = async () => {
             const tradeBotBtcUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=BITCOIN&apiKey=${this.getApiKey()}`
 
-            const tradeBotBtcAt = await fetch(tradeBotBtcUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotBtcAt = tradeBotBtcAt
+			this.tradeBotBtcAt = await fetch(tradeBotBtcUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -964,7 +963,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableBtcQortal) === true) {
-                return
+
             } else {
                 const botbtcprice = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
                 const changebtcamount = parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount)
@@ -995,7 +994,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyBtcAction()
+                await this.buyBtcAction()
 
                 if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
                     return
@@ -1008,7 +1007,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotBtcBook) === true) {
-                    return
+
                 } else {
                     const checkBotBtcFunds = this.round(parseFloat(this.tradeBotBtcBook[0].botBtcQortAmount) * parseFloat(this.tradeBotBtcBook[0].botBtcPrice))
                     const myBotBtcFunds = this.round(parseFloat(this.btcWalletBalance))
@@ -1111,7 +1110,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferLTC()
                 await appDelay(1000)
-                filterMyBotPriceTradesLTC()
+                await filterMyBotPriceTradesLTC()
                 setTimeout(getOpenTradesLTC, 150000)
             }
         }
@@ -1119,11 +1118,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesLTC = async () => {
             const tradeBotLtcUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=LITECOIN&apiKey=${this.getApiKey()}`
 
-            const tradeBotLtcAt = await fetch(tradeBotLtcUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotLtcAt = tradeBotLtcAt
+			this.tradeBotLtcAt = await fetch(tradeBotLtcUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -1161,7 +1158,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableLtcQortal) === true) {
-                return
+
             } else {
                 const botltcprice = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
                 const changeltcamount = parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount)
@@ -1192,7 +1189,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyLtcAction()
+                await this.buyLtcAction()
 
                 if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
                     return
@@ -1205,7 +1202,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotLtcBook) === true) {
-                    return
+
                 } else {
                     const checkBotLtcFunds = this.round(parseFloat(this.tradeBotLtcBook[0].botLtcQortAmount) * parseFloat(this.tradeBotLtcBook[0].botLtcPrice))
                     const myBotLtcFunds = this.round(parseFloat(this.ltcWalletBalance))
@@ -1297,7 +1294,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferDOGE()
                 await appDelay(1000)
-                filterMyBotPriceTradesDOGE()
+                await filterMyBotPriceTradesDOGE()
                 setTimeout(getOpenTradesDOGE, 150000)
             }
         }
@@ -1305,11 +1302,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesDOGE = async () => {
             const tradeBotDogeUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=DOGECOIN&apiKey=${this.getApiKey()}`
 
-            const tradeBotDogeAt = await fetch(tradeBotDogeUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotDogeAt = tradeBotDogeAt
+			this.tradeBotDogeAt = await fetch(tradeBotDogeUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -1347,7 +1342,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableDogeQortal) === true) {
-                return
+
             } else {
                 const botdogeprice = this.round(parseFloat(this.tradeBotDogeBook[0].botDogePrice))
                 const changedogeamount = parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount)
@@ -1378,7 +1373,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyDogeAction()
+                await this.buyDogeAction()
 
                 if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
                     return
@@ -1391,7 +1386,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotDogeBook) === true) {
-                    return
+
                 } else {
                     const checkBotDogeFunds = this.round(parseFloat(this.tradeBotDogeBook[0].botDogeQortAmount) * parseFloat(this.tradeBotDogeBook[0].botDogePrice))
                     const myBotDogeFunds = this.round(parseFloat(this.dogeWalletBalance))
@@ -1483,7 +1478,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferDGB()
                 await appDelay(1000)
-                filterMyBotPriceTradesDGB()
+                await filterMyBotPriceTradesDGB()
                 setTimeout(getOpenTradesDGB, 150000)
             }
         }
@@ -1491,11 +1486,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesDGB = async () => {
             const tradeBotDgbUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=DIGIBYTE&apiKey=${this.getApiKey()}`
 
-            const tradeBotDgbAt = await fetch(tradeBotDgbUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotDgbAt = tradeBotDgbAt
+			this.tradeBotDgbAt = await fetch(tradeBotDgbUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -1533,7 +1526,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableDgbQortal) === true) {
-                return
+
             } else {
                 const botdgbprice = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
                 const changedgbamount = parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount)
@@ -1564,7 +1557,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyDgbAction()
+                await this.buyDgbAction()
 
                 if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
                     return
@@ -1577,7 +1570,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotDgbBook) === true) {
-                    return
+
                 } else {
                     const checkBotDgbFunds = this.round(parseFloat(this.tradeBotDgbBook[0].botDgbQortAmount) * parseFloat(this.tradeBotDgbBook[0].botDgbPrice))
                     const myBotDgbFunds = this.round(parseFloat(this.dgbWalletBalance))
@@ -1669,7 +1662,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferRVN()
                 await appDelay(1000)
-                filterMyBotPriceTradesRVN()
+                await filterMyBotPriceTradesRVN()
                 setTimeout(getOpenTradesRVN, 150000)
             }
         }
@@ -1677,11 +1670,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesRVN = async () => {
             const tradeBotRvnUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=RAVENCOIN&apiKey=${this.getApiKey()}`
 
-            const tradeBotRvnAt = await fetch(tradeBotRvnUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotRvnAt = tradeBotRvnAt
+			this.tradeBotRvnAt = await fetch(tradeBotRvnUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -1719,7 +1710,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableRvnQortal) === true) {
-                return
+
             } else {
                 const botrvnprice = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
                 const changervnamount = parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount)
@@ -1750,7 +1741,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyRvnAction()
+                await this.buyRvnAction()
 
                 if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
                     return
@@ -1763,7 +1754,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotRvnBook) === true) {
-                    return
+
                 } else {
                     const checkBotRvnFunds = this.round(parseFloat(this.tradeBotRvnBook[0].botRvnQortAmount) * parseFloat(this.tradeBotRvnBook[0].botRvnPrice))
                     const myBotRvnFunds = this.round(parseFloat(this.rvnWalletBalance))
@@ -1855,7 +1846,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await filterOpenOfferARRR()
                 await appDelay(1000)
-                filterMyBotPriceTradesARRR()
+                await filterMyBotPriceTradesARRR()
                 setTimeout(getOpenTradesARRR, 150000)
             }
         }
@@ -1863,11 +1854,9 @@ class AppView extends connect(store)(LitElement) {
         const filterMyBotPriceTradesARRR = async () => {
             const tradeBotArrrUrl = `${nodeAppUrl}/crosschain/tradebot?foreignBlockchain=PIRATECHAIN&apiKey=${this.getApiKey()}`
 
-            const tradeBotArrrAt = await fetch(tradeBotArrrUrl).then(response => {
-                return response.json()
-            })
-
-            this.tradeBotArrrAt = tradeBotArrrAt
+			this.tradeBotArrrAt = await fetch(tradeBotArrrUrl).then(response => {
+				return response.json()
+			})
 
             await appDelay(1000)
 
@@ -1905,7 +1894,7 @@ class AppView extends connect(store)(LitElement) {
             await appDelay(1000)
 
             if (this.isEmptyArray(this.tradeBotAvailableArrrQortal) === true) {
-                return
+
             } else {
                 const botarrrprice = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
                 const changearrramount = parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount)
@@ -1936,7 +1925,7 @@ class AppView extends connect(store)(LitElement) {
 
                 await appDelay(1000)
 
-                this.buyArrrAction()
+                await this.buyArrrAction()
 
                 if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
                     return
@@ -1949,7 +1938,7 @@ class AppView extends connect(store)(LitElement) {
                 }
 
                 if (this.isEmptyArray(this.tradeBotArrrBook) === true) {
-                    return
+
                 } else {
                     const checkBotArrrFunds = this.round(parseFloat(this.tradeBotArrrBook[0].botArrrQortAmount) * parseFloat(this.tradeBotArrrBook[0].botArrrPrice))
                     const myBotArrrFunds = this.round(parseFloat(this.arrrWalletBalance))
@@ -2117,10 +2106,6 @@ class AppView extends connect(store)(LitElement) {
 
                     ${this.renderNodeManagement()}
                 </side-menu-item>
-
-                <div>
-                    <start-minting></start-minting>
-                </div>
             `
         }
     }
@@ -2246,7 +2231,7 @@ class AppView extends connect(store)(LitElement) {
             this.helperMessage = this.renderHelperErr()
             await errDelay(3000)
             this.helperMessage = this.renderHelperPass()
-            return
+
         }
     }
 
@@ -2454,12 +2439,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyBtcAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botBtcBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.btcWallet.derivedMasterPrivateKey,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botBtcBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.btcWallet.derivedMasterPrivateKey,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2512,12 +2496,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyLtcAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botLtcBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botLtcBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2570,12 +2553,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyDogeAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botDogeBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.dogeWallet.derivedMasterPrivateKey,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botDogeBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.dogeWallet.derivedMasterPrivateKey,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2628,12 +2610,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyDgbAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botDgbBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.dgbWallet.derivedMasterPrivateKey,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botDgbBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.dgbWallet.derivedMasterPrivateKey,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2686,12 +2667,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyRvnAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botRvnBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.rvnWallet.derivedMasterPrivateKey,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botRvnBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.rvnWallet.derivedMasterPrivateKey,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2744,12 +2724,11 @@ class AppView extends connect(store)(LitElement) {
 
     async buyArrrAction() {
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: this.botArrrBuyAtAddress,
-                foreignKey: store.getState().app.selectedAddress.arrrWallet.seed58,
-                receivingAddress: store.getState().app.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: this.botArrrBuyAtAddress,
+				foreignKey: store.getState().app.selectedAddress.arrrWallet.seed58,
+				receivingAddress: store.getState().app.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2806,6 +2785,7 @@ class AppView extends connect(store)(LitElement) {
         this.config = state.config
         this.urls = state.app.registeredUrls
         this.addressInfo = state.app.accountInfo.addressInfo
+        this.showSyncMessages = state.app.showSyncIndicator
 
         if (sideurl === "minting") {
             this.shadowRoot.getElementById('qminter').setAttribute('selected', 'selected')
@@ -3350,8 +3330,7 @@ class AppView extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     isEmptyArray(arr) {
@@ -3362,8 +3341,7 @@ class AppView extends connect(store)(LitElement) {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 }
 

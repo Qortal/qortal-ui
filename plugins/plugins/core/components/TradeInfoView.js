@@ -1,7 +1,6 @@
-import {css, html, LitElement} from 'lit'
-import {render} from 'lit/html.js'
+import {html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 import {tradeInfoViewStyle} from './TradeInfoView-css.js'
 import './TraderInfoView.js'
 import '@polymer/paper-dialog/paper-dialog.js'
@@ -161,11 +160,9 @@ class TradeInfoView extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const infoSellerAddressUrl = `${nodeUrl}/addresses/${seller}`
 
-        const qortalSellerAddressInfo = await fetch(infoSellerAddressUrl).then(response => {
-            return response.json()
-        })
-
-        this.addressSellerResult = qortalSellerAddressInfo
+		this.addressSellerResult = await fetch(infoSellerAddressUrl).then(response => {
+			return response.json()
+		})
     }
 
     async getAddressBuyerInfo(buyer) {
@@ -174,11 +171,9 @@ class TradeInfoView extends LitElement {
         const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
         const infoBuyerAddressUrl = `${nodeUrl}/addresses/${buyer}`
 
-        const qortalBuyerAddressInfo = await fetch(infoBuyerAddressUrl).then(response => {
-            return response.json()
-        })
-
-        this.addressBuyerResult = qortalBuyerAddressInfo
+		this.addressBuyerResult = await fetch(infoBuyerAddressUrl).then(response => {
+			return response.json()
+		})
     }
 
     async getAddressSellerAvatar(seller) {
@@ -202,8 +197,7 @@ class TradeInfoView extends LitElement {
             }
         })
 
-        const sellerImageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.sellerImageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        this.sellerImage = sellerImageUrl
+		this.sellerImage = `${nodeUrl}/arbitrary/THUMBNAIL/${this.sellerImageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
     }
 
     async getAddressBuyerAvatar(buyer) {
@@ -227,8 +221,7 @@ class TradeInfoView extends LitElement {
             }
         })
 
-        const buyerImageUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.buyerImageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-        this.buyerImage = buyerImageUrl
+		this.buyerImage = `${nodeUrl}/arbitrary/THUMBNAIL/${this.buyerImageName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
     }
 
     avatarSellerImage() {
@@ -257,8 +250,7 @@ class TradeInfoView extends LitElement {
 
     getApiKey() {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey;
-        return apiKey;
+		return apiNode.apiKey;
     }
 
     isEmptyArray(arr) {
@@ -269,8 +261,7 @@ class TradeInfoView extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 }
 

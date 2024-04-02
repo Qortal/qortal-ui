@@ -69,7 +69,7 @@ export const chatStyles = css`
 
 	.forwarded-text {
 		user-select: none;
-		color: var(--accent-color);
+		color: var(--general-color-blue);
 		margin-bottom: 5px;
 	}
 

@@ -1,30 +1,34 @@
-import { LitElement, html, css } from 'lit';
-import { store } from '../../store';
-import { connect } from 'pwa-helpers';
-import '@material/mwc-icon';
-import { translate } from '../../../translate';
-import { parentEpml } from '../show-plugin';
+import {css, html, LitElement} from 'lit'
+import {store} from '../../store'
+import {connect} from 'pwa-helpers'
+import {translate} from '../../../translate'
+import {parentEpml} from '../show-plugin'
+
+import '@material/mwc-icon'
 
 class SyncIndicator extends connect(store)(LitElement) {
 	static get properties() {
 		return {
-			isBehind: { type: Boolean },
 			blocksBehind: { type: Number },
+			nodeUrl: { type: String },
+			address: { type: String },
+			isBehind: { type: Boolean },
 			isSynchronizing: { type: Boolean },
-			hasCoreRunning: { type: Boolean },
-		};
+			hasCoreRunning: { type: Boolean }
+		}
 	}
 
 	constructor() {
-		super();
-		this.isBehind = null;
-		this.blocksBehind = 0;
-		this.nodeUrl = this.getNodeUrl();
-		this.myNode = this.getMyNode();
-		this.interval = null;
-		this.hasCoreRunning = true;
-		this.seenWelcomeSync = false;
-		this.numberOfTries = 0;
+		super()
+		this.blocksBehind = 0
+		this.nodeUrl = ''
+		this.address = ''
+		this.isBehind = false
+		this.isSynchronizing = false
+		this.hasCoreRunning = true
+		this.interval = null
+		this.seenWelcomeSync = false
+		this.numberOfTries = 0
 		this.hasOpened = false
 	}
 
@@ -34,13 +38,15 @@ class SyncIndicator extends connect(store)(LitElement) {
 				--mdc-theme-text-primary-on-background: var(--black);
 				box-sizing: border-box;
 			}
+
 			:host {
 				box-sizing: border-box;
 				position: fixed;
-				bottom: 25px;
+				bottom: 50px;
 				right: 25px;
 				z-index: 50000;
 			}
+
 			.parent {
 				width: 360px;
 				padding: 10px;
@@ -52,17 +58,20 @@ class SyncIndicator extends connect(store)(LitElement) {
 				user-select: none;
 				background: var(--white);
 			}
+
 			.row {
 				display: flex;
 				gap: 10px;
 				width: 100%;
 			}
+
 			.column {
 				display: flex;
 				flex-direction: column;
 				gap: 10px;
 				width: 100%;
 			}
+
 			.bootstrap-button {
 				font-family: Roboto, sans-serif;
 				font-size: 16px;
@@ -78,60 +87,96 @@ class SyncIndicator extends connect(store)(LitElement) {
 				cursor: pointer;
 				background-color: #03a8f475;
 			}
-		`;
+		`
 	}
-	async firstUpdated() {
+
+	render() {
+		return html`
+			${!this.hasCoreRunning ? html`
+				<div class="parent">
+					<span>
+						<mwc-icon id="notification-general-icon" style="color: red; cursor:pointer;user-select:none">
+							priority_high
+						</mwc-icon>
+					</span>
+					<p>
+						${translate("tour.tour17")}
+					</p>
+				</div>
+			` : (this.blocksBehind > 1050 && this.isSynchronizing) ? html`
+				<div class="parent">
+					<div class="column">
+						<div class="row">
+							<span>
+								<img src="/img/syncing.png" style="height: 24px; width: 24px;" />
+							</span>
+							<p>
+								${this.blocksBehind} ${translate("tour.tour20")}
+							</p>
+						</div>
+						<div class="row" style="justify-content: center">
+							<button class="bootstrap-button" @click="${() => {this.bootstrap()}}">
+								${translate("tour.tour18")}
+							</button>
+						</div>
+					</div>
+				</div>
+			` : this.isSynchronizing ? html`
+				<div class="parent">
+					<span>
+						<img src="/img/syncing.png" style="height: 24px; width: 24px;" />
+					</span>
+					<p>
+						${translate("tour.tour19")} ${this.blocksBehind ? this.blocksBehind : ""} ${this.blocksBehind ? translate("tour.tour21"): ""}
+					</p>
+				</div>
+			` : "" }
+		`
+	}
+
+	firstUpdated() {
+		this.getNodeUrl()
 		this.address = store.getState().app.selectedAddress.address
 
-		const seenWelcomeSync = JSON.parse(
+		this.seenWelcomeSync = JSON.parse(
 			localStorage.getItem(`welcome-sync-${this.address}`) || 'false'
-		);
-		this.seenWelcomeSync = seenWelcomeSync;
+		)
+
+		setInterval(() => {
+			this.getNodeUrl()
+		}, 60000)
 	}
 
 	getNodeUrl() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
-	}
-	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		const syncInfoNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		const syncInfoUrl = syncInfoNode.protocol + '://' + syncInfoNode.domain + ':' + syncInfoNode.port
+		this.nodeUrl = syncInfoUrl
 	}
 
 	async getDaySummary() {
 		try {
 			this.fetchingSummary = true
-	
 
-			const endpointLastBlock = `${this.nodeUrl}/blocks/last`;
-			const resLastBlock = await fetch(endpointLastBlock);
-			const dataLastBlock = await resLastBlock.json();
-			const timestampNow = Date.now();
-			const currentBlockTimestamp = dataLastBlock.timestamp;
+			const endpointLastBlock = `${this.nodeUrl}/blocks/last`
+			const resLastBlock = await fetch(endpointLastBlock)
+			const dataLastBlock = await resLastBlock.json()
+			const timestampNow = Date.now()
+			const currentBlockTimestamp = dataLastBlock.timestamp
+
 			if (currentBlockTimestamp < timestampNow) {
-				const diff = timestampNow - currentBlockTimestamp;
-				const inSeconds = diff / 1000; // millisecs to secs
-				const inBlocks = inSeconds / 70;
-				this.blocksBehind = parseInt(inBlocks);
+				const diff = timestampNow - currentBlockTimestamp
+				const inSeconds = diff / 1000
+				const inBlocks = inSeconds / 70
+				this.blocksBehind = parseInt(inBlocks)
 				if (inBlocks >= 100) {
-					this.isBehind = true;
+					this.isBehind = true
 				} else {
-					this.isBehind = false;
-					this.blocksBehind = 0;
+					this.isBehind = false
+					this.blocksBehind = 0
 				}
 			} else {
-				this.blocksBehind = 0;
-				this.isBehind = false;
+				this.blocksBehind = 0
+				this.isBehind = false
 			}
 		} catch (error) {} finally {
 			this.fetchingSummary = false
@@ -140,141 +185,76 @@ class SyncIndicator extends connect(store)(LitElement) {
 
 	async checkHowManyBlocksBehind() {
 		try {
-			this.getDaySummary();
+			await this.getDaySummary()
 			this.interval = setInterval(() => {
 				if(this.fetchingSummary) return
 				if (this.isBehind === false) {
-					this.isBehind = null;
-					clearInterval(this.interval);
+					this.isBehind = null
+					clearInterval(this.interval)
 				}
-				this.getDaySummary();
-			}, 20000);
-		} catch (error) {}
+				this.getDaySummary()
+			}, 20000)
+		} catch (error) {
+			// ...
+		}
+	}
+
+	async bootstrap() {
+		try {
+			const endpoint = `${this.nodeUrl}/admin/bootstrap/?apiKey=${this.getApiKey()}`
+			const res = await fetch(endpoint)
+			const data = await res.json()
+			if (data === true) {
+				parentEpml.request('showSnackBar', get('tour.tour22'))
+			}
+		} catch (error) {
+			// ...
+		}
+	}
+
+	getApiKey() {
+		const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		return apiNode.apiKey
 	}
 
 	stateChanged(state) {
+		this.address = store.getState().app.selectedAddress.address
 
-		if(!this.seenWelcomeSync && state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && this.hasOpened === false){
+		if (!this.seenWelcomeSync && state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && this.hasOpened === false) {
 			this.hasOpened = true
 			this.dispatchEvent(
 				new CustomEvent('open-welcome-modal-sync', {
 					bubbles: true,
 					composed: true,
 				})
-			);
+			)
 		}
-		if (
-			state.app.nodeStatus &&
-			Object.keys(state.app.nodeStatus).length === 0
-		) {
+
+		if (state.app.nodeStatus && Object.keys(state.app.nodeStatus).length === 0) {
 			if (this.numberOfTries > 5) {
-				this.hasCoreRunning = false;
+				this.hasCoreRunning = false
 			} else {
-				this.numberOfTries = this.numberOfTries + 1;
+				this.numberOfTries = this.numberOfTries + 1
 			}
-		} else if(state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && state.app.nodeStatus.syncPercent !== this.syncPercentage){
-			this.syncPercentage = state.app.nodeStatus.syncPercent;
-			this.isSynchronizing = false;
-			
-		} else if (
-			state.app.nodeStatus
-		) {
+		} else if (state.app.nodeStatus && state.app.nodeStatus.syncPercent === 100 && state.app.nodeStatus.syncPercent !== this.syncPercentage) {
+			this.syncPercentage = state.app.nodeStatus.syncPercent
+			this.isSynchronizing = false
+		} else if (state.app.nodeStatus) {
 			this.hasCoreRunning = true
 			this.numberOfTries = 0
-			this.syncPercentage = state.app.nodeStatus.syncPercent;
+			this.syncPercentage = state.app.nodeStatus.syncPercent
 
 			if (state.app.nodeStatus.syncPercent !== 100) {
-				this.isSynchronizing = true;
-			} 
-			
-			if (
-				!this.interval &&
-				this.isBehind === null &&
-				state.app.nodeStatus.isSynchronizing &&
-				state.app.nodeStatus.syncPercent !== 100
-			) {
-				this.checkHowManyBlocksBehind();
+				this.isSynchronizing = true
+			}
+
+			if (!this.interval && this.isBehind === null && state.app.nodeStatus.isSynchronizing && state.app.nodeStatus.syncPercent !== 100) {
+				this.checkHowManyBlocksBehind()
 			}
 		} else {
-			this.hasCoreRunning = true;
+			this.hasCoreRunning = true
 		}
-	}
-
-	async bootstrap(){
-		try {
-			const endpoint = `${this.nodeUrl}/admin/bootstrap/?apiKey=${this.myNode.apiKey}`;
-			const res = await fetch(endpoint);
-			const data = await res.json();
-			if(data === true){
-				parentEpml.request('showSnackBar', get('tour.tour22'));
-			}
-		} catch (error) {
-			
-		}
-	}
-
-	render() {
-		return html`
-			${!this.hasCoreRunning
-				? html`
-						<div class="parent">
-							<span
-								><mwc-icon
-									id="notification-general-icon"
-									style="color: red; cursor:pointer;user-select:none"
-									>priority_high</mwc-icon
-								></span
-							>
-							<p>
-								${translate("tour.tour17")}
-							</p>
-						</div>
-				  `
-				: (this.blocksBehind > 1050 && this.isSynchronizing)
-				? html`
-						<div class="parent">
-							<div class="column">
-								<div class="row">
-									<span
-										><img
-											src="/img/syncing.png"
-											style="height: 24px; width: 24px;"
-									/></span>
-									<p>
-									${this.blocksBehind} ${translate("tour.tour20")}
-									</p>
-								</div>
-								<div
-									class="row"
-									style="justify-content: center"
-								>
-									<button
-										class="bootstrap-button"
-										@click="${() => {
-											this.bootstrap()
-										}}"
-									>
-										${translate("tour.tour18")}
-									</button>
-								</div>
-							</div>
-						</div>
-				  `
-				: this.isSynchronizing
-				? html`
-						<div class="parent">
-							<span
-								><img
-									src="/img/syncing.png"
-									style="height: 24px; width: 24px;"
-							/></span>
-							<p>
-								${translate("tour.tour19")} ${this.blocksBehind ? this.blocksBehind : ""} ${this.blocksBehind ? translate("tour.tour21"): ""} 
-							</p>
-						</div>
-				  `
-				: "" }
-		`;
 	}
 }
-customElements.define('sync-indicator', SyncIndicator);
+
+customElements.define('sync-indicator', SyncIndicator)

@@ -593,7 +593,7 @@
                 }
                 dst(c1);
             }
-            if (c2 !== null) dst(c2);
+            if (false) dst(c2);
         };
 
         /**

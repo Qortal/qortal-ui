@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit'
-import {get, translate} from '../../translate/index.js'
+import {get, translate} from '../../translate'
 import snackbar from '../functional-components/snackbar.js'
 
 import '@polymer/paper-icon-button/paper-icon-button.js'
@@ -118,7 +118,7 @@ class SearchModal extends LitElement {
 				dismiss: true
 			})
 			this.shadowRoot.getElementById('searchContent').value = this.searchContentString
-			return
+
 		} else {
 			let sendInfoAddress = this.shadowRoot.getElementById('searchContent').value
 			const infoDialog = document.getElementById('main-app').shadowRoot.querySelector('app-view').shadowRoot.querySelector('user-info-view')

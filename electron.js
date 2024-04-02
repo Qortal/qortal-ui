@@ -2,16 +2,12 @@ const {
 	app,
 	BrowserWindow,
 	ipcMain,
-	ipcRenderer,
 	Menu,
 	Notification,
 	Tray,
-	nativeImage,
 	dialog,
-	webContents,
 	nativeTheme,
-	crashReporter,
-	webFrame
+	crashReporter
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
@@ -42,16 +38,16 @@ crashReporter.start({
 })
 
 if (myMemory > 16000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=8192', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=8192 --max-semi-space-size=2')
         log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
 } else if (myMemory > 12000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=6144', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=6144 --max-semi-space-size=2')
         log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
 } else if (myMemory > 7000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=4096', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=4096 --max-semi-space-size=2')
         log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
 } else {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=2048', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192 --max-old-space-size=2048 --max-semi-space-size=2')
         log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
 }
 
@@ -168,15 +164,11 @@ const isRunning = (query, cb) => {
 }
 
 function doesFileExist(urlToJavaFile) {
-	var xhr = new XMLHttpRequest()
+	const xhr = new XMLHttpRequest();
 	xhr.open('HEAD', urlToJavaFile, true)
 	xhr.send()
-     
-	if (xhr.status == "404") {
-		return false
-	} else {
-		return true
-	}
+
+	return xhr.status != "404";
 }
 
 async function checkWin() {
@@ -201,7 +193,7 @@ async function checkWin() {
 							store.set('askingCore', returnValue.checkboxChecked)
 						} else {
 							store.set('askingCore', returnValue.checkboxChecked)
-							return
+
 						}
 					})
 				}
@@ -219,7 +211,7 @@ async function checkWin() {
 			if (returnValue.response === 0) {
 				downloadWindows()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -227,11 +219,11 @@ async function checkWin() {
 
 async function checkOsPlatform() {
 	if (process.platform === 'win32') {
-		startElectronWin()
+		await startElectronWin()
 	} else if (process.platform === 'linux' || process.platform === 'darwin') {
 		startElectronUnix()
 	} else {
-		return
+
 	}
 }
 
@@ -256,7 +248,7 @@ async function startElectronWin() {
 			if (returnValue.response === 0) {
 				downloadWindows()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -283,7 +275,7 @@ function startElectronUnix() {
 			if (returnValue.response === 0) {
 				downloadQortal()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -298,7 +290,7 @@ async function downloadWindows() {
 		alwaysOnTop: true,
 		show: false
 	})
-	winLoader.loadFile(path.join(__dirname + '/splash/download.html'))
+	await winLoader.loadFile(path.join(__dirname + '/splash/download.html'))
 
 	winLoader.show()
 	await electronDl.download(myWindow, winurl, {
@@ -329,7 +321,7 @@ async function removeQortalExe() {
 		log.info('renove error', err)
 	}
 
-	checkWin()
+	await checkWin()
 }
 
 async function checkPort() {
@@ -344,7 +336,7 @@ async function checkPort() {
 
 async function checkResponseStatus(res) {
 	if (res.ok) {
-		return
+
 	} else if (process.platform === 'win32') {
 		await checkWin()
 	} else {
@@ -353,7 +345,7 @@ async function checkResponseStatus(res) {
 }
 
 async function javaversion() {
-	var stderrChunks = []
+	let stderrChunks = [];
 	let checkJava = await spawn('java', ['-version'], { shell: true })
 	if (process.platform === 'linux') {
 		if (process.arch === 'x64') {
@@ -386,8 +378,8 @@ async function javaversion() {
 	})
 
 	checkJava.stderr.on('end', () => {
-		datres = Buffer.concat(stderrChunks).toString().split('\n')[0]
-		var javaVersion = new RegExp('(java|openjdk) version').test(datres) ? datres.split(' ')[2].replace(/"/g, '') : false
+		let datres = Buffer.concat(stderrChunks).toString().split('\n')[0]
+		const javaVersion = new RegExp('(java|openjdk) version').test(datres) ? datres.split(' ')[2].replace(/"/g, '') : false;
 		log.info("Java Version", javaVersion)
 		if (javaVersion != false) {
 			checkQortal()
@@ -403,7 +395,7 @@ async function javaversion() {
 				if (returnValue.response === 0) {
 					installJava()
 				} else {
-					return
+
 				}
 			})
 		}
@@ -419,7 +411,7 @@ async function installJava() {
 		alwaysOnTop: true,
 		show: false
 	})
-	splashLoader.loadFile(path.join(__dirname + '/splash/download.html'))
+	await splashLoader.loadFile(path.join(__dirname + '/splash/download.html'))
 
 	if (process.platform === 'linux') {
 		if (process.arch === 'x64') {
@@ -435,7 +427,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaX64Linux()
+				await unzipJavaX64Linux()
 			} else {
 				try {
 					splashLoader.show()
@@ -448,7 +440,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaX64Linux()
+				await unzipJavaX64Linux()
 			}
 		} else if (process.arch === 'arm64') {
 			if (doesFileExist(linjavaarm64url) == true) {
@@ -463,7 +455,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaArm64Linux()
+				await unzipJavaArm64Linux()
 			} else {
 				try {
 					splashLoader.show()
@@ -476,7 +468,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaArm64Linux()
+				await unzipJavaArm64Linux()
 			}
 		} else if (process.arch === 'arm') {
 			if (doesFileExist(linjavaarmurl) == true) {
@@ -491,7 +483,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaArmLinux()
+				await unzipJavaArmLinux()
 			} else {
 				try {
 					splashLoader.show()
@@ -504,7 +496,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaArmLinux()
+				await unzipJavaArmLinux()
 			}
 		}
 	} else if (process.platform === 'darwin') {
@@ -521,7 +513,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaX64Mac()
+				await unzipJavaX64Mac()
 			} else {
 				try {
 					splashLoader.show()
@@ -534,7 +526,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaX64Mac()
+				await unzipJavaX64Mac()
 			}
 		} else {
 			if (doesFileExist(macjavaaarch64url) == true) {
@@ -549,7 +541,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaAarch64Mac()
+				await unzipJavaAarch64Mac()
 			} else {
 				try {
 					splashLoader.show()
@@ -562,7 +554,7 @@ async function installJava() {
 					log.info('Download JAVA error', err)
 				}
 				splashLoader.destroy()
-				unzipJavaAarch64Mac()
+				await unzipJavaAarch64Mac()
 			}
 		}
 	}
@@ -575,7 +567,7 @@ async function unzipJavaX64Linux() {
 	} catch (err) {
 		log.info('Unzip Java error', err)
 	}
-	chmodJava()
+	await chmodJava()
 }
 
 async function unzipJavaArm64Linux() {
@@ -585,7 +577,7 @@ async function unzipJavaArm64Linux() {
 	} catch (err) {
 		log.info('Unzip Java error', err)
 	}
-	chmodJava()
+	await chmodJava()
 }
 
 async function unzipJavaArmLinux() {
@@ -595,7 +587,7 @@ async function unzipJavaArmLinux() {
 	} catch (err) {
 		log.info('Unzip Java error', err)
 	}
-	chmodJava()
+	await chmodJava()
 }
 
 async function unzipJavaX64Mac() {
@@ -605,7 +597,7 @@ async function unzipJavaX64Mac() {
 	} catch (err) {
 		log.info('Unzip Java error', err)
 	}
-	chmodJava()
+	await chmodJava()
 }
 
 async function unzipJavaAarch64Mac() {
@@ -615,7 +607,7 @@ async function unzipJavaAarch64Mac() {
 	} catch (err) {
 		log.info('Unzip Java error', err)
 	}
-	chmodJava()
+	await chmodJava()
 }
 
 async function chmodJava() {
@@ -627,7 +619,7 @@ async function chmodJava() {
 	} catch (err) {
 		log.info('chmod error', err)
 	}
-	removeJavaZip()
+	await removeJavaZip()
 }
 
 async function removeJavaZip() {
@@ -710,7 +702,7 @@ function checkQortal() {
 							store.set('askingCore', returnValue.checkboxChecked)
 						} else {
 							store.set('askingCore', returnValue.checkboxChecked)
-							return
+
 						}
 					})
 				}
@@ -728,7 +720,7 @@ function checkQortal() {
 			if (returnValue.response === 0) {
 				downloadQortal()
 			} else {
-				return
+
 			}
 		})
 	}
@@ -743,7 +735,7 @@ async function downloadQortal() {
 		alwaysOnTop: true,
 		show: false
 	})
-	qortalLoader.loadFile(path.join(__dirname + '/splash/download.html'))
+	await qortalLoader.loadFile(path.join(__dirname + '/splash/download.html'))
 
 	try {
 		qortalLoader.show()
@@ -756,7 +748,7 @@ async function downloadQortal() {
 		log.info('Download Qortal error', err)
 	}
 	qortalLoader.destroy()
-	unzipQortal()
+	await unzipQortal()
 }
 
 async function unzipQortal() {
@@ -766,7 +758,7 @@ async function unzipQortal() {
 	} catch (err) {
 		log.info('Unzip Qortal error', err)
 	}
-	chmodQortal()
+	await chmodQortal()
 }
 
 async function chmodQortal() {
@@ -778,7 +770,7 @@ async function chmodQortal() {
 	} catch (err) {
 		log.info('chmod error', err)
 	}
-	removeQortalZip()
+	await removeQortalZip()
 }
 
 async function removeQortalZip() {
@@ -790,7 +782,7 @@ async function removeQortalZip() {
 	} catch (err) {
 		log.info('rm error', err)
 	}
-	checkAndStart()
+	await checkAndStart()
 }
 
 async function checkAndStart() {
@@ -811,7 +803,7 @@ async function checkAndStart() {
 					store.set('askingCore', returnValue.checkboxChecked)
 				} else {
 					store.set('askingCore', returnValue.checkboxChecked)
-					return
+
 				}
 			})
 		}
@@ -990,7 +982,7 @@ const editMenu = Menu.buildFromTemplate([
 						store.set('askingCore', returnValue.checkboxChecked)
 					} else {
 						store.set('askingCore', returnValue.checkboxChecked)
-						return
+
 					}
 				})
 			}
@@ -1147,7 +1139,7 @@ const createTray = () => {
 						store.set('askingCore', returnValue.checkboxChecked)
 					} else {
 						store.set('askingCore', returnValue.checkboxChecked)
-						return
+
 					}
 				})
 			},
@@ -1208,8 +1200,10 @@ if (!isLock) {
 	app.whenReady().then(async () => {
 		createWindow()
 		createTray()
-		await checkAll()
-		autoUpdater.checkForUpdatesAndNotify()
+		if (!store.get('askingCore')) {
+			await checkAll()
+		}
+		await autoUpdater.checkForUpdatesAndNotify()
 		setInterval(() => {
 			autoUpdater.checkForUpdatesAndNotify()
 		}, 1000 * 60 * 720)
@@ -1245,7 +1239,7 @@ if (!isLock) {
 				store.set('askingCore', returnValue.checkboxChecked)
 			} else {
 				store.set('askingCore', returnValue.checkboxChecked)
-				return
+
 			}
 		})
 	})
@@ -1331,7 +1325,7 @@ if (!isLock) {
 				})
 				dl.show()
 			} else {
-				return
+
 			}
 		})
 	})
@@ -1353,7 +1347,7 @@ if (!isLock) {
 			if (returnValue.response === 0) {
 				autoUpdater.quitAndInstall()
 			} else {
-				return
+
 			}
 		})
 	})

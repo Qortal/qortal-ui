@@ -36,9 +36,11 @@ import {
 	UPDATE_BLOCK_INFO,
 	UPDATE_NODE_INFO,
 	UPDATE_NODE_STATUS,
-    SET_PROFILE_DATA,
-    ALLOW_QAPP_FRIENDS_LIST,
-    REMOVE_QAPP_FRIENDS_LIST
+	SET_PROFILE_DATA,
+	ALLOW_QAPP_FRIENDS_LIST,
+	REMOVE_QAPP_FRIENDS_LIST,
+	ALLOW_SHOW_SYNC_INDICATOR,
+	REMOVE_SHOW_SYNC_INDICATOR
 } from './app-action-types.js'
 import {initWorkersReducer} from './reducers/init-workers.js'
 import {loginReducer} from './reducers/login-reducer.js'
@@ -48,8 +50,6 @@ import localForage from "localforage";
 const chatLastSeen = localForage.createInstance({
     name: "chat-last-seen",
 });
-
-
 
 const INITIAL_STATE = {
     loggedIn: false,
@@ -88,6 +88,7 @@ const INITIAL_STATE = {
     qAPPAutoAuth: loadStateFromLocalStorage('qAPPAutoAuth') || false,
     qAPPAutoLists: loadStateFromLocalStorage('qAPPAutoLists') || false,
     qAPPFriendsList: loadStateFromLocalStorage('qAPPFriendsList') || false,
+    showSyncIndicator: loadStateFromLocalStorage('showSyncIndicator') || false,
     chatLastSeen: [],
     newTab: null,
     tabInfo: {},
@@ -228,6 +229,7 @@ export default (state = INITIAL_STATE, action) => {
                 qAPPAutoAuth: action.payload
             }
         }
+
         case ALLOW_QAPP_AUTO_LISTS: {
             saveStateToLocalStorage("qAPPAutoLists", true)
             return {
@@ -266,6 +268,7 @@ export default (state = INITIAL_STATE, action) => {
                 chatLastSeen: action.payload
             }
         }
+
         case ADD_CHAT_LAST_SEEN: {
             const chatId = action.payload.key
             const timestamp = action.payload.timestamp
@@ -299,12 +302,14 @@ export default (state = INITIAL_STATE, action) => {
                 newTab: action.payload
             }
         }
+
         case IS_OPEN_DEV_DIALOG: {
             return {
                 ...state,
                 isOpenDevDialog: action.payload
             }
         }
+
         case ADD_TAB_INFO: {
             const newTabInfo = action.payload
             if (state.tabInfo[newTabInfo.id] && state.tabInfo[newTabInfo.id].name && newTabInfo.name === state.tabInfo[newTabInfo.id].name) break
@@ -319,6 +324,7 @@ export default (state = INITIAL_STATE, action) => {
                 }
             }
         }
+
         case SET_TAB_NOTIFICATIONS: {
             const count = action.payload.count
             const name = action.payload.name
@@ -346,18 +352,21 @@ export default (state = INITIAL_STATE, action) => {
                 newNotification: action.payload
             }
         }
+
         case SET_SIDE_EFFECT: {
             return {
                 ...state,
                 sideEffectAction: action.payload
             }
         }
+
         case SET_PROFILE_DATA: {
             return {
                 ...state,
                 profileData: action.payload
             }
         }
+
         case SET_COIN_BALANCES: {
             const copyBalances = {...state.coinBalances}
             copyBalances[action.payload.type] = {
@@ -367,6 +376,22 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 coinBalances: copyBalances
+            }
+        }
+
+        case ALLOW_SHOW_SYNC_INDICATOR: {
+            saveStateToLocalStorage("showSyncIndicator", true)
+            return {
+                ...state,
+                showSyncIndicator: action.payload
+            }
+        }
+
+        case REMOVE_SHOW_SYNC_INDICATOR: {
+            saveStateToLocalStorage("showSyncIndicator", false)
+            return {
+                ...state,
+                showSyncIndicator: action.payload
             }
         }
 
