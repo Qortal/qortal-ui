@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {get, translate,} from '../../../../core/translate/index.js'
+import {get, translate,} from '../../../../core/translate'
 import axios from 'axios'
 import {RequestQueueWithPromise} from '../../utils/queue';
 import '@material/mwc-menu';
@@ -116,13 +116,10 @@ export class ChatImage extends LitElement {
   getNodeUrl(){
     const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
-    const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-    return nodeUrl
+  return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 }
 getMyNode(){
-  const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-  return myNode
+	return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 }
 
   getApiKey() {
@@ -130,8 +127,7 @@ getMyNode(){
       window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
       window.parent.reduxStore.getState().app.nodeConfig.node
       ];
-    let apiKey = myNode.apiKey;
-    return apiKey;
+	  return myNode.apiKey;
   }
 
    async fetchResource() {
@@ -148,7 +144,7 @@ getMyNode(){
 
  async fetchVideoUrl() {
 
-      this.fetchResource()
+      await this.fetchResource()
       this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
 
   }
@@ -201,7 +197,7 @@ getMyNode(){
 
         this.status = res
         if(this.status.status === 'DOWNLOADED'){
-          this.fetchResource()
+          await this.fetchResource()
         }
       }
 
@@ -216,12 +212,12 @@ getMyNode(){
 
   async _fetchImage() {
     try {
-      this.fetchVideoUrl({
-       name: this.resource.name,
-       service: this.resource.service,
-       identifier: this.resource.identifier
-      })
-      this.fetchStatus()
+      await this.fetchVideoUrl({
+		  name: this.resource.name,
+		  service: this.resource.service,
+		  identifier: this.resource.identifier
+	  })
+      await this.fetchStatus()
     } catch (error) { /* empty */ }
   }
 
@@ -231,11 +227,9 @@ getMyNode(){
   }
 
   shouldUpdate(changedProperties) {
-		if (changedProperties.has('setOpenDialogImage') && changedProperties.size === 1) {
-			return false;
-		}
+		return !(changedProperties.has('setOpenDialogImage') && changedProperties.size === 1);
 
-    return true
+
   }
 
 

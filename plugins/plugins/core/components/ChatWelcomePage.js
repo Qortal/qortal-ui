@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import isElectron from 'is-electron'
 
 import '@material/mwc-icon'
@@ -145,7 +145,7 @@ class ChatWelcomePage extends LitElement {
         }
 
         h2, h3, h4, h5 {
-            color:# var(--black);
+            color: var(--black);
             font-weight: 400;
         }
 
@@ -369,7 +369,7 @@ class ChatWelcomePage extends LitElement {
                 myRes = false;
             } else {
                 myRes = myNameRes;
-            };
+            }
             return myRes;
         };
 
@@ -379,7 +379,7 @@ class ChatWelcomePage extends LitElement {
             recipient = _recipient;
         } else {
             recipient = myNameRes.owner;
-        };
+        }
 
         let _reference = new Uint8Array(64);
         window.crypto.getRandomValues(_reference);
@@ -406,12 +406,12 @@ class ChatWelcomePage extends LitElement {
             } else if (addressPublicKey !== false) {
                 isEncrypted = 1;
                 _publicKey = addressPublicKey;
-                sendMessageRequest(isEncrypted, _publicKey);
+                await sendMessageRequest(isEncrypted, _publicKey);
             } else {
                 isEncrypted = 0;
                 _publicKey = this.selectedAddress.address;
-                sendMessageRequest(isEncrypted, _publicKey);
-            };
+                await sendMessageRequest(isEncrypted, _publicKey);
+            }
         };
 
         const sendMessageRequest = async (isEncrypted, _publicKey) => {
@@ -437,7 +437,7 @@ class ChatWelcomePage extends LitElement {
                     isText: 1
                 }
             })
-            _computePow(chatResponse)
+            await _computePow(chatResponse)
         }
 
         const _computePow = async (chatBytes) => {
@@ -482,7 +482,7 @@ class ChatWelcomePage extends LitElement {
             }
 
         }
-        getAddressPublicKey()
+        await getAddressPublicKey()
     }
 
     _textArea(e) {
@@ -495,9 +495,8 @@ class ChatWelcomePage extends LitElement {
     }
 
     getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
     }
 }
 

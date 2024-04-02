@@ -1,8 +1,8 @@
-import {css, html, LitElement} from 'lit'
+import {html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import Base58 from '../../../../crypto/api/deps/Base58.js'
 import {decryptData, encryptData} from '../../../../core/src/lockScreen.js'
 import {tradeStyles} from './trade-portal-css.js'
@@ -876,7 +876,7 @@ class TradePortal extends LitElement {
 
         this.changeTheme()
         this.changeLanguage()
-        this.tradeFee()
+        await this.tradeFee()
         await this.getNewBlockedTrades()
 
         this.tradeHelperMessage = this.renderTradeHelperPass()
@@ -917,8 +917,8 @@ class TradePortal extends LitElement {
             this.shadowRoot.getElementById('tradeLockScreenActive').open()
         }
 
-        this.updateWalletBalance()
-        this.fetchWalletAddress(this.selectedCoin)
+        await this.updateWalletBalance()
+        await this.fetchWalletAddress(this.selectedCoin)
         this.blockedTradesList = JSON.parse(localStorage.getItem('failedTrades') || '[]')
 
         setTimeout(() => {
@@ -953,11 +953,7 @@ class TradePortal extends LitElement {
         const getSellButtonStatus = () => {
             if (this.nodeInfo.isSynchronizing === true) {
                 this.sellBtnDisable = true
-            } else if (this.nodeInfo.isSynchronizing === false) {
-                this.sellBtnDisable = false
-            } else {
-                this.sellBtnDisable = true
-            }
+            } else this.sellBtnDisable = this.nodeInfo.isSynchronizing !== false;
         }
 
         const getQortBtcPrice = () => {
@@ -1244,7 +1240,7 @@ class TradePortal extends LitElement {
             this.tradeHelperMessage = this.renderTradeHelperErr()
             await errDelay(3000)
             this.tradeHelperMessage = this.renderTradeHelperPass()
-            return
+
         }
     }
 
@@ -1501,7 +1497,7 @@ class TradePortal extends LitElement {
         this.clearSellForm()
         this.clearBuyForm()
         await this.updateWalletBalance()
-        this.fetchWalletAddress(coin)
+        await this.fetchWalletAddress(coin)
     }
 
     displayTabContent(tab) {
@@ -2244,16 +2240,15 @@ class TradePortal extends LitElement {
                 default:
                     break
             }
-            const response = await parentEpml.request('tradeBotCreateRequest', {
-                creatorPublicKey: this.selectedAddress.base58PublicKey,
-                qortAmount: parseFloat(sellAmountInput),
-                fundingQortAmount: parseFloat(fundingQortAmount),
-                foreignBlockchain: this.selectedCoin,
-                foreignAmount: parseFloat(sellTotalInput),
-                tradeTimeout: 120,
-                receivingAddress: _receivingAddress,
-            })
-            return response
+			return await parentEpml.request('tradeBotCreateRequest', {
+				creatorPublicKey: this.selectedAddress.base58PublicKey,
+				qortAmount: parseFloat(sellAmountInput),
+				fundingQortAmount: parseFloat(fundingQortAmount),
+				foreignBlockchain: this.selectedCoin,
+				foreignAmount: parseFloat(sellTotalInput),
+				tradeTimeout: 120,
+				receivingAddress: _receivingAddress,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2318,12 +2313,11 @@ class TradePortal extends LitElement {
         }
 
         const makeRequest = async () => {
-            const response = await parentEpml.request('tradeBotRespondRequest', {
-                atAddress: qortalAtAddress,
-                foreignKey: _foreignKey,
-                receivingAddress: this.selectedAddress.address,
-            })
-            return response
+			return await parentEpml.request('tradeBotRespondRequest', {
+				atAddress: qortalAtAddress,
+				foreignKey: _foreignKey,
+				receivingAddress: this.selectedAddress.address,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2358,11 +2352,10 @@ class TradePortal extends LitElement {
         this.cancelBtnDisable = true
 
         const makeRequest = async () => {
-            const response = await parentEpml.request('deleteTradeOffer', {
-                creatorPublicKey: this.selectedAddress.base58PublicKey,
-                atAddress: state.atAddress,
-            })
-            return response
+			return await parentEpml.request('deleteTradeOffer', {
+				creatorPublicKey: this.selectedAddress.base58PublicKey,
+				atAddress: state.atAddress,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2414,11 +2407,10 @@ class TradePortal extends LitElement {
         this.cancelStuckOfferBtnDisable = true
 
         const makeRequest = async () => {
-            const response = await parentEpml.request('deleteTradeOffer', {
-                creatorPublicKey: this.selectedAddress.base58PublicKey,
-                atAddress: offer.qortalAtAddress,
-            })
-            return response
+			return await parentEpml.request('deleteTradeOffer', {
+				creatorPublicKey: this.selectedAddress.base58PublicKey,
+				atAddress: offer.qortalAtAddress,
+			})
         }
 
         const manageResponse = (response) => {
@@ -2556,8 +2548,7 @@ class TradePortal extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+		return myNode.apiKey;
     }
 
     clearBuyForm() {
@@ -2582,8 +2573,7 @@ class TradePortal extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     /**
@@ -2744,11 +2734,10 @@ class TradePortal extends LitElement {
 
         const filterStuckOffers = (myOffers) => {
             const myTradeBotStates = tradeBotStates.filter((state) => state.creatorAddress === 'SELECTED_ADDRESS')
-            const stuckOffers = myOffers.filter((myOffer) => {
-                let value = myTradeBotStates.some((myTradeBotState) => myOffer.qortalAtAddress === myTradeBotState.atAddress)
-                return !value
-            })
-            return stuckOffers
+			return myOffers.filter((myOffer) => {
+				let value = myTradeBotStates.some((myTradeBotState) => myOffer.qortalAtAddress === myTradeBotState.atAddress)
+				return !value
+			})
         }
 
         const getOffers = async () => {

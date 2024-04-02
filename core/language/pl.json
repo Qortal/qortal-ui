@@ -213,7 +213,8 @@
 		"arrr1": "Portfel ARRR nie został zainicjowany!",
 		"arrr2": "Przejdź do zakładki portfela i najpierw zainicjalizuj swój portfel arrr.",
 		"arrr3": "Potrzebujesz aktualizacji rdzenia!",
-		"arrr4": "Aby zapisać klucz prywatny swojego portfela arrr, potrzebujesz najpierw aktualizacji rdzenia!"
+		"arrr4": "Aby zapisać klucz prywatny swojego portfela arrr, potrzebujesz najpierw aktualizacji rdzenia!",
+		"sync_indicator": "Wyłącz wyskakujące okienko wskaźnika synchronizacji"
 	},
 	"appinfo": {
 		"blockheight": "Wysokość bloku",

@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
 import '../components/ButtonIconCopy.js'
-import {registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {registerTranslateConfig, translate, use} from '../../../../core/translate'
 import {blocksNeed} from '../../utils/blocks-needed.js'
 import isElectron from 'is-electron'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
@@ -80,18 +80,15 @@ class BecomeMinter extends LitElement {
 	}
 
 	async getNodeInfo() {
-		const nodeInfo = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/admin/status`,
 		})
-
-		return nodeInfo
 	}
 
 	async getMintingAcccounts() {
-		const mintingAccountData = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/admin/mintingaccounts`,
 		})
-		return mintingAccountData
 	}
 
 	async atMount() {
@@ -148,21 +145,18 @@ class BecomeMinter extends LitElement {
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
-		const myRewardShareArray = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			type: 'api',
 			url: `/addresses/rewardshares?recipients=${recipientAddress}`,
 		})
-
-		return myRewardShareArray
 	}
 
 	_levelUpBlocks() {
-		let countBlocksString = (
+		return (
 			blocksNeed(0) -
 			(this.addressInfo?.blocksMinted +
 				this.addressInfo?.blocksMintedAdjustment)
 		).toString()
-		return countBlocksString
 	}
 
 	render() {

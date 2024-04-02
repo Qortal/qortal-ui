@@ -1,7 +1,6 @@
 import {css, html, LitElement} from 'lit'
-import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import isElectron from 'is-electron'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-dialog/paper-dialog.js'
@@ -726,28 +725,23 @@ class QApps extends LitElement {
         }, 0)
 
         const getFollowedNames = async () => {
-            const followedNames = await parentEpml.request('apiCall', {
-                url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-            })
-
-            this.followedNames = followedNames
+			this.followedNames = await parentEpml.request('apiCall', {
+				url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getFollowedNames, 60000)
         }
 
         const getBlockedNames = async () => {
-            const blockedNames = await parentEpml.request('apiCall', {
-                url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-            })
-            this.blockedNames = blockedNames
+			this.blockedNames = await parentEpml.request('apiCall', {
+				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getBlockedNames, 60000)
         }
 
         const getRelayMode = async () => {
-            const relayMode = await parentEpml.request('apiCall', {
-                url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
-            })
-
-            this.relayMode = relayMode
+			this.relayMode = await parentEpml.request('apiCall', {
+				url: `/arbitrary/relaymode?apiKey=${this.getApiKey()}`
+			})
             setTimeout(getRelayMode, 600000)
         }
 
@@ -858,10 +852,9 @@ class QApps extends LitElement {
     getAppsArrayData = async () => {
         this.isLoading = true
         this.appsArray = []
-        const appsArrayRes = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=APP&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
-        })
-        this.appsArray = appsArrayRes
+		this.appsArray = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=APP&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&excludeblocked=true`
+		})
         this.isLoading = false
         this.renderAppGrid()
     }
@@ -950,19 +943,17 @@ class QApps extends LitElement {
 
     getFollowedNamesRefresh = async () => {
         this.isLoading = true
-        const followedNamesRes = await parentEpml.request('apiCall', {
-            url: `/lists/followedNames?apiKey=${this.getApiKey()}`
-        })
-        this.followedNames = followedNamesRes
+		this.followedNames = await parentEpml.request('apiCall', {
+			url: `/lists/followedNames?apiKey=${this.getApiKey()}`
+		})
         this.isLoading = false
     }
 
     getFollowedNamesResource = async () => {
         this.isLoading = true
-        const followedResourcesRes = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=followedNames`
-        })
-        this.followedResources = followedResourcesRes
+		this.followedResources = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=followedNames`
+		})
         this.isLoading = false
         this.renderFollowedAppsGrid()
     }
@@ -1051,20 +1042,18 @@ class QApps extends LitElement {
 
     getBlockedNamesRefresh = async () => {
         this.isLoading = true
-        const blockedNamesRes = await parentEpml.request('apiCall', {
-            url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
-        })
-        this.blockedNames = blockedNamesRes
+		this.blockedNames = await parentEpml.request('apiCall', {
+			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
+		})
         this.isLoading = false
     }
 
     getBlockedNamesResource = async () => {
         this.isLoading = true
         this.blockedResources = []
-        const blockedResourcesRes = await parentEpml.request('apiCall', {
-            url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=blockedNames`
-        })
-        this.blockedResources = blockedResourcesRes
+		this.blockedResources = await parentEpml.request('apiCall', {
+			url: `/arbitrary/resources?service=${this.service}&default=true&limit=0&reverse=false&includestatus=true&includemetadata=true&namefilter=blockedNames`
+		})
         this.isLoading = false
         this.renderBlockedAppsGrid()
     }
@@ -1410,9 +1399,9 @@ class QApps extends LitElement {
                 this.textProgress = ''
                 this.shadowRoot.getElementById('downloadProgressDialog').close()
                 this.closeAppInfoDialog()
-                this.getAppsArrayData()
-                this.getFollowedNamesRefresh()
-                this.getFollowedNamesResource()
+                await this.getAppsArrayData()
+                await this.getFollowedNamesRefresh()
+                await this.getFollowedNamesResource()
                 this.updateComplete.then(() => this.requestUpdate())
             } else if (status.id === "BUILDING") {
                 this.textProgress = ''
@@ -1478,8 +1467,8 @@ class QApps extends LitElement {
             this.followedNames = this.followedNames.filter(item => item != name)
             this.followedNames.push(name)
             this.closeAppInfoDialog()
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
+            await this.getFollowedNamesRefresh()
+            await this.getFollowedNamesResource()
         } else {
             let err3string = get("appspage.schange22")
             parentEpml.request('showSnackBar', `${err3string}`)
@@ -1506,8 +1495,8 @@ class QApps extends LitElement {
         if (ret === true) {
             this.followedNames = this.followedNames.filter(item => item != name)
             this.closeAppInfoDialog()
-            this.getFollowedNamesRefresh()
-            this.getFollowedNamesResource()
+            await this.getFollowedNamesRefresh()
+            await this.getFollowedNamesResource()
         } else {
             let err4string = get("appspage.schange23")
             parentEpml.request('showSnackBar', `${err4string}`)
@@ -1535,9 +1524,9 @@ class QApps extends LitElement {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.blockedNames.push(name)
             this.closeAppInfoDialog()
-            this.getAppsArrayData()
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
+            await this.getAppsArrayData()
+            await this.getBlockedNamesRefresh()
+            await this.getBlockedNamesResource()
         } else {
             let err5string = get("appspage.schange24")
             parentEpml.request('showSnackBar', `${err5string}`)
@@ -1564,8 +1553,8 @@ class QApps extends LitElement {
         if (ret === true) {
             this.blockedNames = this.blockedNames.filter(item => item != name)
             this.closeBlockedInfoDialog()
-            this.getBlockedNamesRefresh()
-            this.getBlockedNamesResource()
+            await this.getBlockedNamesRefresh()
+            await this.getBlockedNamesResource()
         } else {
             let err6string = get("appspage.schange25")
             parentEpml.request('showSnackBar', `${err6string}`)
@@ -1590,8 +1579,7 @@ class QApps extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     isEmptyArray(arr) {

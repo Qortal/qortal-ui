@@ -240,7 +240,7 @@ class ExtendedTimeElement extends HTMLElement {
         }
     }
     getFormattedDate() {
-        return;
+
     }
 }
 const titleFormatter = makeFormatter({

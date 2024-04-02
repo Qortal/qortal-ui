@@ -213,7 +213,8 @@
 		"arrr1": "ARRR rahakott pole initsialiseeritud!",
 		"arrr2": "Minge rahakoti vahekaardile ja lähtestage esmalt oma arrr rahakott.",
 		"arrr3": "Vaja põhivärskendust!",
-		"arrr4": "Oma arrr rahakoti privaatvõtme salvestamiseks vajate esmalt põhivärskendust!"
+		"arrr4": "Oma arrr rahakoti privaatvõtme salvestamiseks vajate esmalt põhivärskendust!",
+		"sync_indicator": "Keela sünkroonimisindikaatori hüpikaken"
 	},
 	"appinfo": {
 		"blockheight": "Ploki kõrgus",

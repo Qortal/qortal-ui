@@ -1,7 +1,8 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
 import localForage from "localforage"
-import {translate} from '../../../../core/translate/index.js'
+import {translate} from '../../../../core/translate'
+
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -28,15 +29,12 @@ class ChatHead extends LitElement {
     static get styles() {
         return css`
             li {
-
                 width: 100%;
                 padding: 10px 5px 10px 5px;
                 cursor: pointer;
-                width: 100%;
                 box-sizing: border-box;
                 display: flex;
                 align-items: flex-start;
-
             }
 
             li:hover {
@@ -59,7 +57,7 @@ class ChatHead extends LitElement {
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
-                margin: 0px;
+                margin: 0;
             }
             .inner-container {
                 display: flex;
@@ -135,7 +133,6 @@ class ChatHead extends LitElement {
 
     render() {
         let avatarImg = ''
-        let backupAvatarImg = ''
         let isUnread = false
 
         if(this.chatInfo.name){
@@ -160,26 +157,25 @@ class ChatHead extends LitElement {
         }
         return html`
             <li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
-                ${this.isImageLoaded ? html`${avatarImg}` : html`` }
+				${this.isImageLoaded ? html`${avatarImg}` : html`` }
                 ${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html`` }
                 ${!this.isImageLoaded && this.chatInfo.name ? html`<div  style="width:40px; height:40px; flex-shrink: 0; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.name.charAt(0)}</div>`: ''}
                 ${!this.isImageLoaded && this.chatInfo.groupName ? html`<div  style="width:40px; height:40px; flex-shrink: 0; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)' }; color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)' }; font-weight:bold; display: flex; justify-content: center; align-items: center; text-transform: capitalize">${this.chatInfo.groupName.charAt(0)}</div>`: ''}
-               <div class="inner-container">
-                <div class="about">
-                    <div class="name"><span style="font-weight: bold;float:left; padding-left: 8px; color: var(--chat-group);font-size:14px;word-break:${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? 'break-word': 'break-all'}">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
-                </div>
-                <div class="about" style="margin-top:7px">
-                    <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:14px"></span>
-                    <div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
-                    <div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
-                    <message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>
-                    <span style="font-size:12px;color:var(--black);display: ${(!this.chatInfo.timestamp || this.chatInfo.timestamp > 100000) ? 'none' : 'block'}">${translate('chatpage.cchange90')}</span>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-            </li>
+				<div class="inner-container">
+				   <div class="about">
+					   <div class="name"><span style="font-weight: bold;float:left; padding-left: 8px; color: var(--chat-group);font-size:14px;word-break:${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? 'break-word': 'break-all'}">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
+				   </div>
+				   <div class="about" style="margin-top:7px">
+					   <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:14px"></span>
+						   <div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
+							   <div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
+							   <message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>
+							   <span style="font-size:12px;color:var(--black);display: ${(!this.chatInfo.timestamp || this.chatInfo.timestamp > 100000) ? 'none' : 'block'}">${translate('chatpage.cchange90')}</span>
+						   </div>
+					   </div>
+				   </div>
+			   </div>
+			</li>
         `
     }
 

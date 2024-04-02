@@ -1,6 +1,6 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import {blocksNeed} from '../../utils/blocks-needed.js'
 import {asyncReplace} from 'lit/directives/async-replace.js'
 import {pageStyles} from './sponsorship-list-css.src.js'
@@ -240,7 +240,7 @@ class SponsorshipList extends LitElement {
 					</mwc-button>
 				</mwc-dialog>
 
-				<mwc-dialog escapeKeyAction='' scrimClickAction=''  id='showDialogRewardShareCreationStatus' ?hideActions=${this.errorMessage ? false : this.status < 4  ? true : false} ?open=${this.openDialogRewardShare}>
+				<mwc-dialog escapeKeyAction='' scrimClickAction='' id='showDialogRewardShareCreationStatus' ?hideActions=${this.errorMessage ? false : this.status < 4} ?open=${this.openDialogRewardShare}>
 					<div class='dialog-header' >
 						<div class='row'>
 							<h1>${translate('sponsorshipspage.schange14')}</h1>
@@ -461,10 +461,9 @@ class SponsorshipList extends LitElement {
 	}
 
 	async getNodeInfo() {
-		const nodeInfo = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/admin/status`
 		})
-		return nodeInfo
 	}
 
 	async saveToClipboard(toBeCopied, text) {
@@ -483,8 +482,7 @@ class SponsorshipList extends LitElement {
 
 	getApiKey() {
 		const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		let apiKey = apiNode.apiKey
-		return apiKey
+		return apiNode.apiKey
 	}
 
 	async atMount() {
@@ -511,8 +509,7 @@ class SponsorshipList extends LitElement {
 				if(getNames.length > 0 ) {
 					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 					const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-					const urlPic = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-					url = urlPic
+					url = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
 				}
 
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
@@ -554,16 +551,14 @@ class SponsorshipList extends LitElement {
 	}
 
 	async getRewardShareRelationship(recipientAddress) {
-		const myRewardShareArray = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			type: 'api',
 			url: `/addresses/rewardshares?minters=${recipientAddress}`
 		})
-		return myRewardShareArray
 	}
 
 	_levelUpBlocks(accountInfo) {
-		let countBlocksString = (blocksNeed(0) - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
-		return countBlocksString
+		return (blocksNeed(0) - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
 	}
 
 	async removeRewardShare(rewardShareObject) {
@@ -577,11 +572,10 @@ class SponsorshipList extends LitElement {
 
 		// Get Last Ref
 		const getLastRef = async () => {
-			let myRef = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				type: 'api',
 				url: `/addresses/lastreference/${selectedAddress?.address}`
 			})
-			return myRef
 		}
 
 		// Remove Reward Share
@@ -597,7 +591,7 @@ class SponsorshipList extends LitElement {
 			let mylastRef = lastRef
 			let rewarddialog5 = get('transactions.rewarddialog5')
 			let rewarddialog6 = get('transactions.rewarddialog6')
-			let myTxnrequest = await parentEpml.request('transaction', {
+			return await parentEpml.request('transaction', {
 				type: 381,
 				nonce: selectedAddress.nonce,
 				params: {
@@ -610,7 +604,6 @@ class SponsorshipList extends LitElement {
 					rewarddialog6: rewarddialog6,
 				},
 			})
-			return myTxnrequest
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
@@ -632,7 +625,7 @@ class SponsorshipList extends LitElement {
 				throw new Error(txnResponse)
 			}
 		}
-		removeReceiver()
+		await removeReceiver()
 	}
 
 	async createRewardShare(publicKeyValue, isCopy) {
@@ -652,20 +645,18 @@ class SponsorshipList extends LitElement {
 
 		// Get Last Ref
 		const getLastRef = async () => {
-			let myRef = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				type: 'api',
 				url: `/addresses/lastreference/${selectedAddress.address}`
 			})
-			return myRef
 		}
 
 		// Get Account Details
 		const getAccountDetails = async () => {
-			let myAccountDetails = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				type: 'api',
 				url: `/addresses/${selectedAddress.address}`
 			})
-			return myAccountDetails
 		}
 
 		// Validate Reward Share by Level
@@ -703,7 +694,7 @@ class SponsorshipList extends LitElement {
 			let rewarddialog2 = get('transactions.rewarddialog2')
 			let rewarddialog3 = get('transactions.rewarddialog3')
 			let rewarddialog4 = get('transactions.rewarddialog4')
-			let myTxnrequest = await parentEpml.request('transaction', {
+			return await parentEpml.request('transaction', {
 				type: 38,
 				nonce: selectedAddress.nonce,
 				params: {
@@ -717,17 +708,16 @@ class SponsorshipList extends LitElement {
 				},
 				disableModal: true
 			})
-			return myTxnrequest
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
-			
+
 			const extraData = txnResponse && txnResponse.extraData;
 			const data = txnResponse && txnResponse.data;
 			const dataMessage = data && data.message;
 			const extraDataPrivateKey = extraData && extraData.rewardSharePrivateKey;
 			const txnSuccess = txnResponse && txnResponse.success;
-		  
+
 			if (extraDataPrivateKey && typeof dataMessage === 'string' &&
 				(dataMessage.includes('multiple') || dataMessage.includes('SELF_SHARE_EXISTS'))) {
 			  this.privateRewardShareKey = extraDataPrivateKey;
@@ -746,7 +736,7 @@ class SponsorshipList extends LitElement {
 			  throw new Error(dataMessage || txnResponse.message || defaultErrorMessage);
 			}
 		}
-		validateReceiver()
+		await validateReceiver()
 	}
 
 	async confirmRelationship(recipientPublicKey, isCopy) {

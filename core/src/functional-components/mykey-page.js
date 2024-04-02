@@ -2,7 +2,7 @@ import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../store.js'
 import {testApiKey} from '../apiKeyUtils.js'
-import {get, translate} from '../../translate/index.js'
+import {get, translate} from '../../translate'
 
 import '@material/mwc-dialog'
 import '@material/mwc-button'

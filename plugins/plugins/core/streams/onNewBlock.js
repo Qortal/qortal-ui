@@ -19,11 +19,7 @@ let blockSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
 let nodeStatusSocketReconnectInterval = MIN_RECONNECT_INTERVAL;
 
 parentEpml.subscribe('logged_in', loggedIn => {
-    if (loggedIn === 'true') {
-        isLoggedIn = true
-    } else {
-        isLoggedIn = false
-    }
+    isLoggedIn = loggedIn === 'true';
 })
 
 
@@ -39,7 +35,7 @@ const setAccountInfo = async (addr) => {
         addressInfo: addressInfo
     }
     if (window.parent._.isEqual(oldAccountInfo, accountInfo) === true) {
-        return
+
     } else {
         parentEpml.request('setAccountInfo', accountInfo)
         oldAccountInfo = accountInfo
@@ -82,7 +78,7 @@ export const startConfigWatcher = () => {
             let _newState = JSON.parse(c)
             let newState = { node: _newState.node, knownNodes: _newState.knownNodes }
             if (window.parent._.isEqual(oldState, newState) === true) {
-                return
+
             } else {
                 oldState = newState
                 nodeStateCall = true

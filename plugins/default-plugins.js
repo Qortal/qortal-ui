@@ -12,19 +12,16 @@ const pluginsController = (type) => {
     switch (type) {
         case PLUGINS:
             const path = require('path')
-            const plugins = [
-                {
-                    folder: path.join(__dirname, 'plugins/core'),
-                    name: 'core'
-                }
-            ]
-            return plugins
+			return [
+				{
+					folder: path.join(__dirname, 'plugins/core'),
+					name: 'core'
+				}
+			]
         case BUILD:
-            const build = require('./build.js')
-            return build
+			return require('./build.js')
         case WATCH:
-            const watch = require('./watch.js')
-            return watch
+			return require('./watch.js')
         default:
             return
     }

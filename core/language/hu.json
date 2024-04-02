@@ -213,7 +213,8 @@
 		"arrr1": "ARRR Wallet nincs inicializálva!",
 		"arrr2": "Kérjük, lépjen a Wallet fülre, és először inicializálja arrr pénztárcáját.",
 		"arrr3": "Alapfrissítésre van szükség!",
-		"arrr4": "Az arrr pénztárca privát kulcsának mentéséhez először egy alapvető frissítésre van szükség!"
+		"arrr4": "Az arrr pénztárca privát kulcsának mentéséhez először egy alapvető frissítésre van szükség!",
+		"sync_indicator": "Szinkronizálásjelző előugró ablak letiltása"
 	},
 	"appinfo": {
 		"blockheight": "Blokk Magassága",

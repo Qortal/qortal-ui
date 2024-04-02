@@ -1,10 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {connect} from 'pwa-helpers'
 import {store} from '../store.js'
-import {translate} from '../../translate/index.js'
-
-import '@polymer/paper-toast'
-import '@material/mwc-icon-button'
+import {translate} from '../../translate'
 
 class WalletProfile extends connect(store)(LitElement) {
     static get properties() {
@@ -12,82 +9,76 @@ class WalletProfile extends connect(store)(LitElement) {
             wallet: { type: Object },
             nodeConfig: { type: Object },
             accountInfo: { type: Object },
-            imageUrl: { type: String },
             theme: { type: String, reflect: true }
         }
     }
 
     static get styles() {
-        return [
-            css`
-            `
-        ]
+        return css`
+            #profileInMenu {
+                padding: 12px;
+                border-top: var(--border);
+                background: var(--sidetopbar);
+                color: var(--black);
+            }
+
+            #accountName {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 500;
+                width: 100%;
+                padding-bottom: 8px;
+                display: flex;
+            }
+
+            #blocksMinted {
+                margin:0;
+                margin-top: 0;
+                font-size: 12px;
+                color: #03a9f4;
+            }
+
+            #address {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin:0;
+                margin-top: 8px;
+                font-size: 11px;
+            }
+
+            .round-fullinfo {
+                position: relative;
+                width: 68px;
+                height: 68px;
+                border-radius: 50%;
+            }
+
+            .full-info-logo {
+                width: 68px;
+                height: 68px;
+                border-radius: 50%;
+            }
+
+            .inline-block-child {
+                flex: 1;
+            }
+        `
     }
 
     constructor() {
         super()
+        this.wallet = {}
         this.nodeConfig = {}
         this.accountInfo = {
             names: [],
             addressInfo: {}
         }
-        this.imageUrl = ''
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 
     render() {
         return html`
-            <style>
-                #profileInMenu {
-                    padding: 12px;
-                    border-top: var(--border);
-                    background: var(--sidetopbar);
-                    color: var(--black);
-                }
-                #profileInMenu:hover {
-                }
-                #accountIcon {
-                    font-size:48px;
-                    color: var(--mdc-theme-primary);
-                    display: inline-block;
-                }
-                #accountName {
-                    margin: 0;
-                    font-size: 18px;
-                    font-weight:500;
-                    width:100%;
-                    padding-bottom:8px;
-                    display: flex;
-                }
-                #blocksMinted {
-                    margin:0;
-                    margin-top: 0;
-                    font-size: 12px;
-                    color: #03a9f4;
-                }
-                #address {
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    margin:0;
-                    margin-top:8px;
-                    font-size:11px;
-                }
-                .round-fullinfo {
-                    position: relative;
-                    width: 68px;
-                    height: 68px;
-                    border-radius: 50%;
-                }
-                .full-info-logo {
-                    width: 68px;
-                    height: 68px;
-                    border-radius: 50%;
-                }
-                .inline-block-child {
-                    flex: 1;
-                }
-            </style>
             <div id="profileInMenu">
                 <div style="padding: 8px 0;">
                     <div id="accountName">
@@ -102,26 +93,10 @@ class WalletProfile extends connect(store)(LitElement) {
                     <p id="address">${this.wallet.addresses[0].address}</p>
                 </div>
             </div>
-            <paper-toast id="toast" horizontal-align="right" vertical-align="top" vertical-offset="64"></paper-toast>
         `
     }
 
-    firstUpdated() {
-
-        const container = document.body.querySelector('main-app').shadowRoot.querySelector('app-view').shadowRoot;
-        const toast = this.shadowRoot.getElementById('toast')
-        const isMobile = window.matchMedia(`(max-width: ${getComputedStyle(document.body).getPropertyValue('--layout-breakpoint-tablet')})`).matches
-
-        if (isMobile) {
-            toast.verticalAlign = 'bottom'
-            toast.verticalOffset = 0
-        }
-        this.toast = container.appendChild(toast)
-    }
-
-    async getAllWithAddress(myAddress) {
-        await this.getAddressUserAvatar(myAddress)
-    }
+    firstUpdated() {}
 
     getAvatar() {
         if (this.accountInfo.names.length === 0) {
@@ -135,9 +110,8 @@ class WalletProfile extends connect(store)(LitElement) {
     }
 
     getApiKey() {
-        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node];
-        let apiKey = apiNode.apiKey;
-        return apiKey;
+        const apiNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		return apiNode.apiKey
     }
 
     stateChanged(state) {

@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {render} from 'lit/html.js'
 import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
 import isElectron from 'is-electron'
 import '../components/qortal-info-view.js'
 import '@material/mwc-button'
@@ -580,7 +580,7 @@ class NamesMarket extends LitElement {
             }).then(res => {
                 this.marketSellNames = res
             })
-            this.updatePageSize()
+            await this.updatePageSize()
             this.isLoading = false
             setTimeout(fetchMarketSellNames, 180000)
         }
@@ -592,7 +592,7 @@ class NamesMarket extends LitElement {
             }).then(res => {
                 this.marketSoldNames = res
             })
-            this.updatePageSoldSize()
+            await this.updatePageSoldSize()
             this.isLoading = false
             setTimeout(fetchMarketSoldNames, 300000)
         }
@@ -1053,8 +1053,7 @@ class NamesMarket extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
     async createCancelSellName() {
@@ -1064,11 +1063,10 @@ class NamesMarket extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -1084,18 +1082,17 @@ class NamesMarket extends LitElement {
             const myCancelSellNameDialog1 = get("registernamepage.nchange30")
             const myCancelSellNameDialog2 = get("registernamepage.nchange31")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 6,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myName,
-                    lastReference: myLastRef,
-                    cancelSellNameDialog1: myCancelSellNameDialog1,
-                    cancelSellNameDialog2: myCancelSellNameDialog2
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 6,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					name: myName,
+					lastReference: myLastRef,
+					cancelSellNameDialog1: myCancelSellNameDialog1,
+					cancelSellNameDialog2: myCancelSellNameDialog2
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -1118,7 +1115,7 @@ class NamesMarket extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
     createBuyName() {
@@ -1130,11 +1127,10 @@ class NamesMarket extends LitElement {
         this.btnDisable = true
 
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         }
 
         const validateReceiver = async () => {
@@ -1153,21 +1149,20 @@ class NamesMarket extends LitElement {
             const myBuyNameDialog2 = get("registernamepage.nchange27")
             const myBuyNameDialog3 = get("registernamepage.nchange40")
 
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 7,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: myFee,
-                    name: myName,
-                    sellPrice: myPrice,
-                    recipient: mySeller,
-                    lastReference: myLastRef,
-                    buyNameDialog1: myBuyNameDialog1,
-                    buyNameDialog2: myBuyNameDialog2,
-                    buyNameDialog3: myBuyNameDialog3
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 7,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: myFee,
+					name: myName,
+					sellPrice: myPrice,
+					recipient: mySeller,
+					lastReference: myLastRef,
+					buyNameDialog1: myBuyNameDialog1,
+					buyNameDialog2: myBuyNameDialog2,
+					buyNameDialog3: myBuyNameDialog3
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -1198,8 +1193,7 @@ class NamesMarket extends LitElement {
     }
 
     round(number) {
-        let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-        return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     isEmptyArray(arr) {

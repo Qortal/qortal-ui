@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
 import '@polymer/paper-dialog/paper-dialog.js'
 import * as Highcharts from 'highcharts'
 import Exporting from 'highcharts/modules/exporting'
@@ -200,8 +200,7 @@ class DgbCharts extends LitElement {
 	}
 
 	round(number) {
-		let result = (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
-		return result
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 

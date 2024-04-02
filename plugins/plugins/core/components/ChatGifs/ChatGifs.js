@@ -9,7 +9,7 @@ import {bytesToMegabytes} from '../../../utils/bytesToMegabytes.js';
 import './ChatGifsExplore.js';
 import '../ImageComponent.js';
 import '@vaadin/tooltip';
-import {get, translate} from '../../../../../core/translate/index.js'
+import {get, translate} from '../../../../../core/translate'
 
 const parentEpml = new Epml({type: 'WINDOW', source: window.parent});
 
@@ -150,11 +150,7 @@ setOpenGifModal: { attribute: false }
 			if (changedProperties && changedProperties.has('currentCollection')) {
 				if (this.mode === 'explore') {
 					const subbedCollection = this.mySubscribedCollections.find((collection) => ((collection.name === this.currentCollection.name) && (collection.identifier === this.currentCollection.identifier)));
-					if (subbedCollection) {
-						this.isSubscribed = true;
-					} else {
-						this.isSubscribed = false;
-					}
+					this.isSubscribed = !!subbedCollection;
 				}
 			}
 		}
@@ -211,8 +207,7 @@ setOpenGifModal: { attribute: false }
 
 	getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node];
-        let apiKey = myNode.apiKey;
-        return apiKey;
+		return myNode.apiKey;
     }
 
     async getMoreExploreGifs() {
@@ -285,17 +280,14 @@ setOpenGifModal: { attribute: false }
     }
 
     async getMyGifCollections() {
-    	const userName = await this.getName(this.selectedAddress.address);
-    	this.myAccountName = userName;
+		this.myAccountName = await this.getName(this.selectedAddress.address);
     	if (this.myAccountName) {
     		const getMyGifCollections = await parentEpml.request('apiCall', {
     			url: `/arbitrary/resources/search?service=GIF_REPOSITORY&query=${this.myAccountName}&apiKey=${this.getApiKey()}`,
     		});
-    		const gifCollectionWithMetaData = await this.structureCollections(
-    			getMyGifCollections
-    		);
-
-    		return gifCollectionWithMetaData;
+			return await this.structureCollections(
+				getMyGifCollections
+			);
     	} else {
 				return [];
 			}
@@ -343,10 +335,9 @@ setOpenGifModal: { attribute: false }
     		}
     	);
     	await Promise.all(getSavedGifRepos);
-    	const savedCollectionsWithMetaData = await this.structureCollections(
-    		savedCollections
-    	);
-    	return savedCollectionsWithMetaData;
+		return await this.structureCollections(
+			savedCollections
+		);
     }
 
     async getName(recipient) {
@@ -440,11 +431,7 @@ setOpenGifModal: { attribute: false }
 						}
 					}
 
-					if (invalidGifs.length > 0) {
-						return false;
-					} else {
-						return true;
-					}
+					return invalidGifs.length <= 0;
 				}
 
 				let validatedSize = validateGifSizes(this.gifsToBeAdded);
@@ -587,8 +574,7 @@ setOpenGifModal: { attribute: false }
 			);
 			parentEpml.request('showSnackBar', get('gifs.gchange20'));
 			this.isSubscribed = true;
-			const savedCollections = await this.getSavedCollections();
-			this.mySubscribedCollections = savedCollections;
+			this.mySubscribedCollections = await this.getSavedCollections();
 		}
 
 		async unsubscribeToCollection() {
@@ -597,8 +583,7 @@ setOpenGifModal: { attribute: false }
 			);
 			parentEpml.request('showSnackBar', get('gifs.gchange21'));
 			this.isSubscribed = false;
-			const savedCollections = await this.getSavedCollections();
-			this.mySubscribedCollections = savedCollections;
+			this.mySubscribedCollections = await this.getSavedCollections();
 		}
 
     render() {

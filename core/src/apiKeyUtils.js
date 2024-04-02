@@ -49,8 +49,6 @@ export const testApiKey = async (apiKey) => {
     let testRes = await api.request(testUrl, {
         method: "GET"
     });
-    if (testRes === true) {
-        return true;
-    }
-    return false;
+    return testRes === true;
+
 }

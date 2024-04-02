@@ -210,11 +210,9 @@ class ChatSelect extends LitElement {
         if(changedProperties.has('activeChatHeadUrl')){
             return true
         }
-        if(changedProperties.has('chatInfo')){
-            return true
-        }
+        return !!changedProperties.has('chatInfo');
 
-        return false
+
       }
 
     getUrl(chatUrl) {
