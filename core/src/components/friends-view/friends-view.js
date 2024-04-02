@@ -13,7 +13,7 @@ import './ChatSideNavHeads';
 import '../../../../plugins/plugins/core/components/ChatSearchResults'
 import './add-friends-modal'
 
-import {translate,} from '../../../translate/index.js'
+import {translate,} from '../../../translate'
 import {store} from '../../store';
 import {friendsViewStyles} from './friends-view-css';
 import {parentEpml} from '../show-plugin';
@@ -74,19 +74,14 @@ class FriendsView extends connect(store)(LitElement) {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return store.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	getMoreFriends() {}
@@ -105,12 +100,10 @@ class FriendsView extends connect(store)(LitElement) {
 	}
 
 	_updateFriends(event) {
-		const detail = event.detail
-        this.friendList = detail
+		this.friendList = event.detail
 	}
 	_updateFeed(event) {
-		const detail = event.detail
-        this.mySelectedFeeds = detail
+		this.mySelectedFeeds = event.detail
 		this.requestUpdate()
 	}
 	_addFriend(event){
@@ -125,7 +118,7 @@ class FriendsView extends connect(store)(LitElement) {
 				name
 			};
 		}
-		
+
 		this.isOpenAddFriendsModal = true
 		this.openSidePanel()
 	}
@@ -165,7 +158,7 @@ class FriendsView extends connect(store)(LitElement) {
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.friendList.length < 20) {
 				return;
@@ -201,8 +194,7 @@ class FriendsView extends connect(store)(LitElement) {
 
 		getApiKey() {
 			const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-			let apiKey = apiNode.apiKey
-			return apiKey
+			return apiNode.apiKey
 		}
 
 		async myFollowName(name) {
@@ -211,7 +203,7 @@ class FriendsView extends connect(store)(LitElement) {
 			]
 			let namesJsonString = JSON.stringify({ "items": items })
 
-			let ret = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 				method: 'POST',
 				headers: {
@@ -219,9 +211,6 @@ class FriendsView extends connect(store)(LitElement) {
 				},
 				body: `${namesJsonString}`
 			})
-
-
-			return ret
 		}
 
 		async unFollowName(name) {
@@ -230,7 +219,7 @@ class FriendsView extends connect(store)(LitElement) {
 			]
 			let namesJsonString = JSON.stringify({ "items": items })
 
-			let ret = await parentEpml.request('apiCall', {
+			return await parentEpml.request('apiCall', {
 				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 				method: 'DELETE',
 				headers: {
@@ -238,9 +227,6 @@ class FriendsView extends connect(store)(LitElement) {
 				},
 				body: `${namesJsonString}`
 			})
-
-
-			return ret
 		}
 	async addToFriendList(val, isRemove){
 		const copyVal = {...val}
@@ -260,9 +246,9 @@ class FriendsView extends connect(store)(LitElement) {
 			this.friendList = [...this.friendList, copyVal]
 		}
 		if(!copyVal.willFollow || isRemove) {
-			this.unFollowName(copyVal.name)
+			await this.unFollowName(copyVal.name)
 		} else if(copyVal.willFollow){
-			this.myFollowName(copyVal.name)
+			await this.myFollowName(copyVal.name)
 		}
 		this.setMySelectedFeeds(val.mySelectedFeeds)
 		await new Promise((res)=> {

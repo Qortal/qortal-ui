@@ -171,9 +171,7 @@ export const newMessageNotificationQappLocal  = (data) => {
             }
 
             notify.onclick = async(e) => {
-                const url = data?.url
-                const value = url
-			let newQuery = value;
+				let newQuery = data?.url;
 			if (newQuery.endsWith('/')) {
 				newQuery = newQuery.slice(0, -1);
 			}
@@ -217,9 +215,7 @@ export const newMessageNotificationQappLocal  = (data) => {
             const notify = new Notification(data.title, data.options)
 
             notify.onclick = async(e) => {
-                const url = data?.url
-                const value = url
-			let newQuery = value;
+				let newQuery = data?.url;
 			if (newQuery.endsWith('/')) {
 				newQuery = newQuery.slice(0, -1);
 			}

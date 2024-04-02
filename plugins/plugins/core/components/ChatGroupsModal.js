@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {translate,} from '../../../../core/translate/index.js'
+import {translate,} from '../../../../core/translate'
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';
 import '@material/mwc-dialog'

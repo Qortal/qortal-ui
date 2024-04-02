@@ -10,7 +10,7 @@ import {
 	removeQAPPAutoLists,
 	setIsOpenDevDialog
 } from '../../redux/app/app-actions.js'
-import {get, translate} from '../../../translate/index.js'
+import {get, translate} from '../../../translate'
 import snackbar from '../../functional-components/snackbar.js'
 import FileSaver from 'file-saver'
 
@@ -232,7 +232,7 @@ class SecurityView extends connect(store)(LitElement) {
         const dataString = JSON.stringify(data)
         const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' })
         backupname = "qortal_backup_" + state.app.selectedAddress.address + ".json"
-        this.saveFileToDisk(blob, backupname)
+        await this.saveFileToDisk(blob, backupname)
     }
 
     async saveFileToDisk(blob, fileName) {

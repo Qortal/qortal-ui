@@ -5,7 +5,7 @@ import {friendsViewStyles} from './friends-view-css';
 import {connect} from 'pwa-helpers';
 import {store} from '../../store';
 import './feed-item'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 
@@ -53,24 +53,18 @@ class FriendsFeed extends connect(store)(LitElement) {
 		const myNode =
 			store.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return store.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
     _updateFeeds(event) {
-		const detail = event.detail
-        this.mySelectedFeeds = detail
+		this.mySelectedFeeds = event.detail
         this.reFetchFeedData()
         this.requestUpdate()
 	}
@@ -170,7 +164,7 @@ class FriendsFeed extends connect(store)(LitElement) {
             if(this.mySelectedFeeds.length === 0){
                 await this.getEndpoints()
 
-this.loadAndMergeData();
+await this.loadAndMergeData();
             }
 
 this.getFeedOnInterval()
@@ -190,7 +184,7 @@ this.getFeedOnInterval()
     async refresh(){
         try {
              await this.getEndpoints()
-             this.reFetchFeedData()
+             await this.reFetchFeedData()
         } catch (error) {
 
         }
@@ -216,7 +210,7 @@ this.getFeedOnInterval()
 
 	observerHandler(entries) {
 		if (!entries[0].isIntersecting) {
-			return;
+
 		} else {
 			if (this.feedToRender.length < 20) {
 				return;
@@ -326,8 +320,7 @@ this.getFeedOnInterval()
 
         let clickValue1 = newItem.schema.click;
 
-        const resolvedClickValue1 = replacePlaceholders(clickValue1, resource, newItem.schema.customParams);
-        newItem.link = resolvedClickValue1
+				newItem.link = replacePlaceholders(clickValue1, resource, newItem.schema.customParams)
         newData.push(newItem)
             }
         }
@@ -375,7 +368,7 @@ this.getFeedOnInterval()
           return false;
         });
       }
-      
+
 
     async  loadAndMergeData() {
         let allData = this.feed

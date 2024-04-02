@@ -1,13 +1,11 @@
-import { LitElement, html, css } from 'lit';
-import { get, translate } from '../../../translate/index.js'
+import {css, html, LitElement} from 'lit';
 import axios from 'axios';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item.js';
-import { RequestQueueWithPromise } from '../../../../plugins/plugins/utils/queue';
+import {RequestQueueWithPromise} from '../../../../plugins/plugins/utils/queue';
 import '../../../../plugins/plugins/core/components/TimeAgo';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store';
-import { setNewTab } from '../../redux/app/app-actions';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store';
 import ShortUniqueId from 'short-unique-id';
 
 const requestQueue = new RequestQueueWithPromise(3);
@@ -125,17 +123,12 @@ export class AvatarComponent extends connect(store)(LitElement) {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-
-		return myNode;
 	}
 
 	getApiKey() {
@@ -143,8 +136,7 @@ export class AvatarComponent extends connect(store)(LitElement) {
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-		let apiKey = myNode.apiKey;
-		return apiKey;
+		return myNode.apiKey;
 	}
 
 	async fetchResource() {
@@ -161,7 +153,7 @@ export class AvatarComponent extends connect(store)(LitElement) {
 	}
 
 	async fetchVideoUrl() {
-		this.fetchResource();
+		await this.fetchResource();
 	}
 
 	async getRawData() {
@@ -249,7 +241,7 @@ export class AvatarComponent extends connect(store)(LitElement) {
 
 				this.status = res;
 				if (this.status.status === 'DOWNLOADED') {
-					this.fetchResource();
+					await this.fetchResource();
 				}
 			}
 
@@ -264,8 +256,8 @@ export class AvatarComponent extends connect(store)(LitElement) {
 
 	async _fetchImage() {
 		try {
-			this.fetchVideoUrl();
-			this.fetchStatus();
+			await this.fetchVideoUrl();
+			await this.fetchStatus();
 		} catch (error) {
 			/* empty */
 		}

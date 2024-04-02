@@ -24,6 +24,5 @@ export const createWallet = async (sourceType, source, statusUpdateFn) => {
 			throw 'sourceType ' + sourceType + ' not recognized'
 	}
 
-	const wallet = new PhraseWallet(seed, version)
-	return wallet
+	return new PhraseWallet(seed, version)
 }

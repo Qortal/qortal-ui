@@ -43,8 +43,7 @@ class NotificationBell extends connect(store)(LitElement) {
 
     getApiKey() {
         const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = apiNode.apiKey
-        return apiKey
+		return apiNode.apiKey
     }
 
     async getNotifications() {
@@ -69,8 +68,7 @@ class NotificationBell extends connect(store)(LitElement) {
                     }
                 })
 
-                const data = await response.json()
-                return data;
+				return await response.json()
             }
 
             if (!stop && !this.showNotifications) {
@@ -97,25 +95,41 @@ class NotificationBell extends connect(store)(LitElement) {
                     if (!this.initialFetch && notificationsToShow.length > 0) {
                         const mail = notificationsToShow[0]
                         const urlPic = `${nodeUrl}/arbitrary/THUMBNAIL/${mail.name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-                        routes.showNotification({
-                            data: { title: "New Q-Mail", type: "qapp", sound: config.messageAlert, url: "", options: { body: `You have an unread mail from ${mail.name}`, icon: urlPic, badge: urlPic } }
+                        await routes.showNotification({
+                            data: {
+                                title: "New Q-Mail",
+                                type: "qapp",
+                                sound: config.messageAlert,
+                                url: "",
+                                options: {
+                                    body: `You have an unread mail from ${mail.name}`,
+                                    icon: urlPic,
+                                    badge: urlPic
+                                }
+                            }
                         })
                     } else if (notificationsToShow.length > 0) {
                         if (notificationsToShow[0].created > (this.notifications[0]?.created || 0)) {
                             const mail = notificationsToShow[0]
                             const urlPic = `${nodeUrl}/arbitrary/THUMBNAIL/${mail.name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
-                            routes.showNotification({
-                                data: { title: "New Q-Mail", type: "qapp", sound: config.messageAlert, url: "", options: { body: `You have an unread mail from ${mail.name}`, icon: urlPic, badge: urlPic } }
+                            await routes.showNotification({
+                                data: {
+                                    title: "New Q-Mail",
+                                    type: "qapp",
+                                    sound: config.messageAlert,
+                                    url: "",
+                                    options: {
+                                        body: `You have an unread mail from ${mail.name}`,
+                                        icon: urlPic,
+                                        badge: urlPic
+                                    }
+                                }
                             })
                         }
                     }
                     this.notifications = notificationsToShow
 
-                    if (this.notifications.length === 0) {
-                        this.notificationCount = false
-                    } else {
-                        this.notificationCount = true
-                    }
+                    this.notificationCount = this.notifications.length !== 0;
 
                     if (!this.initialFetch) this.initialFetch = true
                 } catch (error) {

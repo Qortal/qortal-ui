@@ -1,15 +1,14 @@
-import { css, html, LitElement } from 'lit';
-import { connect } from 'pwa-helpers';
+import {css, html, LitElement} from 'lit';
+import {connect} from 'pwa-helpers';
 
 import '@vaadin/item';
 import '@vaadin/list-box';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/iron-icons/iron-icons.js';
-import { store } from '../../store.js';
-import { setNewTab } from '../../redux/app/app-actions.js';
+import {store} from '../../store.js';
+import {setNewTab} from '../../redux/app/app-actions.js';
 import '@material/mwc-icon';
-import { get, translate } from '../../../translate/index.js';
-import { repeat } from 'lit/directives/repeat.js';
+import {get} from '../../../translate';
 import '../../../../plugins/plugins/core/components/TimeAgo.js';
 import '../notification-view/popover.js';
 import ShortUniqueId from 'short-unique-id';
@@ -74,17 +73,12 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-
-		return myNode;
 	}
 
 	async getName(recipient) {
@@ -94,11 +88,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			const res = await fetch(endpoint);
 			const getNames = await res.json();
 
-			if (Array.isArray(getNames) && getNames.length > 0) {
-				this.hasName = true;
-			} else {
-				this.hasName = false;
-			}
+			this.hasName = Array.isArray(getNames) && getNames.length > 0;
 		} catch (error) {
 			return '';
 		}
@@ -132,7 +122,7 @@ class BeginnerChecklist extends connect(store)(LitElement) {
 			state.app.accountInfo.names.length > 0
 		) {
 			this.hasName = true;
-		} 
+		}
 	}
 
 	handleBlur() {

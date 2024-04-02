@@ -1,7 +1,7 @@
 import {html, LitElement} from 'lit'
 import {Epml} from '../../../../epml.js'
 import {chatGifsExploreStyles} from './ChatGifsExplore-css.js'
-import {get, translate} from '../../../../../core/translate/index.js'
+import {get, translate} from '../../../../../core/translate'
 import '@material/mwc-icon'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
@@ -52,7 +52,7 @@ class ChatGifsExplore extends LitElement {
 
     observerHandler(entries) {
     	if (!entries[0].isIntersecting) {
-    		return;
+
     	} else {
     		if (this.exploreCollections.length < 20) {
     			return;
@@ -70,8 +70,7 @@ class ChatGifsExplore extends LitElement {
     }
 	getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 
 		async searchCollections() {
@@ -120,8 +119,7 @@ class ChatGifsExplore extends LitElement {
 							class='clear-search-icon'
 							@click=${async () => {
 								if (this.isLoading) return;
-								const latestCollections = await this.getAllCollections();
-								this.exploreCollections = latestCollections;
+								this.exploreCollections = await this.getAllCollections();
 								this.searchCollectionName = '';
 								this.isSearched = false;
 								}}

@@ -425,10 +425,9 @@ class Chat extends LitElement {
 		this.getLocalBlockedList()
 
 		const getBlockedUsers = async () => {
-			let blockedUsers = await parentEpml.request('apiCall', {
+			this.blockedUsers = await parentEpml.request('apiCall', {
 				url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
 			})
-			this.blockedUsers = blockedUsers
 			setTimeout(getBlockedUsers, 60000)
 		}
 
@@ -516,7 +515,7 @@ class Chat extends LitElement {
 					const name = sideEffectAction.data.name
 					const address = sideEffectAction.data.address
 					if(this.chatHeadsObj.direct && this.chatHeadsObj.direct.find(item=> item.address === address)){
-						this.setActiveChatHeadUrl(`direct/${address}`)
+						await this.setActiveChatHeadUrl(`direct/${address}`)
 						window.parent.reduxStore.dispatch(
 							window.parent.reduxAction.setSideEffectAction(null))
 					} else {
@@ -601,7 +600,7 @@ class Chat extends LitElement {
 				version: 3
 			}
 			const stringifyMessageObject = JSON.stringify(messageObject)
-			this.sendMessage(stringifyMessageObject)
+			await this.sendMessage(stringifyMessageObject)
 		}
 	}
 
@@ -654,7 +653,7 @@ class Chat extends LitElement {
 			} else if (addressPublicKey !== false) {
 				isEncrypted = 1
 				_publicKey = addressPublicKey
-				sendMessageRequest(isEncrypted, _publicKey)
+				await sendMessageRequest(isEncrypted, _publicKey)
 			} else {
 				let err4string = get("chatpage.cchange39")
 				parentEpml.request('showSnackBar', `${err4string}`)
@@ -680,7 +679,7 @@ class Chat extends LitElement {
 					isText: 1
 				}
 			})
-			_computePow(chatResponse)
+			await _computePow(chatResponse)
 		}
 
 		const _computePow = async (chatBytes) => {
@@ -723,7 +722,7 @@ class Chat extends LitElement {
 			this.isLoading = false
 		}
 		// Exec..
-		getAddressPublicKey()
+		await getAddressPublicKey()
 	}
 
 	insertImage(file) {
@@ -807,10 +806,9 @@ class Chat extends LitElement {
 	async getPendingGroupInvites() {
 		const myAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 		try {
-			let pendingGroupInvites = await parentEpml.request('apiCall', {
+			this.groupInvites = await parentEpml.request('apiCall', {
 				url: `/groups/invites/${myAddress}`
-			})
-			this.groupInvites = pendingGroupInvites;
+			});
 		} catch (error) {
 			let err4string = get("chatpage.cchange61");
 			parentEpml.request('showSnackBar', `${err4string}`)
@@ -938,7 +936,7 @@ class Chat extends LitElement {
 
 	getChatHeadFromState(chatObj) {
 		if (chatObj === undefined) {
-			return
+
 		} else {
 			this.chatHeadsObj = chatObj
 			this.setChatHeads(chatObj)
@@ -960,8 +958,7 @@ class Chat extends LitElement {
 
 	getApiKey() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		let apiKey = myNode.apiKey
-		return apiKey
+		return myNode.apiKey
 	}
 
 	scrollToBottom() {

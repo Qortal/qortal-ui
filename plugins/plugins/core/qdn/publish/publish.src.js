@@ -1,7 +1,7 @@
 import {css, html, LitElement} from 'lit'
 import {Epml} from '../../../../epml'
 import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate/index.js'
+import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@material/mwc-select'
@@ -478,7 +478,7 @@ class PublishData extends LitElement {
                     if (res.action !== 'accept') throw new Error('User declined publish')
                 }
 
-                this.publishData(registeredName, path, file, service, identifier, preview, fee)
+                await this.publishData(registeredName, path, file, service, identifier, preview, fee)
             } catch (error) {
                 this.shadowRoot.querySelector('#publishWithFeeDialog').close()
             }
@@ -491,12 +491,10 @@ class PublishData extends LitElement {
         this.btnDisable = true
 
         const validateName = async (receiverName) => {
-            let nameRes = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/names/${receiverName}`,
-            })
-
-            return nameRes
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/names/${receiverName}`,
+			})
         }
 
         const showError = async (errorMessage) => {
@@ -522,7 +520,7 @@ class PublishData extends LitElement {
             let validNameRes = await validateName(registeredName)
             if (validNameRes.error) {
                 this.errorMessage = "Error: " + validNameRes.message
-                showError(this.errorMessage)
+                await showError(this.errorMessage)
                 throw new Error(this.errorMessage)
             }
 
@@ -545,13 +543,13 @@ class PublishData extends LitElement {
             if (uploadDataRes.error) {
                 let err7string = get("publishpage.pchange20")
                 this.errorMessage = `${err7string}` + uploadDataRes.message
-                showError(this.errorMessage)
+                await showError(this.errorMessage)
                 throw new Error(this.errorMessage)
             }
             else if (uploadDataRes.includes("Error 500 Internal Server Error")) {
                 let err8string = get("publishpage.pchange21")
                 this.errorMessage = `${err8string}`
-                showError(this.errorMessage)
+                await showError(this.errorMessage)
                 throw new Error(this.errorMessage)
             }
 
@@ -580,7 +578,7 @@ class PublishData extends LitElement {
             if (signAndProcessRes.error) {
                 let err10string = get("publishpage.pchange20")
                 this.errorMessage = `${err10string}` + signAndProcessRes.message
-                showError(this.errorMessage)
+                await showError(this.errorMessage)
                 throw new Error(this.errorMessage)
             }
 
@@ -644,23 +642,21 @@ class PublishData extends LitElement {
                 }
             }
 
-            let uploadDataRes = await parentEpml.request('apiCall', {
-                type: 'api',
-                method: 'POST',
-                url: `${uploadDataUrl}`,
-                body: `${postBody}`,
-            })
-            return uploadDataRes
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				method: 'POST',
+				url: `${uploadDataUrl}`,
+				body: `${postBody}`,
+			})
         }
 
         const convertBytesForSigning = async (transactionBytesBase58) => {
-            let convertedBytes = await parentEpml.request('apiCall', {
-                type: 'api',
-                method: 'POST',
-                url: `/transactions/convert`,
-                body: `${transactionBytesBase58}`,
-            })
-            return convertedBytes
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				method: 'POST',
+				url: `/transactions/convert`,
+				body: `${transactionBytesBase58}`,
+			})
         }
 
         const signAndProcess = async (transactionBytesBase58, fee) => {
@@ -668,7 +664,7 @@ class PublishData extends LitElement {
             if (convertedBytesBase58.error) {
                 let err12string = get("publishpage.pchange20")
                 this.errorMessage = `${err12string}` + convertedBytesBase58.message
-                showError(this.errorMessage)
+                await showError(this.errorMessage)
                 throw new Error(this.errorMessage)
             }
 
@@ -716,7 +712,7 @@ class PublishData extends LitElement {
             }
             return myResponse
         }
-        validate()
+        await validate()
     }
 
     fetchResourceMetadata() {
@@ -750,8 +746,7 @@ class PublishData extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        let apiKey = myNode.apiKey
-        return apiKey
+		return myNode.apiKey
     }
 }
 

@@ -1,17 +1,16 @@
 import {css, html, LitElement} from 'lit';
 import '@material/mwc-icon';
 import './friends-side-panel.js';
-import { connect } from 'pwa-helpers';
-import { store } from '../../store.js';
+import {connect} from 'pwa-helpers';
+import {store} from '../../store.js';
 import WebWorker from '../WebWorkerFile.js';
 import '@polymer/paper-spinner/paper-spinner-lite.js';
 import '@vaadin/tooltip';
-import { get, translate } from '../../../translate/index.js'
+import {translate} from '../../../translate'
 import ShortUniqueId from 'short-unique-id';
 
 import {
 	decryptGroupData,
-	
 	encryptDataGroup,
 	objectToBase64,
 	uint8ArrayToObject,
@@ -19,7 +18,7 @@ import {
 import {publishData} from '../../../../plugins/plugins/utils/publish-image.js';
 import {parentEpml} from '../show-plugin.js';
 import '../notification-view/popover.js';
-import { setNewTab } from '../../redux/app/app-actions.js';
+import {setNewTab} from '../../redux/app/app-actions.js';
 
 class SaveSettingsQdn extends connect(store)(LitElement) {
 	static get properties() {
@@ -144,19 +143,14 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		const myNode =
 			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
+			]
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
 	getMyNode() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			];
-
-		return myNode;
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
+			]
 	}
 
 	async getRawData(dataItem) {
@@ -165,8 +159,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 		const data = await res.text();
 		if (data.error) throw new Error('Cannot retrieve your data from qdn');
 		const decryptedData = decryptGroupData(data);
-		const decryptedDataToBase64 = uint8ArrayToObject(decryptedData);
-		return decryptedDataToBase64;
+		return uint8ArrayToObject(decryptedData);
 	}
 
 	async getMyFollowedNames() {
@@ -184,10 +177,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
     }
 
 	async followNames(names) {
-		let items = names
-		let namesJsonString = JSON.stringify({ "items": items })
+		let namesJsonString = JSON.stringify({ "items": names })
 
-		let ret = await parentEpml.request('apiCall', {
+		return await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.myNode.apiKey}`,
 			method: 'POST',
 			headers: {
@@ -195,9 +187,6 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			},
 			body: `${namesJsonString}`
 		})
-
-
-		return ret
 	}
 
 	async setValues(response, resource) {
@@ -322,8 +311,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 	async getGeneralSettingsQdn() {
 		try {
 			this.error = ""
-			const arbFee = await this.getArbitraryFee();
-			this.fee = arbFee;
+			this.fee = await this.getArbitraryFee();
 			this.hasAttemptedToFetchResource = true;
 			let resource;
 			let nameObject
@@ -331,7 +319,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 			 nameObject = store.getState().app.accountInfo.names[0];
 
 			} catch (error) {
-				
+
 			}
 			if (!nameObject) {
 				this.name = null;
@@ -358,7 +346,7 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 						try {
 							const response = await this.getRawData(dataItem);
 							if (response.version) {
-								this.setValues(response, dataItem);
+								await this.setValues(response, dataItem);
 							} else {
 								this.error = 'Cannot get saved user settings';
 							}
@@ -514,9 +502,9 @@ class SaveSettingsQdn extends connect(store)(LitElement) {
 				});
 
 				this.resourceExists = true;
-				this.setValues(newObject, {
-					updated: Date.now(),
-				});
+				await this.setValues(newObject, {
+                    updated: Date.now(),
+                });
 				localStorage.setItem('temp-settings-data', JSON.stringify({}));
 				this.valuesToBeSavedOnQdn = {};
 				worker.terminate();

@@ -1,6 +1,6 @@
 import {html, LitElement,} from 'lit';
 import {repeat} from 'lit/directives/repeat.js';
-import {get, translate,} from '../../../../core/translate/index.js'
+import {get, translate,} from '../../../../core/translate'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {chatStyles} from './ChatScroller-css.js';
 import {Epml} from '../../../epml';
@@ -40,8 +40,7 @@ const getApiKey = () => {
 		window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
 			window.parent.reduxStore.getState().app.nodeConfig.node
 		];
-	let apiKey = myNode.apiKey;
-	return apiKey;
+	return myNode.apiKey;
 };
 
 const extractComponents = async (url) => {
@@ -559,11 +558,11 @@ class ChatScroller extends LitElement {
 
 
 		// Using map to return a new array, rather than mutating the old one
-		const newMessagesToRender = this.messagesToRender.map((group) => {
+		this.messagesToRender = this.messagesToRender.map((group) => {
 			// For each message, return the updated message if it exists, otherwise return the original message
 			const updatedGroupMessages = group.messages.map((message) => {
 				return updatedMessages[message.signature]
-					? { ...message, ...updatedMessages[message.signature] }
+					? {...message, ...updatedMessages[message.signature]}
 					: message;
 			});
 
@@ -573,8 +572,6 @@ class ChatScroller extends LitElement {
 				messages: updatedGroupMessages,
 			};
 		});
-
-		this.messagesToRender = newMessagesToRender;
 		this.requestUpdate();
 		await this.updateComplete;
 
@@ -627,34 +624,34 @@ class ChatScroller extends LitElement {
 	async updated(changedProperties) {
 		if (changedProperties && changedProperties.has('messages')) {
 			if (this.messages.type === 'initial') {
-				this.addNewMessages(this.messages.messages, 'initial');
+				await this.addNewMessages(this.messages.messages, 'initial');
 			} else if (this.messages.type === 'initialLastSeen') {
-				this.newListMessagesUnreadMessages(
+				await this.newListMessagesUnreadMessages(
 					this.messages.messages,
 					'initialLastSeen',
 					this.messages.lastReadMessageTimestamp,
 					this.messages.count
 				);
 			} else if (this.messages.type === 'new')
-				this.addNewMessages(this.messages.messages);
+				await this.addNewMessages(this.messages.messages);
 			else if (this.messages.type === 'newComingInAuto')
-				this.addNewMessages(this.messages.messages, 'newComingInAuto');
+				await this.addNewMessages(this.messages.messages, 'newComingInAuto');
 			else if (this.messages.type === 'old')
-				this.prependOldMessages(this.messages.messages);
+				await this.prependOldMessages(this.messages.messages);
 			else if (this.messages.type === 'inBetween')
-				this.newListMessages(
+				await this.newListMessages(
 					this.messages.messages,
 					this.messages.count
 				);
 			else if (this.messages.type === 'update')
-				this.replaceMessagesWithUpdateByArray(this.messages.messages);
+				await this.replaceMessagesWithUpdateByArray(this.messages.messages);
 		}
 		if (
 			changedProperties &&
 			changedProperties.has('updateMessageHash') &&
 			Object.keys(this.updateMessageHash).length > 0
 		) {
-			this.replaceMessagesWithUpdate(this.updateMessageHash);
+			await this.replaceMessagesWithUpdate(this.updateMessageHash);
 		}
 		if (
 			changedProperties &&
@@ -676,13 +673,9 @@ class ChatScroller extends LitElement {
 
 	isLastMessageBeforeUnread(message, formattedMessages) {
 		// if the message is the last one in the older messages list and its timestamp is before the user's last seen timestamp
-		if (
-			message.timestamp < this.lastReadMessageTimestamp &&
-			formattedMessages.indexOf(message) === formattedMessages.length - 21
-		) {
-			return true;
-		}
-		return false;
+		return message.timestamp < this.lastReadMessageTimestamp &&
+			formattedMessages.indexOf(message) === formattedMessages.length - 21;
+
 	}
 
 	render() {
@@ -1097,11 +1090,7 @@ class MessageTemplate extends LitElement {
 	}
 
 	showBlockIconFunc(bool) {
-		if (bool) {
-			this.showBlockAddressIcon = true;
-		} else {
-			this.showBlockAddressIcon = false;
-		}
+		this.showBlockAddressIcon = !!bool;
 	}
 
 	async downloadAttachment(attachment) {
@@ -1206,10 +1195,8 @@ class MessageTemplate extends LitElement {
 		if (changedProperties.has('openDialogGif')) {
 			return true;
 		}
-		if (changedProperties.has('isGifLoaded')) {
-			return true;
-		}
-		return false;
+		return !!changedProperties.has('isGifLoaded');
+
 	}
 
 	clearConsole() {
@@ -1411,8 +1398,7 @@ class MessageTemplate extends LitElement {
 
 		if (repliedToData) {
 			try {
-				const parsedMsg = JSON.parse(repliedToData.decodedMessage);
-				repliedToData.decodedMessage = parsedMsg;
+				repliedToData.decodedMessage = JSON.parse(repliedToData.decodedMessage);
 			} catch (error) { /* empty */ }
 		}
 

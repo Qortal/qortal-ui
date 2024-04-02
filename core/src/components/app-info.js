@@ -63,7 +63,7 @@ class AppInfo extends connect(store)(LitElement) {
         super()
         this.nodeInfo = []
         this.coreInfo = []
-        this.nodeStatus = {}
+        this.nodeConfig = {}
         this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
     }
 

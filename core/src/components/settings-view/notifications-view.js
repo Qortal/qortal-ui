@@ -3,7 +3,7 @@ import {connect} from 'pwa-helpers'
 import {store} from '../../store.js'
 import {allowShowSyncIndicator, removeShowSyncIndicator} from '../../redux/app/app-actions.js'
 import {doSetQChatNotificationConfig} from '../../redux/user/user-actions.js'
-import {translate} from '../../../translate/index.js'
+import {translate} from '../../../translate'
 import isElectron from 'is-electron'
 
 import '@material/mwc-checkbox'

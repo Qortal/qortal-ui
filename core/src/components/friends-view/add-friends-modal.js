@@ -1,5 +1,5 @@
 import {css, html, LitElement} from 'lit';
-import {translate,} from '../../../translate/index.js'
+import {translate,} from '../../../translate'
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-checkbox';
@@ -202,17 +202,12 @@ class AddFriendsModal extends connect(store)(LitElement) {
 				window.parent.reduxStore.getState().app.nodeConfig.node
 			];
 
-		const nodeUrl =
-			myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
-		return nodeUrl;
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port;
 	}
 	getMyNode() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
+		return store.getState().app.nodeConfig.knownNodes[
+			window.parent.reduxStore.getState().app.nodeConfig.node
 			];
-
-		return myNode;
 	}
 
 	clearFields() {
@@ -267,7 +262,7 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			changedProperties &&
 			changedProperties.has('isOpen') && this.isOpen
 		) {
-			this.getAvailableFeedSchemas()
+			await this.getAvailableFeedSchemas()
 		}
 
 	}
@@ -281,11 +276,9 @@ class AddFriendsModal extends connect(store)(LitElement) {
 			if (data.error === 401) {
 				this.availableFeeedSchemas = [];
 			} else {
-				const result = data.filter(
+				this.availableFeeedSchemas = data.filter(
 					(item) => item.identifier === 'ui_schema_feed'
 				);
-
-				this.availableFeeedSchemas = result;
 			}
 			this.userFoundModalOpen = true;
 		} catch (error) {} finally {

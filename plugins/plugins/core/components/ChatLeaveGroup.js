@@ -5,7 +5,7 @@ import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-icon'
 import './WrapperModal'
-import {get, translate} from '../../../../core/translate/index.js'
+import {get, translate} from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -134,11 +134,10 @@ class ChatLeaveGroup extends LitElement {
 
         // Get Last Ref
         const getLastRef = async () => {
-            let myRef = await parentEpml.request('apiCall', {
-                type: 'api',
-                url: `/addresses/lastreference/${this.selectedAddress.address}`
-            })
-            return myRef
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
         };
 
         const validateReceiver = async () => {
@@ -152,20 +151,19 @@ class ChatLeaveGroup extends LitElement {
         const makeTransactionRequest = async (lastRef) => {
             let groupdialog3 = get("transactions.groupdialog3")
             let groupdialog4 = get("transactions.groupdialog4")
-            let myTxnrequest = await parentEpml.request('transaction', {
-                type: 32,
-                nonce: this.selectedAddress.nonce,
-                params: {
-                    fee: leaveFeeInput,
-                    registrantAddress: this.selectedAddress.address,
-                    rGroupName: groupName,
-                    rGroupId: groupId,
-                    lastReference: lastRef,
-                    groupdialog3: groupdialog3,
-                    groupdialog4: groupdialog4,
-                }
-            })
-            return myTxnrequest
+			return await parentEpml.request('transaction', {
+				type: 32,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: leaveFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog3: groupdialog3,
+					groupdialog4: groupdialog4,
+				}
+			})
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -184,7 +182,7 @@ class ChatLeaveGroup extends LitElement {
                 throw new Error(txnResponse)
             }
         }
-        validateReceiver()
+        await validateReceiver()
     }
 
   render() {
