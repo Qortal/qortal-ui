@@ -395,7 +395,7 @@ class ChatPage extends LitElement {
 
                     </div>
                     <div style="display: flex; height: 100%; align-items: center">
-                    ${(!this.isReceipient && +this._chatId !== 0 && this.groupInfo.isOpen) ?
+                    ${(!this.isReceipient && +this._chatId !== 0) ?
                         html`
                         <mwc-icon class="top-bar-icon" @click=${this.copyJoinGroupLinkToClipboard} style="margin: 0px 10px">link</mwc-icon>
                         `

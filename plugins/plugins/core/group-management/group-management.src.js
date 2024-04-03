@@ -1847,13 +1847,7 @@ class GroupManagement extends LitElement {
                 if(sideEffectAction && sideEffectAction.type === 'openJoinGroupModal'){
                    const res = await getGroupInfo(sideEffectAction.data)
                    if(res && res.groupId){
-                    if(res.isOpen){
-                        this.joinGroup(res)
-
-                    } else {
-                        let snackbarstring = get("managegroup.mg45")
-                        parentEpml.request('showSnackBar', `${snackbarstring}`)
-                    }
+                    this.joinGroup(res)
                    }
                    window.parent.reduxStore.dispatch(
                     window.parent.reduxAction.setSideEffectAction(null)
