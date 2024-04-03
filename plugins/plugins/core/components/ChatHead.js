@@ -166,7 +166,7 @@ class ChatHead extends LitElement {
 					   <div class="name"><span style="font-weight: bold;float:left; padding-left: 8px; color: var(--chat-group);font-size:14px;word-break:${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? 'break-word': 'break-all'}">${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)} </span> <mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon> </div>
 				   </div>
 				   <div class="about" style="margin-top:7px">
-					   <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:14px"></span>
+					   <div class="name"><span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:12px">${this.chatInfo.groupId !== undefined ? 'id: ' + this.chatInfo.groupId : ''}</span>
 						   <div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
 							   <div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
 							   <message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>
