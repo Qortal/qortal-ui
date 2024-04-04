@@ -2718,6 +2718,7 @@ class MultiWallet extends LitElement {
         this.changeTheme()
         this.changeLanguage()
         this.paymentFee()
+        this.getNodeConfig()
 
         this.bookQortalAddress = window.parent.reduxStore.getState().app.selectedAddress.address
         this.bookBitcoinAddress = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
@@ -2800,9 +2801,12 @@ class MultiWallet extends LitElement {
         }
 
         this.clearConsole()
+
         setInterval(() => {
             this.clearConsole()
+            this.getNodeConfig()
         }, 60000)
+
         setInterval(() => {
             this.paymentFee()
         }, 600000)
@@ -2830,7 +2834,6 @@ class MultiWallet extends LitElement {
         }
     }
 
-
     pingCoinBalancesController(){
         if(!this._selectedWallet) return
         const customEvent = new CustomEvent('ping-coin-controller-with-coin', {
@@ -2839,20 +2842,17 @@ class MultiWallet extends LitElement {
         window.parent.dispatchEvent(customEvent);
     }
 
-	connectedCallback() {
-		super.connectedCallback();
-        this.intervalID = setInterval(this.pingCoinBalancesController, 30000);
+    connectedCallback() {
+        super.connectedCallback()
+        this.intervalID = setInterval(this.pingCoinBalancesController, 30000)
+    }
 
-	}
-
-	disconnectedCallback() {
-
-		super.disconnectedCallback();
-        if(this.intervalID){
-            clearInterval(this.intervalID);
-
+    disconnectedCallback() {
+        super.disconnectedCallback()
+        if(this.intervalID) {
+            clearInterval(this.intervalID)
         }
-	}
+    }
 
     renderWalletLockButton() {
         if (this.myWalletLockScreenPass === false && this.myWalletLockScreenSet === false) {
@@ -4265,10 +4265,10 @@ class MultiWallet extends LitElement {
         }
 
         const getLastRef = async () => {
-			return await parentEpml.request('apiCall', {
-				type: 'api',
-				url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
-			})
+            return await parentEpml.request('apiCall', {
+                type: 'api',
+                url: `/addresses/lastreference/${this.getSelectedWalletAddress()}`,
+            })
         }
 
         const validateName = async (receiverName) => {
@@ -4342,21 +4342,22 @@ class MultiWallet extends LitElement {
             let dialogName = get("login.name")
             let dialogto = get("transactions.to")
             let recipientName = await getName(myReceiver)
-			return await parentEpml.request('transaction', {
-				type: 2,
-				nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
-				params: {
-					recipient: myReceiver,
-					recipientName: recipientName,
-					amount: amount,
-					lastReference: mylastRef,
-					fee: sendFee,
-					dialogamount: dialogamount,
-					dialogto: dialogto,
-					dialogAddress,
-					dialogName
-				},
-			})
+
+            return await parentEpml.request('transaction', {
+                type: 2,
+                nonce: this.wallets.get(this._selectedWallet).wallet.nonce,
+                params: {
+                    recipient: myReceiver,
+                    recipientName: recipientName,
+                    amount: amount,
+                    lastReference: mylastRef,
+                    fee: sendFee,
+                    dialogamount: dialogamount,
+                    dialogto: dialogto,
+                    dialogAddress,
+                    dialogName
+                },
+            })
         }
 
         const getTxnRequestResponse = (txnResponse) => {
@@ -4400,7 +4401,7 @@ class MultiWallet extends LitElement {
                 bitcoinAmount: btcAmount,
                 feePerByte: (this.btcFeePerByte / 1e8).toFixed(8),
             }
-			return await parentEpml.request('sendBtc', opts)
+            return await parentEpml.request('sendBtc', opts)
         }
 
         const manageResponse = (response) => {
@@ -4490,7 +4491,7 @@ class MultiWallet extends LitElement {
                 dogecoinAmount: dogeAmount,
                 feePerByte: (this.dogeFeePerByte / 1e8).toFixed(8),
             }
-			return await parentEpml.request('sendDoge', opts)
+            return await parentEpml.request('sendDoge', opts)
         }
 
         const manageResponse = (response) => {
@@ -4535,7 +4536,7 @@ class MultiWallet extends LitElement {
                 digibyteAmount: dgbAmount,
                 feePerByte: (this.dgbFeePerByte / 1e8).toFixed(8),
             }
-			return await parentEpml.request('sendDgb', opts)
+            return await parentEpml.request('sendDgb', opts)
         }
 
         const manageResponse = (response) => {
@@ -4626,7 +4627,7 @@ class MultiWallet extends LitElement {
                 arrrAmount: arrrAmount,
                 memo: arrrMemo
             }
-			return await parentEpml.request('sendArrr', opts)
+            return await parentEpml.request('sendArrr', opts)
         }
 
         const manageResponse = (response) => {
@@ -5010,7 +5011,6 @@ class MultiWallet extends LitElement {
 
     async fetchWalletServer(coin) {
         if (coin == 'qort') {
-            this.getNodeConfig()
             return
         }
         let walletServer = ''
@@ -5070,14 +5070,14 @@ class MultiWallet extends LitElement {
     }
 
     getNodeConfig() {
-        this.nodeConfig = {}
         this.nodeDomain = ""
+        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+        this.nodeDomain = myNode.domain + ":" + myNode.port
+
+        this.nodeConfig = {}
         parentEpml.request("getNodeConfig").then((res) => {
             this.nodeConfig = res
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            this.nodeDomain = myNode.domain + ":" + myNode.port
         })
-        setTimeout(getNodeConfig, 60000)
     }
 
     async getTransactionGrid(coin) {
@@ -5677,7 +5677,7 @@ class MultiWallet extends LitElement {
 
     getApiKey() {
         const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		return myNode.apiKey
+        return myNode.apiKey
     }
 
     transactionItem(transactionObject) {
@@ -5832,7 +5832,7 @@ class MultiWallet extends LitElement {
     }
 
     round(number) {
-		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+        return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
     }
 
     subtract(num1, num2) {
