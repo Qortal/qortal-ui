@@ -31,7 +31,7 @@
 		"lint": "eslint './**/*.{js,mjs}'"
 	},
 	"dependencies": {
-		"@hapi/hapi": "21.3.7",
+		"@hapi/hapi": "21.3.8",
 		"@hapi/inert": "7.1.0",
 		"@lit-labs/motion": "1.0.6",
 		"@popperjs/core": "2.11.8",
@@ -69,12 +69,12 @@
 		"prosemirror-state": "1.4.3",
 		"prosemirror-transform": "1.8.0",
 		"prosemirror-view": "1.33.3",
-		"sass": "1.72.0",
+		"sass": "1.74.1",
 		"short-unique-id": "5.0.3",
 		"xhr2": "0.2.1"
 	},
 	"devDependencies": {
-		"@babel/core": "7.24.3",
+		"@babel/core": "7.24.4",
 		"@electron/packager": "18.3.2",
 		"@material/mwc-button": "0.27.0",
 		"@material/mwc-checkbox": "0.27.0",
@@ -126,7 +126,7 @@
 		"@vaadin/tooltip": "24.2.9",
 		"@zip.js/zip.js": "2.7.41",
 		"axios": "1.6.8",
-		"electron": "27.3.8",
+		"electron": "27.3.9",
 		"electron-builder": "24.13.3",
 		"epml": "0.3.3",
 		"eslint": "8.57.0",
@@ -141,7 +141,7 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "5.0.1",
 		"redux-thunk": "3.1.0",
-		"rollup": "4.13.2",
+		"rollup": "4.14.0",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
