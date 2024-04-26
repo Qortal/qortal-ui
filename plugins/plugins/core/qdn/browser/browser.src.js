@@ -2071,7 +2071,7 @@ class WebBrowser extends LitElement {
 					break
 				}
 
-				case 'DEPLOY_AT': {
+				case actions.DEPLOY_AT: {
 					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type']
 					const missingFields = []
 
@@ -2106,7 +2106,7 @@ class WebBrowser extends LitElement {
 					break
 				}
 
-				case 'GET_PROFILE_DATA': {
+				case actions.GET_PROFILE_DATA: {
 					const defaultProperties = ['tagline', 'bio', 'wallets']
 					const requiredFields = ['property'];
 					const missingFields = [];
@@ -2182,7 +2182,7 @@ class WebBrowser extends LitElement {
 					}
 					break;
 				}
-				case 'SET_PROFILE_DATA': {
+				case actions.SET_PROFILE_DATA: {
 					const requiredFields = ['property', 'data'];
 					const missingFields = [];
 
@@ -2261,7 +2261,7 @@ class WebBrowser extends LitElement {
 					break;
 				}
 
-				case 'OPEN_PROFILE': {
+				case actions.OPEN_PROFILE: {
 					const requiredFields = ['name'];
 					const missingFields = [];
 
