@@ -35,7 +35,7 @@ export default class UpdateGroupTransaction extends TransactionBase {
     }
 
     set newDescription(newDescription) {
-        this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(newDescription.toLocaleLowerCase())
+        this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(newDescription)
         this._rGroupDescLength = this.constructor.utils.int32ToBytes(this._rGroupDescBytes.length)
     }
 

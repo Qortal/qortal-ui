@@ -49,13 +49,13 @@ export default class CreateGroupTransaction extends TransactionBase {
 
 	set rGroupName(rGroupName) {
 		this._rGroupName = rGroupName
-		this._rGroupNameBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupName.toLocaleLowerCase())
+		this._rGroupNameBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupName)
 		this._rGroupNameLength = this.constructor.utils.int32ToBytes(this._rGroupNameBytes.length)
 	}
 
 	set rGroupDesc(rGroupDesc) {
 		this._rGroupDesc = rGroupDesc
-		this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupDesc.toLocaleLowerCase())
+		this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupDesc)
 		this._rGroupDescLength = this.constructor.utils.int32ToBytes(this._rGroupDescBytes.length)
 	}
 

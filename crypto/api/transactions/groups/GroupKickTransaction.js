@@ -33,7 +33,7 @@ export default class GroupKickTransaction extends TransactionBase {
 
 	set rBanReason(rBanReason) {
 		this._rBanReason = rBanReason
-		this._rBanReasonBytes = this.constructor.utils.stringtoUTF8Array(this._rBanReason.toLocaleLowerCase())
+		this._rBanReasonBytes = this.constructor.utils.stringtoUTF8Array(this._rBanReason)
 		this._rBanReasonLength = this.constructor.utils.int32ToBytes(this._rBanReasonBytes.length)
 	}
 
