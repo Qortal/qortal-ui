@@ -1,6 +1,6 @@
-import Base58 from '../../../deps/Base58.js'
-import nacl from '../../../deps/nacl-fast.js'
-import utils from '../../../deps/utils.js'
+import Base58 from '../../../deps/Base58'
+import nacl from '../../../deps/nacl-fast'
+import utils from '../../../deps/utils'
 
 const signTradeBotTransaction = (unsignedTxn, keyPair) => {
 	if (!unsignedTxn) {

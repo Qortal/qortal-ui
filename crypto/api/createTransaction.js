@@ -5,7 +5,6 @@ import signChat from './transactions/chat/signChat.js'
 import signArbitrary from './transactions/arbitrary/signArbitrary.js'
 import signArbitraryWithFee from './transactions/arbitrary/signArbitraryWithFee.js'
 
-
 export const createTransaction = (type, keyPair, params) => {
 	const tx = new transactions[type]()
 	tx.keyPair = keyPair
@@ -35,8 +34,6 @@ export const signArbitraryTransaction = (arbitraryBytesBase58, arbitraryBytesFor
 export const signArbitraryWithFeeTransaction = (arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair) => {
 	return signArbitraryWithFee(arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair)
 }
-
-
 
 // Process Transactions
 export const processTransaction = bytes => request('/transactions/process', {

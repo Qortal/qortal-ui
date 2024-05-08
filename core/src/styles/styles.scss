@@ -5,7 +5,7 @@ $mdc-layout-grid-breakpoints: (
     phone: 0px
 );
 
-:root, html, body{
+:root, html, body {
     --layout-breakpoint-desktop: #{map-get($mdc-layout-grid-breakpoints, desktop)};
     --layout-breakpoint-laptop: #{map-get($mdc-layout-grid-breakpoints, laptop)};
     --layout-breakpoint-tablet: #{map-get($mdc-layout-grid-breakpoints, tablet)};

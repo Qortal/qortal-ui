@@ -4,9 +4,9 @@ import { TranslateDirective } from './translate.js'
 import { get } from '../util.js'
 
 export class TranslateUnsafeHTMLDirective extends TranslateDirective {
-    render(key, values, config) {
-        return this.renderValue(() => unsafeHTML(get(key, values, config)))
-    }
+	render(key, values, config) {
+		return this.renderValue(() => unsafeHTML(get(key, values, config)))
+	}
 }
 
 export const translateUnsafeHTML = directive(TranslateUnsafeHTMLDirective)

@@ -29,16 +29,6 @@ const uiCoreController = (type) => {
         default:
             return
     }
-
 }
 
 module.exports = uiCoreController
-
-/**
- * Performance update
- * Write a CSS ripple effect and replace all paper-ripple and mwc-ripple
- * Do something about the particles...
- */
-
-//  TODO: notifications settings, do not show notification in an active chat, Fix double message rendering, right custom menu in chat
-

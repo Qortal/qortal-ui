@@ -1,18 +1,20 @@
-import {css, html, LitElement} from 'lit'
-import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
-import {overviewStyle} from './overview-page-css.js'
-import {asyncReplace} from 'lit/directives/async-replace.js'
+import { html, LitElement } from 'lit'
+import { asyncReplace } from 'lit/directives/async-replace.js'
+import { Epml } from '../../../epml'
+import { overviewPageStyles, startMintingNowStyles, myButtonStyles } from '../components/plugins-css'
 import isElectron from 'is-electron'
-
 import "@material/mwc-button"
 import '@material/mwc-dialog'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/button'
 
+// Multi language support
+import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
 registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 async function* countDown(count, callback) {
 	while (count > 0) {
@@ -24,343 +26,348 @@ async function* countDown(count, callback) {
 	}
 }
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
-
 class OverviewPage extends LitElement {
-    static get properties() {
-        return {
-            theme: { type: String, reflect: true },
-            nodeConfig: { type: Object },
-            accountInfo: { type: Object },
-            nodeInfo: { type: Array },
-            coreInfo: { type: Array },
-            imageUrl: { type: String },
-            myBalance: { type: Number },
-            listAccounts: { type: Array },
-            check1: { type: Boolean },
-            check2: { type: Boolean }
-        }
-    }
+	static get properties() {
+		return {
+			theme: { type: String, reflect: true },
+			nodeConfig: { type: Object },
+			accountInfo: { type: Object },
+			nodeInfo: { type: Array },
+			coreInfo: { type: Array },
+			imageUrl: { type: String },
+			myBalance: { type: Number },
+			listAccounts: { type: Array },
+			check1: { type: Boolean },
+			check2: { type: Boolean }
+		}
+	}
 
-    static styles = [overviewStyle]
+	static get styles() {
+		return [overviewPageStyles]
+	}
 
-    constructor() {
-        super()
-        this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
-        this.nodeConfig = {}
-        this.accountInfo = {
-            names: [],
-            addressInfo: {}
-        }
-        this.nodeInfo = []
-        this.coreInfo = []
-        this.imageUrl = ''
-        this.myBalance = 0
-        this.listAccounts = []
-        this.check1 = false
-        this.check2 = false
-    }
+	constructor() {
+		super()
+		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
+		this.nodeConfig = {}
+		this.accountInfo = {
+			names: [],
+			addressInfo: {}
+		}
+		this.nodeInfo = []
+		this.coreInfo = []
+		this.imageUrl = ''
+		this.myBalance = 0
+		this.listAccounts = []
+		this.check1 = false
+		this.check2 = false
+	}
 
-    render() {
-        return html`
-            <div class="main-content">
-                <div class="container mt-7">
-                    <div class="row">
-                        <div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
-                            <div class="card card-profile shadow">
-                                <div class="row justify-content-center">
-                                    <div class="col-lg-3 order-lg-2">
-                                        <div class="card-profile-image">
-                                            ${this.getAvatar()}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="btn btn-sm btn-info mr-4">${translate("walletprofile.minterlevel")} ${this.accountInfo.addressInfo.level}</span>
-                                        ${this.renderMintingStatus()}
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0 pt-md-4">
-                                    <div class="text-center pt-0 mt-md-3">
-                                        <h2>${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : ''}</h2>
-                                        <div class="h3 font-weight-400">
-                                            ${this.accountInfo.addressInfo.address}
-                                        </div>
-                                        <div class="h3 font-weight-400">
-                                            ${translate("explorerpage.exp2")}: <span style="color: #03a9f4">${this.myBalance}</span> QORT
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="card-profile-stats d-flex justify-content-center">
-                                                <div>
-                                                    <span class="heading">${this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment}</span>
-                                                    <span class="description">${translate("walletprofile.blocksminted")}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="text-center">
-                                        <hr class="my-4" style="color: var(--black)">
-                                        <h2>${translate("walletprofile.wp3")}</h2>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="card-profile-stats d-flex justify-content-center">
-                                                    <div>
-                                                        <span class="heading">${this.coreInfo.buildVersion ? this.coreInfo.buildVersion : ''}</span>
-                                                        <span class="description">${translate("appinfo.coreversion")}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="heading">${this.nodeInfo.height ? this.nodeInfo.height : ''}</span>
-                                                        <span class="description">${translate("appinfo.blockheight")}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="heading">${this.nodeInfo.numberOfConnections ? this.nodeInfo.numberOfConnections : ''}</span>
-                                                        <span class="description">${translate("appinfo.peers")}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="heading"><span class="${this.cssStatus2}">${this.renderSyncStatus()}</span></span>
-                                                        <span class="description">${translate("walletprofile.wp5")}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="h5 float-right opacity06">
-                                        ${translate("appinfo.uiversion")}: <span style="color: #03a9f4">${this.nodeConfig.version ? this.nodeConfig.version : ''}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `
-    }
+	render() {
+		return html`
+			<div class="main-content">
+				<div class="container mt-7">
+					<div class="row">
+						<div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
+							<div class="card card-profile shadow">
+								<div class="row justify-content-center">
+									<div class="col-lg-3 order-lg-2">
+										<div class="card-profile-image">
+											${this.getAvatar()}
+										</div>
+									</div>
+								</div>
+								<div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+									<div class="d-flex justify-content-between">
+										<span class="btn btn-sm btn-info mr-4">${translate("walletprofile.minterlevel")} ${this.accountInfo.addressInfo.level}</span>
+										${this.renderMintingStatus()}
+									</div>
+								</div>
+								<div class="card-body pt-0 pt-md-4">
+									<div class="text-center pt-0 mt-md-3">
+										<h2>${this.accountInfo.names.length !== 0 ? this.accountInfo.names[0].name : ''}</h2>
+										<div class="h3 font-weight-400">
+											${this.accountInfo.addressInfo.address}
+										</div>
+										<div class="h3 font-weight-400">
+											${translate("explorerpage.exp2")}: <span style="color: #03a9f4">${this.myBalance}</span> QORT
+										</div>
+									</div>
+									<div class="row">
+										<div class="col">
+											<div class="card-profile-stats d-flex justify-content-center">
+												<div>
+													<span class="heading">${this.accountInfo.addressInfo.blocksMinted + this.accountInfo.addressInfo.blocksMintedAdjustment}</span>
+													<span class="description">${translate("walletprofile.blocksminted")}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="text-center">
+										<hr class="my-4" style="color: var(--black)">
+										<h2>${translate("walletprofile.wp3")}</h2>
+										<div class="row">
+											<div class="col">
+												<div class="card-profile-stats d-flex justify-content-center">
+													<div>
+														<span class="heading">${this.coreInfo.buildVersion ? this.coreInfo.buildVersion : ''}</span>
+														<span class="description">${translate("appinfo.coreversion")}</span>
+													</div>
+													<div>
+														<span class="heading">${this.nodeInfo.height ? this.nodeInfo.height : ''}</span>
+														<span class="description">${translate("appinfo.blockheight")}</span>
+													</div>
+													<div>
+														<span class="heading">${this.nodeInfo.numberOfConnections ? this.nodeInfo.numberOfConnections : ''}</span>
+														<span class="description">${translate("appinfo.peers")}</span>
+													</div>
+													<div>
+														<span class="heading"><span class="${this.cssStatus2}">${this.renderSyncStatus()}</span></span>
+														<span class="description">${translate("walletprofile.wp5")}</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="h5 float-right opacity06">
+										${translate("appinfo.uiversion")}: <span style="color: #03a9f4">${this.nodeConfig.version ? this.nodeConfig.version : ''}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		`
+	}
 
-    async firstUpdated() {
-        this.changeTheme()
-        this.changeLanguage()
+	async firstUpdated() {
+		this.changeTheme()
+		this.changeLanguage()
 
-        this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
-        this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
+		this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
+		this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
 
-        await this.getNodeInfo()
-        await this.getCoreInfo()
-        await this.getBalanceInfo()
-        await this.getMintingKeysList()
+		await this.getNodeInfo()
+		await this.getCoreInfo()
+		await this.getBalanceInfo()
+		await this.getMintingKeysList()
 
-        window.addEventListener('storage', () => {
-            const checkLanguage = localStorage.getItem('qortalLanguage')
-            const checkTheme = localStorage.getItem('qortalTheme')
+		window.addEventListener('storage', () => {
+			const checkLanguage = localStorage.getItem('qortalLanguage')
+			const checkTheme = localStorage.getItem('qortalTheme')
 
-            use(checkLanguage)
+			use(checkLanguage)
 
-            if (checkTheme === 'dark') {
-                this.theme = 'dark'
-            } else {
-                this.theme = 'light'
-            }
-            document.querySelector('html').setAttribute('theme', this.theme)
-        })
+			if (checkTheme === 'dark') {
+				this.theme = 'dark'
+			} else {
+				this.theme = 'light'
+			}
+			document.querySelector('html').setAttribute('theme', this.theme)
+		})
 
-        if (!isElectron()) {
-        } else {
-            window.addEventListener('contextmenu', (event) => {
-                event.preventDefault()
-                window.parent.electronAPI.showMyMenu()
-            })
-        }
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
 
-        setInterval(() => {
-            this.refreshItems()
-        }, 60000)
+		setInterval(() => {
+			this.refreshItems()
+		}, 60000)
 
-        setInterval(() => {
-            this.getAvatar()
-        }, 180000)
+		setInterval(() => {
+			this.getAvatar()
+		}, 180000)
 
-        this.clearConsole()
-        setInterval(() => {
-            this.clearConsole()
-        }, 60000)
-    }
+		this.clearConsole()
+		setInterval(() => {
+			this.clearConsole()
+		}, 60000)
+	}
 
-    clearConsole() {
-        if (!isElectron()) {
-        } else {
-            console.clear()
-            window.parent.electronAPI.clearCache()
-        }
-    }
+	clearConsole() {
+		if (!isElectron()) {
+		} else {
+			console.clear()
+			window.parent.electronAPI.clearCache()
+		}
+	}
 
-    changeTheme() {
-        const checkTheme = localStorage.getItem('qortalTheme')
-        if (checkTheme === 'dark') {
-            this.theme = 'dark'
-        } else {
-            this.theme = 'light'
-        }
-        document.querySelector('html').setAttribute('theme', this.theme)
-    }
+	changeTheme() {
+		const checkTheme = localStorage.getItem('qortalTheme')
+		if (checkTheme === 'dark') {
+			this.theme = 'dark'
+		} else {
+			this.theme = 'light'
+		}
+		document.querySelector('html').setAttribute('theme', this.theme)
+	}
 
-    changeLanguage() {
-        const checkLanguage = localStorage.getItem('qortalLanguage')
+	changeLanguage() {
+		const checkLanguage = localStorage.getItem('qortalLanguage')
 
-        if (checkLanguage === null || checkLanguage.length === 0) {
-            localStorage.setItem('qortalLanguage', 'us')
-            use('us')
-        } else {
-            use(checkLanguage)
-        }
-    }
+		if (checkLanguage === null || checkLanguage.length === 0) {
+			localStorage.setItem('qortalLanguage', 'us')
+			use('us')
+		} else {
+			use(checkLanguage)
+		}
+	}
 
-    renderMyErrorMsg1() {
-        return html`${translate("startminting.smchange1")}`
-    }
+	renderMyErrorMsg1() {
+		return html`${translate("startminting.smchange1")}`
+	}
 
-    async refreshItems() {
-        this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
-        this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
-        await this.getNodeInfo()
-        await this.getCoreInfo()
-        await this.getBalanceInfo()
-        await this.getMintingKeysList()
-    }
+	async refreshItems() {
+		this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
+		this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
+		await this.getNodeInfo()
+		await this.getCoreInfo()
+		await this.getBalanceInfo()
+		await this.getMintingKeysList()
+	}
 
-    async getMintingKeysList() {
-        this.check1 = false
-        this.check2 = false
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const nodeStatus = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-        const statusUrl = `${nodeStatus}/admin/mintingaccounts`
+	async getMintingKeysList() {
+		this.check1 = false
+		this.check2 = false
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeStatus = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const statusUrl = `${nodeStatus}/admin/mintingaccounts`
 
-        try {
-            const res = await fetch(statusUrl)
+		try {
+			const res = await fetch(statusUrl)
 			this.listAccounts = await res.json()
 
-            const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
-            const address = window.parent.reduxStore.getState().app.selectedAddress.address
-            const findMyMintingAccount = this.listAccounts.find((myKey) => myKey.mintingAccount === address)
-            const findMyMintingRecipient = this.listAccounts.find((myKey) => myKey.recipientAccount === address)
-            const findRemovedSponsorsKey = this.listAccounts.filter((my) => my.address)
+			const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
+			const address = window.parent.reduxStore.getState().app.selectedAddress.address
+			const findMyMintingAccount = this.listAccounts.find((myKey) => myKey.mintingAccount === address)
+			const findMyMintingRecipient = this.listAccounts.find((myKey) => myKey.recipientAccount === address)
+			const findRemovedSponsorsKey = this.listAccounts.filter((my) => my.address)
 
-            this.check1 = findMyMintingAccount !== undefined;
+			this.check1 = findMyMintingAccount !== undefined
 
-            this.check2 = findMyMintingRecipient !== undefined;
+			this.check2 = findMyMintingRecipient !== undefined
 
-            if (findRemovedSponsorsKey.length > 0) {
-                this.removeBlankKey(findRemovedSponsorsKey.publicKey)
-            } else {
-            }
-        } catch (error) {
-            this.errorMsg = this.renderMyErrorMsg1()
-        }
-    }
+			if (findRemovedSponsorsKey.length > 0) {
+				this.removeBlankKey(findRemovedSponsorsKey.publicKey)
+			} else {
+			}
+		} catch (error) {
+			this.errorMsg = this.renderMyErrorMsg1()
+		}
+	}
 
-    removeBlankKey(myPublicKey) {
-        parentEpml.request("apiCall", {
-            url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
-            method: "DELETE",
-            body: myPublicKey,
-        }).then((res) => {
-            if (res === true) {
-                console.log('REMOVED BLANK KEY')
-            } else {
-            }
-        })
-    }
+	removeBlankKey(myPublicKey) {
+		parentEpml.request("apiCall", {
+			url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
+			method: "DELETE",
+			body: myPublicKey,
+		}).then((res) => {
+			if (res === true) {
+				console.log('REMOVED BLANK KEY')
+			} else {
+			}
+		})
+	}
 
-    renderMintingStatus() {
-        const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
-        const myMintingKey = addressInfo?.error !== 124 && +addressInfo?.level > 0
+	renderMintingStatus() {
+		const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
+		const myMintingKey = addressInfo?.error !== 124 && +addressInfo?.level > 0
 
-        if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === true && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
-            this.cssStatus = ''
-            return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
-        } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
-            this.cssStatus = ''
-            return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
-        } else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === false && this.check2 === true && addressInfo.level == 0 && addressInfo.blocksMinted < 7200) {
-            this.cssStatus = ''
-            return html`<span class="btn btn-sm btn-info float-right">${translate("becomeMinterPage.bchange12")}</span>`
-        } else if (this.check1 === false && this.check2 === false && myMintingKey === true) {
-            return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
-        } else if (myMintingKey === false) {
-            return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
-        }
-    }
+		if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === true && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
+			this.cssStatus = ''
+			return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
+		} else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === true && this.check2 === true && addressInfo.level > 0) {
+			this.cssStatus = ''
+			return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
+		} else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === false && this.check2 === true && addressInfo.level == 0 && addressInfo.blocksMinted < 7200) {
+			this.cssStatus = ''
+			return html`<span class="btn btn-sm btn-info float-right">${translate("becomeMinterPage.bchange12")}</span>`
+		} else if (this.check1 === false && this.check2 === false && myMintingKey === true) {
+			return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
+		} else if (myMintingKey === false) {
+			return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
+		}
+	}
 
-    renderSyncStatus() {
-        if (this.nodeInfo.isSynchronizing === true) {
-            this.cssStatus2 = 'red'
-            return html`${translate("appinfo.synchronizing")}... ${this.nodeInfo.syncPercent !== undefined ? this.nodeInfo.syncPercent + '%' : ''}`
-        } else if (this.nodeInfo.isSynchronizing === false) {
-            this.cssStatus2 = ''
-            return html`${translate("walletprofile.wp4")}`
-        }
-    }
+	renderSyncStatus() {
+		if (this.nodeInfo.isSynchronizing === true) {
+			this.cssStatus2 = 'red'
+			return html`${translate("appinfo.synchronizing")}... ${this.nodeInfo.syncPercent !== undefined ? this.nodeInfo.syncPercent + '%' : ''}`
+		} else if (this.nodeInfo.isSynchronizing === false) {
+			this.cssStatus2 = ''
+			return html`${translate("walletprofile.wp4")}`
+		}
+	}
 
-    getAvatar() {
-        if (this.accountInfo.names.length === 0) {
-            return html`<img class="rounded-circle" src="/img/incognito.png">`
-        } else {
-            const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-            const avatarUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true}`
-            return html`<img class="rounded-circle" src="${url}" onerror="this.src='/img/incognito.png';" />`
-        }
-    }
+	getAvatar() {
+		if (this.accountInfo.names.length === 0) {
+			return html`<img class="rounded-circle" src="/img/incognito.png">`
+		} else {
+			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+			const avatarUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+			const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.accountInfo.names[0].name}/qortal_avatar?async=true}`
+			return html`<img class="rounded-circle" src="${url}" onerror="this.src='/img/incognito.png';" />`
+		}
+	}
 
-    async getNodeInfo() {
-        const infoNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const infoNodeUrl = infoNode.protocol + '://' + infoNode.domain + ':' + infoNode.port
-        const nodeUrl = `${infoNodeUrl}/admin/status`
-        await fetch(nodeUrl).then(response => {
-            return response.json()
-        })
-        .then(data => {
-            this.nodeInfo = data
-        })
-        .catch(err => {
-            console.error('Request failed', err)
-        })
-    }
+	async getNodeInfo() {
+		const infoNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const infoNodeUrl = infoNode.protocol + '://' + infoNode.domain + ':' + infoNode.port
+		const nodeUrl = `${infoNodeUrl}/admin/status`
+		await fetch(nodeUrl).then(response => {
+			return response.json()
+		}).then(data => {
+			this.nodeInfo = data
+		}).catch(err => {
+			console.error('Request failed', err)
+		})
+	}
 
-    async getCoreInfo() {
-        const infoCore = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const infoCoreUrl = infoCore.protocol + '://' + infoCore.domain + ':' + infoCore.port
-        const coreUrl = `${infoCoreUrl}/admin/info`
-        await fetch(coreUrl).then(response => {
-            return response.json()
-        })
-        .then(data => {
-            this.coreInfo = data
-        })
-        .catch(err => {
-        })
-    }
+	async getCoreInfo() {
+		const infoCore = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const infoCoreUrl = infoCore.protocol + '://' + infoCore.domain + ':' + infoCore.port
+		const coreUrl = `${infoCoreUrl}/admin/info`
+		await fetch(coreUrl).then(response => {
+			return response.json()
+		}).then(data => {
+			this.coreInfo = data
+		}).catch(err => {
+		})
+	}
 
-    async getBalanceInfo() {
-        const infoBalance = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-        const infoBalanceUrl = infoBalance.protocol + '://' + infoBalance.domain + ':' + infoBalance.port
-        const balanceUrl = `${infoBalanceUrl}/addresses/balance/${this.accountInfo.addressInfo.address}`
-        await fetch(balanceUrl).then(response => {
-            return response.json()
-        })
-        .then(data => {
-            this.myBalance = data
-        })
-        .catch(err => {
-        })
-    }
+	async getBalanceInfo() {
+		const infoBalance = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const infoBalanceUrl = infoBalance.protocol + '://' + infoBalance.domain + ':' + infoBalance.port
+		const balanceUrl = `${infoBalanceUrl}/addresses/balance/${this.accountInfo.addressInfo.address}`
+		await fetch(balanceUrl).then(response => {
+			return response.json()
+		}).then(data => {
+			this.myBalance = data
+		}).catch(err => {
+		})
+	}
 
-    getApiKey() {
-        const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		return myNode.apiKey
-    }
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+	}
 }
+
 window.customElements.define('overview-page', OverviewPage)
 
 class StartMintingNow extends LitElement {
@@ -376,137 +383,7 @@ class StartMintingNow extends LitElement {
 	}
 
 	static get styles() {
-		return [css`
-			p, h1 {
-				color: var(--black)
-			}
-			.dialogCustom {
-				position: fixed;
-    				z-index: 10000;
-    				display: flex;
-    				justify-content: center;
-    				flex-direction: column;
-    				align-items: center;
-    				top: 0px;
-    				bottom: 0px;
-    				left: 0px;
-    				width: 100vw;
-			}
-			.dialogCustomInner {
-				width: 300px;
-				min-height: 400px;
-				background-color: var(--white);
-				box-shadow: var(--mdc-dialog-box-shadow, 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12));
-				padding: 20px 24px;
-				border-radius: 4px;
-			}
-			.dialogCustomInner ul {
-				padding-left: 0px
-			}
-			.dialogCustomInner li {
-				margin-bottom: 10px;
-			}
-			.start-minting-wrapper {
-				z-index: 10;
-			}
-			.dialog-header h1 {
-				font-size: 18px;
-			}
-			.row {
-				display: flex;
-				width: 100%;
-				align-items: center;
-			}
-			.modalFooter {
-				width: 100%;
-				display: flex;
-				justify-content: flex-end;
-			}
-			.hide {
-				visibility: hidden
-			}
-			.inactiveText {
-				opacity: .60
-			}
-			.column {
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-			}
-			.smallLoading,
-			.smallLoading:after {
-				border-radius: 50%;
-				width: 2px;
-				height: 2px;
-			}
-			.smallLoading {
-				border-width: 0.6em;
-				border-style: solid;
-				border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-				rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
-				font-size: 10px;
-				position: relative;
-				text-indent: -9999em;
-				transform: translateZ(0px);
-				animation: 1.1s linear 0s infinite normal none running loadingAnimation;
-			}
-			@-webkit-keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-			@keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-			.word-break {
-				word-break:break-all;
-			}
-			.dialog-container {
-				width: 300px;
-				min-height: 300px;
-				max-height: 75vh;
-				padding: 5px;
-				display: flex;
-				align-items: flex-start;
-				flex-direction: column;
-			}
-			.between {
-				justify-content: space-between;
-			}
-			.no-width {
-				width: auto
-			}
-			.between p {
-				margin: 0;
-				padding: 0;
-				color: var(--black);
-			}
-			.marginLoader {
-				margin-left: 10px;
-			}
-			.marginRight {
-				margin-right: 10px;
-			}
-			.warning{
-				display: flex;
-				flex-grow: 1
-			}
-			.message-error {
-				color: var(--error);
-			}
-		`]
+		return [startMintingNowStyles]
 	}
 
 	constructor() {
@@ -515,7 +392,7 @@ class StartMintingNow extends LitElement {
 		this.errorMsg = ''
 		this.openDialogRewardShare = false
 		this.status = 0
-		this.privateRewardShareKey = ""
+		this.privateRewardShareKey = ''
 	}
 
 	render() {
@@ -527,19 +404,19 @@ class StartMintingNow extends LitElement {
 	}
 
 	renderErrorMsg1() {
-		return html`${translate("startminting.smchange1")}`
+		return html`${translate('startminting.smchange1')}`
 	}
 
 	renderErrorMsg2() {
-		return html`${translate("startminting.smchange2")}`
+		return html`${translate('startminting.smchange2')}`
 	}
 
 	renderErrorMsg3() {
-		return html`${translate("startminting.smchange3")}`
+		return html`${translate('startminting.smchange3')}`
 	}
 
 	renderErrorMsg4() {
-		return html`${translate("startminting.smchange4")}`
+		return html`${translate('startminting.smchange4')}`
 	}
 
 	async getMintingAcccounts() {
@@ -579,10 +456,7 @@ class StartMintingNow extends LitElement {
 		}
 
 		try {
-			if (
-				findMintingAccountFromOtherUser &&
-				findMintingAccountFromOtherUser?.publicKey[0]
-			) {
+			if (findMintingAccountFromOtherUser && findMintingAccountFromOtherUser?.publicKey[0]) {
 				await removeMintingAccount(
 					findMintingAccountFromOtherUser?.publicKey[0]
 				)
@@ -708,8 +582,8 @@ class StartMintingNow extends LitElement {
 
 			const findMintingAccountsFromUser = this.mintingAccountData.filter((ma) => ma.recipientAccount === address && ma.mintingAccount === address)
 
-			if(findMintingAccountsFromUser.length > 2) {
-				this.errorMsg = translate("startminting.smchange10")
+			if (findMintingAccountsFromUser.length > 2) {
+				this.errorMsg = translate('startminting.smchange10')
 				return
 			}
 
@@ -725,7 +599,8 @@ class StartMintingNow extends LitElement {
 		return html`
 			${isMinterButKeyMintingKeyNotAssigned ? html`
 				<div class="start-minting-wrapper">
-					<my-button label="${translate('becomeMinterPage.bchange18')}"
+					<my-button
+						label="${translate('becomeMinterPage.bchange18')}"
 						?isLoading=${false}
 						.onClick=${async () => {
 							await startMinting()
@@ -736,9 +611,7 @@ class StartMintingNow extends LitElement {
 					>
 					</my-button>
 				</div>
-
 				<!-- Dialog for tracking the progress of starting minting -->
-
 				${this.openDialogRewardShare ? html`
 					<div class="dialogCustom">
 						<div class="dialogCustomInner">
@@ -806,7 +679,7 @@ class StartMintingNow extends LitElement {
 								>
 									${translate("general.close")}
 								</mwc-button>
-							` : '' }
+							` : ''}
 						</div>
 					</div>
 				` : ""}
@@ -819,7 +692,27 @@ class StartMintingNow extends LitElement {
 			`}
 		`
 	}
+
+	firstUpdated() {
+		// ...
+	}
+
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+	}
 }
+
 window.customElements.define('start-minting-now', StartMintingNow)
 
 class MyButton extends LitElement {
@@ -829,42 +722,43 @@ class MyButton extends LitElement {
 		label: { type: String }
 	}
 
-	static styles = css`
-		vaadin-button {
-			font-size: 1rem;
-			font-weight: 600;
-			height: 35px;
-			margin: 0;
-			cursor: pointer;
-			min-width: 80px;
-			min-height: 35px;
-			background-color: #03a9f4;
-			color: white;
-		}
-
-		vaadin-button:hover {
-			opacity: 0.9;
-		}
-	`
+	static get styles() {
+		return [myButtonStyles]
+	}
 
 	constructor() {
 		super()
-		this.onClick = () => {}
+		this.onClick = () => { }
 		this.isLoading = false
 		this.label = ''
 	}
 
 	render() {
 		return html`
-			<vaadin-button
-				?disabled="${this.isLoading}"
-				@click="${this.onClick}"
-			>
-				${this.isLoading === false
-					? html`${this.label}`
-					: html`<paper-spinner-lite active></paper-spinner-lite>`}
+			<vaadin-button ?disabled="${this.isLoading}" @click="${this.onClick}">
+				${this.isLoading === false ? html`${this.label}` : html`<paper-spinner-lite active></paper-spinner-lite>`}
 			</vaadin-button>
 		`
 	}
+
+	firstUpdated() {
+		// ...
+	}
+
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+	}
 }
-customElements.define('my-button', MyButton)
+
+window.customElements.define('my-button', MyButton)

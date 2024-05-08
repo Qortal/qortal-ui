@@ -1,5 +1,4 @@
-'use strict'
-import TransactionBase from './TransactionBase.js'
+import TransactionBase from './TransactionBase'
 
 export default class DelegationTransaction extends TransactionBase {
 	constructor() {

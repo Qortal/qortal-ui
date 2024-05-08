@@ -26,6 +26,7 @@
 			data = appendBuffer(data, lastReference)
 			data = appendBuffer(data, publicKey)
 			data = appendBuffer(data, paymentsLengthBytes)
+
 			// Here it is necessary to insert the payments, if there are
 			data = appendBuffer(data, serviceBytes)
 			data = appendBuffer(data, dataSizeBytes)

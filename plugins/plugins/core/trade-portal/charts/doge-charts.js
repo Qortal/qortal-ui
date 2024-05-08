@@ -1,7 +1,6 @@
-import {css, html, LitElement} from 'lit'
-import {Epml} from '../../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
-import '@polymer/paper-dialog/paper-dialog.js'
+import { html, LitElement } from 'lit'
+import { Epml } from '../../../../epml'
+import { highChartStyles } from '../../components/plugins-css'
 import * as Highcharts from 'highcharts'
 import Exporting from 'highcharts/modules/exporting'
 import StockChart from 'highcharts/modules/stock'
@@ -11,17 +10,20 @@ import 'highcharts/modules/boost.js'
 import 'highcharts/modules/data.js'
 import 'highcharts/modules/export-data.js'
 import 'highcharts/modules/offline-exporting.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 
+// Multi language support
+import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate'
 registerTranslateConfig({
-	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 Exporting(Highcharts)
 StockChart(Highcharts)
 
 let dogeChartDialog
-
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class DogeCharts extends LitElement {
 	static get properties() {
@@ -33,43 +35,7 @@ class DogeCharts extends LitElement {
 	}
 
 	static get styles() {
-		return css`
-			.loadingContainer {
-				height: 100%;
-				width: 100%;
-			}
-
-			.trades-chart {
-				color: var(--black);
-				background: var(--white);
-				border: 1px solid var(--black);
-				border-radius: 25px;
-				padding: 15px;
-			}
-
-			.chart-container {
-				margin: auto;
-				color: var(--black);
-				text-align: center;
-				padding: 15px;
-				height: 30vh;
-				width: 80vw;
-			}
-
-			.chart-info-wrapper {
-				background: transparent;
-				height: 38vh;
-				width: 83vw;
-				overflow: auto;
-			}
-
-			.chart-loading-wrapper {
-				color: var(--black);
-				background: var(--white);
-				border: 1px solid var(--black);
-				border-radius: 15px;
-			}
-		`
+		return [highChartStyles]
 	}
 
 	constructor() {
@@ -199,6 +165,17 @@ class DogeCharts extends LitElement {
 		}
 	}
 
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
 	round(number) {
 		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
@@ -208,5 +185,4 @@ window.customElements.define('doge-charts', DogeCharts)
 
 const chartsdoge = document.createElement('doge-charts')
 dogeChartDialog = document.body.appendChild(chartsdoge)
-
 export default dogeChartDialog

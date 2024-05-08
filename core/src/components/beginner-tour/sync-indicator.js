@@ -1,10 +1,12 @@
-import {css, html, LitElement} from 'lit'
-import {store} from '../../store'
-import {connect} from 'pwa-helpers'
-import {translate} from '../../../translate'
-import {parentEpml} from '../show-plugin'
-
+import { html, LitElement } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../../store'
+import { parentEpml } from '../show-plugin'
+import { syncIndicator2Styles } from '../../styles/core-css'
 import '@material/mwc-icon'
+
+// Multi language support
+import {translate} from '../../../translate'
 
 class SyncIndicator extends connect(store)(LitElement) {
 	static get properties() {
@@ -16,6 +18,10 @@ class SyncIndicator extends connect(store)(LitElement) {
 			isSynchronizing: { type: Boolean },
 			hasCoreRunning: { type: Boolean }
 		}
+	}
+
+	static get styles() {
+		return [syncIndicator2Styles]
 	}
 
 	constructor() {
@@ -30,64 +36,6 @@ class SyncIndicator extends connect(store)(LitElement) {
 		this.seenWelcomeSync = false
 		this.numberOfTries = 0
 		this.hasOpened = false
-	}
-
-	static get styles() {
-		return css`
-			* {
-				--mdc-theme-text-primary-on-background: var(--black);
-				box-sizing: border-box;
-			}
-
-			:host {
-				box-sizing: border-box;
-				position: fixed;
-				bottom: 50px;
-				right: 25px;
-				z-index: 50000;
-			}
-
-			.parent {
-				width: 360px;
-				padding: 10px;
-				border-radius: 8px;
-				border: 1px solid var(--black);
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				user-select: none;
-				background: var(--white);
-			}
-
-			.row {
-				display: flex;
-				gap: 10px;
-				width: 100%;
-			}
-
-			.column {
-				display: flex;
-				flex-direction: column;
-				gap: 10px;
-				width: 100%;
-			}
-
-			.bootstrap-button {
-				font-family: Roboto, sans-serif;
-				font-size: 16px;
-				color: var(--mdc-theme-primary);
-				background-color: transparent;
-				padding: 8px 10px;
-				border-radius: 5px;
-				border: none;
-				transition: all 0.3s ease-in-out;
-			}
-
-			.bootstrap-button:hover {
-				cursor: pointer;
-				background-color: #03a8f475;
-			}
-		`
 	}
 
 	render() {
@@ -225,7 +173,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 			this.dispatchEvent(
 				new CustomEvent('open-welcome-modal-sync', {
 					bubbles: true,
-					composed: true,
+					composed: true
 				})
 			)
 		}
@@ -257,4 +205,4 @@ class SyncIndicator extends connect(store)(LitElement) {
 	}
 }
 
-customElements.define('sync-indicator', SyncIndicator)
+window.customElements.define('sync-indicator', SyncIndicator)

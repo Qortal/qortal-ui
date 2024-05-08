@@ -1,115 +1,108 @@
-import {css, html, LitElement} from 'lit'
-
+import { html, LitElement } from 'lit'
+import { fragFileInputStyles } from './plugins-css'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 
-import {translate} from '../../../../core/translate'
+// Multi language support
+import { translate } from '../../../../core/translate'
 
 class FragFileInput extends LitElement {
-    static get properties () {
-        return {
-            accept: { type: String },
-            readAs: { type: String }
-        }
-    }
+	static get properties() {
+		return {
+			accept: { type: String },
+			readAs: { type: String }
+		}
+	}
 
-    static get styles () {
-        return css`
-            #drop-area {
-                border: 2px dashed #ccc;
-                font-family: "Roboto", sans-serif;
-                padding: 20px;
-            }
+	static get styles() {
+		return [fragFileInputStyles]
+	}
 
-            #trigger:hover {
-                cursor: pointer;
-            }
+	constructor() {
+		super()
+		this.readAs = this.readAs || 'Text'
+	}
 
-            #drop-area.highlight {
-                border-color: var(--mdc-theme-primary, #000);
-            }
+	render() {
+		return html`
+			<div id="drop-area">
+				<slot name="info-text"></slot>
+				<div style="line-height: 40px; text-align: center;">
+					<slot id="trigger" name="inputTrigger" @click=${() => this.shadowRoot.getElementById('fileInput').click()} style="dispay:inline;">
+						<mwc-button><mwc-icon>cloud_upload</mwc-icon><span style="color: var(--black);">&nbsp; ${translate("fragfile.selectfile")}</span></mwc-button>
+					</slot>
+					<br>
+					<span style="text-align: center; padding-top: 4px; color: var(--black);">${translate("fragfile.dragfile")}</span>
+				</div>
+			</div>
+			<input type="file" id="fileInput" accept="${this.accept}" @change="${e => this.readFile(e.target.files[0])}">
+		`
+	}
 
-            p {
-                margin-top: 0;
-            }
+	firstUpdated() {
+		this._dropArea = this.shadowRoot.getElementById('drop-area')
 
-            form {
-                margin-bottom: 10px;
-            }
+		const preventDefaults = e => {
+			e.preventDefault()
+			e.stopPropagation()
+		}
 
-            #fileInput {
-                display: none;
-            }
-        `
-    }
+		;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+			this._dropArea.addEventListener(eventName, preventDefaults, false)
+		})
 
-    constructor () {
-        super()
-        this.readAs = this.readAs || 'Text'
-    }
+		const highlight = e => {
+			this._dropArea.classList.add('highlight')
+		}
 
-    render () {
-        return html`
-            <div id="drop-area">
-                <slot name="info-text"></slot>
-                <div style="line-height: 40px; text-align: center;">
-                    <slot id="trigger" name="inputTrigger" @click=${() => this.shadowRoot.getElementById('fileInput').click()} style="dispay:inline;">
-                        <mwc-button><mwc-icon>cloud_upload</mwc-icon><span style="color: var(--black);">&nbsp; ${translate("fragfile.selectfile")}</span></mwc-button>
-                    </slot><br>
-                    <span style="text-align: center; padding-top: 4px; color: var(--black);">${translate("fragfile.dragfile")}</span>
-                </div>
-            </div>
-            <input type="file" id="fileInput" accept="${this.accept}" @change="${e => this.readFile(e.target.files[0])}">
-        `
-    }
+		const unhighlight = e => {
+			this._dropArea.classList.remove('highlight')
+		}
 
-    readFile (file) {
-        const fr = new FileReader()
-        fr.onload = () => {
-            this.dispatchEvent(new CustomEvent('file-read-success', {
-                detail: { result: fr.result },
-                bubbles: true,
-                composed: true
-            }))
-        }
-        fr['readAs' + this.readAs](file)
-    }
+		;['dragenter', 'dragover'].forEach(eventName => {
+			this._dropArea.addEventListener(eventName, highlight, false)
+		})
 
-    firstUpdated () {
-        this._dropArea = this.shadowRoot.getElementById('drop-area')
+		;['dragleave', 'drop'].forEach(eventName => {
+			this._dropArea.addEventListener(eventName, unhighlight, false)
+		})
 
-        const preventDefaults = e => {
-            e.preventDefault()
-            e.stopPropagation()
-        }
+		this._dropArea.addEventListener('drop', e => {
+			const dt = e.dataTransfer
+			const file = dt.files[0]
 
-            ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            this._dropArea.addEventListener(eventName, preventDefaults, false)
-        })
+			this.readFile(file)
+		}, false)
+	}
 
-        const highlight = e => {
-            this._dropArea.classList.add('highlight')
-        }
+	readFile(file) {
+		const fr = new FileReader()
 
-        const unhighlight = e => {
-            this._dropArea.classList.remove('highlight')
-        }
+		fr.onload = () => {
+			this.dispatchEvent(new CustomEvent('file-read-success', {
+				detail: { result: fr.result },
+				bubbles: true,
+				composed: true
+			}))
+		}
 
-            ;['dragenter', 'dragover'].forEach(eventName => {
-            this._dropArea.addEventListener(eventName, highlight, false)
-        })
+		fr['readAs' + this.readAs](file)
+	}
 
-        ;['dragleave', 'drop'].forEach(eventName => {
-            this._dropArea.addEventListener(eventName, unhighlight, false)
-        })
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
 
-        this._dropArea.addEventListener('drop', e => {
-            const dt = e.dataTransfer
-            const file = dt.files[0]
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
 
-            this.readFile(file)
-        }, false)
-    }
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+	}
 }
 
 window.customElements.define('frag-file-input', FragFileInput)

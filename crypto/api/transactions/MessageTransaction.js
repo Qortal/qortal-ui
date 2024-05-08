@@ -1,13 +1,12 @@
-'use strict'
-import PaymentTransaction from './PaymentTransaction.js'
+import PaymentTransaction from './PaymentTransaction'
 
 export default class MessageTransaction extends PaymentTransaction {
 	constructor() {
 		super()
 		this.type = 17
-		this._key = this.constructor.utils.int64ToBytes(0);
-		this._isEncrypted = new Uint8Array(1); // Defaults to false
-		this._isText = new Uint8Array(1); // Defaults to false
+		this._key = this.constructor.utils.int64ToBytes(0)
+		this._isEncrypted = new Uint8Array(1) // Defaults to false
+		this._isText = new Uint8Array(1) // Defaults to false
 	}
 
 	set message(message /* UTF8 String */) {

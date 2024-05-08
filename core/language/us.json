@@ -945,7 +945,16 @@
 		"gchange56": "Group Name To Search",
 		"gchange57": "Private Group Name Not Found",
 		"gchange58": "Note that group name must be an exact match.",
-		"gchange59": "Show / Hide Ticker"
+		"gchange59": "Show / Hide Ticker",
+		"gchange60": "Please enter an group name",
+		"gchange61": "Please enter an description",
+		"gchange62": "Are you sure to update this group?",
+		"gchange63": "On pressing confirm, the update group request will be sent!",
+		"gchange64": "Current Owner / New Owner",
+		"gchange65": "Only replace this address if you want to transfer the group!",
+		"gchange66": "Invalid Owner / New Owner Address",
+		"gchange67": "Group Update Successful!",
+		"gchange68": "Set Group Avatar"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

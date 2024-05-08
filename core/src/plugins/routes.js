@@ -1,4 +1,4 @@
-import {store} from '../store.js'
+import { store } from '../store'
 import {
 	doAddPluginUrl,
 	doPageUrl,
@@ -7,13 +7,14 @@ import {
 	doUpdateAccountInfo,
 	doUpdateBlockInfo,
 	doUpdateNodeInfo,
-	doUpdateNodeStatus,
-} from '../redux/app/app-actions.js'
+	doUpdateNodeStatus
+} from '../redux/app/app-actions'
+import { loadStateFromLocalStorage, saveStateToLocalStorage, } from '../localStorageHelpers'
+import { requestTransactionDialog } from '../functional-components/confirm-transaction-dialog'
+import { doNewMessage } from '../notifications/controller'
 import * as api from 'qortal-ui-crypto'
-import {requestTransactionDialog} from '../functional-components/confirm-transaction-dialog.js'
-import {doNewMessage} from '../notifications/controller.js'
-import snackbar from '../functional-components/snackbar.js'
-import {loadStateFromLocalStorage, saveStateToLocalStorage,} from '../localStorageHelpers.js'
+import snackbar from '../functional-components/snackbar'
+
 
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
@@ -119,18 +120,19 @@ export const routes = {
 
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(tx.signedBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(tx.signedBytes)
 			}
 
 			let extraData = {}
-			if(req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey){
+
+			if (req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey) {
 				extraData.rewardSharePrivateKey = Base58.encode(tx._rewardShareKeyPair.secretKey)
 			}
-
 
 			response = {
 				success: true,
@@ -140,70 +142,80 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = {
 				success: false,
-				message: e.message,
+				message: e.message
 			}
 		}
+
 		return response
 	},
 
 	standaloneTransaction: async (req) => {
 		const rebuildUint8Array = (obj) => {
 			let _array = new Uint8Array(Object.keys(obj).length)
+
 			for (let i = 0; i < _array.byteLength; ++i) {
 				_array.set([obj[i]], i)
 			}
+
 			return _array
 		}
 
 		let response
+
 		try {
 			// req.data.keyPair unfortunately "prepared" into horrible object so we need to convert back
 			let _keyPair = {}
+
 			for (let _keyName in req.data.keyPair) {
 				_keyPair[_keyName] = rebuildUint8Array(
 					req.data.keyPair[_keyName]
 				)
 			}
+
 			const tx = createTransaction(
 				req.data.type,
 				_keyPair,
 				req.data.params
 			)
+
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(tx.signedBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(tx.signedBytes)
 			}
 
-
 			response = {
 				success: true,
-				data: res,
+				data: res
 			}
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = {
 				success: false,
-				message: e.message,
+				message: e.message
 			}
 		}
+
 		return response
 	},
 
 	username: async (req) => {
 		const state = store.getState()
-		return state.user.storedWallets[state.app.wallet.addresses[0].address]
-			.name
+		return state.user.storedWallets[state.app.wallet.addresses[0].address].name
 	},
 
 	chat: async (req) => {
 		let response
+
 		try {
 			const tx = createTransaction(
 				req.data.type,
@@ -215,13 +227,16 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = false
 		}
+
 		return response
 	},
 
 	sign_chat: async (req) => {
 		let response
+
 		try {
 			const signedChatBytes = await signChatTransaction(
 				req.data.chatBytesArray,
@@ -231,10 +246,11 @@ export const routes = {
 
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(signedChatBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(signedChatBytes)
 			}
 
@@ -242,13 +258,16 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = false
 		}
+
 		return response
 	},
 
 	sign_arbitrary: async (req) => {
 		let response
+
 		try {
 			const signedArbitraryBytes = await signArbitraryTransaction(
 				req.data.arbitraryBytesBase58,
@@ -256,12 +275,14 @@ export const routes = {
 				req.data.arbitraryNonce,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			)
+
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(signedArbitraryBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(signedArbitraryBytes)
 			}
 
@@ -269,25 +290,30 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = false
 		}
+
 		return response
 	},
 
 	sign_arbitrary_with_fee: async (req) => {
 		let response
+
 		try {
 			const signedArbitraryBytes = await signArbitraryWithFeeTransaction(
 				req.data.arbitraryBytesBase58,
 				req.data.arbitraryBytesForSigningBase58,
 				store.getState().app.wallet._addresses[req.data.nonce].keyPair
 			)
+
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(signedArbitraryBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(signedArbitraryBytes)
 			}
 
@@ -295,8 +321,10 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = false
 		}
+
 		return response
 	},
 
@@ -307,12 +335,13 @@ export const routes = {
 	showSnackBar: async (req) => {
 		snackbar.add({
 			labelText: req.data,
-			dismiss: true,
+			dismiss: true
 		})
 	},
 
 	tradeBotCreateRequest: async (req) => {
 		let response
+
 		try {
 			const unsignedTxn = await tradeBotCreateRequest(req.data)
 
@@ -320,37 +349,46 @@ export const routes = {
 				unsignedTxn,
 				store.getState().app.selectedAddress.keyPair
 			)
+
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(signedTxnBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(signedTxnBytes)
 			}
+
 			response = res
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	tradeBotRespondRequest: async (req) => {
 		let response
+
 		try {
 			response = await tradeBotRespondRequest(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	deleteTradeOffer: async (req) => {
 		let response
+
 		try {
 			const unsignedTxn = await deleteTradeOffer(req.data)
 
@@ -361,10 +399,11 @@ export const routes = {
 
 			let res
 
-			if(req.data.apiVersion && req.data.apiVersion === 2){
+			if (req.data.apiVersion && req.data.apiVersion === 2) {
 				res = await processTransactionVersion2(signedTxnBytes)
 			}
-			if(!req.data.apiVersion){
+
+			if (!req.data.apiVersion) {
 				res = await processTransaction(signedTxnBytes)
 			}
 
@@ -372,94 +411,115 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	cancelAllOffers: async (req) => {
 		let response
+
 		try {
-			response = await cancelAllOffers(
-				store.getState().app.selectedAddress
-			)
+			response = await cancelAllOffers(store.getState().app.selectedAddress)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendBtc: async (req) => {
 		let response
+
 		try {
 			response = await sendBtc(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendLtc: async (req) => {
 		let response
+
 		try {
 			response = await sendLtc(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendDoge: async (req) => {
 		let response
+
 		try {
 			response = await sendDoge(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendDgb: async (req) => {
 		let response
+
 		try {
 			response = await sendDgb(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendRvn: async (req) => {
 		let response
+
 		try {
 			response = await sendRvn(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	sendArrr: async (req) => {
 		let response
+
 		try {
 			response = await sendArrr(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
-	},
+	}
 }
