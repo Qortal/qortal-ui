@@ -1597,19 +1597,19 @@ class NavBar extends connect(store)(LitElement) {
 			} else if (this.pluginType === 'reward-share') {
 				this.pluginPage = 'reward-share/index.html'
 			} else if (this.pluginType === 'q-chat') {
-				this.pluginPage = 'messaging/q-chat/index.html'
+				this.pluginPage = 'q-chat/index.html'
 			} else if (this.pluginType === 'name-registration') {
 				this.pluginPage = 'name-registration/index.html'
 			} else if (this.pluginType === 'names-market') {
 				this.pluginPage = 'names-market/index.html'
 			} else if (this.pluginType === 'websites') {
-				this.pluginPage = 'qdn/index.html'
+				this.pluginPage = 'q-website/index.html'
 			} else if (this.pluginType === 'qapps') {
 				this.pluginPage = 'q-app/index.html'
 			} else if (this.pluginType === 'group-management') {
 				this.pluginPage = 'group-management/index.html'
 			} else if (this.pluginType === 'data-management') {
-				this.pluginPage = 'qdn/data-management/index.html'
+				this.pluginPage = 'data-management/index.html'
 			} else if (this.pluginType === 'puzzles') {
 				this.pluginPage = 'puzzles/index.html'
 			} else if (this.pluginType === 'node-management') {
