@@ -14,7 +14,9 @@ class ChatSelect extends LitElement {
 			iconName: { type: String },
 			activeChatHeadUrl: { type: String },
 			isImageLoaded: { type: Boolean },
-			setActiveChatHeadUrl: { attribute: false }
+			setActiveChatHeadUrl: { attribute: false },
+			avatarImg: { type: String }
+
 		}
 	}
 
@@ -27,8 +29,7 @@ class ChatSelect extends LitElement {
 		this.selectedAddress = {}
 		this.config = {
 			user: {
-				node: {
-				}
+				node: {}
 			}
 		}
 		this.chatInfo = {}
@@ -36,29 +37,44 @@ class ChatSelect extends LitElement {
 		this.activeChatHeadUrl = ''
 		this.isImageLoaded = false
 		this.imageFetches = 0
+		this.avatarImg = ''
 	}
 
 	render() {
-		let avatarImg = ''
-		let backupAvatarImg = ''
+		let groupString = 'Group_' + this.chatInfo.groupId
+		let groupAvatarString = 'qortal_group_avatar_' + this.chatInfo.groupId
 
-		if (this.chatInfo.name) {
-			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+
+		if (groupString === 'Group_0') {
+			const avatarUrl = `/img/qgcgroup.png`
+			this.avatarImg = this.createImage(avatarUrl)
+		} else if (groupString === 'Group_1') {
+			const avatarUrl = `/img/qdcgroup.png`
+			this.avatarImg = this.createImage(avatarUrl)
+		} else if (this.chatInfo.name) {
 			const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true`
-			avatarImg = this.createImage(avatarUrl)
+			this.avatarImg = this.createImage(avatarUrl)
+		} else if (this.chatInfo.ownerName) {
+			if (this.chatInfo.ownerName === undefined) {
+				// Nothing to do
+			} else {
+				const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.ownerName}/${groupAvatarString}?async=true`
+				this.avatarImg = this.createImage(avatarUrl)
+			}
 		}
 
 		return html`
 			<li @click=${() => this.getUrl(this.chatInfo.url)} class="clearfix ${this.activeChatHeadUrl === this.chatInfo.url ? 'active' : ''}">
-				${this.isImageLoaded ? html`${avatarImg}` : html``}
+				${this.isImageLoaded ? html`${this.avatarImg}` : html``}
 				${!this.isImageLoaded && !this.chatInfo.name && !this.chatInfo.groupName ? html`<mwc-icon class="img-icon">account_circle</mwc-icon>` : html``}
 				${!this.isImageLoaded && this.chatInfo.name ?
 					html`
 						<div
 							style="width:40px; height:40px; float:left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)'};
 							color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)'};
-                        				font-weight:bold; display:flex; justify-content:center; align-items:center; text-transform:capitalize"
+                        				font-weight:bold; display:flex; justify-content:center; align-items:center; text-transform:capitalize;"
 						>
 							${this.chatInfo.name.charAt(0)}
 						</div>
@@ -70,7 +86,7 @@ class ChatSelect extends LitElement {
 						<div
 							style="width:40px; height:40px; float:left; border-radius:50%; background: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadBgActive)' : 'var(--chatHeadBg)'};
 							color: ${this.activeChatHeadUrl === this.chatInfo.url ? 'var(--chatHeadTextActive)' : 'var(--chatHeadText)'};
-							font-weight:bold; display:flex; justify-content:center; align-items:center; text-transform:capitalize"
+							font-weight:bold; display:flex; justify-content:center; align-items:center; text-transform:capitalize;"
 						>
 							${this.chatInfo.groupName.charAt(0)}
 						</div>

@@ -120,7 +120,7 @@ export const chatpageStyles = css`
     .message-size {
         font-family: Roboto, sans-serif;
         font-size: 12px;
-        color: black;
+        color: var(--black);
     }
 
     .lds-grid {
@@ -508,7 +508,7 @@ export const chatpageStyles = css`
     .message-size {
         font-family: Roboto, sans-serif;
         font-size: 12px;
-        color: black;
+        color: var(--black);
     }
 
     .lds-grid {
@@ -3529,7 +3529,7 @@ export const chatTextEditorStyles = css`
     .message-size {
         font-family: Roboto, sans-serif;
         font-size: 12px;
-        color: black;
+        color: var(--black);
     }
 
     .paperclip-icon {

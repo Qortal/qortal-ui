@@ -60,12 +60,12 @@ class ChatTextEditor extends LitElement {
 
 	render() {
 		return html`
-			<div class=${["chatbar-container", "chatbar-buttons", this.iframeId !== "_chatEditorDOM" && 'hide-styling'].join(" ")} style="align-items: center;justify-content:space-between">
-				<div style="display: flex;align-items: center">
+			<div class=${["chatbar-container", "chatbar-buttons", this.iframeId !== "_chatEditorDOM" && 'hide-styling'].join(" ")} style="align-items: center; justify-content:space-between;">
+				<div style="display: flex; align-items: center;">
 					<button
 						@click=${() => this.editor.chain().focus().toggleBold().run()}
 						?disabled=${this.editor && !this.editor.can().chain().focus().toggleBold().run()}
-						class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(" ")}
+						class=${["chatbar-button-single", (this.editedMessageObj || this.repliedToMessageObj || this.openGifModal) && 'show-chatbar-buttons', this.editor && this.editor.isActive('bold') ? 'is-active' : ''].join(' ')}
 					>
 						<span class="material-symbols-outlined">&#xe238;</span>
 					</button>
@@ -104,7 +104,7 @@ class ChatTextEditor extends LitElement {
 				</div>
 				${this.iframeId === "_chatEditorDOM" ?
 					html`
-						<div style="height: 26px; box-sizing: border-box" class=${["chatbar-button-single", "removeBg"].join(' ')}>
+						<div style="height: 26px; box-sizing: border-box;" class=${["chatbar-button-single", "removeBg"].join(' ')}>
 							<label for="qChatShowAutoMsg" @click=${() => this.shadowRoot.getElementById('qChatShowAutoMsg').click()}>
 								${translate('chatpage.cchange69')}
 							</label>
@@ -126,8 +126,8 @@ class ChatTextEditor extends LitElement {
 					: ''
 				}
 			</div>
-			<div class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")} style="align-items: flex-end; position: relative">
-				<div style=${this.iframeId === "privateMessage" ? "display: none" : "display: block"} class="file-picker-container" @click=${(e) => {this.preventUserSendingImage(e)}}>
+			<div class=${["chatbar-container", (this.iframeId === "newChat" || this.iframeId === "privateMessage") ? "chatbar-caption" : ""].join(" ")} style="align-items: flex-end; position: relative;">
+				<div style=${this.iframeId === "privateMessage" ? "display: none;" : "display: block;"} class="file-picker-container" @click=${(e) => {this.preventUserSendingImage(e)}}>
 					<vaadin-icon class="paperclip-icon" icon="vaadin:paperclip" slot="icon"></vaadin-icon>
 					<div class="file-picker-input-container">
 						<input
@@ -142,18 +142,18 @@ class ChatTextEditor extends LitElement {
 							class="file-picker-input"
 							type="file"
 							name="myImage"
-							accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx" /
+							accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx"
 						>
 					</div>
 				</div>
-				<textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1">></textarea>
+				<textarea style="color: var(--black);" tabindex='1' ?autofocus=${true} ?disabled=${this.isLoading || this.isLoadingMessages} id="messageBox" rows="1"></textarea>
 				<div id=${this.iframeId} class=${["element", this.iframeId === "privateMessage" ? "privateMessageMargin" : ""].join(" ")}></div>
 				<button class="emoji-button" ?disabled=${this.isLoading || this.isLoadingMessages}>
-					${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg" />`}
+					${html`<img class="emoji" draggable="false" alt="😀" src="/emoji/svg/1f600.svg">`}
 				</button>
 				${this.editedMessageObj ?
-					(html`
-						<div style="margin-bottom: 10px">
+					html`
+						<div style="margin-bottom: 10px;">
 							${this.isLoading === false
 								? html`
 									<vaadin-icon class="checkmark-icon" icon="vaadin:check" slot="icon" @click=${() => {this.sendMessageFunc(this.messageQueue)}}></vaadin-icon>
@@ -162,11 +162,11 @@ class ChatTextEditor extends LitElement {
 								`
 							}
 						</div>
-					`) : html`
+					` : html`
 						<div style="margin-bottom: 10px; ${(this.iframeId === 'newChat' || this.iframeId === "newAttachmentChat") ? 'display: none;' : 'display: flex;'}">
 							${this.isLoading === false
 								? html`
-									<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" @click=${() => {this.sendMessageFunc(this.messageQueue)}} />
+									<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" @click=${() => {this.sendMessageFunc(this.messageQueue)}}>
 								` : html`
 									<paper-spinner-lite active></paper-spinner-lite>
 								`
@@ -178,7 +178,7 @@ class ChatTextEditor extends LitElement {
 			${this.chatMessageSize >= 750 ?
 				html`
 					<div class="message-size-container" style=${this.imageFile && "margin-top: 10px;"}>
-						<div class="message-size" style="${this.chatMessageSize > 4000 && 'color: #bd1515'}">
+						<div class="message-size" style="${this.chatMessageSize > 4000 && 'color: #F44336'}">
 							${`Your message size is of ${this.chatMessageSize} bytes out of a maximum of 4000`}
 						</div>
 					</div>

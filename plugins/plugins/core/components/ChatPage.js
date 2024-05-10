@@ -321,13 +321,13 @@ class ChatPage extends LitElement {
 												<p class="senderName">${this.repliedToMessageObj.senderName ? this.repliedToMessageObj.senderName : this.repliedToMessageObj.sender}</p>
 												${this.repliedToMessageObj.version.toString() === '1' ?
 													html`
-														${this.repliedToMessageObj.message}
+														<span style="color: var(--black);">${this.repliedToMessageObj.message}</span>
 													`
 													: ''
 												}
 												${+this.repliedToMessageObj.version > 1 ?
 													html`
-														${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight]))}
+														<span style="color: var(--black);">${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight]))}</span>
 													`
 													: ''
 												}
@@ -344,7 +344,7 @@ class ChatPage extends LitElement {
 											<vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
 											<div class="repliedTo-message">
 												<p class="senderName">${translate("chatpage.cchange25")}</p>
-												${unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight]))}
+												<span style="color: var(--black);">${unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight]))}</span>
 											</div>
 											<vaadin-icon class="close-icon" icon="vaadin:close-big" slot="icon" @click=${() => this.closeEditMessageContainer()}></vaadin-icon>
 										</div>
@@ -1366,11 +1366,23 @@ class ChatPage extends LitElement {
 
 	shouldUpdate(changedProperties) {
 		if (changedProperties.has('chatId')) {
+			if (this.repliedToMessageObj) {
+				this.closeRepliedToContainer()
+				return true
+			}
+
+			if (this.editedMessageObj) {
+				this.closeEditMessageContainer()
+				return true
+			}
+
 			return true
 		}
+
 		if (changedProperties.has('setActiveChatHeadUrl')) {
 			return false
 		}
+
 		if (changedProperties.has('setOpenPrivateMessage')) {
 			return false
 		}
@@ -1665,8 +1677,6 @@ class ChatPage extends LitElement {
 			}))
 
 			let list = [...decodeMsgs]
-
-
 
 			this.messagesRendered = {
 				messages: list,
