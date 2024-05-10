@@ -1,6 +1,6 @@
 import TransactionBase from './TransactionBase'
-import {store} from '../../api'
-import {QORT_DECIMALS} from '../constants'
+import { store } from '../../api'
+import { QORT_DECIMALS } from '../constants'
 
 export default class DeployAtTransaction extends TransactionBase {
 	constructor() {

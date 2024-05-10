@@ -1,5 +1,5 @@
 import TransactionBase from '../TransactionBase'
-import {QORT_DECIMALS} from '../../constants'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class BuyNameTransacion extends TransactionBase {
 	constructor() {

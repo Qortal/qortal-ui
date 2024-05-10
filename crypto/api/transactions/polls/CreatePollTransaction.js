@@ -1,5 +1,5 @@
 import TransactionBase from '../TransactionBase'
-import {QORT_DECIMALS} from '../../constants'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class CreatePollTransaction extends TransactionBase {
 	constructor() {
@@ -35,7 +35,7 @@ export default class CreatePollTransaction extends TransactionBase {
 		this._options.push({ length: optionLength, bytes: optionBytes })
 	}
 
-	set feeDialog(feeDialog){
+	set feeDialog(feeDialog) {
 		this._feeDialog = feeDialog
 	}
 
@@ -106,7 +106,7 @@ export default class CreatePollTransaction extends TransactionBase {
 			params.push(this._options[i].length, this._options[i].bytes)
 		}
 
-		params.push(this._feeBytes);
+		params.push(this._feeBytes)
 
 		return params
 	}

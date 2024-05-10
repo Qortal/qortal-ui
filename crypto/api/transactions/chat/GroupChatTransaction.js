@@ -1,5 +1,5 @@
 import ChatBase from './ChatBase'
-import {CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP} from '../../constants'
+import { CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP } from '../../constants'
 
 export default class GroupChatTransaction extends ChatBase {
 	constructor() {

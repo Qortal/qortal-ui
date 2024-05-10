@@ -1,7 +1,7 @@
 import nacl from '../../deps/nacl-fast'
 import Base58 from '../../deps/Base58'
 import ed2curve from '../../deps/ed2curve'
-import {Sha256} from 'asmcrypto.js'
+import { Sha256 } from 'asmcrypto.js'
 
 export const decryptChatMessage = (encryptedMessage, privateKey, recipientPublicKey, lastReference) => {
 	let _encryptedMessage = Base58.decode(encryptedMessage)

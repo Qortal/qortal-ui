@@ -1,6 +1,6 @@
 import TransactionBase from './TransactionBase'
 import Base58 from '../deps/Base58'
-import {store} from '../../api'
+import { store } from '../../api'
 
 export default class PaymentTransaction extends TransactionBase {
 	constructor() {

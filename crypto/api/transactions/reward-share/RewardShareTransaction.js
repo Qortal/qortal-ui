@@ -2,8 +2,8 @@ import publicKeyToAddress from '../../wallet/publicKeyToAddress'
 import TransactionBase from '../TransactionBase'
 import nacl from '../../deps/nacl-fast'
 import ed2curve from '../../deps/ed2curve'
-import {Sha256} from 'asmcrypto.js'
-import {DYNAMIC_FEE_TIMESTAMP} from '../../constants'
+import { Sha256 } from 'asmcrypto.js'
+import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RewardShareTransaction extends TransactionBase {
 	constructor() {

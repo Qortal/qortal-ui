@@ -1,4 +1,4 @@
-import {QORT_DECIMALS, TX_TYPES} from '../constants'
+import { QORT_DECIMALS, TX_TYPES } from '../constants'
 import nacl from '../deps/nacl-fast'
 import Base58 from '../deps/Base58'
 import utils from '../deps/utils'

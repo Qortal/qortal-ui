@@ -1,5 +1,5 @@
 import TransactionBase from '../TransactionBase'
-import {QORT_DECIMALS} from '../../constants'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class VoteOnPollTransaction extends TransactionBase {
 	constructor() {
@@ -20,7 +20,7 @@ export default class VoteOnPollTransaction extends TransactionBase {
 		`
 	}
 
-	set feeDialog(feeDialog){
+	set feeDialog(feeDialog) {
 		this._feeDialog = feeDialog
 	}
 

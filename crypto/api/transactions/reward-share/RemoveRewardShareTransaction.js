@@ -1,7 +1,7 @@
 import TransactionBase from '../TransactionBase'
 import publicKeyToAddress from '../../wallet/publicKeyToAddress'
-import {Base58} from '../../deps/deps'
-import {DYNAMIC_FEE_TIMESTAMP} from '../../constants'
+import { Base58 } from '../../deps/deps'
+import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RemoveRewardShareTransaction extends TransactionBase {
 	constructor() {
