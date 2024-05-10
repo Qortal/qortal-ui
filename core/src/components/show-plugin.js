@@ -421,35 +421,46 @@ class ShowPlugin extends connect(store)(LitElement) {
 			let iconId = ''
 
 			this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
-			this.currentTab = this.tabs.length - 1;
+			this.currentTab = this.tabs.length - 1
 
 			const tabD = this.tabs.length - 1
-			const plugObj = this.tabs[tabD].url
-			theId = this.tabs[tabD].id
-			tabId = 'tab-' + theId
-			frameId = 'frame-' + theId
-			plugId = 'plug-' + theId
-			iconId = 'icon-' + theId
 
-			var tabActive = this.shadowRoot.getElementById(tabId)
-			var frameActive = this.shadowRoot.getElementById(frameId)
-			var plugActive = this.shadowRoot.getElementById(plugId)
-			var iconActive = this.shadowRoot.getElementById(iconId)
-
-			if (plugObj === undefined || '') {
-				tabActive.classList.add('active')
-				iconActive.classList.remove('iconInactive')
-				iconActive.classList.add('iconActive')
-				plugActive.classList.remove('hideIframe')
-				plugActive.classList.add('showIframe')
+			if (tabD < 0) {
+				const lengthOfTabs = this.tabs.length
+				this.addTab({
+					url: '',
+					id: this.uid.rnd()
+				})
+				this.currentTab = lengthOfTabs
 			} else {
-				tabActive.classList.add('active')
-				iconActive.classList.remove('iconInactive')
-				iconActive.classList.add('iconActive')
-				frameActive.classList.remove('hideIframe')
-				frameActive.classList.add('showIframe')
+				const plugObj = this.tabs[tabD].url
+				theId = this.tabs[tabD].id
+				tabId = 'tab-' + theId
+				frameId = 'frame-' + theId
+				plugId = 'plug-' + theId
+				iconId = 'icon-' + theId
+
+				var tabActive = this.shadowRoot.getElementById(tabId)
+				var frameActive = this.shadowRoot.getElementById(frameId)
+				var plugActive = this.shadowRoot.getElementById(plugId)
+				var iconActive = this.shadowRoot.getElementById(iconId)
+
+				if (plugObj === undefined || '') {
+					tabActive.classList.add('active')
+					iconActive.classList.remove('iconInactive')
+					iconActive.classList.add('iconActive')
+					plugActive.classList.remove('hideIframe')
+					plugActive.classList.add('showIframe')
+				} else {
+					tabActive.classList.add('active')
+					iconActive.classList.remove('iconInactive')
+					iconActive.classList.add('iconActive')
+					frameActive.classList.remove('hideIframe')
+					frameActive.classList.add('showIframe')
+				}
+
+				this.requestUpdate()
 			}
-			this.requestUpdate()
 		} else {
 			// Remove tab from array
 			this.tabs = this.tabs.filter((tab, tIndex) => tIndex !== index)
@@ -457,6 +468,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 			if (this.tabs.length !== 0) {
 				this.currentTab = 0
 			}
+
 			this.requestUpdate()
 		}
 	}
@@ -1583,7 +1595,7 @@ class NavBar extends connect(store)(LitElement) {
 			if (this.pluginType === 'overview-page') {
 				this.pluginPage = 'overview-page/index.html'
 			} else if (this.pluginType === 'minting') {
-				this.pluginPage = 'minting/index.html'
+				this.pluginPage = 'minting-info/index.html'
 			} else if (this.pluginType === 'become-minter') {
 				this.pluginPage = 'become-minter/index.html'
 			} else if (this.pluginType === 'sponsorship-list') {

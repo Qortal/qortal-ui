@@ -2497,6 +2497,7 @@ export const showPluginStyles = css`
         --mdc-theme-surface: var(--white);
         --mdc-text-field-outlined-idle-border-color: var(--txtfieldborder);
         --mdc-text-field-outlined-hover-border-color: var(--txtfieldhoverborder);
+        --mdc-text-field-disabled-ink-color: var(--black);
         --mdc-text-field-label-ink-color: var(--black);
         --mdc-text-field-ink-color: var(--black);
         --mdc-select-ink-color: var(--black);
