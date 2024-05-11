@@ -103,7 +103,7 @@ class SyncIndicator extends connect(store)(LitElement) {
 						${translate("tour.tour17")}
 					</p>
 				</div>
-			` : (this.blocksBehind > 1050 && this.isSynchronizing) ? html`
+			` : (this.blocksBehind > 8500 && this.isSynchronizing) ? html`
 				<div class="parent">
 					<div class="column">
 						<div class="row">
