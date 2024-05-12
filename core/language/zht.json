@@ -945,7 +945,16 @@
 		"gchange56": "要搜索的群組名稱",
 		"gchange57": "未找到私人群組名稱",
 		"gchange58": "注意群組名稱必須完全匹配。",
-		"gchange59": "顯示/隱藏代碼"
+		"gchange59": "顯示/隱藏代碼",
+		"gchange60": "請輸入組名",
+		"gchange61": "請輸入描述",
+		"gchange62": "你確定要更新這個組嗎？",
+		"gchange63": "按 CONFIRM 後，將發送UPDATE_GROUP請求！",
+		"gchange64": "當前擁有者/新擁有者",
+		"gchange65": "將此位址替換為組的 TRANSFER OWNERSHIP！",
+		"gchange66": "無效的擁有者/新擁有者位址",
+		"gchange67": "組更新成功！",
+		"gchange68": "設置組頭像"
 	},
 	"puzzlepage": {
 		"pchange1": "益智游戲",

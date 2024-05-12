@@ -945,7 +945,16 @@
 		"gchange56": "Hae ryhmän nimeä",
 		"gchange57": "Yksityisen ryhmän nimeä ei löydy",
 		"gchange58": "Ryhmän nimen on oltava täsmällinen.",
-		"gchange59": "Näytä/piilota saldot"
+		"gchange59": "Näytä/piilota saldot",
+		"gchange60": "Anna ryhmän nimi",
+		"gchange61": "Anna kuvaus",
+		"gchange62": "Oletko varma, että päivität tämän ryhmän?",
+		"gchange63": "Kun painat vahvista, UPDATE_GROUP pyyntö lähetetään!",
+		"gchange64": "Nykyinen / uusi omistaja",
+		"gchange65": "Korvaa tämä osoite muotoon SIIRRÄ RYHMÄN OMISTAJUUS!",
+		"gchange66": "Virheellinen omistaja / uuden omistajan osoite",
+		"gchange67": "Ryhmän päivitys onnistui!",
+		"gchange68": "Aseta ryhmän avatar"
 	},
 	"puzzlepage": {
 		"pchange1": "Palapelit",

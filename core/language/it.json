@@ -945,7 +945,16 @@
 		"gchange56": "Nome gruppo da cercare",
 		"gchange57": "Nome gruppo privato non trovato",
 		"gchange58": "Nota che il nome del gruppo deve corrispondere esattamente.",
-		"gchange59": "Mostra / Nascondi ticker"
+		"gchange59": "Mostra / Nascondi ticker",
+		"gchange60": "Inserisci il nome del gruppo",
+		"gchange61": "Si prega di inserire la descrizione",
+		"gchange62": "Sei sicuro di AGGIORNARE questo gruppo?",
+		"gchange63": "Premendo CONFERMA, verrà inviata la richiesta UPDATE_GROUP!",
+		"gchange64": "Proprietario attuale / Nuovo proprietario",
+		"gchange65": "Sostituisci questo indirizzo per TRASFERIRE LA PROPRIETA' del gruppo!",
+		"gchange66": "Indirizzo del proprietario non valido/nuovo proprietario",
+		"gchange67": "AGGIORNAMENTO di gruppo riuscito!",
+		"gchange68": "Imposta avatar di gruppo"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzle",

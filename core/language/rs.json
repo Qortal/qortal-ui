@@ -945,7 +945,16 @@
 		"gchange56": "Ime grupe za pretragu",
 		"gchange57": "Ime privatne grupe nije pronađeno",
 		"gchange58": "Imajte na umu da ime grupe mora potpuno da se podudara.",
-		"gchange59": "Prikaži / Sakrij Oznaku"
+		"gchange59": "Prikaži / Sakrij Oznaku",
+		"gchange60": "Unesite ime grupe",
+		"gchange61": "Unesite opis",
+		"gchange62": "Želite li zaista da ažurirate ovu grupu?",
+		"gchange63": "Na pritisku POTVRDITE, UPDATE_GROUP će biti poslat!",
+		"gchange64": "Trenutni vlasnik / novi vlasnik",
+		"gchange65": "Zameni ovu adresu NA PRENOS VLASNIŠTVA GRUPE!",
+		"gchange66": "Nevažeći vlasnik / adresa novog vlasnika",
+		"gchange67": "Grupni UPDATE je uspešan!",
+		"gchange68": "Postavi grupni avatar"
 	},
 	"puzzlepage": {
 		"pchange1": "Slagalice",

@@ -182,7 +182,7 @@
 		"accountsecurity": "Account-beveiliging",
 		"password": "Wachtwoord",
 		"download": "Qortal back-upbestand exporteren/opslaan",
-		"choose": "Kies een wachtwoord om uw Qortal-back-upbestand te coderen. (Dit kan dezelfde zijn als waarmee u bent ingelogd, of een nieuwe.)"",
+		"choose": "Kies een wachtwoord om uw Qortal-back-upbestand te coderen. (Dit kan dezelfde zijn als waarmee u bent ingelogd, of een nieuwe.)",
 		"playsound": "Geluid afspelen",
 		"shownotifications": "Toon waarschuwingen",
 		"nodeurl": "Adres van de node",
@@ -945,7 +945,16 @@
 		"gchange56": "Te zoeken groepsnaam",
 		"gchange57": "Geen privé-groep gevonden voor opgegeven naam",
 		"gchange58": "Hou er rekening mee dat de groepsnaam exact overeen moet komen.",
-		"gchange59": "Ticker wel/niet tonen"
+		"gchange59": "Ticker wel/niet tonen",
+		"gchange60": "Voer de groepsnaam in",
+		"gchange61": "Voer een beschrijving in",
+		"gchange62": "Weet je zeker dat je deze groep UPDATET?",
+		"gchange63": "Als u op BEVESTIGEN drukt, wordt het UPDATE_GROUP verzoek verzonden!",
+		"gchange64": "Huidige eigenaar / nieuwe eigenaar",
+		"gchange65": "Vervang dit adres door EIGENDOM van de groep OVERDRAGEN!",
+		"gchange66": "Ongeldig adres van de eigenaar/nieuwe eigenaar",
+		"gchange67": "Groep UPDATE Geslaagd!",
+		"gchange68": "Groepsavatar instellen"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzels",

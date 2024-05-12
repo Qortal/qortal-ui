@@ -945,7 +945,16 @@
 		"gchange56": "Nome do grupo para pesquisar",
 		"gchange57": "Nome do grupo privado não encontrado",
 		"gchange58": "Observe que o nome do grupo deve corresponder exatamente.",
-		"gchange59": "Mostrar / Ocultar Ticker"
+		"gchange59": "Mostrar / Ocultar Ticker",
+		"gchange60": "Insira o nome do grupo",
+		"gchange61": "Por favor, insira a descrição",
+		"gchange62": "Tem certeza de que vai ATUALIZAR este grupo?",
+		"gchange63": "Ao pressionar CONFIRMAR, a solicitação de UPDATE_GROUP será enviada!",
+		"gchange64": "Proprietário Atual / Novo Proprietário",
+		"gchange65": "Substitua este endereço para TRANSFERIR PROPRIEDADE do grupo!",
+		"gchange66": "Endereço de proprietário / novo proprietário inválido",
+		"gchange67": "ATUALIZAÇÃO DO Grupo bem-sucedida!",
+		"gchange68": "Definir avatar do grupo"
 	},
 	"puzzlepage": {
 		"pchange1": "Enigmas",

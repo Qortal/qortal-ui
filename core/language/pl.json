@@ -945,7 +945,16 @@
 		"gchange56": "Nazwa grupy do wyszukania",
 		"gchange57": "Nie znaleziono nazwy grupy prywatnej",
 		"gchange58": "Zauważ, że nazwa grupy musi dokładnie pasować.",
-		"gchange59": "Pokaż / Ukryj Znacznik"
+		"gchange59": "Pokaż / Ukryj Znacznik",
+		"gchange60": "Podaj nazwę grupy",
+		"gchange61": "Podaj opis",
+		"gchange62": "Czy na pewno AKTUALIZUJESZ tę grupę?",
+		"gchange63": "Po naciśnięciu przycisku POTWIERDŹ zostanie wysłane żądanie UPDATE_GROUP!",
+		"gchange64": "Current Owner / New Owner",
+		"gchange65": "Zamień ten adres na PRZENIESIENIE WŁASNOŚCI grupy!",
+		"gchange66": "Nieprawidłowy właściciel / nowy adres właściciela",
+		"gchange67": "AKTUALIZACJA grupy powiodła się!",
+		"gchange68": "Ustaw awatar grupy"
 	},
 	"puzzlepage": {
 		"pchange1": "Zagadki",

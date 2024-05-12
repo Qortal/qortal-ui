@@ -945,7 +945,16 @@
 		"gchange56": "Zu suchender Gruppenname",
 		"gchange57": "Privater Gruppenname nicht gefunden",
 		"gchange58": "Beachten Sie, dass der Gruppenname genau übereinstimmen muss.",
-		"gchange59": "Ticker ein-/ausblenden"
+		"gchange59": "Ticker ein-/ausblenden",
+		"gchange60": "Bitte geben Sie den Gruppennamen ein",
+		"gchange61": "Bitte Beschreibung eingeben",
+		"gchange62": "Sind Sie sicher, dass Sie diese Gruppe AKTUALISIEREN möchten?",
+		"gchange63": "Wenn Sie auf CONFIRM klicken, wird die UPDATE_GROUP Anfrage gesendet!",
+		"gchange64": "Derzeitiger Besitzer / Neuer Besitzer",
+		"gchange65": "Ersetzen Sie diese Adresse durch EIGENTUM der Gruppe übertragen!",
+		"gchange66": "Ungültige Besitzer-/neue Besitzeradresse",
+		"gchange67": "Gruppen-UPDATE erfolgreich!",
+		"gchange68": "Gruppen-Avatar festlegen"
 	},
 	"puzzlepage": {
 		"pchange1": "Rätsel",

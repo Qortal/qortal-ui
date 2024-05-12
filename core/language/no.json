@@ -945,7 +945,16 @@
 		"gchange56": "Gruppenavn å søke",
 		"gchange57": "Privat gruppenavn ikke funnet",
 		"gchange58": "Merk at gruppenavnet må samsvare nøyaktig.",
-		"gchange59": "Vis / Skjul Ticker"
+		"gchange59": "Vis / Skjul Ticker",
+		"gchange60": "Vennligst skriv inn gruppenavn",
+		"gchange61": "Vennligst skriv inn beskrivelse",
+		"gchange62": "Er du sikker på å oppdatere denne gruppen?",
+		"gchange63": "Når du trykker på BEKREFT, vil den UPDATE_GROUP forespørselen bli sendt!",
+		"gchange64": "Nåværende eier / ny eier",
+		"gchange65": "Erstatt denne adressen til OVERFØR EIERSKAP av gruppen!",
+		"gchange66": "Ugyldig eier / ny eieradresse",
+		"gchange67": "Gruppeoppdatering vellykket!",
+		"gchange68": "Angi gruppeavatar"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",
