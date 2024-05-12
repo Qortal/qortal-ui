@@ -230,8 +230,8 @@
 		"wp1": "Mündimine",
 		"wp2": "Ei vermita",
 		"wp3": "Põhiteave",
-		"wp4": "Sünkroonitud",
-		"wp5": "Sünkroonimise olek"
+		"wp4": "sünkroniseeritud",
+		"wp5": "Sünkroniseerimise olek"
 	},
 	"general": {
 		"yes": "Jah",
@@ -998,7 +998,7 @@
 		"nchange20": "Väljalaske versioon",
 		"nchange21": "Ühendatud",
 		"nchange22": "Tegevus",
-		"nchange23": "Sünkroonimise sundimine",
+		"nchange23": "Sünkroniseerimise sundimine",
 		"nchange24": "Ühendatud partnereid pole",
 		"nchange25": "Alustan sünki partneriga: ",
 		"nchange26": "Partner edukalt eemaldatud: ",
@@ -1216,8 +1216,8 @@
 		"notify1": "Tehingu kinnitamine",
 		"notify2": "Tehing kinnitatud",
 		"explanation": "Sinu tehing kinnitatakse. Edenemise jälgimiseks klõpsa kellaikoonil.",
-		"status1": "Täielikult sünkroonitud",
-		"status2": "Pole sünkroonitud",
+		"status1": "Täielikult sünkroniseeritud",
+		"status2": "Pole sünkroniseeritud",
 		"notify3": "Märguandeid pole",
 		"notify4": "Tx-teatised"
 	},
@@ -1275,8 +1275,8 @@
 		"profile26": "Lisa sõbraks"
 	},
 	"tour": {
-		"tour1": "Qortali kasutamiseks peab Core olema sünkroonitud. See ikoon on sünkroonimisel sinine.",
-		"tour2": "Sünkroonitud",
+		"tour1": "Qortali kasutamiseks peab Core olema sünkroniseeritud. See ikoon on Sünkroniseerimisel sinine.",
+		"tour2": "sünkroniseeritud",
 		"tour3": "Sünkroonimine ja vermimine",
 		"tour4": "Sünkroonimine",
 		"tour5": "Sünkrooni oma tuum",
@@ -1287,13 +1287,13 @@
 		"tour10": "See on vahekaardi vaikevaade, kus pääsete juurde olulistele Qortali sätetele ja Q-rakendustele, nagu Q-Tube.",
 		"tour11": "Saage täielik kogemus",
 		"tour12": "Qortali täieliku kogemuse saamiseks soovitame järgida seda kontroll-loendit.",
-		"tour13": "Olete täielikult sünkroonitud! Nüüd saate kogeda Qortali plokiahela võimsust.",
+		"tour13": "Olete täielikult sünkroniseeritud! Nüüd saate kogeda Qortali plokiahela võimsust.",
 		"tour14": "Proovime külastada Q-Tube'i!",
 		"tour15": "Külastage Q-Tube'i",
 		"tour16": "Kontrollnimekiri",
 		"tour17": "Qortali plokiahelale juurdepääsuks käivitage Core.",
 		"tour18": "Värskenda (bootstrap)",
-		"tour19": "Praegu sünkroonimine... Qortali kasutamiseks peate olema täielikult sünkroonitud",
+		"tour19": "Praegu sünkroonimine... Qortali kasutamiseks peate olema täielikult sünkroniseeritud",
 		"tour20": "blokeerib taga. Kas soovite sünkroonimisprotsessi kiirendamiseks värskendada (bootstrap)?",
 		"tour21": "jäänud plokke.",
 		"tour22": "Taotleb värskendamist (bootstrap). Palun oodake."
