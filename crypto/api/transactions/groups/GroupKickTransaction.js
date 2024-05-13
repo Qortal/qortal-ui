@@ -1,6 +1,5 @@
-'use strict'
-import TransactionBase from '../TransactionBase.js'
-import {QORT_DECIMALS} from '../../constants.js'
+import TransactionBase from '../TransactionBase'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class GroupKickTransaction extends TransactionBase {
 	constructor() {
@@ -33,7 +32,7 @@ export default class GroupKickTransaction extends TransactionBase {
 
 	set rBanReason(rBanReason) {
 		this._rBanReason = rBanReason
-		this._rBanReasonBytes = this.constructor.utils.stringtoUTF8Array(this._rBanReason.toLocaleLowerCase())
+		this._rBanReasonBytes = this.constructor.utils.stringtoUTF8Array(this._rBanReason)
 		this._rBanReasonLength = this.constructor.utils.int32ToBytes(this._rBanReasonBytes.length)
 	}
 

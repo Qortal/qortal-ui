@@ -1,10 +1,10 @@
-import Base58 from './deps/Base58.js'
-import {kdf} from './kdf.js'
-import {AES_CBC, HmacSha512} from 'asmcrypto.js'
-import {get, registerTranslateConfig} from '../../core/translate'
+import Base58 from './deps/Base58'
+import { kdf } from './kdf'
+import { AES_CBC, HmacSha512 } from 'asmcrypto.js'
+import { get, registerTranslateConfig } from '../../core/translate'
 
 registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 export const decryptStoredWallet = async (password, wallet, statusFn = () => { }) => {

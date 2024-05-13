@@ -1,6 +1,7 @@
-import {waitForConfig, watchConfig} from '../config.js'
+import { waitForConfig, watchConfig } from '../config'
 
 let config = {}
+
 watchConfig((c) => {
 	config = c
 })
@@ -15,6 +16,7 @@ export async function request(url, options) {
 
 	const n = config.nodeConfig.knownNodes[config.nodeConfig.node]
 	const node = n.protocol + '://' + n.domain + ':' + n.port
+
 	return fetch(node + url, {
 		method,
 		headers,

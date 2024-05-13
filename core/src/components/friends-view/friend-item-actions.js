@@ -1,146 +1,42 @@
-// popover-component.js
-import {css, html, LitElement} from 'lit';
-import {createPopper} from '@popperjs/core';
-import '@material/mwc-icon';
-import {translate} from '../../../translate'
-import {store} from '../../store';
-import {connect} from 'pwa-helpers';
-import {setNewTab, setSideEffectAction} from '../../redux/app/app-actions';
-import ShortUniqueId from 'short-unique-id';
+import { html, LitElement } from 'lit'
+import { connect } from 'pwa-helpers'
+import { store } from '../../store'
+import { createPopper } from '@popperjs/core'
+import { setNewTab, setSideEffectAction } from '../../redux/app/app-actions'
+import { translate } from '../../../translate'
+import { friendItemActionsStyles } from '../../styles/core-css'
+import ShortUniqueId from 'short-unique-id'
+import '@material/mwc-icon'
 
 export class FriendItemActions extends connect(store)(LitElement) {
-	static styles = css`
-		:host {
-			display: none;
-			position: absolute;
-			background-color: var(--white);
-			border: 1px solid #ddd;
-			padding: 8px;
-			z-index: 10;
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-			color: var(--black);
-			max-width: 250px;
-		}
-
-		.close-icon {
-			cursor: pointer;
-			float: right;
-			margin-left: 10px;
-			color: var(--black);
-		}
-
-		.send-message-button {
-			font-family: Roboto, sans-serif;
-			letter-spacing: 0.3px;
-			font-weight: 300;
-			padding: 8px 5px;
-			border-radius: 3px;
-			text-align: center;
-			color: var(--mdc-theme-primary);
-			transition: all 0.3s ease-in-out;
-			display: flex;
-			align-items: center;
-			gap: 10px;
-		}
-
-		.send-message-button:hover {
-			cursor: pointer;
-			background-color: #03a8f485;
-		}
-		.action-parent {
-			display: flex;
-			flex-direction: column;
-			width: 100%;
-		}
-
-		div[tabindex='0']:focus {
-			outline: none;
-		}
-	`;
-
 	static get properties() {
 		return {
 			for: { type: String, reflect: true },
 			message: { type: String },
 			openEditFriend: { attribute: false },
 			name: { type: String },
-			closeSidePanel: { attribute: false, type: Object },
-		};
+			closeSidePanel: { attribute: false, type: Object }
+		}
+	}
+
+	static get styles() {
+		return [friendItemActionsStyles]
 	}
 
 	constructor() {
-		super();
-		this.message = '';
-		this.nodeUrl = this.getNodeUrl();
-		this.uid = new ShortUniqueId();
-		this.getUserAddress = this.getUserAddress.bind(this);
-	}
-	getNodeUrl() {
-		const myNode =
-			store.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			]
-
-		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-	}
-
-	firstUpdated() {
-		// We'll defer the popper attachment to the openPopover() method to ensure target availability
-	}
-
-	attachToTarget(target) {
-		if (!this.popperInstance && target) {
-			this.popperInstance = createPopper(target, this, {
-				placement: 'bottom',
-			});
-		}
-	}
-
-	openPopover(target) {
-		this.attachToTarget(target);
-		this.style.display = 'block';
-		setTimeout(() => {
-			this.shadowRoot.getElementById('parent-div').focus();
-		}, 50);
-	}
-
-	closePopover() {
-		this.style.display = 'none';
-		if (this.popperInstance) {
-			this.popperInstance.destroy();
-			this.popperInstance = null;
-		}
-		this.requestUpdate();
-	}
-	handleBlur() {
-		setTimeout(() => {
-			this.closePopover();
-		}, 0);
-	}
-
-	async getUserAddress() {
-		try {
-			const url = `${this.nodeUrl}/names/${this.name}`;
-			const res = await fetch(url);
-			const result = await res.json();
-			if (result.error === 401) {
-				return '';
-			} else {
-				return result.owner;
-			}
-		} catch (error) {
-			return '';
-		}
+		super()
+		this.message = ''
+		this.nodeUrl = this.getNodeUrl()
+		this.uid = new ShortUniqueId()
+		this.getUserAddress = this.getUserAddress.bind(this)
 	}
 
 	render() {
 		return html`
 			<div id="parent-div" tabindex="0" @blur=${this.handleBlur}>
-				<span class="close-icon" @click="${this.closePopover}"
-					><mwc-icon style="color: var(--black)"
-						>close</mwc-icon
-					></span
-				>
+				<span class="close-icon" @click="${this.closePopover}">
+					<mwc-icon style="color: var(--black)">close</mwc-icon>
+				</span>
 				<div class="action-parent">
 					<div
 						class="send-message-button"
@@ -164,16 +60,15 @@ export class FriendItemActions extends connect(store)(LitElement) {
 									myPlugObj: {
 										url: 'q-chat',
 										domain: 'core',
-										page: 'messaging/q-chat/index.html',
+										page: 'q-chat/index.html',
 										title: 'Q-Chat',
 										icon: 'vaadin:chat',
 										mwcicon: 'forum',
 										pluginNumber: 'plugin-qhsyOnpRhT',
 										menus: [],
-										parent: false,
+										parent: false
 									},
-
-									openExisting: true,
+									openExisting: true
 								})
 							);
 							store.dispatch(
@@ -181,8 +76,8 @@ export class FriendItemActions extends connect(store)(LitElement) {
 									type: 'openPrivateChat',
 									data: {
 										address,
-										name: this.name,
-									},
+										name: this.name
+									}
 								})
 							);
 							this.closePopover();
@@ -208,9 +103,9 @@ export class FriendItemActions extends connect(store)(LitElement) {
 										icon: 'vaadin:mailbox',
 										mwcicon: 'mail_outline',
 										menus: [],
-										parent: false,
+										parent: false
 									},
-									openExisting: true,
+									openExisting: true
 								})
 							);
 							this.closePopover();
@@ -223,26 +118,89 @@ export class FriendItemActions extends connect(store)(LitElement) {
 					<div
 						class="send-message-button"
 						@click="${() => {
-							const customEvent = new CustomEvent(
-								'open-visiting-profile',
-								{
-									detail: this.name,
-								}
-							);
+							const customEvent = new CustomEvent('open-visiting-profile', { detail: this.name });
 							window.dispatchEvent(customEvent);
 							this.closePopover();
 							this.closeSidePanel();
 						}}"
 					>
-						<mwc-icon style="color: var(--black)"
-							>person</mwc-icon
-						>
+						<mwc-icon style="color: var(--black)">person</mwc-icon>
 						${translate('profile.profile18')}
 					</div>
 				</div>
 			</div>
-		`;
+		`
+	}
+
+	firstUpdated() {
+		// ...
+	}
+
+	getNodeUrl() {
+		const myNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+	}
+
+	attachToTarget(target) {
+		if (!this.popperInstance && target) {
+			this.popperInstance = createPopper(target, this, {
+				placement: 'bottom'
+			})
+		}
+	}
+
+	openPopover(target) {
+		this.attachToTarget(target)
+		this.style.display = 'block'
+		setTimeout(() => {
+			this.shadowRoot.getElementById('parent-div').focus()
+		}, 50)
+	}
+
+	closePopover() {
+		this.style.display = 'none'
+		if (this.popperInstance) {
+			this.popperInstance.destroy()
+			this.popperInstance = null
+		}
+		this.requestUpdate()
+	}
+
+	handleBlur() {
+		setTimeout(() => {
+			this.closePopover()
+		}, 0)
+	}
+
+	async getUserAddress() {
+		try {
+			const url = `${this.nodeUrl}/names/${this.name}`
+			const res = await fetch(url)
+			const result = await res.json()
+			if (result.error === 401) {
+				return ''
+			} else {
+				return result.owner
+			}
+		} catch (error) {
+			return ''
+		}
+	}
+
+	// Standard functions
+	getApiKey() {
+		const coreNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		return coreNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
-customElements.define('friend-item-actions', FriendItemActions);
+window.customElements.define('friend-item-actions', FriendItemActions)

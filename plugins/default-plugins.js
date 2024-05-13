@@ -2,12 +2,10 @@ const PLUGINS = 'plugins'
 const BUILD = 'build'
 const WATCH = 'watch'
 
-
 /**
  * @package Plugins Controller
  * @param { String } type
  */
-
 const pluginsController = (type) => {
     switch (type) {
         case PLUGINS:
@@ -25,8 +23,6 @@ const pluginsController = (type) => {
         default:
             return
     }
-
 }
-
 
 module.exports = pluginsController

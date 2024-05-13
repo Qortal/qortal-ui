@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux'
-
-import app from './app/app-reducer.js'
-import config from './config/config-reducer.js'
-import user from './user/user-reducer.js'
+import app from './app/app-reducer'
+import config from './config/config-reducer'
+import user from './user/user-reducer'
 
 export default combineReducers({
-    user,
-    app,
-    config
+	user,
+	app,
+	config
 })

@@ -1,7 +1,7 @@
 /**
  * Not to be confused with register name...this is a special use case
  */
-import {createTransaction, processTransaction, request} from './api.js'
+import { createTransaction, processTransaction, request } from './api'
 
 const TX_TYPE = 3 // NAME_REGISTRATION
 const CHECK_LAST_REF_INTERVAL = 30 * 1000 // err 30 seconds

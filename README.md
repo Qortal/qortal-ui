@@ -26,8 +26,8 @@ Easiest way to install the lastest required packages on Linux is via nvm.
 ``` source ~/.profile ``` (For Debian based distro) <br/>
 ``` source ~/.bashrc ``` (For Fedora / CentOS) <br/>
 ``` nvm ls-remote ``` (Fetch list of available versions) <br/>
-``` nvm install v18.17.1 ```  (LTS: Hydrogen supported by Electron V27) <br/>
-``` npm --location=global install npm@10.5.0 ``` <br/>
+``` nvm install v20.11.1 ```  (LTS: Iron supported by Electron V30) <br/>
+``` npm --location=global install npm@10.7.0 ``` <br/>
 
 Adding via binary package mirror will only work if you have set the package path. You can do a node or java build via ports instead by downloading ports with portsnap fetch method.
 

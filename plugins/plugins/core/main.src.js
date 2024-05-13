@@ -1,44 +1,22 @@
-import {parentEpml} from './connect.js';
-import './streams/streams.js';
+import { parentEpml } from './connect'
+import './streams/streams'
 
 let config = {}
 let haveRegisteredNodeManagement = false
 
 parentEpml.ready().then(() => {
-	// pluginUrlsConf
+	// Urls for plugins
 	let pluginUrlsConf = [
 		{
-			url: 'overview-page',
+			url: 'wallet',
 			domain: 'core',
-			page: 'overview-page/index.html',
-			title: 'Overview Page',
-			icon: 'vaadin:info-circle',
-			mwcicon: 'home',
-			pluginNumber: 'plugin-OgcWeXBWBt',
+			page: 'wallet/index.html',
+			title: 'Wallets',
+			icon: 'vaadin:wallet',
+			mwcicon: 'account_balance_wallet',
+			pluginNumber: 'plugin-kyhKaCIAZH',
 			menus: [],
-			parent: false,
-		},
-		{
-			url: 'minting',
-			domain: 'core',
-			page: 'minting/index.html',
-			title: 'Minting Details',
-			icon: 'vaadin:info-circle',
-			mwcicon: 'info_outline',
-			pluginNumber: 'plugin-iqKYTJzlcM',
-			menus: [],
-			parent: false,
-		},
-		{
-			url: 'become-minter',
-			domain: 'core',
-			page: 'become-minter/index.html',
-			title: 'Become a Minter',
-			icon: 'vaadin:thumbs-up',
-			mwcicon: 'thumb_up',
-			pluginNumber: 'plugin-dVbRYnJNTs',
-			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'sponsorship-list',
@@ -49,18 +27,7 @@ parentEpml.ready().then(() => {
 			mwcicon: 'format_list_numbered',
 			pluginNumber: 'plugin-YxcLlHkgBl',
 			menus: [],
-			parent: false,
-		},
-		{
-			url: 'wallet',
-			domain: 'core',
-			page: 'wallet/index.html',
-			title: 'Wallets',
-			icon: 'vaadin:wallet',
-			mwcicon: 'account_balance_wallet',
-			pluginNumber: 'plugin-kyhKaCIAZH',
-			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'trade-portal',
@@ -71,7 +38,7 @@ parentEpml.ready().then(() => {
 			mwcicon: 'format_list_bulleted',
 			pluginNumber: 'plugin-zJoESuTpMG',
 			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'trade-bot-portal',
@@ -82,29 +49,18 @@ parentEpml.ready().then(() => {
 			mwcicon: 'shop',
 			pluginNumber: 'plugin-mwPkCdVHsb',
 			menus: [],
-			parent: false,
-		},
-		{
-			url: 'reward-share',
-			domain: 'core',
-			page: 'reward-share/index.html',
-			title: 'Reward Share',
-			icon: 'vaadin:share-square',
-			mwcicon: 'ios_share',
-			pluginNumber: 'plugin-PWZGtSxbPX',
-			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'q-chat',
 			domain: 'core',
-			page: 'messaging/q-chat/index.html',
+			page: 'q-chat/index.html',
 			title: 'Q-Chat',
 			icon: 'vaadin:chat',
 			mwcicon: 'forum',
 			pluginNumber: 'plugin-qhsyOnpRhT',
 			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'name-registration',
@@ -115,40 +71,18 @@ parentEpml.ready().then(() => {
 			mwcicon: 'manage_accounts',
 			pluginNumber: 'plugin-qCmtXAQmtu',
 			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
-			url: 'names-market',
+			url: 'reward-share',
 			domain: 'core',
-			page: 'names-market/index.html',
-			title: 'Names Market',
-			icon: 'vaadin:shop',
-			mwcicon: 'store',
-			pluginNumber: 'plugin-VVPhpHMnKM',
+			page: 'reward-share/index.html',
+			title: 'Reward Share',
+			icon: 'vaadin:share-square',
+			mwcicon: 'ios_share',
+			pluginNumber: 'plugin-PWZGtSxbPX',
 			menus: [],
-			parent: false,
-		},
-		{
-			url: 'websites',
-			domain: 'core',
-			page: 'qdn/index.html',
-			title: 'Websites',
-			icon: 'vaadin:desktop',
-			mwcicon: 'desktop_mac',
-			pluginNumber: 'plugin-shITeUVkLG',
-			menus: [],
-			parent: false,
-		},
-		{
-			url: 'qapps',
-			domain: 'core',
-			page: 'q-app/index.html',
-			title: 'Q-Apps',
-			icon: 'vaadin:external-browser',
-			mwcicon: 'apps',
-			pluginNumber: 'plugin-MpiMASnQsT',
-			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
 			url: 'group-management',
@@ -159,29 +93,62 @@ parentEpml.ready().then(() => {
 			mwcicon: 'group',
 			pluginNumber: 'plugin-fJZNpyLGTl',
 			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
-			url: 'data-management',
+			url: 'minting',
 			domain: 'core',
-			page: 'qdn/data-management/index.html',
-			title: 'Data Management',
-			icon: 'vaadin:database',
-			mwcicon: 'storage',
-			pluginNumber: 'plugin-QtaXNXHvRg',
+			page: 'minting-info/index.html',
+			title: 'Minting Details',
+			icon: 'vaadin:info-circle',
+			mwcicon: 'info_outline',
+			pluginNumber: 'plugin-iqKYTJzlcM',
 			menus: [],
-			parent: false,
+			parent: false
 		},
 		{
-			url: 'puzzles',
+			url: 'become-minter',
 			domain: 'core',
-			page: 'puzzles/index.html',
-			title: 'Puzzles',
-			icon: 'vaadin:puzzle-piece',
-			mwcicon: 'extension',
-			pluginNumber: 'plugin-wCGRmXRxht',
+			page: 'become-minter/index.html',
+			title: 'Become a Minter',
+			icon: 'vaadin:thumbs-up',
+			mwcicon: 'thumb_up',
+			pluginNumber: 'plugin-dVbRYnJNTs',
 			menus: [],
-			parent: false,
+			parent: false
+		},
+		{
+			url: 'overview-page',
+			domain: 'core',
+			page: 'overview-page/index.html',
+			title: 'Overview Page',
+			icon: 'vaadin:info-circle',
+			mwcicon: 'home',
+			pluginNumber: 'plugin-OgcWeXBWBt',
+			menus: [],
+			parent: false
+		},
+		{
+			url: 'qapps',
+			domain: 'core',
+			page: 'q-app/index.html',
+			title: 'Q-Apps',
+			icon: 'vaadin:external-browser',
+			mwcicon: 'apps',
+			pluginNumber: 'plugin-MpiMASnQsT',
+			menus: [],
+			parent: false
+		},
+		{
+			url: 'websites',
+			domain: 'core',
+			page: 'q-website/index.html',
+			title: 'Websites',
+			icon: 'vaadin:desktop',
+			mwcicon: 'desktop_mac',
+			pluginNumber: 'plugin-shITeUVkLG',
+			menus: [],
+			parent: false
 		},
 		{
 			url: 'lottery',
@@ -192,18 +159,48 @@ parentEpml.ready().then(() => {
 			mwcicon: 'token',
 			pluginNumber: 'plugin-TgHRtXRxit',
 			menus: [],
-			parent: false,
+			parent: false
 		},
-	];
+		{
+			url: 'data-management',
+			domain: 'core',
+			page: 'data-management/index.html',
+			title: 'Data Management',
+			icon: 'vaadin:database',
+			mwcicon: 'storage',
+			pluginNumber: 'plugin-QtaXNXHvRg',
+			menus: [],
+			parent: false
+		},
+		{
+			url: 'names-market',
+			domain: 'core',
+			page: 'names-market/index.html',
+			title: 'Names Market',
+			icon: 'vaadin:shop',
+			mwcicon: 'store',
+			pluginNumber: 'plugin-VVPhpHMnKM',
+			menus: [],
+			parent: false
+		},
+		{
+			url: 'puzzles',
+			domain: 'core',
+			page: 'puzzles/index.html',
+			title: 'Puzzles',
+			icon: 'vaadin:puzzle-piece',
+			mwcicon: 'extension',
+			pluginNumber: 'plugin-wCGRmXRxht',
+			menus: [],
+			parent: false
+		}
+	]
 
 	const registerPlugins = (pluginInfo) => {
 		parentEpml.request('registerUrl', pluginInfo)
-	};
+	}
 
-	const checkNode =
-		window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-			window.parent.reduxStore.getState().app.nodeConfig.node
-		]
+	const checkNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
 	parentEpml.subscribe('config', (c) => {
 		config = JSON.parse(c)
@@ -221,10 +218,11 @@ parentEpml.ready().then(() => {
 				mwcicon: 'cloud',
 				pluginNumber: 'plugin-TGAunWeWLU',
 				menus: [],
-				parent: false,
-			};
+				parent: false
+			}
 
 			let _pluginUrlsConf = [...pluginUrlsConf, nodeManagementConf]
+
 			registerPlugins(_pluginUrlsConf)
 		} else {
 			registerPlugins(pluginUrlsConf)

@@ -1,11 +1,11 @@
-import {store} from '../api_deps.js'
-import {stateAwait} from './utils/stateAwait.js'
-import {Sha512} from 'asmcrypto.js'
-import utils from '../api/deps/utils.js'
-import {get, registerTranslateConfig} from '../../core/translate'
+import { store } from '../api_deps'
+import { stateAwait } from './utils/stateAwait'
+import { Sha512 } from 'asmcrypto.js'
+import utils from '../api/deps/utils'
+import { get, registerTranslateConfig } from '../../core/translate'
 
 registerTranslateConfig({
-  loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 export const kdf = async (seed, salt, status = () => { }) => {

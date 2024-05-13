@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/font/material-icons.css">
+    <link rel="stylesheet" href="/font/switch-theme.css">
+    <script>
+        const checkBack = localStorage.getItem('qortalTheme')
+        if (checkBack === 'dark') {
+            newtheme = 'dark';
+        } else {
+            newtheme = 'light';
+        }
+        document.querySelector('html').setAttribute('theme', newtheme);
+    </script>
+    <style>
+        html {
+            --scrollbarBG: #a1a1a1;
+            --thumbBG: #6a6c75;
+        }
+
+        *::-webkit-scrollbar {
+            width: 11px;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--scrollbarBG);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--thumbBG);
+            border-radius: 6px;
+            border: 3px solid var(--scrollbarBG);
+        }
+
+        html,
+        body {
+            margin: 0;
+            font-family: "Roboto", sans-serif;
+            background: var(--plugback);
+        }
+    </style>
+</head>
+
+<body>
+    <q-websites></q-websites>
+    <script src="q-websites.js"></script>
+</body>
+
+</html>

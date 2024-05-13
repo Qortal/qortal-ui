@@ -1,16 +1,17 @@
-'use strict'
-import {QORT_DECIMALS, TX_TYPES} from '../constants.js'
-import nacl from '../deps/nacl-fast.js'
-import Base58 from '../deps/Base58.js'
-import utils from '../deps/utils.js'
+import { QORT_DECIMALS, TX_TYPES } from '../constants'
+import nacl from '../deps/nacl-fast'
+import Base58 from '../deps/Base58'
+import utils from '../deps/utils'
 
 export default class TransactionBase {
 	static get utils() {
 		return utils
 	}
+
 	static get nacl() {
 		return nacl
 	}
+
 	static get Base58() {
 		return Base58
 	}
