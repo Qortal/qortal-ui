@@ -34,6 +34,8 @@ export const blocksNeed = (level) => {
 		return '3037600'
 	} else if (level === 9) {
 		return '4074400'
+	} else if (level === 'sponsor') {
+		return 9000
 	}
 }
 

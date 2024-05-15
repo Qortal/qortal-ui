@@ -227,7 +227,7 @@ class SponsorshipList extends LitElement {
 						<p class='dialog-paragraph' style='text-align:center; width:100%'>${this.sponsorships.filter(s=> s.blocksRemaining <= 0).length} ${translate('sponsorshipspage.schange7')}!</p>
 						<p class='dialog-paragraph' style='margin:0px; padding:0px;text-decoration:underline'> ${translate('sponsorshipspage.schange8')}</p>
 						${this.sponsorships.filter(s=> s.blocksRemaining <= 0).map((ms)=> html`
-						<p class='dialog-paragraph'>${ms.address}</p>
+							<p class='dialog-paragraph'>${ms.address}</p>
 						`)}
 					</div>
 					<mwc-button
@@ -286,7 +286,7 @@ class SponsorshipList extends LitElement {
 										icon='content_copy'
 										@click=${()=> {this.saveToClipboard(this.privateRewardShareKey, this.renderCopyMsg())}}
 									>
-									${translate('sponsorshipspage.schange11')}
+										${translate('sponsorshipspage.schange11')}
 									</mwc-button>
 								</li>
 							` : ''}
@@ -355,7 +355,7 @@ class SponsorshipList extends LitElement {
 									icon='content_copy'
 									@click=${()=> {this.saveToClipboard(this.lookupPublicAddressValue, this.renderCopyMsg())}}
 								>
-								${translate('sponsorshipspage.schange11')}
+									${translate('sponsorshipspage.schange11')}
 								</mwc-button>
 							</div>
 						` : ''}
@@ -504,11 +504,13 @@ class SponsorshipList extends LitElement {
 				if(getNames.length > 0 ) {
 					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 					const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-					url = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+					url = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true}`
 				}
 
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
-				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
+
+				blocksRemaining = blocksRemaining > 0 ? blocksRemaining : 0
+
 				return {
 					...addressInfo,
 					...rs,
@@ -553,7 +555,7 @@ class SponsorshipList extends LitElement {
 	}
 
 	_levelUpBlocks(accountInfo) {
-		return (blocksNeed(0) - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
+		return (blocksNeed('sponsor') - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
 	}
 
 	async removeRewardShare(rewardShareObject) {
