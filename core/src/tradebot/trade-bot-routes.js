@@ -9,12 +9,22 @@ const tradeBotRespondRequest = api.tradeBotRespondRequest
 const signTradeBotTxn = api.signTradeBotTxn
 const deleteTradeOffer = api.deleteTradeOffer
 const cancelAllOffers = api.cancelAllOffers
-const sendBtc = api.sendBtc
-const sendLtc = api.sendLtc
-const sendDoge = api.sendDoge
-const sendDgb = api.sendDgb
-const sendRvn = api.sendRvn
-const sendArrr = api.sendArrr
+const sendCoin = async (coin, req) => {
+	let response
+	try {
+		const sendFn = api[`send${coin}`]
+		if (sendFn) {
+			response = await sendFn(req.data)
+		} else {
+			response = `Unsupported blockchain: ${coin}`
+		}
+	} catch (e) {
+		console.error(e)
+		console.error(e.message)
+		response = e.message
+	}
+	return response
+}
 
 export const routes = {
 	apiCall: async (req) => {
@@ -192,93 +202,15 @@ export const routes = {
 		return response
 	},
 
-	sendBtc: async (req) => {
-		let response
+	sendBtc: async (req) => sendCoin('Btc', req),
 
-		try {
-			response = await sendBtc(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
+	sendLtc: async (req) => sendCoin('Ltc', req),
 
-			response = e.message
-		}
+	sendDoge: async (req) => sendCoin('Doge', req),
 
-		return response
-	},
+	sendDgb: async (req) => sendCoin('Dgb', req),
 
-	sendLtc: async (req) => {
-		let response
+	sendRvn: async (req) => sendCoin('Rvn', req),
 
-		try {
-			response = await sendLtc(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-
-			response = e.message
-		}
-
-		return response
-	},
-
-	sendDoge: async (req) => {
-		let response
-
-		try {
-			response = await sendDoge(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-
-			response = e.message
-		}
-
-		return response
-	},
-
-	sendDgb: async (req) => {
-		let response
-
-		try {
-			response = await sendDgb(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-
-			response = e.message
-		}
-
-		return response
-	},
-
-	sendRvn: async (req) => {
-		let response
-
-		try {
-			response = await sendRvn(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-
-			response = e.message
-		}
-
-		return response
-	},
-
-	sendArrr: async (req) => {
-		let response
-
-		try {
-			response = await sendArrr(req.data)
-		} catch (e) {
-			console.error(e)
-			console.error(e.message)
-
-			response = e.message
-		}
-
-		return response
-	}
+	sendArrr: async (req) => sendCoin('Arrr', req),
 }
