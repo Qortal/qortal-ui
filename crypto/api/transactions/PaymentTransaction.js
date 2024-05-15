@@ -1,7 +1,6 @@
-'use strict'
-import TransactionBase from './TransactionBase.js'
-import Base58 from '../deps/Base58.js'
-import {store} from '../../api.js'
+import TransactionBase from './TransactionBase'
+import Base58 from '../deps/Base58'
+import { store } from '../../api'
 
 export default class PaymentTransaction extends TransactionBase {
 	constructor() {

@@ -1,9 +1,9 @@
 // Trade Bot
-import TradeBotCreateRequest from './transactions/trade-portal/tradebot/TradeBotCreateRequest.js'
-import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBotRespondRequest.js'
-import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction.js'
-import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer.js'
-import {request} from './fetch-request'
+import TradeBotCreateRequest from './transactions/trade-portal/tradebot/TradeBotCreateRequest'
+import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBotRespondRequest'
+import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction'
+import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer'
+import { request } from './fetch-request'
 
 // TradeBotCreateRequest
 export const tradeBotCreateRequest = (requestObject) => {

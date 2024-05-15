@@ -1,6 +1,6 @@
-import {store} from '../store.js'
+import { store } from '../store'
 import * as api from 'qortal-ui-crypto'
-import snackbar from '../functional-components/snackbar.js'
+import snackbar from '../functional-components/snackbar'
 
 const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
@@ -47,11 +47,12 @@ export const routes = {
 			}
 
 			const res = await processTransaction(tx.signedBytes)
+
 			let extraData = {}
-			if(req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey){
+
+			if (req.data.type === 38 && tx && tx._rewardShareKeyPair && tx._rewardShareKeyPair.secretKey) {
 				extraData.rewardSharePrivateKey = Base58.encode(tx._rewardShareKeyPair.secretKey)
 			}
-
 
 			response = {
 				success: true,
@@ -61,61 +62,73 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = {
 				success: false,
-				message: e.message,
+				message: e.message
 			}
 		}
+
 		return response
 	},
 
 	standaloneTransaction: async (req) => {
 		const rebuildUint8Array = (obj) => {
 			let _array = new Uint8Array(Object.keys(obj).length)
+
 			for (let i = 0; i < _array.byteLength; ++i) {
 				_array.set([obj[i]], i)
 			}
+
 			return _array
 		}
 
 		let response
+
 		try {
 			let _keyPair = {}
+
 			for (let _keyName in req.data.keyPair) {
 				_keyPair[_keyName] = rebuildUint8Array(
 					req.data.keyPair[_keyName]
 				)
 			}
+
 			const tx = createTransaction(
 				req.data.type,
 				_keyPair,
 				req.data.params
 			)
+
 			const res = await processTransaction(tx.signedBytes)
+
 			response = {
 				success: true,
-				data: res,
+				data: res
 			}
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = {
 				success: false,
-				message: e.message,
+				message: e.message
 			}
 		}
+
 		return response
 	},
 
 	showSnackBar: async (req) => {
 		snackbar.add({
 			labelText: req.data,
-			dismiss: true,
+			dismiss: true
 		})
 	},
 
 	tradeBotCreateRequest: async (req) => {
 		let response
+
 		try {
 			const unsignedTxn = await tradeBotCreateRequest(req.data)
 
@@ -128,25 +141,31 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	tradeBotRespondRequest: async (req) => {
 		let response
+
 		try {
 			response = await tradeBotRespondRequest(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	deleteTradeOffer: async (req) => {
 		let response
+
 		try {
 			const unsignedTxn = await deleteTradeOffer(req.data)
 
@@ -159,13 +178,16 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 
 	cancelAllOffers: async (req) => {
 		let response
+
 		try {
 			response = await cancelAllOffers(
 				store.getState().app.selectedAddress
@@ -173,8 +195,10 @@ export const routes = {
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)
+
 			response = e.message
 		}
+
 		return response
 	},
 

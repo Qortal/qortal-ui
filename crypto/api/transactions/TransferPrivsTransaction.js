@@ -1,7 +1,6 @@
-'use strict'
-import TransactionBase from './TransactionBase.js'
-import {store} from '../../api.js'
-import {QORT_DECIMALS} from '../constants.js'
+import TransactionBase from './TransactionBase'
+import { store } from '../../api'
+import { QORT_DECIMALS } from '../constants'
 
 export default class TransferPrivsTransaction extends TransactionBase {
 	constructor() {
@@ -12,12 +11,12 @@ export default class TransferPrivsTransaction extends TransactionBase {
 	render(html) {
 		const conf = store.getState().config
 		return html`
-            Are you sure to transfer privileges to this account ?
-            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
-                <span style="color: #000;">${this.theRecipient}</span>
-            </div>
-            On pressing confirm, the transfer privileges request will be sent!
-        `
+			Are you sure to transfer privileges to this account ?
+			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+				<span style="color: #000;">${this.theRecipient}</span>
+			</div>
+			On pressing confirm, the transfer privileges request will be sent!
+		`
 	}
 
 	set recipient(recipient) {

@@ -1,10 +1,10 @@
-import Base58 from '../deps/Base58.js'
-import BROKEN_RIPEMD160 from '../deps/broken-ripemd160.js'
-import RIPEMD160 from '../deps/ripemd160.js'
-import utils from '../deps/utils.js'
-import {ADDRESS_VERSION} from '../constants.js'
-import {Buffer} from 'buffer'
-import {Sha256} from 'asmcrypto.js'
+import Base58 from '../deps/Base58'
+import BROKEN_RIPEMD160 from '../deps/broken-ripemd160'
+import RIPEMD160 from '../deps/ripemd160'
+import utils from '../deps/utils'
+import { ADDRESS_VERSION } from '../constants'
+import { Buffer } from 'buffer'
+import { Sha256 } from 'asmcrypto.js'
 
 const repeatSHA256 = (passphrase, hashes) => {
 	let hash = passphrase

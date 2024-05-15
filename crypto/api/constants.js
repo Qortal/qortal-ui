@@ -1,5 +1,3 @@
-'use strict'
-
 // Qortal TX types
 const TX_TYPES = {
 	1: "Genesis",

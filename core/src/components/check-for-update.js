@@ -1,9 +1,10 @@
-import {css, html, LitElement} from 'lit'
-import {translate} from '../../translate'
+import { html, LitElement } from 'lit'
 import isElectron from 'is-electron'
-
 import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/iron-icons/iron-icons.js'
+
+// Multi language support
+import { translate } from '../../translate'
 
 class CheckForUpdate extends LitElement {
 	static get properties() {
@@ -17,11 +18,6 @@ class CheckForUpdate extends LitElement {
 		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 	}
 
-	static styles = [
-		css`
-		`
-	]
-
 	render() {
 		return html`
 			${this.renderUpdateButton()}
@@ -29,6 +25,7 @@ class CheckForUpdate extends LitElement {
 	}
 
 	firstUpdated() {
+		// ...
 	}
 
 	renderUpdateButton() {
