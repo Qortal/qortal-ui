@@ -1,95 +1,62 @@
-import {css, html, LitElement} from 'lit';
-import {translate,} from '../../../../core/translate'
-import '@material/mwc-menu';
-import '@material/mwc-list/mwc-list-item.js';
-import '@material/mwc-dialog'
+import { html, LitElement } from 'lit'
+import { chatGroupsModalStyles } from './plugins-css'
 import './ChatGroupManager'
+import '@material/mwc-dialog'
+import '@material/mwc-list/mwc-list-item.js'
+import '@material/mwc-menu'
+
+// Multi language support
+import { translate } from '../../../../core/translate'
 
 export class ChatGroupsModal extends LitElement {
 	static get properties() {
 		return {
-	  openDialogGroupsModal: { type: Boolean },
-	  setOpenDialogGroupsModal: { attribute: false}
-		};
+			openDialogGroupsModal: { type: Boolean },
+			setOpenDialogGroupsModal: { attribute: false }
+		}
 	}
 
 	static get styles() {
-		return css`
-			* {
-				--mdc-theme-text-primary-on-background: var(--black);
-				--mdc-dialog-max-width: 85vw;
-				--mdc-dialog-max-height: 95vh;
-			}
-
-			.imageContainer {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100%;
-	}
-
-			@-webkit-keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-
-			@keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-		`;
+		return [chatGroupsModalStyles]
 	}
 
 	constructor() {
-		super();
-	this.openDialogGroupsModal = false
-
+		super()
+		this.openDialogGroupsModal = false
 	}
-
-
-
-	firstUpdated() {
-	}
-
 
 	render() {
 		return html`
+			<mwc-dialog id="showDialogGroupsModal" ?open=${this.openDialogGroupsModal} @closed=${() => {this.setOpenDialogGroupsModal(false)}}>
+				<div class="dialog-header"></div>
+				<div class="dialog-container">
+					<chat-groups-manager></chat-groups-manager>
+				</div>
+				<mwc-button slot="primaryAction" dialogAction="cancel" class="red" @click=${() => {this.setOpenDialogGroupsModal(false)}}>
+					${translate('general.close')}
+				</mwc-button>
+			</mwc-dialog>
+		`
+	}
 
-			<mwc-dialog
-                id="showDialogGroupsModal"
-                ?open=${this.openDialogGroupsModal}
-                @closed=${() => {
-					this.setOpenDialogGroupsModal(false)
-				}}>
-					<div class="dialog-header"></div>
-					<div class="dialog-container ">
-						<chat-groups-manager></chat-groups-manager>
-			</div>
-					<mwc-button
-						slot="primaryAction"
-						dialogAction="cancel"
-						class="red"
-						@click=${() => {
-							this.setOpenDialogGroupsModal(false)
-						}}
-					>
-					    ${translate('general.close')}
-					</mwc-button>
-				</mwc-dialog>
-		`;
+	firstUpdated() {
+		// ...
+	}
+
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
-customElements.define('chat-groups-modal', ChatGroupsModal);
+window.customElements.define('chat-groups-modal', ChatGroupsModal)

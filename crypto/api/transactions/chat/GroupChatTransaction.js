@@ -1,6 +1,5 @@
-'use strict'
-import ChatBase from "./ChatBase.js"
-import {CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP} from '../../constants.js'
+import ChatBase from './ChatBase'
+import { CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP } from '../../constants'
 
 export default class GroupChatTransaction extends ChatBase {
 	constructor() {
@@ -34,7 +33,7 @@ export default class GroupChatTransaction extends ChatBase {
 	}
 
 	set isEncrypted(isEncrypted) {
-		this._isEncrypted = new Uint8Array(1);
+		this._isEncrypted = new Uint8Array(1)
 		this._isEncrypted[0] = isEncrypted
 	}
 
@@ -63,6 +62,7 @@ export default class GroupChatTransaction extends ChatBase {
 				params.push(this._chatReference)
 			}
 		}
+
 		return params
 	}
 }

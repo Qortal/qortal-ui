@@ -1,15 +1,12 @@
 /*
 Copyright 2017-2018 @ irontiga and vbcs (original developer)
 */
-'use strict'
-import Base58 from './deps/Base58.js'
-import {Sha256, Sha512} from 'asmcrypto.js'
-import nacl from './deps/nacl-fast.js'
-import utils from './deps/utils.js'
-
-import {generateSaveWalletData} from './storeWallet.js'
-
-import publicKeyToAddress from './wallet/publicKeyToAddress.js'
+import Base58 from './deps/Base58'
+import { Sha256, Sha512 } from 'asmcrypto.js'
+import nacl from './deps/nacl-fast'
+import utils from './deps/utils'
+import { generateSaveWalletData } from './storeWallet'
+import publicKeyToAddress from './wallet/publicKeyToAddress'
 import AltcoinHDWallet from "./bitcoin/AltcoinHDWallet"
 
 export default class PhraseWallet {

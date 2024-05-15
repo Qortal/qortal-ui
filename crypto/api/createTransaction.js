@@ -1,10 +1,9 @@
-import {transactionTypes as transactions} from './transactions/transactions.js'
-import Base58 from './deps/Base58.js'
-import {request} from './fetch-request'
-import signChat from './transactions/chat/signChat.js'
-import signArbitrary from './transactions/arbitrary/signArbitrary.js'
-import signArbitraryWithFee from './transactions/arbitrary/signArbitraryWithFee.js'
-
+import { transactionTypes as transactions } from './transactions/transactions'
+import Base58 from './deps/Base58'
+import { request } from './fetch-request'
+import signChat from './transactions/chat/signChat'
+import signArbitrary from './transactions/arbitrary/signArbitrary'
+import signArbitraryWithFee from './transactions/arbitrary/signArbitraryWithFee'
 
 export const createTransaction = (type, keyPair, params) => {
 	const tx = new transactions[type]()
@@ -32,11 +31,9 @@ export const signArbitraryTransaction = (arbitraryBytesBase58, arbitraryBytesFor
 	return signArbitrary(arbitraryBytesBase58, arbitraryBytesForSigningBase58, nonce, keyPair)
 }
 
-export const signArbitraryWithFeeTransaction = (arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair) => {
-	return signArbitraryWithFee(arbitraryBytesBase58, arbitraryBytesForSigningBase58,  keyPair)
+export const signArbitraryWithFeeTransaction = (arbitraryBytesBase58, arbitraryBytesForSigningBase58, keyPair) => {
+	return signArbitraryWithFee(arbitraryBytesBase58, arbitraryBytesForSigningBase58, keyPair)
 }
-
-
 
 // Process Transactions
 export const processTransaction = bytes => request('/transactions/process', {

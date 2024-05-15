@@ -1,10 +1,9 @@
-'use strict'
-import publicKeyToAddress from '../../wallet/publicKeyToAddress.js'
-import TransactionBase from "../TransactionBase.js"
-import nacl from '../../deps/nacl-fast.js'
-import ed2curve from '../../deps/ed2curve.js'
-import {Sha256} from 'asmcrypto.js'
-import {DYNAMIC_FEE_TIMESTAMP} from '../../constants.js'
+import publicKeyToAddress from '../../wallet/publicKeyToAddress'
+import TransactionBase from '../TransactionBase'
+import nacl from '../../deps/nacl-fast'
+import ed2curve from '../../deps/ed2curve'
+import { Sha256 } from 'asmcrypto.js'
+import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RewardShareTransaction extends TransactionBase {
 	constructor() {
@@ -42,18 +41,16 @@ export default class RewardShareTransaction extends TransactionBase {
 	set recipientPublicKey(recipientPublicKey) {
 		this._base58RecipientPublicKey = recipientPublicKey instanceof Uint8Array ? this.constructor.Base58.encode(recipientPublicKey) : recipientPublicKey
 		this._recipientPublicKey = this.constructor.Base58.decode(this._base58RecipientPublicKey)
-
 		this.recipient = publicKeyToAddress(this._recipientPublicKey)
-
-		this.fee = (recipientPublicKey === this.constructor.Base58.encode(this._keyPair.publicKey) ? 0 : 0.001)
 
 		const convertedPrivateKey = ed2curve.convertSecretKey(this._keyPair.privateKey)
 		const convertedPublicKey = ed2curve.convertPublicKey(this._recipientPublicKey)
-		const sharedSecret = new Uint8Array(32);
-		nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey);
+		const sharedSecret = new Uint8Array(32)
+
+		nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
 		this._rewardShareSeed = new Sha256().process(sharedSecret).finish().result
 		this._base58RewardShareSeed = this.constructor.Base58.encode(this._rewardShareSeed)
-
 		this._rewardShareKeyPair = nacl.sign.keyPair.fromSeed(this._rewardShareSeed)
 
 		if (new Date(this._timestamp).getTime() >= DYNAMIC_FEE_TIMESTAMP) {

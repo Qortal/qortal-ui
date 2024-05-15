@@ -1,6 +1,6 @@
-import {request} from '../../../fetch-request.js'
-import {deleteTradeOffer, signTradeBotTxn} from '../../../tradeRequest.js'
-import {processTransaction} from '../../../createTransaction.js'
+import {request} from '../../../fetch-request'
+import {deleteTradeOffer, signTradeBotTxn} from '../../../tradeRequest'
+import {processTransaction} from '../../../createTransaction'
 
 export const cancelAllOffers = async (requestObject) => {
 	const keyPair = requestObject.keyPair
@@ -13,6 +13,7 @@ export const cancelAllOffers = async (requestObject) => {
 	}
 
 	const myOpenOffers = await getMyOpenOffers()
+
 	let response = true
 
 	myOpenOffers.forEach(async (openOffer) => {
@@ -20,5 +21,6 @@ export const cancelAllOffers = async (requestObject) => {
 		let signedTxnBytes = await signTradeBotTxn(unsignedTxn, keyPair)
 		await processTransaction(signedTxnBytes)
 	})
+
 	return response
 }

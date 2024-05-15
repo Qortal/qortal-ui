@@ -1,13 +1,16 @@
-import {css, html, LitElement} from "lit"
-import {Epml} from "../../../epml"
-import "@material/mwc-button"
-import "@material/mwc-dialog"
-import "@polymer/paper-spinner/paper-spinner-lite.js"
-import "@material/mwc-icon"
-import "./WrapperModal"
-import {translate} from '../../../../core/translate'
+import { html, LitElement } from 'lit'
+import { Epml } from '../../../epml'
+import { chatGroupStyles } from './plugins-css'
+import './WrapperModal'
+import '@material/mwc-button'
+import '@material/mwc-dialog'
+import '@material/mwc-icon'
+import '@polymer/paper-spinner/paper-spinner-lite.js'
 
-const parentEpml = new Epml({ type: "WINDOW", source: window.parent })
+// Multi language support
+import { translate } from '../../../../core/translate'
+
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class ChatGroupInvites extends LitElement {
 	static get properties() {
@@ -20,8 +23,12 @@ class ChatGroupInvites extends LitElement {
 			chatHeads: { type: Array },
 			groupAdmin: { attribute: false },
 			groupMembers: { attribute: false },
-			selectedHead: { type: Object },
+			selectedHead: { type: Object }
 		}
+	}
+
+	static get styles() {
+		return [chatGroupStyles]
 	}
 
 	constructor() {
@@ -31,37 +38,44 @@ class ChatGroupInvites extends LitElement {
 		this.leaveGroupObj = {}
 		this.leaveFee = 0.001
 		this.error = false
-		this.message = ""
+		this.message = ''
 		this.chatHeads = []
 		this.groupAdmin = []
 		this.groupMembers = []
 	}
 
-	static get styles() {
-		return css`
-			.top-bar-icon {
-				cursor: pointer;
-				height: 18px;
-				width: 18px;
-				transition: 0.2s all;
-			}
-			.top-bar-icon:hover {
-				color: var(--black);
-			}
-			.modal-button {
-				font-family: Roboto, sans-serif;
-				font-size: 16px;
-				color: var(--mdc-theme-primary);
-				background-color: transparent;
-				padding: 8px 10px;
-				border-radius: 5px;
-				border: none;
-				transition: all 0.3s ease-in-out;
-			}
+	render() {
+		return html`
+			<vaadin-icon @click=${() => {this.isOpenLeaveModal = true}} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:users" slot="icon"></vaadin-icon>
+			<wrapper-modal
+				.removeImage=${() => {
+					if (this.isLoading) return
+					this.isOpenLeaveModal = false
+				}}
+				style=${this.isOpenLeaveModal ? "display: block" : "display: none"}
+			>
+				<div style="text-align:center">
+					<h1>${translate("grouppage.gchange35")}</h1>
+					<hr>
+				</div>
+				<button @click=${() => this._addAdmin(this.leaveGroupObj.groupId)}>Promote to Admin</button>
+				<button @click=${() => this._removeAdmin(this.leaveGroupObj.groupId)}>Remove as Admin</button>
+				<div style="text-align:right; height:36px;">
+					<span ?hidden="${!this.isLoading}">
+						<!-- loading message -->
+						${translate("grouppage.gchange36")} &nbsp;
+						<paper-spinner-lite style="margin-top:12px;" ?active="${this.isLoading}" alt="Leaving"></paper-spinner-lite>
+					</span>
+					<span ?hidden=${this.message === ""} style="${this.error ? "color:red;" : ""}">${this.message}</span>
+				</div>
+				<button @click=${() => {this.isOpenLeaveModal = false}} class="modal-button" ?disabled="${this.isLoading}">${translate("general.close")}</button>
+			</wrapper-modal>
 		`
 	}
 
-	firstUpdated() {}
+	firstUpdated() {
+		// ...
+	}
 
 	timeIsoString(timestamp) {
 		let myTimestamp = timestamp === undefined ? 1587560082346 : timestamp
@@ -71,7 +85,7 @@ class ChatGroupInvites extends LitElement {
 
 	resetDefaultSettings() {
 		this.error = false
-		this.message = ""
+		this.message = ''
 		this.isLoading = false
 	}
 
@@ -89,15 +103,16 @@ class ChatGroupInvites extends LitElement {
 				stop = true
 				try {
 					let myRef = await parentEpml.request("apiCall", {
-                        type: "api",
-                        url: `/transactions/reference/${reference}`,
-                    })
+						type: "api",
+						url: `/transactions/reference/${reference}`
+					})
+
 					if (myRef && myRef.type) {
 						clearInterval(interval)
 						this.isLoading = false
 						this.isOpenLeaveModal = false
 					}
-				} catch (error) {}
+				} catch (error) { }
 				stop = false
 			}
 		}
@@ -107,7 +122,7 @@ class ChatGroupInvites extends LitElement {
 	async getLastRef() {
 		return await parentEpml.request("apiCall", {
 			type: "api",
-			url: `/addresses/lastreference/${this.selectedAddress.address}`,
+			url: `/addresses/lastreference/${this.selectedAddress.address}`
 		})
 	}
 
@@ -118,7 +133,7 @@ class ChatGroupInvites extends LitElement {
 			this.confirmRelationship(reference)
 		} else {
 			this.error = true
-			this.message = ""
+			this.message = ''
 			throw new Error(txnResponse)
 		}
 	}
@@ -128,95 +143,40 @@ class ChatGroupInvites extends LitElement {
 			type: "api",
 			method: "POST",
 			url: `/transactions/convert`,
-			body: `${transactionBytesBase58}`,
+			body: `${transactionBytesBase58}`
 		})
 	}
 
-    async signTx(body){
-        return  await parentEpml.request("apiCall", {
-            type: "api",
-            method: "POST",
-            url: `/transactions/sign`,
-            body: body,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-    }
+	async signTx(body) {
+		return await parentEpml.request("apiCall", {
+			type: "api",
+			method: "POST",
+			url: `/transactions/sign`,
+			body: body,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
 
-    async process(body){
-        return  await parentEpml.request("apiCall", {
-            type: "api",
-            method: "POST",
-            url: `/transactions/process`,
-            body: body,
-        })
-    }
+	async process(body) {
+		return await parentEpml.request("apiCall", {
+			type: "api",
+			method: "POST",
+			url: `/transactions/process`,
+			body: body
+		})
+	}
+
 	async _addAdmin(groupId) {
 		// Reset Default Settings...
 		this.resetDefaultSettings()
+
 		const leaveFeeInput = this.leaveFee
 
 		this.isLoading = true
 
 		// Get Last Ref
-
-		const validateReceiver = async () => {
-			let lastRef = await this.getLastRef()
-			let myTransaction = await makeTransactionRequest(lastRef)
-			this.getTxnRequestResponse(myTransaction, lastRef )
-		}
-
-		// Make Transaction Request
-		const makeTransactionRequest = async (lastRef) => {
-			const body = {
-				timestamp: Date.now(),
-				reference: lastRef,
-				fee: leaveFeeInput,
-				ownerPublicKey: window.parent.Base58.encode(
-					window.parent.reduxStore.getState().app.selectedAddress
-						.keyPair.publicKey
-				),
-				groupId: groupId,
-				member: this.selectedHead.address,
-			}
-			const bodyToString = JSON.stringify(body)
-			let transactionBytes = await parentEpml.request("apiCall", {
-				type: "api",
-				method: "POST",
-				url: `/groups/addadmin`,
-				body: bodyToString,
-				headers: {
-					"Content-Type": "application/json",
-				},
-			})
-			const readforsign = await this.convertBytesForSigning(
-				transactionBytes
-			)
-			const body2 = {
-				privateKey: window.parent.Base58.encode(
-					window.parent.reduxStore.getState().app.selectedAddress
-						.keyPair.privateKey
-				),
-				transactionBytes: readforsign,
-			}
-			const bodyToString2 = JSON.stringify(body2)
-			let signTransaction = await this.signTx(bodyToString2)
-			return await this.process(signTransaction)
-		}
-
-		await validateReceiver()
-	}
-
-    async _removeAdmin(groupId) {
-		// Reset Default Settings...
-		this.resetDefaultSettings()
-		const leaveFeeInput = this.leaveFee
-
-		this.isLoading = true
-
-		// Get Last Ref
-
 		const validateReceiver = async () => {
 			let lastRef = await this.getLastRef()
 			let myTransaction = await makeTransactionRequest(lastRef)
@@ -229,101 +189,111 @@ class ChatGroupInvites extends LitElement {
 				timestamp: Date.now(),
 				reference: lastRef,
 				fee: leaveFeeInput,
-				ownerPublicKey: window.parent.Base58.encode(
-					window.parent.reduxStore.getState().app.selectedAddress
-						.keyPair.publicKey
-				),
+				ownerPublicKey: window.parent.Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey),
 				groupId: groupId,
-				admin: this.selectedHead.address,
+				member: this.selectedHead.address
 			}
+
 			const bodyToString = JSON.stringify(body)
+
 			let transactionBytes = await parentEpml.request("apiCall", {
 				type: "api",
 				method: "POST",
-				url: `/groups/removeadmin`,
+				url: `/groups/addadmin`,
 				body: bodyToString,
 				headers: {
-					"Content-Type": "application/json",
-				},
+					"Content-Type": "application/json"
+				}
 			})
-			const readforsign = await this.convertBytesForSigning(
-				transactionBytes
-			)
+
+			const readforsign = await this.convertBytesForSigning(transactionBytes)
+
 			const body2 = {
-				privateKey: window.parent.Base58.encode(
-					window.parent.reduxStore.getState().app.selectedAddress
-						.keyPair.privateKey
-				),
-				transactionBytes: readforsign,
+				privateKey: window.parent.Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey),
+				transactionBytes: readforsign
 			}
+
 			const bodyToString2 = JSON.stringify(body2)
+
 			let signTransaction = await this.signTx(bodyToString2)
+
 			return await this.process(signTransaction)
 		}
 
 		await validateReceiver()
 	}
 
-	render() {
-		console.log("leaveGroupObj", this.leaveGroupObj)
-		return html`
-           <vaadin-icon @click=${()=> {
-            this.isOpenLeaveModal = true
-         }} class="top-bar-icon" style="margin: 0px 20px" icon="vaadin:users" slot="icon"></vaadin-icon>
+	async _removeAdmin(groupId) {
+		// Reset Default Settings...
+		this.resetDefaultSettings()
 
-         <wrapper-modal
-                .removeImage=${() => {
-					if (this.isLoading) return
-					this.isOpenLeaveModal = false
-				}}
-                style=${
-					this.isOpenLeaveModal ? "display: block" : "display: none"
-				}>
-                    <div style="text-align:center">
-                        <h1>${translate("grouppage.gchange35")}</h1>
-                        <hr>
-                    </div>
+		const leaveFeeInput = this.leaveFee
 
-                    <button @click=${() =>
-						this._addAdmin(
-							this.leaveGroupObj.groupId
-						)}>Promote to Admin</button>
-                     <button @click=${() =>
-						this._removeAdmin(
-							this.leaveGroupObj.groupId
-						)}>Remove as Admin</button>
-                    <div style="text-align:right; height:36px;">
-                        <span ?hidden="${!this.isLoading}">
-                            <!-- loading message -->
-                            ${translate("grouppage.gchange36")} &nbsp;
-                            <paper-spinner-lite
-                                style="margin-top:12px;"
-                                ?active="${this.isLoading}"
-                                alt="Leaving"
-                            >
-                            </paper-spinner-lite>
-                        </span>
-                        <span ?hidden=${this.message === ""} style="${
-			this.error ? "color:red;" : ""
-		}">
-                            ${this.message}
-                        </span>
-                    </div>
+		this.isLoading = true
 
+		// Get Last Ref
+		const validateReceiver = async () => {
+			let lastRef = await this.getLastRef()
+			let myTransaction = await makeTransactionRequest(lastRef)
+			this.getTxnRequestResponse(myTransaction, lastRef)
+		}
 
-                    <button
-                    @click=${() => {
-						this.isOpenLeaveModal = false
-					}}
-                    class="modal-button"
-                        ?disabled="${this.isLoading}"
+		// Make Transaction Request
+		const makeTransactionRequest = async (lastRef) => {
+			const body = {
+				timestamp: Date.now(),
+				reference: lastRef,
+				fee: leaveFeeInput,
+				ownerPublicKey: window.parent.Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey),
+				groupId: groupId,
+				admin: this.selectedHead.address
+			}
 
-                    >
-                    ${translate("general.close")}
-                    </button>
-                </wrapper-modal >
-    `
+			const bodyToString = JSON.stringify(body)
+
+			let transactionBytes = await parentEpml.request("apiCall", {
+				type: "api",
+				method: "POST",
+				url: `/groups/removeadmin`,
+				body: bodyToString,
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+
+			const readforsign = await this.convertBytesForSigning(
+				transactionBytes
+			)
+
+			const body2 = {
+				privateKey: window.parent.Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey),
+				transactionBytes: readforsign
+			}
+
+			const bodyToString2 = JSON.stringify(body2)
+
+			let signTransaction = await this.signTx(bodyToString2)
+
+			return await this.process(signTransaction)
+		}
+
+		await validateReceiver()
+	}
+
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
-customElements.define("chat-right-panel", ChatGroupInvites)
+window.customElements.define('chat-group-invites', ChatGroupInvites)

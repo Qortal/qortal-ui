@@ -1,19 +1,20 @@
-import {html, LitElement} from 'lit'
-import {Epml} from '../../../epml.js'
-import '../components/ButtonIconCopy.js'
-import {registerTranslateConfig, translate, use} from '../../../../core/translate'
-import {blocksNeed} from '../../utils/blocks-needed.js'
+import { html, LitElement } from 'lit'
+import { Epml } from '../../../epml'
+import { blocksNeed } from '../../utils/functions'
+import { becomeMinterStyles } from '../components/plugins-css'
 import isElectron from 'is-electron'
+import './not-sponsored'
+import './yes-sponsored'
+import '../components/ButtonIconCopy'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@material/mwc-button'
 import '@material/mwc-textfield'
 import '@vaadin/button'
-import {pageStyles} from './become-minter-css.src.js'
-import './components/not-sponsored.js'
-import './components/yes-sponsored.js'
 
+// Multi language support
+import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json()),
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -27,11 +28,13 @@ class BecomeMinter extends LitElement {
 			isPageLoading: { type: Boolean },
 			addressInfo: { type: Object },
 			rewardSharePublicKey: { type: String },
-			mintingAccountData: { type: Array },
+			mintingAccountData: { type: Array }
 		}
 	}
 
-	static styles = [pageStyles]
+	static get styles() {
+		return [becomeMinterStyles]
+	}
 
 	constructor() {
 		super()
@@ -42,6 +45,76 @@ class BecomeMinter extends LitElement {
 		this.addressInfo = {}
 		this.rewardSharePublicKey = ''
 		this.mintingAccountData = null
+	}
+
+	render() {
+		const findMintingAccount = this.mintingAccountData?.find((ma) => ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress?.address)
+		const isAlreadySponsored = this.addressInfo?.error !== 124 && this.addressInfo?.level === 0 && this.addressInfo?.blocksMinted > 0 && this.addressInfo?.blocksMinted < 7200
+		return html`
+			${this.isPageLoading
+				? html`
+					<div class="loadingContainer">
+						<div class="loading"></div>
+					</div>
+					<div class="backdrop"></div>
+				`
+			: ''}
+			<div class="page-container">
+				<h1 class="header-title">
+					${translate('mintingpage.mchange32')}
+				</h1>
+				<div class="fullWidth">
+					<hr class="divider" />
+				</div>
+				${isAlreadySponsored
+				? ''
+				: html`
+					<not-sponsored
+						.atMount="${() => this.atMount()}"
+					>
+					</not-sponsored>
+				`}
+				${!isAlreadySponsored
+				? ''
+				: html`
+					<yes-sponsored
+						.rewardSharePublicKey=${this
+						.rewardSharePublicKey}
+							.addressInfo=${this.addressInfo}
+							.isMinting=${!!findMintingAccount}
+					>
+					</yes-sponsored>
+				`}
+			</div>
+		`
+	}
+
+	async firstUpdated() {
+		await this.atMount()
+
+		if (!isElectron()) {
+		} else {
+			window.addEventListener('contextmenu', (event) => {
+				event.preventDefault()
+				window.parent.electronAPI.showMyMenu()
+			})
+		}
+
+		this.clearConsole()
+
+		setInterval(() => {
+			this.clearConsole()
+		}, 60000)
+	}
+
+	connectedCallback() {
+		super.connectedCallback()
+		window.addEventListener('storage', this._handleStorage)
+	}
+
+	disconnectedCallback() {
+		window.removeEventListener('storage', this._handleStorage)
+		super.disconnectedCallback()
 	}
 
 	changeLanguage() {
@@ -66,74 +139,45 @@ class BecomeMinter extends LitElement {
 		} else {
 			this.theme = 'light'
 		}
+
 		document.querySelector('html').setAttribute('theme', this.theme)
-	}
-
-	connectedCallback() {
-		super.connectedCallback()
-		window.addEventListener('storage', this._handleStorage)
-	}
-
-	disconnectedCallback() {
-		window.removeEventListener('storage', this._handleStorage)
-		super.disconnectedCallback()
 	}
 
 	async getNodeInfo() {
 		return await parentEpml.request('apiCall', {
-			url: `/admin/status`,
+			url: `/admin/status`
 		})
 	}
 
 	async getMintingAcccounts() {
 		return await parentEpml.request('apiCall', {
-			url: `/admin/mintingaccounts`,
+			url: `/admin/mintingaccounts`
 		})
 	}
 
 	async atMount() {
 		this.changeLanguage()
-
-
 		this.isPageLoading = true
+
 		try {
 			const [nodeInfo, myRewardShareArray, mintingaccounts] =
 				await Promise.all([
 					this.getNodeInfo(),
 					this.getRewardShareRelationship(
-						window.parent.reduxStore.getState().app?.selectedAddress
-							?.address
+						window.parent.reduxStore.getState().app?.selectedAddress?.address
 					),
-					this.getMintingAcccounts(),
+					this.getMintingAcccounts()
 				])
-
 			this.nodeInfo = nodeInfo
-			this.rewardSharePublicKey =
-				myRewardShareArray[0]?.rewardSharePublicKey
+			this.rewardSharePublicKey = myRewardShareArray[0]?.rewardSharePublicKey
 			this.isPageLoading = false
 			this.mintingAccountData = mintingaccounts
-			this.addressInfo =
-				window.parent.reduxStore.getState().app.accountInfo.addressInfo
+			this.addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		} catch (error) {
 			console.error(error)
 
 			this.isPageLoading = false
 		}
-	}
-
-	async firstUpdated() {
-		await this.atMount()
-		if (!isElectron()) {
-		} else {
-			window.addEventListener('contextmenu', (event) => {
-				event.preventDefault()
-				window.parent.electronAPI.showMyMenu()
-			})
-		}
-		this.clearConsole()
-		setInterval(() => {
-			this.clearConsole()
-		}, 60000)
 	}
 
 	clearConsole() {
@@ -147,70 +191,27 @@ class BecomeMinter extends LitElement {
 	async getRewardShareRelationship(recipientAddress) {
 		return await parentEpml.request('apiCall', {
 			type: 'api',
-			url: `/addresses/rewardshares?recipients=${recipientAddress}`,
+			url: `/addresses/rewardshares?recipients=${recipientAddress}`
 		})
 	}
 
 	_levelUpBlocks() {
-		return (
-			blocksNeed(0) -
-			(this.addressInfo?.blocksMinted +
-				this.addressInfo?.blocksMintedAdjustment)
-		).toString()
+		return (blocksNeed(0) - (this.addressInfo?.blocksMinted + this.addressInfo?.blocksMintedAdjustment)).toString()
 	}
 
-	render() {
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
 
-		const findMintingAccount = this.mintingAccountData?.find(
-			(ma) => ma.recipientAccount === window.parent.reduxStore.getState().app?.selectedAddress
-				?.address
-		)
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
 
-		const isAlreadySponsored =
-			this.addressInfo?.error !== 124 &&
-			this.addressInfo?.level === 0 &&
-			this.addressInfo?.blocksMinted > 0 && this.addressInfo?.blocksMinted < 7200
-
-		return html`
-			${this.isPageLoading
-				? html`
-					<div class="loadingContainer">
-						<div class="loading"></div>
-					</div>
-					<div class="backdrop"></div>
-				`
-			: ''}
-
-			<div class="page-container">
-				<h1 class="header-title">
-					${translate('mintingpage.mchange32')}
-				</h1>
-
-				<div class="fullWidth">
-					<hr class="divider" />
-				</div>
-
-				${isAlreadySponsored
-				? ''
-				: html`
-					<not-sponsored
-						.atMount="${() => this.atMount()}"
-					>
-					</not-sponsored>
-				`}
-				${!isAlreadySponsored
-				? ''
-				: html`
-					<yes-sponsored
-						.rewardSharePublicKey=${this
-						.rewardSharePublicKey}
-							.addressInfo=${this.addressInfo}
-							.isMinting=${!!findMintingAccount}
-					>
-					</yes-sponsored>
-				`}
-			</div>
-		`
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
