@@ -271,7 +271,7 @@ class ShowPlugin extends connect(store)(LitElement) {
 
 	firstUpdated() {
 		// Check and update outdated plugin URLs in local storage
-		this.updatePluginUrls();
+		this.updatePluginUrls()
 		this.changeLanguage()
 
 		this.tabs.forEach((tab, index) => {
@@ -308,27 +308,26 @@ class ShowPlugin extends connect(store)(LitElement) {
 
 	async updatePluginUrls() {
 		const outdatedUrls = {
-		    'messaging/q-chat/index.html': 'q-chat/index.html',
-		    'qdn/index.html': 'q-website/index.html',
+			'messaging/q-chat/index.html': 'q-chat/index.html',
+			'qdn/index.html': 'q-website/index.html',
 			'qdn/data-management/index.html': 'data-management/index.html',
 			'minting/index.html': 'minting-info/index.html'
-		};
-		let myMenuPlugs = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]');
+		}
+		let myMenuPlugs = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]')
 		let updatedMenuPlugs = myMenuPlugs.map(plugin => {
 			if (outdatedUrls[plugin.page]) {
-				return { ...plugin, page: outdatedUrls[plugin.page] };
+				return { ...plugin, page: outdatedUrls[plugin.page] }
 			}
-			return plugin;
-		});
+			return plugin
+		})
 		if (JSON.stringify(updatedMenuPlugs) !== JSON.stringify(myMenuPlugs)) {
-		    localStorage.setItem('myMenuPlugs', JSON.stringify(updatedMenuPlugs));
-		    await this.updateRegisteredUrls(updatedMenuPlugs);
+			localStorage.setItem('myMenuPlugs', JSON.stringify(updatedMenuPlugs))
+			await this.updateRegisteredUrls(updatedMenuPlugs)
 		}
 	}
 
 	async updateRegisteredUrls(updatedMenuPlugs) {
-		let registeredUrls = [];
-	  
+		let registeredUrls = []
 		updatedMenuPlugs.forEach(plugin => {
 			let pluginUrl = {
 				url: plugin.url,
@@ -339,10 +338,10 @@ class ShowPlugin extends connect(store)(LitElement) {
 				mwcicon: plugin.mwcicon,
 				menus: plugin.menus,
 				parent: plugin.parent
-			};
-			registeredUrls.push(pluginUrl);
-		});
-		await parentEpml.request('setRegisteredUrls', registeredUrls);
+			}
+			registeredUrls.push(pluginUrl)
+		})
+		await parentEpml.request('setRegisteredUrls', registeredUrls)
 	}
 
 	async getUpdateComplete() {
@@ -1463,7 +1462,7 @@ class NavBar extends connect(store)(LitElement) {
 				<option style="padding-top: 10px;" value="puzzles">${translate("tabmenu.tm15")}</option>
 				<option style="padding-top: 10px;" value="node-management">${translate("tabmenu.tm16")}</option>
 				<option style="padding-top: 10px;" value="lottery">${translate("tabmenu.tm42")}</option>
-            `
+			`
 		}
 	}
 
