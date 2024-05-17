@@ -270,6 +270,8 @@ class ShowPlugin extends connect(store)(LitElement) {
 	}
 
 	firstUpdated() {
+		// Check and update outdated plugin URLs in local storage
+		this.updatePluginUrls();
 		this.changeLanguage()
 
 		this.tabs.forEach((tab, index) => {
@@ -302,6 +304,45 @@ class ShowPlugin extends connect(store)(LitElement) {
 		} else {
 			use(checkLanguage)
 		}
+	}
+
+	async updatePluginUrls() {
+		const outdatedUrls = {
+		    'messaging/q-chat/index.html': 'q-chat/index.html',
+		    'qdn/index.html': 'q-website/index.html',
+			'qdn/data-management/index.html': 'data-management/index.html',
+			'minting/index.html': 'minting-info/index.html'
+		};
+		let myMenuPlugs = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]');
+		let updatedMenuPlugs = myMenuPlugs.map(plugin => {
+			if (outdatedUrls[plugin.page]) {
+				return { ...plugin, page: outdatedUrls[plugin.page] };
+			}
+			return plugin;
+		});
+		if (JSON.stringify(updatedMenuPlugs) !== JSON.stringify(myMenuPlugs)) {
+		    localStorage.setItem('myMenuPlugs', JSON.stringify(updatedMenuPlugs));
+		    await this.updateRegisteredUrls(updatedMenuPlugs);
+		}
+	}
+
+	async updateRegisteredUrls(updatedMenuPlugs) {
+		let registeredUrls = [];
+	  
+		updatedMenuPlugs.forEach(plugin => {
+			let pluginUrl = {
+				url: plugin.url,
+				domain: plugin.domain,
+				page: plugin.page,
+				title: plugin.title,
+				icon: plugin.icon,
+				mwcicon: plugin.mwcicon,
+				menus: plugin.menus,
+				parent: plugin.parent
+			};
+			registeredUrls.push(pluginUrl);
+		});
+		await parentEpml.request('setRegisteredUrls', registeredUrls);
 	}
 
 	async getUpdateComplete() {
